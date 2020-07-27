@@ -45,14 +45,15 @@ public class NettyUseRawHttpResponseTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .process(exchange -> {
-                        HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
-                                                                            NettyConverter.toByteBuffer("Bye World".getBytes()));
-                        response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), 9);
+                        .to("mock:input")
+                        .process(exchange -> {
+                            HttpResponse response = new DefaultFullHttpResponse(
+                                    HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
+                                    NettyConverter.toByteBuffer("Bye World".getBytes()));
+                            response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), 9);
 
-                        exchange.getMessage().setBody(response);
-                    });
+                            exchange.getMessage().setBody(response);
+                        });
             }
         };
     }

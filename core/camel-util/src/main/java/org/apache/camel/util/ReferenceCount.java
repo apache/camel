@@ -85,6 +85,7 @@ public final class ReferenceCount {
     }
 
     public static ReferenceCount onRelease(Runnable onRelease) {
-        return new ReferenceCount(() -> { }, onRelease);
+        return new ReferenceCount(() -> {
+        }, onRelease);
     }
 }

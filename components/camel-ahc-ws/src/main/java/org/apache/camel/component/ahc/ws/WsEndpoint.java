@@ -38,10 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Exchange data with external Websocket servers using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
+ * Exchange data with external Websocket servers using <a href="http://github.com/sonatype/async-http-client">Async Http
+ * Client</a>.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "Async HTTP Client (AHC) Websocket,Async HTTP Client (AHC) Secure Websocket",
-        syntax = "ahc-ws:httpUri", category = {Category.WEBSOCKET})
+@UriEndpoint(firstVersion = "2.14.0", scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc",
+             title = "Async HTTP Client (AHC) Websocket,Async HTTP Client (AHC) Secure Websocket",
+             syntax = "ahc-ws:httpUri", category = { Category.WEBSOCKET })
 public class WsEndpoint extends AhcEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
@@ -127,8 +129,9 @@ public class WsEndpoint extends AhcEndpoint {
 
         LOG.debug("Connecting to {}", uri);
         websocket = getClient().prepareGet(uri).execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(listener).build()).get();
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(listener).build())
+                .get();
     }
 
     @Override

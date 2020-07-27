@@ -29,7 +29,8 @@ import org.junit.jupiter.api.Test;
 
 public class AdviceWithIssueTest extends CamelTestSupport {
 
-    final String pub = "activemq:topic:integrations?allowNullBody=false&asyncConsumer=true&concurrentConsumers=10&jmsMessageType=Map&preserveMessageQos=true";
+    final String pub
+            = "activemq:topic:integrations?allowNullBody=false&asyncConsumer=true&concurrentConsumers=10&jmsMessageType=Map&preserveMessageQos=true";
     final String advicedPub = "activemq:topic:integrations";
 
     @Override
@@ -55,12 +56,11 @@ public class AdviceWithIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        JmsComponent activemq =
-            JmsComponent.jmsComponent();
+        JmsComponent activemq = JmsComponent.jmsComponent();
         camelContext.addComponent("activemq", activemq);
         return camelContext;
     }
@@ -71,7 +71,7 @@ public class AdviceWithIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("starter")
-                    .to(pub).to("mock:result");
+                        .to(pub).to("mock:result");
             }
         };
     }

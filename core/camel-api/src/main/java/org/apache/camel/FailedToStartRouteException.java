@@ -37,5 +37,3 @@ public class FailedToStartRouteException extends RuntimeCamelException {
         return routeId;
     }
 }
-
-

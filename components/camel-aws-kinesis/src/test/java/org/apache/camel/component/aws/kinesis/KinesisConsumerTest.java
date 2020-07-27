@@ -73,23 +73,22 @@ public class KinesisConsumerTest {
         KinesisEndpoint endpoint = new KinesisEndpoint(null, configuration, component);
         endpoint.start();
         undertest = new KinesisConsumer(endpoint, processor);
-        
+
         SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber(null);
         Shard shard = new Shard().withShardId("shardId").withSequenceNumberRange(range);
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-
         lenient().when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(new GetRecordsResult()
-                .withNextShardIterator("nextShardIterator"));
+                .thenReturn(new GetRecordsResult()
+                        .withNextShardIterator("nextShardIterator"));
         lenient().when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
-            .thenReturn(new DescribeStreamResult()
-                .withStreamDescription(new StreamDescription()
-                    .withShards(shardList)));
+                .thenReturn(new DescribeStreamResult()
+                        .withStreamDescription(new StreamDescription()
+                                .withShards(shardList)));
         lenient().when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
-            .thenReturn(new GetShardIteratorResult()
-                .withShardIterator("shardIterator"));
+                .thenReturn(new GetShardIteratorResult()
+                        .withShardIterator("shardIterator"));
     }
 
     @Test
@@ -97,7 +96,8 @@ public class KinesisConsumerTest {
         undertest.poll();
 
         final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).describeStream(describeStreamReqCap.capture());
         assertEquals("streamName", describeStreamReqCap.getValue().getStreamName());
@@ -114,7 +114,8 @@ public class KinesisConsumerTest {
 
         undertest.poll();
 
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
         assertEquals("streamName", getShardIteratorReqCap.getValue().getStreamName());
@@ -130,7 +131,8 @@ public class KinesisConsumerTest {
         undertest.poll();
 
         final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).describeStream(describeStreamReqCap.capture());
         assertEquals("streamName", describeStreamReqCap.getValue().getStreamName());
@@ -170,10 +172,9 @@ public class KinesisConsumerTest {
     @Test
     public void recordsAreSentToTheProcessor() throws Exception {
         when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(new GetRecordsResult()
-                .withNextShardIterator("nextShardIterator")
-                .withRecords(new Record().withSequenceNumber("1"), new Record().withSequenceNumber("2"))
-            );
+                .thenReturn(new GetRecordsResult()
+                        .withNextShardIterator("nextShardIterator")
+                        .withRecords(new Record().withSequenceNumber("1"), new Record().withSequenceNumber("2")));
 
         int messageCount = undertest.poll();
 
@@ -190,14 +191,12 @@ public class KinesisConsumerTest {
         String partitionKey = "partitionKey";
         String sequenceNumber = "1";
         when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(new GetRecordsResult()
-                .withNextShardIterator("nextShardIterator")
-                .withRecords(new Record()
-                    .withSequenceNumber(sequenceNumber)
-                    .withApproximateArrivalTimestamp(new Date(42))
-                    .withPartitionKey(partitionKey)
-                )
-            );
+                .thenReturn(new GetRecordsResult()
+                        .withNextShardIterator("nextShardIterator")
+                        .withRecords(new Record()
+                                .withSequenceNumber(sequenceNumber)
+                                .withApproximateArrivalTimestamp(new Date(42))
+                                .withPartitionKey(partitionKey)));
 
         undertest.poll();
 
@@ -206,7 +205,8 @@ public class KinesisConsumerTest {
         verify(processor).process(exchangeCaptor.capture(), any(AsyncCallback.class));
         assertEquals(42L, exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.APPROX_ARRIVAL_TIME, long.class));
         assertEquals(partitionKey, exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.PARTITION_KEY, String.class));
-        assertEquals(sequenceNumber, exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER, String.class));
+        assertEquals(sequenceNumber,
+                exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER, String.class));
     }
 
 }

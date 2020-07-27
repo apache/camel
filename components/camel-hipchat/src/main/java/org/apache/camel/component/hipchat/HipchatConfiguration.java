@@ -37,7 +37,8 @@ public class HipchatConfiguration {
     private String authToken;
     @UriParam
     private String consumeUsers;
-    @UriParam(description = "The CloseableHttpClient reference from registry to be used during API HTTP requests.", defaultValue = "CloseableHttpClient default from HttpClient library")
+    @UriParam(description = "The CloseableHttpClient reference from registry to be used during API HTTP requests.",
+              defaultValue = "CloseableHttpClient default from HttpClient library")
     private CloseableHttpClient httpClient = HttpClients.createDefault();
 
     public String getHost() {

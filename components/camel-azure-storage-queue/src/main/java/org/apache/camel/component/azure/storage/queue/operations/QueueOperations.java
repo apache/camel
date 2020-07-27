@@ -100,13 +100,17 @@ public class QueueOperations {
         final Duration timeout = getTimeout(exchange);
 
         if (ObjectHelper.isEmpty(messageId)) {
-            throw new IllegalArgumentException(String.format("Message ID must be specified in camel headers '%s' for deleteMessage "
-                    + "operation.", QueueConstants.MESSAGE_ID));
+            throw new IllegalArgumentException(
+                    String.format("Message ID must be specified in camel headers '%s' for deleteMessage "
+                                  + "operation.",
+                            QueueConstants.MESSAGE_ID));
         }
 
         if (ObjectHelper.isEmpty(popReceipt)) {
-            throw new IllegalArgumentException(String.format("Message Pop Receipt must be specified in camel headers '%s' for deleteMessage "
-                    + "operation.", QueueConstants.POP_RECEIPT));
+            throw new IllegalArgumentException(
+                    String.format("Message Pop Receipt must be specified in camel headers '%s' for deleteMessage "
+                                  + "operation.",
+                            QueueConstants.POP_RECEIPT));
         }
 
         return buildResponseWithEmptyBody(client.deleteMessage(messageId, popReceipt, timeout));
@@ -114,7 +118,9 @@ public class QueueOperations {
 
     public QueueOperationResponse receiveMessages(final Exchange exchange) {
         if (exchange == null) {
-            return new QueueOperationResponse(client.receiveMessages(configuration.getMaxMessages(), configuration.getVisibilityTimeout(), configuration.getTimeout()));
+            return new QueueOperationResponse(
+                    client.receiveMessages(configuration.getMaxMessages(), configuration.getVisibilityTimeout(),
+                            configuration.getTimeout()));
         }
 
         final Integer maxMessages = getMaxMessages(exchange);
@@ -145,21 +151,28 @@ public class QueueOperations {
         final Duration timeout = getTimeout(exchange);
 
         if (ObjectHelper.isEmpty(messageId)) {
-            throw new IllegalArgumentException(String.format("Message ID must be specified in camel headers '%s' for updateMessage "
-                    + "operation.", QueueConstants.MESSAGE_ID));
+            throw new IllegalArgumentException(
+                    String.format("Message ID must be specified in camel headers '%s' for updateMessage "
+                                  + "operation.",
+                            QueueConstants.MESSAGE_ID));
         }
 
         if (ObjectHelper.isEmpty(popReceipt)) {
-            throw new IllegalArgumentException(String.format("Message Pop Receipt must be specified in camel headers '%s' for updateMessage "
-                    + "operation.", QueueConstants.POP_RECEIPT));
+            throw new IllegalArgumentException(
+                    String.format("Message Pop Receipt must be specified in camel headers '%s' for updateMessage "
+                                  + "operation.",
+                            QueueConstants.POP_RECEIPT));
         }
 
         if (ObjectHelper.isEmpty(visibilityTimeout)) {
-            throw new IllegalArgumentException(String.format("Visibility Timeout must be specified in camel headers '%s' for updateMessage "
-                    + "operation.", QueueConstants.VISIBILITY_TIMEOUT));
+            throw new IllegalArgumentException(
+                    String.format("Visibility Timeout must be specified in camel headers '%s' for updateMessage "
+                                  + "operation.",
+                            QueueConstants.VISIBILITY_TIMEOUT));
         }
 
-        final Response<UpdateMessageResult> response = client.updateMessage(messageId, popReceipt, updatedText, visibilityTimeout, timeout);
+        final Response<UpdateMessageResult> response
+                = client.updateMessage(messageId, popReceipt, updatedText, visibilityTimeout, timeout);
         final QueueExchangeHeaders headers = new QueueExchangeHeaders()
                 .timeNextVisible(response.getValue().getTimeNextVisible())
                 .popReceipt(response.getValue().getPopReceipt())
@@ -179,7 +192,8 @@ public class QueueOperations {
         QueueExchangeHeaders exchangeHeaders;
 
         if (response.getValue() instanceof SendMessageResult) {
-            exchangeHeaders = QueueExchangeHeaders.createQueueExchangeHeadersFromSendMessageResult((SendMessageResult) response.getValue());
+            exchangeHeaders = QueueExchangeHeaders
+                    .createQueueExchangeHeadersFromSendMessageResult((SendMessageResult) response.getValue());
         } else {
             exchangeHeaders = new QueueExchangeHeaders();
         }
@@ -190,22 +204,26 @@ public class QueueOperations {
     }
 
     private Duration getVisibilityTimeout(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getVisibilityTimeout(exchange)) ? configuration.getVisibilityTimeout()
+        return ObjectHelper.isEmpty(QueueExchangeHeaders.getVisibilityTimeout(exchange))
+                ? configuration.getVisibilityTimeout()
                 : QueueExchangeHeaders.getVisibilityTimeout(exchange);
     }
 
     private Duration getTimeToLive(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getTimeToLiveFromHeaders(exchange)) ? configuration.getTimeToLive()
+        return ObjectHelper.isEmpty(QueueExchangeHeaders.getTimeToLiveFromHeaders(exchange))
+                ? configuration.getTimeToLive()
                 : QueueExchangeHeaders.getTimeToLiveFromHeaders(exchange);
     }
 
     private Duration getTimeout(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getTimeoutFromHeaders(exchange)) ? configuration.getTimeout()
+        return ObjectHelper.isEmpty(QueueExchangeHeaders.getTimeoutFromHeaders(exchange))
+                ? configuration.getTimeout()
                 : QueueExchangeHeaders.getTimeoutFromHeaders(exchange);
     }
 
     private Integer getMaxMessages(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getMaxMessagesFromHeaders(exchange)) ? configuration.getMaxMessages()
+        return ObjectHelper.isEmpty(QueueExchangeHeaders.getMaxMessagesFromHeaders(exchange))
+                ? configuration.getMaxMessages()
                 : QueueExchangeHeaders.getMaxMessagesFromHeaders(exchange);
     }
 

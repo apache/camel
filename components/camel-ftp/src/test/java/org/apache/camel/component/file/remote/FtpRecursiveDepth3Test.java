@@ -32,12 +32,18 @@ public class FtpRecursiveDepth3Test extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b");
 
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3?password=admin", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3?password=admin", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/foo?password=admin", "a2", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/foo/bar?password=admin", "a3", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/bar?password=admin", "b2", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/bar/foo?password=admin", "b3", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3?password=admin", "a", Exchange.FILE_NAME,
+                "a.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3?password=admin", "b", Exchange.FILE_NAME,
+                "b.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/foo?password=admin", "a2",
+                Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/foo/bar?password=admin", "a3",
+                Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/bar?password=admin", "b2",
+                Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/bar/foo?password=admin", "b3",
+                Exchange.FILE_NAME, "b.txt");
 
         assertMockEndpointsSatisfied();
     }

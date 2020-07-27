@@ -33,9 +33,8 @@ import org.apache.camel.model.language.ExpressionDefinition;
 /**
  * A base {@link ExpressionNode} which does <b>not</b> support any outputs.
  * <p/>
- * This node is to be extended by definitions which need to support an
- * expression but the definition should not contain any outputs, such as
- * {@link org.apache.camel.model.TransformDefinition}.
+ * This node is to be extended by definitions which need to support an expression but the definition should not contain
+ * any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
@@ -103,7 +102,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         }
 
         if (exp instanceof ExpressionClause) {
-            ExpressionClause<?> clause = (ExpressionClause<?>)exp;
+            ExpressionClause<?> clause = (ExpressionClause<?>) exp;
             if (clause.getExpressionType() != null) {
                 // if using the Java DSL then the expression may have been set
                 // using the
@@ -115,7 +114,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
                 // ExpressionClause did build for us
                 ExpressionFactory model = clause.getExpressionType();
                 if (model instanceof ExpressionDefinition) {
-                    setExpression((ExpressionDefinition)model);
+                    setExpression((ExpressionDefinition) model);
                 }
             }
         }

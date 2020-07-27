@@ -122,7 +122,6 @@ public class CMISProducerTest extends CMISTestSupport {
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
 
-
         template.send(exchange);
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
@@ -172,7 +171,7 @@ public class CMISProducerTest extends CMISTestSupport {
     @Test
     void failConnectingToNonExistingRepository() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl()
-                + "?username=admin&password=admin&repositoryId=NON_EXISTING_ID");
+                                                + "?username=admin&password=admin&repositoryId=NON_EXISTING_ID");
         Producer producer = endpoint.createProducer();
 
         Exchange exchange = createExchangeWithInBody("Some content to be store");
@@ -222,7 +221,7 @@ public class CMISProducerTest extends CMISTestSupport {
 
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
-        assertEquals("Renamed Folder",  cmisObject.getPropertyValue(PropertyIds.NAME));
+        assertEquals("Renamed Folder", cmisObject.getPropertyValue(PropertyIds.NAME));
         assertEquals(folder.getId(), cmisObject.getId());
         assertTrue(cmisObject instanceof Folder);
     }
@@ -230,8 +229,7 @@ public class CMISProducerTest extends CMISTestSupport {
     @Test
     void renameDocument() throws UnsupportedEncodingException {
 
-        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
-
+        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
         exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
@@ -243,13 +241,13 @@ public class CMISProducerTest extends CMISTestSupport {
 
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
-        assertEquals("Renamed Document.txt",  cmisObject.getPropertyValue(PropertyIds.NAME));
+        assertEquals("Renamed Document.txt", cmisObject.getPropertyValue(PropertyIds.NAME));
         assertEquals(document.getId(), cmisObject.getId());
         assertTrue(cmisObject instanceof Document);
     }
 
     @Test
-    void deleteFolder()  {
+    void deleteFolder() {
 
         Folder folder = createFolderWithName("Test");
 
@@ -269,10 +267,10 @@ public class CMISProducerTest extends CMISTestSupport {
         });
     }
 
-    @Test 
+    @Test
     void deleteDocument() throws UnsupportedEncodingException {
 
-        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
+        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
         exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
@@ -307,7 +305,7 @@ public class CMISProducerTest extends CMISTestSupport {
     void moveDocument() throws UnsupportedEncodingException {
 
         Folder rootFolder = createSession().getRootFolder();
-        Document toBeMoved = createTextDocument(rootFolder, "This is new test document",  "document.txt");
+        Document toBeMoved = createTextDocument(rootFolder, "This is new test document", "document.txt");
         Folder destinationFolder = createFolderWithName("Destination");
 
         Exchange exchange = createExchangeWithInBody(null);
@@ -325,7 +323,7 @@ public class CMISProducerTest extends CMISTestSupport {
     @Test
     void copyDocument() throws UnsupportedEncodingException {
         Folder destination = createFolderWithName("Destination");
-        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
+        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
         exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);

@@ -66,7 +66,7 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
     @BeforeEach
     public void setUp() {
         when(blockStorageService.snapshots()).thenReturn(snapshotService);
-        
+
         producer = new SnapshotProducer(endpoint, client);
 
         when(snapshotService.create(any())).thenReturn(testOSVolumeSnapshot);
@@ -109,7 +109,6 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
         assertEquals(desc, descCaptor.getValue());
         assertNull(msg.getBody());
     }
-
 
     @Test
     public void getVolumeSnapshotTest() throws Exception {

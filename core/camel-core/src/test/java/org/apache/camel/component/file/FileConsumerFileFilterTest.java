@@ -50,7 +50,8 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME,
+                "skipme.txt");
 
         mock.setResultWaitTime(100);
         mock.assertIsSatisfied();
@@ -61,7 +62,8 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME,
+                "skipme.txt");
 
         template.sendBodyAndHeader("file:target/data/filefilter/", "Hello World", Exchange.FILE_NAME, "hello.txt");
 

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class WebsocketHandler implements WebSocketProtocol {
     private static final transient Logger LOG = LoggerFactory.getLogger(WebsocketHandler.class);
-    
+
     protected WebsocketConsumer consumer;
     protected WebSocketStore store;
 
@@ -37,7 +37,7 @@ public class WebsocketHandler implements WebSocketProtocol {
     public void configure(AtmosphereConfig config) {
         // noop
     }
-    
+
     @Override
     public void onClose(WebSocket webSocket) {
         LOG.debug("closing websocket");
@@ -71,7 +71,7 @@ public class WebsocketHandler implements WebSocketProtocol {
         LOG.debug("text message sent");
         return null;
     }
-    
+
     @Override
     public List<AtmosphereRequest> onMessage(WebSocket webSocket, byte[] data, int offset, int length) {
         LOG.debug("processing byte message {}", data);

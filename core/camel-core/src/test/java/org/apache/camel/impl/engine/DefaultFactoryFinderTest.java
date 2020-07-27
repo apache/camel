@@ -48,7 +48,8 @@ public class DefaultFactoryFinderTest {
 
         final String properties = "class=" + TestImplA.class.getName();
 
-        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA")).thenReturn(new ByteArrayInputStream(properties.getBytes()));
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
+                .thenReturn(new ByteArrayInputStream(properties.getBytes()));
 
         when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
 
@@ -63,7 +64,8 @@ public class DefaultFactoryFinderTest {
 
         final String properties = "class=" + TestImplA.class.getName();
 
-        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA")).thenReturn(new ByteArrayInputStream(properties.getBytes()));
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
+                .thenReturn(new ByteArrayInputStream(properties.getBytes()));
 
         when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
 
@@ -120,7 +122,8 @@ public class DefaultFactoryFinderTest {
     }
 
     URL urlFor(final Class<?> clazz) {
-        final String resourceName = clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName() + ".properties";
+        final String resourceName
+                = clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName() + ".properties";
         final ClassLoader classLoader = clazz.getClassLoader();
 
         return classLoader.getResource(resourceName);

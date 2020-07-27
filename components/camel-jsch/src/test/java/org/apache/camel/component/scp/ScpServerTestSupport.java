@@ -144,7 +144,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
         }
         return false;
     }
-    
+
     protected void setupKnownHosts() {
         knownHostsFile = SCP_ROOT_DIR + "/" + KNOWN_HOSTS;
         if (!acceptLocalhostConnections) {
@@ -169,33 +169,38 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
             LOG.debug("Using '{}' for known hosts.", knownHostsFile);
             jsch.setKnownHosts(knownHostsFile);
             Session s = jsch.getSession("admin", "localhost", getPort());
-            s.setConfig("StrictHostKeyChecking",  "ask");
+            s.setConfig("StrictHostKeyChecking", "ask");
 
             // TODO: by the current jsch (0.1.51) setting "HashKnownHosts" to "no" is a workaround
             // to make the tests run green, see also http://sourceforge.net/p/jsch/bugs/63/
-            s.setConfig("HashKnownHosts",  "no");
+            s.setConfig("HashKnownHosts", "no");
             s.setUserInfo(new UserInfo() {
                 @Override
                 public String getPassphrase() {
                     return null;
                 }
+
                 @Override
                 public String getPassword() {
                     return "admin";
                 }
+
                 @Override
                 public boolean promptPassword(String message) {
                     return true;
                 }
+
                 @Override
                 public boolean promptPassphrase(String message) {
                     return false;
                 }
+
                 @Override
                 public boolean promptYesNo(String message) {
                     // accept host authenticity
                     return true;
                 }
+
                 @Override
                 public void showMessage(String message) {
                 }

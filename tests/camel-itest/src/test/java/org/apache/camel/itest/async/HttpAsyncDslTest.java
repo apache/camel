@@ -76,7 +76,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry registry =  new SimpleRegistry();
+        Registry registry = new SimpleRegistry();
         registry.bind("validateOrder", new MyValidateOrderBean());
         registry.bind("handleOrder", new MyHandleOrderBean());
         return registry;
@@ -100,17 +100,17 @@ public class HttpAsyncDslTest extends CamelTestSupport {
 
                 // list on the JMS queue for new orders
                 from("jms:queue:order")
-                    // do some sanity check validation
-                    .to("bean:validateOrder")
-                    .to("mock:validate")
-                    // use multi threading with a pool size of 20
-                    // turn the route async as some others do not expect a reply
-                    // and a few does then we can use the threads DSL as a turning point
-                    // if the JMS ReplyTo was set then we expect a reply, otherwise not
-                    // use a pool of 20 threads for the point forward
-                    .threads(20)
-                    // do some CPU heavy processing of the message (we simulate and delay just 500 ms)
-                    .delay(500).to("bean:handleOrder").to("mock:order");
+                        // do some sanity check validation
+                        .to("bean:validateOrder")
+                        .to("mock:validate")
+                        // use multi threading with a pool size of 20
+                        // turn the route async as some others do not expect a reply
+                        // and a few does then we can use the threads DSL as a turning point
+                        // if the JMS ReplyTo was set then we expect a reply, otherwise not
+                        // use a pool of 20 threads for the point forward
+                        .threads(20)
+                        // do some CPU heavy processing of the message (we simulate and delay just 500 ms)
+                        .delay(500).to("bean:handleOrder").to("mock:order");
                 // END SNIPPET: e1
             }
         };

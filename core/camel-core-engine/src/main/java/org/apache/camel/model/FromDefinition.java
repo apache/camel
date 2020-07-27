@@ -108,8 +108,8 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     /**
      * Gets tne endpoint if an {@link Endpoint} instance was set.
      * <p/>
-     * This implementation may return <tt>null</tt> which means you need to use
-     * {@link #getEndpointUri()} to get information about the endpoint.
+     * This implementation may return <tt>null</tt> which means you need to use {@link #getEndpointUri()} to get
+     * information about the endpoint.
      *
      * @return the endpoint instance, or <tt>null</tt>
      */

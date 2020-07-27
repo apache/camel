@@ -79,7 +79,7 @@ public class CMISConsumerTest extends CMISTestSupport {
     }
 
     private void populateRepositoryRootFolderWithTwoFoldersAndTwoDocuments()
-        throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         Folder folder1 = createFolderWithName("Folder1");
         Folder folder2 = createChildFolderWithName(folder1, "Folder2");
         createTextDocument(folder2, "Document2.1", "2.1.txt");

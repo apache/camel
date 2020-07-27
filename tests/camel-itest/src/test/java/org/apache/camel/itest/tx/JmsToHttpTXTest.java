@@ -26,8 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test will look for the spring .xml file with the same class name
- * but postfixed with -config.xml as filename.
+ * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
  * <p/>
  */
 @CamelSpringTest
@@ -45,7 +44,7 @@ public class JmsToHttpTXTest {
     private ProducerTemplate template;
 
     // the ok response to expect
-    private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+    private String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
     @Test
     void testSendToTXJms() throws Exception {

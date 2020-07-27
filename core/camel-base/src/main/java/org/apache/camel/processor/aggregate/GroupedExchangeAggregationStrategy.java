@@ -22,11 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 
 /**
- * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
- * in a {@link List} of {@link Exchange} as the message body.
+ * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges in a {@link List} of
+ * {@link Exchange} as the message body.
  * <p/>
- * <b>Important:</b> This strategy is not to be used with the <a href="http://camel.apache.org/content-enricher.html">Content Enricher</a> EIP
- * which is enrich or pollEnrich.
+ * <b>Important:</b> This strategy is not to be used with the
+ * <a href="http://camel.apache.org/content-enricher.html">Content Enricher</a> EIP which is enrich or pollEnrich.
  */
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
@@ -46,4 +46,3 @@ public class GroupedExchangeAggregationStrategy extends AbstractListAggregationS
     }
 
 }
-

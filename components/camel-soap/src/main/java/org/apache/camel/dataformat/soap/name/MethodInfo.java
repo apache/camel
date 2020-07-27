@@ -22,41 +22,42 @@ import java.util.Map;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Value object to hold information about a method in a JAX-WS service interface.
- * Method can have many parameters in the signature, but only one response object.
+ * Value object to hold information about a method in a JAX-WS service interface. Method can have many parameters in the
+ * signature, but only one response object.
  */
 public final class MethodInfo {
     private String name;
     private String soapAction;
     private TypeInfo[] in;
     private TypeInfo out;
-    
+
     // map of type name to qname
     private Map<String, TypeInfo> inTypeMap;
 
     /**
-     * Initialize 
+     * Initialize
      * 
-     * @param name method name
+     * @param name       method name
      * @param soapAction
-     * @param in input parameters
-     * @param out return types
+     * @param in         input parameters
+     * @param out        return types
      */
     public MethodInfo(String name, String soapAction, TypeInfo[] in, TypeInfo out) {
         this.name = name;
         this.soapAction = soapAction;
         this.in = in;
         this.out = out;
-        
+
         this.inTypeMap = new HashMap<>();
         for (TypeInfo typeInfo : in) {
             if (inTypeMap.containsKey(typeInfo.getTypeName())
-                && (!(typeInfo.getTypeName().equals("javax.xml.ws.Holder")))
-                && (!(inTypeMap.get(typeInfo.getTypeName()).getElName().equals(typeInfo.getElName())))) {
-                throw new RuntimeCamelException("Ambiguous QName mapping. The type [ "
-                                                  + typeInfo.getTypeName()
-                                                  + " ] is already mapped to a QName in this method."
-                                                  + " This is not supported.");                   
+                    && (!(typeInfo.getTypeName().equals("javax.xml.ws.Holder")))
+                    && (!(inTypeMap.get(typeInfo.getTypeName()).getElName().equals(typeInfo.getElName())))) {
+                throw new RuntimeCamelException(
+                        "Ambiguous QName mapping. The type [ "
+                                                + typeInfo.getTypeName()
+                                                + " ] is already mapped to a QName in this method."
+                                                + " This is not supported.");
             }
             inTypeMap.put(typeInfo.getTypeName(), typeInfo);
         }
@@ -65,7 +66,7 @@ public final class MethodInfo {
     public String getName() {
         return name;
     }
-    
+
     public String getSoapAction() {
         return soapAction;
     }
@@ -77,9 +78,9 @@ public final class MethodInfo {
     public TypeInfo getOut() {
         return out;
     }
-     
+
     public TypeInfo getIn(String typeName) {
         return this.inTypeMap.get(typeName);
     }
-    
+
 }

@@ -50,13 +50,13 @@ public class JmsInOutWithNoOutBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:before")
-                    .to("activemq:request")
-                    .to("log:after")
-                    .to("mock:result");
+                        .to("log:before")
+                        .to("activemq:request")
+                        .to("log:after")
+                        .to("mock:result");
 
                 from("activemq:request")
-                    .to("log:receivedRequest");
+                        .to("log:receivedRequest");
             }
         };
     }

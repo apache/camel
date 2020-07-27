@@ -166,17 +166,16 @@ public class BlobProducerIT extends CamelTestSupport {
     public void testUploadBlockBlobWithConfigUri() throws InterruptedException {
         result.expectedMessageCount(1);
 
-        template.send("direct:uploadBlockBlobWithConfigUri", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Block Blob"));
+        template.send("direct:uploadBlockBlobWithConfigUri", ExchangePattern.InOnly,
+                exchange -> exchange.getIn().setBody("Block Blob"));
 
         result.assertIsSatisfied();
     }
-
 
     @AfterAll
     public void tearDown() {
         containerClient.delete();
     }
-
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

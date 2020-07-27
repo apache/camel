@@ -43,8 +43,8 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor
- * information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
+ * Camel.
  */
 @Mojo(name = "generate-languages-list", threadSafe = true)
 public class PackageLanguageMojo extends AbstractGeneratorMojo {
@@ -85,10 +85,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -104,7 +103,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         // can stop the build before the end and eclipse always needs to know
         // about that directory
         if (projectHelper != null) {
-            projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/language.properties"), Collections.emptyList());
+            projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/language.properties"),
+                    Collections.emptyList());
         }
 
         if (!haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
@@ -150,7 +150,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         Class<?> javaType = loadClass(entry.getValue());
                         String modelName = asModelName(name);
 
-                        String json = PackageHelper.loadText(new File(core, "src/generated/resources/org/apache/camel/model/language/" + modelName + PackageHelper.JSON_SUFIX));
+                        String json = PackageHelper.loadText(new File(
+                                core, "src/generated/resources/org/apache/camel/model/language/" + modelName
+                                      + PackageHelper.JSON_SUFIX));
 
                         LanguageModel languageModel = extractLanguageModel(project, json, name, javaType);
                         if (log.isDebugEnabled()) {
@@ -164,7 +166,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         }
 
                         // write this to the directory
-                        Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(languageModel.getJavaType())).resolve(name + PackageHelper.JSON_SUFIX);
+                        Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(languageModel.getJavaType()))
+                                .resolve(name + PackageHelper.JSON_SUFIX);
                         updateResource(schemaOutDir.toPath(),
                                 schemaSubDirectory(languageModel.getJavaType()) + "/" + name + PackageHelper.JSON_SUFIX,
                                 schema);
@@ -174,7 +177,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         }
                     }
                 } else {
-                    throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
+                    throw new MojoExecutionException(
+                            "Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
                                                      + ".jar file. Make sure camel-core has been built first.");
                 }
             }
@@ -186,9 +190,11 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
             String names = Stream.of(buffer.toString().split(" ")).sorted().collect(Collectors.joining(" "));
             String properties = createProperties(project, "languages", names);
             updateResource(camelMetaDir.toPath(), "language.properties", properties);
-            log.info("Generated language.properties containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
+            log.info("Generated language.properties containing " + count + " Camel "
+                     + (count > 1 ? "languages: " : "language: ") + names);
         } else {
-            log.debug("No META-INF/services/org/apache/camel/language directory found. Are you sure you have created a Camel language?");
+            log.debug(
+                    "No META-INF/services/org/apache/camel/language directory found. Are you sure you have created a Camel language?");
         }
 
         return count;
@@ -252,7 +258,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         return model;
     }
 
-    private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
+    private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext)
+            throws MojoExecutionException {
         // skip directories as there may be a sub .resolver directory such as in
         // camel-script
         if (file.isDirectory()) {

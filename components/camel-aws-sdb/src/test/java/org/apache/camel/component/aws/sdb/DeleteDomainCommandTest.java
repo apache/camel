@@ -30,21 +30,21 @@ public class DeleteDomainCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
+
     @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new DeleteDomainCommand(sdbClient, configuration, exchange);
     }
 
     @Test
     public void testExecute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", sdbClient.deleteDomainRequest.getDomainName());
     }
 }

@@ -65,8 +65,8 @@ public class DropboxProducerGetSingleTest extends DropboxTestSupport {
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE_NAME))
-                    .to("dropbox://get?accessToken={{accessToken}}")
-                    .to("mock:result");
+                        .to("dropbox://get?accessToken={{accessToken}}")
+                        .to("mock:result");
             }
         };
     }

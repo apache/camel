@@ -46,9 +46,7 @@ public class CsvRouteCharsetTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:src/test/resources/?fileName=daltons-utf-8.csv&noop=true").
-                        unmarshal().csv().
-                        to("mock:daltons");
+                from("file:src/test/resources/?fileName=daltons-utf-8.csv&noop=true").unmarshal().csv().to("mock:daltons");
             }
         };
     }

@@ -58,7 +58,7 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
         if (Boolean.toString(true).equals(fallbackViaNetwork)) {
             return "OnFallbackViaNetwork[" + getOutputs() + "]";
         } else if (fallbackViaNetwork == null || Boolean.toString(false).equals(fallbackViaNetwork)) {
-            return "OnFallback["  + getOutputs() + "]";
+            return "OnFallback[" + getOutputs() + "]";
         } else {
             return "OnFallback[viaNetwork=" + fallbackViaNetwork + "," + getOutputs() + "]";
         }
@@ -90,12 +90,10 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
     /**
      * Whether the fallback goes over the network.
      * <p/>
-     * If the fallback will go over the network it is another possible point of
-     * failure and so it also needs to be wrapped by a HystrixCommand. It is
-     * important to execute the fallback command on a separate thread-pool,
-     * otherwise if the main command were to become latent and fill the
-     * thread-pool this would prevent the fallback from running if the two
-     * commands share the same pool.
+     * If the fallback will go over the network it is another possible point of failure and so it also needs to be
+     * wrapped by a HystrixCommand. It is important to execute the fallback command on a separate thread-pool, otherwise
+     * if the main command were to become latent and fill the thread-pool this would prevent the fallback from running
+     * if the two commands share the same pool.
      */
     public void setFallbackViaNetwork(String fallbackViaNetwork) {
         this.fallbackViaNetwork = fallbackViaNetwork;

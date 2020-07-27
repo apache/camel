@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpRegistryProvider {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ResteasyCamelServlet.class);
 
     private HttpRegistry httpRegistry;
@@ -62,12 +62,11 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
 
     private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
 
-
     /**
-     * Init method for ResteasyCamelServlet, which registering servlets to HttpRegistry and it is also registering
-     * proxy classes to Resteasy dispatcher
+     * Init method for ResteasyCamelServlet, which registering servlets to HttpRegistry and it is also registering proxy
+     * classes to Resteasy dispatcher
      *
-     * @param servletConfig configuration of the servlet
+     * @param  servletConfig    configuration of the servlet
      * @throws ServletException exception thrown from the super method
      */
     @SuppressWarnings("rawtypes")
@@ -80,15 +79,16 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
             httpRegistry = DefaultHttpRegistry.getHttpRegistry(name);
             HttpRegistryProvider existing = httpRegistry.getCamelServlet(name);
             if (existing != null) {
-                LOG.info("Duplicate ServletName detected: {}. Existing: {} This: {}. " 
-                    + "Its advised to use unique ServletName per Camel application.", name, existing, this.toString());
+                LOG.info("Duplicate ServletName detected: {}. Existing: {} This: {}. "
+                         + "Its advised to use unique ServletName per Camel application.",
+                        name, existing, this.toString());
             }
             httpRegistry.register(this);
         }
 
-
         for (Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
-            String proxyClasses = ((ResteasyComponent)getServletEndpoint(entry.getValue()).getComponent()).getProxyConsumersClasses();
+            String proxyClasses
+                    = ((ResteasyComponent) getServletEndpoint(entry.getValue()).getComponent()).getProxyConsumersClasses();
             if (proxyClasses != null) {
                 String[] classes = proxyClasses.split(",");
                 LOG.debug("Proxy classes defined in the component {}", Arrays.asList(classes));
@@ -98,7 +98,7 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
                         Class realClazz = Class.forName(clazz);
                         // Create dynamic proxy class implementing interface
                         InvocationHandler handler = new ResteasyInvocationHandler();
-                        Object  proxy = Proxy.newProxyInstance(realClazz.getClassLoader(), new Class[]{realClazz}, handler);
+                        Object proxy = Proxy.newProxyInstance(realClazz.getClassLoader(), new Class[] { realClazz }, handler);
 
                         // register new created proxy to the resteasy registry
                         getDispatcher().getRegistry().addSingletonResource(proxy);
@@ -114,16 +114,17 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
 
     /**
      * Overridden service method to consume requests and create responses and propagate them to the Camel routes. If
-     * proxies options are used then only request is propagated to the Camel route and user must create some
-     * response, which will be returned to the client.
+     * proxies options are used then only request is propagated to the Camel route and user must create some response,
+     * which will be returned to the client.
      *
-     * @param httpServletRequest to be processed
-     * @param httpServletResponse to be returned
-     * @throws ServletException if there was problem in Resteasy servlet, which we are extending
-     * @throws IOException if there was problem in Resteasy servlet, which we are extending
+     * @param  httpServletRequest  to be processed
+     * @param  httpServletResponse to be returned
+     * @throws ServletException    if there was problem in Resteasy servlet, which we are extending
+     * @throws IOException         if there was problem in Resteasy servlet, which we are extending
      */
     @Override
-    protected void service(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+    protected void service(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+            throws ServletException, IOException {
         // From camel servlet
         if (LOG.isTraceEnabled()) {
             LOG.trace("Service: {}", httpServletRequest);
@@ -184,8 +185,8 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
         // skipServletProcessing is set to true then don't process in servlet. Just continue to camel route
         // if skipServletProcessing is true then check httpMethodRestrict
         if (getServletEndpoint(consumer).getSkipServletProcessing()) {
-            if (getServletEndpoint(consumer).getHttpMethodRestrict() != null 
-                && !httpServletRequest.getMethod().equals(getServletEndpoint(consumer).getHttpMethodRestrict())) {
+            if (getServletEndpoint(consumer).getHttpMethodRestrict() != null
+                    && !httpServletRequest.getMethod().equals(getServletEndpoint(consumer).getHttpMethodRestrict())) {
                 httpServletResponse.setStatus(405);
                 return;
             }
@@ -196,7 +197,8 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
 
         String response = "";
 
-        if (getServletEndpoint(consumer).getSetHttpResponseDuringProcessing() || getServletEndpoint(consumer).getSkipServletProcessing()) {
+        if (getServletEndpoint(consumer).getSetHttpResponseDuringProcessing()
+                || getServletEndpoint(consumer).getSkipServletProcessing()) {
             // Servlet is returning status code 204 if request was correct but there is no content -> if 204 continue to camel route
             if (httpServletResponse.getStatus() != 200 && httpServletResponse.getStatus() != 204) {
                 // If request wasn't successful in resteasy then stop processing and return created response from resteasy
@@ -218,14 +220,19 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
             HttpHelper.setCharsetFromContentType(httpServletRequest.getContentType(), exchange);
             HttpMessage m = new HttpMessage(exchange, consumer.getEndpoint(), httpServletRequest, httpServletResponse);
 
-            response = new String(((ResteasyHttpServletResponseWrapper) httpServletResponse).getCopy(), httpServletResponse.getCharacterEncoding());
+            response = new String(
+                    ((ResteasyHttpServletResponseWrapper) httpServletResponse).getCopy(),
+                    httpServletResponse.getCharacterEncoding());
 
             m.setBody(((ResteasyHttpServletResponseWrapper) httpServletResponse).getStream());
             exchange.setIn(m);
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Copier service: {}", new String(((ResteasyHttpServletResponseWrapper) httpServletResponse).getCopy(), httpServletResponse.getCharacterEncoding()));
+            LOG.trace("Copier service: {}",
+                    new String(
+                            ((ResteasyHttpServletResponseWrapper) httpServletResponse).getCopy(),
+                            httpServletResponse.getCharacterEncoding()));
         }
 
         String contextPath = consumer.getEndpoint().getPath();
@@ -234,7 +241,7 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
         // Maybe send request to camel also for some logging or something
         exchange.getIn().setHeader(ResteasyConstants.RESTEASY_HTTP_REQUEST, httpServletRequest);
 
-        String httpPath = (String)exchange.getIn().getHeader(Exchange.HTTP_PATH);
+        String httpPath = (String) exchange.getIn().getHeader(Exchange.HTTP_PATH);
         // here we just remove the CamelServletContextPath part from the HTTP_PATH
         if (contextPath != null
                 && httpPath.startsWith(contextPath)) {
@@ -274,7 +281,6 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
         }
     }
 
-
     /**
      * Connect HttpConsumer so it can be used as consumer
      *
@@ -309,22 +315,23 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
     /**
      * Get ResteasyEndpoint from HttpConsumer
      *
-     * @param consumer from which we need to get the endpoint
-     * @return ResteasyEndpoint for given HttpConsumer
+     * @param  consumer from which we need to get the endpoint
+     * @return          ResteasyEndpoint for given HttpConsumer
      */
     protected ResteasyEndpoint getServletEndpoint(HttpConsumer consumer) {
         if (!(consumer.getEndpoint() instanceof ResteasyEndpoint)) {
-            throw new RuntimeException("Invalid consumer type. Must be RESTEasyEndpoint but is "
-                    + consumer.getClass().getName());
+            throw new RuntimeException(
+                    "Invalid consumer type. Must be RESTEasyEndpoint but is "
+                                       + consumer.getClass().getName());
         }
-        return (ResteasyEndpoint)consumer.getEndpoint();
+        return (ResteasyEndpoint) consumer.getEndpoint();
     }
 
     /**
      * Resolve for which HttpConsumer is given request
      *
-     * @param request to be resolved
-     * @return HttpConsumer, which must consume given request
+     * @param  request to be resolved
+     * @return         HttpConsumer, which must consume given request
      */
     protected HttpConsumer resolve(HttpServletRequest request) {
         String path = request.getPathInfo();
@@ -356,4 +363,3 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
         return Collections.unmodifiableMap(consumers);
     }
 }
-

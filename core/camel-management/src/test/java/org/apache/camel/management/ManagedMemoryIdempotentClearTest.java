@@ -118,7 +118,7 @@ public class ManagedMemoryIdempotentClearTest extends ManagementTestSupport {
 
         Long count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(0L, count.longValue());
-        
+
         resultEndpoint.expectedBodiesReceived("one", "two");
 
         sendMessage("1", "one");
@@ -137,9 +137,9 @@ public class ManagedMemoryIdempotentClearTest extends ManagementTestSupport {
         // count should be resetted
         count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(0L, count.longValue());
-        
+
         resetMocks();
-        
+
         resultEndpoint.expectedBodiesReceived("five");
 
         sendMessage("4", "four");
@@ -148,7 +148,7 @@ public class ManagedMemoryIdempotentClearTest extends ManagementTestSupport {
         sendMessage("4", "four");
 
         resultEndpoint.assertIsSatisfied();
-        
+
         count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(3L, count.longValue());
     }
@@ -179,8 +179,8 @@ public class ManagedMemoryIdempotentClearTest extends ManagementTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock:result");
             }
         };
     }

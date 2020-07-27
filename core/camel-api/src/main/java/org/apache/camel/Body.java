@@ -27,6 +27,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.PARAMETER })
+@Target({ ElementType.PARAMETER })
 public @interface Body {
 }

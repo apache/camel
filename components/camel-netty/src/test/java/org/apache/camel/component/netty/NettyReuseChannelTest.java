@@ -61,30 +61,30 @@ public class NettyReuseChannelTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
-                            channels.add(channel);
-                            assertTrue(channel.isActive(), "Should be active");
-                        }
-                    })
-                    .to("mock:a")
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
-                            channels.add(channel);
-                            assertTrue(channel.isActive(), "Should be active");
-                        }
-                    })
-                    .to("mock:b");
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
+                                channels.add(channel);
+                                assertTrue(channel.isActive(), "Should be active");
+                            }
+                        })
+                        .to("mock:a")
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
+                                channels.add(channel);
+                                assertTrue(channel.isActive(), "Should be active");
+                            }
+                        })
+                        .to("mock:b");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
-                    .transform(body().prepend("Hello "))
-                    .to("mock:result");
+                        .transform(body().prepend("Hello "))
+                        .to("mock:result");
             }
         };
     }

@@ -89,11 +89,13 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
-                onException(NullPointerException.class).maximumRedeliveries(0).handled(true).setHeader(MESSAGE_INFO, constant("Handled exchange with NullPointerException"))
-                    .to(ERROR_QUEUE);
+                onException(NullPointerException.class).maximumRedeliveries(0).handled(true)
+                        .setHeader(MESSAGE_INFO, constant("Handled exchange with NullPointerException"))
+                        .to(ERROR_QUEUE);
 
-                onException(IOException.class).maximumRedeliveries(0).handled(header("foo").isEqualTo("bar")).setHeader(MESSAGE_INFO, constant("Handled exchange with IOException"))
-                    .to(ERROR_QUEUE);
+                onException(IOException.class).maximumRedeliveries(0).handled(header("foo").isEqualTo("bar"))
+                        .setHeader(MESSAGE_INFO, constant("Handled exchange with IOException"))
+                        .to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
                 from("direct:a").process(new Processor() {

@@ -72,7 +72,8 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".tar", exchange.getIn().getHeader(FILE_NAME));
-        assertTrue(ObjectHelper.equalByteArray(getTaredText(exchange.getIn().getMessageId()), (byte[]) exchange.getIn().getBody()));
+        assertTrue(ObjectHelper.equalByteArray(getTaredText(exchange.getIn().getMessageId()),
+                (byte[]) exchange.getIn().getBody()));
     }
 
     @Test
@@ -116,7 +117,8 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(ObjectHelper.equalByteArray(getTaredTextInFolder("poems/", "poems/poem.txt"), (byte[]) exchange.getIn().getBody()));
+        assertTrue(ObjectHelper.equalByteArray(getTaredTextInFolder("poems/", "poems/poem.txt"),
+                (byte[]) exchange.getIn().getBody()));
     }
 
     @Test
@@ -132,7 +134,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     @Test
     public void testUntarWithCorruptedTarFile() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:corruptUntar", new File("src/test/resources/data/corrupt.tar")));
+                () -> template.sendBody("direct:corruptUntar", new File("src/test/resources/data/corrupt.tar")));
     }
 
     @Test
@@ -213,7 +215,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testUntarWithEmptyDirectorySupported() throws Exception {
         deleteDirectory(new File("hello_out"));
@@ -223,7 +225,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertTrue(Files.exists(Paths.get("hello_out/Configurations2")));
         deleteDirectory(new File("hello_out"));
     }
-    
+
     @Test
     public void testUntarWithEmptyDirectoryUnsupported() throws Exception {
         deleteDirectory(new File("hello_out"));
@@ -240,7 +242,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         deleteDirectory(TEST_DIR);
         super.setUp();
     }
-    
+
     private static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         while (true) {
@@ -252,15 +254,15 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         }
     }
 
-    private static void copy(File file, OutputStream out) throws IOException { 
+    private static void copy(File file, OutputStream out) throws IOException {
         try (InputStream in = new FileInputStream(file)) {
-            copy(in, out); 
-        } 
+            copy(in, out);
+        }
     }
 
-    private static void copy(InputStream in, File file) throws IOException { 
+    private static void copy(InputStream in, File file) throws IOException {
         try (OutputStream out = new FileOutputStream(file)) {
-            copy(in, out); 
+            copy(in, out);
         }
     }
 
@@ -276,28 +278,30 @@ public class TarFileDataFormatTest extends CamelTestSupport {
                 from("direct:tar").marshal(tar).to("mock:tar");
                 from("direct:untar").unmarshal(tar).to("mock:untar");
                 from("direct:untarWithEmptyDirectory").unmarshal(tar)
-                                         .split(bodyAs(Iterator.class))
-                                         //.streaming()
-                                         //.to("file:hello_out?autoCreate=true")
-                                         .process(new Processor() {
-                                             @Override
-                                             public void process(Exchange exchange) throws Exception {
-                                                 InputStream is = new FileInputStream("src/test/resources/data/hello.tar"); 
+                        .split(bodyAs(Iterator.class))
+                        //.streaming()
+                        //.to("file:hello_out?autoCreate=true")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                InputStream is = new FileInputStream("src/test/resources/data/hello.tar");
 
-                                                 TarArchiveEntry entry = new TarArchiveEntry((String)exchange.getIn().getHeader(Exchange.FILE_NAME)); 
-                                                 File outputFile = new File("hello_out", entry.getName());
-                                                 if (entry.isDirectory()) {
-                                                     outputFile.mkdirs();
-                                                 } else {
-                                                     outputFile.getParentFile().mkdirs();
-                                                     try (TarArchiveInputStream debInputStream = (TarArchiveInputStream)
-                                                             new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
-                                                         copy(debInputStream, outputFile);
-                                                     }
-                                                 }
-                                             }
-                                         })
-                                   .end();
+                                TarArchiveEntry entry
+                                        = new TarArchiveEntry((String) exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                File outputFile = new File("hello_out", entry.getName());
+                                if (entry.isDirectory()) {
+                                    outputFile.mkdirs();
+                                } else {
+                                    outputFile.getParentFile().mkdirs();
+                                    try (TarArchiveInputStream debInputStream
+                                            = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar",
+                                                    is)) {
+                                        copy(debInputStream, outputFile);
+                                    }
+                                }
+                            }
+                        })
+                        .end();
                 from("direct:tarAndUntar").marshal(tar).unmarshal(tar).to("mock:tarAndUntar");
                 from("direct:tarToFile").marshal(tar).to("file:" + TEST_DIR.getPath()).to("mock:tarToFile");
                 from("direct:dslTar").marshal(tar).to("mock:dslTar");

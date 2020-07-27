@@ -30,8 +30,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
 
     /**
-     * Returns the precedence that is used by Spring to choose the appropriate
-     * execution order of test listeners.
+     * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
      *
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */
@@ -74,12 +73,13 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
     @Override
     public void beforeTestMethod(TestContext testContext) throws Exception {
-        LOG.info("CamelSpringBootExecutionListener before: {}.{}", testContext.getTestClass(), testContext.getTestMethod().getName());
+        LOG.info("CamelSpringBootExecutionListener before: {}.{}", testContext.getTestClass(),
+                testContext.getTestMethod().getName());
 
         Class<?> testClass = testContext.getTestClass();
         String testName = testContext.getTestMethod().getName();
 
-        ConfigurableApplicationContext context = (ConfigurableApplicationContext)testContext.getApplicationContext();
+        ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
         threadApplicationContext.set(context);
 
         // mark Camel to be startable again and start Camel
@@ -94,7 +94,8 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
     @Override
     public void afterTestMethod(TestContext testContext) throws Exception {
-        LOG.info("CamelSpringBootExecutionListener after: {}.{}", testContext.getTestClass(), testContext.getTestMethod().getName());
+        LOG.info("CamelSpringBootExecutionListener after: {}.{}", testContext.getTestClass(),
+                testContext.getTestMethod().getName());
 
         Class<?> testClass = testContext.getTestClass();
         String testName = testContext.getTestMethod().getName();

@@ -58,10 +58,12 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
         //Verify cache was created with the set configuration and used in route
         Cache cache = lookupCache("setManagerNameConfiguration");
-        CompleteConfiguration completeConfiguration = (CompleteConfiguration) cache.getConfiguration(CompleteConfiguration.class);
+        CompleteConfiguration completeConfiguration
+                = (CompleteConfiguration) cache.getConfiguration(CompleteConfiguration.class);
         assertEquals(String.class, completeConfiguration.getKeyType());
         assertEquals(String.class, completeConfiguration.getValueType());
-        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)), completeConfiguration.getExpiryPolicyFactory());
+        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)),
+                completeConfiguration.getExpiryPolicyFactory());
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
         assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
@@ -106,10 +108,12 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
         //Verify the cache was created with routeId and configuration
         Cache cache = lookupCache("direct-policy-manager-configuration");
-        CompleteConfiguration completeConfiguration = (CompleteConfiguration) cache.getConfiguration(CompleteConfiguration.class);
+        CompleteConfiguration completeConfiguration
+                = (CompleteConfiguration) cache.getConfiguration(CompleteConfiguration.class);
         assertEquals(String.class, completeConfiguration.getKeyType());
         assertEquals(String.class, completeConfiguration.getValueType());
-        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 61)), completeConfiguration.getExpiryPolicyFactory());
+        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 61)),
+                completeConfiguration.getExpiryPolicyFactory());
 
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
@@ -230,6 +234,5 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
             }
         };
     }
-
 
 }

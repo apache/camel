@@ -44,11 +44,9 @@ public class BoxCommentsManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create comments manager to manage the comments of Box connection's
-     * authenticated user.
+     * Create comments manager to manage the comments of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxCommentsManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
@@ -57,11 +55,9 @@ public class BoxCommentsManager {
     /**
      * Add comment to file.
      * 
-     * @param fileId
-     *            - the id of file to rename.
-     * @param message
-     *            - the comment's message.
-     * @return The commented file.
+     * @param  fileId  - the id of file to rename.
+     * @param  message - the comment's message.
+     * @return         The commented file.
      */
     public BoxFile addFileComment(String fileId, String message) {
         try {
@@ -85,9 +81,8 @@ public class BoxCommentsManager {
     /**
      * Get a list of any comments on this file.
      * 
-     * @param fileId
-     *            - the id of file.
-     * @return The list of comments on this file.
+     * @param  fileId - the id of file.
+     * @return        The list of comments on this file.
      */
     public List<BoxComment.Info> getFileComments(String fileId) {
         try {
@@ -109,9 +104,8 @@ public class BoxCommentsManager {
     /**
      * Get comment information.
      * 
-     * @param commentId
-     *            - the id of comment.
-     * @return The comment information.
+     * @param  commentId - the id of comment.
+     * @return           The comment information.
      */
     public BoxComment.Info getCommentInfo(String commentId) {
         try {
@@ -132,11 +126,9 @@ public class BoxCommentsManager {
     /**
      * Reply to a comment.
      * 
-     * @param commentId
-     *            - the id of comment to reply to.
-     * @param message
-     *            - the message for the reply.
-     * @return The newly created reply comment.
+     * @param  commentId - the id of comment to reply to.
+     * @param  message   - the message for the reply.
+     * @return           The newly created reply comment.
      */
     public BoxComment replyToComment(String commentId, String message) {
         try {
@@ -158,11 +150,9 @@ public class BoxCommentsManager {
     /**
      * Change comment message.
      * 
-     * @param commentId
-     *            - the id of comment to change.
-     * @param message
-     *            - the new message for the comment.
-     * @return The comment with changed message.
+     * @param  commentId - the id of comment to change.
+     * @param  message   - the new message for the comment.
+     * @return           The comment with changed message.
      */
     public BoxComment changeCommentMessage(String commentId, String message) {
         try {
@@ -184,8 +174,7 @@ public class BoxCommentsManager {
     /**
      * Delete comment.
      * 
-     * @param commentId
-     *            - the id of comment to delete.
+     * @param commentId - the id of comment to delete.
      */
     public void deleteComment(String commentId) {
         try {

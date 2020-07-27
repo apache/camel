@@ -73,8 +73,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     /**
-     * Creates an aggregation repository using a new {@link LevelDBFile}
-     * that persists using the provided file.
+     * Creates an aggregation repository using a new {@link LevelDBFile} that persists using the provided file.
      *
      * @param repositoryName     the repository name
      * @param persistentFileName the persistent store filename
@@ -269,7 +268,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             LOG.trace("Scanned and found no exchange to recover.");
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).", answer.size());
+                LOG.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).",
+                        answer.size());
             }
         }
         return answer;
@@ -433,14 +433,18 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         int completed = size(getRepositoryNameCompleted());
 
         if (current > 0) {
-            LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: "
+                     + getRepositoryName());
         } else {
-            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: "
+                     + getRepositoryName());
         }
         if (completed > 0) {
-            LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: "
+                     + getRepositoryNameCompleted());
         } else {
-            LOG.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.info("On startup there are no completed exchanges to be recovered in repository: "
+                     + getRepositoryNameCompleted());
         }
     }
 

@@ -34,35 +34,33 @@ public class BlobServiceUtilTest extends CamelTestSupport {
     @Test
     public void testPrepareUri() throws Exception {
         registerCredentials(context);
-        
-        BlobServiceEndpoint endpoint =
-            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?credentials=#creds");
-        URI uri = 
-            BlobServiceUtil.prepareStorageBlobUri(endpoint.createExchange(), endpoint.getConfiguration());
+
+        BlobServiceEndpoint endpoint
+                = (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?credentials=#creds");
+        URI uri = BlobServiceUtil.prepareStorageBlobUri(endpoint.createExchange(), endpoint.getConfiguration());
         assertEquals("https://camelazure.blob.core.windows.net/container/blob", uri.toString());
     }
 
     @Test
     public void testGetConfiguredClient() throws Exception {
-        CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
-        
-        context.getRegistry().bind("azureBlobClient", client);
-        
-        BlobServiceEndpoint endpoint =
-            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true");
-        assertSame(client, BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration()));
-    }
-    @Test
-    public void testGetConfiguredClientTypeMismatch() throws Exception {
-        CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+        CloudBlockBlob client = new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
 
         context.getRegistry().bind("azureBlobClient", client);
-        
-        BlobServiceEndpoint endpoint =
-            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true"
-                                                           + "&blobType=appendBlob");
+
+        BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context
+                .getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true");
+        assertSame(client, BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration()));
+    }
+
+    @Test
+    public void testGetConfiguredClientTypeMismatch() throws Exception {
+        CloudBlockBlob client = new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+
+        context.getRegistry().bind("azureBlobClient", client);
+
+        BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context
+                .getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true"
+                             + "&blobType=appendBlob");
         try {
             BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration());
             fail();
@@ -70,16 +68,16 @@ public class BlobServiceUtilTest extends CamelTestSupport {
             assertEquals("Invalid Client Type", ex.getMessage());
         }
     }
+
     @Test
     public void testGetConfiguredClientUriMismatch() throws Exception {
-        CloudAppendBlob client = 
-            new CloudAppendBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+        CloudAppendBlob client = new CloudAppendBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
 
         context.getRegistry().bind("azureBlobClient", client);
-        
-        BlobServiceEndpoint endpoint =
-            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob2?azureBlobClient=#azureBlobClient&publicForRead=true"
-                                                           + "&blobType=appendBlob");
+
+        BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context
+                .getEndpoint("azure-blob://camelazure/container/blob2?azureBlobClient=#azureBlobClient&publicForRead=true"
+                             + "&blobType=appendBlob");
         try {
             BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration());
             fail();
@@ -95,11 +93,12 @@ public class BlobServiceUtilTest extends CamelTestSupport {
 
         context.getRegistry().bind("azureBlobClient", client);
 
-        BlobServiceEndpoint endpoint =
-                (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true"
-                        + "&blobType=appendBlob&validateClientURI=false");
+        BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context
+                .getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true"
+                             + "&blobType=appendBlob&validateClientURI=false");
 
-        CloudBlob configuredClient = BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration());
+        CloudBlob configuredClient
+                = BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration());
         assertEquals(uri, configuredClient.getUri());
     }
 }

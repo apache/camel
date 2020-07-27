@@ -73,8 +73,8 @@ public class XsltSaxonTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("xslt-saxon:xslt/transform.xsl")
-                    .to("mock:result");
+                        .to("xslt-saxon:xslt/transform.xsl")
+                        .to("mock:result");
             }
         };
     }

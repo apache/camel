@@ -46,7 +46,7 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
 
     @Test
     public void testRoute() throws Exception {
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World 2");
 
@@ -61,7 +61,6 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-
     /*
      * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
      * @return
@@ -69,7 +68,8 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
      */
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+        ActiveMQConnectionFactory connectionFactory
+                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         CamelContext camelContext = super.createCamelContext();
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
@@ -89,24 +89,23 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
             public void configure() {
 
                 from("direct:start")
-                    .to("sjms:queue:test.queue?transacted=true")
-                    .process(
-                         new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
-                                    log.info("We failed. Should roll back.");
-                                    throw new RollbackExchangeException(exchange);
-                                } else {
-                                    log.info("We passed.  Should commit.");
-                                }
-                            }
-                        });
-                
-                from("sjms:queue:test.queue?durableSubscriptionId=bar&transacted=true")
-                    .to("mock:result");
+                        .to("sjms:queue:test.queue?transacted=true")
+                        .process(
+                                new Processor() {
+                                    @Override
+                                    public void process(Exchange exchange) throws Exception {
+                                        if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
+                                            log.info("We failed. Should roll back.");
+                                            throw new RollbackExchangeException(exchange);
+                                        } else {
+                                            log.info("We passed.  Should commit.");
+                                        }
+                                    }
+                                });
 
-                
+                from("sjms:queue:test.queue?durableSubscriptionId=bar&transacted=true")
+                        .to("mock:result");
+
             }
         };
     }

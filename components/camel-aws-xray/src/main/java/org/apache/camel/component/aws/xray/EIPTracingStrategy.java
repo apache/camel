@@ -36,9 +36,10 @@ public class EIPTracingStrategy implements InterceptStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
-    public Processor wrapProcessorInInterceptors(CamelContext camelContext,
-                                                 NamedNode processorDefinition, Processor target, Processor nextTarget)
-        throws Exception {
+    public Processor wrapProcessorInInterceptors(
+            CamelContext camelContext,
+            NamedNode processorDefinition, Processor target, Processor nextTarget)
+            throws Exception {
 
         String defName = processorDefinition.getShortName();
 

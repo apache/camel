@@ -22,7 +22,7 @@ import org.apache.camel.AsyncCallback;
  * Useful constants used in the Camel Reactive Streams component.
  */
 public final class ReactorStreamsConstants {
-    public static final String SERVICE_NAME =  "reactor";
+    public static final String SERVICE_NAME = "reactor";
 
     /**
      * An implementation of the {@link AsyncCallback} that does nothing.

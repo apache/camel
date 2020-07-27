@@ -44,12 +44,11 @@ public class PulsarProducerHeadersInTest extends PulsarTestSupport {
     private ProducerTemplate producerTemplate;
 
     @EndpointInject("pulsar:" + TOPIC_URI
-            + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription"
-            + "&consumerQueueSize=1"
-            + "&consumerName=camel-consumer"
-            + "&producerName=" + PRODUCER
-    )
+                    + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription"
+                    + "&consumerQueueSize=1"
+                    + "&consumerName=camel-consumer"
+                    + "&producerName=" + PRODUCER)
     private Endpoint pulsar;
 
     @EndpointInject("mock:result")

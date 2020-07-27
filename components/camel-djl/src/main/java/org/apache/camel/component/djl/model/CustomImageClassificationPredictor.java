@@ -89,7 +89,8 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
         try (Predictor<BufferedImage, Classifications> predictor = model.newPredictor(translator)) {
             Classifications classifications = predictor.predict(input);
             List<Classifications.Classification> list = classifications.items();
-            return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
+            return list.stream()
+                    .collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
             throw new RuntimeException("Could not process input or output", e);

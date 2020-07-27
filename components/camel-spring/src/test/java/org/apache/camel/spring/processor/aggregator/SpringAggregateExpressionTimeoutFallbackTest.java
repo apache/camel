@@ -25,7 +25,8 @@ public class SpringAggregateExpressionTimeoutFallbackTest extends AggregateExpre
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateExpressionTimeoutFallbackTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateExpressionTimeoutFallbackTest.xml");
     }
 
 }

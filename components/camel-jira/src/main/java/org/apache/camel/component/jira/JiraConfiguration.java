@@ -110,6 +110,7 @@ public class JiraConfiguration implements Cloneable {
 
     /**
      * Time in milliseconds to elapse for the next poll.
+     * 
      * @param delay Integer time in milliseconds
      */
     public void setDelay(Integer delay) {
@@ -121,8 +122,9 @@ public class JiraConfiguration implements Cloneable {
     }
 
     /**
-     * (Basic authentication only) The username to authenticate to the Jira server. Use only if OAuth is not enabled on the Jira server.
-     * Do not set the username and OAuth token parameter, if they are both set, the username basic authentication takes precedence.
+     * (Basic authentication only) The username to authenticate to the Jira server. Use only if OAuth is not enabled on
+     * the Jira server. Do not set the username and OAuth token parameter, if they are both set, the username basic
+     * authentication takes precedence.
      */
     public void setUsername(String username) {
         this.username = username;
@@ -133,7 +135,8 @@ public class JiraConfiguration implements Cloneable {
     }
 
     /**
-     * (Basic authentication only) The password to authenticate to the Jira server. Use only if username basic authentication is used.
+     * (Basic authentication only) The password to authenticate to the Jira server. Use only if username basic
+     * authentication is used.
      */
     public void setPassword(String password) {
         this.password = password;
@@ -141,7 +144,7 @@ public class JiraConfiguration implements Cloneable {
 
     public JiraConfiguration copy() {
         try {
-            return (JiraConfiguration)super.clone();
+            return (JiraConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

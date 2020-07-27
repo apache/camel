@@ -66,10 +66,9 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -83,7 +82,8 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
         }
     }
 
-    public static void generateArchetypeCatalog(Log log, MavenProject project, MavenProjectHelper projectHelper, File outDir) throws MojoExecutionException, IOException {
+    public static void generateArchetypeCatalog(Log log, MavenProject project, MavenProjectHelper projectHelper, File outDir)
+            throws MojoExecutionException, IOException {
 
         File archetypes = PackageHelper.findCamelDirectory(project.getBasedir(), "archetypes");
         if (archetypes == null || !archetypes.exists()) {

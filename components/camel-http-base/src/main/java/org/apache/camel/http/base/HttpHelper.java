@@ -62,7 +62,7 @@ public final class HttpHelper {
         } catch (NumberFormatException e) {
             throw new ProtocolException("Invalid HTTP minor version number: " + s);
         }
-        return new int[]{major, minor};
+        return new int[] { major, minor };
     }
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
@@ -90,16 +90,15 @@ public final class HttpHelper {
         return null;
     }
 
-
     /**
      * Appends the key/value to the headers.
      * <p/>
-     * This implementation supports keys with multiple values. In such situations the value
-     * will be a {@link java.util.List} that contains the multiple values.
+     * This implementation supports keys with multiple values. In such situations the value will be a
+     * {@link java.util.List} that contains the multiple values.
      *
-     * @param headers  headers
-     * @param key      the key
-     * @param value    the value
+     * @param headers headers
+     * @param key     the key
+     * @param value   the value
      */
     @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
@@ -122,14 +121,13 @@ public final class HttpHelper {
     /**
      * Extracts the parameter value.
      * <p/>
-     * This implementation supports HTTP multi value parameters which
-     * is based on the syntax of <tt>[value1, value2, value3]</tt> by returning
-     * a {@link List} containing the values.
+     * This implementation supports HTTP multi value parameters which is based on the syntax of
+     * <tt>[value1, value2, value3]</tt> by returning a {@link List} containing the values.
      * <p/>
      * If the value is not a HTTP mulit value the value is returned as is.
      *
-     * @param value the parameter value
-     * @return the extracted parameter value, see more details in javadoc.
+     * @param  value the parameter value
+     * @return       the extracted parameter value, see more details in javadoc.
      */
     public static Object extractHttpParameterValue(String value) {
         if (value == null || ObjectHelper.isEmpty(value)) {
@@ -156,9 +154,9 @@ public final class HttpHelper {
     /**
      * Checks whether the given http status code is within the ok range
      *
-     * @param statusCode the status code
-     * @param okStatusCodeRange the ok range (inclusive)
-     * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
+     * @param  statusCode        the status code
+     * @param  okStatusCodeRange the ok range (inclusive)
+     * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
         String[] ranges = okStatusCodeRange.split(",");
@@ -167,7 +165,7 @@ public final class HttpHelper {
             if (range.contains("-")) {
                 int from = Integer.parseInt(StringHelper.before(range, "-"));
                 int to = Integer.parseInt(StringHelper.after(range, "-"));
-                ok =  statusCode >= from && statusCode <= to;
+                ok = statusCode >= from && statusCode <= to;
             } else {
                 int exact = Integer.parseInt(range);
                 ok = exact == statusCode;

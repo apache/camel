@@ -52,11 +52,12 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
 
     @Override
     public WorkdayEndpoint getEndpoint() {
-        return (WorkdayEndpoint)super.getEndpoint();
+        return (WorkdayEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
-        PoolingHttpClientConnectionManager httpClientConnectionManager = endpoint.getWorkdayConfiguration().getHttpConnectionManager();
+        PoolingHttpClientConnectionManager httpClientConnectionManager
+                = endpoint.getWorkdayConfiguration().getHttpConnectionManager();
         CloseableHttpClient httpClient = HttpClientBuilder.create().setConnectionManager(httpClientConnectionManager).build();
         String workdayUri = prepareUri(endpoint.getWorkdayConfiguration());
 
@@ -66,13 +67,17 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
         CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 
         if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new IllegalStateException("Got the invalid http status value '" + httpResponse.getStatusLine() + "' as the result of the RAAS '" + workdayUri + "'");
+            throw new IllegalStateException(
+                    "Got the invalid http status value '" + httpResponse.getStatusLine() + "' as the result of the RAAS '"
+                                            + workdayUri + "'");
         }
 
-        String report = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, httpResponse.getEntity().getContent());
+        String report = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class,
+                httpResponse.getEntity().getContent());
 
         if (report.isEmpty()) {
-            throw new IllegalStateException("Got the unexpected value '" + report + "' as the result of the report '" + workdayUri + "'");
+            throw new IllegalStateException(
+                    "Got the unexpected value '" + report + "' as the result of the report '" + workdayUri + "'");
         }
 
         exchange.getIn().setBody(report);

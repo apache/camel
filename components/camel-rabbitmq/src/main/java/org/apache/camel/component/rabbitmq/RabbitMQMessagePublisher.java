@@ -47,13 +47,18 @@ public class RabbitMQMessagePublisher {
     private volatile boolean basicReturnReceived;
     private final ReturnListener guaranteedDeliveryReturnListener = new ReturnListener() {
         @Override
-        public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException {
-            LOG.warn("Delivery failed for exchange: {} and routing key: {}; replyCode: {}; replyText: {}", exchange, routingKey, replyCode, replyText);
+        public void handleReturn(
+                int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties,
+                byte[] body)
+                throws IOException {
+            LOG.warn("Delivery failed for exchange: {} and routing key: {}; replyCode: {}; replyText: {}", exchange, routingKey,
+                    replyCode, replyText);
             basicReturnReceived = true;
         }
     };
 
-    public RabbitMQMessagePublisher(final Exchange camelExchange, final Channel channel, final String routingKey, final RabbitMQEndpoint endpoint) {
+    public RabbitMQMessagePublisher(final Exchange camelExchange, final Channel channel, final String routingKey,
+                                    final RabbitMQEndpoint endpoint) {
         this.camelExchange = camelExchange;
         this.channel = channel;
         this.routingKey = routingKey;
@@ -71,17 +76,17 @@ public class RabbitMQMessagePublisher {
         }
         if (routingKey != null && routingKey.startsWith(RabbitMQConstants.RABBITMQ_DIRECT_REPLY_ROUTING_KEY)) {
             message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
-                                                                                                                  // default
-                                                                                                                  // exchange
-                                                                                                                  // for
-                                                                                                                  // reply-to
-                                                                                                                  // messages
+                                                                                                                 // default
+                                                                                                                 // exchange
+                                                                                                                 // for
+                                                                                                                 // reply-to
+                                                                                                                 // messages
             message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
-                                                                                                                           // default
-                                                                                                                           // exchange
-                                                                                                                           // for
-                                                                                                                           // reply-to
-                                                                                                                           // messages
+                                                                                                                          // default
+                                                                                                                          // exchange
+                                                                                                                          // for
+                                                                                                                          // reply-to
+                                                                                                                          // messages
         }
 
         return message;
@@ -93,7 +98,8 @@ public class RabbitMQMessagePublisher {
         try {
             // To maintain backwards compatibility try the TypeConverter (The
             // DefaultTypeConverter seems to only work on Strings)
-            body = camelExchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, camelExchange, message.getBody());
+            body = camelExchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, camelExchange,
+                    message.getBody());
 
             properties = endpoint.getMessageConverter().buildProperties(camelExchange).build();
         } catch (NoTypeConversionAvailableException | TypeConversionException e) {
@@ -116,13 +122,14 @@ public class RabbitMQMessagePublisher {
     }
 
     private void publishToRabbitMQ(final AMQP.BasicProperties properties, final byte[] body) throws IOException {
-        String exchangeName = (String)message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        String exchangeName = (String) message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
         // If it is BridgeEndpoint we should ignore the message header of
         // EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || endpoint.isBridgeEndpoint()) {
             exchangeName = endpoint.getExchangeName();
         } else {
-            LOG.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
+            LOG.debug("Overriding header: {} detected sending message to exchange: {}",
+                    RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
         }
 
         Boolean mandatory = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY, endpoint.isMandatory(), Boolean.class);
@@ -172,7 +179,8 @@ public class RabbitMQMessagePublisher {
             o.writeObject(msg.getBody());
             return b.toByteArray();
         } catch (NotSerializableException nse) {
-            LOG.warn("Cannot send object {} via RabbitMQ because it contains non-serializable objects.", msg.getBody().getClass());
+            LOG.warn("Cannot send object {} via RabbitMQ because it contains non-serializable objects.",
+                    msg.getBody().getClass());
             throw new RuntimeCamelException(nse);
         }
     }

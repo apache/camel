@@ -27,7 +27,7 @@ import org.apache.camel.processor.SamplingThrottler;
 public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
 
     public SamplingReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SamplingDefinition)definition);
+        super(route, (SamplingDefinition) definition);
     }
 
     @Override

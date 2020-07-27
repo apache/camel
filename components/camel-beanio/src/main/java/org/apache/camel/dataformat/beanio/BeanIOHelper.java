@@ -31,12 +31,15 @@ public final class BeanIOHelper {
         // utility class
     }
 
-    public static BeanReaderErrorHandler getOrCreateBeanReaderErrorHandler(BeanIOConfiguration configuration, Exchange exchange,
-                                                                           List<Object> results, BeanIOIterator iterator) throws Exception {
+    public static BeanReaderErrorHandler getOrCreateBeanReaderErrorHandler(
+            BeanIOConfiguration configuration, Exchange exchange,
+            List<Object> results, BeanIOIterator iterator)
+            throws Exception {
         BeanReaderErrorHandler answer = null;
 
         if (ObjectHelper.isNotEmpty(configuration.getBeanReaderErrorHandlerType())) {
-            Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(configuration.getBeanReaderErrorHandlerType());
+            Class<?> clazz = exchange.getContext().getClassResolver()
+                    .resolveMandatoryClass(configuration.getBeanReaderErrorHandlerType());
             Object instance = exchange.getContext().getInjector().newInstance(clazz);
             answer = (BeanReaderErrorHandler) instance;
         }

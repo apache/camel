@@ -41,12 +41,16 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     private boolean fastExistsCheck;
 
     @Override
-    public void prepareOnStartup(GenericFileOperations<FTPFile> tGenericFileOperations, GenericFileEndpoint<FTPFile> tGenericFileEndpoint) throws Exception {
+    public void prepareOnStartup(
+            GenericFileOperations<FTPFile> tGenericFileOperations, GenericFileEndpoint<FTPFile> tGenericFileEndpoint)
+            throws Exception {
         // noop
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
+            throws Exception {
         boolean exclusive = false;
 
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
@@ -61,7 +65,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so
                     // return false
                     return false;
@@ -91,10 +96,13 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
                 String path = file.getParent();
                 if (path.equals("/") || path.equals("\\")) {
                     // special for root (= home) directory
-                    LOG.trace("Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
+                    LOG.trace(
+                            "Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
                     files = operations.listFiles();
                 } else {
-                    LOG.trace("Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.", path);
+                    LOG.trace(
+                            "Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.",
+                            path);
                     files = operations.listFiles(path);
                 }
             }
@@ -120,7 +128,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
             long newOlderThan = startTime + watch.taken() - minAge;
             LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length) || (minAge != 0 && newLastModified < newOlderThan))) {
+            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
+                    || (minAge != 0 && newLastModified < newOlderThan))) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -152,17 +161,23 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
+            throws Exception {
         // noop
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
+            throws Exception {
         // noop
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
+            throws Exception {
         // noop
     }
 

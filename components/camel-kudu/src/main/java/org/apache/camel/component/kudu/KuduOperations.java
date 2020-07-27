@@ -17,5 +17,7 @@
 package org.apache.camel.component.kudu;
 
 public enum KuduOperations {
-    INSERT, CREATE_TABLE, SCAN
+    INSERT,
+    CREATE_TABLE,
+    SCAN
 }

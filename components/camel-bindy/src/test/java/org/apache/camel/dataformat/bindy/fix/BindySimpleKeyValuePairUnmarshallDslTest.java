@@ -36,10 +36,11 @@ public class BindySimpleKeyValuePairUnmarshallDslTest extends CommonBindyTest {
         result.assertIsSatisfied();
 
         Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
-        
+
         assertTrue(order.getTrailer().toString().contains("10: 220"));
         assertTrue(order.getHeader().toString().contains("FIX.4.1, 9: 20, 34: 1 , 35: 0, 49: INVMGR, 56: BRKR"));
-        assertTrue(order.toString().contains("BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
+        assertTrue(order.toString()
+                .contains("BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
     }
 
     public static class ContextConfig extends RouteBuilder {
@@ -47,8 +48,8 @@ public class BindySimpleKeyValuePairUnmarshallDslTest extends CommonBindyTest {
         @Override
         public void configure() {
             from(URI_FILE_FIX).unmarshal()
-                .bindy(BindyType.KeyValue, Order.class)
-                .to(URI_MOCK_RESULT);
+                    .bindy(BindyType.KeyValue, Order.class)
+                    .to(URI_MOCK_RESULT);
         }
 
     }

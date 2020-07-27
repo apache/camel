@@ -41,7 +41,6 @@ public class TagConsumerTest extends GitHubComponentTestBase {
         };
     }
 
-
     @Test
     public void tagConsumerTest() throws Exception {
         RepositoryTag tag1 = repositoryService.addTag("TAG1");

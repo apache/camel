@@ -62,8 +62,8 @@ public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
                 errorHandler(noErrorHandler());
 
                 from("vm:a").to("mock:a")
-                    // this timeout will trigger an exception to occur
-                    .to("vm:b?timeout=200").to("mock:a2");
+                        // this timeout will trigger an exception to occur
+                        .to("vm:b?timeout=200").to("mock:a2");
             }
         };
     }

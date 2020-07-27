@@ -34,26 +34,26 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void createAndRunInstancesTest() {
-        
+
         template.send("direct:createAndRun", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "ami-fd65ba94");
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
-                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1); 
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
             }
         });
     }
-    
+
     @Test
     public void createAndRunInstancesWithSecurityGroupsTest() {
-        
+
         template.send("direct:createAndRun", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "ami-fd65ba94");
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
-                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1); 
-                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);  
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
                 Collection<String> secGroups = new ArrayList<>();
                 secGroups.add("secgroup-1");
                 secGroups.add("secgroup-2");
@@ -61,10 +61,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2CreateAndRunTestWithKeyPair() throws Exception {
-        
+
         template.request("direct:createAndRun", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -77,10 +77,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void stopInstances() {
-        
+
         template.send("direct:stop", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -89,10 +89,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void startInstances() {
-        
+
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -101,10 +101,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void terminateInstances() {
-        
+
         template.send("direct:terminate", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -113,24 +113,24 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeInstancesTest() throws Exception {
-        
+
         template.request("direct:describe", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
-                
+
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeSpecificInstancesTest() throws Exception {
-        
+
         template.request("direct:describe", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -139,24 +139,24 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeInstancesStatusTest() throws Exception {
-        
+
         template.request("direct:describeStatus", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
-                
+
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeStatusSpecificInstancesTest() throws Exception {
-        
+
         template.request("direct:describeStatus", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -165,12 +165,12 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2RebootInstancesTest() throws Exception {
-        
+
         template.request("direct:reboot", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -179,12 +179,12 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2MonitorInstancesTest() throws Exception {
-        
+
         template.request("direct:monitor", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -193,12 +193,12 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2UnmonitorInstancesTest() throws Exception {
-        
+
         template.request("direct:unmonitor", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -207,7 +207,7 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

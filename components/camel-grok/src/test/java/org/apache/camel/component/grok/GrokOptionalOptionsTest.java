@@ -73,26 +73,27 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
         assertNotNull(flattenedFalse);
         assertTrue(flattenedFalse.containsKey("i"));
         assertTrue(flattenedFalse.get("i") instanceof List);
-        assertEquals("123", ((List)flattenedFalse.get("i")).get(0));
-        assertEquals("456", ((List)flattenedFalse.get("i")).get(1));
+        assertEquals("123", ((List) flattenedFalse.get("i")).get(0));
+        assertEquals("456", ((List) flattenedFalse.get("i")).get(1));
 
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
-            () -> template.requestBody("direct:flattenedTrue", "1 2"));
+                () -> template.requestBody("direct:flattenedTrue", "1 2"));
         assertIsInstanceOf(GrokException.class, e.getCause());
     }
-
 
     @Test
     @SuppressWarnings("unchecked")
     public void testNamedOnly() throws Exception {
-        Map<String, Object> namedOnlyTrue = template.requestBody("direct:namedOnlyTrue", "https://github.com/apache/camel", Map.class);
+        Map<String, Object> namedOnlyTrue
+                = template.requestBody("direct:namedOnlyTrue", "https://github.com/apache/camel", Map.class);
         assertNotNull(namedOnlyTrue);
         assertEquals("https://github.com/apache/camel", namedOnlyTrue.get("website"));
         assertFalse(namedOnlyTrue.containsKey("URIPROTO"));
         assertFalse(namedOnlyTrue.containsKey("URIHOST"));
         assertFalse(namedOnlyTrue.containsKey("URIPATHPARAM"));
 
-        Map<String, Object> namedOnlyFalse = template.requestBody("direct:namedOnlyFalse", "https://github.com/apache/camel", Map.class);
+        Map<String, Object> namedOnlyFalse
+                = template.requestBody("direct:namedOnlyFalse", "https://github.com/apache/camel", Map.class);
         assertNotNull(namedOnlyFalse);
         assertEquals("https://github.com/apache/camel", namedOnlyFalse.get("website"));
         assertEquals("https", namedOnlyFalse.get("URIPROTO"));

@@ -56,25 +56,25 @@ public class NavigateRouteTest extends ContextTestSupport {
             return;
         }
         if (nav.getClass().getName().endsWith("ProcessorToReactiveProcessorBridge")) {
-            nav = (Navigate)((Navigate)nav).next().get(0);
+            nav = (Navigate) ((Navigate) nav).next().get(0);
         }
 
         for (Processor child : nav.next()) {
             processors.add(child);
 
             if (child instanceof SendProcessor) {
-                SendProcessor send = (SendProcessor)child;
+                SendProcessor send = (SendProcessor) child;
                 assertEquals("mock://result", send.getDestination().getEndpointUri());
             }
 
             if (child instanceof ConvertBodyProcessor) {
-                ConvertBodyProcessor convert = (ConvertBodyProcessor)child;
+                ConvertBodyProcessor convert = (ConvertBodyProcessor) child;
                 assertEquals(String.class, convert.getType());
             }
 
             // navigate children
             if (child instanceof Navigate) {
-                navigateRoute((Navigate<Processor>)child);
+                navigateRoute((Navigate<Processor>) child);
             }
         }
     }

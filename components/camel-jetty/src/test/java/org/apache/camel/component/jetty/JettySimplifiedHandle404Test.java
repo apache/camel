@@ -26,8 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Based on end user on forum how to get the 404 error code in his enrich
- * aggregator
+ * Based on end user on forum how to get the 404 error code in his enrich aggregator
  */
 public class JettySimplifiedHandle404Test extends BaseJettyTest {
 
@@ -58,14 +57,15 @@ public class JettySimplifiedHandle404Test extends BaseJettyTest {
                 // strategy where we can check the HTTP response code
                 // and decide what to do. As this is based on an unit test we
                 // assert the code is 404
-                from("direct:start").enrich("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
-                    public Exchange aggregate(Exchange original, Exchange resource) {
-                        // get the response code
-                        Integer code = resource.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-                        assertEquals(404, code.intValue());
-                        return resource;
-                    }
-                }).to("mock:result");
+                from("direct:start").enrich("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false&user=Camel",
+                        new AggregationStrategy() {
+                            public Exchange aggregate(Exchange original, Exchange resource) {
+                                // get the response code
+                                Integer code = resource.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                                assertEquals(404, code.intValue());
+                                return resource;
+                            }
+                        }).to("mock:result");
 
                 // this is our jetty server where we simulate the 404
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {

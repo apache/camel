@@ -48,18 +48,19 @@ public class OperationVisitorTest {
         visitor.emit(parameter);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "      param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
-            + "        .required(false)\n"
-            + "      .endParam()}\n");
+                                                        + "      param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()}\n");
     }
 
     @Test
     public void shouldEmitCodeForOas32arameterInPath() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
+        final OperationVisitor<?> visitor
+                = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
 
         final Oas20Document document = new Oas20Document();
         final OasPaths paths = document.createPaths();
@@ -72,20 +73,21 @@ public class OperationVisitorTest {
         visitor.visit(HttpMethod.GET, operation);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "    get(\"/path/{param}\")\n"
-            + "      .param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
-            + "        .required(false)\n"
-            + "      .endParam()\n"
-            + "      .to(\"direct:rest1\")}\n");
+                                                        + "    get(\"/path/{param}\")\n"
+                                                        + "      .param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()\n"
+                                                        + "      .to(\"direct:rest1\")}\n");
     }
 
     @Test
     public void shouldEmitCodeForOas3ParameterInPath() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
+        final OperationVisitor<?> visitor
+                = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
 
         final Oas30Document document = new Oas30Document();
         final OasPaths paths = document.createPaths();
@@ -98,13 +100,13 @@ public class OperationVisitorTest {
         visitor.visit(HttpMethod.GET, operation);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "    get(\"/path/{param}\")\n"
-            + "      .param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
-            + "        .required(false)\n"
-            + "      .endParam()\n"
-            + "      .to(\"direct:rest1\")}\n");
+                                                        + "    get(\"/path/{param}\")\n"
+                                                        + "      .param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()\n"
+                                                        + "      .to(\"direct:rest1\")}\n");
     }
 
     @Test
@@ -121,12 +123,12 @@ public class OperationVisitorTest {
         visitor.emit(parameter);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "      param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
-            + "        .defaultValue(\"default\")\n"
-            + "        .required(false)\n"
-            + "      .endParam()}\n");
+                                                        + "      param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
+                                                        + "        .defaultValue(\"default\")\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()}\n");
     }
 
     @Test
@@ -143,12 +145,12 @@ public class OperationVisitorTest {
         visitor.emit(parameter);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "      param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
-            + "        .allowableValues(\"one,two,three\")\n"
-            + "        .required(false)\n"
-            + "      .endParam()}\n");
+                                                        + "      param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
+                                                        + "        .allowableValues(\"one,two,three\")\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()}\n");
     }
 
     @Test
@@ -165,12 +167,12 @@ public class OperationVisitorTest {
         visitor.emit(parameter);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "      param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
-            + "        .dataType(\"integer\")\n"
-            + "        .required(false)\n"
-            + "      .endParam()}\n");
+                                                        + "      param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
+                                                        + "        .dataType(\"integer\")\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()}\n");
     }
 
     @Test
@@ -185,11 +187,11 @@ public class OperationVisitorTest {
         visitor.emit(parameter);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "      param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
-            + "        .required(false)\n"
-            + "      .endParam()}\n");
+                                                        + "      param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()}\n");
     }
 
     @Test
@@ -211,10 +213,10 @@ public class OperationVisitorTest {
         visitor.emit(parameter);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "      param()\n"
-            + "        .name(\"param\")\n"
-            + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
-            + "        .required(false)\n"
-            + "      .endParam()}\n");
+                                                        + "      param()\n"
+                                                        + "        .name(\"param\")\n"
+                                                        + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
+                                                        + "        .required(false)\n"
+                                                        + "      .endParam()}\n");
     }
 }

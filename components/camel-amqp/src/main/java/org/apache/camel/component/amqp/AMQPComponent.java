@@ -76,7 +76,8 @@ public class AMQPComponent extends JmsComponent {
         Set<AMQPConnectionDetails> connectionDetails = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
         if (connectionDetails.size() == 1) {
             AMQPConnectionDetails details = connectionDetails.iterator().next();
-            JmsConnectionFactory connectionFactory = new JmsConnectionFactory(details.username(), details.password(), details.uri());
+            JmsConnectionFactory connectionFactory
+                    = new JmsConnectionFactory(details.username(), details.password(), details.uri());
             if (details.setTopicPrefix()) {
                 connectionFactory.setTopicPrefix("topic://");
             }
@@ -95,8 +96,7 @@ public class AMQPComponent extends JmsComponent {
     /**
      * Factory method to create the default configuration instance
      *
-     * @return a newly created configuration object which can then be further
-     *         customized
+     * @return a newly created configuration object which can then be further customized
      */
     @Override
     protected JmsConfiguration createConfiguration() {
@@ -106,10 +106,9 @@ public class AMQPComponent extends JmsComponent {
     // Properties
 
     /**
-     * Whether to include AMQP annotations when mapping from AMQP to Camel Message.
-     * Setting this to true maps AMQP message annotations that contain a JMS_AMQP_MA_ prefix to message headers.
-     * Due to limitations in Apache Qpid JMS API, currently delivery annotations
-     * are ignored.
+     * Whether to include AMQP annotations when mapping from AMQP to Camel Message. Setting this to true maps AMQP
+     * message annotations that contain a JMS_AMQP_MA_ prefix to message headers. Due to limitations in Apache Qpid JMS
+     * API, currently delivery annotations are ignored.
      */
     @Metadata(displayName = "Include AMQP Annotations")
     public void setIncludeAmqpAnnotations(boolean includeAmqpAnnotations) {
@@ -130,7 +129,8 @@ public class AMQPComponent extends JmsComponent {
         Object includeAmqpAnnotations = parameters.remove("includeAmqpAnnotations");
         if (includeAmqpAnnotations != null) {
             ((AMQPConfiguration) ((JmsEndpoint) bean).getConfiguration())
-                    .setIncludeAmqpAnnotations(PropertyConfigurerSupport.property(getCamelContext(), boolean.class, includeAmqpAnnotations));
+                    .setIncludeAmqpAnnotations(
+                            PropertyConfigurerSupport.property(getCamelContext(), boolean.class, includeAmqpAnnotations));
         }
         super.setProperties(bean, parameters);
     }

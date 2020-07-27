@@ -33,7 +33,8 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
     @Test
     public void testBindyMarshalWithDefaultValue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultMarshal");
-        mock.expectedBodiesReceived("\"123\",\"Wednesday, November 9, 2011\",\"North Pole\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mock.expectedBodiesReceived(
+                "\"123\",\"Wednesday, November 9, 2011\",\"North Pole\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         WeatherModel model = new WeatherModel();
         model.setId(123);
@@ -62,11 +63,11 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:marshal")
-                    .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
-                    .to("mock:resultMarshal");
+                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .to("mock:resultMarshal");
                 from("direct:unmarshal")
-                    .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
-                    .to("mock:resultUnmarshal");
+                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .to("mock:resultUnmarshal");
             }
         };
     }

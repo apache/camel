@@ -68,7 +68,7 @@ public class ConsumeJmsMapMessageTest extends CamelTestSupport {
         assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
         JmsMessage in = (JmsMessage) exchange.getIn();
         assertNotNull(in);
-        
+
         Map<?, ?> map = exchange.getIn().getBody(Map.class);
         LOG.info("Received map: " + map);
 

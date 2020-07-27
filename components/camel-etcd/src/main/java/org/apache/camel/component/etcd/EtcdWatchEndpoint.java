@@ -25,11 +25,11 @@ import org.apache.camel.spi.UriEndpoint;
  * Watch specific etcd keys or directories for changes.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-watch", title = "Etcd Watch", consumerOnly = true,
-        syntax = "etcd-watch:path", label = "clustering,database")
+             syntax = "etcd-watch:path", label = "clustering,database")
 public class EtcdWatchEndpoint extends AbstractEtcdEndpoint {
 
     public EtcdWatchEndpoint(
-            String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
+                             String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
         super(uri, component, configuration, path);
     }
 

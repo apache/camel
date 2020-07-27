@@ -18,5 +18,15 @@ package org.apache.camel.component.aws2.ec2;
 
 public enum AWS2EC2Operations {
 
-    createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags
+    createAndRunInstances,
+    startInstances,
+    stopInstances,
+    terminateInstances,
+    describeInstances,
+    describeInstancesStatus,
+    rebootInstances,
+    monitorInstances,
+    unmonitorInstances,
+    createTags,
+    deleteTags
 }

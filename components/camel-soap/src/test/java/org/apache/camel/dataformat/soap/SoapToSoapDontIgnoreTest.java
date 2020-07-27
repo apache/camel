@@ -55,7 +55,7 @@ public class SoapToSoapDontIgnoreTest extends CamelTestSupport {
         soapjaxbModel.setIgnoreJAXBElement(false);
         soapjaxbModel.setElementNameStrategy(new TypeNameStrategy());
         soapjaxbModelDontIgnoreUnmarshalled = new SoapJaxbDataFormat(
-                                                                     "com.example.contact:com.example.soapheaders");
+                "com.example.contact:com.example.soapheaders");
         soapjaxbModelDontIgnoreUnmarshalled.setNamespacePrefix(namespacePrefixMap);
         soapjaxbModelDontIgnoreUnmarshalled.setPrettyPrint(true);
         soapjaxbModelDontIgnoreUnmarshalled.setIgnoreUnmarshalledHeaders(false);
@@ -78,11 +78,11 @@ public class SoapToSoapDontIgnoreTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         Exchange result = endpoint.assertExchangeReceived(0);
 
-        byte[] body = (byte[])result.getIn().getBody();
+        byte[] body = (byte[]) result.getIn().getBody();
         InputStream stream = new ByteArrayInputStream(body);
         SOAPMessage request = MessageFactory.newInstance().createMessage(null, stream);
         assertTrue(null != request.getSOAPHeader()
-                        && request.getSOAPHeader().extractAllHeaderElements().hasNext(),
+                && request.getSOAPHeader().extractAllHeaderElements().hasNext(),
                 "Expected headers");
     }
 
@@ -99,7 +99,7 @@ public class SoapToSoapDontIgnoreTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").unmarshal(soapjaxbModel).marshal(soapjaxbModelDontIgnoreUnmarshalled)
-                    .to("mock:end");
+                        .to("mock:end");
             }
         };
     }

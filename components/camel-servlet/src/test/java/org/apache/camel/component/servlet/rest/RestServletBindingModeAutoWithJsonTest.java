@@ -37,7 +37,8 @@ public class RestServletBindingModeAutoWithJsonTest extends ServletCamelRouterTe
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
 
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
@@ -60,7 +61,7 @@ public class RestServletBindingModeAutoWithJsonTest extends ServletCamelRouterTe
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/json").type(UserPojo.class)
+                        .post("new").consumes("application/json").type(UserPojo.class)
                         .to("mock:input");
             }
         };

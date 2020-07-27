@@ -53,7 +53,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final String couchDbUrlFormat = "couchdb:http://" + getCouchDbHost() + ":" + getCouchDbPort() + "/camelcouchdb?createDatabase=true%s";
+        final String couchDbUrlFormat
+                = "couchdb:http://" + getCouchDbHost() + ":" + getCouchDbPort() + "/camelcouchdb?createDatabase=true%s";
 
         return new RouteBuilder() {
             @Override
@@ -68,7 +69,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
     @Order(1)
     @Test
     void jsonObjectDocumentCrudShouldTriggerUpdateAndDeleteNotifications() throws InterruptedException {
-        JsonObject testDocument = new Gson().fromJson("{ \"randomString\" : \"36e8807f-0810-4b80-9ca9-b20859433034\" }", JsonObject.class);
+        JsonObject testDocument
+                = new Gson().fromJson("{ \"randomString\" : \"36e8807f-0810-4b80-9ca9-b20859433034\" }", JsonObject.class);
 
         // Creating a document should trigger an update notification
         mockUpdateNotifications.expectedHeaderReceived(CouchDbConstants.HEADER_METHOD, "UPDATE");
@@ -77,7 +79,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
             e.getMessage().setBody(testDocument);
         });
         final String createdDocumentId = createExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
-        final String createdDocumentRevision = createExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
+        final String createdDocumentRevision
+                = createExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
         assertNotNull(createdDocumentId);
         assertNotNull(createdDocumentRevision);
         mockUpdateNotifications.assertIsSatisfied();
@@ -86,7 +89,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
         Map<String, Object> retrieveExchangeHeaders = new HashMap<>();
         retrieveExchangeHeaders.put(CouchDbConstants.HEADER_DOC_ID, createdDocumentId);
         retrieveExchangeHeaders.put(CouchDbConstants.HEADER_METHOD, CouchDbOperations.GET);
-        String retrievedDocumentString = template.requestBodyAndHeaders(couchDbIn, testDocument, retrieveExchangeHeaders, String.class);
+        String retrievedDocumentString
+                = template.requestBodyAndHeaders(couchDbIn, testDocument, retrieveExchangeHeaders, String.class);
         assertNotNull(retrievedDocumentString);
         JsonObject retrievedDocument = new Gson().fromJson(retrievedDocumentString, JsonObject.class);
         assertEquals("36e8807f-0810-4b80-9ca9-b20859433034", retrievedDocument.get("randomString").getAsString());
@@ -102,7 +106,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
             e.getMessage().setBody(retrievedDocument);
         });
         final String updatedDocumentId = updateExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
-        final String updatedDocumentRevision = updateExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
+        final String updatedDocumentRevision
+                = updateExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
         assertEquals(createdDocumentId, updatedDocumentId);
         assertNotEquals(createdDocumentRevision, updatedDocumentRevision);
         mockUpdateNotifications.assertIsSatisfied();
@@ -111,7 +116,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
         Map<String, Object> retrieveUpdatedExchangeHeaders = new HashMap<>();
         retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_DOC_ID, updatedDocumentId);
         retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_METHOD, CouchDbOperations.GET);
-        String retrievedUpdatedDocumentString = template.requestBodyAndHeaders(couchDbIn, retrievedDocument, retrieveUpdatedExchangeHeaders, String.class);
+        String retrievedUpdatedDocumentString
+                = template.requestBodyAndHeaders(couchDbIn, retrievedDocument, retrieveUpdatedExchangeHeaders, String.class);
         assertNotNull(retrievedUpdatedDocumentString);
         JsonObject retrievedUpdatedDocument = new Gson().fromJson(retrievedUpdatedDocumentString, JsonObject.class);
         final String retrievedUpdatedDocumentId = retrievedUpdatedDocument.get("_id").getAsString();
@@ -128,7 +134,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
             e.getMessage().setHeader(CouchDbConstants.HEADER_METHOD, CouchDbOperations.DELETE);
         });
         final String deletedDocumentId = deleteExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
-        final String deletedDocumentRevision = deleteExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
+        final String deletedDocumentRevision
+                = deleteExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
         assertEquals(retrievedUpdatedDocumentId, deletedDocumentId);
         assertNotEquals(retrievedUpdatedDocumentRevision, deletedDocumentRevision);
         mockDeleteNotifications.assertIsSatisfied();
@@ -137,7 +144,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
     @Order(2)
     @Test
     void jsonStringDocumentCrudShouldTriggerUpdateAndDeleteNotifications() throws InterruptedException {
-        JsonObject testDocument = new Gson().fromJson("{ \"randomString\" : \"36e8807f-0810-4b80-9ca9-b20859433044\" }", JsonObject.class);
+        JsonObject testDocument
+                = new Gson().fromJson("{ \"randomString\" : \"36e8807f-0810-4b80-9ca9-b20859433044\" }", JsonObject.class);
 
         // Creating a document should trigger an update notification
         mockUpdateNotifications.expectedHeaderReceived(CouchDbConstants.HEADER_METHOD, "UPDATE");
@@ -146,7 +154,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
             e.getMessage().setBody(testDocument.toString());
         });
         final String createdDocumentId = createExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
-        final String createdDocumentRevision = createExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
+        final String createdDocumentRevision
+                = createExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
         assertNotNull(createdDocumentId);
         assertNotNull(createdDocumentRevision);
         mockUpdateNotifications.assertIsSatisfied();
@@ -171,7 +180,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
             e.getMessage().setBody(retrievedDocument.toString());
         });
         final String updatedDocumentId = updateExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
-        final String updatedDocumentRevision = updateExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
+        final String updatedDocumentRevision
+                = updateExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
         assertEquals(createdDocumentId, updatedDocumentId);
         assertNotEquals(createdDocumentRevision, updatedDocumentRevision);
         mockUpdateNotifications.assertIsSatisfied();
@@ -180,7 +190,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
         Map<String, Object> retrieveUpdatedExchangeHeaders = new HashMap<>();
         retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_DOC_ID, updatedDocumentId);
         retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_METHOD, CouchDbOperations.GET);
-        String retrievedUpdatedDocumentString = template.requestBodyAndHeaders(couchDbIn, "", retrieveUpdatedExchangeHeaders, String.class);
+        String retrievedUpdatedDocumentString
+                = template.requestBodyAndHeaders(couchDbIn, "", retrieveUpdatedExchangeHeaders, String.class);
         assertNotNull(retrievedUpdatedDocumentString);
         JsonObject retrievedUpdatedDocument = new Gson().fromJson(retrievedUpdatedDocumentString, JsonObject.class);
         final String retrievedUpdatedDocumentId = retrievedUpdatedDocument.get("_id").getAsString();
@@ -197,7 +208,8 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
             e.getMessage().setHeader(CouchDbConstants.HEADER_METHOD, CouchDbOperations.DELETE);
         });
         final String deletedDocumentId = deleteExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
-        final String deletedDocumentRevision = deleteExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
+        final String deletedDocumentRevision
+                = deleteExchange.getMessage().getHeader(CouchDbConstants.HEADER_DOC_REV, String.class);
         assertEquals(retrievedUpdatedDocumentId, deletedDocumentId);
         assertNotEquals(retrievedUpdatedDocumentRevision, deletedDocumentRevision);
         mockDeleteNotifications.assertIsSatisfied();

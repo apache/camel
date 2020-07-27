@@ -59,8 +59,10 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testCreateAndDeleteContainer() {
-        final BlobContainerClientWrapper containerClientWrapper = blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1");
-        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, containerClientWrapper);
+        final BlobContainerClientWrapper containerClientWrapper
+                = blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1");
+        final BlobContainerOperations blobContainerOperations
+                = new BlobContainerOperations(configuration, containerClientWrapper);
 
         final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 
@@ -75,7 +77,6 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(BlobConstants.METADATA, Collections.singletonMap("testKeyMetadata", "testValueMetadata"));
         exchange.getIn().setHeader(BlobConstants.PUBLIC_ACCESS_TYPE, PublicAccessType.CONTAINER);
-
 
         // try to create the container again, we try until we can
         Awaitility.given()

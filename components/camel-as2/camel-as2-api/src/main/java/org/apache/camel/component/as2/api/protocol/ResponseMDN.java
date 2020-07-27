@@ -65,13 +65,13 @@ public class ResponseMDN implements HttpResponseInterceptor {
     public static final String BOUNDARY_PARAM_NAME = "boundary";
 
     private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n"
-            + " Message ID: $requestHeaders[\"Message-Id\"]\n"
-            + "  Subject: $requestHeaders[\"Subject\"]\n"
-            + "  Date: $requestHeaders[\"Date\"]\n"
-            + "  From: $requestHeaders[\"AS2-From\"]\n"
-            + "  To: $requestHeaders[\"AS2-To\"]\n"
-            + "  Received on: $responseHeaders[\"Date\"]\n"
-            + " Status: $dispositionType \n";
+                                                               + " Message ID: $requestHeaders[\"Message-Id\"]\n"
+                                                               + "  Subject: $requestHeaders[\"Subject\"]\n"
+                                                               + "  Date: $requestHeaders[\"Date\"]\n"
+                                                               + "  From: $requestHeaders[\"AS2-From\"]\n"
+                                                               + "  To: $requestHeaders[\"AS2-To\"]\n"
+                                                               + "  Received on: $responseHeaders[\"Date\"]\n"
+                                                               + " Status: $dispositionType \n";
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
 
@@ -126,24 +126,32 @@ public class ResponseMDN implements HttpResponseInterceptor {
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity;
-        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) == AS2DispositionType.FAILED.getType()) {
+        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null
+                || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE)
+                   == AS2DispositionType.FAILED.getType()) {
             // Return a failed Message Disposition Notification Receipt in response body
-            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
+                    DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
                     AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
+                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true,
+                    decryptingPrivateKey, mdnMessage);
         } else {
-            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
+            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
+                    DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII,
+                    DEFAULT_MDN_MESSAGE_TEMPLATE);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true,
+                    decryptingPrivateKey, mdnMessage);
         }
 
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
                 .parseDispositionNotificationOptions(
-                        HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
+                        HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS),
+                        null);
 
         String receiptAddress = HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.RECEIPT_DELIVERY_OPTION);
         if (receiptAddress != null) {
@@ -210,7 +218,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
                 // Create signed receipt
                 try {
                     multipartReportEntity.setMainBody(false);
-                    MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(multipartReportEntity, gen,
+                    MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
+                            multipartReportEntity, gen,
                             AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
                     response.setHeader(multipartSignedEntity.getContentType());
                     EntityUtils.setMessageEntity(response, multipartSignedEntity);
@@ -227,17 +236,19 @@ public class ResponseMDN implements HttpResponseInterceptor {
         LOG.debug(AS2Utils.printMessage(response));
     }
 
-    private String createMdnDescription(HttpEntityEnclosingRequest request,
-                                        HttpResponse response,
-                                        DispositionMode dispositionMode,
-                                        AS2DispositionType dispositionType,
-                                        AS2DispositionModifier dispositionModifier,
-                                        String[] failureFields,
-                                        String[] errorFields,
-                                        String[] warningFields,
-                                        Map<String, String> extensionFields,
-                                        String charset,
-                                        String mdnMessageTemplate) throws HttpException {
+    private String createMdnDescription(
+            HttpEntityEnclosingRequest request,
+            HttpResponse response,
+            DispositionMode dispositionMode,
+            AS2DispositionType dispositionType,
+            AS2DispositionModifier dispositionModifier,
+            String[] failureFields,
+            String[] errorFields,
+            String[] warningFields,
+            Map<String, String> extensionFields,
+            String charset,
+            String mdnMessageTemplate)
+            throws HttpException {
 
         try {
             Context context = new VelocityContext();

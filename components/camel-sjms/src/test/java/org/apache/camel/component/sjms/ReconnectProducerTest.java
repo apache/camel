@@ -80,17 +80,17 @@ public class ReconnectProducerTest extends JmsTestSupport {
     /**
      * @return
      * @throws Exception
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("sjms:queue:" + TEST_DESTINATION_NAME + "?consumerCount=10");
+                        .to("sjms:queue:" + TEST_DESTINATION_NAME + "?consumerCount=10");
 
                 from("direct:finish")
-                    .to("log:test.log.1?showBody=true", "mock:result");
+                        .to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }

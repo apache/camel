@@ -48,7 +48,8 @@ public class LdapProducer extends DefaultProducer {
     private String searchBase;
     private Integer pageSize;
 
-    public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize, String returnedAttributes) throws Exception {
+    public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize,
+                        String returnedAttributes) throws Exception {
         super(endpoint);
 
         this.remaining = remaining;
@@ -66,7 +67,6 @@ public class LdapProducer extends DefaultProducer {
         }
     }
 
-
     @Override
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
@@ -79,7 +79,8 @@ public class LdapProducer extends DefaultProducer {
                 data = simpleSearch(dirContext, filter);
             } else {
                 if (!(dirContext instanceof LdapContext)) {
-                    throw new IllegalArgumentException("When using attribute 'pageSize' for a ldap endpoint, you must provide a LdapContext (subclass of DirContext)");
+                    throw new IllegalArgumentException(
+                            "When using attribute 'pageSize' for a ldap endpoint, you must provide a LdapContext (subclass of DirContext)");
                 }
                 data = pagedSearch((LdapContext) dirContext, filter);
             }
@@ -112,7 +113,8 @@ public class LdapProducer extends DefaultProducer {
         } else if (context instanceof DirContext) {
             answer = (DirContext) context;
         } else if (context != null) {
-            String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName() + " expected type was: " + DirContext.class.getName();
+            String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName()
+                         + " expected type was: " + DirContext.class.getName();
             throw new NoSuchBeanException(msg);
         }
         return answer;
@@ -132,7 +134,7 @@ public class LdapProducer extends DefaultProducer {
 
         LOG.trace("Using paged ldap search, pageSize={}", pageSize);
 
-        Control[] requestControls = new Control[]{new PagedResultsControl(pageSize, Control.CRITICAL)};
+        Control[] requestControls = new Control[] { new PagedResultsControl(pageSize, Control.CRITICAL) };
         ldapContext.setRequestControls(requestControls);
         do {
             List<SearchResult> pageResult = simpleSearch(ldapContext, searchFilter);
@@ -163,7 +165,7 @@ public class LdapProducer extends DefaultProducer {
         if (cookie == null) {
             return false;
         } else {
-            ldapContext.setRequestControls(new Control[]{new PagedResultsControl(pageSize, cookie, Control.CRITICAL)});
+            ldapContext.setRequestControls(new Control[] { new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
             return true;
         }
     }

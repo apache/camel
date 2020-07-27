@@ -41,10 +41,10 @@ public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
 
     @EndpointInject("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
     private HipchatEndpoint hipchatEndpoint;
-    
+
     @BindToRegistry("myHttpClient")
     private MyCustomHttpClient client = new MyCustomHttpClient();
-    
+
     @Test
     public void ensureCustomHttpClientIsDefined() {
         HttpClient httpClient = hipchatEndpoint.getConfiguration().getHttpClient();
@@ -58,8 +58,8 @@ public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
-                    .to("mock:result");
+                        .to("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
+                        .to("mock:result");
             }
         };
     }
@@ -88,7 +88,8 @@ public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
         }
 
         @Override
-        protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context) throws IOException, ClientProtocolException {
+        protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context)
+                throws IOException, ClientProtocolException {
             return innerHttpClient.execute(target, request, context);
         }
     }

@@ -40,35 +40,70 @@ public class IgniteIdGenTest extends AbstractIgniteTest {
 
     @Test
     public void testOperations() {
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET", null, Long.class)).isEqualTo(0);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET_AND_INCREMENT", null, Long.class)).isEqualTo(0);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=INCREMENT_AND_GET", null, Long.class)).isEqualTo(2);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=ADD_AND_GET", 5, Long.class)).isEqualTo(7);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET_AND_ADD", 5, Long.class)).isEqualTo(7);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET", 5, Long.class)).isEqualTo(12);
+        Assertions
+                .assertThat(
+                        template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET", null, Long.class))
+                .isEqualTo(0);
+        Assertions.assertThat(template
+                .requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET_AND_INCREMENT", null, Long.class))
+                .isEqualTo(0);
+        Assertions.assertThat(template
+                .requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=INCREMENT_AND_GET", null, Long.class))
+                .isEqualTo(2);
+        Assertions.assertThat(
+                template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=ADD_AND_GET", 5, Long.class))
+                .isEqualTo(7);
+        Assertions.assertThat(
+                template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET_AND_ADD", 5, Long.class))
+                .isEqualTo(7);
+        Assertions
+                .assertThat(
+                        template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET", 5, Long.class))
+                .isEqualTo(12);
     }
 
     @Test
     public void testInitialValue() {
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100", null, Long.class)).isEqualTo(100);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET_AND_INCREMENT&initialValue=100", null, Long.class)).isEqualTo(100);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?operation=INCREMENT_AND_GET&initialValue=100", null, Long.class)).isEqualTo(102);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?operation=ADD_AND_GET&initialValue=100", 5, Long.class)).isEqualTo(107);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET_AND_ADD&initialValue=100", 5, Long.class)).isEqualTo(107);
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100", 5, Long.class)).isEqualTo(112);
+        Assertions.assertThat(
+                template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100", null, Long.class))
+                .isEqualTo(100);
+        Assertions
+                .assertThat(template.requestBody(
+                        "ignite-idgen:" + resourceUid + "?operation=GET_AND_INCREMENT&initialValue=100", null, Long.class))
+                .isEqualTo(100);
+        Assertions
+                .assertThat(template.requestBody(
+                        "ignite-idgen:" + resourceUid + "?operation=INCREMENT_AND_GET&initialValue=100", null, Long.class))
+                .isEqualTo(102);
+        Assertions.assertThat(
+                template.requestBody("ignite-idgen:" + resourceUid + "?operation=ADD_AND_GET&initialValue=100", 5, Long.class))
+                .isEqualTo(107);
+        Assertions.assertThat(
+                template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET_AND_ADD&initialValue=100", 5, Long.class))
+                .isEqualTo(107);
+        Assertions
+                .assertThat(
+                        template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100", 5, Long.class))
+                .isEqualTo(112);
     }
 
     @Test
     public void testDifferentOperation() {
-        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100", null, Long.class)).isEqualTo(100);
-        Assertions.assertThat(template.requestBodyAndHeader("ignite-idgen:" + resourceUid + "?operation=GET_AND_INCREMENT&initialValue=100", null, IgniteConstants.IGNITE_IDGEN_OPERATION,
-                                                     IgniteIdGenOperation.INCREMENT_AND_GET, Long.class))
-            .isEqualTo(101);
+        Assertions.assertThat(
+                template.requestBody("ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100", null, Long.class))
+                .isEqualTo(100);
+        Assertions
+                .assertThat(template.requestBodyAndHeader(
+                        "ignite-idgen:" + resourceUid + "?operation=GET_AND_INCREMENT&initialValue=100", null,
+                        IgniteConstants.IGNITE_IDGEN_OPERATION,
+                        IgniteIdGenOperation.INCREMENT_AND_GET, Long.class))
+                .isEqualTo(101);
     }
 
     @Test
     public void testBatchSize() {
-        IgniteIdGenEndpoint endpoint = context.getEndpoint("ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100&batchSize=100", IgniteIdGenEndpoint.class);
+        IgniteIdGenEndpoint endpoint = context.getEndpoint(
+                "ignite-idgen:" + resourceUid + "?operation=GET&initialValue=100&batchSize=100", IgniteIdGenEndpoint.class);
         Assertions.assertThat(template.requestBody(endpoint, null, Long.class)).isEqualTo(100);
 
         // Cannot test much here with a single Ignite instance, let's just test

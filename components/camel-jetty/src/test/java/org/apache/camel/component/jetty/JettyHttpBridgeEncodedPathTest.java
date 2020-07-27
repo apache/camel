@@ -31,7 +31,8 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
 
     @Test
     public void testJettyHttpClient() throws Exception {
-        String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null, String.class);
+        String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null,
+                String.class);
         assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
@@ -57,11 +58,12 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
                     }
                 };
                 from("jetty://http://localhost:" + port2 + "/jettyTestRouteA?matchOnUriPrefix=true")
-                    .log("Using JettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                    .to("http://localhost:" + port1 + "/jettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .log("Using JettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .to("http://localhost:" + port1 + "/jettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:" + port1 + "/jettyTestRouteB?matchOnUriPrefix=true")
-                    .log("Using JettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]").process(serviceProc);
+                        .log("Using JettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .process(serviceProc);
             }
         };
     }

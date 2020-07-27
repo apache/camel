@@ -17,8 +17,8 @@
 package org.apache.camel.component.crypto.cms.exception;
 
 /**
- * Exception thrown when no certificate in the keystore fits to the recipients
- * in the CMS enveloped data during the decryption process.
+ * Exception thrown when no certificate in the keystore fits to the recipients in the CMS enveloped data during the
+ * decryption process.
  */
 public class CryptoCmsNoCertificateForRecipientsException extends CryptoCmsException {
 

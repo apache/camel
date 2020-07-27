@@ -31,7 +31,7 @@ public class JsonPathMockMatchesTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

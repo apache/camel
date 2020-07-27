@@ -22,8 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 /**
- * An optional interface an {@link Endpoint} may choose to implement which allows it to
- * expose a way of browsing the exchanges available.
+ * An optional interface an {@link Endpoint} may choose to implement which allows it to expose a way of browsing the
+ * exchanges available.
  */
 public interface BrowsableEndpoint extends Endpoint {
 

@@ -58,12 +58,13 @@ public final class ChannelHandlerFactories {
         }
     }
 
-
-    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, String protocol) {
+    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(
+            final int maxFrameLength, final ByteBuf[] delimiters, String protocol) {
         return newDelimiterBasedFrameDecoder(maxFrameLength, delimiters, true, protocol);
     }
 
-    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, final boolean stripDelimiter, String protocol) {
+    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(
+            final int maxFrameLength, final ByteBuf[] delimiters, final boolean stripDelimiter, String protocol) {
         if ("udp".equals(protocol)) {
             return new DefaultChannelHandlerFactory() {
                 @Override
@@ -89,13 +90,15 @@ public final class ChannelHandlerFactories {
         return new ShareableChannelHandlerFactory(new DatagramPacketEncoder());
     }
 
-    public static ChannelHandlerFactory newLengthFieldBasedFrameDecoder(final int maxFrameLength, final int lengthFieldOffset,
-                                                                        final int lengthFieldLength, final int lengthAdjustment,
-                                                                        final int initialBytesToStrip) {
+    public static ChannelHandlerFactory newLengthFieldBasedFrameDecoder(
+            final int maxFrameLength, final int lengthFieldOffset,
+            final int lengthFieldLength, final int lengthAdjustment,
+            final int initialBytesToStrip) {
         return new DefaultChannelHandlerFactory() {
             @Override
             public ChannelHandler newChannelHandler() {
-                return new LengthFieldBasedFrameDecoder(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, initialBytesToStrip);
+                return new LengthFieldBasedFrameDecoder(
+                        maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, initialBytesToStrip);
             }
         };
     }

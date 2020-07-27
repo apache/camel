@@ -24,10 +24,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Zot extends Bar {
     private String otherValue;
+
     public void setOtherValue(String value) {
         otherValue = value;
     }
-    
+
     public String getOtherValue() {
         return otherValue;
     }

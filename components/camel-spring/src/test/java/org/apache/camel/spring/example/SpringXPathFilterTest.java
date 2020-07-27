@@ -30,7 +30,8 @@ public class SpringXPathFilterTest extends XPathFilterTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"), true);
+        return SpringCamelContext.springCamelContext(
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"), true);
     }
 
 }

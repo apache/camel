@@ -37,7 +37,7 @@ import org.ehcache.xml.XmlConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EhcacheTestSupport extends CamelTestSupport  {
+public class EhcacheTestSupport extends CamelTestSupport {
     public static final Logger LOGGER = LoggerFactory.getLogger(EhcacheTestSupport.class);
     public static final String EHCACHE_CONFIG = "/ehcache/ehcache-config.xml";
     public static final String TEST_CACHE_NAME = "mycache";
@@ -115,8 +115,7 @@ public class EhcacheTestSupport extends CamelTestSupport  {
 
     protected static Map<String, String> generateRandomMapOfString(int size) {
         return IntStream.range(0, size).boxed().collect(Collectors.toMap(
-            i -> i + "-" + generateRandomString(),
-            i -> i + "-" + generateRandomString()
-        ));
+                i -> i + "-" + generateRandomString(),
+                i -> i + "-" + generateRandomString()));
     }
 }

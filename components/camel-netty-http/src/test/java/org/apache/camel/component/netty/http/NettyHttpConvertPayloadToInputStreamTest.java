@@ -37,7 +37,8 @@ public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/test", expectedBody, "Content-Type",
+                "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -56,9 +57,7 @@ public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/test").
-                        convertBodyTo(InputStream.class).
-                        to("mock:result");
+                from("netty-http:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");
             }
         };
     }

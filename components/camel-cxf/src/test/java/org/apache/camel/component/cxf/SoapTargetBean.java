@@ -39,10 +39,10 @@ public class SoapTargetBean {
         try {
             MessageFactory factory = MessageFactory.newInstance();
             InputStream is = getClass().getResourceAsStream("sayHiDocLiteralResp.xml");
-            sayHiResponse =  factory.createMessage(null, is);
+            sayHiResponse = factory.createMessage(null, is);
             is.close();
             is = getClass().getResourceAsStream("GreetMeDocLiteralResp.xml");
-            greetMeResponse =  factory.createMessage(null, is);
+            greetMeResponse = factory.createMessage(null, is);
             is.close();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -84,11 +84,12 @@ public class SoapTargetBean {
         SOAPMessage response = null;
         try {
             Document doc = StaxUtils.read(in);
-            if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(), 
-                                           sayHi.getLocalPart()).getLength() == 1) {
+            if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(),
+                    sayHi.getLocalPart()).getLength()
+                == 1) {
                 response = sayHiResponse;
-            } else if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(), 
-                                                  greetMe.getLocalPart()).getLength() == 1) {
+            } else if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(),
+                    greetMe.getLocalPart()).getLength() == 1) {
                 response = greetMeResponse;
             }
         } catch (Exception ex) {

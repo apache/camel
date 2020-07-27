@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
                       portName = "MultiPartInvokePort",
                       targetNamespace = "http://adapter.ti.tongtech.com/ws",
                       endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
-                      
+
 public class MultiPartInvokeImpl implements MultiPartInvoke {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiPartInvokeImpl.class);

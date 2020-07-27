@@ -79,8 +79,8 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                    // wraps the entire route in the same policy
-                    .policy("foo").to("mock:foo").to("async:bye:camel").to("mock:bar").to("mock:result");
+                        // wraps the entire route in the same policy
+                        .policy("foo").to("mock:foo").to("async:bye:camel").to("mock:bar").to("mock:result");
 
                 from("direct:send").to("mock:before").to("log:before").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -125,12 +125,14 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                 }
 
                 public void process(Exchange exchange) throws Exception {
-                    final AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+                    final AsyncProcessorAwaitManager awaitManager
+                            = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
                     awaitManager.process(this, exchange);
                 }
 
                 public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                            = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
                     process(exchange, callback);
                     return callback.getFuture();
                 }

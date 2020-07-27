@@ -39,10 +39,8 @@ public abstract class ApplicationContextTestSupport {
         IOHelper.close(applicationContext);
     }
 
-
     /**
-     * Looks up the mandatory spring bean of the given name and type, failing if
-     * it is not present or the correct type
+     * Looks up the mandatory spring bean of the given name and type, failing if it is not present or the correct type
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
         return applicationContext.getBean(name, type);

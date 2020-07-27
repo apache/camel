@@ -26,9 +26,8 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Integration test for the {@link IrcConfiguration#isNamesOnJoin()} option.
- * Joins a channel and asserts that the username of the current test user is
- * listed for the channel.
+ * Integration test for the {@link IrcConfiguration#isNamesOnJoin()} option. Joins a channel and asserts that the
+ * username of the current test user is listed for the channel.
  */
 public class IrcsListUsersTest extends IrcIntegrationTestSupport {
 
@@ -48,12 +47,12 @@ public class IrcsListUsersTest extends IrcIntegrationTestSupport {
             @Override
             public void configure() throws Exception {
                 LOGGER.debug("Creating new test route");
-                
+
                 from(PRODUCER_URI + "?namesOnJoin=true&onReply=true")
-                    .choice()
+                        .choice()
                         .when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
-                            .filter(header("irc.num").isEqualTo(IRC_RPL_NAMREPLY))
-                            .to("mock:result").stop();
+                        .filter(header("irc.num").isEqualTo(IRC_RPL_NAMREPLY))
+                        .to("mock:result").stop();
             }
         };
     }

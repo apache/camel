@@ -130,7 +130,8 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
             // Camel context should be set at this stage.
             final CamelContext context = ObjectHelper.notNull(getCamelContext(), "CamelContext");
 
-            executor = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "FileLockClusterService-" + getId());
+            executor = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "FileLockClusterService-" + getId());
         }
 
         return executor;

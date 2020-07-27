@@ -42,9 +42,9 @@ public class GroovyInvokeMethodTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setHeader("name").groovy("request.body.name")
-                    .setHeader("dangerous").groovy("request.body.isDangerous()")
-                    .to("mock:result");
+                        .setHeader("name").groovy("request.body.name")
+                        .setHeader("dangerous").groovy("request.body.isDangerous()")
+                        .to("mock:result");
             }
         };
     }

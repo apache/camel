@@ -25,8 +25,8 @@ public class FreemarkerFileLetterTest extends FreemarkerLetterTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a")
-                    .to("freemarker:file:src/test/resources/org/apache/camel/component/freemarker/letter.ftl")
-                    .to("mock:result");
+                        .to("freemarker:file:src/test/resources/org/apache/camel/component/freemarker/letter.ftl")
+                        .to("mock:result");
             }
         };
     }

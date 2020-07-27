@@ -36,13 +36,13 @@ public final class FilePathResolver {
      * <p/>
      * The pattern is:
      * <ul>
-     *   <li><tt>${env.key}</tt> for environment variables.</li>
-     *   <li><tt>${key}</tt> for JVM system properties.</li>
+     * <li><tt>${env.key}</tt> for environment variables.</li>
+     * <li><tt>${key}</tt> for JVM system properties.</li>
      * </ul>
      * For example: <tt>${env.KARAF_HOME}/data/logs</tt>
      *
-     * @param path  the path
-     * @return the resolved path
+     * @param  path                     the path
+     * @return                          the resolved path
      * @throws IllegalArgumentException is thrown if system property / environment not found
      */
     public static String resolvePath(String path) throws IllegalArgumentException {

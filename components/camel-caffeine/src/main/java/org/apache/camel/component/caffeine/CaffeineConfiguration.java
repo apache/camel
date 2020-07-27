@@ -65,8 +65,7 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Configure if a cache need to be created if it does exist or can't be
-     * pre-configured.
+     * Configure if a cache need to be created if it does exist or can't be pre-configured.
      */
     public void setCreateCacheIfNotExist(boolean createCacheIfNotExist) {
         this.createCacheIfNotExist = createCacheIfNotExist;
@@ -77,8 +76,8 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * To configure the default cache action. If an action is set in the message
-     * header, then the operation from the header takes precedence.
+     * To configure the default cache action. If an action is set in the message header, then the operation from the
+     * header takes precedence.
      */
     public void setAction(String action) {
         this.action = action;
@@ -89,8 +88,8 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * To configure the default action key. If a key is set in the message
-     * header, then the key from the header takes precedence.
+     * To configure the default action key. If a key is set in the message header, then the key from the header takes
+     * precedence.
      */
     public void setKey(Object key) {
         this.key = key;
@@ -189,8 +188,7 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Set the expire After Access Time in case of time based Eviction (in
-     * seconds)
+     * Set the expire After Access Time in case of time based Eviction (in seconds)
      */
     public void setExpireAfterAccessTime(int expireAfterAccessTime) {
         this.expireAfterAccessTime = expireAfterAccessTime;
@@ -201,8 +199,7 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Set the expire After Access Write in case of time based Eviction (in
-     * seconds)
+     * Set the expire After Access Write in case of time based Eviction (in seconds)
      */
     public void setExpireAfterWriteTime(int expireAfterWriteTime) {
         this.expireAfterWriteTime = expireAfterWriteTime;
@@ -235,7 +232,7 @@ public class CaffeineConfiguration implements Cloneable {
     // ****************************
     public CaffeineConfiguration copy() {
         try {
-            return (CaffeineConfiguration)super.clone();
+            return (CaffeineConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

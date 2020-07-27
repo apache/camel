@@ -25,24 +25,26 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 
 public interface MicroProfileMetricsCamelContextEventNotifierNamingStrategy {
 
-    MicroProfileMetricsCamelContextEventNotifierNamingStrategy DEFAULT = new MicroProfileMetricsCamelContextEventNotifierNamingStrategy() {
-        @Override
-        public String getCamelContextUptimeName() {
-            return CAMEL_CONTEXT_UPTIME_METRIC_NAME;
-        }
+    MicroProfileMetricsCamelContextEventNotifierNamingStrategy DEFAULT
+            = new MicroProfileMetricsCamelContextEventNotifierNamingStrategy() {
+                @Override
+                public String getCamelContextUptimeName() {
+                    return CAMEL_CONTEXT_UPTIME_METRIC_NAME;
+                }
 
-        @Override
-        public String getCamelContextStatusName() {
-            return CAMEL_CONTEXT_STATUS_METRIC_NAME;
-        }
-    };
+                @Override
+                public String getCamelContextStatusName() {
+                    return CAMEL_CONTEXT_STATUS_METRIC_NAME;
+                }
+            };
 
     String getCamelContextUptimeName();
+
     String getCamelContextStatusName();
 
     default Tag[] getTags(CamelContext camelContext) {
         return new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, camelContext.getName()),
+                new Tag(CAMEL_CONTEXT_TAG, camelContext.getName()),
         };
     }
 }

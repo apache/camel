@@ -40,14 +40,15 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
         TelegramEndpoint ep2 = (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=CUSTOM");
         assertEquals("CUSTOM", ep2.getConfiguration().getAuthorizationToken());
 
-        TelegramEndpoint ep3 = (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=ANOTHER&chatId=123");
+        TelegramEndpoint ep3
+                = (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=ANOTHER&chatId=123");
         assertEquals("ANOTHER", ep3.getConfiguration().getAuthorizationToken());
     }
 
     @Test
     public void testNonDefaultConfig() {
         assertThrows(IllegalArgumentException.class, () -> {
-            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
             component.setAuthorizationToken(null);
             component.createEndpoint("telegram:bots");
         });
@@ -56,7 +57,7 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
     @Test
     public void testWrongURI1() {
         assertThrows(IllegalArgumentException.class, () -> {
-            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
             component.setAuthorizationToken("ANY");
             component.createEndpoint("telegram:bots/ ");
         });
@@ -65,7 +66,7 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
     @Test
     public void testWrongURI2() {
         assertThrows(IllegalArgumentException.class, () -> {
-            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
             component.setAuthorizationToken("ANY");
             component.createEndpoint("telegram:bots/token/s");
         });
@@ -74,7 +75,7 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
     @Test
     public void testWrongURI3() {
         assertThrows(PropertyBindingException.class, () -> {
-            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
             component.setAuthorizationToken("ANY");
             component.createEndpoint("telegram:bots?proxyType=ANY");
         });

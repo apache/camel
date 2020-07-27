@@ -62,7 +62,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
         assertEquals(204, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("", msg.getBody(String.class));
     }
-    
+
     @Test
     public void testNoSwitchingHasBodyViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
@@ -93,7 +93,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
         assertEquals(200, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("No Content", msg.getBody(String.class));
     }
-    
+
     @Test
     public void testNoSwitchingHasCodeViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
@@ -124,7 +124,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
         assertEquals(200, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("", msg.getBody(String.class));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -132,25 +132,23 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
             public void configure() throws Exception {
 
                 from("undertow:http://localhost:{{port}}/foo")
-                    .setBody().constant("");
+                        .setBody().constant("");
 
                 from("direct:foo")
-                    .to("undertow:http://localhost:{{port}}/foo");
+                        .to("undertow:http://localhost:{{port}}/foo");
 
-                
                 from("undertow:http://localhost:{{port}}/bar")
-                    .setBody().constant("No Content");
+                        .setBody().constant("No Content");
 
                 from("direct:bar")
-                    .to("undertow:http://localhost:{{port}}/bar");
-                
-                
+                        .to("undertow:http://localhost:{{port}}/bar");
+
                 from("undertow:http://localhost:{{port}}/foobar")
-                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
-                    .setBody().constant("");
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
+                        .setBody().constant("");
 
                 from("direct:foobar")
-                    .to("undertow:http://localhost:{{port}}/foobar");
+                        .to("undertow:http://localhost:{{port}}/foobar");
 
             }
         };

@@ -36,14 +36,15 @@ public class GenericType {
     private static final Map<String, Class> PRIMITIVE_CLASSES = new HashMap<>();
 
     public enum BoundType {
-        Exact, Extends, Super
+        Exact,
+        Extends,
+        Super
     }
-    
+
     private final Class clazz;
     private GenericType[] parameters;
     private BoundType boundType;
-    
-    
+
     static {
         PRIMITIVE_CLASSES.put("int", int.class);
         PRIMITIVE_CLASSES.put("short", short.class);
@@ -203,7 +204,7 @@ public class GenericType {
         if (!(object instanceof GenericType)) {
             return false;
         }
-        GenericType other = (GenericType)object;
+        GenericType other = (GenericType) object;
         if (getRawClass() != other.getRawClass()) {
             return false;
         }
@@ -241,7 +242,7 @@ public class GenericType {
 
     static BoundType boundType(Type type) {
         if (type instanceof WildcardType) {
-            WildcardType wct = (WildcardType)type;
+            WildcardType wct = (WildcardType) type;
             return wct.getLowerBounds().length == 0 ? BoundType.Extends : BoundType.Super;
         }
         return BoundType.Exact;
@@ -249,11 +250,11 @@ public class GenericType {
 
     static GenericType[] parametersOf(Type type) {
         if (type instanceof Class) {
-            Class clazz = (Class)type;
+            Class clazz = (Class) type;
             if (clazz.isArray()) {
                 GenericType t = new GenericType(clazz.getComponentType());
                 if (t.size() > 0) {
-                    return new GenericType[] {t};
+                    return new GenericType[] { t };
                 } else {
                     return EMPTY;
                 }
@@ -262,7 +263,7 @@ public class GenericType {
             }
         }
         if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType)type;
+            ParameterizedType pt = (ParameterizedType) type;
             Type[] parameters = pt.getActualTypeArguments();
             GenericType[] gts = new GenericType[parameters.length];
             for (int i = 0; i < gts.length; i++) {
@@ -271,7 +272,7 @@ public class GenericType {
             return gts;
         }
         if (type instanceof GenericArrayType) {
-            return new GenericType[] {new GenericType(((GenericArrayType)type).getGenericComponentType())};
+            return new GenericType[] { new GenericType(((GenericArrayType) type).getGenericComponentType()) };
         }
         if (type instanceof WildcardType) {
             return EMPTY;
@@ -282,10 +283,10 @@ public class GenericType {
     static Class<?> getConcreteClass(Type type) {
         Type ntype = collapse(type);
         if (ntype instanceof Class) {
-            return (Class<?>)ntype;
+            return (Class<?>) ntype;
         }
         if (ntype instanceof ParameterizedType) {
-            return getConcreteClass(collapse(((ParameterizedType)ntype).getRawType()));
+            return getConcreteClass(collapse(((ParameterizedType) ntype).getRawType()));
         }
         throw new RuntimeException("Unknown type " + type);
     }
@@ -294,15 +295,15 @@ public class GenericType {
         if (target instanceof Class || target instanceof ParameterizedType) {
             return target;
         } else if (target instanceof TypeVariable) {
-            return collapse(((TypeVariable<?>)target).getBounds()[0]);
+            return collapse(((TypeVariable<?>) target).getBounds()[0]);
         } else if (target instanceof GenericArrayType) {
-            Type t = collapse(((GenericArrayType)target).getGenericComponentType());
+            Type t = collapse(((GenericArrayType) target).getGenericComponentType());
             while (t instanceof ParameterizedType) {
-                t = collapse(((ParameterizedType)t).getRawType());
+                t = collapse(((ParameterizedType) t).getRawType());
             }
-            return Array.newInstance((Class<?>)t, 0).getClass();
+            return Array.newInstance((Class<?>) t, 0).getClass();
         } else if (target instanceof WildcardType) {
-            WildcardType wct = (WildcardType)target;
+            WildcardType wct = (WildcardType) target;
             if (wct.getLowerBounds().length == 0) {
                 return collapse(wct.getUpperBounds()[0]);
             } else {

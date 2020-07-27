@@ -53,12 +53,11 @@ public class BindySimpleCsvBooleanTrueMarshallTest {
         resultEndpoint.assertIsSatisfied();
     }
 
-
     public List<Map<String, Object>> generateModel() {
         Map<String, Object> modelObjects = new HashMap<>();
 
         BooleanExample example = new BooleanExample();
-        
+
         example.setName("andrew");
         example.setExist(Boolean.TRUE);
 
@@ -74,13 +73,13 @@ public class BindySimpleCsvBooleanTrueMarshallTest {
         @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-                org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
-            
+                    org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
+
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
-        
+
     }
 
 }

@@ -100,15 +100,18 @@ public final class VertxPlatformHttpServerSupport {
                 } else {
                     final String requestedMethods = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD);
                     if (requestedMethods != null) {
-                        processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestedMethods, corsConfig.getMethods());
+                        processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestedMethods,
+                                corsConfig.getMethods());
                     }
 
                     final String requestedHeaders = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
                     if (requestedHeaders != null) {
-                        processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestedHeaders, corsConfig.getHeaders());
+                        processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestedHeaders,
+                                corsConfig.getHeaders());
                     }
 
-                    final boolean allowsOrigin = ObjectHelper.isEmpty(corsConfig.getOrigins()) || corsConfig.getOrigins().contains(origin);
+                    final boolean allowsOrigin
+                            = ObjectHelper.isEmpty(corsConfig.getOrigins()) || corsConfig.getOrigins().contains(origin);
                     if (allowsOrigin) {
                         response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
                     }
@@ -116,12 +119,15 @@ public final class VertxPlatformHttpServerSupport {
                     response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
 
                     if (ObjectHelper.isNotEmpty(corsConfig.getExposedHeaders())) {
-                        response.headers().set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, String.join(",", corsConfig.getExposedHeaders()));
+                        response.headers().set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+                                String.join(",", corsConfig.getExposedHeaders()));
                     }
 
                     if (request.method().equals(HttpMethod.OPTIONS)) {
-                        if ((requestedHeaders != null || requestedMethods != null) && corsConfig.getAccessControlMaxAge() != null) {
-                            response.putHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, String.valueOf(corsConfig.getAccessControlMaxAge().getSeconds()));
+                        if ((requestedHeaders != null || requestedMethods != null)
+                                && corsConfig.getAccessControlMaxAge() != null) {
+                            response.putHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE,
+                                    String.valueOf(corsConfig.getAccessControlMaxAge().getSeconds()));
                         }
                         response.end();
                     } else {
@@ -132,7 +138,8 @@ public final class VertxPlatformHttpServerSupport {
         };
     }
 
-    private static void processHeaders(HttpServerResponse response, CharSequence header, String allowValues, Collection<String> values) {
+    private static void processHeaders(
+            HttpServerResponse response, CharSequence header, String allowValues, Collection<String> values) {
         if (ObjectHelper.isEmpty(values)) {
             response.headers().set(header, allowValues);
         } else {
@@ -142,8 +149,8 @@ public final class VertxPlatformHttpServerSupport {
             }
 
             String result = values.stream()
-                .filter(value -> requestedValues.contains(value.toLowerCase()))
-                .collect(Collectors.joining(","));
+                    .filter(value -> requestedValues.contains(value.toLowerCase()))
+                    .collect(Collectors.joining(","));
 
             if (ObjectHelper.isNotEmpty(result)) {
                 response.headers().set(header, result);
@@ -157,10 +164,11 @@ public final class VertxPlatformHttpServerSupport {
     //
     // *****************************
 
-    static HttpServerOptions configureSSL(HttpServerOptions options, VertxPlatformHttpServerConfiguration configuration, CamelContext camelContext) {
+    static HttpServerOptions configureSSL(
+            HttpServerOptions options, VertxPlatformHttpServerConfiguration configuration, CamelContext camelContext) {
         final SSLContextParameters sslParameters = configuration.getSslContextParameters() != null
-            ? configuration.getSslContextParameters()
-            : configuration.isUseGlobalSslContextParameters() ? camelContext.getSSLContextParameters() : null;
+                ? configuration.getSslContextParameters()
+                : configuration.isUseGlobalSslContextParameters() ? camelContext.getSSLContextParameters() : null;
 
         if (sslParameters != null) {
             options.setSsl(true);
@@ -192,7 +200,9 @@ public final class VertxPlatformHttpServerSupport {
         return options;
     }
 
-    private static KeyManagerFactory createKeyManagerFactory(CamelContext camelContext, SSLContextParameters sslContextParameters) throws GeneralSecurityException, IOException {
+    private static KeyManagerFactory createKeyManagerFactory(
+            CamelContext camelContext, SSLContextParameters sslContextParameters)
+            throws GeneralSecurityException, IOException {
         final KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
         if (keyManagers == null) {
             return null;
@@ -207,7 +217,8 @@ public final class VertxPlatformHttpServerSupport {
         if (keyManagers.getProvider() == null) {
             kmf = KeyManagerFactory.getInstance(kmfAlgorithm);
         } else {
-            kmf = KeyManagerFactory.getInstance(kmfAlgorithm, camelContext.resolvePropertyPlaceholders(keyManagers.getProvider()));
+            kmf = KeyManagerFactory.getInstance(kmfAlgorithm,
+                    camelContext.resolvePropertyPlaceholders(keyManagers.getProvider()));
         }
 
         char[] kmfPassword = null;
@@ -221,7 +232,9 @@ public final class VertxPlatformHttpServerSupport {
         return kmf;
     }
 
-    private static TrustManagerFactory createTrustManagerFactory(CamelContext camelContext, SSLContextParameters sslContextParameters) throws GeneralSecurityException, IOException {
+    private static TrustManagerFactory createTrustManagerFactory(
+            CamelContext camelContext, SSLContextParameters sslContextParameters)
+            throws GeneralSecurityException, IOException {
         final TrustManagersParameters trustManagers = sslContextParameters.getTrustManagers();
         if (trustManagers == null) {
             return null;
@@ -238,7 +251,8 @@ public final class VertxPlatformHttpServerSupport {
             if (trustManagers.getProvider() == null) {
                 tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             } else {
-                tmf = TrustManagerFactory.getInstance(tmfAlgorithm, camelContext.resolvePropertyPlaceholders(trustManagers.getProvider()));
+                tmf = TrustManagerFactory.getInstance(tmfAlgorithm,
+                        camelContext.resolvePropertyPlaceholders(trustManagers.getProvider()));
             }
 
             KeyStore ks = trustManagers.getKeyStore() == null ? null : trustManagers.getKeyStore().createKeyStore();

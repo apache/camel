@@ -23,10 +23,9 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 /**
  * This {@link DefaultMessageListenerContainer} is used for reply queues which are shared.
  * <p/>
- * This implementation supports using a fixed or dynamic JMS Message Selector to pickup the
- * designated reply messages from the shared queue. Since the queue is shared, then we can only
- * pickup the reply messages which is intended for us, so to support that we must use JMS
- * Message Selectors.
+ * This implementation supports using a fixed or dynamic JMS Message Selector to pickup the designated reply messages
+ * from the shared queue. Since the queue is shared, then we can only pickup the reply messages which is intended for
+ * us, so to support that we must use JMS Message Selectors.
  * <p/>
  * See more details at <a href="http://camel.apache.org/jms">camel-jms</a>.
  *
@@ -40,7 +39,7 @@ public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListen
     /**
      * Use a fixed JMS message selector
      *
-     * @param endpoint the endpoint
+     * @param endpoint             the endpoint
      * @param fixedMessageSelector the fixed selector
      */
     public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, String fixedMessageSelector) {
@@ -52,7 +51,7 @@ public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListen
      * Use a dynamic JMS message selector
      *
      * @param endpoint the endpoint
-     * @param creator the create to create the dynamic selector
+     * @param creator  the create to create the dynamic selector
      */
     public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, MessageSelectorCreator creator) {
         super(endpoint, endpoint.isAllowReplyManagerQuickStop());

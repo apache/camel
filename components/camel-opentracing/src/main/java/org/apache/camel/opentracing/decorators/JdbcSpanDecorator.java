@@ -41,7 +41,7 @@ public class JdbcSpanDecorator extends AbstractSpanDecorator {
 
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
-            span.setTag(Tags.DB_STATEMENT.getKey(), (String)body);
+            span.setTag(Tags.DB_STATEMENT.getKey(), (String) body);
         }
     }
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.utils.cassandra;
+
 //
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
@@ -130,7 +131,7 @@ public final class CassandraUtils {
     public static Select generateSelect(String table, String[] selectColumns, String[] whereColumns, int whereColumnsMaxIndex) {
         SelectFrom from = selectFrom(table);
         Select select = null;
-        for (String column: selectColumns) {
+        for (String column : selectColumns) {
             select = (select != null ? select : from).column(column);
         }
         if (select == null) {
@@ -144,14 +145,14 @@ public final class CassandraUtils {
         return select;
     }
 
-   /**
+    /**
      * Generate delete where columns = ? CQL.
      */
     public static Delete generateDelete(String table, String[] whereColumns, boolean ifExists) {
         return generateDelete(table, whereColumns, size(whereColumns), ifExists);
     }
 
-   /**
+    /**
      * Generate delete where columns = ? CQL.
      */
     public static Delete generateDelete(String table, String[] whereColumns, int whereColumnsMaxIndex, boolean ifExists) {
@@ -165,8 +166,9 @@ public final class CassandraUtils {
         } else {
             // Once there is at least one relation, the statement can be built
             //(see https://docs.datastax.com/en/developer/java-driver/4.6/manual/query_builder/delete/#relations)
-            throw new IllegalArgumentException("Invalid delete statement. There has to be at least one relation. "
-                    + "To delete all records, use Truncate");
+            throw new IllegalArgumentException(
+                    "Invalid delete statement. There has to be at least one relation. "
+                                               + "To delete all records, use Truncate");
         }
 
         if (ifExists) {

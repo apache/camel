@@ -26,8 +26,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * Default implementation of {@link ManagementNameStrategy}
  * <p/>
- * This implementation will by default use a name pattern as <tt>#name#</tt> and in case
- * of a clash, then the pattern will fallback to be using the counter as <tt>#name#-#counter#</tt>.
+ * This implementation will by default use a name pattern as <tt>#name#</tt> and in case of a clash, then the pattern
+ * will fallback to be using the counter as <tt>#name#-#counter#</tt>.
  */
 public class DefaultManagementNameStrategy implements ManagementNameStrategy {
 
@@ -66,7 +66,8 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
             String pattern = getNamePattern();
             if (pattern == null) {
                 // fallback and use the default pattern which is the same name as the CamelContext has been given
-                pattern = defaultPattern != null ? defaultPattern : camelContext.getManagementStrategy().getManagementAgent().getManagementNamePattern();
+                pattern = defaultPattern != null
+                        ? defaultPattern : camelContext.getManagementStrategy().getManagementAgent().getManagementNamePattern();
             }
             name = resolveManagementName(pattern, camelContext.getName(), true);
         }
@@ -103,9 +104,9 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
     /**
      * Creates a new management name with the given pattern
      *
-     * @param pattern the pattern
-     * @param name    the name
-     * @return the management name
+     * @param  pattern                  the pattern
+     * @param  name                     the name
+     * @return                          the management name
      * @throws IllegalArgumentException if the pattern or name is invalid or empty
      */
     @Override
@@ -138,9 +139,9 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
     /**
      * Strategy to do any custom resolution of the name
      *
-     * @param pattern  the pattern
-     * @param answer   the current answer, which may have custom patterns still to be resolved
-     * @return the resolved name
+     * @param  pattern the pattern
+     * @param  answer  the current answer, which may have custom patterns still to be resolved
+     * @return         the resolved name
      */
     protected String customResolveManagementName(String pattern, String answer) {
         return answer;

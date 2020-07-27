@@ -81,7 +81,7 @@ public class CMISTestSupport extends CamelTestSupport {
         ItemIterable<CmisObject> children = rootFolder.getChildren();
         for (CmisObject cmisObject : children) {
             if (CamelCMISConstants.CMIS_FOLDER.equals(cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID))) {
-                List<String> notDeltedIdList = ((Folder)cmisObject)
+                List<String> notDeltedIdList = ((Folder) cmisObject)
                         .deleteTree(true, UnfileObject.DELETE, true);
                 if (notDeltedIdList != null && notDeltedIdList.size() > 0) {
                     throw new RuntimeException("Cannot empty repo");
@@ -105,7 +105,7 @@ public class CMISTestSupport extends CamelTestSupport {
 
     protected String getDocumentContentAsString(String nodeId) throws Exception {
         CmisObject cmisObject = retrieveCMISObjectByIdFromServer(nodeId);
-        Document doc = (Document)cmisObject;
+        Document doc = (Document) cmisObject;
         InputStream inputStream = doc.getContentStream().getStream();
         return readFromStream(inputStream);
     }

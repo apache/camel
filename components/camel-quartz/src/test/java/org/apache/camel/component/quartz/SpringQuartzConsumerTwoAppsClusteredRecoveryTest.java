@@ -32,7 +32,8 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Tests a Quartz based cluster setup of two Camel Apps being triggered through with recoverableJob option is true {@link QuartzConsumer}.
+ * Tests a Quartz based cluster setup of two Camel Apps being triggered through with recoverableJob option is true
+ * {@link QuartzConsumer}.
  */
 public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
 
@@ -41,10 +42,12 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
     @Test
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
-        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
+        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
 
         // now launch the first clustered app which will acquire the quartz database lock and become the master
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerRecoveryClusteredAppOne.xml");
+        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerRecoveryClusteredAppOne.xml");
 
         // now let's simulate a crash of the first app (the quartz instance 'app-one')
         log.warn("The first app is going to crash NOW!");
@@ -57,7 +60,8 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
         Thread.sleep(2000);
 
         // as well as the second one which will run in slave mode as it will not be able to acquire the same lock
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerRecoveryClusteredAppTwo.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerRecoveryClusteredAppTwo.xml");
         app2.start();
 
         // wait long enough until the second app takes it over...
@@ -103,7 +107,7 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
         @Override
         public void process(Exchange exchange) throws Exception {
             // shutdown the application context;
-            ((AbstractXmlApplicationContext)applicationContext).close();
+            ((AbstractXmlApplicationContext) applicationContext).close();
         }
 
         @Override

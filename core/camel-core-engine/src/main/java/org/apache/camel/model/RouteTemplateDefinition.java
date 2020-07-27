@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeTemplate")
-@XmlType(propOrder = {"templateParameters", "route"})
+@XmlType(propOrder = { "templateParameters", "route" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
@@ -67,8 +67,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     /**
      * Creates an input to the route
      *
-     * @param uri the from uri
-     * @return the builder
+     * @param  uri the from uri
+     * @return     the builder
      */
     public RouteDefinition from(@AsEndpointUri String uri) {
         return route.from(uri);
@@ -77,8 +77,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     /**
      * Creates an input to the route
      *
-     * @param endpoint the from endpoint
-     * @return the builder
+     * @param  endpoint the from endpoint
+     * @return          the builder
      */
     public RouteDefinition from(Endpoint endpoint) {
         return route.from(endpoint);
@@ -87,8 +87,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     /**
      * Creates an input to the route
      *
-     * @param endpoint the from endpoint
-     * @return the builder
+     * @param  endpoint the from endpoint
+     * @return          the builder
      */
     public RouteDefinition from(EndpointConsumerBuilder endpoint) {
         return route.from(endpoint);
@@ -122,7 +122,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     /**
      * Adds a parameter the route template uses.
      *
-     * @param name the name of the parameter
+     * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
      */
     public RouteTemplateDefinition templateParameter(String name, String defaultValue) {
@@ -133,7 +133,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     /**
      * Adds a parameter the route template uses.
      *
-     * @param name the name of the parameter
+     * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
      */
     public RouteTemplateDefinition templateParameter(String name, String defaultValue, String description) {
@@ -177,9 +177,9 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
         this.templateParameters.add(new RouteTemplateParameterDefinition(name, defaultValue, description));
     }
+
     /**
-     * Creates a copy of this template as a {@link RouteDefinition} which can be used
-     * to add as a new route.
+     * Creates a copy of this template as a {@link RouteDefinition} which can be used to add as a new route.
      */
     public RouteDefinition asRouteDefinition() {
         RouteDefinition copy = new RouteDefinition();

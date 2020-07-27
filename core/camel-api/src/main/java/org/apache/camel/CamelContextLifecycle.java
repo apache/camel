@@ -23,7 +23,7 @@ public interface CamelContextLifecycle extends AutoCloseable {
 
     /**
      * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
-     *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>.
+     * <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>.
      * <p/>
      * See more details at the class-level javadoc of this class.
      *
@@ -32,7 +32,8 @@ public interface CamelContextLifecycle extends AutoCloseable {
     void start();
 
     /**
-     * Stop and shutdown the {@link CamelContext} (will stop all routes/components/endpoints etc and clear internal state/cache).
+     * Stop and shutdown the {@link CamelContext} (will stop all routes/components/endpoints etc and clear internal
+     * state/cache).
      * <p/>
      * See more details at the class-level javadoc of this class.
      *
@@ -83,8 +84,8 @@ public interface CamelContextLifecycle extends AutoCloseable {
     boolean isSuspended();
 
     /**
-     * Helper methods so the CamelContext knows if it should keep running.
-     * Returns <tt>false</tt> if the CamelContext is being stopped or is stopped.
+     * Helper methods so the CamelContext knows if it should keep running. Returns <tt>false</tt> if the CamelContext is
+     * being stopped or is stopped.
      *
      * @return <tt>true</tt> if the CamelContext should continue to run.
      */

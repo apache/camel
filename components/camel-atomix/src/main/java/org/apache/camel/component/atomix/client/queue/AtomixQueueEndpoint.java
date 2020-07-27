@@ -27,11 +27,11 @@ import org.apache.camel.spi.UriParam;
  * Access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedqueue">distributed queue</a>.
  */
 @UriEndpoint(
-    firstVersion = "2.20.0",
-    scheme = "atomix-queue",
-    title = "Atomix Queue",
-    syntax = "atomix-queue:resourceName",
-    label = "clustering")
+             firstVersion = "2.20.0",
+             scheme = "atomix-queue",
+             title = "Atomix Queue",
+             syntax = "atomix-queue:resourceName",
+             label = "clustering")
 public final class AtomixQueueEndpoint extends AbstractAtomixClientEndpoint<AtomixQueueComponent, AtomixQueueConfiguration> {
     @UriParam
     private AtomixQueueConfiguration configuration;

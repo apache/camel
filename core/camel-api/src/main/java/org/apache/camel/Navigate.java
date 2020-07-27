@@ -19,16 +19,16 @@ package org.apache.camel;
 import java.util.List;
 
 /**
- * Implementations support navigating a graph where you can traverse forward and each next
- * returns a {@link List} of outputs of type <tt>T</tt> that can contain <tt>0..n</tt> nodes.
+ * Implementations support navigating a graph where you can traverse forward and each next returns a {@link List} of
+ * outputs of type <tt>T</tt> that can contain <tt>0..n</tt> nodes.
  */
 public interface Navigate<T> {
 
     /**
      * Next group of outputs
      * <p/>
-     * Important only invoke this once, as this method do not carry state, and is not intended to be used in a while loop,
-     * but used by a if statement instead.
+     * Important only invoke this once, as this method do not carry state, and is not intended to be used in a while
+     * loop, but used by a if statement instead.
      *
      * @return next group or <tt>null</tt> if no more outputs
      */
@@ -37,8 +37,8 @@ public interface Navigate<T> {
     /**
      * Are there more outputs?
      * <p/>
-     * Important only invoke this once, as this method do not carry state, and is not intended to be used in a while loop,
-     * but used by a if statement instead.
+     * Important only invoke this once, as this method do not carry state, and is not intended to be used in a while
+     * loop, but used by a if statement instead.
      *
      * @return <tt>true</tt> if more outputs
      */

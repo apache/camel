@@ -52,14 +52,14 @@ import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static io.smallrye.faulttolerance.core.Invocation.invocation;
 
 /**
  * Implementation of Circuit Breaker EIP using microprofile fault tolerance.
  */
 @ManagedResource(description = "Managed FaultTolerance Processor")
-public class FaultToleranceProcessor extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+public class FaultToleranceProcessor extends AsyncProcessorSupport
+        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FaultToleranceProcessor.class);
 
@@ -212,7 +212,9 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport implements Ca
 
         // 1. bulkhead
         if (config.isBulkheadEnabled()) {
-            target = new ThreadPoolBulkhead(target, "bulkhead", executorService, config.getBulkheadMaxConcurrentCalls(), config.getBulkheadWaitingTaskQueue(), null);
+            target = new ThreadPoolBulkhead(
+                    target, "bulkhead", executorService, config.getBulkheadMaxConcurrentCalls(),
+                    config.getBulkheadWaitingTaskQueue(), null);
         }
         // 2. timeout
         if (config.isTimeoutEnabled()) {
@@ -251,7 +253,8 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport implements Ca
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         if (circuitBreaker == null) {
-            circuitBreaker = new CircuitBreaker(invocation(), id, SetOfThrowables.ALL,
+            circuitBreaker = new CircuitBreaker(
+                    invocation(), id, SetOfThrowables.ALL,
                     SetOfThrowables.EMPTY, config.getDelay(), config.getRequestVolumeThreshold(), config.getFailureRatio(),
                     config.getSuccessThreshold(), new SystemStopwatch(), null);
         }
@@ -260,11 +263,13 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport implements Ca
     @Override
     protected void doStart() throws Exception {
         if (config.isTimeoutEnabled() && scheduledExecutorService == null) {
-            scheduledExecutorService = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, "CircuitBreakerTimeout", config.getTimeoutPoolSize());
+            scheduledExecutorService = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,
+                    "CircuitBreakerTimeout", config.getTimeoutPoolSize());
             shutdownScheduledExecutorService = true;
         }
         if (config.isBulkheadEnabled() && executorService == null) {
-            executorService = getCamelContext().getExecutorServiceManager().newThreadPool(this, "CircuitBreakerBulkhead", config.getBulkheadMaxConcurrentCalls(), config.getBulkheadMaxConcurrentCalls());
+            executorService = getCamelContext().getExecutorServiceManager().newThreadPool(this, "CircuitBreakerBulkhead",
+                    config.getBulkheadMaxConcurrentCalls(), config.getBulkheadMaxConcurrentCalls());
             shutdownExecutorService = true;
         }
     }
@@ -347,7 +352,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport implements Ca
                     exchange.setException(throwable);
                     return exchange;
                 } else if (throwable instanceof CircuitBreakerOpenException) {
-                     // the circuit breaker triggered a call rejected
+                    // the circuit breaker triggered a call rejected
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);

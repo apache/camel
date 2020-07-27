@@ -26,18 +26,19 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataIntegrityViolationException;
 
 /**
- * A default {@link JdbcOptimisticLockingExceptionMapper} which checks the caused exception (and its nested)
- * whether any of them is a constraint violation exception.
+ * A default {@link JdbcOptimisticLockingExceptionMapper} which checks the caused exception (and its nested) whether any
+ * of them is a constraint violation exception.
  * <p/>
  * The following check is done:
  * <ul>
- *     <li>If the caused exception is an {@link SQLException}</li> then the SQLState is checked if starts with <tt>23</tt>.
- *     <li>If the caused exception is a {@link DataIntegrityViolationException}</li>
- *     <li>If the caused exception class name has <tt>ConstraintViolation</tt></li> in its name.
- *     <li>optional checking for FQN class name matches if any class names has been configured</li>
+ * <li>If the caused exception is an {@link SQLException}</li> then the SQLState is checked if starts with <tt>23</tt>.
+ * <li>If the caused exception is a {@link DataIntegrityViolationException}</li>
+ * <li>If the caused exception class name has <tt>ConstraintViolation</tt></li> in its name.
+ * <li>optional checking for FQN class name matches if any class names has been configured</li>
  * </ul>
- * In addition you can add FQN classnames using the {@link #addClassName(String)} or {@link #setClassNames(java.util.Set)}
- * methods. These class names is also matched. This allows to add vendor specific exception classes.
+ * In addition you can add FQN classnames using the {@link #addClassName(String)} or
+ * {@link #setClassNames(java.util.Set)} methods. These class names is also matched. This allows to add vendor specific
+ * exception classes.
  */
 public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimisticLockingExceptionMapper {
 

@@ -26,7 +26,7 @@ public class SdbOperationsTest {
     public void supportedOperationCount() {
         assertEquals(9, SdbOperations.values().length);
     }
-    
+
     @Test
     public void valueOf() {
         assertEquals(SdbOperations.BatchDeleteAttributes, SdbOperations.valueOf("BatchDeleteAttributes"));
@@ -39,7 +39,7 @@ public class SdbOperationsTest {
         assertEquals(SdbOperations.PutAttributes, SdbOperations.valueOf("PutAttributes"));
         assertEquals(SdbOperations.Select, SdbOperations.valueOf("Select"));
     }
-    
+
     @Test
     public void testToString() {
         assertEquals(SdbOperations.BatchDeleteAttributes.toString(), "BatchDeleteAttributes");

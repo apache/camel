@@ -26,7 +26,7 @@ public class CamelResourceProvider implements ResourceProvider {
     // Using the dynamical proxy to provide the instance of client to invoke
     private Class<?> clazz;
     private ResourceProvider provider;
-    
+
     public CamelResourceProvider(Class<?> clazz) {
         this.clazz = clazz;
         if (!clazz.isInterface()) {
@@ -41,8 +41,8 @@ public class CamelResourceProvider implements ResourceProvider {
             result = provider.getInstance(m);
         } else {
             // create the instance with the invoker
-            result = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz},
-                                            new SubResourceClassInvocationHandler());
+            result = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz },
+                    new SubResourceClassInvocationHandler());
         }
         return result;
     }

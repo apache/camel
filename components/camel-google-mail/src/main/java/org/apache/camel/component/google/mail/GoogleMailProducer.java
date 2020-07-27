@@ -41,7 +41,8 @@ public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, G
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            BeanIntrospection beanIntrospection = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection
+                    = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }

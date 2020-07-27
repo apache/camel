@@ -57,42 +57,43 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/test").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketListener() {
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
 
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket, int code, String reason) {
+                            @Override
+                            public void onClose(WebSocket websocket, int code, String reason) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                t.printStackTrace();
+                            }
 
-                    @Override
-                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-                    }
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                            }
 
-                    @Override
-                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                        received.add(payload);
-                        log.info("received --> " + payload);
-                        latch.countDown();
-                    }
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                                received.add(payload);
+                                log.info("received --> " + payload);
+                                latch.countDown();
+                            }
 
-                    @Override
-                    public void onPingFrame(byte[] payload) {
-                    }
+                            @Override
+                            public void onPingFrame(byte[] payload) {
+                            }
 
-                    @Override
-                    public void onPongFrame(byte[] payload) {
-                    }
-                }).build()).get();
+                            @Override
+                            public void onPongFrame(byte[] payload) {
+                            }
+                        }).build())
+                .get();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
@@ -123,8 +124,8 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
                         .log(">>> Message received from WebSocket Client : ${body}")
                         .to("mock:client")
                         .loop(10)
-                            .setBody().constant(">> Welcome on board!")
-                            .to("websocket://test");
+                        .setBody().constant(">> Welcome on board!")
+                        .to("websocket://test");
             }
         };
     }

@@ -29,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PaymentMethodNonceGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentMethodNonceGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(PaymentMethodNonceGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(PaymentMethodNonceGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for create
     @Disabled
@@ -59,10 +60,10 @@ public class PaymentMethodNonceGatewayIntegrationTest extends AbstractBraintreeT
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=paymentMethodToken");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=paymentMethodToken");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=paymentMethodNonce");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=paymentMethodNonce");
             }
         };
     }

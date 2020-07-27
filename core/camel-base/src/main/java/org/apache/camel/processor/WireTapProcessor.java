@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
  */
-public class WireTapProcessor extends AsyncProcessorSupport implements Traceable, ShutdownAware, IdAware, RouteIdAware, CamelContextAware {
+public class WireTapProcessor extends AsyncProcessorSupport
+        implements Traceable, ShutdownAware, IdAware, RouteIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
 
@@ -176,7 +177,9 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
                 asyncProcessor.process(wireTapExchange, doneSync -> {
                     if (wireTapExchange.getException() != null) {
                         String u = URISupport.sanitizeUri(uri);
-                        LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + u + ". This exception will be ignored.", wireTapExchange.getException());
+                        LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + u
+                                 + ". This exception will be ignored.",
+                                wireTapExchange.getException());
                     }
                     taskCount.decrement();
                 });

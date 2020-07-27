@@ -24,7 +24,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteTemplateDefaultValueTest extends ContextTestSupport {
@@ -98,8 +97,8 @@ public class RouteTemplateDefaultValueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar", "cake")
-                    .from("direct:{{foo}}")
-                    .to("mock:{{bar}}");
+                        .from("direct:{{foo}}")
+                        .to("mock:{{bar}}");
             }
         };
     }

@@ -17,5 +17,11 @@
 package org.apache.camel.component.xquery;
 
 public enum ResultFormat {
-    Bytes, BytesSource, DOM, DOMSource, List, String, StringSource
+    Bytes,
+    BytesSource,
+    DOM,
+    DOMSource,
+    List,
+    String,
+    StringSource
 }

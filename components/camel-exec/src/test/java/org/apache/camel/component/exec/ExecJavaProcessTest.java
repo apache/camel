@@ -63,23 +63,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests the functionality of the {@link ExecComponent}, executing<br>
  * <i>java org.apache.camel.component.exec.ExecutableJavaProgram</i> <br>
- * command. <b>Note, that the tests assume, that the JAVA_HOME system variable
- * is set.</b> This is a more credible assumption, than assuming that java is in
- * the path, because the Maven scripts build the path to java with the JAVA_HOME
- * environment variable.
+ * command. <b>Note, that the tests assume, that the JAVA_HOME system variable is set.</b> This is a more credible
+ * assumption, than assuming that java is in the path, because the Maven scripts build the path to java with the
+ * JAVA_HOME environment variable.
  *
  * @see {@link ExecutableJavaProgram}
  */
 public class ExecJavaProcessTest extends CamelTestSupport {
 
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
-    
+
     @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
     @EndpointInject("mock:output")
     MockEndpoint output;
-    
+
     @BindToRegistry("executorMock")
     private ProvokeExceptionExecCommandExecutor provokerMock = new ProvokeExceptionExecCommandExecutor();
 
@@ -307,7 +306,8 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
                 // use string for args
                 String classpath = System.getProperty("java.class.path");
-                String args = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT + " \"Hello World\"";
+                String args
+                        = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT + " \"Hello World\"";
 
                 exchange.getIn().setBody("hello");
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
@@ -398,8 +398,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     }
 
     /**
-     * Test for thrown {@link ExecException} and access stderr and exitValue
-     * of thrown Exception
+     * Test for thrown {@link ExecException} and access stderr and exitValue of thrown Exception
      */
     @Test
     public void testExecJavaProcessWithThrownExecException() throws Exception {
@@ -431,11 +430,14 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         return sendExchange(commandArgument, buildFailArgs(commandArgument), timeout, "testBody", false);
     }
 
-    protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
+    protected Exchange sendExchange(
+            final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
         return sendExchange(commandArgument, buildArgs(commandArgument), timeout, body, useStderrOnEmptyStdout);
     }
 
-    protected Exchange sendExchange(final Object commandArgument, final List<String> args, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
+    protected Exchange sendExchange(
+            final Object commandArgument, final List<String> args, final long timeout, final String body,
+            final boolean useStderrOnEmptyStdout) {
         final String javaAbsolutePath = buildJavaExecutablePath();
 
         return producerTemplate.send(new Processor() {

@@ -55,8 +55,8 @@ public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:a")
-                    // invalid due extra parenthesis at the end
-                    .to("bean:foo?method=echo(${body}, 5))").to("mock:result");
+                        // invalid due extra parenthesis at the end
+                        .to("bean:foo?method=echo(${body}, 5))").to("mock:result");
             }
         };
     }

@@ -48,8 +48,8 @@ public class TransformViaDSLTest extends ContextTestSupport {
             public void configure() {
                 /*tag::example[]*/
                 from("direct:start")
-                    .setBody(body().append(" World!"))
-                    .to("mock:result");
+                        .setBody(body().append(" World!"))
+                        .to("mock:result");
                 /*end::example[]*/
             }
         };

@@ -26,7 +26,8 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PropertyBindingSupport;
 
 /**
- * An implementation of a {@link BeanHolder} which will look up a bean from the registry and act as a cache of its metadata
+ * An implementation of a {@link BeanHolder} which will look up a bean from the registry and act as a cache of its
+ * metadata
  */
 public class RegistryBean implements BeanHolder {
     private final CamelContext context;
@@ -104,7 +105,7 @@ public class RegistryBean implements BeanHolder {
             // could be a class then create an instance of it
             if (value instanceof Class) {
                 // bean is a class so create an instance of it
-                value = context.getInjector().newInstance((Class<?>)value);
+                value = context.getInjector().newInstance((Class<?>) value);
             }
             return value;
         }

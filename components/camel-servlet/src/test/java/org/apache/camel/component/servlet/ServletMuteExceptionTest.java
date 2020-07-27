@@ -27,7 +27,8 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMuteException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/mute",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/mute",
                 new ByteArrayInputStream("".getBytes()), "text/plain");
         WebResponse response = query(req, false);
 
@@ -38,7 +39,8 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMuteWithTransferException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/muteWithTransfer",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/muteWithTransfer",
                 new ByteArrayInputStream("".getBytes()), "text/plain");
         WebResponse response = query(req, false);
 
@@ -53,10 +55,10 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 from("servlet:mute?muteException=true")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .throwException(new IllegalArgumentException("Damn"));
 
                 from("servlet:muteWithTransfer?muteException=true&transferException=true")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

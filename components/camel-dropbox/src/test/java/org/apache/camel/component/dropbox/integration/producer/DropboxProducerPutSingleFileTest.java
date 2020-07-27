@@ -65,7 +65,7 @@ public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
         headers.put(DropboxConstants.HEADER_LOCAL_PATH, file.toAbsolutePath().toString());
         headers.put(DropboxConstants.HEADER_UPLOAD_MODE, DropboxUploadMode.add);
         assertThrows(DropboxException.class,
-            () -> template.sendBodyAndHeaders("direct:start", null, headers));
+                () -> template.sendBodyAndHeaders("direct:start", null, headers));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("dropbox://put?accessToken={{accessToken}}&remotePath=" + workdir + "/" + FILENAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

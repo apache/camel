@@ -71,22 +71,22 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     /**
      * Handles the given exception
      *
-     * @param exceptionType the exception
-     * @return the try builder
+     * @param  exceptionType the exception
+     * @return               the try builder
      */
     @SuppressWarnings("unchecked")
     public TryDefinition doCatch(Class<? extends Throwable> exceptionType) {
         // this method is introduced to avoid compiler warnings about the
         // generic Class arrays in the case we've got only one single Class
         // to build a TryDefinition for
-        return doCatch(new Class[] {exceptionType});
+        return doCatch(new Class[] { exceptionType });
     }
 
     /**
      * Handles the given exception(s)
      *
-     * @param exceptionType the exception(s)
-     * @return the try builder
+     * @param  exceptionType the exception(s)
+     * @return               the try builder
      */
     @SafeVarargs
     public final TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
@@ -112,14 +112,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     /**
-     * Sets an additional predicate that should be true before the onCatch is
-     * triggered.
+     * Sets an additional predicate that should be true before the onCatch is triggered.
      * <p/>
-     * To be used for fine grained controlling whether a thrown exception should
-     * be intercepted by this exception type or not.
+     * To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type
+     * or not.
      *
-     * @param predicate predicate that determines true or false
-     * @return the builder
+     * @param  predicate predicate that determines true or false
+     * @return           the builder
      */
     public TryDefinition onWhen(@AsPredicate Predicate predicate) {
         // we must use a delegate so we can use the fluent builder based on
@@ -195,12 +194,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
 
             for (ProcessorDefinition<?> output : outputs) {
                 if (output instanceof CatchDefinition) {
-                    catchClauses.add((CatchDefinition)output);
+                    catchClauses.add((CatchDefinition) output);
                 } else if (output instanceof FinallyDefinition) {
                     if (finallyClause != null) {
-                        throw new IllegalArgumentException("Multiple finally clauses added: " + finallyClause + " and " + output);
+                        throw new IllegalArgumentException(
+                                "Multiple finally clauses added: " + finallyClause + " and " + output);
                     } else {
-                        finallyClause = (FinallyDefinition)output;
+                        finallyClause = (FinallyDefinition) output;
                     }
                 } else {
                     outputsWithoutCatches.add(output);

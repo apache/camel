@@ -33,4 +33,3 @@ public class NeutronComponent extends DefaultComponent {
         return endpoint;
     }
 }
-

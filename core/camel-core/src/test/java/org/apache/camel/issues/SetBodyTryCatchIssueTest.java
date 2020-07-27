@@ -43,10 +43,11 @@ public class SetBodyTryCatchIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader("foo", constant("123")).doTry().setHeader("bar", constant("456")).to("mock:bar").bean(SetBodyTryCatchIssueTest.class, "doSomething")
-                    .doCatch(IllegalArgumentException.class)
-                    // empty block
-                    .end().setBody(header("foo")).to("mock:result");
+                from("direct:start").setHeader("foo", constant("123")).doTry().setHeader("bar", constant("456")).to("mock:bar")
+                        .bean(SetBodyTryCatchIssueTest.class, "doSomething")
+                        .doCatch(IllegalArgumentException.class)
+                        // empty block
+                        .end().setBody(header("foo")).to("mock:result");
             }
         };
     }

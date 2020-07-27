@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class JdbcAggregateRecoverTest extends AbstractJdbcAggregationTestSupport {
 
     private static AtomicInteger counter = new AtomicInteger(0);
-    
+
     @Override
     void configureJdbcAggregationRepository() {
         // enable recovery
@@ -66,7 +66,7 @@ public class JdbcAggregateRecoverTest extends AbstractJdbcAggregationTestSupport
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .delay(1000)
-                                // simulate errors the first two times
+                        // simulate errors the first two times
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 int count = counter.incrementAndGet();

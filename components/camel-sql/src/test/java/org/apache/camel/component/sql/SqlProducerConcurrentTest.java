@@ -39,7 +39,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqlProducerConcurrentTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
     private EmbeddedDatabase db;
@@ -93,8 +93,8 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-        
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+
         super.setUp();
     }
 
@@ -102,7 +102,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 

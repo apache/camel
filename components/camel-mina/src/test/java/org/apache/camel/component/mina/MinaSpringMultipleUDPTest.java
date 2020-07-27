@@ -32,7 +32,7 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "org/apache/camel/component/mina/SpringMultipleUDPTest-context.xml");
+                "org/apache/camel/component/mina/SpringMultipleUDPTest-context.xml");
     }
 
     @Test

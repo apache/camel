@@ -17,5 +17,11 @@
 package org.apache.camel.component.wordpress.api.model;
 
 public enum CategoryOrderBy {
-    id, include, name, slug, term_group, description, count;
+    id,
+    include,
+    name,
+    slug,
+    term_group,
+    description,
+    count;
 }

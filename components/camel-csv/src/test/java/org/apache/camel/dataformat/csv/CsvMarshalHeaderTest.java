@@ -93,7 +93,8 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String uri = String.format("file:%s?charset=utf-8&fileExist=Append", outputFile.getParentFile().getAbsolutePath());
+                String uri
+                        = String.format("file:%s?charset=utf-8&fileExist=Append", outputFile.getParentFile().getAbsolutePath());
                 from("direct:start").marshal(createCsvDataFormat()).to(uri);
             }
         };

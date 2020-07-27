@@ -159,8 +159,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public FluentProducerTemplate withBodyAs(Object body, Class<?> type) {
         Object b = type != null
-            ? context.getTypeConverter().convertTo(type, body)
-            : body;
+                ? context.getTypeConverter().convertTo(type, body)
+                : body;
 
         this.body.set(b);
 
@@ -234,33 +234,33 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @SuppressWarnings("unchecked")
     public <T> T request(Class<T> type) throws CamelExecutionException {
         if (exchangeSupplier.get() != null) {
-            throw new IllegalArgumentException("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.");
+            throw new IllegalArgumentException(
+                    "withExchange not supported on FluentProducerTemplate.request method. Use send method instead.");
         }
 
         // Determine the target endpoint
         final Endpoint target = target();
 
         // Create the default processor if not provided.
-        final Processor processorSupplier = this.processorSupplier.get() != null ? this.processorSupplier.get().get() : defaultProcessor();
+        final Processor processorSupplier
+                = this.processorSupplier.get() != null ? this.processorSupplier.get().get() : defaultProcessor();
 
         T result;
         if (type == Exchange.class) {
-            result = (T)template().request(target, processorSupplier);
+            result = (T) template().request(target, processorSupplier);
         } else if (type == Message.class) {
             Exchange exchange = template().request(target, processorSupplier);
-            result = (T)exchange.getMessage();
+            result = (T) exchange.getMessage();
         } else {
             Exchange exchange = template().send(
-                target,
-                ExchangePattern.InOut,
-                processorSupplier,
-                resultProcessors.get(type)
-            );
+                    target,
+                    ExchangePattern.InOut,
+                    processorSupplier,
+                    resultProcessors.get(type));
 
             result = context.getTypeConverter().convertTo(
-                type,
-                ExchangeHelper.extractResultBody(exchange, exchange.getPattern())
-            );
+                    type,
+                    ExchangeHelper.extractResultBody(exchange, exchange.getPattern()));
         }
 
         return result;
@@ -354,7 +354,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     private Processor defaultAsyncProcessor() {
-        final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers.get()) ? new HashMap<>(this.headers.get()) : null;
+        final Map<String, Object> headersCopy
+                = ObjectHelper.isNotEmpty(this.headers.get()) ? new HashMap<>(this.headers.get()) : null;
         final Object bodyCopy = this.body.get();
 
         return exchange -> {
@@ -375,7 +376,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
             return template.getDefaultEndpoint();
         }
 
-        throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
+        throw new IllegalArgumentException(
+                "No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
     }
 
     @Override

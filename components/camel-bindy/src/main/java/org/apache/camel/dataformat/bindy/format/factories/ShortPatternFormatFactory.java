@@ -38,7 +38,8 @@ public class ShortPatternFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new ShortPatternFormat(formattingOptions.getPattern(),
+        return new ShortPatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getLocale());
     }
 

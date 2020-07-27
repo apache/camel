@@ -69,7 +69,7 @@ public class HttpRequestResponseTest extends BaseJettyTest {
             assertNotNull(res);
 
             // and they should also be on HttpMessage
-            HttpMessage msg = (HttpMessage)exchange.getIn();
+            HttpMessage msg = (HttpMessage) exchange.getIn();
             assertNotNull(msg.getRequest());
             assertNotNull(msg.getResponse());
 

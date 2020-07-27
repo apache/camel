@@ -103,5 +103,4 @@ public class XmlRestDslTest {
         assertNull(details.getVerbs().get(1).getUri());
     }
 
-
 }

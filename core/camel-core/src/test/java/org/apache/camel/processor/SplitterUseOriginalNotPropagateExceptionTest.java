@@ -64,8 +64,10 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body()).aggregationStrategy(AggregationStrategies.useOriginal(false)).filter(simple("${body} == 'Kaboom'"))
-                    .throwException(new IllegalArgumentException("Forced error")).end().to("mock:line").end().to("mock:result");
+                from("direct:start").split(body()).aggregationStrategy(AggregationStrategies.useOriginal(false))
+                        .filter(simple("${body} == 'Kaboom'"))
+                        .throwException(new IllegalArgumentException("Forced error")).end().to("mock:line").end()
+                        .to("mock:result");
             }
         };
     }

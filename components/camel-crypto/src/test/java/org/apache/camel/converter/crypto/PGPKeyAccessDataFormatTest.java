@@ -28,7 +28,8 @@ public class PGPKeyAccessDataFormatTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 PGPPublicKeyAccessor publicKeyAccessor = new DefaultPGPPublicKeyAccessor(PGPDataFormatTest.getPublicKeyRing());
-                PGPSecretKeyAccessor secretKeyAccessor = new DefaultPGPSecretKeyAccessor(PGPDataFormatTest.getSecKeyRing(), "sdude", "BC");
+                PGPSecretKeyAccessor secretKeyAccessor
+                        = new DefaultPGPSecretKeyAccessor(PGPDataFormatTest.getSecKeyRing(), "sdude", "BC");
                 try (PGPKeyAccessDataFormat dt = new PGPKeyAccessDataFormat()) {
                     dt.setPublicKeyAccessor(publicKeyAccessor);
                     dt.setSecretKeyAccessor(secretKeyAccessor);

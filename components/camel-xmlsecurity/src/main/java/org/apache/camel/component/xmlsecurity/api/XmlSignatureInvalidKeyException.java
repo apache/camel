@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
-
 /**
- * Exception thrown during signing or verifying if the key type does not fit to
- * the signature algorithm.
+ * Exception thrown during signing or verifying if the key type does not fit to the signature algorithm.
  */
 public class XmlSignatureInvalidKeyException extends XmlSignatureException {
 

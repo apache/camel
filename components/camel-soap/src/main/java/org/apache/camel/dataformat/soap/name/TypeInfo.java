@@ -19,8 +19,7 @@ package org.apache.camel.dataformat.soap.name;
 import javax.xml.namespace.QName;
 
 /**
- * Value object to hold type information about parameters and return type of a
- * method
+ * Value object to hold type information about parameters and return type of a method
  */
 final class TypeInfo {
     private final String typeName;

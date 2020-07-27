@@ -108,8 +108,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     @Test
     public void testThreadPoolBuilderAll() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ExecutorService executor = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000).keepAliveTime(20000, TimeUnit.MILLISECONDS)
-            .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest).build(this, "myPool");
+        ExecutorService executor
+                = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000).keepAliveTime(20000, TimeUnit.MILLISECONDS)
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest).build(this, "myPool");
         assertNotNull(executor);
 
         assertEquals(false, executor.isShutdown());

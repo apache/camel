@@ -48,13 +48,13 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         expectedHeaders.put("TestHeader", "test");
         expectedHeaders.put(ACCEPT_LANGUAGE, "pl");
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new MyHeaderValidationHandler(GET.name(), "HTTP/1.0", getExpectedContent(), expectedHeaders)).create();
+        localServer
+                = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                        .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                        .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                        .registerHandler("/",
+                                new MyHeaderValidationHandler(GET.name(), "HTTP/1.0", getExpectedContent(), expectedHeaders))
+                        .create();
         localServer.start();
 
         super.setUp();
@@ -86,16 +86,16 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
     private Exchange doExchange() {
         return template.request(
                 "http://"
-                        + localServer.getInetAddress().getHostName()
-                        + ":"
-                        + localServer.getLocalPort()
-                        + "/"
-                        + setupEndpointParams(), exchange -> {
-                exchange.getIn().setHeader("TestHeader", "test");
-                exchange.getIn().setHeader(ACCEPT_LANGUAGE, "pl");
-                exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
-        }
-        );
+                                + localServer.getInetAddress().getHostName()
+                                + ":"
+                                + localServer.getLocalPort()
+                                + "/"
+                                + setupEndpointParams(),
+                exchange -> {
+                    exchange.getIn().setHeader("TestHeader", "test");
+                    exchange.getIn().setHeader(ACCEPT_LANGUAGE, "pl");
+                    exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
+                });
     }
 
     protected String setupEndpointParams() {
@@ -112,8 +112,10 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         }
 
         @Override
-        public void handle(final HttpRequest request, final HttpResponse response,
-                           final HttpContext context) throws HttpException, IOException {
+        public void handle(
+                final HttpRequest request, final HttpResponse response,
+                final HttpContext context)
+                throws HttpException, IOException {
             if (!expectProtocolVersion.equals(request.getProtocolVersion().toString())) {
                 response.setStatusCode(HttpStatus.SC_HTTP_VERSION_NOT_SUPPORTED);
                 return;

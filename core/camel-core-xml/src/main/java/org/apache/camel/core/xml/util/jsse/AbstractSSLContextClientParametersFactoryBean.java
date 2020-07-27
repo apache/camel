@@ -25,7 +25,8 @@ import org.apache.camel.support.jsse.SSLContextClientParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-public abstract class AbstractSSLContextClientParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextClientParameters> {
+public abstract class AbstractSSLContextClientParametersFactoryBean
+        extends AbstractBaseSSLContextParametersFactoryBean<SSLContextClientParameters> {
 
     @XmlElement(name = "sniHostNames")
     private SNIHostNamesDefinition sniHostNamesDefinition;

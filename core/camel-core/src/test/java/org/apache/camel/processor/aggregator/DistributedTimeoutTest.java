@@ -85,8 +85,10 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).aggregationRepository(sharedAggregationRepository).optimisticLocking()
-                    .discardOnCompletionTimeout().completionSize(3).completionTimeout(200).completionTimeoutCheckerInterval(10).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                        .discardOnCompletionTimeout().completionSize(3).completionTimeout(200)
+                        .completionTimeoutCheckerInterval(10).to("mock:aggregated");
             }
         };
     }

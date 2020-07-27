@@ -76,8 +76,9 @@ public class OnExceptionNotHandledErrorHandlerRefIssueTwoRoutesTest extends Cont
 
                 from("direct:foo").to("mock:foo").throwException(new IllegalArgumentException("Damn Foo"));
 
-                from("direct:start").onException(IllegalArgumentException.class).handled(false).to("mock:handled").end().to("mock:a")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").onException(IllegalArgumentException.class).handled(false).to("mock:handled").end()
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

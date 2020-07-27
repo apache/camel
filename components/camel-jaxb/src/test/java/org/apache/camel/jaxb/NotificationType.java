@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "Notification")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "NotificationType", propOrder = {"event"})
+@XmlType(name = "NotificationType", propOrder = { "event" })
 public class NotificationType {
     @XmlElement(required = true)
     protected String event;

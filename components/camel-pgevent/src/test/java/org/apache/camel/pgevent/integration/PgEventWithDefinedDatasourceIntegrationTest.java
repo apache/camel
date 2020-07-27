@@ -53,7 +53,6 @@ public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEvent
         dataSource.setUser(properties.getProperty("userName"));
         dataSource.setPassword(properties.getProperty("password"));
 
-
         return dataSource;
     }
 
@@ -69,11 +68,11 @@ public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEvent
             @Override
             public void configure() throws Exception {
                 from(timerEndpoint)
-                    .setBody(constant(TEST_MESSAGE_BODY))
-                    .to(notifyEndpoint);
+                        .setBody(constant(TEST_MESSAGE_BODY))
+                        .to(notifyEndpoint);
 
                 from(subscribeEndpoint)
-                    .to(mockEndpoint);
+                        .to(mockEndpoint);
             }
         };
     }

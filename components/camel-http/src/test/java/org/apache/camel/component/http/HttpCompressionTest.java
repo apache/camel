@@ -69,13 +69,12 @@ public class HttpCompressionTest extends BaseHttpTest {
         expectedHeaders.put(CONTENT_TYPE, TEXT_PLAIN.getMimeType());
         expectedHeaders.put(CONTENT_ENCODING, "gzip");
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new HeaderValidationHandler(POST.name(), null, getBody(), getExpectedContent(), expectedHeaders)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/",
+                        new HeaderValidationHandler(POST.name(), null, getBody(), getExpectedContent(), expectedHeaders))
+                .create();
         localServer.start();
 
         super.setUp();
@@ -93,11 +92,12 @@ public class HttpCompressionTest extends BaseHttpTest {
 
     @Test
     public void compressedHttpPost() {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
-            exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
-            exchange1.getIn().setBody(getBody());
-        });
+        Exchange exchange = template.request(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
+                    exchange1.getIn().setBody(getBody());
+                });
 
         assertNotNull(exchange);
 
@@ -147,7 +147,8 @@ public class HttpCompressionTest extends BaseHttpTest {
             }
 
             @Override
-            public InputStream getContent() throws IOException,
+            public InputStream getContent()
+                    throws IOException,
                     IllegalStateException {
                 InputStream wrappedIn = wrappedEntity.getContent();
                 return new GZIPInputStream(wrappedIn);

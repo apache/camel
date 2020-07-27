@@ -67,7 +67,8 @@ public class MasterEndpointTest {
 
     @Test
     public void testRawPropertiesOnChild() throws Exception {
-        final String uri = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
+        final String uri
+                = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
 
         DefaultCamelContext ctx = new DefaultCamelContext();
         MasterEndpoint master = (MasterEndpoint) ctx.getEndpoint(uri);

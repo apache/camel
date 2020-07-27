@@ -39,7 +39,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
     @Override
     protected Consumer createConsumer() throws Exception {
         // lets add ourselves as a consumer
-        GenericFileConsumer consumer = (GenericFileConsumer)super.createConsumer();
+        GenericFileConsumer consumer = (GenericFileConsumer) super.createConsumer();
         // do not start scheduler as we poll manually
         consumer.setStartScheduler(false);
         // when using polling consumer we poll only 1 file per poll so we can
@@ -71,7 +71,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
 
     @Override
     protected GenericFileConsumer getConsumer() {
-        return (GenericFileConsumer)super.getConsumer();
+        return (GenericFileConsumer) super.getConsumer();
     }
 
     @Override

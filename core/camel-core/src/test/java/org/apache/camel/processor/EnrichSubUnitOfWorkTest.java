@@ -70,7 +70,8 @@ public class EnrichSubUnitOfWorkTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").to("mock:start").process(new MyPreProcessor()).enrich("direct:b", null, false, true).to("mock:result");
+                from("direct:start").to("mock:start").process(new MyPreProcessor()).enrich("direct:b", null, false, true)
+                        .to("mock:result");
 
                 from("direct:b").process(new MyProcessor()).to("mock:b");
             }

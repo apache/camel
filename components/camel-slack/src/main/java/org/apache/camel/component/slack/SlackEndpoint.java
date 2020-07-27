@@ -36,7 +36,8 @@ import org.apache.camel.util.json.JsonObject;
 /**
  * Send and receive messages to/from Slack.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", category = {Category.SOCIAL})
+@UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel",
+             category = { Category.SOCIAL })
 public class SlackEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
@@ -60,9 +61,9 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     /**
      * Constructor for SlackEndpoint
      *
-     * @param uri the full component url
+     * @param uri         the full component url
      * @param channelName the channel or username the message is directed at
-     * @param component the component that was created
+     * @param component   the component that was created
      */
     public SlackEndpoint(String uri, String channelName, SlackComponent component) {
         super(uri, component);
@@ -79,7 +80,8 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (ObjectHelper.isEmpty(token)) {
-            throw new RuntimeCamelException("Missing required endpoint configuration: token must be defined for Slack consumer");
+            throw new RuntimeCamelException(
+                    "Missing required endpoint configuration: token must be defined for Slack consumer");
         }
         SlackConsumer consumer = new SlackConsumer(this, processor);
         configureConsumer(consumer);
@@ -102,8 +104,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The channel name (syntax #name) or slackuser (syntax @userName) to send a
-     * message directly to an user.
+     * The channel name (syntax #name) or slackuser (syntax @userName) to send a message directly to an user.
      */
     public void setChannel(String channel) {
         this.channel = channel;
@@ -114,8 +115,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * This is the username that the bot will have when sending messages to a
-     * channel or user.
+     * This is the username that the bot will have when sending messages to a channel or user.
      */
     public void setUsername(String username) {
         this.username = username;
@@ -126,8 +126,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The avatar that the component will use when sending message to a channel
-     * or user.
+     * The avatar that the component will use when sending message to a channel or user.
      */
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;

@@ -62,24 +62,23 @@ final class ServiceNowComponentVerifierExtension extends DefaultComponentVerifie
             final String tableName = ObjectHelper.supplyIfEmpty(configuration.getTable(), () -> "incident");
 
             client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(configuration.getApiVersion())
-                .path("table")
-                .path(tableName)
-                .query(ServiceNowParams.SYSPARM_LIMIT.getId(), 1L)
-                .query(ServiceNowParams.SYSPARM_FIELDS.getId(), "sys_id")
-                .invoke(HttpMethod.GET);
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(configuration.getApiVersion())
+                    .path("table")
+                    .path(tableName)
+                    .query(ServiceNowParams.SYSPARM_LIMIT.getId(), 1L)
+                    .query(ServiceNowParams.SYSPARM_FIELDS.getId(), "sys_id")
+                    .invoke(HttpMethod.GET);
         } catch (NoSuchOptionException e) {
             builder.error(
-                ResultErrorBuilder.withMissingOption(e.getOptionName()).build()
-            );
+                    ResultErrorBuilder.withMissingOption(e.getOptionName()).build());
         } catch (ServiceNowException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withException(e)
-                .detail(VerificationError.HttpAttribute.HTTP_CODE, e.getCode())
-                .detail("servicenow_error_message", e.getMessage())
-                .detail("servicenow_error_status", e.getStatus())
-                .detail("servicenow_error_detail", e.getDetail());
+                    .detail(VerificationError.HttpAttribute.HTTP_CODE, e.getCode())
+                    .detail("servicenow_error_message", e.getMessage())
+                    .detail("servicenow_error_status", e.getStatus())
+                    .detail("servicenow_error_detail", e.getDetail());
 
             if (e.getCode() == 401) {
                 errorBuilder.code(VerificationError.StandardCode.AUTHENTICATION);
@@ -92,8 +91,7 @@ final class ServiceNowComponentVerifierExtension extends DefaultComponentVerifie
             builder.error(errorBuilder.build());
         } catch (Exception e) {
             builder.error(
-                ResultErrorBuilder.withException(e).build()
-            );
+                    ResultErrorBuilder.withException(e).build());
         }
 
         return builder.build();
@@ -104,7 +102,7 @@ final class ServiceNowComponentVerifierExtension extends DefaultComponentVerifie
     // *********************************
 
     private String getInstanceName(Map<String, Object> parameters) throws Exception {
-        String instanceName = (String)parameters.get("instanceName");
+        String instanceName = (String) parameters.get("instanceName");
         if (ObjectHelper.isEmpty(instanceName) && ObjectHelper.isNotEmpty(getComponent())) {
             instanceName = getComponent(ServiceNowComponent.class).getInstanceName();
         }
@@ -116,7 +114,8 @@ final class ServiceNowComponentVerifierExtension extends DefaultComponentVerifie
         return instanceName;
     }
 
-    private ServiceNowClient getServiceNowClient(ServiceNowConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    private ServiceNowClient getServiceNowClient(ServiceNowConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
         ServiceNowClient client = null;
 
         // check if a client has been supplied to the parameters map

@@ -48,8 +48,9 @@ public class SftpSimpleConsumeRecursiveTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true").routeId("foo")
-                    .noAutoStartup().to("log:result", "mock:result");
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                     + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true").routeId("foo")
+                             .noAutoStartup().to("log:result", "mock:result");
             }
         };
     }

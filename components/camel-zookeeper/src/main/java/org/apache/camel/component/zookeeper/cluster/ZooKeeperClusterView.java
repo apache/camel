@@ -43,7 +43,8 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private final CuratorLocalMember localMember;
     private volatile LeaderSelector leaderSelector;
 
-    public ZooKeeperClusterView(CamelClusterService cluster, ZooKeeperCuratorConfiguration configuration, CuratorFramework client, String namespace) {
+    public ZooKeeperClusterView(CamelClusterService cluster, ZooKeeperCuratorConfiguration configuration,
+                                CuratorFramework client, String namespace) {
         super(cluster, namespace);
 
         this.localMember = new CuratorLocalMember();
@@ -66,10 +67,11 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
             Participant participant = leaderSelector.getLeader();
 
             return ObjectHelper.equal(participant.getId(), localMember.getId())
-                ? Optional.of(localMember)
-                : Optional.of(new CuratorClusterMember(participant));
+                    ? Optional.of(localMember)
+                    : Optional.of(new CuratorClusterMember(participant));
         } catch (KeeperException.NoNodeException e) {
-            LOGGER.debug("Failed to get get master because node '{}' does not yet exist (error: '{}')", configuration.getBasePath(), e.getMessage());
+            LOGGER.debug("Failed to get get master because node '{}' does not yet exist (error: '{}')",
+                    configuration.getBasePath(), e.getMessage());
             return Optional.empty();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
@@ -84,11 +86,12 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
 
         try {
             return leaderSelector.getParticipants()
-                .stream()
-                .map(CuratorClusterMember::new)
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(CuratorClusterMember::new)
+                    .collect(Collectors.toList());
         } catch (KeeperException.NoNodeException e) {
-            LOGGER.debug("Failed to get members because node '{}' does not yet exist (error: '{}')", configuration.getBasePath(), e.getMessage());
+            LOGGER.debug("Failed to get members because node '{}' does not yet exist (error: '{}')",
+                    configuration.getBasePath(), e.getMessage());
             return Collections.emptyList();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
@@ -175,8 +178,8 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         @Override
         public boolean isLocal() {
             return (participant.getId() != null)
-                ? ObjectHelper.equal(participant.getId(), localMember.getId())
-                : false;
+                    ? ObjectHelper.equal(participant.getId(), localMember.getId())
+                    : false;
         }
 
         @Override

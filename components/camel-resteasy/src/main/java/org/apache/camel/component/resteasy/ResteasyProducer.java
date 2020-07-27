@@ -40,9 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ResteasyProducer binds a Camel exchange to a Http Request, acts as a Resteasy
- * client, and sends the request to a server.  Any response will
- * be bound to Camel exchange.
+ * ResteasyProducer binds a Camel exchange to a Http Request, acts as a Resteasy client, and sends the request to a
+ * server. Any response will be bound to Camel exchange.
  */
 public class ResteasyProducer extends DefaultProducer {
 
@@ -77,7 +76,8 @@ public class ResteasyProducer extends DefaultProducer {
         if (resteasyEndpoint.getProxyClientClass() != null) {
             // producer with resteasy proxy
             if (resteasyEndpoint.getProxyClientClass().isEmpty()) {
-                throw new IllegalArgumentException("Uri option proxyClientClass cannot be empty! Full class name must be specified.");
+                throw new IllegalArgumentException(
+                        "Uri option proxyClientClass cannot be empty! Full class name must be specified.");
             } else {
                 writeResponseByProxy(exchange, resteasyEndpoint, parameters, resteasyWebTarget);
             }
@@ -90,9 +90,9 @@ public class ResteasyProducer extends DefaultProducer {
      * Method for getting specific Camel-Resteasy options from endpoint and headers in exchange and returning the
      * correct values as Map.
      *
-     * @param exchange camel exchange
-     * @param endpoint endpoint on which the exchange came
-     * @return map with correct values for each option relevant for Camel-Resteasy
+     * @param  exchange camel exchange
+     * @param  endpoint endpoint on which the exchange came
+     * @return          map with correct values for each option relevant for Camel-Resteasy
      */
     protected static Map<String, String> getParameters(Exchange exchange, ResteasyEndpoint endpoint) {
         Map<String, String> parameters = new HashMap<String, String>();
@@ -136,9 +136,9 @@ public class ResteasyProducer extends DefaultProducer {
     /**
      * Method for adding query to URI and creating final URI for producer
      *
-     * @param uri base URI
-     * @param query string representing query read from HTTP_QUERY header
-     * @return URI with added query
+     * @param  uri   base URI
+     * @param  query string representing query read from HTTP_QUERY header
+     * @return       URI with added query
      */
     private String addQueryToUri(String uri, String query) {
         if (uri == null || uri.length() == 0) {
@@ -170,11 +170,13 @@ public class ResteasyProducer extends DefaultProducer {
         return client.target(uri);
     }
 
-    private void applyAuth(ResteasyEndpoint resteasyEndpoint, Map<String, String> parameters,
-        WebTarget resteasyWebTarget) {
+    private void applyAuth(
+            ResteasyEndpoint resteasyEndpoint, Map<String, String> parameters,
+            WebTarget resteasyWebTarget) {
         if (resteasyEndpoint.getBasicAuth() != null && Boolean.TRUE.equals(resteasyEndpoint.getBasicAuth())) {
             if (parameters.get(RESTEASY_USERNAME_OPTION) != null && parameters.get(RESTEASY_USERNAME_OPTION) != null) {
-                resteasyWebTarget.register(new BasicAuthentication(parameters.get(RESTEASY_USERNAME_OPTION), parameters.get(RESTEASY_USERNAME_OPTION)));
+                resteasyWebTarget.register(new BasicAuthentication(
+                        parameters.get(RESTEASY_USERNAME_OPTION), parameters.get(RESTEASY_USERNAME_OPTION)));
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Basic authentication was applied");
                 }
@@ -182,14 +184,16 @@ public class ResteasyProducer extends DefaultProducer {
         }
     }
 
-    private Object createResponseObject(Exchange exchange, ResteasyEndpoint resteasyEndpoint,
-        Map<String, String> parameters, WebTarget resteasyWebTarget) {
+    private Object createResponseObject(
+            Exchange exchange, ResteasyEndpoint resteasyEndpoint,
+            Map<String, String> parameters, WebTarget resteasyWebTarget) {
         Object object = null;
         try {
             Class realClazz = Class.forName(resteasyEndpoint.getProxyClientClass());
             Object simple = ObjectHelper.cast(ResteasyWebTarget.class, resteasyWebTarget).proxy(realClazz);
 
-            ArrayList headerParams = exchange.getIn().getHeader(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, ArrayList.class);
+            ArrayList headerParams
+                    = exchange.getIn().getHeader(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, ArrayList.class);
 
             if (headerParams != null) {
                 Object[] args = new Object[headerParams.size()];
@@ -213,10 +217,11 @@ public class ResteasyProducer extends DefaultProducer {
         return object;
     }
 
-    private void writeResponseByProxy(Exchange exchange, ResteasyEndpoint resteasyEndpoint,
-        Map<String, String> parameters, WebTarget resteasyWebTarget) {
+    private void writeResponseByProxy(
+            Exchange exchange, ResteasyEndpoint resteasyEndpoint,
+            Map<String, String> parameters, WebTarget resteasyWebTarget) {
         Object object = createResponseObject(exchange, resteasyEndpoint, parameters,
-            resteasyWebTarget);
+                resteasyWebTarget);
 
         if (object == null) {
             // maybe throw exception because not method was correct
@@ -237,7 +242,8 @@ public class ResteasyProducer extends DefaultProducer {
         }
     }
 
-    private Response createResponse(Exchange exchange, ResteasyEndpoint resteasyEndpoint, Map<String, String> parameters, WebTarget target) {
+    private Response createResponse(
+            Exchange exchange, ResteasyEndpoint resteasyEndpoint, Map<String, String> parameters, WebTarget target) {
         String body = exchange.getIn().getBody(String.class);
         LOG.debug("Body in producer: {}", body);
 
@@ -256,7 +262,7 @@ public class ResteasyProducer extends DefaultProducer {
             String key = entry.getKey();
             Object value = entry.getValue();
             if (resteasyEndpoint.getHeaderFilterStrategy() != null
-                && !resteasyEndpoint.getHeaderFilterStrategy().applyFilterToCamelHeaders(key, value, exchange)) {
+                    && !resteasyEndpoint.getHeaderFilterStrategy().applyFilterToCamelHeaders(key, value, exchange)) {
                 builder.header(key, value);
                 LOG.debug("Populate Resteasy request from exchange header: {} value: {}", key, value);
             }
@@ -269,39 +275,42 @@ public class ResteasyProducer extends DefaultProducer {
             response = builder.get();
         }
         if (method.equals("POST")) {
-            response =  builder.post(Entity.entity(body, mediaType));
+            response = builder.post(Entity.entity(body, mediaType));
         }
         if (method.equals("PUT")) {
-            response =  builder.put(Entity.entity(body, mediaType));
+            response = builder.put(Entity.entity(body, mediaType));
         }
         if (method.equals("DELETE")) {
-            response =  builder.delete();
+            response = builder.delete();
         }
         if (method.equals("OPTIONS")) {
-            response =  builder.options();
+            response = builder.options();
         }
         if (method.equals("TRACE")) {
-            response =  builder.trace();
+            response = builder.trace();
         }
         if (method.equals("HEAD")) {
-            response =  builder.head();
+            response = builder.head();
         }
         return response;
     }
 
-    private void writeResponse(Exchange exchange, ResteasyEndpoint resteasyEndpoint, Map<String, String> parameters, WebTarget target) {
+    private void writeResponse(
+            Exchange exchange, ResteasyEndpoint resteasyEndpoint, Map<String, String> parameters, WebTarget target) {
         Response response = createResponse(exchange, resteasyEndpoint, parameters, target);
         if (response == null) {
             // maybe throw exception because not method was correct
-            throw new IllegalArgumentException("Method '" + parameters.get(RESTEASY_METHOD_OPTION) + "' is not supported method to create response");
+            throw new IllegalArgumentException(
+                    "Method '" + parameters.get(RESTEASY_METHOD_OPTION) + "' is not supported method to create response");
         }
         doWriteResponse(exchange, response, resteasyEndpoint.getHeaderFilterStrategy());
         response.close();
         return;
     }
 
-    public void doWriteResponse(Exchange exchange, Response response,
-        HeaderFilterStrategy headerFilterStrategy) {
+    public void doWriteResponse(
+            Exchange exchange, Response response,
+            HeaderFilterStrategy headerFilterStrategy) {
         // set response code
         int responseCode = response.getStatus();
         Map<String, Object> headers = new HashMap<>();
@@ -310,7 +319,7 @@ public class ResteasyProducer extends DefaultProducer {
         for (String key : response.getHeaders().keySet()) {
             Object value = response.getHeaders().get(key);
             if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
                 headers.put(key, value);
                 LOG.debug("Populate Camel exchange from response: {} value: {}", key, value);
             }

@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS ECS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS Elastic Container Service (ECS)", syntax = "aws-ecs:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS Elastic Container Service (ECS)",
+             syntax = "aws-ecs:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class ECSEndpoint extends ScheduledPollEndpoint {
 
     private AmazonECS ecsClient;
@@ -101,7 +102,8 @@ public class ECSEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonECSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonECSClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonECSClientBuilder.standard().withCredentials(credentialsProvider);
             }

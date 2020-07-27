@@ -73,8 +73,7 @@ public class WhenDefinition extends OutputExpressionNode {
     }
 
     /**
-     * Expression used as the predicate to evaluate whether this when should
-     * trigger and route the message or not.
+     * Expression used as the predicate to evaluate whether this when should trigger and route the message or not.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

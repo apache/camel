@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test regexp function as the reg exp value should be template text only
- * and not any embedded functions etc.
+ * Unit test regexp function as the reg exp value should be template text only and not any embedded functions etc.
  */
 public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
 

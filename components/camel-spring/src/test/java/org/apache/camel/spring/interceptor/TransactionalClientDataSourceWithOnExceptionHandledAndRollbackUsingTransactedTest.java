@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test to demonstrate the transactional client pattern.
  */
-public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsingTransactedTest extends TransactionalClientDataSourceTest {
+public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsingTransactedTest
+        extends TransactionalClientDataSourceTest {
 
     @Override
     @Test
@@ -51,14 +52,14 @@ public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsing
                         .handled(true).to("mock:error").transform(constant("Sorry")).markRollbackOnly();
 
                 from("direct:okay")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

@@ -41,20 +41,18 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put(HOST, CUSTOM_HOST);
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("*",
-                        new HeaderValidationHandler("GET",
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).registerHandler("*",
+                        new HeaderValidationHandler(
+                                "GET",
                                 "customHostHeader=" + CUSTOM_HOST,
                                 null,
                                 getExpectedContent(),
                                 expectedHeaders))
                 .registerHandler("*",
-                        new HeaderValidationHandler("GET",
+                        new HeaderValidationHandler(
+                                "GET",
                                 null,
                                 null,
                                 getExpectedContent(),
@@ -82,8 +80,9 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
 
-        HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-                + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
+        HttpEndpoint endpoint = (HttpEndpoint) component
+                .createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                                + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
         HttpProducer producer = new HttpProducer(endpoint);
 
         Exchange exchange = producer.createExchange();
@@ -102,8 +101,9 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
 
-        HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-                + localServer.getLocalPort() + "/myget");
+        HttpEndpoint endpoint
+                = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                                                          + localServer.getLocalPort() + "/myget");
         HttpProducer producer = new HttpProducer(endpoint);
 
         Exchange exchange = producer.createExchange();

@@ -86,7 +86,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         }
 
         // Configure basic authentication
-        if (ObjectHelper.isNotEmpty(configuration.getBasicAuthUsername()) && ObjectHelper.isNotEmpty(configuration.getBasicAuthPassword())) {
+        if (ObjectHelper.isNotEmpty(configuration.getBasicAuthUsername())
+                && ObjectHelper.isNotEmpty(configuration.getBasicAuthPassword())) {
             request.basicAuthentication(configuration.getBasicAuthUsername(), configuration.getBasicAuthPassword());
         }
 
@@ -117,7 +118,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response) throws Exception {
+    public void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response)
+            throws Exception {
         HttpResponse<Buffer> result = response.result();
         if (response.succeeded()) {
             Message message = exchange.getMessage();
@@ -162,14 +164,16 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly) throws Exception {
+    public Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly)
+            throws Exception {
         if (responseBody != null) {
             if (VertxHttpHelper.isContentTypeMatching(exchange, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
                 boolean transferException = endpoint.getConfiguration().isTransferException();
                 boolean allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
 
                 if (allowJavaSerializedObject || (exceptionOnly && transferException)) {
-                    InputStream inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class, responseBody.getBytes());
+                    InputStream inputStream
+                            = exchange.getContext().getTypeConverter().convertTo(InputStream.class, responseBody.getBytes());
                     if (inputStream != null) {
                         try {
                             return VertxHttpHelper.deserializeJavaObjectFromStream(inputStream);
@@ -190,7 +194,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result) throws Exception {
+    public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
+            throws Exception {
         VertxHttpConfiguration configuration = endpoint.getConfiguration();
         Throwable exception;
 
@@ -213,7 +218,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             if (httpURI == null) {
                 httpURI = configuration.getHttpUri();
             }
-            exception = new HttpOperationFailedException(httpURI.toString(), result.statusCode(), result.statusMessage(), location, headers, result.bodyAsString());
+            exception = new HttpOperationFailedException(
+                    httpURI.toString(), result.statusCode(), result.statusMessage(), location, headers, result.bodyAsString());
         }
         return exception;
     }

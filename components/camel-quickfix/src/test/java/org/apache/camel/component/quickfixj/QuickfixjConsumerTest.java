@@ -39,63 +39,63 @@ public class QuickfixjConsumerTest {
     private Processor mockProcessor;
     private QuickfixjEndpoint mockEndpoint;
     private Message inboundFixMessage;
-    
+
     @BeforeEach
     public void setUp() {
 
         mockExchange = Mockito.mock(Exchange.class);
         org.apache.camel.Message mockCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getIn()).thenReturn(mockCamelMessage);
-        
+
         inboundFixMessage = new Message();
         inboundFixMessage.getHeader().setString(BeginString.FIELD, FixVersions.BEGINSTRING_FIX44);
         inboundFixMessage.getHeader().setString(SenderCompID.FIELD, "SENDER");
         inboundFixMessage.getHeader().setString(TargetCompID.FIELD, "TARGET");
         Mockito.when(mockCamelMessage.getBody(quickfix.Message.class)).thenReturn(inboundFixMessage);
-        
+
         mockProcessor = Mockito.mock(Processor.class);
         mockEndpoint = Mockito.mock(QuickfixjEndpoint.class);
-        Mockito.when(mockEndpoint.createExchange(ExchangePattern.InOnly)).thenReturn(mockExchange);  
+        Mockito.when(mockEndpoint.createExchange(ExchangePattern.InOnly)).thenReturn(mockExchange);
     }
-    
+
     @Test
     public void processExchangeOnlyWhenStarted() throws Exception {
         QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
-        
+
         assertThat("Consumer should not be automatically started",
-            consumer.isStarted(), CoreMatchers.is(false));
-        
+                consumer.isStarted(), CoreMatchers.is(false));
+
         consumer.onExchange(mockExchange);
-        
+
         // No expected interaction with processor since component is not started
         Mockito.verifyZeroInteractions(mockProcessor);
-        
+
         consumer.start();
         Mockito.verify(mockEndpoint).ensureInitialized();
         assertThat(consumer.isStarted(), CoreMatchers.is(true));
-        
+
         consumer.onExchange(mockExchange);
-        
+
         // Second message should be processed
         Mockito.verify(mockProcessor).process(isA(Exchange.class));
     }
-    
+
     @Test
-    public void setExceptionOnExchange() throws Exception {            
+    public void setExceptionOnExchange() throws Exception {
         QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
         consumer.start();
-        
+
         Throwable exception = new Exception("Throwable for test");
         Mockito.doThrow(exception).when(mockProcessor).process(mockExchange);
-        
+
         // Simulate a message from the FIX engine
         consumer.onExchange(mockExchange);
-        
+
         Mockito.verify(mockExchange).setException(exception);
     }
 
     @Test
-    public void setExceptionOnInOutExchange() throws Exception {            
+    public void setExceptionOnInOutExchange() throws Exception {
         org.apache.camel.Message mockCamelOutMessage = Mockito.mock(org.apache.camel.Message.class);
         org.apache.camel.Message mockCamelInMessage = Mockito.mock(org.apache.camel.Message.class);
         SessionID mockSessionId = Mockito.mock(SessionID.class);

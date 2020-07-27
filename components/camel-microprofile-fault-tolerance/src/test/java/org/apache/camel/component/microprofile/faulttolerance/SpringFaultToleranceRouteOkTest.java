@@ -28,7 +28,8 @@ public class SpringFaultToleranceRouteOkTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/microprofile/faulttolerance/SpringFaultToleranceRouteOkTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/microprofile/faulttolerance/SpringFaultToleranceRouteOkTest.xml");
     }
 
     @Test

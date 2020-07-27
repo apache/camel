@@ -40,13 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirLoadPage} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirLoadPage} APIs. The class source won't be generated
+ * again if the generator MOJO finds it under src/test/java.
  */
 public class FhirLoadPageIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirLoadPageIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirLoadPageApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = FhirApiCollection.getCollection().getApiName(FhirLoadPageApiMethod.class).getName();
 
     @Test
     public void testByUrl() throws Exception {
@@ -74,8 +75,8 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
     public void testNext() throws Exception {
         String url = "Patient?_count=2";
         Bundle bundle = this.fhirClient.search()
-                                       .byUrl(url)
-                                       .returnBundle(Bundle.class).execute();
+                .byUrl(url)
+                .returnBundle(Bundle.class).execute();
         assertNotNull(bundle.getLink(IBaseBundle.LINK_NEXT));
 
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
@@ -152,15 +153,15 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for byUrl
                 from("direct://BY_URL")
-                    .to("fhir://" + PATH_PREFIX + "/byUrl");
+                        .to("fhir://" + PATH_PREFIX + "/byUrl");
 
                 // test route for next
                 from("direct://NEXT")
-                    .to("fhir://" + PATH_PREFIX + "/next?inBody=bundle");
+                        .to("fhir://" + PATH_PREFIX + "/next?inBody=bundle");
 
                 // test route for previous
                 from("direct://PREVIOUS")
-                    .to("fhir://" + PATH_PREFIX + "/previous?inBody=bundle");
+                        .to("fhir://" + PATH_PREFIX + "/previous?inBody=bundle");
 
             }
         };

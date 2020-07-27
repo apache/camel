@@ -29,16 +29,16 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-ddb")
 public class DdbComponent extends DefaultComponent {
 
-    @Metadata 
+    @Metadata
     private DdbConfiguration configuration = new DdbConfiguration();
-    
+
     public DdbComponent() {
         this(null);
     }
 
     public DdbComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new DdbComponentVerifierExtension());
     }
 
@@ -55,13 +55,14 @@ public class DdbComponent extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonDDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonDDBClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
     }
-    
+
     public DdbConfiguration getConfiguration() {
         return configuration;
     }
@@ -72,7 +73,7 @@ public class DdbComponent extends DefaultComponent {
     public void setConfiguration(DdbConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     private void checkAndSetRegistryClient(DdbConfiguration configuration) {
         Set<AmazonDynamoDB> clients = getCamelContext().getRegistry().findByType(AmazonDynamoDB.class);
         if (clients.size() == 1) {

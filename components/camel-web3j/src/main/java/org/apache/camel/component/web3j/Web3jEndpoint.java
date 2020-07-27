@@ -44,13 +44,14 @@ import org.web3j.quorum.Quorum;
  * Interact with Ethereum nodes using web3j client API.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
-    category = {Category.BITCOIN, Category.BLOCKCHAIN, Category.API})
+             category = { Category.BITCOIN, Category.BLOCKCHAIN, Category.API })
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
     private Web3j web3j;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String nodeAddress;
 
     @UriParam
@@ -124,7 +125,8 @@ public class Web3jEndpoint extends DefaultEndpoint {
         this.nodeAddress = nodeAddress;
     }
 
-    public static EthFilter buildEthFilter(DefaultBlockParameter fromBlock, DefaultBlockParameter toBlock, List<String> addresses, List<String> topics) {
+    public static EthFilter buildEthFilter(
+            DefaultBlockParameter fromBlock, DefaultBlockParameter toBlock, List<String> addresses, List<String> topics) {
         EthFilter filter = new EthFilter(fromBlock, toBlock, addresses);
         addTopics(filter, topics);
         return filter;

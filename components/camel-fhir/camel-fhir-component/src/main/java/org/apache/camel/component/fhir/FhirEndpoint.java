@@ -52,7 +52,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
-        category = {Category.API})
+             category = { Category.API })
 public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> {
 
     private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";

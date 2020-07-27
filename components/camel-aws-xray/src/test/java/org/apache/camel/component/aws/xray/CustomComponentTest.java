@@ -35,22 +35,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
 /**
- * This test uses a custom component that will trigger a long-running backing task for certain
- * specific states. The task is forwarded via an asynchronous send to a Camel route which then
- * performs the task, such as an upload or a computation.
+ * This test uses a custom component that will trigger a long-running backing task for certain specific states. The task
+ * is forwarded via an asynchronous send to a Camel route which then performs the task, such as an upload or a
+ * computation.
  * <p>
- * AWS XRay does monitor the subsegment count per segment and only emits the segment to the local
- * XRay daemon once the segment is closed and its internal count reaches 0. If the segment is closed
- * before the counter reached 0 the segment is not emitted till the last subsegments belonging to
- * that segment got closed.
+ * AWS XRay does monitor the subsegment count per segment and only emits the segment to the local XRay daemon once the
+ * segment is closed and its internal count reaches 0. If the segment is closed before the counter reached 0 the segment
+ * is not emitted till the last subsegments belonging to that segment got closed.
  * <p>
- * Due to the asynchronous nature of the backing {@link ProcessingCamelBean processing camel bean},
- * the first request is still in progress when the second request is triggered. As those tasks
- * aren't executed in parallel, AWS XRay does not take notice of the seconds processing Camel bean
- * invocation yet which leads to a premature emit of that segment and thus missing subsegments
- * for the route and bean invocation. This is possible as the count of the segment reached 0 when
- * the segment got closed as Camel has not had a chance yet to create the subsegments for the
- * asynchronously executed route and its bean invocation.
+ * Due to the asynchronous nature of the backing {@link ProcessingCamelBean processing camel bean}, the first request is
+ * still in progress when the second request is triggered. As those tasks aren't executed in parallel, AWS XRay does not
+ * take notice of the seconds processing Camel bean invocation yet which leads to a premature emit of that segment and
+ * thus missing subsegments for the route and bean invocation. This is possible as the count of the segment reached 0
+ * when the segment got closed as Camel has not had a chance yet to create the subsegments for the asynchronously
+ * executed route and its bean invocation.
  */
 public class CustomComponentTest extends CamelAwsXRayTestSupport {
 
@@ -62,38 +60,31 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
 
     public CustomComponentTest() {
         super(
-                createTrace().inRandomOrder()
-                        .withSegment(createSegment("start")
-                                .withSubsegment(createSubsegment(DELIVERY))
-                        )
-                        .withSegment(createSegment("delivery")
-                                .withSubsegment(createSubsegment(CommonEndpoints.RECEIVED)
-                                        .withSubsegment(createSubsegment("seda:backingTask"))
-                                        .withSubsegment(createSubsegment("seda:backingTask"))
-                                        .withMetadata("state", "received")
-                                )
-                                .withSubsegment(createSubsegment(IN_QUEUE))
-                        )
-                        .withSegment(createSegment("processing")
-                                .withSubsegment(createSubsegment(CommonEndpoints.PROCESSING))
-                                .withSubsegment(createSubsegment(PERSISTENCE_QUEUE))
-                        )
-                        .withSegment(createSegment("wait-for-persisting")
-                                .withSubsegment(createSubsegment(CommonEndpoints.PERSISTENCE_QUEUE))
-                                .withSubsegment(createSubsegment(PERSISTING))
-                        )
-                        .withSegment(createSegment("persisting")
-                                .withSubsegment(createSubsegment(CommonEndpoints.READY)
-                                        // not available due to the asynchronous, long-running nature of the processing
-                                        // bean. If the sleep is commented out in the bean, this subsegments should be
-                                        // available
-//                                        .withSubsegment(createSubsegment("backingTask")
-//                                                .withSubsegment(createSubsegment("bean:ProcessingCamelBean"))
-//                                        )
-//                                        .withMetadata("state", "ready")
-                                )
-                        )
-        );
+              createTrace().inRandomOrder()
+                      .withSegment(createSegment("start")
+                              .withSubsegment(createSubsegment(DELIVERY)))
+                      .withSegment(createSegment("delivery")
+                              .withSubsegment(createSubsegment(CommonEndpoints.RECEIVED)
+                                      .withSubsegment(createSubsegment("seda:backingTask"))
+                                      .withSubsegment(createSubsegment("seda:backingTask"))
+                                      .withMetadata("state", "received"))
+                              .withSubsegment(createSubsegment(IN_QUEUE)))
+                      .withSegment(createSegment("processing")
+                              .withSubsegment(createSubsegment(CommonEndpoints.PROCESSING))
+                              .withSubsegment(createSubsegment(PERSISTENCE_QUEUE)))
+                      .withSegment(createSegment("wait-for-persisting")
+                              .withSubsegment(createSubsegment(CommonEndpoints.PERSISTENCE_QUEUE))
+                              .withSubsegment(createSubsegment(PERSISTING)))
+                      .withSegment(createSegment("persisting")
+                              .withSubsegment(createSubsegment(CommonEndpoints.READY)
+                              // not available due to the asynchronous, long-running nature of the processing
+                              // bean. If the sleep is commented out in the bean, this subsegments should be
+                              // available
+                              //                                        .withSubsegment(createSubsegment("backingTask")
+                              //                                                .withSubsegment(createSubsegment("bean:ProcessingCamelBean"))
+                              //                                        )
+                              //                                        .withMetadata("state", "ready")
+                              )));
     }
 
     @Override
@@ -153,7 +144,10 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
                         .onException(Exception.class)
                         .redeliveryDelay(100L)
                         .onRedelivery((Exchange exchange) -> System.err.println(">> Retrying due to "
-                                + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getLocalizedMessage()))
+                                                                                + exchange
+                                                                                        .getProperty(Exchange.EXCEPTION_CAUGHT,
+                                                                                                Exception.class)
+                                                                                        .getLocalizedMessage()))
                         .logExhausted(true)
                         .handled(true)
                         .logStackTrace(true)

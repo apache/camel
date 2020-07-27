@@ -71,8 +71,8 @@ public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // use a bean as the dynamic router
-                    .dynamicRouter(method(DynamicRouterExchangeHeaders2Test.class, "slip"));
+                        // use a bean as the dynamic router
+                        .dynamicRouter(method(DynamicRouterExchangeHeaders2Test.class, "slip"));
 
                 from("direct:foo").transform(constant("Bye World")).to("mock:foo");
             }
@@ -83,11 +83,10 @@ public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
     /**
      * Use this method to compute dynamic where we should route next.
      *
-     * @param body the message body
-     * @param headers the message headers where we can store state between
-     *            invocations
-     * @param previous the previous slip
-     * @return endpoints to go, or <tt>null</tt> to indicate the end
+     * @param  body     the message body
+     * @param  headers  the message headers where we can store state between invocations
+     * @param  previous the previous slip
+     * @return          endpoints to go, or <tt>null</tt> to indicate the end
      */
     public String slip(String body, @Headers Map<String, Object> headers, @Header(Exchange.SLIP_ENDPOINT) String previous) {
         bodies.add(body);

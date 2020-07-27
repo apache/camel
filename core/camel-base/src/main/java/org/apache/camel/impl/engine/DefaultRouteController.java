@@ -31,8 +31,8 @@ import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * A default {@link RouteController} that starts the routes in a fail-fast mode, which means
- * if any of the routes fail to startup then this causes Camel to fail to startup as well.
+ * A default {@link RouteController} that starts the routes in a fail-fast mode, which means if any of the routes fail
+ * to startup then this causes Camel to fail to startup as well.
  *
  * @see DefaultSupervisingRouteController
  */

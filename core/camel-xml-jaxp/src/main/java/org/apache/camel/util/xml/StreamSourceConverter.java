@@ -30,8 +30,8 @@ import org.apache.camel.StreamCache;
 import static org.apache.camel.converter.stream.StreamCacheConverter.convertToByteArray;
 
 /**
- * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache}
- * implementation to ensure message re-readability (eg multicasting, retrying)
+ * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache} implementation to
+ * ensure message re-readability (eg multicasting, retrying)
  */
 @Converter(generateLoader = true)
 public final class StreamSourceConverter {

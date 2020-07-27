@@ -32,7 +32,7 @@ import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
     public SplitReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SplitDefinition)definition);
+        super(route, (SplitDefinition) definition);
     }
 
     @Override
@@ -59,9 +59,11 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
         Expression exp = createExpression(definition.getExpression());
 
-        Splitter answer = new Splitter(camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
-                                       shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
-                                       isStopOnAggregateException);
+        Splitter answer = new Splitter(
+                camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
+                shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork,
+                isParallelAggregate,
+                isStopOnAggregateException);
         return answer;
     }
 
@@ -70,21 +72,23 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy)aggStrategy;
+                strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter
+                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                throw new IllegalArgumentException(
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
             }
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(camelContext);
+            ((CamelContextAware) strategy).setCamelContext(camelContext);
         }
 
         if (strategy != null && parseBoolean(definition.getShareUnitOfWork(), false)) {

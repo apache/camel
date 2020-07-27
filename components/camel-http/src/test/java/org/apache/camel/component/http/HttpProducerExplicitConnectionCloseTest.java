@@ -43,14 +43,10 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -70,8 +66,9 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
     public void noDataDefaultIsGet() throws Exception {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-            + localServer.getLocalPort() + "/myget?connectionClose=true");
+        HttpEndpoint endpoiont
+                = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                                                          + localServer.getLocalPort() + "/myget?connectionClose=true");
         HttpProducer producer = new HttpProducer(endpoiont);
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);

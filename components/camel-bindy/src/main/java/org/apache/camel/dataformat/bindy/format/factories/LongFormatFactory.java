@@ -29,6 +29,7 @@ public class LongFormatFactory extends AbstractFormatFactory {
         supportedClasses.add(long.class);
         supportedClasses.add(Long.class);
     }
+
     @Override
     public boolean canBuild(FormattingOptions formattingOptions) {
         return super.canBuild(formattingOptions)

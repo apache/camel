@@ -30,8 +30,8 @@ public class JsonPathHeaderNameTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setHeader("number").jsonpath("$..store.book.length()", false, int.class, "myHeader")
-                    .to("mock:result");
+                        .setHeader("number").jsonpath("$..store.book.length()", false, int.class, "myHeader")
+                        .to("mock:result");
             }
         };
     }

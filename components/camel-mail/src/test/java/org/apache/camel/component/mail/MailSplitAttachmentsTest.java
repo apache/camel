@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- *  Tests the {@link SplitAttachmentsExpression}.
+ * Tests the {@link SplitAttachmentsExpression}.
  */
 public class MailSplitAttachmentsTest extends CamelTestSupport {
 
@@ -97,12 +97,12 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
-                    .to("log:email")
-                    // use the SplitAttachmentsExpression which will split the message per attachment
-                    .split(splitAttachmentsExpression)
+                        .to("log:email")
+                        // use the SplitAttachmentsExpression which will split the message per attachment
+                        .split(splitAttachmentsExpression)
                         // each message going to this mock has a single attachment
                         .to("mock:split")
-                    .end();
+                        .end();
                 // END SNIPPET: e1
             }
         };

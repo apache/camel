@@ -61,17 +61,17 @@ public class ActiveMQConsumeWildcardQueuesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // use wildcard to consume from all sports
                 from("activemq:queue:sport.>")
-                    .to("log:received?showHeaders=true")
-                    .choice()
+                        .to("log:received?showHeaders=true")
+                        .choice()
                         // the JMSDestination contains from which queue the message was consumed from
                         .when(header("JMSDestination").isEqualTo("queue://sport.pl.chelsea"))
-                            .to("mock:chelsea")
+                        .to("mock:chelsea")
                         // we can use a reg exp to match any message from 1st division
                         .when(header("JMSDestination").regex("queue://sport.1st.*"))
-                            .to("mock:1st")
+                        .to("mock:1st")
                         .otherwise()
-                            .to("mock:other")
-                    .end();
+                        .to("mock:other")
+                        .end();
             }
         };
     }

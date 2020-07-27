@@ -62,9 +62,8 @@ public class StringTemplateConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        to("string-template:org/apache/camel/component/stringtemplate/Concurrent.tm").
-                        to("mock:result");
+                from("direct:start").to("string-template:org/apache/camel/component/stringtemplate/Concurrent.tm")
+                        .to("mock:result");
             }
         };
     }

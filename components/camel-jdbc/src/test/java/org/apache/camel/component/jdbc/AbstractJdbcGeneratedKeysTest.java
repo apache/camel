@@ -57,7 +57,8 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
+        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be one");
     }
 
     protected void testRetrieveGeneratedKeys(String query) throws Exception {
@@ -65,8 +66,10 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
     }
 
     @SuppressWarnings("unchecked")
-    protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(String query,
-                                                                       Map<String, Object> parameters) throws Exception {
+    protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(
+            String query,
+            Map<String, Object> parameters)
+            throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -74,7 +77,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         // then we set the SQL on the in body and add possible parameters
         exchange.getIn().setBody(query);
         exchange.getIn().setHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, true);
-        exchange.getIn().setHeader(JdbcConstants.JDBC_GENERATED_COLUMNS, new String[]{"ID"});
+        exchange.getIn().setHeader(JdbcConstants.JDBC_GENERATED_COLUMNS, new String[] { "ID" });
         setHeaders(exchange, parameters);
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -93,7 +96,8 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
+        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be one");
     }
 
     protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(String query) throws Exception {
@@ -101,8 +105,10 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
     }
 
     @SuppressWarnings("unchecked")
-    protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(String query,
-                                                                    Map<String, Object> parameters) throws Exception {
+    protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(
+            String query,
+            Map<String, Object> parameters)
+            throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -110,7 +116,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         // then we set the SQL on the in body and add possible parameters
         exchange.getIn().setBody(query);
         exchange.getIn().setHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, true);
-        exchange.getIn().setHeader(JdbcConstants.JDBC_GENERATED_COLUMNS, new int[]{1});
+        exchange.getIn().setHeader(JdbcConstants.JDBC_GENERATED_COLUMNS, new int[] { 1 });
         setHeaders(exchange, parameters);
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -129,15 +135,18 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
+        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be one");
     }
 
     protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(String query) throws Exception {
         testRetrieveGeneratedKeysWithIntGeneratedColumns(query, null);
     }
 
-    protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(String query,
-                                                                                   Map<String, Object> parameters) throws Exception {
+    protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(
+            String query,
+            Map<String, Object> parameters)
+            throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -148,7 +157,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         setHeaders(exchange, parameters);
 
         // set wrong data type for generated columns
-        exchange.getIn().setHeader(JdbcConstants.JDBC_GENERATED_COLUMNS, new Object[]{});
+        exchange.getIn().setHeader(JdbcConstants.JDBC_GENERATED_COLUMNS, new Object[] {});
 
         // now we send the exchange to the endpoint, and receives the response from Camel
         template.send(endpoint, exchange);

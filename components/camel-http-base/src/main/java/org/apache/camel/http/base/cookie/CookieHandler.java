@@ -26,35 +26,30 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 
 /**
- * The interface for cookie handling will allow components to handle cookies for
- * HTTP requests.
+ * The interface for cookie handling will allow components to handle cookies for HTTP requests.
  * <p>
- * Note: The defined cookie policies apply. The default is
- * CookiePolicy.ACCEPT_ORIGINAL_SERVER, so cookies will only be handled for
- * fully qualified host names in the URI (not local host names like "myhost" or
- * "localhost").
+ * Note: The defined cookie policies apply. The default is CookiePolicy.ACCEPT_ORIGINAL_SERVER, so cookies will only be
+ * handled for fully qualified host names in the URI (not local host names like "myhost" or "localhost").
  */
 public interface CookieHandler {
 
     /**
      * Store cookies for a HTTP response in the cookie handler
      * 
-     * @param exchange the exchange
-     * @param uri the URI of the called HTTP service
-     * @param headerMap a map containing the HTTP headers returned by the server
+     * @param  exchange    the exchange
+     * @param  uri         the URI of the called HTTP service
+     * @param  headerMap   a map containing the HTTP headers returned by the server
      * @throws IOException if the cookies cannot be stored
      */
     void storeCookies(Exchange exchange, URI uri, Map<String, List<String>> headerMap) throws IOException;
 
     /**
-     * Create cookie headers from the stored cookies appropriate for a given
-     * URI.
+     * Create cookie headers from the stored cookies appropriate for a given URI.
      * 
-     * @param exchange the exchange
-     * @param uri the URI of the called HTTP service
-     * @return a map containing the cookie headers that can be set to the HTTP
-     *         request. Only cookies that are supposed to be sent to the URI in
-     *         question are considered.
+     * @param  exchange    the exchange
+     * @param  uri         the URI of the called HTTP service
+     * @return             a map containing the cookie headers that can be set to the HTTP request. Only cookies that
+     *                     are supposed to be sent to the URI in question are considered.
      * @throws IOException if the cookies cannot be loaded
      */
     Map<String, List<String>> loadCookies(Exchange exchange, URI uri) throws IOException;
@@ -62,8 +57,8 @@ public interface CookieHandler {
     /**
      * Get the CookieStore. This method can be used if the is using a CookieHandler by itself.
      *
-     * @param exchange the exchange
-     * @return the CookieStore
+     * @param  exchange the exchange
+     * @return          the CookieStore
      */
     CookieStore getCookieStore(Exchange exchange);
 

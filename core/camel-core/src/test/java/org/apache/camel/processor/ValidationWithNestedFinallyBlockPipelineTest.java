@@ -29,7 +29,8 @@ public class ValidationWithNestedFinallyBlockPipelineTest extends ValidationTest
             public void configure() {
                 from("direct:start").doTry().to("direct:embedded").doCatch(ValidationException.class).to("mock:invalid");
 
-                from("direct:embedded").errorHandler(noErrorHandler()).doTry().process(validator).to("mock:valid").doFinally().setHeader("valid", constant(false)).end();
+                from("direct:embedded").errorHandler(noErrorHandler()).doTry().process(validator).to("mock:valid").doFinally()
+                        .setHeader("valid", constant(false)).end();
             }
         };
     }

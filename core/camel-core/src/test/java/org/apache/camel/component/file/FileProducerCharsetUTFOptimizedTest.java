@@ -92,8 +92,8 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true")
-                    // no charset so its optimized to write directly
-                    .to("file:target/data/charset/?fileName=output.txt");
+                        // no charset so its optimized to write directly
+                        .to("file:target/data/charset/?fileName=output.txt");
             }
         };
     }

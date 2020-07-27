@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This class tests an issue where an input file is not picked up due to a
- * dynamic doneFileName containing two dots.
+ * This class tests an issue where an input file is not picked up due to a dynamic doneFileName containing two dots.
  */
 public class FileConsumeDynamicDoneFileNameWithTwoDotsTest extends ContextTestSupport {
 

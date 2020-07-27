@@ -43,8 +43,8 @@ public interface BacklogTracerEventMessage extends Serializable {
      * <p/>
      * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}
      *
-     * @param indent number of spaces to indent
-     * @return xml representation of this event
+     * @param  indent number of spaces to indent
+     * @return        xml representation of this event
      */
     String toXml(int indent);
 

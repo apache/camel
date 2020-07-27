@@ -57,8 +57,10 @@ public class JcrAuthLoginTest extends JcrAuthTestBase {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
                         constant("node")).setHeader("my.contents.property",
-                        body()).to(
-                        "jcr://test:quatloos@repository" + BASE_REPO_PATH);
+                                body())
+                        .to(
+                                "jcr://test:quatloos@repository"
+                            + BASE_REPO_PATH);
                 // END SNIPPET: jcr
             }
         };

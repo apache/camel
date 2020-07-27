@@ -65,20 +65,20 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(2, events.size());
 
         // there should also be messages on bar
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"bar"}, new String[]{"java.lang.String"});
+                new Object[] { "bar" }, new String[] { "java.lang.String" });
         assertNotNull(events);
         assertEquals(2, events.size());
 
         // but not on beer
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"beer"}, new String[]{"java.lang.String"});
+                new Object[] { "beer" }, new String[] { "java.lang.String" });
         assertNotNull(events);
         assertEquals(0, events.size());
     }

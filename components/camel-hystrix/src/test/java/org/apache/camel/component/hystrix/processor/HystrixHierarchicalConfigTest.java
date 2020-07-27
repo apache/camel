@@ -48,14 +48,14 @@ public class HystrixHierarchicalConfigTest {
         registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, def);
         registry.bind("ref-hystrix", ref);
 
-        final HystrixReifier reifier = new HystrixReifier(route,
+        final HystrixReifier reifier = new HystrixReifier(
+                route,
                 new CircuitBreakerDefinition()
                         .configuration("ref-hystrix")
                         .hystrixConfiguration()
                         .groupKey("local-conf-group-key")
                         .requestLogEnabled(false)
-                        .end()
-        );
+                        .end());
         final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
         assertEquals("local-conf-group-key", config.getGroupKey());
@@ -80,14 +80,14 @@ public class HystrixHierarchicalConfigTest {
         context.getExtension(Model.class).setHystrixConfiguration(def);
         context.getExtension(Model.class).addHystrixConfiguration("ref-hystrix", ref);
 
-        final HystrixReifier reifier = new HystrixReifier(route,
+        final HystrixReifier reifier = new HystrixReifier(
+                route,
                 new CircuitBreakerDefinition()
                         .configuration("ref-hystrix")
                         .hystrixConfiguration()
                         .groupKey("local-conf-group-key")
                         .requestLogEnabled(false)
-                        .end()
-        );
+                        .end());
         final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
         assertEquals("local-conf-group-key", config.getGroupKey());
@@ -121,14 +121,14 @@ public class HystrixHierarchicalConfigTest {
         registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, defReg);
         registry.bind("ref-hystrix", ref);
 
-        final HystrixReifier reifier = new HystrixReifier(route,
+        final HystrixReifier reifier = new HystrixReifier(
+                route,
                 new CircuitBreakerDefinition()
                         .configuration("ref-hystrix")
                         .hystrixConfiguration()
                         .groupKey("local-conf-group-key")
                         .requestLogEnabled(false)
-                        .end()
-        );
+                        .end());
         final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
         assertEquals("local-conf-group-key", config.getGroupKey());

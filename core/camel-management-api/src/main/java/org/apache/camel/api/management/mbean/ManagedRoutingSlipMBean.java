@@ -26,7 +26,8 @@ public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean, ManagedE
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.", mask = true)
+    @ManagedAttribute(description = "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.",
+                      mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "The uri delimiter to use")

@@ -24,12 +24,10 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * To process the delegated producer in synchronous mode.
  * <p/>
- * This is used to enforce asynchronous producers to run in synchronous mode
- * when it has been configured to do so.
+ * This is used to enforce asynchronous producers to run in synchronous mode when it has been configured to do so.
  * <p/>
- * This delegate allows the component developers easily to support their
- * existing asynchronous producer to behave synchronously by wrapping their
- * producer in this synchronous delegate.
+ * This delegate allows the component developers easily to support their existing asynchronous producer to behave
+ * synchronously by wrapping their producer in this synchronous delegate.
  */
 public class SynchronousDelegateProducer implements Producer {
 

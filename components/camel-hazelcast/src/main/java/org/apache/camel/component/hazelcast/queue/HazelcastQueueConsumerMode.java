@@ -21,7 +21,6 @@ public enum HazelcastQueueConsumerMode {
     LISTEN("listen"),
     POLL("poll");
 
-
     private static HazelcastQueueConsumerMode[] values = values();
     private final String mode;
 
@@ -34,7 +33,8 @@ public enum HazelcastQueueConsumerMode {
             return null;
         }
         for (HazelcastQueueConsumerMode hazelcastQueueConsumerMode : values) {
-            if (hazelcastQueueConsumerMode.toString().equalsIgnoreCase(name) || hazelcastQueueConsumerMode.name().equalsIgnoreCase(name)) {
+            if (hazelcastQueueConsumerMode.toString().equalsIgnoreCase(name)
+                    || hazelcastQueueConsumerMode.name().equalsIgnoreCase(name)) {
                 return hazelcastQueueConsumerMode;
             }
         }

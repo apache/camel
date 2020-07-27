@@ -65,7 +65,8 @@ public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice?continuationTimeout=3000").to("async:bye:world?delay=6000").to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice?continuationTimeout=3000").to("async:bye:world?delay=6000")
+                        .to("mock:result");
             }
         };
     }

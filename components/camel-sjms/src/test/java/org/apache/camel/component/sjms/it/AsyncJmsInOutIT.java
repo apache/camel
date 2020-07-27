@@ -27,9 +27,8 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.body;
 
 /**
- * Integration test that verifies the ability of SJMS to correctly process
- * asynchronous InOut exchanges from both the Producer and Consumer perspective
- * using a namedReplyTo destination.
+ * Integration test that verifies the ability of SJMS to correctly process asynchronous InOut exchanges from both the
+ * Producer and Consumer perspective using a namedReplyTo destination.
  */
 public class AsyncJmsInOutIT extends JmsTestSupport {
 
@@ -58,12 +57,12 @@ public class AsyncJmsInOutIT extends JmsTestSupport {
             public void configure() throws Exception {
 
                 from("seda:start")
-                    .to("sjms:queue:in.foo?synchronous=false&namedReplyTo=out.bar&exchangePattern=InOut")
-                    .to("mock:result");
+                        .to("sjms:queue:in.foo?synchronous=false&namedReplyTo=out.bar&exchangePattern=InOut")
+                        .to("mock:result");
 
                 from("sjms:queue:in.foo?synchronous=false&exchangePattern=InOut")
-                    .log("Using ${threadName} to process ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

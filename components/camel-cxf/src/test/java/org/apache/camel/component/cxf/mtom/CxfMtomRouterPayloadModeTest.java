@@ -44,8 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
-
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  */
@@ -64,13 +62,14 @@ public class CxfMtomRouterPayloadModeTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:" + port2 + "/" 
-            + getClass().getSimpleName() + "/jaxws-mtom/hello", getImpl());
-        SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
+        endpoint = Endpoint.publish("http://localhost:" + port2 + "/"
+                                    + getClass().getSimpleName() + "/jaxws-mtom/hello",
+                getImpl());
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(true);
-        
+
     }
-    
+
     @AfterEach
     public void tearDown() throws Exception {
         if (endpoint != null) {
@@ -79,7 +78,7 @@ public class CxfMtomRouterPayloadModeTest {
     }
 
     @Test
-    public void testInvokingServiceFromCXFClient() throws Exception {        
+    public void testInvokingServiceFromCXFClient() throws Exception {
         if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
@@ -89,20 +88,20 @@ public class CxfMtomRouterPayloadModeTest {
 
         Hello port = getPort();
 
-        SOAPBinding binding = (SOAPBinding) ((BindingProvider)port).getBinding();
+        SOAPBinding binding = (SOAPBinding) ((BindingProvider) port).getBinding();
         binding.setMTOMEnabled(true);
 
         port.detail(photo, image);
-        
-        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA,  photo.value);
+
+        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, photo.value);
         assertNotNull(image.value);
         if (image.value instanceof BufferedImage) {
-            assertEquals(560, ((BufferedImage)image.value).getWidth());
-            assertEquals(300, ((BufferedImage)image.value).getHeight());            
+            assertEquals(560, ((BufferedImage) image.value).getWidth());
+            assertEquals(300, ((BufferedImage) image.value).getHeight());
         }
-        
+
     }
-    
+
     protected Hello getPort() {
         URL wsdl = getClass().getResource("/mtom.wsdl");
         assertNotNull(wsdl, "WSDL is null");
@@ -110,20 +109,18 @@ public class CxfMtomRouterPayloadModeTest {
         HelloService service = new HelloService(wsdl, HelloService.SERVICE);
         assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
-        ((BindingProvider)port).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port1 + "/CxfMtomRouterPayloadModeTest/jaxws-mtom/hello");
+        ((BindingProvider) port).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + port1 + "/CxfMtomRouterPayloadModeTest/jaxws-mtom/hello");
         return port;
     }
-    
+
     private Image getImage(String name) throws Exception {
         return ImageIO.read(getClass().getResource(name));
     }
-    
-    
+
     protected Object getImpl() {
         return new HelloImpl();
     }
-    
 
 }

@@ -42,8 +42,8 @@ public class GroovySetFixedHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setHeader("beer", groovy("'Carlsberg'"))
-                    .to("mock:result");
+                        .setHeader("beer", groovy("'Carlsberg'"))
+                        .to("mock:result");
             }
         };
     }

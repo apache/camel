@@ -57,7 +57,8 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest {
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        BindyDoNotRemoveQuotesCsvUnmarshallTest.Product product = result.getReceivedExchanges().get(0).getIn().getBody(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
+        BindyDoNotRemoveQuotesCsvUnmarshallTest.Product product
+                = result.getReceivedExchanges().get(0).getIn().getBody(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
         assertEquals("apple", product.getName());
         assertEquals("\"bright red\" apple", product.getDescription1());
         assertEquals("a fruit", product.getDescription2());
@@ -110,7 +111,8 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest {
 
         @Override
         public String toString() {
-            return "Product{" + "name='" + name + '\'' + ", description1='" + description1 + '\'' + ", description2='" + description2 + '\'' + '}';
+            return "Product{" + "name='" + name + '\'' + ", description1='" + description1 + '\'' + ", description2='"
+                   + description2 + '\'' + '}';
         }
     }
 

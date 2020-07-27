@@ -20,5 +20,7 @@ package org.apache.camel.component.salesforce.api.dto.analytics.reports;
  * Report format enumeration.
  */
 public enum ReportFormatEnum {
-    TABULAR, SUMMARY, MATRIX
+    TABULAR,
+    SUMMARY,
+    MATRIX
 }

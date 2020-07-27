@@ -50,7 +50,7 @@ public final class EmbeddedXmppTestServer {
     private TCPEndpoint endpoint;
     private int port;
 
-    public EmbeddedXmppTestServer() { 
+    public EmbeddedXmppTestServer() {
         initializeXmppServer();
     }
 
@@ -66,7 +66,7 @@ public final class EmbeddedXmppTestServer {
 
             Entity user2 = EntityImpl.parseUnchecked("camel_producer@apache.camel");
             accountManagement.addUser(user2, "secret");
-            
+
             Entity user3 = EntityImpl.parseUnchecked("camel_producer1@apache.camel");
             accountManagement.addUser(user3, "secret");
 
@@ -82,7 +82,7 @@ public final class EmbeddedXmppTestServer {
             xmppServer.setTLSCertificateInfo(stream, "secret");
 
             // allow anonymous logins
-            xmppServer.setSASLMechanisms(Arrays.asList(new SASLMechanism[]{new Anonymous()}));
+            xmppServer.setSASLMechanisms(Arrays.asList(new SASLMechanism[] { new Anonymous() }));
 
             xmppServer.start();
 

@@ -32,34 +32,35 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-eks")
 public class EKSComponent extends DefaultComponent {
 
-    @Metadata 
+    @Metadata
     private EKSConfiguration configuration = new EKSConfiguration();
-    
+
     public EKSComponent() {
         this(null);
     }
-    
+
     public EKSComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new EKSComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EKSConfiguration configuration =  this.configuration != null ? this.configuration.copy() : new EKSConfiguration();
+        EKSConfiguration configuration = this.configuration != null ? this.configuration.copy() : new EKSConfiguration();
         EKSEndpoint endpoint = new EKSEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getEksClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getEksClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public EKSConfiguration getConfiguration() {
         return configuration;
     }

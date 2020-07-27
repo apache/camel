@@ -22,7 +22,7 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test Producer prefillPool parameter 
+ * Test Producer prefillPool parameter
  */
 public class PrefillPoolTest extends JmsTestSupport {
 

@@ -38,11 +38,11 @@ import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_SET_TOP
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
 public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
-    
+
     static int amqpPort = AvailablePortFinder.getNextAvailable();
-    
+
     static EmbeddedActiveMQ server = new EmbeddedActiveMQ();
-    
+
     @EndpointInject("mock:result")
     MockEndpoint resultEndpoint;
 
@@ -54,19 +54,19 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         AddressSettings addressSettings = new AddressSettings();
         // Disable auto create address to make sure that topic name is correct without prefix
         addressSettings.setAutoCreateAddresses(false);
-        config.addAcceptorConfiguration("amqp", "tcp://0.0.0.0:" + amqpPort 
-                                        + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300");
+        config.addAcceptorConfiguration("amqp", "tcp://0.0.0.0:" + amqpPort
+                                                + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300");
         config.setPersistenceEnabled(false);
         config.addAddressesSetting("#", addressSettings);
         config.setSecurityEnabled(false);
-        
+
         // Set explicit topic name
         CoreAddressConfiguration pingTopicConfig = new CoreAddressConfiguration();
         pingTopicConfig.setName("topic.ping");
         pingTopicConfig.addRoutingType(RoutingType.MULTICAST);
-        
+
         config.addAddressConfiguration(pingTopicConfig);
-        
+
         server.setConfiguration(config);
         server.start();
         System.setProperty(AMQP_PORT, amqpPort + "");
@@ -77,14 +77,14 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
     public static void afterClass() throws Exception {
         server.stop();
     }
-    
+
     @Test
     public void testTopicWithoutPrefix() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         template.sendBody("direct:send-topic", expectedBody);
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -92,17 +92,17 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         camelContext.addComponent("amqp-customized", new AMQPComponent());
         return camelContext;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:send-topic")
-                    .to("amqp-customized:topic:topic.ping");
-                
+                        .to("amqp-customized:topic:topic.ping");
+
                 from("amqp-customized:topic:topic.ping")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
             }
         };
     }

@@ -50,11 +50,12 @@ public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
                         assertNotNull(elements, "We should get the elements here");
                         assertEquals(elements.size(), 1, "Get the wrong elements size");
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/", "Get the wrong namespace URI");
+                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/",
+                                "Get the wrong namespace URI");
                     }
-                    
+
                 })
-                .to(serviceEndpointURI);
+                        .to(serviceEndpointURI);
                 // END SNIPPET: payload
             }
         };

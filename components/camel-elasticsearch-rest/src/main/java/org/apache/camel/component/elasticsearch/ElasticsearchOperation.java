@@ -19,15 +19,12 @@ package org.apache.camel.component.elasticsearch;
 /**
  * The ElasticSearch server operations list which are implemented
  * 
- * Index        - Index a document associated with a given index and type
- * Update       - Updates a document based on a script
- * Bulk         - Executes a bulk of index / delete operations
- * BulkIndex   - Executes a bulk of index / delete operations
- * GetById    - Gets the document that was indexed from an index with a type and id
- * MultiGet     - Multiple get documents
- * Delete       - Deletes a document from the index based on the index, type and id
- * Search       - Search across one or more indices and one or more types with a query
- * Exists       - Checks the index exists or not (using search with size=0 and terminate_after=1 parameters)
+ * Index - Index a document associated with a given index and type Update - Updates a document based on a script Bulk -
+ * Executes a bulk of index / delete operations BulkIndex - Executes a bulk of index / delete operations GetById - Gets
+ * the document that was indexed from an index with a type and id MultiGet - Multiple get documents Delete - Deletes a
+ * document from the index based on the index, type and id Search - Search across one or more indices and one or more
+ * types with a query Exists - Checks the index exists or not (using search with size=0 and terminate_after=1
+ * parameters)
  */
 public enum ElasticsearchOperation {
     Index("Index"),

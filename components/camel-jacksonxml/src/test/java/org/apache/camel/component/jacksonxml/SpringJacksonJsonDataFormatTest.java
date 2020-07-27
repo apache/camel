@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
-    
+
     private static final String LS = System.lineSeparator();
 
     @Test

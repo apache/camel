@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data
- * from a remote server.
+ * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data from a remote
+ * server.
  */
 public class MinaInOutRouteTest extends BaseMinaTest {
 
@@ -52,7 +52,8 @@ public class MinaInOutRouteTest extends BaseMinaTest {
                     exchange.getMessage().setBody("Bye " + body);
                 });
 
-                from("direct:in").to(String.format("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort())).to("mock:result");
+                from("direct:in").to(String.format("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort()))
+                        .to("mock:result");
             }
         };
     }

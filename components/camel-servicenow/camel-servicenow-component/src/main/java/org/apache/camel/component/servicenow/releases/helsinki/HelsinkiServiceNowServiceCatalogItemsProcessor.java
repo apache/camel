@@ -64,31 +64,31 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = ObjectHelper.isEmpty(sysId)
-            ? client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("sn_sc")
-                .path(apiVersion)
-                .path("servicecatalog")
-                .path("items")
-                .query(ServiceNowParams.SYSPARM_CATEGORY, in)
-                .query(ServiceNowParams.SYSPARM_TYPE, in)
-                .query(ServiceNowParams.SYSPARM_LIMIT, in)
-                .query(ServiceNowParams.SYSPARM_TEXT, in)
-                .query(ServiceNowParams.SYSPARM_OFFSET, in)
-                .query(ServiceNowParams.SYSPARM_CATALOG, in)
-                .query(ServiceNowParams.SYSPARM_VIEW, in)
-                .query(responseModel)
-                .invoke(HttpMethod.GET)
-            : client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("sn_sc")
-                .path(apiVersion)
-                .path("items")
-                .path("items")
-                .path(sysId)
-                .query(ServiceNowParams.SYSPARM_VIEW, in)
-                .query(responseModel)
-                .invoke(HttpMethod.GET);
+                ? client.reset()
+                        .types(MediaType.APPLICATION_JSON_TYPE)
+                        .path("sn_sc")
+                        .path(apiVersion)
+                        .path("servicecatalog")
+                        .path("items")
+                        .query(ServiceNowParams.SYSPARM_CATEGORY, in)
+                        .query(ServiceNowParams.SYSPARM_TYPE, in)
+                        .query(ServiceNowParams.SYSPARM_LIMIT, in)
+                        .query(ServiceNowParams.SYSPARM_TEXT, in)
+                        .query(ServiceNowParams.SYSPARM_OFFSET, in)
+                        .query(ServiceNowParams.SYSPARM_CATALOG, in)
+                        .query(ServiceNowParams.SYSPARM_VIEW, in)
+                        .query(responseModel)
+                        .invoke(HttpMethod.GET)
+                : client.reset()
+                        .types(MediaType.APPLICATION_JSON_TYPE)
+                        .path("sn_sc")
+                        .path(apiVersion)
+                        .path("items")
+                        .path("items")
+                        .path(sysId)
+                        .query(ServiceNowParams.SYSPARM_VIEW, in)
+                        .query(responseModel)
+                        .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -109,17 +109,17 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
         final String sysId = getSysID(in);
         final String apiVersion = getApiVersion(in);
 
-        Response response =  client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("items")
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .path("submit_guide")
-            .query(ServiceNowParams.SYSPARM_VIEW, in)
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody());
+        Response response = client.reset()
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("items")
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .path("submit_guide")
+                .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -140,15 +140,15 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("items")
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .path("submit_guide")
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody());
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("items")
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .path("submit_guide")
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -169,15 +169,15 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("items")
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .path("add_to_cart")
-            .query(responseModel)
-            .invoke(HttpMethod.POST);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("items")
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .path("add_to_cart")
+                .query(responseModel)
+                .invoke(HttpMethod.POST);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -199,16 +199,16 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("items")
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .path("submit_producer")
-            .query(ServiceNowParams.SYSPARM_VIEW, in)
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody());
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("items")
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .path("submit_producer")
+                .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);
     }

@@ -31,10 +31,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * The new Async API version of doing async routing based on the old
- * AsyncProcessor API In the old SedaAsyncProcessorTest a seda endpoint was
- * needed to really turn it into async. This is not needed by the new API so we
- * send it using direct instead.
+ * The new Async API version of doing async routing based on the old AsyncProcessor API In the old
+ * SedaAsyncProcessorTest a seda endpoint was needed to really turn it into async. This is not needed by the new API so
+ * we send it using direct instead.
  */
 public class SedaAsyncProducerTest extends ContextTestSupport {
 

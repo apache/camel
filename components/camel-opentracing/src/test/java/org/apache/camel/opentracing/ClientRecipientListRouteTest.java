@@ -24,13 +24,13 @@ import org.junit.jupiter.api.Test;
 public class ClientRecipientListRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(3),
-        new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(3),
-        new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setParentId(3),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(3),
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(3),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(3),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public ClientRecipientListRouteTest() {
@@ -52,15 +52,15 @@ public class ClientRecipientListRouteTest extends CamelOpenTracingTestSupport {
                 from("direct:start").recipientList(constant("seda:a,seda:b,seda:c")).routeId("start");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}");
+                        .log("routing at ${routeId}");
 
                 from("seda:b").routeId("b")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(0,100)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

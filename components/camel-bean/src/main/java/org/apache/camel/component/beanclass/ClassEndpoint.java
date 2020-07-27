@@ -24,7 +24,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Invoke methods of Java beans specified by class name.
  */
-@UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true, category = {Category.CORE, Category.JAVA})
+@UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true,
+             category = { Category.CORE, Category.JAVA })
 public class ClassEndpoint extends BeanEndpoint {
 
     public ClassEndpoint(String endpointUri, Component component) {

@@ -32,8 +32,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 
 /**
- * This class populates a SOAP header and attachments in the WebServiceMessage
- * instance.
+ * This class populates a SOAP header and attachments in the WebServiceMessage instance.
  */
 public class BasicMessageFilter implements MessageFilter {
 
@@ -61,7 +60,7 @@ public class BasicMessageFilter implements MessageFilter {
     protected void processHeaderAndAttachments(AttachmentMessage inOrOut, WebServiceMessage response) {
 
         if (response instanceof SoapMessage) {
-            SoapMessage soapMessage = (SoapMessage)response;
+            SoapMessage soapMessage = (SoapMessage) response;
             processSoapHeader(inOrOut, soapMessage);
             doProcessSoapAttachments(inOrOut, soapMessage);
         }
@@ -82,12 +81,10 @@ public class BasicMessageFilter implements MessageFilter {
     }
 
     /**
-     * The SOAP header is populated from exchange.getOut().getHeaders() if this
-     * class is used by the consumer or exchange.getIn().getHeaders() if this
-     * class is used by the producer. If .getHeaders() contains under a certain
-     * key a value with the QName object, it is directly added as a new header
-     * element. If it contains only a String value, it is transformed into a
-     * header attribute. Following headers are excluded:
+     * The SOAP header is populated from exchange.getOut().getHeaders() if this class is used by the consumer or
+     * exchange.getIn().getHeaders() if this class is used by the producer. If .getHeaders() contains under a certain
+     * key a value with the QName object, it is directly added as a new header element. If it contains only a String
+     * value, it is transformed into a header attribute. Following headers are excluded:
      */
     protected void doProcessSoapHeader(AttachmentMessage inOrOut, SoapMessage soapMessage) {
         SoapHeader soapHeader = soapMessage.getSoapHeader();
@@ -116,7 +113,7 @@ public class BasicMessageFilter implements MessageFilter {
             Object value = headers.get(name);
 
             if (value instanceof QName) {
-                soapHeader.addHeaderElement((QName)value);
+                soapHeader.addHeaderElement((QName) value);
             } else {
                 if (value instanceof String) {
                     soapHeader.addAttribute(new QName(name), value + "");
@@ -126,8 +123,7 @@ public class BasicMessageFilter implements MessageFilter {
     }
 
     /**
-     * Populate SOAP attachments from in or out exchange message. This the
-     * convenient method for overriding.
+     * Populate SOAP attachments from in or out exchange message. This the convenient method for overriding.
      * 
      * @param inOrOut
      * @param response

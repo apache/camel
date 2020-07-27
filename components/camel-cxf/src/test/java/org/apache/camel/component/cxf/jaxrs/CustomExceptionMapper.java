@@ -23,11 +23,11 @@ import org.apache.camel.component.cxf.jaxrs.testbean.CustomException;
 
 public class CustomExceptionMapper implements ExceptionMapper<CustomException> {
 
-    @Override 
+    @Override
     public Response toResponse(CustomException exception) {
         Response.Status status;
         status = Response.Status.INTERNAL_SERVER_ERROR;
         return Response.status(status).header("exception", exception.getMessage()).build();
-    } 
+    }
 
 }

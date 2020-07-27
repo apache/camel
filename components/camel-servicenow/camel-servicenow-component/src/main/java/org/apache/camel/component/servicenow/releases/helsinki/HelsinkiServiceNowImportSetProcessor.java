@@ -55,14 +55,14 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
         final String sysId = getSysID(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("import")
-            .path(ObjectHelper.notNull(tableName, "tableName"))
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .query(responseModel)
-            .invoke(HttpMethod.GET);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("import")
+                .path(ObjectHelper.notNull(tableName, "tableName"))
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .query(responseModel)
+                .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -76,7 +76,8 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
         final String tableName = getTableName(in);
         final String apiVersion = getApiVersion(in);
         final Class<?> requestModel = getRequestModel(in, tableName);
-        final boolean retrieve = in.getHeader(ServiceNowConstants.RETRIEVE_TARGET_RECORD, config::getRetrieveTargetRecordOnImport, Boolean.class);
+        final boolean retrieve = in.getHeader(ServiceNowConstants.RETRIEVE_TARGET_RECORD,
+                config::getRetrieveTargetRecordOnImport, Boolean.class);
 
         Class<?> responseModel = getResponseModel(in, tableName);
         Response response;
@@ -88,12 +89,12 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
             // import response model is ignored and the response is ImportSetResponse
 
             response = client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(apiVersion)
-                .path("import")
-                .path(tableName)
-                .invoke(HttpMethod.POST, in.getMandatoryBody());
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(apiVersion)
+                    .path("import")
+                    .path(tableName)
+                    .invoke(HttpMethod.POST, in.getMandatoryBody());
 
             if (ObjectHelper.isNotEmpty(response.getHeaderString(HttpHeaders.CONTENT_TYPE))) {
                 for (ImportSetResult result : response.readEntity(ImportSetResponse.class).getResults()) {
@@ -110,18 +111,18 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
 
                         // Do get the record
                         response = client.reset()
-                            .types(MediaType.APPLICATION_JSON_TYPE)
-                            .path("now")
-                            .path(apiVersion)
-                            .path("table")
-                            .path(ObjectHelper.notNull(table, "table"))
-                            .path(ObjectHelper.notNull(sysId, "sys_id"))
-                            .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-                            .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
-                            .query(ServiceNowParams.SYSPARM_FIELDS, in)
-                            .query(ServiceNowParams.SYSPARM_VIEW, in)
-                            .query(responseModel)
-                            .invoke(HttpMethod.GET);
+                                .types(MediaType.APPLICATION_JSON_TYPE)
+                                .path("now")
+                                .path(apiVersion)
+                                .path("table")
+                                .path(ObjectHelper.notNull(table, "table"))
+                                .path(ObjectHelper.notNull(sysId, "sys_id"))
+                                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                                .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
+                                .query(ServiceNowParams.SYSPARM_FIELDS, in)
+                                .query(ServiceNowParams.SYSPARM_VIEW, in)
+                                .query(responseModel)
+                                .invoke(HttpMethod.GET);
 
                         break;
                     }
@@ -129,13 +130,13 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
             }
         } else {
             response = client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(apiVersion)
-                .path("import")
-                .path(tableName)
-                .query(responseModel)
-                .invoke(HttpMethod.POST, in.getMandatoryBody());
+                    .types(MediaType.APPLICATION_JSON_TYPE)
+                    .path("now")
+                    .path(apiVersion)
+                    .path("import")
+                    .path(tableName)
+                    .query(responseModel)
+                    .invoke(HttpMethod.POST, in.getMandatoryBody());
         }
 
         setBodyAndHeaders(in, responseModel, response);

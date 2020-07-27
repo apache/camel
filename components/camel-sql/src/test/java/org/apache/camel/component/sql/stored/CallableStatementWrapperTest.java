@@ -59,8 +59,10 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteStoredProcedure() throws Exception {
-        CallableStatementWrapper wrapper = new CallableStatementWrapper("SUBNUMBERS"
-                + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsub)", factory);
+        CallableStatementWrapper wrapper = new CallableStatementWrapper(
+                "SUBNUMBERS"
+                                                                        + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsub)",
+                factory);
 
         final Exchange exchange = createExchangeWithBody(null);
         exchange.getIn().setHeader("v1", 1);
@@ -81,8 +83,10 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     public void shouldExecuteStoredFunction() throws Exception {
         CallableStatementWrapperFactory factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, true);
 
-        CallableStatementWrapper wrapper = new CallableStatementWrapper("SUBNUMBERS_FUNCTION"
-                + "(OUT INTEGER resultofsub, INTEGER ${header.v1},INTEGER ${header.v2})", factory);
+        CallableStatementWrapper wrapper = new CallableStatementWrapper(
+                "SUBNUMBERS_FUNCTION"
+                                                                        + "(OUT INTEGER resultofsub, INTEGER ${header.v1},INTEGER ${header.v2})",
+                factory);
 
         final Exchange exchange = createExchangeWithBody(null);
         exchange.getIn().setHeader("v1", 1);

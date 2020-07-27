@@ -401,8 +401,7 @@ public class KubernetesConfiguration implements Cloneable {
     }
 
     /**
-     * Connection timeout in milliseconds to use when making requests to the
-     * Kubernetes API server.
+     * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
      */
     public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
@@ -414,7 +413,7 @@ public class KubernetesConfiguration implements Cloneable {
 
     public KubernetesConfiguration copy() {
         try {
-            return (KubernetesConfiguration)super.clone();
+            return (KubernetesConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
@@ -422,11 +421,16 @@ public class KubernetesConfiguration implements Cloneable {
 
     @Override
     public String toString() {
-        return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient=" + kubernetesClient + ", username=" + username + ", password="
-               + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData + ", caCertFile=" + caCertFile + ", clientCertData="
-               + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo + ", clientKeyData=" + clientKeyData + ", clientKeyFile="
-               + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts=" + trustCerts + ", namespace=" + namespace
-               + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName=" + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
+        return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
+               + kubernetesClient + ", username=" + username + ", password="
+               + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData
+               + ", caCertFile=" + caCertFile + ", clientCertData="
+               + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo + ", clientKeyData="
+               + clientKeyData + ", clientKeyFile="
+               + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
+               + trustCerts + ", namespace=" + namespace
+               + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName="
+               + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
                + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
     }
 

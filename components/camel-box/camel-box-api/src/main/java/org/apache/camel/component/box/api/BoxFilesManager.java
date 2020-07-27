@@ -57,11 +57,9 @@ public class BoxFilesManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create files manager to manage the files of Box connection's
-     * authenticated user.
+     * Create files manager to manage the files of Box connection's authenticated user.
      *
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxFilesManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
@@ -70,12 +68,9 @@ public class BoxFilesManager {
     /**
      * Get file information.
      *
-     * @param fileId
-     *            - the id of file.
-     * @param fields
-     *            - the information fields to retrieve; if <code>null</code> all
-     *            information fields are retrieved.
-     * @return The file information.
+     * @param  fileId - the id of file.
+     * @param  fields - the information fields to retrieve; if <code>null</code> all information fields are retrieved.
+     * @return        The file information.
      */
     public BoxFile.Info getFileInfo(String fileId, String... fields) {
         try {
@@ -100,11 +95,9 @@ public class BoxFilesManager {
     /**
      * Update file information.
      *
-     * @param fileId
-     *            - the id of file to update.
-     * @param info
-     *            - the updated information
-     * @return The updated file.
+     * @param  fileId - the id of file to update.
+     * @param  info   - the updated information
+     * @return        The updated file.
      */
     public BoxFile updateFileInfo(String fileId, BoxFile.Info info) {
         try {
@@ -127,28 +120,18 @@ public class BoxFilesManager {
     /**
      * Upload a new file to parent folder.
      *
-     * @param parentFolderId
-     *            - the id of parent folder.
-     * @param content
-     *            - a stream containing contents of the file to upload.
-     * @param fileName
-     *            the name to give the uploaded file.
-     * @param created
-     *            - the content created date that will be given to the uploaded
-     *            file.
-     * @param modified
-     *            - the content modified date that will be given to the uploaded
-     *            file.
-     * @param size
-     *            - the size of the file's content used for monitoring the
-     *            upload's progress.
-     * @param check
-     *            - if the file name is already used, call the uploadNewVersion instead.
-     * @param listener
-     *            - a listener for monitoring the upload's progress.
-     * @return The uploaded file.
+     * @param  parentFolderId - the id of parent folder.
+     * @param  content        - a stream containing contents of the file to upload.
+     * @param  fileName       the name to give the uploaded file.
+     * @param  created        - the content created date that will be given to the uploaded file.
+     * @param  modified       - the content modified date that will be given to the uploaded file.
+     * @param  size           - the size of the file's content used for monitoring the upload's progress.
+     * @param  check          - if the file name is already used, call the uploadNewVersion instead.
+     * @param  listener       - a listener for monitoring the upload's progress.
+     * @return                The uploaded file.
      */
-    public BoxFile uploadFile(String parentFolderId, InputStream content, String fileName, Date created, Date modified,
+    public BoxFile uploadFile(
+            String parentFolderId, InputStream content, String fileName, Date created, Date modified,
             Long size, Boolean check, ProgressListener listener) {
         try {
             LOG.debug("Uploading file with name '" + fileName + "' to parent_folder(id=" + parentFolderId + ")");
@@ -190,7 +173,8 @@ public class BoxFilesManager {
                         BoxItem.Info existingFile = null;
                         if (folder != null) {
                             // returns only the name and type fields of each folder item
-                            for (BoxItem.Info itemInfo : folder.getChildren("name", BoxFolder.SortDirection.ASC, "name", "type")) {
+                            for (BoxItem.Info itemInfo : folder.getChildren("name", BoxFolder.SortDirection.ASC, "name",
+                                    "type")) {
                                 // check if the filename exists
                                 exists = "file".equals(itemInfo.getType()) && fileName.equals(itemInfo.getName());
                                 if (exists) {
@@ -202,8 +186,10 @@ public class BoxFilesManager {
                         long end = System.currentTimeMillis();
                         long elapsed = (end - init) / 1000;
                         if (elapsed > delayLimit) {
-                            LOG.warn("The upload operation, checks if the file exists by using the Box list folder, however it took "
-                                + elapsed + " seconds to verify, try to reduce the size of the folder items for faster results.");
+                            LOG.warn(
+                                    "The upload operation, checks if the file exists by using the Box list folder, however it took "
+                                     + elapsed
+                                     + " seconds to verify, try to reduce the size of the folder items for faster results.");
                         }
                         if (exists) {
                             boxFile = uploadNewFileVersion(existingFile.getID(), content, modified, size, listener);
@@ -245,21 +231,15 @@ public class BoxFilesManager {
     /**
      * Upload a new version of file.
      *
-     * @param fileId
-     *            - the id of file.
-     * @param fileContent
-     *            - a stream containing contents of the file to upload.
-     * @param modified
-     *            - the content modified date that will be given to the uploaded
-     *            file.
-     * @param fileSize
-     *            - the size of the file's content used for monitoring the
-     *            upload's progress.
-     * @param listener
-     *            - a listener for monitoring the upload's progress.
-     * @return The uploaded file.
+     * @param  fileId      - the id of file.
+     * @param  fileContent - a stream containing contents of the file to upload.
+     * @param  modified    - the content modified date that will be given to the uploaded file.
+     * @param  fileSize    - the size of the file's content used for monitoring the upload's progress.
+     * @param  listener    - a listener for monitoring the upload's progress.
+     * @return             The uploaded file.
      */
-    public BoxFile uploadNewFileVersion(String fileId, InputStream fileContent, Date modified, Long fileSize,
+    public BoxFile uploadNewFileVersion(
+            String fileId, InputStream fileContent, Date modified, Long fileSize,
             ProgressListener listener) {
         try {
             LOG.debug("Uploading new version of file(id={})", fileId);
@@ -292,9 +272,8 @@ public class BoxFilesManager {
     /**
      * Get any previous versions of file.
      *
-     * @param fileId
-     *            - the id of file.
-     * @return The list of previous file versions.
+     * @param  fileId - the id of file.
+     * @return        The list of previous file versions.
      */
     public Collection<BoxFileVersion> getFileVersions(String fileId) {
         try {
@@ -316,25 +295,18 @@ public class BoxFilesManager {
     /**
      * Download a file.
      *
-     * @param fileId
-     *            - the id of file.
-     * @param output
-     *            - the stream to which the file contents will be written.
-     * @param rangeStart
-     *            - the byte offset in file at which to start the download; if
-     *            <code>null</code> the entire contents of file will be
-     *            downloaded.
-     * @param rangeEnd
-     *            - the byte offset in file at which to stop the download; if
-     *            <code>null</code> the entire contents of file will be
-     *            downloaded.
-     * @param listener
-     *            - a listener for monitoring the download's progress; if
-     *            <code>null</code> the download's progress will not be
-     *            monitored.
-     * @return The stream containing the contents of the downloaded file.
+     * @param  fileId     - the id of file.
+     * @param  output     - the stream to which the file contents will be written.
+     * @param  rangeStart - the byte offset in file at which to start the download; if <code>null</code> the entire
+     *                    contents of file will be downloaded.
+     * @param  rangeEnd   - the byte offset in file at which to stop the download; if <code>null</code> the entire
+     *                    contents of file will be downloaded.
+     * @param  listener   - a listener for monitoring the download's progress; if <code>null</code> the download's
+     *                    progress will not be monitored.
+     * @return            The stream containing the contents of the downloaded file.
      */
-    public OutputStream downloadFile(String fileId, OutputStream output, Long rangeStart, Long rangeEnd,
+    public OutputStream downloadFile(
+            String fileId, OutputStream output, Long rangeStart, Long rangeEnd,
             ProgressListener listener) {
         try {
             LOG.debug("Downloading file(id={})", fileId);
@@ -369,22 +341,16 @@ public class BoxFilesManager {
     /**
      * Download a previous version of file.
      *
-     * @param fileId
-     *            - the id of file.
-     * @param version
-     *            - the version of file to download; initial version of file has
-     *            value of <code>0</code>, second version of file is
-     *            <code>1</code> and so on.
-     * @param output
-     *            - the stream to which the version contents will be written.
-     * @param listener
-     *            - a listener for monitoring the download's progress; if
-     *            <code>null</code> the download's progress will not be
-     *            monitored.
-     * @return The stream containing the contents of the downloaded file
-     *         version.
+     * @param  fileId   - the id of file.
+     * @param  version  - the version of file to download; initial version of file has value of <code>0</code>, second
+     *                  version of file is <code>1</code> and so on.
+     * @param  output   - the stream to which the version contents will be written.
+     * @param  listener - a listener for monitoring the download's progress; if <code>null</code> the download's
+     *                  progress will not be monitored.
+     * @return          The stream containing the contents of the downloaded file version.
      */
-    public OutputStream downloadPreviousFileVersion(String fileId, Integer version, OutputStream output,
+    public OutputStream downloadPreviousFileVersion(
+            String fileId, Integer version, OutputStream output,
             ProgressListener listener) {
         try {
             LOG.debug("Downloading file(id=" + fileId + ", version=" + version + ")");
@@ -417,13 +383,10 @@ public class BoxFilesManager {
     /**
      * Promote a previous version of file.
      *
-     * @param fileId
-     *            - the id of file.
-     * @param version
-     *            - the version of file to promote; initial version of file has
-     *            value of <code>0</code>, second version of file is
-     *            <code>1</code> and so on.
-     * @return The promoted version of file.
+     * @param  fileId  - the id of file.
+     * @param  version - the version of file to promote; initial version of file has value of <code>0</code>, second
+     *                 version of file is <code>1</code> and so on.
+     * @return         The promoted version of file.
      */
     public BoxFileVersion promoteFileVersion(String fileId, Integer version) {
         try {
@@ -450,20 +413,16 @@ public class BoxFilesManager {
     /**
      * Copy file to destination folder while optionally giving it a new name.
      *
-     * @param fileId
-     *            - the id of file to copy.
-     * @param destinationFolderId
-     *            - the id of the destination folder.
-     * @param newName
-     *            - the new name for copied file; if <code>newName</code> is
-     *            <code>null</code>, the copied file has same name as the
-     *            original.
-     * @return The copied file.
+     * @param  fileId              - the id of file to copy.
+     * @param  destinationFolderId - the id of the destination folder.
+     * @param  newName             - the new name for copied file; if <code>newName</code> is <code>null</code>, the
+     *                             copied file has same name as the original.
+     * @return                     The copied file.
      */
     public BoxFile copyFile(String fileId, String destinationFolderId, String newName) {
         try {
             LOG.debug("Copying file(id=" + fileId + ") to destination_folder(id=" + destinationFolderId + ")"
-                    + (newName == null ? "" : " with new name '" + newName + "'"));
+                      + (newName == null ? "" : " with new name '" + newName + "'"));
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -486,20 +445,16 @@ public class BoxFilesManager {
     /**
      * Move file to destination folder while optionally giving it a new name.
      *
-     * @param fileId
-     *            - the id of file to move.
-     * @param destinationFolderId
-     *            - the id of the destination folder.
-     * @param newName
-     *            - the new name of moved file; if <code>newName</code> is
-     *            <code>null</code>, the moved file has same name as the
-     *            original.
-     * @return The moved file.
+     * @param  fileId              - the id of file to move.
+     * @param  destinationFolderId - the id of the destination folder.
+     * @param  newName             - the new name of moved file; if <code>newName</code> is <code>null</code>, the moved
+     *                             file has same name as the original.
+     * @return                     The moved file.
      */
     public BoxFile moveFile(String fileId, String destinationFolderId, String newName) {
         try {
             LOG.debug("Moving file(id=" + fileId + ") to destination_folder(id=" + destinationFolderId + ")"
-                    + (newName == null ? "" : " with new name '" + newName + "'"));
+                      + (newName == null ? "" : " with new name '" + newName + "'"));
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -522,11 +477,9 @@ public class BoxFilesManager {
     /**
      * Rename file giving it the name <code>newName</code>
      *
-     * @param fileId
-     *            - the id of file to rename.
-     * @param newFileName
-     *            - the new name of file.
-     * @return The renamed file.
+     * @param  fileId      - the id of file to rename.
+     * @param  newFileName - the new name of file.
+     * @return             The renamed file.
      */
     public BoxFile renameFile(String fileId, String newFileName) {
         try {
@@ -549,8 +502,7 @@ public class BoxFilesManager {
     /**
      * Delete the file.
      *
-     * @param fileId
-     *            - the id of file to delete.
+     * @param fileId - the id of file to delete.
      */
     public void deleteFile(String fileId) {
         try {
@@ -569,12 +521,9 @@ public class BoxFilesManager {
     /**
      * Delete a file version.
      *
-     * @param fileId
-     *            - the id of file with version to delete.
-     * @param version
-     *            - the version of file to delete; initial version of file has
-     *            value of <code>0</code>, second version of file is
-     *            <code>1</code> and so on.
+     * @param fileId  - the id of file with version to delete.
+     * @param version - the version of file to delete; initial version of file has value of <code>0</code>, second
+     *                version of file is <code>1</code> and so on.
      */
     public void deleteFileVersion(String fileId, Integer version) {
         try {
@@ -600,27 +549,23 @@ public class BoxFilesManager {
     /**
      * Create a shared link to file.
      *
-     * @param fileId
-     *            - the id of the file to create shared link on.
-     * @param access
-     *            - the access level of the shared link.
-     * @param unshareDate
-     *            - the date and time at which time the created shared link will
-     *            expire; if <code>unsharedDate</code> is <code>null</code> then
-     *            a non-expiring link is created.
-     * @param permissions
-     *            - the permissions of the created link; if
-     *            <code>permissions</code> is <code>null</code> then the created
-     *            shared link is create with default permissions.
-     * @return The created shared link.
+     * @param  fileId      - the id of the file to create shared link on.
+     * @param  access      - the access level of the shared link.
+     * @param  unshareDate - the date and time at which time the created shared link will expire; if
+     *                     <code>unsharedDate</code> is <code>null</code> then a non-expiring link is created.
+     * @param  permissions - the permissions of the created link; if <code>permissions</code> is <code>null</code> then
+     *                     the created shared link is create with default permissions.
+     * @return             The created shared link.
      */
-    public BoxSharedLink createFileSharedLink(String fileId, BoxSharedLink.Access access, Date unshareDate,
+    public BoxSharedLink createFileSharedLink(
+            String fileId, BoxSharedLink.Access access, Date unshareDate,
             BoxSharedLink.Permissions permissions) {
         try {
             LOG.debug("Creating shared link for file(id=" + fileId + ") with access=" + access
-                    + (unshareDate == null ? ""
-                            : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
-                                    + " permissions=" + permissions));
+                      + (unshareDate == null
+                              ? ""
+                              : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
+                                + " permissions=" + permissions));
 
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
@@ -638,13 +583,11 @@ public class BoxFilesManager {
     }
 
     /**
-     * Get an expiring URL for downloading a file directly from Box. This can be
-     * user, for example, for sending as a redirect to a browser to cause the
-     * browser to download the file directly from Box.
+     * Get an expiring URL for downloading a file directly from Box. This can be user, for example, for sending as a
+     * redirect to a browser to cause the browser to download the file directly from Box.
      *
-     * @param fileId
-     *            - the id of file.
-     * @return The temporary download URL
+     * @param  fileId - the id of file.
+     * @return        The temporary download URL
      */
     public URL getDownloadURL(String fileId) {
         try {
@@ -664,13 +607,11 @@ public class BoxFilesManager {
     }
 
     /**
-     * Get an expiring URL for creating an embedded preview session. The URL
-     * will expire after 60 seconds and the preview session will expire after 60
-     * minutes.
+     * Get an expiring URL for creating an embedded preview session. The URL will expire after 60 seconds and the
+     * preview session will expire after 60 minutes.
      *
-     * @param fileId
-     *            - the id of the file to get preview link on.
-     * @return The preview link.
+     * @param  fileId - the id of the file to get preview link on.
+     * @return        The preview link.
      */
     public URL getFilePreviewLink(String fileId) {
         try {
@@ -689,29 +630,23 @@ public class BoxFilesManager {
     }
 
     /**
-     * Get an expiring URL for creating an embedded preview session. The URL
-     * will expire after 60 seconds and the preview session will expire after 60
-     * minutes.
+     * Get an expiring URL for creating an embedded preview session. The URL will expire after 60 seconds and the
+     * preview session will expire after 60 minutes.
      *
-     * @param fileId
-     *            - the id of the file to get preview link on.
-     * @param fileType
-     *            - either PNG of JPG.
-     * @param minWidth
-     *            - minimum width.
-     * @param minHeight
-     *            - minimum height.
-     * @param maxWidth
-     *            - maximum width.
-     * @param maxHeight
-     *            - maximum height.
-     * @return The byte array of the thumbnail image.
+     * @param  fileId    - the id of the file to get preview link on.
+     * @param  fileType  - either PNG of JPG.
+     * @param  minWidth  - minimum width.
+     * @param  minHeight - minimum height.
+     * @param  maxWidth  - maximum width.
+     * @param  maxHeight - maximum height.
+     * @return           The byte array of the thumbnail image.
      */
-    public byte[] getFileThumbnail(String fileId, BoxFile.ThumbnailFileType fileType, Integer minWidth,
+    public byte[] getFileThumbnail(
+            String fileId, BoxFile.ThumbnailFileType fileType, Integer minWidth,
             Integer minHeight, Integer maxWidth, Integer maxHeight) {
         try {
             LOG.debug("Getting thumbnail for file(id=" + fileId + ") fileType=" + fileType + " minWidth=" + minWidth
-                    + " minHeight=" + minHeight + " maxWidth=" + maxWidth + " maxHeight=" + maxHeight);
+                      + " minHeight=" + minHeight + " maxWidth=" + maxWidth + " maxHeight=" + maxHeight);
 
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
@@ -741,17 +676,13 @@ public class BoxFilesManager {
     }
 
     /**
-     * Create metadata for file in either the global properties template or the
-     * specified template type.
+     * Create metadata for file in either the global properties template or the specified template type.
      *
-     * @param fileId
-     *            - the id of the file to create metadata for.
-     * @param metadata
-     *            - the new metadata values.
-     * @param typeName
-     *            - the metadata template type name; if <code>null</code> the
-     *            global properties template type is used.
-     * @return The metadata returned from the server.
+     * @param  fileId   - the id of the file to create metadata for.
+     * @param  metadata - the new metadata values.
+     * @param  typeName - the metadata template type name; if <code>null</code> the global properties template type is
+     *                  used.
+     * @return          The metadata returned from the server.
      */
     public Metadata createFileMetadata(String fileId, Metadata metadata, String typeName) {
         try {
@@ -780,12 +711,10 @@ public class BoxFilesManager {
     /**
      * Gets the file properties metadata.
      *
-     * @param fileId
-     *            - the id of the file to retrieve metadata for.
-     * @param typeName
-     *            - the metadata template type name; if <code>null</code> the
-     *            global properties template type is used.
-     * @return The metadata returned from the server.
+     * @param  fileId   - the id of the file to retrieve metadata for.
+     * @param  typeName - the metadata template type name; if <code>null</code> the global properties template type is
+     *                  used.
+     * @return          The metadata returned from the server.
      */
     public Metadata getFileMetadata(String fileId, String typeName) {
         try {
@@ -812,11 +741,9 @@ public class BoxFilesManager {
     /**
      * Update the file properties metadata.
      *
-     * @param fileId
-     *            - the id of file to delete.
-     * @param metadata
-     *            - the new metadata values.
-     * @return The metadata returned from the server.
+     * @param  fileId   - the id of file to delete.
+     * @param  metadata - the new metadata values.
+     * @return          The metadata returned from the server.
      */
     public Metadata updateFileMetadata(String fileId, Metadata metadata) {
         try {
@@ -838,8 +765,7 @@ public class BoxFilesManager {
     /**
      * Delete the file properties metadata.
      *
-     * @param fileId
-     *            - the id of file to delete.
+     * @param fileId - the id of file to delete.
      */
     public void deleteFileMetadata(String fileId) {
         try {
@@ -856,15 +782,12 @@ public class BoxFilesManager {
     }
 
     /**
-     * Does a pre-verification before upload, to check if the filename already exists or if there is permission to upload.
-     * It will throw a BoxAPIResponseException if there is any problem in uploading the given file.
+     * Does a pre-verification before upload, to check if the filename already exists or if there is permission to
+     * upload. It will throw a BoxAPIResponseException if there is any problem in uploading the given file.
      *
-     * @param parentFolderId
-     *            - the id of parent folder.
-     * @param fileName
-     *            the name to give the uploaded file.
-     * @param size
-     *            - the size of the file's content used for monitoring the upload's progress.
+     * @param parentFolderId - the id of parent folder.
+     * @param fileName       the name to give the uploaded file.
+     * @param size           - the size of the file's content used for monitoring the upload's progress.
      *
      */
     public void checkUpload(String fileName, String parentFolderId, Long size) {
@@ -884,7 +807,7 @@ public class BoxFilesManager {
             parentFolder.canUpload(fileName, size);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 }

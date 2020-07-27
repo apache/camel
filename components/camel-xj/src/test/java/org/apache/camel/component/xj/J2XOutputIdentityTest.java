@@ -28,9 +28,9 @@ public class J2XOutputIdentityTest extends CamelTestSupport {
     public void testOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
-                + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
-                + "</object>");
+                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                                    + "</object>");
         mock.message(0).body().isInstanceOf(String.class);
 
         template.sendBody("direct:start", "{\"hello\": \"world!\"}");

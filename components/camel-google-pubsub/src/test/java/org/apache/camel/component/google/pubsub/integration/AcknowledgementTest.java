@@ -74,14 +74,11 @@ public class AcknowledgementTest extends PubsubTestSupport {
     }
 
     /**
-     * Testing acknowledgements. Three checks to be performed. Check 1 :
-     * Successful round trip. Message received and acknowledged. If the ACK
-     * fails for the first message, it will be delivered again for the second
-     * check and the body comparison will fail. Check 2 : Failure. As the route
-     * throws and exception and the message is NACK'ed. The message should
-     * remain in the PubSub Subscription for the third check. Check 3 : Success
-     * for the second message. The message received should match the second
-     * message sent.
+     * Testing acknowledgements. Three checks to be performed. Check 1 : Successful round trip. Message received and
+     * acknowledged. If the ACK fails for the first message, it will be delivered again for the second check and the
+     * body comparison will fail. Check 2 : Failure. As the route throws and exception and the message is NACK'ed. The
+     * message should remain in the PubSub Subscription for the third check. Check 3 : Success for the second message.
+     * The message received should match the second message sent.
      *
      * @throws Exception
      */

@@ -92,22 +92,25 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    private void assertThrottlerTiming(final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
+    private void assertThrottlerTiming(
+            final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
         // now assert that they have actually been throttled (use +/- 50 as
         // slack)
         long minimum = calculateMinimum(intervalMs, throttle, messageCount) - 50;
         long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
         // add 500 in case running on slow CI boxes
         maximum += 500;
-        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount, elapsedTimeMs, throttle, intervalMs, minimum,
-                 maximum);
+        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount,
+                elapsedTimeMs, throttle, intervalMs, minimum,
+                maximum);
 
         assertTrue(elapsedTimeMs >= minimum, "Should take at least " + minimum + "ms, was: " + elapsedTimeMs);
         assertTrue(elapsedTimeMs <= maximum + TOLERANCE, "Should take at most " + maximum + "ms, was: " + elapsedTimeMs);
     }
 
-    private long sendMessagesAndAwaitDelivery(final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
-        throws InterruptedException {
+    private long sendMessagesAndAwaitDelivery(
+            final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
+            throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
         try {
             if (receivingEndpoint != null) {
@@ -161,19 +164,20 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
     private long calculateMinimum(final long periodMs, final long throttleRate, final long messageCount) {
         if (messageCount % throttleRate > 0) {
-            return (long)Math.floor((double)messageCount / (double)throttleRate) * periodMs;
+            return (long) Math.floor((double) messageCount / (double) throttleRate) * periodMs;
         } else {
-            return (long)(Math.floor((double)messageCount / (double)throttleRate) * periodMs) - periodMs;
+            return (long) (Math.floor((double) messageCount / (double) throttleRate) * periodMs) - periodMs;
         }
     }
 
     private long calculateMaximum(final long periodMs, final long throttleRate, final long messageCount) {
-        return ((long)Math.ceil((double)messageCount / (double)throttleRate)) * periodMs;
+        return ((long) Math.ceil((double) messageCount / (double) throttleRate)) * periodMs;
     }
 
-    private void sendMessagesWithHeaderExpression(final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int intervalMs,
-                                                  final int messageCount)
-        throws InterruptedException {
+    private void sendMessagesWithHeaderExpression(
+            final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int intervalMs,
+            final int messageCount)
+            throws InterruptedException {
         resultEndpoint.expectedMessageCount(messageCount);
 
         long start = System.nanoTime();
@@ -211,9 +215,11 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
 
                 from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(1000).to("log:gresult", "mock:gresult");
 
-                from("direct:ga").throttle(constant(5), header("key")).timePeriodMillis(INTERVAL).to("log:gresult", "mock:gresult");
+                from("direct:ga").throttle(constant(5), header("key")).timePeriodMillis(INTERVAL).to("log:gresult",
+                        "mock:gresult");
 
-                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key")).timePeriodMillis(INTERVAL).to("log:gresult", "mock:gresult");
+                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key")).timePeriodMillis(INTERVAL)
+                        .to("log:gresult", "mock:gresult");
             }
         };
     }

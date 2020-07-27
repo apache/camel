@@ -118,7 +118,7 @@ public class CouchDbProducerTest {
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_ID, id);
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_REV, rev);
     }
-    
+
     @Test
     void testGetResponse() throws Exception {
         String id = UUID.randomUUID().toString();
@@ -142,7 +142,8 @@ public class CouchDbProducerTest {
 
             @Override
             public Response answer(InvocationOnMock invocation) throws Throwable {
-                assertTrue(invocation.getArguments()[0] instanceof JsonElement, invocation.getArguments()[0].getClass() + " but wanted " + JsonElement.class);
+                assertTrue(invocation.getArguments()[0] instanceof JsonElement,
+                        invocation.getArguments()[0].getClass() + " but wanted " + JsonElement.class);
                 return new Response();
             }
         });

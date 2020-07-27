@@ -119,10 +119,10 @@ public class S3ComponentFileTest extends CamelTestSupport {
         assertEquals(getCamelBucket(), resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
         assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not
-                                                                              // enabled
-                                                                              // on
-                                                                              // this
-                                                                              // bucket
+                                                                             // enabled
+                                                                             // on
+                                                                             // this
+                                                                             // bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
         assertNull(resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));

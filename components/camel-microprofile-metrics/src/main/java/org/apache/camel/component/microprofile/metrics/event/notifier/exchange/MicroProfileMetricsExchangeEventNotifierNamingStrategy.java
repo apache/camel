@@ -28,15 +28,16 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 
 public interface MicroProfileMetricsExchangeEventNotifierNamingStrategy {
 
-    MicroProfileMetricsExchangeEventNotifierNamingStrategy DEFAULT = (event, endpoint) -> DEFAULT_CAMEL_EXCHANGE_EVENT_METRIC_NAME;
+    MicroProfileMetricsExchangeEventNotifierNamingStrategy DEFAULT
+            = (event, endpoint) -> DEFAULT_CAMEL_EXCHANGE_EVENT_METRIC_NAME;
 
     String getName(Exchange exchange, Endpoint endpoint);
 
     default Tag[] getTags(ExchangeEvent event, Endpoint endpoint) {
         return new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName()),
-            new Tag(ENDPOINT_NAME, endpoint.getEndpointUri()),
-            new Tag(EVENT_TYPE_TAG, event.getClass().getSimpleName())
+                new Tag(CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName()),
+                new Tag(ENDPOINT_NAME, endpoint.getEndpointUri()),
+                new Tag(EVENT_TYPE_TAG, event.getClass().getSimpleName())
         };
     }
 }

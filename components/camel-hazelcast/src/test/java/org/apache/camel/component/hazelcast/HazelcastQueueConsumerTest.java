@@ -49,7 +49,7 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
+        when(hazelcastInstance.<String> getQueue("foo")).thenReturn(queue);
         when(queue.addItemListener(any(), eq(true))).thenReturn(UUID.randomUUID());
     }
 
@@ -68,7 +68,6 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         verify(queue).addItemListener(argument.capture(), eq(true));
         final ItemEvent<String> event = new ItemEvent<>("foo", ItemEventType.ADDED, "foo", null);
         argument.getValue().itemAdded(event);
-
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
 
@@ -93,8 +92,11 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
-                        .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise()
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice()
+                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+                        .log("...added").to("mock:added")
+                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
+                        .log("...removed").to("mock:removed").otherwise()
                         .log("fail!");
             }
         };

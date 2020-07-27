@@ -47,7 +47,7 @@ class DynamicClassLoader extends URLClassLoader {
         int i = 0;
         for (Iterator<?> it = classpathElements.iterator(); it.hasNext(); i++) {
             try {
-                urls[i] = new File((String)it.next()).toURI().toURL();
+                urls[i] = new File((String) it.next()).toURI().toURL();
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }

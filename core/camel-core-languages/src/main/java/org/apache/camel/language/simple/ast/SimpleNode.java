@@ -35,10 +35,9 @@ public interface SimpleNode {
     /**
      * Creates a Camel {@link Expression} based on this model.
      *
-     * @param expression the input string
-     * @return the created {@link Expression}
-     * @throws org.apache.camel.language.simple.types.SimpleParserException
-     *          should be thrown if error parsing the model
+     * @param  expression                                                   the input string
+     * @return                                                              the created {@link Expression}
+     * @throws org.apache.camel.language.simple.types.SimpleParserException should be thrown if error parsing the model
      */
     Expression createExpression(String expression) throws SimpleParserException;
 

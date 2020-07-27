@@ -70,7 +70,7 @@ public class KafkaProducerTest {
     private Message out = new DefaultMessage(camelContext);
     private AsyncCallback callback = Mockito.mock(AsyncCallback.class);
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public KafkaProducerTest() throws Exception {
         KafkaComponent kafka = new KafkaComponent(new DefaultCamelContext());
         kafka.getConfiguration().setBrokers("broker1:1234,broker2:4567");
@@ -84,14 +84,16 @@ public class KafkaProducerTest {
         RecordMetadata rm = new RecordMetadata(null, 0, 0, 0, 0L, 0, 0);
         Future future = Mockito.mock(Future.class);
         Mockito.when(future.get()).thenReturn(rm);
-        org.apache.kafka.clients.producer.KafkaProducer kp = Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class);
+        org.apache.kafka.clients.producer.KafkaProducer kp
+                = Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class);
         Mockito.when(kp.send(any(ProducerRecord.class))).thenReturn(future);
 
         Mockito.when(exchange.getContext()).thenReturn(context);
         Mockito.when(context.getTypeConverter()).thenReturn(converter);
         Mockito.when(converter.tryConvertTo(String.class, exchange, null)).thenReturn(null);
         Mockito.when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
-        Mockito.when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
+        Mockito.when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory())
+                .thenReturn(new DefaultHeadersMapFactory());
         Mockito.when(camelContext.getTypeConverter()).thenReturn(converter);
 
         producer.setKafkaProducer(kp);
@@ -105,7 +107,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public void processSendsMessage() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
@@ -119,7 +121,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public void processSendsMessageWithException() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
         // setup the exception here
@@ -129,7 +131,7 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         assertThrows(Exception.class,
-            () -> producer.process(exchange));
+                () -> producer.process(exchange));
     }
 
     @Test
@@ -324,7 +326,8 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.KEY, "someKey");
 
         // we add our exchanges in order to aggregate
-        final List<Exchange> nestedExchanges = createListOfExchangesWithTopics(Arrays.asList("overridenTopic1", "overridenTopic2", "overridenTopic3"));
+        final List<Exchange> nestedExchanges
+                = createListOfExchangesWithTopics(Arrays.asList("overridenTopic1", "overridenTopic2", "overridenTopic3"));
 
         // aggregate
         final Exchange finalAggregatedExchange = aggregateExchanges(nestedExchanges, new GroupedExchangeAggregationStrategy());
@@ -350,7 +353,8 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.KEY, "someKey");
 
         // we add our exchanges in order to aggregate
-        final List<Exchange> nestedExchanges = createListOfExchangesWithTopics(Arrays.asList("overridenTopic1", "overridenTopic2", "overridenTopic3"));
+        final List<Exchange> nestedExchanges
+                = createListOfExchangesWithTopics(Arrays.asList("overridenTopic1", "overridenTopic2", "overridenTopic3"));
 
         // aggregate
         final Exchange finalAggregatedExchange = aggregateExchanges(nestedExchanges, new GroupedMessageAggregationStrategy());
@@ -366,7 +370,7 @@ public class KafkaProducerTest {
         assertRecordMetadataExistsForEachAggregatedMessage();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void verifySendMessage(Integer partitionKey, String topic, String messageKey) {
         ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
         Mockito.verify(producer.getKafkaProducer()).send(captor.capture());
@@ -375,7 +379,7 @@ public class KafkaProducerTest {
         assertEquals(topic, captor.getValue().topic());
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void verifySendMessage(String topic, String messageKey) {
         ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
         Mockito.verify(producer.getKafkaProducer()).send(captor.capture());
@@ -383,40 +387,42 @@ public class KafkaProducerTest {
         assertEquals(topic, captor.getValue().topic());
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void verifySendMessage(String topic) {
         ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
         Mockito.verify(producer.getKafkaProducer()).send(captor.capture());
         assertEquals(topic, captor.getValue().topic());
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void verifySendMessages(final List<String> expectedTopics) {
         final ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
         Mockito.verify(producer.getKafkaProducer(), Mockito.atLeast(expectedTopics.size())).send(captor.capture());
-        final List<String> actualTopics = captor.getAllValues().stream().map(ProducerRecord::topic).collect(Collectors.toList());
+        final List<String> actualTopics
+                = captor.getAllValues().stream().map(ProducerRecord::topic).collect(Collectors.toList());
 
         assertEquals(expectedTopics, actualTopics);
     }
 
     private void assertRecordMetadataExists() {
-        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>)in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
         assertNotNull(recordMetaData1);
         assertEquals(recordMetaData1.size(), 1, "Expected one recordMetaData");
         assertNotNull(recordMetaData1.get(0));
     }
 
     private void assertRecordMetadataExists(final int numMetadata) {
-        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>)in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
         assertNotNull(recordMetaData1);
         assertEquals(recordMetaData1.size(), numMetadata, "Expected one recordMetaData");
         assertTrue(recordMetaData1.get(0) != null);
     }
 
     private void assertRecordMetadataExistsForEachAggregatedExchange() {
-        List<Exchange> exchanges = (List<Exchange>)in.getBody();
+        List<Exchange> exchanges = (List<Exchange>) in.getBody();
         for (Exchange ex : exchanges) {
-            List<RecordMetadata> recordMetaData = (List<RecordMetadata>)ex.getMessage().getHeader(KafkaConstants.KAFKA_RECORDMETA);
+            List<RecordMetadata> recordMetaData
+                    = (List<RecordMetadata>) ex.getMessage().getHeader(KafkaConstants.KAFKA_RECORDMETA);
             assertNotNull(recordMetaData);
             assertEquals(recordMetaData.size(), 1, "Expected one recordMetaData");
             assertNotNull(recordMetaData.get(0));
@@ -424,9 +430,9 @@ public class KafkaProducerTest {
     }
 
     private void assertRecordMetadataExistsForEachAggregatedMessage() {
-        List<Message> messages = (List<Message>)in.getBody();
+        List<Message> messages = (List<Message>) in.getBody();
         for (Message msg : messages) {
-            List<RecordMetadata> recordMetaData = (List<RecordMetadata>)msg.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+            List<RecordMetadata> recordMetaData = (List<RecordMetadata>) msg.getHeader(KafkaConstants.KAFKA_RECORDMETA);
             assertNotNull(recordMetaData);
             assertEquals(recordMetaData.size(), 1, "Expected one recordMetaData");
             assertNotNull(recordMetaData.get(0));

@@ -40,7 +40,7 @@ public class ApnsServiceFactoryTest {
     public void testApnsServiceFactoryAsPool0() throws Exception {
         ApnsServiceFactory apnsServiceFactory = createApnsServiceFactoryWithFixedCertificatesAsPool(0);
         assertThrows(IllegalArgumentException.class,
-            () -> apnsServiceFactory.getApnsService());
+                () -> apnsServiceFactory.getApnsService());
     }
 
     @Test
@@ -56,8 +56,8 @@ public class ApnsServiceFactoryTest {
         assertTrue(apnsService instanceof ApnsService);
     }
 
-    public static ApnsServiceFactory createApnsServiceFactoryWithFixedCertificates() 
-        throws Exception {
+    public static ApnsServiceFactory createApnsServiceFactoryWithFixedCertificates()
+            throws Exception {
         ApnsServiceFactory apnsServiceFactory = new ApnsServiceFactory();
 
         apnsServiceFactory.setFeedbackHost(TestConstants.TEST_HOST);
@@ -69,8 +69,8 @@ public class ApnsServiceFactoryTest {
         return apnsServiceFactory;
     }
 
-    private ApnsServiceFactory createApnsServiceFactoryWithFixedCertificatesAsPool(int poolSize) 
-        throws Exception {
+    private ApnsServiceFactory createApnsServiceFactoryWithFixedCertificatesAsPool(int poolSize)
+            throws Exception {
         ApnsServiceFactory apnsServiceFactory = createApnsServiceFactoryWithFixedCertificates();
         apnsServiceFactory.setConnectionStrategy(ConnectionStrategy.POOL);
 

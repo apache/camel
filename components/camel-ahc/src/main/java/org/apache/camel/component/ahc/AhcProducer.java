@@ -54,7 +54,8 @@ public class AhcProducer extends DefaultAsyncProducer {
             // AHC supports async processing
             Request request = getEndpoint().getBinding().prepareRequest(getEndpoint(), exchange);
             LOG.debug("Executing request {}", request);
-            client.executeRequest(request, new AhcAsyncHandler(exchange, callback, request.getUrl(), getEndpoint().getBufferSize()));
+            client.executeRequest(request,
+                    new AhcAsyncHandler(exchange, callback, request.getUrl(), getEndpoint().getBufferSize()));
             return false;
         } catch (Exception e) {
             exchange.setException(e);
@@ -120,7 +121,7 @@ public class AhcProducer extends DefaultAsyncProducer {
 
         @Override
         public State onBodyPartReceived(HttpResponseBodyPart bodyPart)
-            throws Exception {
+                throws Exception {
             // write body parts to stream, which we will bind to the Camel Exchange in onComplete
             os.write(bodyPart.getBodyPartBytes());
             if (LOG.isTraceEnabled()) {
@@ -132,7 +133,7 @@ public class AhcProducer extends DefaultAsyncProducer {
 
         @Override
         public State onStatusReceived(HttpResponseStatus responseStatus)
-            throws Exception {
+                throws Exception {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("{} onStatusReceived {}", exchange.getExchangeId(), responseStatus);
             }

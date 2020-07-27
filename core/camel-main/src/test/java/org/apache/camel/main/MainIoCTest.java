@@ -130,9 +130,10 @@ public class MainIoCTest {
         }
 
         @BindToRegistry("coolStuff")
-        public String cool(@BeanInject MyCoolBean cool,
-                           @PropertyInject(value = "magic", defaultValue = "456") int num,
-                           @BeanInject("myBar") MyBar bar) {
+        public String cool(
+                @BeanInject MyCoolBean cool,
+                @PropertyInject(value = "magic", defaultValue = "456") int num,
+                @BeanInject("myBar") MyBar bar) {
             // should lookup MyCoolBean type from the registry and find the property
             assertNotNull(cool);
             assertEquals(456, num);

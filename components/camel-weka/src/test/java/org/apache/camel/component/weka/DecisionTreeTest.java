@@ -32,109 +32,109 @@ import weka.classifiers.Evaluation;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DecisionTreeTest extends AbstractWekaTest {
-    
+
     @Test
     public void testJ48WithCrossValidation() throws Exception {
-        
+
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
-                
+
                 @Override
                 public void configure() throws Exception {
-                    
-                        // Use the weka to read the model training data
-                        from("direct:start")
-                        
-                        // Build a J48 classifier using cross-validation with 10 folds
-                        .to("weka:model?build=J48&xval=true&folds=10&seed=1")
-                        
-                        // Persist the J48 model
-                        .to("weka:model?saveTo=src/test/resources/data/sfny-j48.model");
+
+                    // Use the weka to read the model training data
+                    from("direct:start")
+
+                            // Build a J48 classifier using cross-validation with 10 folds
+                            .to("weka:model?build=J48&xval=true&folds=10&seed=1")
+
+                            // Persist the J48 model
+                            .to("weka:model?saveTo=src/test/resources/data/sfny-j48.model");
                 }
             });
             camelctx.start();
-            
+
             Path inpath = Paths.get("src/test/resources/data/sfny-train.arff");
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
-            
+
             Classifier classifier = dataset.getClassifier();
             assertNotNull(classifier);
             logInfo("{}", classifier);
-            
+
             Evaluation evaluation = dataset.getEvaluation();
             assertNotNull(evaluation);
             logInfo("{}", evaluation);
         }
     }
-    
+
     @Test
     public void testJ48WithTrainingData() throws Exception {
-        
+
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
-                
+
                 @Override
                 public void configure() throws Exception {
-                    
-                        // Use the weka to read the model training data
-                        from("direct:start")
-                        
-                        // Push the current instances to the stack
-                        .to("weka:push?dsname=sfny-train")
-                        
-                        // Build a J48 classifier with a set of named instances
-                        .to("weka:model?build=J48&dsname=sfny-train");
+
+                    // Use the weka to read the model training data
+                    from("direct:start")
+
+                            // Push the current instances to the stack
+                            .to("weka:push?dsname=sfny-train")
+
+                            // Build a J48 classifier with a set of named instances
+                            .to("weka:model?build=J48&dsname=sfny-train");
                 }
             });
             camelctx.start();
-            
+
             Path inpath = Paths.get("src/test/resources/data/sfny-train.arff");
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
-            
+
             Classifier classifier = dataset.getClassifier();
             assertNotNull(classifier);
             logInfo("{}", classifier);
-            
+
             Evaluation evaluation = dataset.getEvaluation();
             assertNotNull(evaluation);
             logInfo("{}", evaluation);
         }
     }
-    
+
     @Test
     public void testJ48WithCurrentInstances() throws Exception {
-        
+
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
-                
+
                 @Override
                 public void configure() throws Exception {
-                    
-                        // Use the weka to read the model training data
-                        from("direct:start")
-                        
-                        // Build a J48 classifier using the current dataset
-                        .to("weka:model?build=J48");
+
+                    // Use the weka to read the model training data
+                    from("direct:start")
+
+                            // Build a J48 classifier using the current dataset
+                            .to("weka:model?build=J48");
                 }
             });
             camelctx.start();
-            
+
             Path inpath = Paths.get("src/test/resources/data/sfny-train.arff");
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
-            
+
             Classifier classifier = dataset.getClassifier();
             assertNotNull(classifier);
             logInfo("{}", classifier);
-            
+
             Evaluation evaluation = dataset.getEvaluation();
             assertNotNull(evaluation);
             logInfo("{}", evaluation);

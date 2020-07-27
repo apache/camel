@@ -185,7 +185,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
     @Test
     public void setMultiValuedFieldInHeader() throws Exception {
-        String[] categories = {"electronics", "apple"};
+        String[] categories = { "electronics", "apple" };
         Exchange exchange = createExchangeWithBody("Test body for iPod.");
         exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         exchange.getIn().setHeader("SolrField.id", "MA147LL/A");

@@ -48,13 +48,13 @@ public class RestUndertowProducerThrowExceptionErrorTest extends BaseUndertowTes
             public void configure() throws Exception {
                 // configure to use localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort())
-                    .endpointProperty("throwExceptionOnFailure", "false");
+                        .endpointProperty("throwExceptionOnFailure", "false");
 
                 from("direct:start")
-                    .to("rest:get:users/{id}/basic");
+                        .to("rest:get:users/{id}/basic");
 
-                    // use the rest DSL to define the rest services
-                    rest("/users/")
+                // use the rest DSL to define the rest services
+                rest("/users/")
                         .get("{id}/basic")
                         .route()
                         .to("mock:input")
@@ -68,5 +68,5 @@ public class RestUndertowProducerThrowExceptionErrorTest extends BaseUndertowTes
             }
         };
     }
- 
+
 }

@@ -25,7 +25,7 @@ public class MyErrorProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         // do nothing here
     }
-    
+
     @Override
     public String toString() {
         return "MyErrorProcessor";

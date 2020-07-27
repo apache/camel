@@ -47,8 +47,8 @@ public class JettyValidatorStreamTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .to("validator:OptimizationRequest.xsd")
-                    .transform(constant("<ok/>"));
+                        .to("validator:OptimizationRequest.xsd")
+                        .transform(constant("<ok/>"));
             }
         };
     }

@@ -55,7 +55,7 @@ public final class JcloudsPayloadConverter {
     public static Payload toPayload(String str, Exchange ex) throws UnsupportedEncodingException {
         return toPayload(str.getBytes(ExchangeHelper.getCharsetName(ex)));
     }
-    
+
     public static Payload toPayload(String str) throws UnsupportedEncodingException {
         return toPayload(str, null);
     }
@@ -64,35 +64,35 @@ public final class JcloudsPayloadConverter {
     public static Payload toPayload(File file) {
         return new ByteSourcePayload(Files.asByteSource(file));
     }
-    
+
     protected static Payload setContentMetadata(Payload payload, Exchange exchange) {
         // Just add an NPE check on the payload
         if (exchange == null) {
             return payload;
         }
-        
+
         String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
         String contentDisposition = exchange.getIn().getHeader(JcloudsConstants.CONTENT_DISPOSITION, String.class);
         String contentLanguage = exchange.getIn().getHeader(JcloudsConstants.CONTENT_LANGUAGE, String.class);
         Date payloadExpires = exchange.getIn().getHeader(JcloudsConstants.PAYLOAD_EXPIRES, Date.class);
-        
+
         if (ObjectHelper.isNotEmpty(contentType)) {
             payload.getContentMetadata().setContentType(contentType);
         }
-        
+
         if (ObjectHelper.isNotEmpty(contentEncoding)) {
             payload.getContentMetadata().setContentEncoding(contentEncoding);
         }
-        
+
         if (ObjectHelper.isNotEmpty(contentDisposition)) {
             payload.getContentMetadata().setContentDisposition(contentDisposition);
         }
-        
+
         if (ObjectHelper.isNotEmpty(contentLanguage)) {
             payload.getContentMetadata().setContentLanguage(contentLanguage);
         }
-        
+
         if (ObjectHelper.isNotEmpty(payloadExpires)) {
             payload.getContentMetadata().setExpires(payloadExpires);
         }

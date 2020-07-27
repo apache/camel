@@ -91,15 +91,15 @@ public class ManagedDynamicRouterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .dynamicRouter(header("whereTo")).id("mysend");
+                        .dynamicRouter(header("whereTo")).id("mysend");
 
                 from("direct:foo")
-                    .to("mock:foo")
-                    .removeHeader("whereTo");
+                        .to("mock:foo")
+                        .removeHeader("whereTo");
 
                 from("direct:bar")
-                    .to("mock:bar")
-                    .removeHeader("whereTo");
+                        .to("mock:bar")
+                        .removeHeader("whereTo");
             }
         };
     }

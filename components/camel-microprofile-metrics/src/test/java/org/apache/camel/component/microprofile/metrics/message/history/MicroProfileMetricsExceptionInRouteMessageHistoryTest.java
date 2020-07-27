@@ -69,18 +69,18 @@ public class MicroProfileMetricsExceptionInRouteMessageHistoryTest extends Micro
             @Override
             public void configure() {
                 onException(Exception.class)
-                    .routeId("ExceptionRoute")
-                    .to("mock:exception").id("exception");
+                        .routeId("ExceptionRoute")
+                        .to("mock:exception").id("exception");
 
                 from("seda:foo")
-                    .to("mock:foo").id("foo");
+                        .to("mock:foo").id("foo");
 
                 from("seda:bar")
-                    .to("mock:bar").id("bar")
-                    .process(exchange -> {
-                        throw new Exception("Metrics Exception");
-                    })
-                    .to("mock:baz").id("baz");
+                        .to("mock:bar").id("bar")
+                        .process(exchange -> {
+                            throw new Exception("Metrics Exception");
+                        })
+                        .to("mock:baz").id("baz");
             }
         };
     }

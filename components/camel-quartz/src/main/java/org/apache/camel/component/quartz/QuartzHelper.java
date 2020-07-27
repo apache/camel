@@ -41,28 +41,28 @@ public final class QuartzHelper {
     }
 
     /**
-     * Adds the current CamelContext name and endpoint URI to the Job's jobData
-     * map.
+     * Adds the current CamelContext name and endpoint URI to the Job's jobData map.
      *
      * @param camelContext The currently active camelContext
-     * @param jobDetail The job for which the jobData map shall be updated
-     * @param endpointUri URI of the endpoint name, if any. May be {@code null}
+     * @param jobDetail    The job for which the jobData map shall be updated
+     * @param endpointUri  URI of the endpoint name, if any. May be {@code null}
      */
     public static void updateJobDataMap(CamelContext camelContext, JobDetail jobDetail, String endpointUri) {
         updateJobDataMap(camelContext, jobDetail, endpointUri, false);
     }
 
     /**
-     * Adds the current CamelContext name and endpoint URI to the Job's jobData
-     * map.
+     * Adds the current CamelContext name and endpoint URI to the Job's jobData map.
      *
-     * @param camelContext The currently active camelContext
-     * @param jobDetail The job for which the jobData map shall be updated
-     * @param endpointUri URI of the endpoint name, if any. May be {@code null}
-     * @param usingFixedCamelContextName If it is true, jobDataMap uses the CamelContext name;
-     *  if it is false, jobDataMap uses the CamelContext management name which could be changed during the deploy time
+     * @param camelContext               The currently active camelContext
+     * @param jobDetail                  The job for which the jobData map shall be updated
+     * @param endpointUri                URI of the endpoint name, if any. May be {@code null}
+     * @param usingFixedCamelContextName If it is true, jobDataMap uses the CamelContext name; if it is false,
+     *                                   jobDataMap uses the CamelContext management name which could be changed during
+     *                                   the deploy time
      */
-    public static void updateJobDataMap(CamelContext camelContext, JobDetail jobDetail, String endpointUri, boolean usingFixedCamelContextName) {
+    public static void updateJobDataMap(
+            CamelContext camelContext, JobDetail jobDetail, String endpointUri, boolean usingFixedCamelContextName) {
         // Store this camelContext name into the job data
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
         String camelContextName = camelContext.getName();

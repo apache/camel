@@ -26,7 +26,8 @@ public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
     void testAtomHttpNoCamelParameters() {
-        AtomEndpoint atom = context.getEndpoint("atom://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", AtomEndpoint.class);
+        AtomEndpoint atom = context.getEndpoint(
+                "atom://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", AtomEndpoint.class);
         assertNotNull(atom);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml", atom.getFeedUri());
@@ -36,7 +37,9 @@ public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
     void testAtomHttpNoCamelParametersAndOneFeedParameter() {
-        AtomEndpoint atom = context.getEndpoint("atom://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true&foo=bar", AtomEndpoint.class);
+        AtomEndpoint atom = context.getEndpoint(
+                "atom://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true&foo=bar",
+                AtomEndpoint.class);
         assertNotNull(atom);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml?foo=bar", atom.getFeedUri());

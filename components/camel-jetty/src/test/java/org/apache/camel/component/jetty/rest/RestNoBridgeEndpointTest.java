@@ -46,7 +46,8 @@ public class RestNoBridgeEndpointTest extends BaseJettyTest {
 
                 from("direct:foo").removeHeaders("CamelHttp*").to("http://localhost:" + getPort2());
 
-                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true").to("mock:result").transform().simple("Bye ${header.id}");
+                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true").to("mock:result").transform()
+                        .simple("Bye ${header.id}");
             }
         };
     }

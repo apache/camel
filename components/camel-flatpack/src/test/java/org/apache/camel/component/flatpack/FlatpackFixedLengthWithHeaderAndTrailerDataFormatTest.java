@@ -78,10 +78,10 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
                 df.setFixed(true);
 
                 from("direct:unmarshal")
-                    .setHeader("MyFirstHeader", constant("1"))
-                    .unmarshal(df)
-                    .setHeader("MySecondHeader", constant("2"))
-                    .to("mock:unmarshal");
+                        .setHeader("MyFirstHeader", constant("1"))
+                        .unmarshal(df)
+                        .setHeader("MySecondHeader", constant("2"))
+                        .to("mock:unmarshal");
 
                 // with the definition
                 from("direct:marshal").marshal(df).convertBodyTo(String.class).to("mock:marshal");

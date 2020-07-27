@@ -33,7 +33,8 @@ public class RecipientListParallelStopOnExceptionWithOnExceptionTest extends Con
         getMockEndpoint("mock:a").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:c").expectedMinimumMessageCount(0);
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c", String.class);
+        String out = template.requestBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c",
+                String.class);
         assertEquals("Damn Forced", out);
 
         assertMockEndpointsSatisfied();

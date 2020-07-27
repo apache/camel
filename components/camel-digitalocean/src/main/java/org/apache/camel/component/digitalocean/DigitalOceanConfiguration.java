@@ -28,9 +28,9 @@ import org.apache.camel.spi.UriPath;
 public class DigitalOceanConfiguration {
 
     @UriPath(enums = "create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors,"
-        + "enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,"
-        + "resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,"
-        + "attach,detach,assign,unassign,tag,untag")
+                     + "enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,"
+                     + "resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,"
+                     + "attach,detach,assign,unassign,tag,untag")
     private DigitalOceanOperations operation;
 
     @UriParam(enums = "account,actions,blockStorages,droplets,mages,snapshots,keys,regions,sizes,floatingIPs,tags")

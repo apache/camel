@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrProducerDifferentWorkspaceTest extends JcrRouteDifferentWorkspaceTestSupport {
-    
+
     @Test
     public void testJcrProducer() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");

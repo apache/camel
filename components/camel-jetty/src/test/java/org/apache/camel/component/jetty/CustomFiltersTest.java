@@ -49,10 +49,11 @@ public class CustomFiltersTest extends BaseJettyTest {
         private String keyWord;
 
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
             // set a marker attribute to show that this filter class was used
-            ((HttpServletResponse)response).addHeader("MyTestFilter", "true");
-            ((HttpServletResponse)response).setHeader("KeyWord", keyWord);
+            ((HttpServletResponse) response).addHeader("MyTestFilter", "true");
+            ((HttpServletResponse) response).setHeader("KeyWord", keyWord);
             chain.doFilter(request, response);
         }
 
@@ -105,15 +106,16 @@ public class CustomFiltersTest extends BaseJettyTest {
             public void configure() throws Exception {
 
                 // Test the filter list options
-                from("jetty://http://localhost:{{port}}/testFilters?filters=myFilters&filterInit.keyWord=KEY").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        String request = in.getBody(String.class);
-                        // The other form date can be get from the message
-                        // header
-                        exchange.getOut().setBody(request + " response");
-                    }
-                });
+                from("jetty://http://localhost:{{port}}/testFilters?filters=myFilters&filterInit.keyWord=KEY")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Message in = exchange.getIn();
+                                String request = in.getBody(String.class);
+                                // The other form date can be get from the message
+                                // header
+                                exchange.getOut().setBody(request + " response");
+                            }
+                        });
             }
         };
     }

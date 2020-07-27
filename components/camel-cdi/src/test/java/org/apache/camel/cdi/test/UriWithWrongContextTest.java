@@ -44,23 +44,23 @@ public class UriWithWrongContextTest {
 
     @ClassRule
     public static TestRule exception = ExpectedDeploymentException.none()
-        .expect(RuntimeException.class)
-        .expectMessage(
-            // WELD-1.0, WELD-1.2, WELD-2.0 have different exception messages
-            // Check only error code and injection point
-            allOf(
-                containsString("WELD-001408"),
-                containsString("org.apache.camel.cdi.test.UriWithWrongContextRoute.inbound")));
+            .expect(RuntimeException.class)
+            .expectMessage(
+                    // WELD-1.0, WELD-1.2, WELD-2.0 have different exception messages
+                    // Check only error code and injection point
+                    allOf(
+                            containsString("WELD-001408"),
+                            containsString("org.apache.camel.cdi.test.UriWithWrongContextRoute.inbound")));
 
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(FirstCamelContextBean.class, UriWithWrongContextRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(FirstCamelContextBean.class, UriWithWrongContextRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

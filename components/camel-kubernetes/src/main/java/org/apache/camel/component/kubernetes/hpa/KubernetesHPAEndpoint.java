@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-hpa", title = "Kubernetes HPA", syntax = "kubernetes-hpa:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-hpa", title = "Kubernetes HPA", syntax = "kubernetes-hpa:masterUrl",
+             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesHPAEndpoint(String uri, KubernetesHPAComponent component, KubernetesConfiguration config) {

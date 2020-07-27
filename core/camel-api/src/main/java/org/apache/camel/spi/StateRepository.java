@@ -19,9 +19,11 @@ package org.apache.camel.spi;
 import org.apache.camel.Service;
 
 /**
- * This {@link StateRepository} holds a set of key/value pairs for defining a particular <em>state</em> of a component. For instance it can be a set of indexes.
+ * This {@link StateRepository} holds a set of key/value pairs for defining a particular <em>state</em> of a component.
+ * For instance it can be a set of indexes.
  * <p/>
- * An {@link IdempotentRepository} behaves more or less like a {@code Set} whereas this {@link StateRepository} behaves like a {@code Map}.
+ * An {@link IdempotentRepository} behaves more or less like a {@code Set} whereas this {@link StateRepository} behaves
+ * like a {@code Map}.
  *
  * @param <K> Key type
  * @param <V> Value type
@@ -31,7 +33,7 @@ public interface StateRepository<K, V> extends Service {
     /**
      * Sets the state value for the given key.
      *
-     * @param key State key
+     * @param key   State key
      * @param value State value
      */
     void setState(K key, V value);
@@ -39,9 +41,8 @@ public interface StateRepository<K, V> extends Service {
     /**
      * Gets the state value for the given key. It returns {@code null} if the key is unknown.
      *
-     * @param key State key
-     * @return State value or null the key is unknown
+     * @param  key State key
+     * @return     State value or null the key is unknown
      */
     V getState(K key);
 }
-

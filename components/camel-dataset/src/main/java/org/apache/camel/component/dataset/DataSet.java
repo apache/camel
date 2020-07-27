@@ -36,7 +36,8 @@ public interface DataSet {
     /**
      * Asserts that the expected message has been received for the given index
      */
-    void assertMessageExpected(DataSetEndpoint endpoint, Exchange expected, Exchange actual, long messageIndex) throws Exception;
+    void assertMessageExpected(DataSetEndpoint endpoint, Exchange expected, Exchange actual, long messageIndex)
+            throws Exception;
 
     /**
      * Returns the number of messages which should be received before reporting on the progress of the test

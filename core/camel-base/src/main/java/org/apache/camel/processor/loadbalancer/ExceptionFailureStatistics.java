@@ -69,4 +69,3 @@ public class ExceptionFailureStatistics {
         fallbackCounter.set(0);
     }
 }
-

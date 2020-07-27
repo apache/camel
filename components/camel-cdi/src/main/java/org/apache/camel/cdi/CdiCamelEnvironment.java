@@ -26,11 +26,13 @@ import org.apache.camel.CamelContext;
 @Vetoed
 final class CdiCamelEnvironment {
 
-    <T extends CamelContext> Producer<T> camelContextProducer(Producer<T> delegate, Annotated annotated, BeanManager manager, CdiCamelExtension extension) {
+    <T extends CamelContext> Producer<T> camelContextProducer(
+            Producer<T> delegate, Annotated annotated, BeanManager manager, CdiCamelExtension extension) {
         return new CamelContextProducer<>(delegate, annotated, manager, extension);
     }
 
-    <T extends CamelContext> InjectionTarget<T> camelContextInjectionTarget(InjectionTarget<T> delegate, Annotated annotated, BeanManager manager, CdiCamelExtension extension) {
+    <T extends CamelContext> InjectionTarget<T> camelContextInjectionTarget(
+            InjectionTarget<T> delegate, Annotated annotated, BeanManager manager, CdiCamelExtension extension) {
         CamelContextProducer<T> producer = new CamelContextProducer<>(delegate, annotated, manager, extension);
         return new CamelContextInjectionTarget<>(delegate, producer);
     }

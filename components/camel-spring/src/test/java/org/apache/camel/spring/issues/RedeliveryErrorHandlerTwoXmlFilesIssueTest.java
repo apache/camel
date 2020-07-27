@@ -32,7 +32,8 @@ public class RedeliveryErrorHandlerTwoXmlFilesIssueTest extends SpringTestSuppor
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/RedeliveryErrorHandlerTwoXmlFilesIssueTest-1.xml",
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/RedeliveryErrorHandlerTwoXmlFilesIssueTest-1.xml",
                 "org/apache/camel/spring/issues/RedeliveryErrorHandlerTwoXmlFilesIssueTest-2.xml");
     }
 

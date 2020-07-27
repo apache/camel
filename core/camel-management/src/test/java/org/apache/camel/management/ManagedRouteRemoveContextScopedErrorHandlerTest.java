@@ -92,7 +92,7 @@ public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementT
             public void configure() throws Exception {
                 // context scoped error handler
                 errorHandler(deadLetterChannel("mock:dead"));
-                
+
                 // which this route will use
                 from("seda:foo").to("mock:result");
             }

@@ -31,8 +31,10 @@ public interface RestBindingJaxbDataFormatFactory {
     /**
      * Setup XML data format
      */
-    void setupJaxb(CamelContext camelContext, RestConfiguration config,
-                   String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
-                   DataFormat jaxb, DataFormat outJaxb) throws Exception;
+    void setupJaxb(
+            CamelContext camelContext, RestConfiguration config,
+            String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
+            DataFormat jaxb, DataFormat outJaxb)
+            throws Exception;
 
 }

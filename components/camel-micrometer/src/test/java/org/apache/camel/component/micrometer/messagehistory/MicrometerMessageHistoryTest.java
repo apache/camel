@@ -96,11 +96,11 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:foo")
-                    .to("mock:foo").id("foo");
+                        .to("mock:foo").id("foo");
 
                 from("direct:bar")
-                    .to("mock:bar").id("bar")
-                    .to("mock:baz").id("baz");
+                        .to("mock:bar").id("bar")
+                        .to("mock:baz").id("baz");
             }
         };
     }

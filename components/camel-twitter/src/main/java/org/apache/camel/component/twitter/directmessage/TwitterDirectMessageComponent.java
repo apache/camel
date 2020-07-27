@@ -41,7 +41,9 @@ public class TwitterDirectMessageComponent extends AbstractTwitterComponent {
     }
 
     @Override
-    protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint doCreateEndpoint(
+            TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         return new TwitterDirectMessageEndpoint(uri, remaining, this, properties);
     }
 }

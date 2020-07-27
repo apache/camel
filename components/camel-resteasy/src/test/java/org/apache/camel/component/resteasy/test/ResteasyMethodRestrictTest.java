@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @WebTest
 public class ResteasyMethodRestrictTest {
 
@@ -62,7 +61,7 @@ public class ResteasyMethodRestrictTest {
         assertEquals(405, response.getStatus());
 
         Client client2 = ClientBuilder.newBuilder().build();
-        WebTarget target2 = client2.target(baseUri.toString()  + "method/restrict");
+        WebTarget target2 = client2.target(baseUri.toString() + "method/restrict");
         Response response2 = target2.request().delete();
         assertEquals(200, response2.getStatus());
         assertEquals("Response from httpMethodRestrict", response2.readEntity(String.class));

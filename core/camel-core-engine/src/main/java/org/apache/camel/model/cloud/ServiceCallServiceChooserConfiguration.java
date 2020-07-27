@@ -90,30 +90,35 @@ public class ServiceCallServiceChooserConfiguration extends ServiceCallConfigura
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
+                type = camelContext.adapt(ExtendedCamelContext.class)
+                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
 
             if (type != null) {
                 if (ServiceChooserFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceChooserFactory)camelContext.getInjector().newInstance(type, false);
+                    factory = (ServiceChooserFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new NoFactoryAvailableException("Resolving ServiceChooser: " + factoryKey + " detected type conflict: Not a ServiceChooserFactory implementation. Found: "
+                    throw new NoFactoryAvailableException(
+                            "Resolving ServiceChooser: " + factoryKey
+                                                          + " detected type conflict: Not a ServiceChooserFactory implementation. Found: "
                                                           + type.getName());
                 }
             }
 
             try {
                 Map<String, Object> parameters = new HashMap<>();
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null, false);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null,
+                        false);
 
                 parameters.replaceAll((k, v) -> {
                     if (v instanceof String) {
                         try {
-                            v = camelContext.resolvePropertyPlaceholders((String)v);
+                            v = camelContext.resolvePropertyPlaceholders((String) v);
                         } catch (Exception e) {
-                            throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
+                            throw new IllegalArgumentException(
+                                    String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                         }
                     }
 

@@ -72,11 +72,11 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
                 .thenReturn(jobMock)
                 .thenReturn(null);
         when(client.statsJob(anyLong())).thenReturn(stats);
-        
-        when(client.put(BeanstalkComponent.DEFAULT_PRIORITY, 
-                        BeanstalkComponent.DEFAULT_DELAY, 
-                        BeanstalkComponent.DEFAULT_TIME_TO_RUN, 
-                        payload)).thenReturn(jobId);
+
+        when(client.put(BeanstalkComponent.DEFAULT_PRIORITY,
+                BeanstalkComponent.DEFAULT_DELAY,
+                BeanstalkComponent.DEFAULT_TIME_TO_RUN,
+                payload)).thenReturn(jobId);
 
         MockEndpoint result = getMockEndpoint("mock:result");
 
@@ -91,9 +91,9 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
 
         verify(client, atLeastOnce()).reserve(anyInt());
         verify(client, atLeastOnce()).statsJob(anyLong());
-     
-        assertEquals(((TestExchangeCopyProcessor)a).getExchangeCopy().getIn().getHeaders(),
-                     ((TestExchangeCopyProcessor)b).getExchangeCopy().getIn().getHeaders());
+
+        assertEquals(((TestExchangeCopyProcessor) a).getExchangeCopy().getIn().getHeaders(),
+                ((TestExchangeCopyProcessor) b).getExchangeCopy().getIn().getHeaders());
     }
 
     @Override
@@ -103,12 +103,12 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
             public void configure() {
                 a = new TestExchangeCopyProcessor();
                 b = new TestExchangeCopyProcessor();
-                
+
                 from("beanstalk:tube=A").routeId("foo")
-                    .process(a)
-                    .to("beanstalk:tube=B")
-                    .process(b)
-                    .to("mock:result");
+                        .process(a)
+                        .to("beanstalk:tube=B")
+                        .process(b)
+                        .to("mock:result");
             }
         };
     }

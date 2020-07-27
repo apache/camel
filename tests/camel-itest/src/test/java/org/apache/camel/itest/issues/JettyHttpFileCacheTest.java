@@ -31,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 
 public class JettyHttpFileCacheTest extends CamelTestSupport {
-    private static final String TEST_STRING = "This is a test string and it has enough" 
-        + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
-    
+    private static final String TEST_STRING = "This is a test string and it has enough"
+                                              + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -47,16 +47,16 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
 
     @Test
     void testGetWithRelativePath() throws Exception {
-        
+
         String response = template.requestBody("http://localhost:8201/clipboard/download/file", "   ", String.class);
         assertEquals(TEST_STRING, response, "should get the right response");
-        
+
         File file = new File("target/cachedir");
         String[] files = file.list();
         assertTrue(files.length == 0, "There should not have any temp file");
-        
+
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -64,16 +64,16 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
             public void configure() {
 
                 from("jetty:http://localhost:8201/clipboard/download?chunked=true&matchOnUriPrefix=true")
-                    .to("http://localhost:9101?bridgeEndpoint=true");
+                        .to("http://localhost:9101?bridgeEndpoint=true");
 
                 from("jetty:http://localhost:9101?chunked=true&matchOnUriPrefix=true")
-                    .process(new Processor() {
+                        .process(new Processor() {
 
-                        public void process(Exchange exchange) {
-                            exchange.getMessage().setBody(TEST_STRING);
-                        }
-                        
-                    });
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody(TEST_STRING);
+                            }
+
+                        });
             }
         };
     }

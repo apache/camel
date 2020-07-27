@@ -68,7 +68,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
             log.info("Tweet: " + e.getIn().getBody(String.class));
         }
     }
-    
+
     @Test
     public void testSearchTimelineWithDynamicQuerySinceId() throws Exception {
         Map<String, Object> headers = new HashMap<>();
@@ -84,7 +84,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
             log.info("Tweet: " + e.getIn().getBody(String.class));
         }
     }
-    
+
     @Test
     public void testSearchTimelineWithDynamicQuerySinceIdAndMaxId() throws Exception {
         Map<String, Object> headers = new HashMap<>();

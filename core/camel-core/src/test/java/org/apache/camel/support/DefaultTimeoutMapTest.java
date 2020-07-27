@@ -99,7 +99,7 @@ public class DefaultTimeoutMapTest {
         map.put("A", 123, 50);
         assertEquals(1, map.size());
 
-        assertEquals(123, (int)map.get("A"));
+        assertEquals(123, (int) map.get("A"));
 
         Object old = map.remove("A");
         assertEquals(123, old);

@@ -86,26 +86,25 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .process(exchange -> thread1 = Thread.currentThread().getName())
-                    // use transacted routing
-                    .transacted()
-                    // and route async from this point forward
-                    .threads(5)
-                    // send to mock for verification
-                    .to("mock:async")
-                    .process(exchange -> {
-                        thread2 = Thread.currentThread().getName();
+                        .process(exchange -> thread1 = Thread.currentThread().getName())
+                        // use transacted routing
+                        .transacted()
+                        // and route async from this point forward
+                        .threads(5)
+                        // send to mock for verification
+                        .to("mock:async")
+                        .process(exchange -> {
+                            thread2 = Thread.currentThread().getName();
 
-                        if (counter++ == 0) {
-                            // simulate error so we can test rollback and have the JMS broker
-                            // do redelivery
-                            throw new IllegalAccessException("Damn");
-                        }
-                    }).to("mock:result");
+                            if (counter++ == 0) {
+                                // simulate error so we can test rollback and have the JMS broker
+                                // do redelivery
+                                throw new IllegalAccessException("Damn");
+                            }
+                        }).to("mock:result");
 
             }
         };
     }
-
 
 }

@@ -22,14 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsException;
 
 /**
- * Information about the receiver of an encrypted message used in
- * CmsEnvelopedDataEncryptor.
+ * Information about the receiver of an encrypted message used in CmsEnvelopedDataEncryptor.
  * <p>
- * Represents the "key transport" recipient info alternative: The
- * content-encryption key is encrypted with the public key of the recipient.
- * This technique is compatible to PKCS#7 when creating a RecipientInfo for the
- * public key of the recipient's certificate, identified by issuer and serial
- * number. CMS recommends to use RSA for encrypting the content encryption key.
+ * Represents the "key transport" recipient info alternative: The content-encryption key is encrypted with the public
+ * key of the recipient. This technique is compatible to PKCS#7 when creating a RecipientInfo for the public key of the
+ * recipient's certificate, identified by issuer and serial number. CMS recommends to use RSA for encrypting the content
+ * encryption key.
  */
 public interface TransRecipientInfo extends RecipientInfo {
 
@@ -37,9 +35,8 @@ public interface TransRecipientInfo extends RecipientInfo {
     String getKeyEncryptionAlgorithm(Exchange exchange) throws CryptoCmsException;
 
     /**
-     * Returns the certificate containign the public key which is used for the
-     * encryption and the issuer and serial number which is added to the
-     * recipient information.
+     * Returns the certificate containign the public key which is used for the encryption and the issuer and serial
+     * number which is added to the recipient information.
      */
     X509Certificate getCertificate(Exchange exchange) throws CryptoCmsException;
 }

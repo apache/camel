@@ -38,7 +38,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  */
 public class RestRootHandler implements HttpHandler {
 
-    private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
+    private static final List<String> METHODS
+            = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private final Set<UndertowConsumer> consumers = new CopyOnWriteArraySet<>();
 
@@ -122,7 +123,8 @@ public class RestRootHandler implements HttpHandler {
             paths.add(new RestConsumerPath(consumer));
         }
 
-        RestConsumerContextPathMatcher.ConsumerPath<UndertowConsumer> best = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
+        RestConsumerContextPathMatcher.ConsumerPath<UndertowConsumer> best
+                = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
         if (best != null) {
             answer = best.getConsumer();
         }
@@ -142,7 +144,8 @@ public class RestRootHandler implements HttpHandler {
         }
 
         // extra filter by restrict
-        candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict())).collect(Collectors.toList());
+        candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
+                .collect(Collectors.toList());
         if (candidates.size() == 1) {
             answer = candidates.get(0);
         }

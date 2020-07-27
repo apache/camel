@@ -63,7 +63,9 @@ public class CwComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&unit=BYTES&timestamp=#now").to("mock:result");
+                from("direct:start").to(
+                        "aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&unit=BYTES&timestamp=#now")
+                        .to("mock:result");
             }
         };
     }

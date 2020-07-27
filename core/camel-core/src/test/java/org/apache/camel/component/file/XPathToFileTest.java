@@ -43,7 +43,8 @@ public class XPathToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>" + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
+        String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>"
+                     + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
 
         template.sendBody("direct:start", doc);
@@ -52,11 +53,13 @@ public class XPathToFileTest extends ContextTestSupport {
 
         File first = new File("target/data/xpath/xpath-0.xml");
         assertTrue(first.exists(), "File xpath-0.xml should exists");
-        assertEquals("<person id=\"1\">Claus<country>SE</country></person>", context.getTypeConverter().convertTo(String.class, first));
+        assertEquals("<person id=\"1\">Claus<country>SE</country></person>",
+                context.getTypeConverter().convertTo(String.class, first));
 
         File second = new File("target/data/xpath/xpath-1.xml");
         assertTrue(second.exists(), "File xpath-1.xml should exists");
-        assertEquals("<person id=\"2\">Jonathan<country>CA</country></person>", context.getTypeConverter().convertTo(String.class, second));
+        assertEquals("<person id=\"2\">Jonathan<country>CA</country></person>",
+                context.getTypeConverter().convertTo(String.class, second));
     }
 
     @Override
@@ -64,8 +67,9 @@ public class XPathToFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(xpath("/foo/person")).log("${bodyAs(String)}").to("file://target/data/xpath?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml")
-                    .to("mock:result");
+                from("direct:start").split(xpath("/foo/person")).log("${bodyAs(String)}")
+                        .to("file://target/data/xpath?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml")
+                        .to("mock:result");
             }
         };
     }

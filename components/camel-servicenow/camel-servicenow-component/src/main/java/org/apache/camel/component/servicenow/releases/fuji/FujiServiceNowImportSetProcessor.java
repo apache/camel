@@ -33,7 +33,10 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion, String tableName, String sysId) throws Exception {
+    protected void doProcess(
+            Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion,
+            String tableName, String sysId)
+            throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
             response = retrieveRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
@@ -50,23 +53,27 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
      * GET
      * https://instance.service-now.com/api/now/import/{tableName}/{sys_id}
      */
-    private Response retrieveRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
+    private Response retrieveRecord(
+            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            throws Exception {
         return client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("import")
-            .path(tableName)
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .query(responseModel)
-            .invoke(HttpMethod.GET);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("import")
+                .path(tableName)
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .query(responseModel)
+                .invoke(HttpMethod.GET);
     }
 
     /*
      * POST
      * https://instance.service-now.com/api/now/import/{tableName}
      */
-    private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName) throws Exception {
+    private Response createRecord(
+            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName)
+            throws Exception {
         if (in.getHeader(ServiceNowConstants.RETRIEVE_TARGET_RECORD, config::getRetrieveTargetRecordOnImport, Boolean.class)) {
             throw new UnsupportedOperationException("RetrieveTargetRecordOnImport is supported from Helsinky");
         }
@@ -74,12 +81,12 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
         validateBody(in, requestModel);
 
         return client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("import")
-            .path(tableName)
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody());
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("import")
+                .path(tableName)
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
     }
 }

@@ -47,8 +47,8 @@ public class ScriptTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    // should not affect the body
-                    .script(body().append(" World!")).to("mock:result");
+                        // should not affect the body
+                        .script(body().append(" World!")).to("mock:result");
             }
         };
     }

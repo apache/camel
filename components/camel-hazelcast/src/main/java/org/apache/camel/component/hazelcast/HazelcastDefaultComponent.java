@@ -71,7 +71,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
             hzInstance = getOrCreateHzClientInstance(getCamelContext(), parameters);
         }
 
-        String defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, String.class);
+        String defaultOperation
+                = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, String.class);
         if (defaultOperation == null) {
             defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, "defaultOperation", String.class);
         }
@@ -86,7 +87,9 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
         return endpoint;
     }
 
-    protected abstract HazelcastDefaultEndpoint doCreateEndpoint(String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance) throws Exception;
+    protected abstract HazelcastDefaultEndpoint doCreateEndpoint(
+            String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance)
+            throws Exception;
 
     @Override
     public void doStart() throws Exception {
@@ -109,8 +112,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
     }
 
     /**
-     * The hazelcast instance reference which can be used for hazelcast endpoint.
-     * If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance.
+     * The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance
+     * reference, camel use the default hazelcast instance from the camel-hazelcast instance.
      */
     public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
@@ -121,8 +124,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
     }
 
     /**
-     * The hazelcast mode reference which kind of instance should be used.
-     * If you don't specify the mode, then the node mode will be the default. 
+     * The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node
+     * mode will be the default.
      */
     public void setHazelcastMode(String hazelcastMode) {
         this.hazelcastMode = hazelcastMode;
@@ -180,7 +183,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
         return hzInstance == null ? hazelcastInstance : hzInstance;
     }
 
-    protected HazelcastInstance getOrCreateHzClientInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
+    protected HazelcastInstance getOrCreateHzClientInstance(CamelContext context, Map<String, Object> parameters)
+            throws Exception {
         HazelcastInstance hzInstance = null;
         ClientConfig config = null;
 

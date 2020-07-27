@@ -36,7 +36,8 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
 
         template.sendBodyAndHeader("file://target/xmldata",
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<sample>\n<test>Helloooo</test>\n</sample>", Exchange.FILE_NAME, "hello.xml");
+                                                            + "<sample>\n<test>Helloooo</test>\n</sample>",
+                Exchange.FILE_NAME, "hello.xml");
     }
 
     @Test

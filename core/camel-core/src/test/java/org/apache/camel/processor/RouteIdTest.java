@@ -59,8 +59,9 @@ public class RouteIdTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class).handled(true).to("mock:error").end();
 
-                from("direct:start").onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(5).end().routeId("myCoolRoute").choice().when(body().contains("Kabom"))
-                    .throwException(new IllegalArgumentException("Damn")).otherwise().to("mock:result").end();
+                from("direct:start").onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(5).end()
+                        .routeId("myCoolRoute").choice().when(body().contains("Kabom"))
+                        .throwException(new IllegalArgumentException("Damn")).otherwise().to("mock:result").end();
             }
         };
     }

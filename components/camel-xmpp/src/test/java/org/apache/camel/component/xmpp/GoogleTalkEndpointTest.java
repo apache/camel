@@ -35,9 +35,7 @@ public class GoogleTalkEndpointTest extends GoogleTalkTest {
 
                 context.addEndpoint("talk", endpoint);
 
-                from("direct:start").
-                    to("talk").
-                    to("mock:result");
+                from("direct:start").to("talk").to("mock:result");
             }
         };
     }

@@ -43,7 +43,8 @@ public class RestJettyGetCustomHttpBindingTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef", "#mybinding");
+                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef",
+                        "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {

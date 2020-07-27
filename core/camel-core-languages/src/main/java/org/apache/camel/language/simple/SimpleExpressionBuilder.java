@@ -59,19 +59,20 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges inbound message header invoking methods defined
-     * in a simple OGNL notation
+     * Returns the expression for the exchanges inbound message header invoking methods defined in a simple OGNL
+     * notation
      *
-     * @param ognl  methods to invoke on the header in a simple OGNL syntax
+     * @param ognl methods to invoke on the header in a simple OGNL syntax
      */
     public static Expression headersOgnlExpression(final String ognl) {
-        return new KeyedOgnlExpressionAdapter(ognl, "headerOgnl(" + ognl + ")",
-            new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
-                public Object getKeyedEntity(Exchange exchange, String key) {
-                    String text = ExpressionBuilder.simpleExpression(key).evaluate(exchange, String.class);
-                    return exchange.getIn().getHeader(text);
-                }
-            });
+        return new KeyedOgnlExpressionAdapter(
+                ognl, "headerOgnl(" + ognl + ")",
+                new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
+                    public Object getKeyedEntity(Exchange exchange, String key) {
+                        String text = ExpressionBuilder.simpleExpression(key).evaluate(exchange, String.class);
+                        return exchange.getIn().getHeader(text);
+                    }
+                });
     }
 
     /**
@@ -104,7 +105,8 @@ public final class SimpleExpressionBuilder {
                         def.setShowHeaders(true);
                         def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
                         try {
-                            Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                            Integer maxChars = CamelContextHelper.parseInteger(camelContext,
+                                    camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                             if (maxChars != null) {
                                 def.setMaxChars(maxChars);
                             }
@@ -452,7 +454,8 @@ public final class SimpleExpressionBuilder {
                     } else {
                         date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
                         if (date == null) {
-                            throw new IllegalArgumentException("Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
+                            throw new IllegalArgumentException(
+                                    "Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
                         }
                     }
                 } else {
@@ -489,7 +492,8 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
-                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                ObjectHelper.notNull(it,
+                        "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
                 return new SkipIterator(it, skip);
             }
 
@@ -517,8 +521,8 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges inbound message body converted
-     * to the given type and invoking methods on the converted body defined in a simple OGNL notation
+     * Returns the expression for the exchanges inbound message body converted to the given type and invoking methods on
+     * the converted body defined in a simple OGNL notation
      */
     public static Expression mandatoryBodyOgnlExpression(final String name, final String ognl) {
         return new ExpressionAdapter() {
@@ -548,8 +552,7 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges inbound message body converted
-     * to the given type
+     * Returns the expression for the exchanges inbound message body converted to the given type
      */
     public static Expression mandatoryBodyExpression(final String name) {
         return new ExpressionAdapter() {
@@ -576,8 +579,8 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges inbound message body converted
-     * to the given type and invoking methods on the converted body defined in a simple OGNL notation
+     * Returns the expression for the exchanges inbound message body converted to the given type and invoking methods on
+     * the converted body defined in a simple OGNL notation
      */
     public static Expression bodyOgnlExpression(final String name, final String ognl) {
         return new ExpressionAdapter() {
@@ -608,10 +611,9 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchange invoking methods defined
-     * in a simple OGNL notation
+     * Returns the expression for the exchange invoking methods defined in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the exchange in a simple OGNL syntax
+     * @param ognl methods to invoke on the exchange in a simple OGNL syntax
      */
     public static Expression exchangeOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -629,10 +631,9 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges camelContext invoking methods defined
-     * in a simple OGNL notation
+     * Returns the expression for the exchanges camelContext invoking methods defined in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the context in a simple OGNL syntax
+     * @param ognl methods to invoke on the context in a simple OGNL syntax
      */
     public static Expression camelContextOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -654,10 +655,9 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges inbound message body invoking methods defined
-     * in a simple OGNL notation
+     * Returns the expression for the exchanges inbound message body invoking methods defined in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     * @param ognl methods to invoke on the body in a simple OGNL syntax
      */
     public static Expression bodyOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -679,11 +679,11 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns an expression that caches the evaluation of another expression
-     * and returns the cached value, to avoid re-evaluating the expression.
+     * Returns an expression that caches the evaluation of another expression and returns the cached value, to avoid
+     * re-evaluating the expression.
      *
-     * @param expression  the target expression to cache
-     * @return the cached value
+     * @param  expression the target expression to cache
+     * @return            the cached value
      */
     public static Expression cacheExpression(final Expression expression) {
         return new ExpressionAdapter() {
@@ -708,8 +708,8 @@ public final class SimpleExpressionBuilder {
     /**
      * Returns an expression for a type value
      *
-     * @param name the type name
-     * @return an expression object which will return the type value
+     * @param  name the type name
+     * @return      an expression object which will return the type value
      */
     public static Expression typeExpression(final String name) {
         return new ExpressionAdapter() {
@@ -731,7 +731,8 @@ public final class SimpleExpressionBuilder {
                     }
                 }
 
-                throw CamelExecutionException.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + text));
+                throw CamelExecutionException.wrapCamelExecutionException(exchange,
+                        new ClassNotFoundException("Cannot find type " + text));
             }
 
             @Override
@@ -742,26 +743,26 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns an expression for the property value of exchange with the given name invoking methods defined
-     * in a simple OGNL notation
+     * Returns an expression for the property value of exchange with the given name invoking methods defined in a simple
+     * OGNL notation
      *
-     * @param ognl  methods to invoke on the property in a simple OGNL syntax
+     * @param ognl methods to invoke on the property in a simple OGNL syntax
      */
     public static Expression propertyOgnlExpression(final String ognl) {
-        return new KeyedOgnlExpressionAdapter(ognl, "propertyOgnl(" + ognl + ")",
-            new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
-                public Object getKeyedEntity(Exchange exchange, String key) {
-                    String text = ExpressionBuilder.simpleExpression(key).evaluate(exchange, String.class);
-                    return exchange.getProperty(text);
-                }
-            });
+        return new KeyedOgnlExpressionAdapter(
+                ognl, "propertyOgnl(" + ognl + ")",
+                new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
+                    public Object getKeyedEntity(Exchange exchange, String key) {
+                        String text = ExpressionBuilder.simpleExpression(key).evaluate(exchange, String.class);
+                        return exchange.getProperty(text);
+                    }
+                });
     }
 
     /**
-     * Returns the expression for the exchanges exception invoking methods defined
-     * in a simple OGNL notation
+     * Returns the expression for the exchanges exception invoking methods defined in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     * @param ognl methods to invoke on the body in a simple OGNL syntax
      */
     public static Expression exchangeExceptionOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -810,7 +811,6 @@ public final class SimpleExpressionBuilder {
                 return property;
             }
 
-
             // Split ognl except when this is not a Map, Array
             // and we would like to keep the dots within the key name
             List<String> methods = OgnlHelper.splitOgnl(ognl);
@@ -825,7 +825,6 @@ public final class SimpleExpressionBuilder {
             }
             // remove any OGNL operators so we got the pure key name
             key = OgnlHelper.removeOperators(key);
-
 
             property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, key);
             if (property == null) {

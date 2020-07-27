@@ -29,19 +29,18 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 /**
  * Hello Test Impl class
  */
 public class HelloImpl implements Hello {
 
     public void detail(Holder<byte[]> photo, Holder<Image> image) {
-        
-        assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA,  photo.value);
+
+        assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA, photo.value);
         assertNotNull(image.value);
         if (image.value instanceof BufferedImage) {
-            assertEquals(41, ((BufferedImage)image.value).getWidth());
-            assertEquals(39, ((BufferedImage)image.value).getHeight());            
+            assertEquals(41, ((BufferedImage) image.value).getWidth());
+            assertEquals(39, ((BufferedImage) image.value).getHeight());
         }
 
         try {
@@ -49,7 +48,7 @@ public class HelloImpl implements Hello {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
+
         photo.value = MtomTestHelper.RESP_PHOTO_DATA;
 
     }

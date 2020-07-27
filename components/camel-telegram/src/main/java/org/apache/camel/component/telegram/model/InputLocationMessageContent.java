@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents the content of a location message to be sent as the result of an inline query.
  *
  * @see <a href="https://core.telegram.org/bots/api#inputlocationmessagecontent">
- *     https://core.telegram.org/bots/api#inputlocationmessagecontent</a>
+ *      https://core.telegram.org/bots/api#inputlocationmessagecontent</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InputLocationMessageContent implements InputMessageContent {

@@ -53,7 +53,8 @@ public class ParameterBindingException extends RuntimeCamelException {
     }
 
     private static String createMessage(Method method, int index, Class<?> parameterType, Object parameterValue) {
-        return "Error during parameter binding on method: " + method + " at parameter #" + index + " with type: " + parameterType
-                + " with value type: " + ObjectHelper.type(parameterValue) + " and value: " + parameterValue;
+        return "Error during parameter binding on method: " + method + " at parameter #" + index + " with type: "
+               + parameterType
+               + " with value type: " + ObjectHelper.type(parameterValue) + " and value: " + parameterValue;
     }
 }

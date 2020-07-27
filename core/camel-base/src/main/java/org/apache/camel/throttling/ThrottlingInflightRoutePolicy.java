@@ -38,14 +38,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A throttle based {@link org.apache.camel.spi.RoutePolicy} which is capable of dynamic
- * throttling a route based on number of current inflight exchanges.
+ * A throttle based {@link org.apache.camel.spi.RoutePolicy} which is capable of dynamic throttling a route based on
+ * number of current inflight exchanges.
  * <p/>
- * This implementation supports two scopes {@link ThrottlingScope#Context} and {@link ThrottlingScope#Route} (is default).
- * If context scope is selected then this implementation will use a {@link org.apache.camel.spi.EventNotifier} to listen
- * for events when {@link Exchange}s is done, and trigger the {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)}
- * method. If the route scope is selected then <b>no</b> {@link org.apache.camel.spi.EventNotifier} is in use, as there is already
- * a {@link org.apache.camel.spi.Synchronization} callback on the current {@link Exchange} which triggers the
+ * This implementation supports two scopes {@link ThrottlingScope#Context} and {@link ThrottlingScope#Route} (is
+ * default). If context scope is selected then this implementation will use a {@link org.apache.camel.spi.EventNotifier}
+ * to listen for events when {@link Exchange}s is done, and trigger the
+ * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} method. If the route scope is selected then
+ * <b>no</b> {@link org.apache.camel.spi.EventNotifier} is in use, as there is already a
+ * {@link org.apache.camel.spi.Synchronization} callback on the current {@link Exchange} which triggers the
  * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} when the current {@link Exchange} is done.
  */
 public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware {
@@ -53,7 +54,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private static final Logger LOG = LoggerFactory.getLogger(ThrottlingInflightRoutePolicy.class);
 
     public enum ThrottlingScope {
-        Context, Route
+        Context,
+        Route
     }
 
     private final Set<Route> routes = new LinkedHashSet<>();
@@ -72,7 +74,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
     @Override
     public String toString() {
-        return "ThrottlingInflightRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope " + scope + "]";
+        return "ThrottlingInflightRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope " + scope
+               + "]";
     }
 
     @Override
@@ -103,7 +106,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     /**
      * Throttles the route when {@link Exchange}s is done.
      *
-     * @param route  the route
+     * @param route    the route
      * @param exchange the exchange
      */
     protected void throttle(Route route, Exchange exchange) {
@@ -150,8 +153,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     }
 
     /**
-     * Sets the upper limit of number of concurrent inflight exchanges at which point reached
-     * the throttler should suspend the route.
+     * Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should
+     * suspend the route.
      * <p/>
      * Is default 1000.
      *
@@ -243,14 +246,16 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private void startConsumer(int size, Consumer consumer) throws Exception {
         boolean started = resumeOrStartConsumer(consumer);
         if (started) {
-            getLogger().log("Throttling consumer: " + size + " <= " + resumeInflightExchanges + " inflight exchange by resuming consumer: " + consumer);
+            getLogger().log("Throttling consumer: " + size + " <= " + resumeInflightExchanges
+                            + " inflight exchange by resuming consumer: " + consumer);
         }
     }
 
     private void stopConsumer(int size, Consumer consumer) throws Exception {
         boolean stopped = suspendOrStopConsumer(consumer);
         if (stopped) {
-            getLogger().log("Throttling consumer: " + size + " > " + maxInflightExchanges + " inflight exchange by suspending consumer: " + consumer);
+            getLogger().log("Throttling consumer: " + size + " > " + maxInflightExchanges
+                            + " inflight exchange by suspending consumer: " + consumer);
         }
     }
 
@@ -277,8 +282,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     }
 
     /**
-     * {@link org.apache.camel.spi.EventNotifier} to keep track on when {@link Exchange}
-     * is done, so we can throttle accordingly.
+     * {@link org.apache.camel.spi.EventNotifier} to keep track on when {@link Exchange} is done, so we can throttle
+     * accordingly.
      */
     private class ContextScopedEventNotifier extends EventNotifierSupport {
 

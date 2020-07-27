@@ -22,7 +22,7 @@ import org.apache.camel.processor.routingslip.RoutingSlipIgnoreInvalidEndpointsT
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringRoutingSlipIgnoreInvalidEndpointsTest extends RoutingSlipIgnoreInvalidEndpointsTest {
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/routingSlipIgnoreInvalidEndpoints.xml");

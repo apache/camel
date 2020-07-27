@@ -91,8 +91,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         FileLockClusterService service = getClusterService().unwrap(FileLockClusterService.class);
         ScheduledExecutorService executor = service.getExecutor();
 
-        task = executor.scheduleAtFixedRate(this::tryLock, TimeUnit.MILLISECONDS.convert(service.getAcquireLockDelay(), service.getAcquireLockDelayUnit()),
-                                            TimeUnit.MILLISECONDS.convert(service.getAcquireLockInterval(), service.getAcquireLockIntervalUnit()), TimeUnit.MILLISECONDS);
+        task = executor.scheduleAtFixedRate(this::tryLock,
+                TimeUnit.MILLISECONDS.convert(service.getAcquireLockDelay(), service.getAcquireLockDelayUnit()),
+                TimeUnit.MILLISECONDS.convert(service.getAcquireLockInterval(), service.getAcquireLockIntervalUnit()),
+                TimeUnit.MILLISECONDS);
     }
 
     @Override

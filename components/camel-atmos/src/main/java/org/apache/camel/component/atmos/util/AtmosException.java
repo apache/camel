@@ -23,8 +23,8 @@ public class AtmosException extends Exception {
     public AtmosException(String message) {
         super(message);
     }
-    
+
     public AtmosException(String message, Throwable cause) {
         super(message, cause);
-    }    
+    }
 }

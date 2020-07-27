@@ -45,8 +45,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
 
 /**
- * Prepares the readme.md files content up to date with all the examples that
- * Apache Camel ships.
+ * Prepares the readme.md files content up to date with all the examples that Apache Camel ships.
  */
 @Mojo(name = "prepare-example", threadSafe = true)
 public class PrepareExampleMojo extends AbstractMojo {
@@ -66,9 +65,8 @@ public class PrepareExampleMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws MojoExecutionException execution of the main class or one of the
-     *             threads it generated failed.
-     * @throws MojoFailureException something bad happened...
+     * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -128,7 +126,8 @@ public class PrepareExampleMojo extends AbstractMojo {
                         }
 
                         // readme files is either readme.md or readme.adoc
-                        String[] readmes = new File(file, ".").list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
+                        String[] readmes = new File(file, ".")
+                                .list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
                         if (readmes != null && readmes.length == 1) {
                             model.setReadmeFileName(readmes[0]);
                         }
@@ -167,11 +166,12 @@ public class PrepareExampleMojo extends AbstractMojo {
 
     private String templateExamples(List<ExampleModel> models, long deprecated) throws MojoExecutionException {
         try {
-            String template = PackageHelper.loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel"));
+            String template = PackageHelper
+                    .loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("examples", models);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);

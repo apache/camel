@@ -45,14 +45,14 @@ public class DumpModelAsXmlTransformRouteLanguageTest extends ContextTestSupport
         Document doc = new XmlConverter().toDOMDocument(xml, null);
         NodeList nodes = doc.getElementsByTagName("language");
         assertEquals(1, nodes.getLength());
-        Element node = (Element)nodes.item(0);
+        Element node = (Element) nodes.item(0);
         assertNotNull(node, "Node <simple> expected to be instanceof Element");
         assertEquals("constant", node.getAttribute("language"));
         assertEquals("Hello World", node.getTextContent());
 
         nodes = doc.getElementsByTagName("to");
         assertEquals(1, nodes.getLength());
-        node = (Element)nodes.item(0);
+        node = (Element) nodes.item(0);
         assertNotNull(node, "Node <to> expected to be instanceof Element");
         assertEquals("mock:result", node.getAttribute("uri"));
         assertEquals("myMock", node.getAttribute("id"));
@@ -64,7 +64,8 @@ public class DumpModelAsXmlTransformRouteLanguageTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute").transform(language("constant", "Hello World")).to("mock:result").id("myMock");
+                from("direct:start").routeId("myRoute").transform(language("constant", "Hello World")).to("mock:result")
+                        .id("myMock");
             }
         };
     }

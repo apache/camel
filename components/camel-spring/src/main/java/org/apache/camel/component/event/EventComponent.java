@@ -61,9 +61,11 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
     public ConfigurableApplicationContext getConfigurableApplicationContext() {
         ApplicationContext applicationContext = getApplicationContext();
         if (applicationContext instanceof ConfigurableApplicationContext) {
-            return (ConfigurableApplicationContext)applicationContext;
+            return (ConfigurableApplicationContext) applicationContext;
         } else {
-            throw new IllegalArgumentException("Class: " + applicationContext.getClass().getName() + " is not an instanceof ConfigurableApplicationContext.");
+            throw new IllegalArgumentException(
+                    "Class: " + applicationContext.getClass().getName()
+                                               + " is not an instanceof ConfigurableApplicationContext.");
         }
     }
 

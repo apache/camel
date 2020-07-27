@@ -28,10 +28,10 @@ public class CxfRsServerFactoryBeanTest extends AbstractSpringBeanTestSupport {
     static int port = CXFTestSupport.getPort1();
 
     @Override
-    protected String[] getApplicationContextFiles() {        
-        return new String[]{"org/apache/camel/component/cxf/spring/CxfRsServerFactoryBeans.xml"};
+    protected String[] getApplicationContextFiles() {
+        return new String[] { "org/apache/camel/component/cxf/spring/CxfRsServerFactoryBeans.xml" };
     }
-    
+
     @Test
     public void testCxfRsServerFactoryBean() {
         SpringJAXRSServerFactoryBean sfb1 = ctx.getBean("rsServer1", SpringJAXRSServerFactoryBean.class);
@@ -39,9 +39,10 @@ public class CxfRsServerFactoryBeanTest extends AbstractSpringBeanTestSupport {
         List<Class<?>> resource1Classes = sfb1.getResourceClasses();
         assertEquals(resource1Classes.size(), 1, "Get a wrong size of resouceClasses");
         assertEquals(resource1Classes.get(0), CustomerService.class, "Get a wrong resource class");
-        
+
         SpringJAXRSServerFactoryBean sfb2 = ctx.getBean("rsServer2", SpringJAXRSServerFactoryBean.class);
-        assertEquals(sfb2.getAddress(), "http://localhost:" + port + "/CxfRsServerFactoryBeanTest/server2", "Get a wrong address");
+        assertEquals(sfb2.getAddress(), "http://localhost:" + port + "/CxfRsServerFactoryBeanTest/server2",
+                "Get a wrong address");
         sfb2.getResourceClasses();
         List<Class<?>> resource2Classes = sfb2.getResourceClasses();
         assertEquals(resource2Classes.size(), 1, "Get a wrong size of resouceClasses");

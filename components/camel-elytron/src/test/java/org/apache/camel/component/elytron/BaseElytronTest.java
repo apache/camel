@@ -47,7 +47,7 @@ import org.wildfly.security.permission.PermissionVerifier;
 public abstract class BaseElytronTest extends CamelTestSupport {
 
     private static volatile int port;
-    private static  KeyPair keyPair;
+    private static KeyPair keyPair;
 
     private final AtomicInteger counter = new AtomicInteger(1);
 
@@ -91,8 +91,6 @@ public abstract class BaseElytronTest extends CamelTestSupport {
 
         context.getPropertiesComponent().setLocation("ref:prop");
 
-
-
         context.getComponent("undertow", UndertowComponent.class).setSecurityConfiguration(new ElytronSercurityConfiguration() {
             @Override
             public WildFlyElytronBaseProvider getElytronProvider() {
@@ -114,14 +112,13 @@ public abstract class BaseElytronTest extends CamelTestSupport {
         return context;
     }
 
-    SecurityDomain.Builder getSecurityDomainBuilder()  {
+    SecurityDomain.Builder getSecurityDomainBuilder() {
 
         SecurityDomain.Builder builder = SecurityDomain.builder()
                 .setDefaultRealmName("realm");
 
         builder.addRealm("realm", createBearerRealm())
                 .build();
-
 
         builder.setPermissionMapper((principal, roles) -> PermissionVerifier.from(new LoginPermission()));
         builder.setRoleMapper(RoleMapper.constant(Roles.of("guest")).or(roles -> roles));
@@ -137,7 +134,7 @@ public abstract class BaseElytronTest extends CamelTestSupport {
     }
 
     private KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator generator =  KeyPairGenerator.getInstance("RSA");
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048);
         return generator.generateKeyPair();
     }

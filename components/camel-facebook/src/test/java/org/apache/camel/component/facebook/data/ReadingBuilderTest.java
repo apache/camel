@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test {@link ReadingBuilder}. 
+ * Test {@link ReadingBuilder}.
  */
 public class ReadingBuilderTest {
 
@@ -48,7 +48,7 @@ public class ReadingBuilderTest {
         source.since(new Date());
         source.until(new Date());
         source.withLocation();
-        
+
         Reading copy = ReadingBuilder.copy(source, false);
         assertNotNull(copy, "Null copy");
         assertEquals(source.toString(), copy.toString(), "Copy not equal");

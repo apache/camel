@@ -93,10 +93,10 @@ public final class GZIPHelper {
         }
     }
 
-    public static boolean isGzip(Message message) {        
+    public static boolean isGzip(Message message) {
         return isGzip(message.getHeader(Exchange.CONTENT_ENCODING, String.class), message.getExchange());
     }
-    
+
     public static boolean isGzip(String header, Exchange exchange) {
         if (exchange == null || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             return isGzip(header);

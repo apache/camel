@@ -47,9 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link DataFormat} to create (encode) and
- * read (decode) barcodes. For more info about
- * the available barcodes have a look at:<br/><br/>
+ * {@link DataFormat} to create (encode) and read (decode) barcodes. For more info about the available barcodes have a
+ * look at:<br/>
+ * <br/>
  * <p/>
  * https://github.com/zxing/zxing
  */
@@ -73,7 +73,6 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
 
-
     /**
      * Create instance with default parameters.
      */
@@ -83,8 +82,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom {@link BarcodeFormat}. The other
-     * values are default.
+     * Create instance with custom {@link BarcodeFormat}. The other values are default.
      *
      * @param format the barcode format
      */
@@ -95,8 +93,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom height and width. The other
-     * values are default.
+     * Create instance with custom height and width. The other values are default.
      *
      * @param height the image height
      * @param width  the image width
@@ -109,8 +106,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom {@link BarcodeImageType}. The other
-     * values are default.
+     * Create instance with custom {@link BarcodeImageType}. The other values are default.
      *
      * @param type the type (format) of the image. e.g. PNG
      */
@@ -121,8 +117,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom height, width and image type. The other
-     * values are default.
+     * Create instance with custom height, width and image type. The other values are default.
      *
      * @param height the image height
      * @param width  the image width

@@ -27,7 +27,8 @@ public class MainExampleTest {
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("file://target/mainTest");
+                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor())
+                        .to("file://target/mainTest");
             }
         });
         main.start();

@@ -69,7 +69,8 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
                     transactionTemplate = mapTemplate.values().iterator().next();
                 } else {
                     LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
-                            + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapTemplate.size());
+                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                            mapTemplate.size());
                 }
             }
 
@@ -80,8 +81,10 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
                 } else if (mapManager.size() == 1) {
                     transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
                 } else {
-                    LOG.debug("Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
-                            + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapManager.size());
+                    LOG.debug(
+                            "Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
+                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                            mapManager.size());
                 }
             }
 
@@ -92,7 +95,8 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
 
         ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
 
-        TransactionErrorHandler answer = new TransactionErrorHandler(camelContext, processor,
+        TransactionErrorHandler answer = new TransactionErrorHandler(
+                camelContext, processor,
                 definition.getLogger(), definition.getOnRedelivery(),
                 definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(), transactionTemplate,
                 definition.getRetryWhilePolicy(camelContext),

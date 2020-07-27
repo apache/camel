@@ -27,16 +27,16 @@ public interface Language {
     /**
      * Creates a predicate based on the given string input
      *
-     * @param expression  the expression
-     * @return the created predicate
+     * @param  expression the expression
+     * @return            the created predicate
      */
     Predicate createPredicate(String expression);
 
     /**
      * Creates an expression based on the given string input
      *
-     * @param expression  the expression as a string input
-     * @return the created expression
+     * @param  expression the expression as a string input
+     * @return            the created expression
      */
     Expression createExpression(String expression);
 }

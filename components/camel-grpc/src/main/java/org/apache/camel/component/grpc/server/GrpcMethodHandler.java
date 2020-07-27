@@ -82,7 +82,8 @@ public class GrpcMethodHandler {
         } else if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.PROPAGATION) {
             requestObserver = new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
         } else {
-            throw new IllegalArgumentException("gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
+            throw new IllegalArgumentException(
+                    "gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
         }
 
         return requestObserver;
@@ -90,8 +91,10 @@ public class GrpcMethodHandler {
 
     private Map<String, Object> populateGrpcHeaders(String methodName) {
         Map<String, Object> grpcHeaders = new HashMap<>();
-        grpcHeaders.put(GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(), GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.get());
-        grpcHeaders.put(GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(), GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.get());
+        grpcHeaders.put(GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(),
+                GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.get());
+        grpcHeaders.put(GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(),
+                GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.get());
         grpcHeaders.put(GrpcConstants.GRPC_METHOD_NAME_HEADER, methodName);
         return grpcHeaders;
     }

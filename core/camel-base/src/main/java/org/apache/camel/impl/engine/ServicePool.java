@@ -36,8 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A base class for a pool for either producers or consumers used by
- * {@link org.apache.camel.spi.ProducerCache} and {@link org.apache.camel.spi.ConsumerCache}.
+ * A base class for a pool for either producers or consumers used by {@link org.apache.camel.spi.ProducerCache} and
+ * {@link org.apache.camel.spi.ConsumerCache}.
  */
 abstract class ServicePool<S extends Service> extends ServiceSupport implements NonManagedService {
 
@@ -54,10 +54,15 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
     private interface Pool<S> {
         S acquire() throws Exception;
+
         void release(S s);
+
         int size();
+
         void stop();
+
         void evict(S s);
+
         void cleanUp();
     }
 
@@ -72,12 +77,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * This callback is invoked by LRUCache from a separate background cleanup thread.
-     * Therefore we mark the entries to be evicted from this thread only,
-     * and then let SinglePool and MultiPool handle the evictions (stop the producer/consumer safely)
-     * when they are acquiring/releases producers/consumers. If we sop the producer/consumer from the
-     * LRUCache background thread we can have a race condition with a pooled producer may have been
-     * acquired at the same time its being evicted.
+     * This callback is invoked by LRUCache from a separate background cleanup thread. Therefore we mark the entries to
+     * be evicted from this thread only, and then let SinglePool and MultiPool handle the evictions (stop the
+     * producer/consumer safely) when they are acquiring/releases producers/consumers. If we sop the producer/consumer
+     * from the LRUCache background thread we can have a race condition with a pooled producer may have been acquired at
+     * the same time its being evicted.
      */
     protected void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
@@ -98,8 +102,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * Tries to acquire the producer/consumer with the given key
      *
-     * @param endpoint the endpoint
-     * @return the acquired producer/consumer
+     * @param  endpoint the endpoint
+     * @return          the acquired producer/consumer
      */
     public S acquire(Endpoint endpoint) throws Exception {
         if (!isStarted()) {
@@ -116,7 +120,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * Releases the producer/consumer back to the pool
      *
      * @param endpoint the endpoint
-     * @param s the producer/consumer
+     * @param s        the producer/consumer
      */
     public void release(Endpoint endpoint, S s) {
         Pool<S> p = pool.get(endpoint);
@@ -186,8 +190,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * Pool used for singleton producers or consumers which are thread-safe
-     * and can be shared by multiple worker threads at any given time.
+     * Pool used for singleton producers or consumers which are thread-safe and can be shared by multiple worker threads
+     * at any given time.
      */
     private class SinglePool implements Pool<S> {
         private final Endpoint endpoint;
@@ -270,8 +274,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * Pool used for non-singleton producers or consumers which are not thread-safe
-     * and can only be used by one worker thread at any given time.
+     * Pool used for non-singleton producers or consumers which are not thread-safe and can only be used by one worker
+     * thread at any given time.
      */
     private class MultiplePool implements Pool<S> {
         private final Endpoint endpoint;

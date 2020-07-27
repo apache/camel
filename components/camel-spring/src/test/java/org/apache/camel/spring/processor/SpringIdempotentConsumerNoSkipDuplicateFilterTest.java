@@ -29,7 +29,8 @@ public class SpringIdempotentConsumerNoSkipDuplicateFilterTest extends SpringTes
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringIdempotentConsumerNoSkipDuplicateFilterTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringIdempotentConsumerNoSkipDuplicateFilterTest.xml");
     }
 
     @Test

@@ -34,10 +34,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "combinedServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
-    @XmlElements({@XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class) })
     private List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations;
 
     public CombinedServiceCallServiceFilterConfiguration() {
@@ -83,7 +84,8 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
     /**
      * List of ServiceFilter configuration to use
      */
-    public CombinedServiceCallServiceFilterConfiguration serviceFilterConfigurations(List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations) {
+    public CombinedServiceCallServiceFilterConfiguration serviceFilterConfigurations(
+            List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations) {
         setServiceFilterConfigurations(serviceFilterConfigurations);
         return this;
     }
@@ -91,7 +93,8 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
     /**
      * Add a ServiceFilter configuration
      */
-    public CombinedServiceCallServiceFilterConfiguration serviceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+    public CombinedServiceCallServiceFilterConfiguration serviceFilterConfiguration(
+            ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
         addServiceFilterConfiguration(serviceFilterConfiguration);
         return this;
     }
@@ -125,7 +128,8 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
     // *************************************************************************
 
     @Override
-    protected void postProcessFactoryParameters(final CamelContext camelContext, final Map<String, Object> parameters) throws Exception {
+    protected void postProcessFactoryParameters(final CamelContext camelContext, final Map<String, Object> parameters)
+            throws Exception {
         if (serviceFilterConfigurations != null && !serviceFilterConfigurations.isEmpty()) {
             List<ServiceFilter> discoveries = new ArrayList<>(serviceFilterConfigurations.size());
             for (ServiceCallServiceFilterConfiguration conf : serviceFilterConfigurations) {

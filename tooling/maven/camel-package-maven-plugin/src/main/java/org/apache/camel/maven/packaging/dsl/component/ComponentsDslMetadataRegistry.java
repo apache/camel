@@ -36,7 +36,8 @@ import org.apache.camel.util.json.JsonObject;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
- * Metadata components registry, used to keep track of the components generated DSLs in order to sync the pom file and relevant main builder factory file
+ * Metadata components registry, used to keep track of the components generated DSLs in order to sync the pom file and
+ * relevant main builder factory file
  */
 public class ComponentsDslMetadataRegistry {
 
@@ -103,7 +104,8 @@ public class ComponentsDslMetadataRegistry {
 
     private boolean writeCacheIntoMetadataFile() {
         JsonObject json = new JsonObject();
-        componentsCache.forEach((componentKey, componentModel) -> json.put(componentKey, JsonMapper.asJsonObject(componentModel).get("component")));
+        componentsCache.forEach((componentKey, componentModel) -> json.put(componentKey,
+                JsonMapper.asJsonObject(componentModel).get("component")));
         final String jsonText = JsonMapper.serialize(json);
         try {
             return FileUtil.updateFile(metadataFile.toPath(), jsonText);

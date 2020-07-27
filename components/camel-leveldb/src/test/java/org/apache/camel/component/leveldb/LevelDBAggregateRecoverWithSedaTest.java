@@ -71,27 +71,27 @@ public class LevelDBAggregateRecoverWithSedaTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .to("seda:foo")
-                    .end();
+                        .end();
 
                 // should be able to recover when we send over SEDA as its a OnCompletion
                 // which confirms the exchange when its complete.
                 from("seda:foo")
-                    .delay(1000)
-                    // simulate errors the first two times
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            int count = counter.incrementAndGet();
-                            if (count <= 2) {
-                                throw new IllegalArgumentException("Damn");
+                        .delay(1000)
+                        // simulate errors the first two times
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                int count = counter.incrementAndGet();
+                                if (count <= 2) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
                             }
-                        }
-                    })
-                    .to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

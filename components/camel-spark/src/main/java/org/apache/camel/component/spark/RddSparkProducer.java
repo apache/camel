@@ -37,7 +37,8 @@ public class RddSparkProducer extends DefaultProducer {
         JavaRDDLike rdd = resolveRdd(exchange);
         RddCallback rddCallback = resolveRddCallback(exchange);
         Object body = exchange.getIn().getBody();
-        Object result = body instanceof List ? rddCallback.onRdd(rdd, ((List) body).toArray(new Object[0])) : rddCallback.onRdd(rdd, body);
+        Object result = body instanceof List
+                ? rddCallback.onRdd(rdd, ((List) body).toArray(new Object[0])) : rddCallback.onRdd(rdd, body);
         collectResults(exchange, result);
     }
 
@@ -74,7 +75,7 @@ public class RddSparkProducer extends DefaultProducer {
 
     protected RddCallback resolveRddCallback(Exchange exchange) {
         if (exchange.getIn().getHeader(SPARK_RDD_CALLBACK_HEADER) != null) {
-            return  (RddCallback) exchange.getIn().getHeader(SPARK_RDD_CALLBACK_HEADER);
+            return (RddCallback) exchange.getIn().getHeader(SPARK_RDD_CALLBACK_HEADER);
         } else if (getEndpoint().getRddCallback() != null) {
             return getEndpoint().getRddCallback();
         } else {

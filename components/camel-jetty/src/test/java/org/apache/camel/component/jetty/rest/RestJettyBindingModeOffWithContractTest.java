@@ -42,9 +42,10 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        Object answer = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE, "application/json");
+        Object answer = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/new", body,
+                Exchange.CONTENT_TYPE, "application/json");
         assertNotNull(answer);
-        BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream)answer));
+        BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) answer));
         String line;
         String answerString = "";
         while ((line = reader.readLine()) != null) {
@@ -56,7 +57,7 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
-        UserPojoEx user = (UserPojoEx)obj;
+        UserPojoEx user = (UserPojoEx) obj;
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
@@ -77,13 +78,13 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
                 transformer().fromType("json").toType(UserPojoEx.class).withDataFormat(jsondf);
                 transformer().fromType(UserPojoEx.class).toType("json").withDataFormat(jsondf);
                 rest("/users/")
-                    // REST binding does nothing
-                    .post("new").route()
-                    // contract advice converts betweeen JSON and UserPojoEx
-                    // directly
-                    .inputType(UserPojoEx.class).outputType("json").process(ex -> {
-                        ex.getIn().getBody(UserPojoEx.class).setActive(true);
-                    }).to("mock:input");
+                        // REST binding does nothing
+                        .post("new").route()
+                        // contract advice converts betweeen JSON and UserPojoEx
+                        // directly
+                        .inputType(UserPojoEx.class).outputType("json").process(ex -> {
+                            ex.getIn().getBody(UserPojoEx.class).setActive(true);
+                        }).to("mock:input");
             }
         };
     }

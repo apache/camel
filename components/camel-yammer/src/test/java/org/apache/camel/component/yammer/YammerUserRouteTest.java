@@ -31,11 +31,11 @@ public class YammerUserRouteTest extends YammerComponentTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         User user = exchange.getIn().getBody(User.class);
 
-        assertEquals("Joe Camel", user.getFullName());        
+        assertEquals("Joe Camel", user.getFullName());
         assertEquals("jcamel@redhat.com", user.getContact().getEmailAddresses().get(0).getAddress());
     }
 
@@ -43,13 +43,14 @@ public class YammerUserRouteTest extends YammerComponentTestSupport {
     protected String jsonFile() {
         return "/user.json";
     }
-       
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+                        .to("mock:result");
             }
         };
     }

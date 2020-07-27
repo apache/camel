@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
-
 /**
- * This exception is thrown if the verification of a XML signature fails because
- * the hash calculated over the content does not match the value in the
- * signature.
+ * This exception is thrown if the verification of a XML signature fails because the hash calculated over the content
+ * does not match the value in the signature.
  */
 public class XmlSignatureInvalidContentHashException extends XmlSignatureInvalidException {
 

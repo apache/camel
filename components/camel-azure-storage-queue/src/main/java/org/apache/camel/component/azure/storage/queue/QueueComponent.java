@@ -55,7 +55,8 @@ public class QueueComponent extends DefaultComponent {
             throw new IllegalArgumentException("At least the account name must be specified.");
         }
 
-        final QueueConfiguration configuration = this.configuration != null ? this.configuration.copy() : new QueueConfiguration();
+        final QueueConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new QueueConfiguration();
 
         final String[] parts = remaining.split("/");
 
@@ -94,7 +95,8 @@ public class QueueComponent extends DefaultComponent {
 
         //if no QueueServiceClient is provided fallback to credentials
         if (client == null) {
-            Set<StorageSharedKeyCredential> storageSharedKeyCredentials = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
+            Set<StorageSharedKeyCredential> storageSharedKeyCredentials
+                    = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
             if (storageSharedKeyCredentials.size() == 1) {
                 configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
             }
@@ -117,7 +119,8 @@ public class QueueComponent extends DefaultComponent {
     }
 
     private void validateConfigurations(final QueueConfiguration configuration) {
-        if (configuration.getServiceClient() == null && configuration.getAccessKey() == null && configuration.getCredentials() == null) {
+        if (configuration.getServiceClient() == null && configuration.getAccessKey() == null
+                && configuration.getCredentials() == null) {
             throw new IllegalArgumentException("Azure Storage accessKey or QueueServiceClient must be specified.");
         }
     }

@@ -64,7 +64,7 @@ public class JndiContext implements Context, Serializable {
         this(new Hashtable<String, Object>());
     }
 
-    public JndiContext(Hashtable<String, Object>env) throws Exception {
+    public JndiContext(Hashtable<String, Object> env) throws Exception {
         this(env, createBindingsMapFromEnvironment(env));
     }
 
@@ -91,9 +91,8 @@ public class JndiContext implements Context, Serializable {
     }
 
     /**
-     * A helper method to create the JNDI bindings from the input environment
-     * properties using $foo.class to point to a class name with $foo.* being
-     * properties set on the injected bean
+     * A helper method to create the JNDI bindings from the input environment properties using $foo.class to point to a
+     * class name with $foo.* being properties set on the injected bean
      */
     public static Map<String, Object> createBindingsMapFromEnvironment(Hashtable<String, Object> env) throws Exception {
         return new HashMap<>(env);
@@ -108,14 +107,11 @@ public class JndiContext implements Context, Serializable {
     }
 
     /**
-     * internalBind is intended for use only during setup or possibly by
-     * suitably synchronized superclasses. It binds every possible lookup into a
-     * map in each context. To do this, each context strips off one name segment
-     * and if necessary creates a new context for it. Then it asks that context
-     * to bind the remaining name. It returns a map containing all the bindings
-     * from the next context, plus the context it just created (if it in fact
-     * created it). (the names are suitably extended by the segment originally
-     * lopped off).
+     * internalBind is intended for use only during setup or possibly by suitably synchronized superclasses. It binds
+     * every possible lookup into a map in each context. To do this, each context strips off one name segment and if
+     * necessary creates a new context for it. Then it asks that context to bind the remaining name. It returns a map
+     * containing all the bindings from the next context, plus the context it just created (if it in fact created it).
+     * (the names are suitably extended by the segment originally lopped off).
      */
     protected Map<String, Object> internalBind(String name, Object value) throws NamingException {
         assert name != null && name.length() > 0;
@@ -142,7 +138,7 @@ public class JndiContext implements Context, Serializable {
             } else if (!(o instanceof JndiContext)) {
                 throw new NamingException("Something already bound where a subcontext should go");
             }
-            JndiContext defaultContext = (JndiContext)o;
+            JndiContext defaultContext = (JndiContext) o;
             String remainder = name.substring(pos + 1);
             Map<String, Object> subBindings = defaultContext.internalBind(remainder, value);
             for (Entry<String, Object> entry : subBindings.entrySet()) {
@@ -170,7 +166,7 @@ public class JndiContext implements Context, Serializable {
 
     @Override
     public Hashtable<String, Object> getEnvironment() throws NamingException {
-        return CastUtils.cast((Hashtable<?, ?>)environment.clone(), String.class, Object.class);
+        return CastUtils.cast((Hashtable<?, ?>) environment.clone(), String.class, Object.class);
     }
 
     @Override
@@ -209,7 +205,7 @@ public class JndiContext implements Context, Serializable {
                     if (value == null) {
                         throw new NameNotFoundException(name);
                     } else if (value instanceof Context && path.size() > 1) {
-                        Context subContext = (Context)value;
+                        Context subContext = (Context) value;
                         value = subContext.lookup(path.getSuffix(1));
                     }
                     return value;
@@ -217,7 +213,7 @@ public class JndiContext implements Context, Serializable {
             }
         }
         if (result instanceof LinkRef) {
-            LinkRef ref = (LinkRef)result;
+            LinkRef ref = (LinkRef) result;
             result = lookup(ref.getLinkName());
         }
         if (result instanceof Reference) {
@@ -226,7 +222,7 @@ public class JndiContext implements Context, Serializable {
             } catch (NamingException e) {
                 throw e;
             } catch (Exception e) {
-                throw (NamingException)new NamingException("could not look up : " + name).initCause(e);
+                throw (NamingException) new NamingException("could not look up : " + name).initCause(e);
             }
         }
         if (result instanceof JndiContext) {
@@ -234,7 +230,7 @@ public class JndiContext implements Context, Serializable {
             if (prefix.length() > 0) {
                 prefix = prefix + SEPARATOR;
             }
-            result = new JndiContext((JndiContext)result, environment, prefix + name);
+            result = new JndiContext((JndiContext) result, environment, prefix + name);
         }
         return result;
     }
@@ -251,7 +247,7 @@ public class JndiContext implements Context, Serializable {
 
     @Override
     public Name composeName(Name name, Name prefix) throws NamingException {
-        Name result = (Name)prefix.clone();
+        Name result = (Name) prefix.clone();
         result.addAll(name);
         return result;
     }
@@ -269,7 +265,7 @@ public class JndiContext implements Context, Serializable {
         if (o == this) {
             return CastUtils.cast(new ListEnumeration());
         } else if (o instanceof Context) {
-            return ((Context)o).list("");
+            return ((Context) o).list("");
         } else {
             throw new NotContextException();
         }
@@ -281,7 +277,7 @@ public class JndiContext implements Context, Serializable {
         if (o == this) {
             return CastUtils.cast(new ListBindingEnumeration());
         } else if (o instanceof Context) {
-            return ((Context)o).listBindings("");
+            return ((Context) o).listBindings("");
         } else {
             throw new NotContextException();
         }

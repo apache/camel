@@ -57,7 +57,7 @@ public class ExplicitFileEncodingTest extends CamelTestSupport {
 
         JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.camel.example");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        PurchaseOrder obj = (PurchaseOrder)unmarshaller.unmarshal(new File("target/charset/output.txt"));
+        PurchaseOrder obj = (PurchaseOrder) unmarshaller.unmarshal(new File("target/charset/output.txt"));
         assertEquals(obj.getName(), name);
     }
 

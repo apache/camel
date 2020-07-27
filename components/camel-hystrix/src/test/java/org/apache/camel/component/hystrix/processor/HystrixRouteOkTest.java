@@ -68,17 +68,17 @@ public class HystrixRouteOkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .circuitBreaker()
+                        .circuitBreaker()
                         .to("direct:foo")
                         .to("log:foo")
-                    .onFallback()
+                        .onFallback()
                         .transform().constant("Fallback message")
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
                 from("direct:foo")
-                    .transform().constant("Bye World");
+                        .transform().constant("Bye World");
             }
         };
     }

@@ -51,8 +51,9 @@ public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/move?moveFailed=error&initialDelay=0&delay=10").onException(IllegalArgumentException.class).to("mock:damn").end().to("mock:before")
-                    .throwException(new IllegalArgumentException("Damn")).to("mock:after");
+                from("file:target/data/move?moveFailed=error&initialDelay=0&delay=10")
+                        .onException(IllegalArgumentException.class).to("mock:damn").end().to("mock:before")
+                        .throwException(new IllegalArgumentException("Damn")).to("mock:after");
             }
         };
     }

@@ -19,16 +19,16 @@ package org.apache.camel.component.jms;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
- * Factory used to create a custom {@link org.springframework.jms.listener.AbstractMessageListenerContainer} to
- * be used in JMS endpoints.
+ * Factory used to create a custom {@link org.springframework.jms.listener.AbstractMessageListenerContainer} to be used
+ * in JMS endpoints.
  */
 public interface MessageListenerContainerFactory {
 
     /**
      * Create a custom {@link org.springframework.jms.listener.AbstractMessageListenerContainer}.
      * 
-     * @param endpoint the endpoint to create the listener container for
-     * @return the custom message listener container
+     * @param  endpoint the endpoint to create the listener container for
+     * @return          the custom message listener container
      */
     AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint);
 }

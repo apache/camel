@@ -66,8 +66,8 @@ public class MyBatisInsertListTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:batchInsertAccount?statementType=InsertList")
-                    .to("mock:result");
+                        .to("mybatis:batchInsertAccount?statementType=InsertList")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

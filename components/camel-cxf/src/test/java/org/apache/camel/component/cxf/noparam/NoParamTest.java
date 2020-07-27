@@ -29,6 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class NoParamTest extends CamelSpringTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoParamTest.class);
+
     @BeforeAll
     public static void loadTestSupport() {
         // Need to load the static class first

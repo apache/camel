@@ -32,7 +32,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 /**
  * Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "OPC UA Client", category = {Category.IOT})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "OPC UA Client",
+             category = { Category.IOT })
 public class MiloClientEndpoint extends DefaultEndpoint {
 
     /**
@@ -115,7 +116,6 @@ public class MiloClientEndpoint extends DefaultEndpoint {
         configureConsumer(consumer);
         return consumer;
     }
-
 
     public MiloClientConnection getConnection() {
         return this.connection;

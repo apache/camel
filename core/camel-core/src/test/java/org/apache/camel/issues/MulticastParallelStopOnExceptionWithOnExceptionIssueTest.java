@@ -77,7 +77,8 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
             public void configure() throws Exception {
                 onException(Exception.class).handled(true).to("log:onException").to("mock:end4").transform(constant("Stop!"));
 
-                from("direct:start").multicast().parallelProcessing().stopOnException().to("mock:end1", "mock:end2").end().to("mock:end3").transform(constant("Hello to you too!"));
+                from("direct:start").multicast().parallelProcessing().stopOnException().to("mock:end1", "mock:end2").end()
+                        .to("mock:end3").transform(constant("Hello to you too!"));
             }
         };
     }

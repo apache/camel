@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = {DistributionSummaryRouteTest.TestConfig.class})
+                      classes = { DistributionSummaryRouteTest.TestConfig.class })
 @MockEndpoints
 public class DistributionSummaryRouteTest {
 

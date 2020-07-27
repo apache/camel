@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Manages access to a shared <a href="https://github.com/fusesource/leveldbjni/">LevelDB</a> file.
  * <p/>
- * Will by default not sync writes which allows it to be faster.
- * You can force syncing by setting the sync option to <tt>true</tt>.
+ * Will by default not sync writes which allows it to be faster. You can force syncing by setting the sync option to
+ * <tt>true</tt>.
  */
 public class LevelDBFile implements Service {
 
@@ -186,8 +186,8 @@ public class LevelDBFile implements Service {
 
     private DBFactory getFactory() {
         String[] classNames = new String[] {
-            "org.fusesource.leveldbjni.JniDBFactory",
-            "org.iq80.leveldb.impl.Iq80DBFactory"
+                "org.fusesource.leveldbjni.JniDBFactory",
+                "org.iq80.leveldb.impl.Iq80DBFactory"
         };
         for (String cn : classNames) {
             try {

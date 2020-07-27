@@ -30,5 +30,4 @@ public class ConnectionRedisProcessorsCreator extends AbstractRedisProcessorCrea
         return result;
     }
 
-
 }

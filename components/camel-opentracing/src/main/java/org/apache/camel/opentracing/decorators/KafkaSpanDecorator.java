@@ -50,7 +50,7 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
-        String topic = (String)exchange.getIn().getHeader(TOPIC);
+        String topic = (String) exchange.getIn().getHeader(TOPIC);
         if (topic == null) {
             Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
             topic = queryParameters.get("topic");
@@ -67,12 +67,12 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
             span.setTag(KAFKA_PARTITION_TAG, partition);
         }
 
-        String partitionKey = (String)exchange.getIn().getHeader(PARTITION_KEY);
+        String partitionKey = (String) exchange.getIn().getHeader(PARTITION_KEY);
         if (partitionKey != null) {
             span.setTag(KAFKA_PARTITION_KEY_TAG, partitionKey);
         }
 
-        String key = (String)exchange.getIn().getHeader(KEY);
+        String key = (String) exchange.getIn().getHeader(KEY);
         if (key != null) {
             span.setTag(KAFKA_KEY_TAG, key);
         }
@@ -85,9 +85,10 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
 
     /**
      * Extracts header value from the exchange for given header
-     * @param exchange the {@link Exchange}
-     * @param header the header name
-     * @param type the class type of the exchange header
+     * 
+     * @param  exchange the {@link Exchange}
+     * @param  header   the header name
+     * @param  type     the class type of the exchange header
      * @return
      */
     private <T> String getValue(final Exchange exchange, final String header, Class<T> type) {

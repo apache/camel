@@ -58,7 +58,8 @@ public class CamelJobExecutionListenerTest extends CamelTestSupport {
 
         // Then
         Exchange beforeJobEvent = consumer().receive("seda:eventQueue");
-        assertEquals(CamelJobExecutionListener.EventType.BEFORE.name(), beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
+        assertEquals(CamelJobExecutionListener.EventType.BEFORE.name(),
+                beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
     }
 
     @Test
@@ -77,7 +78,8 @@ public class CamelJobExecutionListenerTest extends CamelTestSupport {
 
         // Then
         Exchange beforeJobEvent = consumer().receive("seda:eventQueue");
-        assertEquals(CamelJobExecutionListener.EventType.AFTER.name(), beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
+        assertEquals(CamelJobExecutionListener.EventType.AFTER.name(),
+                beforeJobEvent.getIn().getHeader(CamelJobExecutionListener.EventType.HEADER_KEY));
     }
 
 }

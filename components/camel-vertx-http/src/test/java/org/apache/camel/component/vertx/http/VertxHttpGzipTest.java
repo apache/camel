@@ -42,7 +42,8 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
         Assertions.assertTrue(result.length() < message.length());
 
         // Invoke the endpoint with compression support to get the raw gzipped response
-        result = template.requestBodyAndHeader(getProducerUri() + "?useCompression=true", null, "Accept-Encoding", "gzip,deflate", String.class);
+        result = template.requestBodyAndHeader(getProducerUri() + "?useCompression=true", null, "Accept-Encoding",
+                "gzip,deflate", String.class);
         // Result length should match the original message
         Assertions.assertEquals(message.length(), result.length());
     }
@@ -55,7 +56,7 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
                 getContext().getRegistry().bind("gzip", createGzipHandler());
 
                 from(getTestServerUri() + "?handlers=gzip")
-                    .to("log:end");
+                        .to("log:end");
             }
         };
     }
@@ -67,15 +68,16 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
         }
         message = builder.toString();
 
-        HttpHandler handler = new EncodingHandler(new ContentEncodingRepository()
-                .addEncodingHandler("gzip", new GzipEncodingProvider(), 50, Predicates.parse("max-content-size[5]")))
-                .setNext(new HttpHandler() {
-                    @Override
-                    public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, message.length() + "");
-                        exchange.getResponseSender().send(message, IoCallback.END_EXCHANGE);
-                    }
-                });
+        HttpHandler handler = new EncodingHandler(
+                new ContentEncodingRepository()
+                        .addEncodingHandler("gzip", new GzipEncodingProvider(), 50, Predicates.parse("max-content-size[5]")))
+                                .setNext(new HttpHandler() {
+                                    @Override
+                                    public void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, message.length() + "");
+                                        exchange.getResponseSender().send(message, IoCallback.END_EXCHANGE);
+                                    }
+                                });
 
         return new CamelUndertowHttpHandler() {
             @Override

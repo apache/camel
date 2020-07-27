@@ -69,17 +69,23 @@ public class HealthCheckTest {
 
         HealthCheck.Result result2 = check.call();
         assertEquals(HealthCheck.State.UP, result2.getState());
-        assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_TIME), result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
-        assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT), result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
-        assertNotEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME), result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
+        assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_TIME),
+                result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
+        assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT),
+                result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
+        assertNotEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME),
+                result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
 
         Thread.sleep(1250);
 
         HealthCheck.Result result3 = check.call();
         assertEquals(HealthCheck.State.UP, result3.getState());
-        assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME), result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
-        assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT), result3.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
-        assertEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME), result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
+        assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME),
+                result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
+        assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT),
+                result3.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
+        assertEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME),
+                result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
     }
 
     @Test
@@ -117,8 +123,8 @@ public class HealthCheckTest {
         for (int i = 0; i < check.getConfiguration().getFailureThreshold(); i++) {
             result = check.call();
 
-            icount = (int)result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT);
-            fcount = (int)result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT);
+            icount = (int) result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT);
+            fcount = (int) result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT);
 
             assertEquals(HealthCheck.State.UP, result.getState());
             assertEquals(i + 1, icount);

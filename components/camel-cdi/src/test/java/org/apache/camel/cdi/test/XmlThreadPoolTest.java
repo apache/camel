@@ -51,14 +51,14 @@ public class XmlThreadPoolTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-threadPool.xml").toFile(),
-                "imported-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-threadPool.xml").toFile(),
+                        "imported-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -71,6 +71,6 @@ public class XmlThreadPoolTest {
         String body = inbound.requestBody((Object) "message", String.class);
 
         assertThat("Body is incorrect!", body,
-            matchesPattern("^Processed \\[message] with \\[Camel \\(test\\) thread #\\d+ - Thread Name]$"));
+                matchesPattern("^Processed \\[message] with \\[Camel \\(test\\) thread #\\d+ - Thread Name]$"));
     }
 }

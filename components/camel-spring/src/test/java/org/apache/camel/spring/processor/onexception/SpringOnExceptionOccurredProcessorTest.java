@@ -25,7 +25,8 @@ public class SpringOnExceptionOccurredProcessorTest extends OnExceptionOccurredP
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/onexception/OnExceptionOccurredProcessorTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/onexception/OnExceptionOccurredProcessorTest.xml");
     }
 
 }

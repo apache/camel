@@ -65,7 +65,8 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("undertow")
-public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
+public class UndertowComponent extends DefaultComponent
+        implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowComponent.class);
 
@@ -135,7 +136,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         // then re-create the http uri with the remaining parameters which the endpoint did not use
         URI httpUri = URISupport.createRemainingURI(
-                new URI(uriHttpUriAddress.getScheme(),
+                new URI(
+                        uriHttpUriAddress.getScheme(),
                         uriHttpUriAddress.getUserInfo(),
                         uriHttpUriAddress.getHost(),
                         uriHttpUriAddress.getPort(),
@@ -153,14 +155,19 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    public Consumer createConsumer(
+            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
+                parameters, false);
     }
 
     @Override
-    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
-                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Consumer createApiConsumer(
+            CamelContext camelContext, Processor processor, String contextPath,
+            RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
         return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
     }
@@ -173,7 +180,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             Iterator<UndertowSecurityProvider> iter = securityProvider.iterator();
             List<String> providers = new LinkedList();
             while (iter.hasNext()) {
-                UndertowSecurityProvider security =  iter.next();
+                UndertowSecurityProvider security = iter.next();
                 //only securityProvider, who accepts security configuration, could be used
                 if (security.acceptConfiguration(securityConfiguration, null)) {
                     this.securityProvider = security;
@@ -188,8 +195,10 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         }
     }
 
-    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
+    Consumer doCreateConsumer(
+            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api)
+            throws Exception {
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
@@ -238,7 +247,6 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(getComponentName(), config);
         // build query string, and append any endpoint configuration properties
 
-
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
 
@@ -283,9 +291,11 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     }
 
     @Override
-    public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Producer createProducer(
+            CamelContext camelContext, String host,
+            String verb, String basePath, String uriTemplate, String queryParameters,
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
@@ -357,14 +367,15 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         }
     }
 
-    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) throws Exception {
+    public HttpHandler registerEndpoint(
+            UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler)
+            throws Exception {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.computeIfAbsent(key, this::createUndertowHost);
 
         host.validateEndpointURI(uri);
         handlers.add(registrationInfo);
-
 
         HttpHandler handlerWrapped = handler;
         if (this.securityProvider != null) {
@@ -374,7 +385,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         return host.registerHandler(consumer, registrationInfo, handlerWrapped);
     }
 
-    public void unregisterEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
+    public void unregisterEndpoint(
+            UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.get(key);
@@ -444,14 +456,16 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     }
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
+     * exception's stack trace.
      */
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
     }
 
     public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
+                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 
     protected String getComponentName() {
@@ -467,8 +481,9 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     }
 
     /**
-     * Configuration used by UndertowSecurityProvider. Security configuration object for use from UndertowSecurityProvider.
-     * Configuration is UndertowSecurityProvider specific. Each provider decides, whether it accepts configuration.
+     * Configuration used by UndertowSecurityProvider. Security configuration object for use from
+     * UndertowSecurityProvider. Configuration is UndertowSecurityProvider specific. Each provider decides, whether it
+     * accepts configuration.
      */
     public void setSecurityConfiguration(Object securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
@@ -486,8 +501,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     }
 
     /**
-     * Security provider allows plug in the provider, which will be used to secure requests.
-     * SPI approach could be used too (component then finds security provider using SPI).
+     * Security provider allows plug in the provider, which will be used to secure requests. SPI approach could be used
+     * too (component then finds security provider using SPI).
      */
     public void setSecurityProvider(UndertowSecurityProvider securityProvider) {
         this.securityProvider = securityProvider;

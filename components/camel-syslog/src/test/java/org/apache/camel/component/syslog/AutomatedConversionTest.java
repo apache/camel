@@ -36,9 +36,12 @@ public class AutomatedConversionTest extends CamelTestSupport {
 
     private static int serverPort;
     private final int messageCount = 1;
-    private final String rfc3164Message = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
-                                          + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n" + "         Conveyer1=OK, Conveyer2=OK # %%";
-    private final String rfc5424Message = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
+    private final String rfc3164Message
+            = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
+              + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
+              + "         Conveyer1=OK, Conveyer2=OK # %%";
+    private final String rfc5424Message
+            = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
 
     @BeforeAll
     public static void initPort() {

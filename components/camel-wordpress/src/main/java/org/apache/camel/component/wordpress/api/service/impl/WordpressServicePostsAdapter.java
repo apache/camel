@@ -32,11 +32,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using {@link JAXRSClientFactory} to make the API calls.
+ * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using
+ * {@link JAXRSClientFactory} to make the API calls.
  * 
  * @since 0.0.1
  */
-public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAdapter<PostsSPI, Post, PostSearchCriteria> implements WordpressServicePosts {
+public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAdapter<PostsSPI, Post, PostSearchCriteria>
+        implements WordpressServicePosts {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServicePostsAdapter.class);
 
@@ -53,9 +55,12 @@ public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAd
     public List<Post> list(PostSearchCriteria criteria) {
         LOGGER.debug("Calling list posts: searchCriteria {}", criteria);
         checkNotNull(criteria, "Please provide a search criteria");
-        return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(), criteria.getSearch(), criteria.getAfter(), criteria.getAuthor(),
-                             criteria.getAuthorExclude(), criteria.getBefore(), criteria.getExclude(), criteria.getInclude(), criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(),
-                             criteria.getSlug(), criteria.getStatus(), criteria.getCategories(), criteria.getCategoriesExclude(), criteria.getTags(), criteria.getTagsExclude(), criteria.getStick());
+        return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(),
+                criteria.getSearch(), criteria.getAfter(), criteria.getAuthor(),
+                criteria.getAuthorExclude(), criteria.getBefore(), criteria.getExclude(), criteria.getInclude(),
+                criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(),
+                criteria.getSlug(), criteria.getStatus(), criteria.getCategories(), criteria.getCategoriesExclude(),
+                criteria.getTags(), criteria.getTagsExclude(), criteria.getStick());
     }
 
     @Override

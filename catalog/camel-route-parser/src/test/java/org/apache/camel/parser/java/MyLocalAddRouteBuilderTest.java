@@ -39,7 +39,7 @@ public class MyLocalAddRouteBuilderTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("mock:foo");
+                        .to("mock:foo");
             }
         });
         context.start();

@@ -67,10 +67,11 @@ public class JcrConsumer extends DefaultConsumer {
     private synchronized void createSessionAndRegisterListener() throws RepositoryException {
         LOG.trace("createSessionAndRegisterListener START");
 
-        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) { 
+        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) {
             session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
         } else {
-            session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(), getJcrEndpoint().getWorkspaceName());
+            session = getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(),
+                    getJcrEndpoint().getWorkspaceName());
         }
 
         int eventTypes = getJcrEndpoint().getEventTypes();
@@ -111,7 +112,9 @@ public class JcrConsumer extends DefaultConsumer {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding JCR Event Listener, {}, on {}. eventTypes=" + eventTypes + ", isDeep=" + isDeep
-                    + ", uuid=" + Arrays.toString(uuid) + ", nodeTypeName=" + Arrays.toString(nodeTypeName) + ", noLocal=" + noLocal, eventListener,
+                      + ", uuid=" + Arrays.toString(uuid) + ", nodeTypeName=" + Arrays.toString(nodeTypeName) + ", noLocal="
+                      + noLocal,
+                    eventListener,
                     absPath);
         }
 

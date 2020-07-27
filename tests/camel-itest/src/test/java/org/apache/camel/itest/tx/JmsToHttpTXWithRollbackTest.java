@@ -26,11 +26,9 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test will look for the spring .xml file with the same class name
- * but postfixed with -config.xml as filename.
+ * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
  * <p/>
- * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
- * that is a Spring class.
+ * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests that is a Spring class.
  */
 @CamelSpringTest
 @ContextConfiguration
@@ -47,7 +45,7 @@ public class JmsToHttpTXWithRollbackTest {
     private ProducerTemplate template;
 
     // the ok response to expect
-    private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+    private String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
     @Test
     void testSendToTXJmsWithRollback() throws Exception {

@@ -51,8 +51,8 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
- * using <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
+ * <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
  */
 @Dataformat("yaml-snakeyaml")
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
@@ -71,7 +71,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     private List<TypeFilter> typeFilters;
     private int maxAliasesForCollections = 50;
     private boolean allowRecursiveKeys;
-
 
     public SnakeYAMLDataFormat() {
         this(null);
@@ -138,12 +137,11 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
             options.setMaxAliasesForCollections(maxAliasesForCollections);
 
             yaml = new Yaml(
-                this.constructor.apply(context),
-                this.representer.apply(context),
-                this.dumperOptions.apply(context),
-                options,
-                this.resolver.apply(context)
-            );
+                    this.constructor.apply(context),
+                    this.representer.apply(context),
+                    this.dumperOptions.apply(context),
+                    options,
+                    this.resolver.apply(context));
 
             yamlCache.set(new WeakReference<>(yaml));
         }
@@ -269,7 +267,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.classTags.put(type, tag);
     }
 
-
     public boolean isUseApplicationContextClassLoader() {
         return useApplicationContextClassLoader;
     }
@@ -286,16 +283,14 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     }
 
     /**
-     * Force the emitter to produce a pretty YAML document when using the flow
-     * style.
+     * Force the emitter to produce a pretty YAML document when using the flow style.
      */
     public void setPrettyFlow(boolean prettyFlow) {
         this.prettyFlow = prettyFlow;
     }
 
     /**
-     * Convenience method to set class tag for bot <code>Constructor</code> and
-     * <code>Representer</code>
+     * Convenience method to set class tag for bot <code>Constructor</code> and <code>Representer</code>
      */
     public void addTag(Class<?> type, Tag tag) {
         addClassTags(type, tag);
@@ -388,15 +383,15 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
             }
 
             yamlConstructor = yamlClassLoader != null
-                ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters, options)
-                : typeFilterConstructor(yamlTypeFilters, options);
+                    ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters, options)
+                    : typeFilterConstructor(yamlTypeFilters, options);
         } else {
             yamlConstructor = new SafeConstructor(options);
         }
 
         if (typeDescriptions != null && yamlConstructor instanceof Constructor) {
             for (TypeDescription typeDescription : typeDescriptions) {
-                ((Constructor)yamlConstructor).addTypeDescription(typeDescription);
+                ((Constructor) yamlConstructor).addTypeDescription(typeDescription);
             }
         }
 
@@ -444,8 +439,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         return constructor;
     }
 
-    private static Constructor typeFilterConstructor(final ClassLoader classLoader, final Collection<TypeFilter> typeFilters,
-                                                     LoaderOptions options) {
+    private static Constructor typeFilterConstructor(
+            final ClassLoader classLoader, final Collection<TypeFilter> typeFilters,
+            LoaderOptions options) {
         CustomClassLoaderConstructor constructor = new CustomClassLoaderConstructor(classLoader, options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {

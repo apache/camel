@@ -50,13 +50,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Tests support for concurrency properties which generate and require reading
- * eTags before patch, update and delete operations. Since the embedded olingo2
- * odata service does not contain any concurrency properties, it is necessary to
- * mock up a new server. Uses a cutdown version of the reference odata service
- * and adds in extra concurrency properties. Service's dispatcher only tests the
- * correct calls are made and whether the eTags are correctly added as headers
- * to the requisite requests.
+ * Tests support for concurrency properties which generate and require reading eTags before patch, update and delete
+ * operations. Since the embedded olingo2 odata service does not contain any concurrency properties, it is necessary to
+ * mock up a new server. Uses a cutdown version of the reference odata service and adds in extra concurrency properties.
+ * Service's dispatcher only tests the correct calls are made and whether the eTags are correctly added as headers to
+ * the requisite requests.
  */
 public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSupport {
 
@@ -97,7 +95,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
         //
         // Check we have enabled eTag properties
         //
-        EdmProperty property = (EdmProperty)entityType.getProperty("Id");
+        EdmProperty property = (EdmProperty) entityType.getProperty("Id");
         assertNotNull(property.getFacets());
     }
 
@@ -118,7 +116,8 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
                         try {
                             if (recordedRequest.getPath().endsWith("/" + TEST_CREATE_MANUFACTURER)) {
 
-                                ODataResponse odataResponse = EntityProvider.writeEntry(TEST_FORMAT.getMimeType(), manufacturersSet, getEntityData(),
+                                ODataResponse odataResponse = EntityProvider.writeEntry(TEST_FORMAT.getMimeType(),
+                                        manufacturersSet, getEntityData(),
                                         EntityProviderWriteProperties.serviceRoot(getServiceUrl().uri()).build());
                                 InputStream entityStream = odataResponse.getEntityAsStream();
                                 mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode());
@@ -184,7 +183,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
 
         Map<String, Object> data = getEntityData();
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>)data.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>) data.get(ADDRESS);
 
         data.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");
@@ -204,7 +203,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
 
         Map<String, Object> data = getEntityData();
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>)data.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>) data.get(ADDRESS);
 
         data.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");
@@ -224,7 +223,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
 
         Map<String, Object> data = getEntityData();
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>)data.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>) data.get(ADDRESS);
 
         data.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");

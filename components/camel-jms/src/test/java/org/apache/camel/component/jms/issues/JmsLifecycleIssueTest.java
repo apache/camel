@@ -85,8 +85,8 @@ public class JmsLifecycleIssueTest extends CamelTestSupport {
                     @Override
                     public void configure() throws Exception {
                         from(ENDPOINT_URI).routeId(ROUTE_ID).autoStartup(false)
-                            .to("log:input")
-                            .to("mock:result");
+                                .to("log:input")
+                                .to("mock:result");
                     }
                 });
             }

@@ -28,9 +28,10 @@ import org.apache.camel.support.DefaultComponent;
 @org.apache.camel.spi.annotations.Component("validator")
 public class ValidatorComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI")
+    @Metadata(label = "advanced",
+              description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI")
     private ValidatorResourceResolverFactory resourceResolverFactory;
-    
+
     public ValidatorComponent() {
     }
 
@@ -38,7 +39,8 @@ public class ValidatorComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ValidatorEndpoint endpoint = new ValidatorEndpoint(uri, this, remaining);
         // lookup custom resolver to use
-        ValidatorResourceResolverFactory resolverFactory = resolveAndRemoveReferenceParameter(parameters, "resourceResolverFactory", ValidatorResourceResolverFactory.class);
+        ValidatorResourceResolverFactory resolverFactory = resolveAndRemoveReferenceParameter(parameters,
+                "resourceResolverFactory", ValidatorResourceResolverFactory.class);
         if (resolverFactory == null) {
             // not in endpoint then use component specific resource resolver factory
             resolverFactory = getResourceResolverFactory();

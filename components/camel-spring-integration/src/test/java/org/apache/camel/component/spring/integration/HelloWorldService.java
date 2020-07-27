@@ -28,11 +28,11 @@ public class HelloWorldService {
         count++;
         return "Hello " + name;
     }
-    
-    public void greet(String name) {        
+
+    public void greet(String name) {
         greetName = name;
     }
-    
+
     public String getGreetName() {
         return greetName;
     }

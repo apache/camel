@@ -24,31 +24,29 @@ import java.util.Comparator;
 public interface SequenceElementComparator<E> extends Comparator<E> {
 
     /**
-     * Returns <code>true</code> if <code>o1</code> is an immediate predecessor
-     * of <code>o2</code>.
+     * Returns <code>true</code> if <code>o1</code> is an immediate predecessor of <code>o2</code>.
      * 
-     * @param o1 a sequence element.
-     * @param o2 a sequence element.
-     * @return true if its an immediate predecessor
+     * @param  o1 a sequence element.
+     * @param  o2 a sequence element.
+     * @return    true if its an immediate predecessor
      */
     boolean predecessor(E o1, E o2);
-    
+
     /**
-     * Returns <code>true</code> if <code>o1</code> is an immediate successor
-     * of <code>o2</code>.
+     * Returns <code>true</code> if <code>o1</code> is an immediate successor of <code>o2</code>.
      * 
-     * @param o1 a sequence element.
-     * @param o2 a sequence element.
-     * @return true if its an immediate successor
+     * @param  o1 a sequence element.
+     * @param  o2 a sequence element.
+     * @return    true if its an immediate successor
      */
     boolean successor(E o1, E o2);
 
     /**
      * Returns <tt>true</tt> if the <code>o1</code> can be used in this comparator.
      *
-     * @param o1 a sequence element
-     * @return true if its usable for this comparator
+     * @param  o1 a sequence element
+     * @return    true if its usable for this comparator
      */
     boolean isValid(E o1);
-    
+
 }

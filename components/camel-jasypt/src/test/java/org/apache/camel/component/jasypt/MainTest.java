@@ -22,7 +22,7 @@ public class MainTest {
 
     @Test
     public void testMainShowOptions() throws Exception {
-        Main.main(new String[]{});
+        Main.main(new String[] {});
     }
 
     @Test

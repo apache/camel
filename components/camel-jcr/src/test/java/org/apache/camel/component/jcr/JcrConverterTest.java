@@ -48,7 +48,8 @@ public class JcrConverterTest {
 
     @BeforeEach
     public void init() throws Exception {
-        converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
+        converter = new DefaultTypeConverter(
+                new DefaultPackageScanClassResolver(),
                 new Injector() {
                     @Override
                     public <T> T newInstance(Class<T> type) {

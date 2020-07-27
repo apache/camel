@@ -23,12 +23,12 @@ public class MySimpleRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         from("timer:foo")
-            .filter(simple("${body} > 100"))
+                .filter(simple("${body} > 100"))
                 .toD("log:a")
-            .end()
-            .filter().simple("${body} > 200")
+                .end()
+                .filter().simple("${body} > 200")
                 .to("log:b")
-            .end()
-            .to("log:c");
+                .end()
+                .to("log:c");
     }
 }

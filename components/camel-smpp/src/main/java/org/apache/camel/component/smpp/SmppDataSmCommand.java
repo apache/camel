@@ -122,11 +122,14 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
             } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag), ((OctetString) optPara).getValue());
             } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag), java.lang.Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
+                optParams.put(java.lang.Short.valueOf(optPara.tag),
+                        java.lang.Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
             } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag), java.lang.Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
+                optParams.put(java.lang.Short.valueOf(optPara.tag),
+                        java.lang.Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
             } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
+                optParams.put(java.lang.Short.valueOf(optPara.tag),
+                        Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
             } else if (Null.class.isInstance(optPara)) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag), null);
             }
@@ -135,7 +138,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         return optParams;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     protected DataSm createDataSm(Exchange exchange) {
         Message in = exchange.getIn();
         DataSm dataSm = new DataSm();

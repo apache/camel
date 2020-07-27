@@ -38,7 +38,7 @@ public class AckExpressionTest extends CamelTestSupport {
         ACK ack = template.requestBody("direct:test1", a01, ACK.class);
         assertEquals("AA", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
-            .getValue());
+                .getValue());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class AckExpressionTest extends CamelTestSupport {
         ACK ack = template.requestBody("direct:test2", a01, ACK.class);
         assertEquals("CA", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
-            .getValue());
+                .getValue());
     }
 
     @Test
@@ -56,9 +56,9 @@ public class AckExpressionTest extends CamelTestSupport {
         ACK ack = template.requestBody("direct:test3", a01, ACK.class);
         assertEquals("AE", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
-            .getValue());
+                .getValue());
         assertEquals(String.valueOf(ErrorCode.APPLICATION_INTERNAL_ERROR.getCode()), ack.getERR()
-            .getErrorCodeAndLocation(0).getCodeIdentifyingError().getIdentifier().getValue());
+                .getErrorCodeAndLocation(0).getCodeIdentifyingError().getIdentifier().getValue());
     }
 
     @Test
@@ -67,11 +67,11 @@ public class AckExpressionTest extends CamelTestSupport {
         ACK ack = template.requestBody("direct:test4", a01, ACK.class);
         assertEquals("AR", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
-            .getValue());
+                .getValue());
         assertEquals(String.valueOf(ErrorCode.APPLICATION_INTERNAL_ERROR.getCode()), ack.getERR()
-            .getErrorCodeAndLocation(0).getCodeIdentifyingError().getIdentifier().getValue());
+                .getErrorCodeAndLocation(0).getCodeIdentifyingError().getIdentifier().getValue());
         assertEquals("Problem!", ack.getERR().getErrorCodeAndLocation(0).getCodeIdentifyingError()
-            .getAlternateText().getValue());
+                .getAlternateText().getValue());
     }
 
     @Test
@@ -80,11 +80,11 @@ public class AckExpressionTest extends CamelTestSupport {
         ACK ack = template.requestBody("direct:test5", a01, ACK.class);
         assertEquals("AR", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
-            .getValue());
+                .getValue());
         assertEquals(String.valueOf(ErrorCode.DATA_TYPE_ERROR.getCode()), ack.getERR().getErrorCodeAndLocation(0)
-            .getCodeIdentifyingError().getIdentifier().getValue());
+                .getCodeIdentifyingError().getIdentifier().getValue());
         assertEquals("Problem!", ack.getERR().getErrorCodeAndLocation(0).getCodeIdentifyingError()
-            .getAlternateText().getValue());
+                .getAlternateText().getValue());
     }
 
     @Override
@@ -95,10 +95,10 @@ public class AckExpressionTest extends CamelTestSupport {
                 from("direct:test1").transform(ack());
                 from("direct:test2").transform(ack(AcknowledgmentCode.CA));
                 from("direct:test3").onException(HL7Exception.class).handled(true).transform(ack()).end()
-                    .transform(hl7terser("/.BLORG"));
+                        .transform(hl7terser("/.BLORG"));
                 from("direct:test4").onException(HL7Exception.class).handled(true)
-                    .transform(ack(AcknowledgmentCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR)).end()
-                    .transform(hl7terser("/.BLORG"));
+                        .transform(ack(AcknowledgmentCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR)).end()
+                        .transform(hl7terser("/.BLORG"));
                 from("direct:test5").transform(ack(AcknowledgmentCode.AR, "Problem!", ErrorCode.DATA_TYPE_ERROR));
             }
         };

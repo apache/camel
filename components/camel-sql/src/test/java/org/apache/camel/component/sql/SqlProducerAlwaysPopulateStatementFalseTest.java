@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
-    
+
     @BindToRegistry("myStrategy")
     private SqlPrepareStatementStrategy strategy;
     private volatile boolean invoked;
@@ -49,7 +49,7 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         strategy = new DefaultSqlPrepareStatementStrategy() {
             @Override
@@ -58,7 +58,7 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
                 super.populateStatement(ps, iterator, expectedParams);
             }
         };
-        
+
         super.setUp();
     }
 
@@ -66,7 +66,7 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -97,8 +97,8 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=false&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
-                    .to("mock:result");
+                        .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=false&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
+                        .to("mock:result");
             }
         };
     }

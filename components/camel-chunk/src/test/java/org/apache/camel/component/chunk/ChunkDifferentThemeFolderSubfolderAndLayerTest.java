@@ -64,4 +64,3 @@ public class ChunkDifferentThemeFolderSubfolderAndLayerTest extends CamelTestSup
         };
     }
 }
-

@@ -69,7 +69,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         endpoint.expectedMessageCount(1);
 
         String toSend = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
-                + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
+                        + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
         byte[] in = fromHexString(toSend);
         template.sendBody(String.format("mina:udp://127.0.0.1:%1$s?sync=false", getPort()), in);
 
@@ -96,7 +96,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         int i = 0;
         for (int n = hexstr.length(); i < n; i += 2) {
             data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
-                    + hexstr.charAt(i + 1))).byteValue();
+                                          + hexstr.charAt(i + 1))).byteValue();
         }
         return data;
     }
@@ -106,7 +106,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         return new RouteBuilder() {
             public void configure() {
                 from(String.format("mina:udp://127.0.0.1:%1$s?sync=false&minaLogger=true", getPort()))
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -61,8 +61,7 @@ public class ZendeskConfiguration {
     /**
      * What operation to use
      * 
-     * @param methodName
-     *            the methodName to set
+     * @param methodName the methodName to set
      */
     public void setMethodName(String methodName) {
         this.methodName = methodName;
@@ -124,6 +123,7 @@ public class ZendeskConfiguration {
 
     /**
      * The OAuth token.
+     * 
      * @return OAuth token
      */
     public String getOauthToken() {
@@ -150,6 +150,7 @@ public class ZendeskConfiguration {
 
     /**
      * The password.
+     * 
      * @param password password
      */
     public void setPassword(String password) {
@@ -159,21 +160,22 @@ public class ZendeskConfiguration {
     @Override
     public boolean equals(Object other) {
         if (other instanceof ZendeskConfiguration) {
-            ZendeskConfiguration otherZendeskConf = (ZendeskConfiguration)other;
+            ZendeskConfiguration otherZendeskConf = (ZendeskConfiguration) other;
             return ObjectHelper.equal(methodName, otherZendeskConf.getMethodName())
-                && ObjectHelper.equal(serverUrl, otherZendeskConf.getServerUrl())
-                && ObjectHelper.equal(username, otherZendeskConf.getUsername())
-                && ObjectHelper.equal(password, otherZendeskConf.getPassword())
-                && ObjectHelper.equal(token, otherZendeskConf.getToken())
-                && ObjectHelper.equal(oauthToken, otherZendeskConf.getOauthToken());
+                    && ObjectHelper.equal(serverUrl, otherZendeskConf.getServerUrl())
+                    && ObjectHelper.equal(username, otherZendeskConf.getUsername())
+                    && ObjectHelper.equal(password, otherZendeskConf.getPassword())
+                    && ObjectHelper.equal(token, otherZendeskConf.getToken())
+                    && ObjectHelper.equal(oauthToken, otherZendeskConf.getOauthToken());
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return String.format("ZendeskConfiguration:[methodName=%s, serverUrl=%s, username=%s, password=%s, token=%s, oauthToken=%s]",
-                             methodName, serverUrl, username, password, token, oauthToken);
+        return String.format(
+                "ZendeskConfiguration:[methodName=%s, serverUrl=%s, username=%s, password=%s, token=%s, oauthToken=%s]",
+                methodName, serverUrl, username, password, token, oauthToken);
     }
 
     @Override

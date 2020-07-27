@@ -38,7 +38,8 @@ public class FloatPatternFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new FloatPatternFormat(formattingOptions.getPattern(),
+        return new FloatPatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getLocale());
     }
 

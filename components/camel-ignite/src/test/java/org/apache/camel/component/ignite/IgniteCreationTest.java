@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteCreationTest extends AbstractIgniteTest {
-    
+
     private Ignite ignite;
 
     @Override

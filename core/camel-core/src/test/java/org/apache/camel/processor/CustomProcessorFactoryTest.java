@@ -72,7 +72,8 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").setBody().constant("body not altered").to("mock:foo");
 
-                from("direct:foo").split(body()).setBody().constant("body not altered").to("mock:split").end().to("mock:result");
+                from("direct:foo").split(body()).setBody().constant("body not altered").to("mock:split").end()
+                        .to("mock:result");
             }
         };
     }
@@ -90,12 +91,12 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
         public Processor createProcessor(Route route, NamedNode definition) throws Exception {
             if (definition instanceof SplitDefinition) {
                 // add additional output to the splitter
-                SplitDefinition split = (SplitDefinition)definition;
+                SplitDefinition split = (SplitDefinition) definition;
                 split.addOutput(new ToDefinition("mock:extra"));
             }
 
             if (definition instanceof SetBodyDefinition) {
-                SetBodyDefinition set = (SetBodyDefinition)definition;
+                SetBodyDefinition set = (SetBodyDefinition) definition;
                 set.setExpression(new ConstantExpression("body was altered"));
             }
 
@@ -106,7 +107,8 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception {
+        public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
+                throws Exception {
             return null;
         }
     }

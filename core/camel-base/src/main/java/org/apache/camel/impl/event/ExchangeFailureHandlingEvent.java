@@ -21,14 +21,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.util.URISupport;
 
-public class ExchangeFailureHandlingEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeFailureHandlingEvent  {
+public class ExchangeFailureHandlingEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeFailureHandlingEvent {
     private static final long serialVersionUID = -7554809462006009549L;
 
     private final transient Processor failureHandler;
     private final boolean deadLetterChannel;
     private final String deadLetterUri;
 
-    public ExchangeFailureHandlingEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
+    public ExchangeFailureHandlingEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel,
+                                        String deadLetterUri) {
         super(source);
         this.failureHandler = failureHandler;
         this.deadLetterChannel = deadLetterChannel;
@@ -54,9 +55,11 @@ public class ExchangeFailureHandlingEvent extends AbstractExchangeEvent implemen
     public String toString() {
         if (isDeadLetterChannel()) {
             String uri = URISupport.sanitizeUri(deadLetterUri);
-            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but is being handled by dead letter channel: " + uri;
+            return getExchange().getExchangeId() + " exchange failed: " + getExchange()
+                   + " but is being handled by dead letter channel: " + uri;
         } else {
-            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but is being processed by failure processor: " + failureHandler;
+            return getExchange().getExchangeId() + " exchange failed: " + getExchange()
+                   + " but is being processed by failure processor: " + failureHandler;
         }
     }
 }

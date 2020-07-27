@@ -24,18 +24,18 @@ import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * DSL Generator class that generates component implementation of the component builder interface.
- * E.g: class KafkaComponentBuilderImpl extends AbstractComponentBuilder implements KafkaComponentBuilder
+ * DSL Generator class that generates component implementation of the component builder interface. E.g: class
+ * KafkaComponentBuilderImpl extends AbstractComponentBuilder implements KafkaComponentBuilder
  */
 public final class ComponentDslInnerImplBuilderGenerator {
     private static final String BUILDER_IMPL_SUFFIX = "Impl";
-
 
     private final JavaClass javaClass;
     private final ComponentModel componentModel;
     private final String classBuilderName;
 
-    private ComponentDslInnerImplBuilderGenerator(final JavaClass javaClass, final ComponentModel componentModel, final String interfaceBuilderName) {
+    private ComponentDslInnerImplBuilderGenerator(final JavaClass javaClass, final ComponentModel componentModel,
+                                                  final String interfaceBuilderName) {
         this.javaClass = javaClass;
         this.componentModel = componentModel;
         this.classBuilderName = interfaceBuilderName;
@@ -43,7 +43,8 @@ public final class ComponentDslInnerImplBuilderGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslInnerImplBuilderGenerator generateClass(final JavaClass javaClass, final ComponentModel componentModel, final String classBuilderName) {
+    public static ComponentDslInnerImplBuilderGenerator generateClass(
+            final JavaClass javaClass, final ComponentModel componentModel, final String classBuilderName) {
         return new ComponentDslInnerImplBuilderGenerator(javaClass, componentModel, classBuilderName);
     }
 
@@ -74,15 +75,17 @@ public final class ComponentDslInnerImplBuilderGenerator {
 
         // then configuration classes are optional and we need
         // to generate a method that can lazy create a new configuration if it was null
-        Optional<ComponentModel.ComponentOptionModel> configurationOption = findConfiguration(componentModel.getComponentOptions());
+        Optional<ComponentModel.ComponentOptionModel> configurationOption
+                = findConfiguration(componentModel.getComponentOptions());
         if (configurationOption.isPresent()) {
             ComponentModel.ComponentOptionModel config = configurationOption.get();
             javaClass.addMethod()
-                .setPrivate()
-                .setReturnType(config.getConfigurationClass())
-                .setName("getOrCreateConfiguration")
-                .addParameter(componentModel.getJavaType(), "component")
-                .setBody(createGetOrCreateConfigurationBody(config.getConfigurationClass(), config.getConfigurationField()));
+                    .setPrivate()
+                    .setReturnType(config.getConfigurationClass())
+                    .setName("getOrCreateConfiguration")
+                    .addParameter(componentModel.getJavaType(), "component")
+                    .setBody(
+                            createGetOrCreateConfigurationBody(config.getConfigurationClass(), config.getConfigurationField()));
         }
 
         javaClass.addMethod()
@@ -121,7 +124,8 @@ public final class ComponentDslInnerImplBuilderGenerator {
         return stringBuilder.toString();
     }
 
-    private static Optional<ComponentModel.ComponentOptionModel> findConfiguration(Collection<ComponentModel.ComponentOptionModel> options) {
+    private static Optional<ComponentModel.ComponentOptionModel> findConfiguration(
+            Collection<ComponentModel.ComponentOptionModel> options) {
         return options.stream().filter(o -> o.getConfigurationField() != null).findFirst();
     }
 

@@ -43,7 +43,7 @@ public class CwProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(CwProducer.class);
 
     private transient String cwProducerToString;
-    
+
     public CwProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -89,7 +89,8 @@ public class CwProducer extends DefaultProducer {
             if (dimensions != null) {
                 Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
-                    Dimension dimension = new Dimension().withName(dimensionEntry.getKey()).withValue(dimensionEntry.getValue());
+                    Dimension dimension
+                            = new Dimension().withName(dimensionEntry.getKey()).withValue(dimensionEntry.getValue());
                     dimensionCollection.add(dimension);
                 }
                 metricDatum.withDimensions(dimensionCollection);

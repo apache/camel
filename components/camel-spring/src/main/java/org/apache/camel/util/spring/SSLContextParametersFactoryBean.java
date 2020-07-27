@@ -32,25 +32,25 @@ import org.springframework.context.ApplicationContextAware;
 @XmlType(propOrder = {})
 public class SSLContextParametersFactoryBean extends AbstractSSLContextParametersFactoryBean
         implements FactoryBean<SSLContextParameters>, ApplicationContextAware {
-    
+
     private KeyManagersParametersFactoryBean keyManagers;
-    
+
     private TrustManagersParametersFactoryBean trustManagers;
-        
+
     private SecureRandomParametersFactoryBean secureRandom;
-    
+
     private SSLContextClientParametersFactoryBean clientParameters;
-    
+
     private SSLContextServerParametersFactoryBean serverParameters;
-    
+
     @XmlTransient
     private ApplicationContext applicationContext;
-    
+
     @Override
     public KeyManagersParametersFactoryBean getKeyManagers() {
         return keyManagers;
     }
-    
+
     public void setKeyManagers(KeyManagersParametersFactoryBean keyManagers) {
         this.keyManagers = keyManagers;
     }
@@ -59,7 +59,7 @@ public class SSLContextParametersFactoryBean extends AbstractSSLContextParameter
     public TrustManagersParametersFactoryBean getTrustManagers() {
         return trustManagers;
     }
-    
+
     public void setTrustManagers(TrustManagersParametersFactoryBean trustManagers) {
         this.trustManagers = trustManagers;
     }
@@ -86,11 +86,11 @@ public class SSLContextParametersFactoryBean extends AbstractSSLContextParameter
     public SSLContextServerParametersFactoryBean getServerParameters() {
         return serverParameters;
     }
-    
+
     public void setServerParameters(SSLContextServerParametersFactoryBean serverParameters) {
         this.serverParameters = serverParameters;
     }
-    
+
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);

@@ -46,7 +46,8 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDeleteTarFileWhenUnmarshalWithDataFormat() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat").whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithDataFormat");
 
@@ -60,7 +61,8 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDeleteTarFileWhenUnmarshalWithSplitter() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter")
+                .whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithSplitter");
 
@@ -71,7 +73,6 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
         // the original file should have been deleted,
         assertFalse(new File(tarFile).exists(), "File should been deleted");
     }
-
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

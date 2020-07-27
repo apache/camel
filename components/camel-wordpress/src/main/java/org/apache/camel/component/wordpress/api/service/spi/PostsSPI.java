@@ -39,7 +39,7 @@ import org.apache.camel.component.wordpress.api.model.PublishableStatus;
 /**
  * Describes the Wordpress Posts API.
  * 
- * @see <a href= "https://developer.wordpress.org/rest-api/reference/posts/">Posts API Reference</a>
+ * @see   <a href= "https://developer.wordpress.org/rest-api/reference/posts/">Posts API Reference</a>
  * @since 0.0.1
  */
 @Path("/wp")
@@ -49,18 +49,26 @@ public interface PostsSPI {
     @GET
     @Path("/v{apiVersion}/posts")
     @Produces(MediaType.APPLICATION_JSON)
-    List<Post> list(@PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context, @QueryParam("page") Integer page, @QueryParam("per_page") Integer perPage,
-                    @QueryParam("search") String search, @QueryParam("after") Date after, @QueryParam("author") List<Integer> author, @QueryParam("author_exclude") List<Integer> authorExclude,
-                    @QueryParam("before") Date before, @QueryParam("exclude") List<Integer> exclude, @QueryParam("include") List<Integer> include, @QueryParam("offset") List<Integer> offset,
-                    @QueryParam("order") Order order, @QueryParam("orderby") PostOrderBy orderBy, @QueryParam("slug") List<String> slug, @QueryParam("status") PublishableStatus status,
-                    @QueryParam("categories") List<String> categories, @QueryParam("categories_exclude") List<String> categoriesExclude, @QueryParam("tags") List<String> tags,
-                    @QueryParam("tags_exclude") List<String> tagsExclude, @QueryParam("stick") Boolean stick);
+    List<Post> list(
+            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
+            @QueryParam("page") Integer page, @QueryParam("per_page") Integer perPage,
+            @QueryParam("search") String search, @QueryParam("after") Date after, @QueryParam("author") List<Integer> author,
+            @QueryParam("author_exclude") List<Integer> authorExclude,
+            @QueryParam("before") Date before, @QueryParam("exclude") List<Integer> exclude,
+            @QueryParam("include") List<Integer> include, @QueryParam("offset") List<Integer> offset,
+            @QueryParam("order") Order order, @QueryParam("orderby") PostOrderBy orderBy, @QueryParam("slug") List<String> slug,
+            @QueryParam("status") PublishableStatus status,
+            @QueryParam("categories") List<String> categories, @QueryParam("categories_exclude") List<String> categoriesExclude,
+            @QueryParam("tags") List<String> tags,
+            @QueryParam("tags_exclude") List<String> tagsExclude, @QueryParam("stick") Boolean stick);
 
     // @formatter:off
     @GET
     @Path("/v{apiVersion}/posts/{postId}")
     @Produces(MediaType.APPLICATION_JSON)
-    Post retrieve(@PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId, @QueryParam("context") Context context, @QueryParam("password") String password);
+    Post retrieve(
+            @PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId, @QueryParam("context") Context context,
+            @QueryParam("password") String password);
 
     // @formatter:on
     @POST

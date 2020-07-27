@@ -38,7 +38,7 @@ public class JmsAllowAdditionalHeadersTest extends CamelTestSupport {
         // getMockEndpoint("mock:bar").expectedHeaderReceived("JMS_IBM_MQMD_USER", data);
 
         fluentTemplate.withBody("Hello World").withHeader("foo", "bar").withHeader("JMS_IBM_MQMD_USER", data)
-            .to("direct:start").send();
+                .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
     }

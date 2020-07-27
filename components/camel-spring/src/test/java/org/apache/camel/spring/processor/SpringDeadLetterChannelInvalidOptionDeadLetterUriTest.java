@@ -31,7 +31,8 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringDeadLetterChannelInvalidOptionDeadLetterUriTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringDeadLetterChannelInvalidOptionDeadLetterUriTest.xml");
     }
 
     @Override

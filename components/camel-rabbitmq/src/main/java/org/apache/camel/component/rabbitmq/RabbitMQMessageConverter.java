@@ -44,8 +44,7 @@ public class RabbitMQMessageConverter {
     private final HeaderFilterStrategy headerFilterStrategy = new RabbitMQHeaderFilterStrategy();
 
     /**
-     * Will take an {@link Exchange} and add header values back to the
-     * {@link Exchange#getIn()}
+     * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
      */
     public void mergeAmqpProperties(Exchange exchange, AMQP.BasicProperties properties) {
 
@@ -177,7 +176,8 @@ public class RabbitMQMessageConverter {
             if ((value != null || isAllowNullHeaders()) && !header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
                 boolean filteredHeader;
                 if (!allowCustomHeaders) {
-                    filteredHeader = headerFilterStrategy.applyFilterToCamelHeaders(header.getKey(), header.getValue(), exchange);
+                    filteredHeader
+                            = headerFilterStrategy.applyFilterToCamelHeaders(header.getKey(), header.getValue(), exchange);
                     if (filteredHeader) {
                         filteredHeaders.put(header.getKey(), header.getValue());
                     }
@@ -190,7 +190,8 @@ public class RabbitMQMessageConverter {
                 } else if (header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
                     LOG.debug("Preventing header propagation: {} with value {}:", header.getKey(), header.getValue());
                 } else {
-                    LOG.debug("Ignoring header: {} of class: {} with value: {}", header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
+                    LOG.debug("Ignoring header: {} of class: {} with value: {}", header.getKey(),
+                            ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
                 }
             }
         }
@@ -202,20 +203,18 @@ public class RabbitMQMessageConverter {
 
     private Date convertTimestamp(Object timestamp) {
         if (timestamp instanceof Date) {
-            return (Date)timestamp;
+            return (Date) timestamp;
         }
         return new Date(Long.parseLong(timestamp.toString()));
     }
 
     /**
-     * Strategy to test if the given header is valid. Without this, the
-     * com.rabbitmq.client.impl.Frame.java class will throw an
-     * IllegalArgumentException (invalid value in table) and close the
-     * connection.
+     * Strategy to test if the given header is valid. Without this, the com.rabbitmq.client.impl.Frame.java class will
+     * throw an IllegalArgumentException (invalid value in table) and close the connection.
      *
-     * @param headerValue the header value
-     * @return the value to use, <tt>null</tt> to ignore this header
-     * @see com.rabbitmq.client.impl.Frame#fieldValueSize
+     * @param  headerValue the header value
+     * @return             the value to use, <tt>null</tt> to ignore this header
+     * @see                com.rabbitmq.client.impl.Frame#fieldValueSize
      */
     private Object getValidRabbitMQHeaderValue(String headerKey, Object headerValue) {
         // accept all x- headers
@@ -244,8 +243,9 @@ public class RabbitMQMessageConverter {
         return null;
     }
 
-    public void populateRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, final boolean out,
-                                       final boolean allowMessageBodySerialization) {
+    public void populateRabbitExchange(
+            Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, final boolean out,
+            final boolean allowMessageBodySerialization) {
         Message message = resolveMessageFrom(camelExchange, out);
         populateMessageHeaders(message, envelope, properties);
         populateMessageBody(message, camelExchange, properties, body, allowMessageBodySerialization);
@@ -296,8 +296,9 @@ public class RabbitMQMessageConverter {
         }
     }
 
-    private void populateMessageBody(final Message message, final Exchange camelExchange, final AMQP.BasicProperties properties, final byte[] body,
-                                     final boolean allowMessageBodySerialization) {
+    private void populateMessageBody(
+            final Message message, final Exchange camelExchange, final AMQP.BasicProperties properties, final byte[] body,
+            final boolean allowMessageBodySerialization) {
         if (allowMessageBodySerialization && hasSerializeHeader(properties)) {
             deserializeBody(camelExchange, message, body);
         } else {
@@ -316,7 +317,7 @@ public class RabbitMQMessageConverter {
         }
         if (messageBody instanceof Throwable) {
             LOG.debug("Reply was an Exception. Setting the Exception on the Exchange");
-            camelExchange.setException((Throwable)messageBody);
+            camelExchange.setException((Throwable) messageBody);
         } else {
             message.setBody(messageBody);
         }

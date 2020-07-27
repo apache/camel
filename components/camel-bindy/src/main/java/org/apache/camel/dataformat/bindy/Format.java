@@ -17,16 +17,15 @@
 package org.apache.camel.dataformat.bindy;
 
 /**
- * Format allows to format object to and from string received using format or
- * parse method
+ * Format allows to format object to and from string received using format or parse method
  */
 public interface Format<T> {
 
     /**
      * Formats the object into a String
      * 
-     * @param object the object
-     * @return formatted as a String
+     * @param  object    the object
+     * @return           formatted as a String
      * @throws Exception can be thrown
      */
     String format(T object) throws Exception;
@@ -34,8 +33,8 @@ public interface Format<T> {
     /**
      * Parses a String into an object
      * 
-     * @param string the string
-     * @return T the object
+     * @param  string    the string
+     * @return           T the object
      * @throws Exception can be thrown
      */
     T parse(String string) throws Exception;

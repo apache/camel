@@ -38,7 +38,8 @@ public final class ComponentDslBuilderFactoryGenerator {
     private ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator;
     private ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator;
 
-    private ComponentDslBuilderFactoryGenerator(final ComponentModel componentModel, final ClassLoader classLoader, final String packageName) {
+    private ComponentDslBuilderFactoryGenerator(final ComponentModel componentModel, final ClassLoader classLoader,
+                                                final String packageName) {
         this.componentModel = componentModel;
         this.packageName = packageName;
 
@@ -47,7 +48,8 @@ public final class ComponentDslBuilderFactoryGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslBuilderFactoryGenerator generateClass(final ComponentModel componentModel, final ClassLoader classLoader, final String componentDslPackageName) {
+    public static ComponentDslBuilderFactoryGenerator generateClass(
+            final ComponentModel componentModel, final ClassLoader classLoader, final String componentDslPackageName) {
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(classLoader);
 
@@ -85,9 +87,12 @@ public final class ComponentDslBuilderFactoryGenerator {
         setJavaDoc();
         setMainAnnotations();
         setBuilderFactoryClassNameAndType();
-        componentDslInnerBuilderGenerator = ComponentDslInnerBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel);
-        componentDslInnerImplBuilderGenerator = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel, componentDslInnerBuilderGenerator.getGeneratedInterfaceName());
-        setDslEntryMethod(componentDslInnerBuilderGenerator.getGeneratedInterfaceName(), componentDslInnerImplBuilderGenerator.getGeneratedClassName());
+        componentDslInnerBuilderGenerator
+                = ComponentDslInnerBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel);
+        componentDslInnerImplBuilderGenerator = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass.addNestedType(),
+                componentModel, componentDslInnerBuilderGenerator.getGeneratedInterfaceName());
+        setDslEntryMethod(componentDslInnerBuilderGenerator.getGeneratedInterfaceName(),
+                componentDslInnerImplBuilderGenerator.getGeneratedClassName());
     }
 
     private void setPackage() {

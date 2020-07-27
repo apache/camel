@@ -39,9 +39,10 @@ public class HttpBridgeAsyncRouteTest extends HttpBridgeRouteTest {
                     }
                 };
                 from("jetty:http://localhost:" + port2 + "/test/hello?async=true&useContinuation=false")
-                    .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true&async=true&useContinuation=false").process(serviceProc);
+                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true&async=true&useContinuation=false")
+                        .process(serviceProc);
             }
         };
     }

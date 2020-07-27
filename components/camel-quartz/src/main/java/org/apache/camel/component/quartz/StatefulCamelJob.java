@@ -20,9 +20,9 @@ import org.quartz.DisallowConcurrentExecution;
 import org.quartz.PersistJobDataAfterExecution;
 
 /**
- * A stateful job for CamelJob. For Quartz, this means it will re-save all job data map after each job execution,
- * and it will not run concurrently within the Quartz thread pool even if you have multiple triggers or misfired
- * instruct to do so.
+ * A stateful job for CamelJob. For Quartz, this means it will re-save all job data map after each job execution, and it
+ * will not run concurrently within the Quartz thread pool even if you have multiple triggers or misfired instruct to do
+ * so.
  */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution

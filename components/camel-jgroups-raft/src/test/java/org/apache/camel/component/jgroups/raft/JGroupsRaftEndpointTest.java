@@ -38,7 +38,8 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
     static final String CLUSTER_NAME1 = "JGroupsraftEndpointTest1";
     static final String CONFIGURED_ENDPOINT_URI1 = "jgroups-raft:" + CLUSTER_NAME1 + "?raftHandle=#rh";
     static final String CLUSTER_NAME2 = "JGroupsraftEndpointTest2";
-    static final String CONFIGURED_ENDPOINT_URI2 = "jgroups-raft:" + CLUSTER_NAME2 + "?stateMachine=#sm&raftId=C&channelProperties=raftC.xml";
+    static final String CONFIGURED_ENDPOINT_URI2
+            = "jgroups-raft:" + CLUSTER_NAME2 + "?stateMachine=#sm&raftId=C&channelProperties=raftC.xml";
 
     StateMachine sm = new StateMachine() {
         @Override

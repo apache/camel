@@ -33,17 +33,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ErrorHandlerDefinitionParserTest {
     protected ClassPathXmlApplicationContext ctx;
-    
+
     @BeforeEach
     public void setUp() throws Exception {
-        ctx =  new ClassPathXmlApplicationContext("org/apache/camel/spring/handler/ErrorHandlerDefinitionParser.xml");
+        ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/handler/ErrorHandlerDefinitionParser.xml");
     }
 
     @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(ctx);
     }
-    
+
     @Test
     public void testDefaultErrorHandler() {
         DefaultErrorHandlerBuilder errorHandler = ctx.getBean("defaultErrorHandler", DefaultErrorHandlerBuilder.class);
@@ -53,20 +53,21 @@ public class ErrorHandlerDefinitionParserTest {
         assertEquals(2, policy.getMaximumRedeliveries(), "Wrong maximumRedeliveries");
         assertEquals(0, policy.getRedeliveryDelay(), "Wrong redeliveryDelay");
         assertEquals(false, policy.isLogStackTrace(), "Wrong logStackTrace");
-        
+
         errorHandler = ctx.getBean("errorHandler", DefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
     }
-    
+
     @Test
     public void testTransactionErrorHandler() {
-        TransactionErrorHandlerBuilder errorHandler = ctx.getBean("transactionErrorHandler", TransactionErrorHandlerBuilder.class);
+        TransactionErrorHandlerBuilder errorHandler
+                = ctx.getBean("transactionErrorHandler", TransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
         Processor processor = errorHandler.getOnRedelivery();
         assertTrue(processor instanceof MyErrorProcessor, "It should be MyErrorProcessor");
     }
-    
+
     @Test
     public void testTXErrorHandler() {
         TransactionErrorHandlerBuilder errorHandler = ctx.getBean("txEH", TransactionErrorHandlerBuilder.class);
@@ -88,4 +89,3 @@ public class ErrorHandlerDefinitionParserTest {
     }
 
 }
-

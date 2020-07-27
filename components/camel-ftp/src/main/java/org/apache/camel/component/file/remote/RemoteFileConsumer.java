@@ -42,7 +42,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
 
-    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations, GenericFileProcessStrategy processStrategy) {
+    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
+                              GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
@@ -50,11 +51,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     @SuppressWarnings("unchecked")
     public RemoteFileEndpoint<T> getEndpoint() {
-        return (RemoteFileEndpoint<T>)super.getEndpoint();
+        return (RemoteFileEndpoint<T>) super.getEndpoint();
     }
 
     protected RemoteFileOperations<T> getOperations() {
-        return (RemoteFileOperations<T>)operations;
+        return (RemoteFileOperations<T>) operations;
     }
 
     @Override
@@ -183,7 +184,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
+            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage()
+                     + ". This exception will be ignored.");
         }
     }
 
@@ -199,7 +201,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             getOperations().forceDisconnect();
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
+            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage()
+                     + ". This exception will be ignored.");
         }
     }
 
@@ -219,7 +222,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
-            loggedIn = getOperations().connect((RemoteFileConfiguration)endpoint.getConfiguration(), null);
+            loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration(), null);
             if (loggedIn) {
                 LOG.debug("Connected and logged in to: {}", remoteServer());
             }
@@ -230,21 +233,19 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
      * Returns human readable server information for logging purpose
      */
     protected String remoteServer() {
-        return ((RemoteFileEndpoint<?>)endpoint).remoteServerInformation();
+        return ((RemoteFileEndpoint<?>) endpoint).remoteServerInformation();
     }
 
     /**
-     * Executes doPollDirectory and on exception checks if it can be ignored by
-     * calling ignoreCannotRetrieveFile.
+     * Executes doPollDirectory and on exception checks if it can be ignored by calling ignoreCannotRetrieveFile.
      *
-     * @param absolutePath the path of the directory to poll
-     * @param dirName the name of the directory to poll
-     * @param fileList current list of files gathered
-     * @param depth the current depth of the directory
-     * @return whether or not to continue polling, <tt>false</tt> means the
-     *         maxMessagesPerPoll limit has been hit
-     * @throws GenericFileOperationFailedException if the exception during
-     *             doPollDirectory can not be ignored
+     * @param  absolutePath                        the path of the directory to poll
+     * @param  dirName                             the name of the directory to poll
+     * @param  fileList                            current list of files gathered
+     * @param  depth                               the current depth of the directory
+     * @return                                     whether or not to continue polling, <tt>false</tt> means the
+     *                                             maxMessagesPerPoll limit has been hit
+     * @throws GenericFileOperationFailedException if the exception during doPollDirectory can not be ignored
      */
     protected boolean doSafePollSubDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth) {
         try {
@@ -261,9 +262,10 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             } else {
                 LOG.trace("Not ignoring file error {} for {}", e.getMessage(), absolutePath);
                 if (e instanceof GenericFileOperationFailedException) {
-                    throw (GenericFileOperationFailedException)e;
+                    throw (GenericFileOperationFailedException) e;
                 } else {
-                    throw new GenericFileOperationFailedException("Cannot poll sub-directory: " + absolutePath + " from: " + endpoint, e);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot poll sub-directory: " + absolutePath + " from: " + endpoint, e);
                 }
             }
         }
@@ -272,12 +274,12 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     /**
      * Poll directory given by dirName or absolutePath
      *
-     * @param absolutePath The path of the directory to poll
-     * @param dirName The name of the directory to poll
-     * @param fileList current list of files gathered
-     * @param depth the current depth of the directory
-     * @return whether or not to continue polling, <tt>false</tt> means the
-     *         maxMessagesPerPoll limit has been hit
+     * @param  absolutePath The path of the directory to poll
+     * @param  dirName      The name of the directory to poll
+     * @param  fileList     current list of files gathered
+     * @param  depth        the current depth of the directory
+     * @return              whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has
+     *                      been hit
      */
     protected abstract boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth);
 }

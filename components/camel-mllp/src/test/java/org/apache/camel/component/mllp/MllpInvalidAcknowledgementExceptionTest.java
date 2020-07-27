@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpInvalidAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     static final String EXCEPTION_MESSAGE = "Invalid Acknowledgment Message";
@@ -53,7 +53,8 @@ public class MllpInvalidAcknowledgementExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpInvalidAcknowledgementException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpInvalidAcknowledgementException(
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());

@@ -61,7 +61,6 @@ public class JpaProducerFindEntityTest extends AbstractJpaTest {
         });
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new SpringRouteBuilder() {

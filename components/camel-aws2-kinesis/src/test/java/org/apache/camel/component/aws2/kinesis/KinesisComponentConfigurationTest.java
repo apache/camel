@@ -28,7 +28,8 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithAccessAndSecretKey() throws Exception {
         Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)component.createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component
+                .createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
@@ -40,7 +41,7 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)component.createEndpoint("aws2-kinesis://some_stream_name");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint("aws2-kinesis://some_stream_name");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
@@ -53,7 +54,8 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)component.createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component
+                .createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -67,8 +69,9 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)component
-            .createEndpoint("aws2-kinesis://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component
+                .createEndpoint(
+                        "aws2-kinesis://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
@@ -77,11 +80,12 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
         Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)component.createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&autoDiscoverClient=false");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component
+                .createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&autoDiscoverClient=false");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());

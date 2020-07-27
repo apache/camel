@@ -67,7 +67,8 @@ public class SshProducer extends DefaultProducer {
         try {
             String knownHostResource = endpoint.getKnownHostsResource();
             if (knownHostResource != null) {
-                client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(exchange.getContext(), knownHostResource,
+                client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(
+                        exchange.getContext(), knownHostResource,
                         endpoint.isFailOnUnknownHost()));
             }
             SshResult result = SshHelper.sendExecCommand(headers, command, endpoint, client);

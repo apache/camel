@@ -34,11 +34,11 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A {@link org.apache.camel.Processor} that binds the REST producer request and reply messages
- * from sources of json or xml to Java Objects.
+ * A {@link org.apache.camel.Processor} that binds the REST producer request and reply messages from sources of json or
+ * xml to Java Objects.
  * <p/>
- * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform
- * from xml/json to Java Objects and reverse again.
+ * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform from xml/json to Java
+ * Objects and reverse again.
  * <p/>
  * The rest-dsl consumer side is implemented in {@link org.apache.camel.processor.RestBindingAdvice}
  */
@@ -222,9 +222,11 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             return getProcessor().process(exchange, callback);
         } else {
             if (bindingMode.contains("xml")) {
-                exchange.setException(new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
+                exchange.setException(
+                        new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
             } else {
-                exchange.setException(new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
+                exchange.setException(
+                        new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
             }
             // we failed so cannot call producer
             callback.done(true);
@@ -320,7 +322,8 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             }
 
             // is the body empty
-            if ((exchange.hasOut() && exchange.getOut().getBody() == null) || (!exchange.hasOut() && exchange.getIn().getBody() == null)) {
+            if ((exchange.hasOut() && exchange.getOut().getBody() == null)
+                    || (!exchange.hasOut() && exchange.getIn().getBody() == null)) {
                 return;
             }
 
@@ -345,9 +348,11 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                         // okay for auto we do not mind if we could not bind
                     } else {
                         if (bindingMode.contains("xml")) {
-                            exchange.setException(new CamelExchangeException("Cannot bind from xml as message body is not xml compatible", exchange));
+                            exchange.setException(new CamelExchangeException(
+                                    "Cannot bind from xml as message body is not xml compatible", exchange));
                         } else {
-                            exchange.setException(new CamelExchangeException("Cannot bind from json as message body is not json compatible", exchange));
+                            exchange.setException(new CamelExchangeException(
+                                    "Cannot bind from json as message body is not json compatible", exchange));
                         }
                     }
                 }

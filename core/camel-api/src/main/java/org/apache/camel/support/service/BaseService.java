@@ -22,16 +22,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A useful base class which ensures that a service is only initialized once and
- * provides some helper methods for enquiring of its status.
+ * A useful base class which ensures that a service is only initialized once and provides some helper methods for
+ * enquiring of its status.
  * <p/>
- * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService}
- * in case they support suspend/resume.
+ * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService} in case they
+ * support suspend/resume.
  * <p/>
  * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()}},
  * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
- * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
- * invoke the operation in a safe manner.
+ * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly invoke
+ * the operation in a safe manner.
  */
 public abstract class BaseService {
 
@@ -121,7 +121,8 @@ public abstract class BaseService {
                     stop();
                 } catch (Exception e2) {
                     // ignore
-                    LOG.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored", e);
+                    LOG.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored",
+                            e);
                 }
                 LOG.trace("Error while starting service: " + this, e);
                 fail(e);
@@ -341,16 +342,15 @@ public abstract class BaseService {
     }
 
     /**
-     * Optional build phase of the service.
-     * This method will only be called by frameworks which supports pre-building projects such as camel-quarkus.
+     * Optional build phase of the service. This method will only be called by frameworks which supports pre-building
+     * projects such as camel-quarkus.
      */
     protected void doBuild() throws Exception {
         // noop
     }
 
     /**
-     * Initialize the service.
-     * This method will only be called once before starting.
+     * Initialize the service. This method will only be called once before starting.
      */
     protected void doInit() throws Exception {
         // noop
@@ -370,12 +370,10 @@ public abstract class BaseService {
     /**
      * Implementations override this method to support customized start/stop.
      * <p/>
-     * <b>Important:</b> Camel will invoke this {@link #doStop()} method when
-     * the service is being stopped. This method will <b>also</b> be invoked
-     * if the service is still in <i>uninitialized</i> state (eg has not
-     * been started). The method is <b>always</b> called to allow the service
-     * to do custom logic when the service is being stopped, such as when
-     * {@link org.apache.camel.CamelContext} is shutting down.
+     * <b>Important:</b> Camel will invoke this {@link #doStop()} method when the service is being stopped. This method
+     * will <b>also</b> be invoked if the service is still in <i>uninitialized</i> state (eg has not been started). The
+     * method is <b>always</b> called to allow the service to do custom logic when the service is being stopped, such as
+     * when {@link org.apache.camel.CamelContext} is shutting down.
      *
      * @see #doStart()
      */
@@ -412,8 +410,7 @@ public abstract class BaseService {
     }
 
     /**
-     * Implementations may return an object that will be closed
-     * when the lifecycle action is completed.
+     * Implementations may return an object that will be closed when the lifecycle action is completed.
      */
     protected AutoCloseable doLifecycleChange() {
         return null;

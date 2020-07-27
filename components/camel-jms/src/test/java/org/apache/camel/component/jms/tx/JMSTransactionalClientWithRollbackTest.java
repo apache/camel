@@ -31,7 +31,7 @@ public class JMSTransactionalClientWithRollbackTest extends CamelSpringTestSuppo
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/JMSTransactionalClientWithRollbackTest.xml");
+                "/org/apache/camel/component/jms/tx/JMSTransactionalClientWithRollbackTest.xml");
     }
 
     @Test

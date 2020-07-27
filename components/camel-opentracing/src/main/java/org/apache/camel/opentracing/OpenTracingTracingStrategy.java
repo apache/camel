@@ -44,8 +44,9 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
     }
 
     @Override
-    public Processor wrapProcessorInInterceptors(CamelContext camelContext,
-                                                 NamedNode processorDefinition, Processor target, Processor nextTarget)
+    public Processor wrapProcessorInInterceptors(
+            CamelContext camelContext,
+            NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
         if (!shouldTrace(processorDefinition)) {
             return new DelegateAsyncProcessor(target);
@@ -86,7 +87,7 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
             }
         });
     }
-    
+
     private static String getComponentName(NamedNode processorDefinition) {
         return SpanDecorator.CAMEL_COMPONENT + processorDefinition.getShortName();
     }

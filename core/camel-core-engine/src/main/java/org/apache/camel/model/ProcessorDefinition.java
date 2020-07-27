@@ -70,7 +70,8 @@ import org.slf4j.LoggerFactory;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type>
+        implements Block {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlTransient
@@ -98,11 +99,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Gets the unique index number for when this {@link ProcessorDefinition}
-     * was created by its constructor.
+     * Gets the unique index number for when this {@link ProcessorDefinition} was created by its constructor.
      * <p/>
-     * This can be used to know the order in which the definition was created
-     * when assembled as a route.
+     * This can be used to know the order in which the definition was created when assembled as a route.
      *
      * @return the index number
      */
@@ -114,11 +113,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public abstract List<ProcessorDefinition<?>> getOutputs();
 
     /**
-     * Whether this definition can only be added as top-level directly on the
-     * route itself (such as onException,onCompletion,intercept, etc.)
+     * Whether this definition can only be added as top-level directly on the route itself (such as
+     * onException,onCompletion,intercept, etc.)
      * <p/>
-     * If trying to add a top-level only definition to a nested output would
-     * fail in the {@link #addOutput(ProcessorDefinition)} method.
+     * If trying to add a top-level only definition to a nested output would fail in the
+     * {@link #addOutput(ProcessorDefinition)} method.
      */
     public boolean isTopLevelOnly() {
         return false;
@@ -127,20 +126,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Whether this model is abstract or not.
      * <p/>
-     * An abstract model is something that is used for configuring cross cutting
-     * concerns such as error handling, transaction policies, interceptors etc.
+     * An abstract model is something that is used for configuring cross cutting concerns such as error handling,
+     * transaction policies, interceptors etc.
      * <p/>
-     * Regular definitions is what is part of the route, such as ToDefinition,
-     * WireTapDefinition and the likes.
+     * Regular definitions is what is part of the route, such as ToDefinition, WireTapDefinition and the likes.
      * <p/>
-     * Will by default return <tt>false</tt> to indicate regular definition, so
-     * all the abstract definitions must override this method and return
-     * <tt>true</tt> instead.
+     * Will by default return <tt>false</tt> to indicate regular definition, so all the abstract definitions must
+     * override this method and return <tt>true</tt> instead.
      * <p/>
-     * This information is used in camel-spring to let Camel work a bit on the
-     * model provided by JAXB from the Spring XML file. This is needed to handle
-     * those cross cutting concerns properly. The Java DSL does not have this
-     * issue as it can work this out directly using the fluent builder methods.
+     * This information is used in camel-spring to let Camel work a bit on the model provided by JAXB from the Spring
+     * XML file. This is needed to handle those cross cutting concerns properly. The Java DSL does not have this issue
+     * as it can work this out directly using the fluent builder methods.
      *
      * @return <tt>true</tt> for abstract, otherwise <tt>false</tt> for regular.
      */
@@ -151,8 +147,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Whether this definition is wrapping the entire output.
      * <p/>
-     * When a definition is wrapping the entire output, the check to ensure that
-     * a route definition is empty should be done on the wrapped output.
+     * When a definition is wrapping the entire output, the check to ensure that a route definition is empty should be
+     * done on the wrapped output.
      *
      * @return <tt>true</tt> when wrapping the entire output.
      */
@@ -176,9 +172,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // validate that top-level is only added on the route (eg top level) (or
         // still allow if using advice-with)
-        boolean parentIsRoute = RouteDefinition.class.isAssignableFrom(this.getClass()) || AdviceWithDefinition.class.isAssignableFrom(this.getClass());
+        boolean parentIsRoute = RouteDefinition.class.isAssignableFrom(this.getClass())
+                || AdviceWithDefinition.class.isAssignableFrom(this.getClass());
         if (output.isTopLevelOnly() && !parentIsRoute) {
-            throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
+            throw new IllegalArgumentException(
+                    "The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
         }
 
         output.setParent(this);
@@ -192,8 +190,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Strategy to execute any custom logic before the {@link Processor} is
-     * created.
+     * Strategy to execute any custom logic before the {@link Processor} is created.
      */
     public void preCreateProcessor() {
         // noop
@@ -214,8 +211,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given endpoint
      *
-     * @param uri the endpoint to send to
-     * @return the builder
+     * @param  uri the endpoint to send to
+     * @return     the builder
      */
     public Type to(@AsEndpointUri String uri) {
         addOutput(new ToDefinition(uri));
@@ -236,9 +233,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
-     * @param uri the dynamic endpoint to send to (resolved using simple
-     *            language by default)
-     * @return the builder
+     * @param  uri the dynamic endpoint to send to (resolved using simple language by default)
+     * @return     the builder
      */
     public Type toD(@AsEndpointUri String uri) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
@@ -250,9 +246,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
-     * @param endpointProducerBuilder the dynamic endpoint to send to (resolved
-     *            using simple language by default)
-     * @return the builder
+     * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
+     * @return                         the builder
      */
     public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
@@ -264,12 +259,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
-     * @param uri the dynamic endpoint to send to (resolved using simple
-     *            language by default)
-     * @param cacheSize sets the maximum size used by the
-     *            {@link org.apache.camel.spi.ProducerCache} which is used to
-     *            cache and reuse producers.
-     * @return the builder
+     * @param  uri       the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  cacheSize sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to
+     *                   cache and reuse producers.
+     * @return           the builder
      */
     public Type toD(@AsEndpointUri String uri, int cacheSize) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
@@ -282,12 +275,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
-     * @param endpointProducerBuilder the dynamic endpoint to send to (resolved
-     *            using simple language by default)
-     * @param cacheSize sets the maximum size used by the
-     *            {@link org.apache.camel.spi.ProducerCache} which is used to
-     *            cache and reuse producers.
-     * @return the builder
+     * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  cacheSize               sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache}
+     *                                 which is used to cache and reuse producers.
+     * @return                         the builder
      */
     public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, int cacheSize) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
@@ -300,11 +291,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
-     * @param uri the dynamic endpoint to send to (resolved using simple
-     *            language by default)
-     * @param ignoreInvalidEndpoint ignore the invalidate endpoint exception
-     *            when try to create a producer with that endpoint
-     * @return the builder
+     * @param  uri                   the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  ignoreInvalidEndpoint ignore the invalidate endpoint exception when try to create a producer with that
+     *                               endpoint
+     * @return                       the builder
      */
     public Type toD(@AsEndpointUri String uri, boolean ignoreInvalidEndpoint) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
@@ -317,11 +307,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
-     * @param endpointProducerBuilder the dynamic endpoint to send to (resolved
-     *            using simple language by default)
-     * @param ignoreInvalidEndpoint ignore the invalidate endpoint exception
-     *            when try to create a producer with that endpoint
-     * @return the builder
+     * @param  endpointProducerBuilder the dynamic endpoint to send to (resolved using simple language by default)
+     * @param  ignoreInvalidEndpoint   ignore the invalidate endpoint exception when try to create a producer with that
+     *                                 endpoint
+     * @return                         the builder
      */
     public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, boolean ignoreInvalidEndpoint) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
@@ -334,9 +323,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given endpoint
      *
-     * @param uri the String formatted endpoint uri to send to
-     * @param args arguments for the string formatting of the uri
-     * @return the builder
+     * @param  uri  the String formatted endpoint uri to send to
+     * @param  args arguments for the string formatting of the uri
+     * @return      the builder
      */
     public Type toF(@AsEndpointUri String uri, Object... args) {
         addOutput(new ToDefinition(String.format(uri, args)));
@@ -357,8 +346,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Calls the service
      *
-     * @param name the service name
-     * @return the builder
+     * @param  name the service name
+     * @return      the builder
      */
     public Type serviceCall(String name) {
         ServiceCallDefinition answer = new ServiceCallDefinition();
@@ -370,9 +359,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Calls the service
      *
-     * @param name the service name
-     * @param uri the endpoint uri to use for calling the service
-     * @return the builder
+     * @param  name the service name
+     * @param  uri  the endpoint uri to use for calling the service
+     * @return      the builder
      */
     public Type serviceCall(String name, @AsEndpointUri String uri) {
         ServiceCallDefinition answer = new ServiceCallDefinition();
@@ -385,8 +374,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given endpoint
      *
-     * @param endpoint the endpoint to send to
-     * @return the builder
+     * @param  endpoint the endpoint to send to
+     * @return          the builder
      */
     public Type to(Endpoint endpoint) {
         addOutput(new ToDefinition(endpoint));
@@ -396,8 +385,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given endpoint
      *
-     * @param endpoint the endpoint to send to
-     * @return the builder
+     * @param  endpoint the endpoint to send to
+     * @return          the builder
      */
     public Type to(@AsEndpointUri EndpointProducerBuilder endpoint) {
         addOutput(new ToDefinition(endpoint));
@@ -409,9 +398,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Notice the existing MEP is preserved
      *
-     * @param pattern the pattern to use for the message exchange
-     * @param uri the endpoint to send to
-     * @return the builder
+     * @param  pattern the pattern to use for the message exchange
+     * @param  uri     the endpoint to send to
+     * @return         the builder
      */
     public Type to(ExchangePattern pattern, @AsEndpointUri String uri) {
         addOutput(new ToDefinition(uri, pattern));
@@ -423,9 +412,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Notice the existing MEP is preserved
      *
-     * @param pattern the pattern to use for the message exchange
-     * @param endpoint the endpoint to send to
-     * @return the builder
+     * @param  pattern  the pattern to use for the message exchange
+     * @param  endpoint the endpoint to send to
+     * @return          the builder
      */
     public Type to(ExchangePattern pattern, Endpoint endpoint) {
         addOutput(new ToDefinition(endpoint, pattern));
@@ -437,9 +426,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Notice the existing MEP is preserved
      *
-     * @param pattern the pattern to use for the message exchange
-     * @param endpoint the endpoint to send to
-     * @return the builder
+     * @param  pattern  the pattern to use for the message exchange
+     * @param  endpoint the endpoint to send to
+     * @return          the builder
      */
     public Type to(ExchangePattern pattern, EndpointProducerBuilder endpoint) {
         addOutput(new ToDefinition(endpoint, pattern));
@@ -449,8 +438,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to a list of endpoints
      *
-     * @param uris list of endpoints to send to
-     * @return the builder
+     * @param  uris list of endpoints to send to
+     * @return      the builder
      */
     public Type to(@AsEndpointUri String... uris) {
         for (String uri : uris) {
@@ -462,8 +451,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to a list of endpoints
      *
-     * @param endpoints list of endpoints to send to
-     * @return the builder
+     * @param  endpoints list of endpoints to send to
+     * @return           the builder
      */
     public Type to(Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -475,8 +464,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to a list of endpoints
      *
-     * @param endpoints list of endpoints to send to
-     * @return the builder
+     * @param  endpoints list of endpoints to send to
+     * @return           the builder
      */
     @Deprecated
     public Type to(Iterable<Endpoint> endpoints) {
@@ -489,8 +478,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to a list of endpoints
      *
-     * @param endpoints list of endpoints to send to
-     * @return the builder
+     * @param  endpoints list of endpoints to send to
+     * @return           the builder
      */
     public Type to(@AsEndpointUri EndpointProducerBuilder... endpoints) {
         for (EndpointProducerBuilder endpoint : endpoints) {
@@ -504,9 +493,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Notice the existing MEP is preserved
      *
-     * @param pattern the pattern to use for the message exchanges
-     * @param uris list of endpoints to send to
-     * @return the builder
+     * @param  pattern the pattern to use for the message exchanges
+     * @param  uris    list of endpoints to send to
+     * @return         the builder
      */
     public Type to(ExchangePattern pattern, @AsEndpointUri String... uris) {
         for (String uri : uris) {
@@ -520,9 +509,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Notice the existing MEP is preserved
      *
-     * @param pattern the pattern to use for the message exchanges
-     * @param endpoints list of endpoints to send to
-     * @return the builder
+     * @param  pattern   the pattern to use for the message exchanges
+     * @param  endpoints list of endpoints to send to
+     * @return           the builder
      */
     public Type to(ExchangePattern pattern, Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -534,9 +523,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to a list of endpoints
      *
-     * @param pattern the pattern to use for the message exchanges
-     * @param endpoints list of endpoints to send to
-     * @return the builder
+     * @param  pattern   the pattern to use for the message exchanges
+     * @param  endpoints list of endpoints to send to
+     * @return           the builder
      */
     @Deprecated
     public Type to(ExchangePattern pattern, Iterable<Endpoint> endpoints) {
@@ -551,9 +540,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Notice the existing MEP is preserved
      *
-     * @param pattern the pattern to use for the message exchanges
-     * @param endpoints list of endpoints to send to
-     * @return the builder
+     * @param  pattern   the pattern to use for the message exchanges
+     * @param  endpoints list of endpoints to send to
+     * @return           the builder
      */
     public Type to(ExchangePattern pattern, @AsEndpointUri EndpointProducerBuilder... endpoints) {
         for (EndpointProducerBuilder endpoint : endpoints) {
@@ -563,15 +552,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href=
-     * "http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set
-     * the {@link ExchangePattern} into the {@link Exchange}.
+     * <a href= "http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern}
+     * into the {@link Exchange}.
      * <p/>
-     * The pattern set on the {@link Exchange} will be changed from this point
-     * going foward.
+     * The pattern set on the {@link Exchange} will be changed from this point going foward.
      *
-     * @param exchangePattern instance of {@link ExchangePattern}
-     * @return the builder
+     * @param  exchangePattern instance of {@link ExchangePattern}
+     * @return                 the builder
      */
     public Type setExchangePattern(ExchangePattern exchangePattern) {
         addOutput(new SetExchangePatternDefinition(exchangePattern));
@@ -579,17 +566,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoint using an
-     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange
-     * pattern</a>
+     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/event-message.html">Event
+     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param uri The endpoint uri which is used for sending the exchange
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      uri The endpoint uri which is used for sending the exchange
+     * @return         the builder
+     * @deprecated     use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOnly(@AsEndpointUri String uri) {
@@ -597,17 +581,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoint using an
-     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange
-     * pattern</a>
+     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/event-message.html">Event
+     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param endpoint The endpoint which is used for sending the exchange
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      endpoint The endpoint which is used for sending the exchange
+     * @return              the builder
+     * @deprecated          use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOnly(Endpoint endpoint) {
@@ -615,17 +596,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoints using an
-     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange
-     * pattern</a>
+     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/event-message.html">Event
+     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param uris list of endpoints to send to
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      uris list of endpoints to send to
+     * @return          the builder
+     * @deprecated      use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOnly(@AsEndpointUri String... uris) {
@@ -633,17 +611,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoints using an
-     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange
-     * pattern</a>
+     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/event-message.html">Event
+     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param endpoints list of endpoints to send to
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      endpoints list of endpoints to send to
+     * @return               the builder
+     * @deprecated           use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOnly(@AsEndpointUri Endpoint... endpoints) {
@@ -651,17 +626,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoints using an
-     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange
-     * pattern</a>
+     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/event-message.html">Event
+     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param endpoints list of endpoints to send to
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      endpoints list of endpoints to send to
+     * @return               the builder
+     * @deprecated           use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOnly(Iterable<Endpoint> endpoints) {
@@ -669,17 +641,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoint using an
-     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange
-     * pattern</a>
+     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/request-reply.html">Request
+     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param uri The endpoint uri which is used for sending the exchange
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      uri The endpoint uri which is used for sending the exchange
+     * @return         the builder
+     * @deprecated     use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOut(@AsEndpointUri String uri) {
@@ -687,17 +656,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoint using an
-     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange
-     * pattern</a>
+     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/request-reply.html">Request
+     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param endpoint The endpoint which is used for sending the exchange
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      endpoint The endpoint which is used for sending the exchange
+     * @return              the builder
+     * @deprecated          use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOut(Endpoint endpoint) {
@@ -705,17 +671,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoints using an
-     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange
-     * pattern</a>
+     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/request-reply.html">Request
+     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param uris list of endpoints to send to
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      uris list of endpoints to send to
+     * @return          the builder
+     * @deprecated      use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOut(@AsEndpointUri String... uris) {
@@ -723,17 +686,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoints using an
-     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange
-     * pattern</a>
+     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/request-reply.html">Request
+     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param endpoints list of endpoints to send to
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      endpoints list of endpoints to send to
+     * @return               the builder
+     * @deprecated           use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOut(Endpoint... endpoints) {
@@ -741,17 +701,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sends the message to the given endpoints using an
-     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
-     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange
-     * pattern</a>
+     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/request-reply.html">Request
+     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      * <p/>
-     * Notice the existing MEP is restored after the message has been sent to
-     * the given endpoint.
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
-     * @param endpoints list of endpoints to send to
-     * @return the builder
-     * @deprecated use to where you can specify the exchange pattern as well
+     * @param      endpoints list of endpoints to send to
+     * @return               the builder
+     * @deprecated           use to where you can specify the exchange pattern as well
      */
     @Deprecated
     public Type inOut(Iterable<Endpoint> endpoints) {
@@ -761,11 +718,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sets the id of this node.
      * <p/>
-     * <b>Important:</b> If you want to set the id of the route, then you
-     * <b>must</b> use {@link #routeId(String)} instead.
+     * <b>Important:</b> If you want to set the id of the route, then you <b>must</b> use {@link #routeId(String)}
+     * instead.
      *
-     * @param id the id
-     * @return the builder
+     * @param  id the id
+     * @return    the builder
      */
     @Override
     public Type id(String id) {
@@ -780,7 +737,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             List<ProcessorDefinition<?>> outputs = getOutputs();
             if (!blocks.isEmpty()) {
                 if (blocks.getLast() instanceof ProcessorDefinition) {
-                    ProcessorDefinition<?> block = (ProcessorDefinition<?>)blocks.getLast();
+                    ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
                     if (!block.getOutputs().isEmpty()) {
                         outputs = block.getOutputs();
                     }
@@ -800,15 +757,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Set the route id for this route.
      * <p/>
-     * <b>Important: </b> Each route in the same
-     * {@link org.apache.camel.CamelContext} must have an <b>unique</b> route
-     * id. If you use the API from {@link org.apache.camel.CamelContext} or
-     * {@link ModelCamelContext} to add routes, then any new routes which has a
-     * route id that matches an old route, then the old route is replaced by the
-     * new route.
+     * <b>Important: </b> Each route in the same {@link org.apache.camel.CamelContext} must have an <b>unique</b> route
+     * id. If you use the API from {@link org.apache.camel.CamelContext} or {@link ModelCamelContext} to add routes,
+     * then any new routes which has a route id that matches an old route, then the old route is replaced by the new
+     * route.
      *
-     * @param id the route id, should be unique
-     * @return the builder
+     * @param  id the route id, should be unique
+     * @return    the builder
      */
     public Type routeId(String id) {
         ProcessorDefinition<?> def = this;
@@ -827,8 +782,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Set the route group for this route.
      *
-     * @param group the route group
-     * @return the builder
+     * @param  group the route group
+     * @return       the builder
      */
     public Type routeGroup(String group) {
         ProcessorDefinition<?> def = this;
@@ -844,8 +799,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Set the route description for this route
      *
-     * @param description the route description
-     * @return the builder
+     * @param  description the route description
+     * @return             the builder
      */
     public Type routeDescription(String description) {
         ProcessorDefinition<?> def = this;
@@ -861,10 +816,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
-     * Multicasts messages to all its child outputs; so that each processor and
-     * destination gets a copy of the original message to avoid the processors
-     * interfering with each other.
+     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a> Multicasts messages to all its child outputs;
+     * so that each processor and destination gets a copy of the original message to avoid the processors interfering
+     * with each other.
      *
      * @return the builder
      */
@@ -875,16 +829,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
-     * Multicasts messages to all its child outputs; so that each processor and
-     * destination gets a copy of the original message to avoid the processors
-     * interfering with each other.
+     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a> Multicasts messages to all its child outputs;
+     * so that each processor and destination gets a copy of the original message to avoid the processors interfering
+     * with each other.
      *
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *            every part
-     * @param parallelProcessing if is <tt>true</tt> camel will fork thread to
-     *            call the endpoint producer
-     * @return the builder
+     * @param  aggregationStrategy the strategy used to aggregate responses for every part
+     * @param  parallelProcessing  if is <tt>true</tt> camel will fork thread to call the endpoint producer
+     * @return                     the builder
      */
     public MulticastDefinition multicast(AggregationStrategy aggregationStrategy, boolean parallelProcessing) {
         MulticastDefinition answer = new MulticastDefinition();
@@ -895,14 +846,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
-     * Multicasts messages to all its child outputs; so that each processor and
-     * destination gets a copy of the original message to avoid the processors
-     * interfering with each other.
+     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a> Multicasts messages to all its child outputs;
+     * so that each processor and destination gets a copy of the original message to avoid the processors interfering
+     * with each other.
      *
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *            every part
-     * @return the builder
+     * @param  aggregationStrategy the strategy used to aggregate responses for every part
+     * @return                     the builder
      */
     public MulticastDefinition multicast(AggregationStrategy aggregationStrategy) {
         MulticastDefinition answer = new MulticastDefinition();
@@ -912,8 +861,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Routes the message to a sequence of processors which is grouped together
-     * as one logical name.
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
      *
      * @return the builder
      */
@@ -924,11 +872,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Routes the message to a sequence of processors which is grouped together
-     * as one logical name.
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
      *
-     * @param id unique id of the step within the camel context
-     * @return the builder
+     * @param  id unique id of the step within the camel context
+     * @return    the builder
      */
     public StepDefinition step(String id) {
         StepDefinition answer = new StepDefinition();
@@ -938,11 +885,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters
-     * EIP:</a> Creates a {@link org.apache.camel.processor.Pipeline} so that
-     * the message will get processed by each endpoint in turn and for
-     * request/response the output of one endpoint will be the input of the next
-     * endpoint
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * {@link org.apache.camel.processor.Pipeline} so that the message will get processed by each endpoint in turn and
+     * for request/response the output of one endpoint will be the input of the next endpoint
      *
      * @return the builder
      */
@@ -953,14 +898,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters
-     * EIP:</a> Creates a {@link org.apache.camel.processor.Pipeline} of the
-     * list of endpoints so that the message will get processed by each endpoint
-     * in turn and for request/response the output of one endpoint will be the
-     * input of the next endpoint
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
+     * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
-     * @param uris list of endpoints
-     * @return the builder
+     * @param  uris list of endpoints
+     * @return      the builder
      */
     public Type pipeline(@AsEndpointUri String... uris) {
         PipelineDefinition answer = new PipelineDefinition();
@@ -970,14 +913,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters
-     * EIP:</a> Creates a {@link org.apache.camel.processor.Pipeline} of the
-     * list of endpoints so that the message will get processed by each endpoint
-     * in turn and for request/response the output of one endpoint will be the
-     * input of the next endpoint
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
+     * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
-     * @param endpoints list of endpoints
-     * @return the builder
+     * @param  endpoints list of endpoints
+     * @return           the builder
      */
     public Type pipeline(Endpoint... endpoints) {
         PipelineDefinition answer = new PipelineDefinition();
@@ -987,14 +928,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters
-     * EIP:</a> Creates a {@link org.apache.camel.processor.Pipeline} of the
-     * list of endpoints so that the message will get processed by each endpoint
-     * in turn and for request/response the output of one endpoint will be the
-     * input of the next endpoint
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
+     * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
-     * @param endpoints list of endpoints
-     * @return the builder
+     * @param  endpoints list of endpoints
+     * @return           the builder
      */
     @Deprecated
     public Type pipeline(Collection<Endpoint> endpoints) {
@@ -1007,8 +946,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Continues processing the {@link org.apache.camel.Exchange} using
-     * asynchronous routing engine.
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
      *
      * @return the builder
      */
@@ -1019,11 +957,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Continues processing the {@link org.apache.camel.Exchange} using
-     * asynchronous routing engine.
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
      *
-     * @param poolSize the core pool size
-     * @return the builder
+     * @param  poolSize the core pool size
+     * @return          the builder
      */
     public ThreadsDefinition threads(int poolSize) {
         ThreadsDefinition answer = new ThreadsDefinition();
@@ -1033,12 +970,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Continues processing the {@link org.apache.camel.Exchange} using
-     * asynchronous routing engine.
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
      *
-     * @param poolSize the core pool size
-     * @param maxPoolSize the maximum pool size
-     * @return the builder
+     * @param  poolSize    the core pool size
+     * @param  maxPoolSize the maximum pool size
+     * @return             the builder
      */
     public ThreadsDefinition threads(int poolSize, int maxPoolSize) {
         ThreadsDefinition answer = new ThreadsDefinition();
@@ -1049,13 +985,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Continues processing the {@link org.apache.camel.Exchange} using
-     * asynchronous routing engine.
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
      *
-     * @param poolSize the core pool size
-     * @param maxPoolSize the maximum pool size
-     * @param threadName the thread pool name
-     * @return the builder
+     * @param  poolSize    the core pool size
+     * @param  maxPoolSize the maximum pool size
+     * @param  threadName  the thread pool name
+     * @return             the builder
      */
     public ThreadsDefinition threads(int poolSize, int maxPoolSize, String threadName) {
         ThreadsDefinition answer = new ThreadsDefinition();
@@ -1073,7 +1008,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ProcessorDefinition<?> end() {
         // must do this ugly cast to avoid compiler error on AIX/HP-UX
-        ProcessorDefinition<?> defn = (ProcessorDefinition<?>)this;
+        ProcessorDefinition<?> defn = (ProcessorDefinition<?>) this;
 
         // when using choice .. when .. otherwise - doTry .. doCatch ..
         // doFinally we should always
@@ -1098,11 +1033,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Strategy to allow {@link ProcessorDefinition}s to have special logic when
-     * using end() in the DSL to return back to the intended parent.
+     * Strategy to allow {@link ProcessorDefinition}s to have special logic when using end() in the DSL to return back
+     * to the intended parent.
      * <p/>
-     * For example a content based router we return back to the
-     * {@link ChoiceDefinition} when we end() from a {@link WhenDefinition}.
+     * For example a content based router we return back to the {@link ChoiceDefinition} when we end() from a
+     * {@link WhenDefinition}.
      *
      * @return the end
      */
@@ -1111,22 +1046,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Ends the current block and returns back to the {@link ChoiceDefinition
-     * choice()} DSL.
+     * Ends the current block and returns back to the {@link ChoiceDefinition choice()} DSL.
      * <p/>
-     * <b>Important:</b> If you want to end the entire choice block, then use
-     * {@link #end()} instead. The purpose of {@link #endChoice()} is to return
-     * <i>control</i> back to the {@link ChoiceDefinition choice()} DSL, so you
-     * can add subsequent <tt>when</tt> and <tt>otherwise</tt> to the choice.
-     * There can be situations where you would need to use {@link #endChoice()}
-     * often when you add additional EIPs inside the <tt>when</tt>'s, and the
-     * DSL <t>looses</t> scope when using a regular {@link #end()}, and you
-     * would need to use this {@link #endChoice()} to return back the scope to
-     * the {@link ChoiceDefinition choice()} DSL.
+     * <b>Important:</b> If you want to end the entire choice block, then use {@link #end()} instead. The purpose of
+     * {@link #endChoice()} is to return <i>control</i> back to the {@link ChoiceDefinition choice()} DSL, so you can
+     * add subsequent <tt>when</tt> and <tt>otherwise</tt> to the choice. There can be situations where you would need
+     * to use {@link #endChoice()} often when you add additional EIPs inside the <tt>when</tt>'s, and the DSL
+     * <t>looses</t> scope when using a regular {@link #end()}, and you would need to use this {@link #endChoice()} to
+     * return back the scope to the {@link ChoiceDefinition choice()} DSL.
      * <p/>
-     * For more details and examples see also this FAQ: <a href=
-     * "http://camel.apache.org/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html">Why
-     * can I not use when or otherwise in a Java Camel route </a>.
+     * For more details and examples see also this FAQ:
+     * <a href= "http://camel.apache.org/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html">Why can I not
+     * use when or otherwise in a Java Camel route </a>.
      *
      * @return the choice builder
      */
@@ -1134,28 +1065,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // are we nested choice?
         ProcessorDefinition<?> def = this;
         if (def.getParent() instanceof WhenDefinition) {
-            return (ChoiceDefinition)def.getParent().getParent();
+            return (ChoiceDefinition) def.getParent().getParent();
         }
 
         // are we already a choice?
         if (def instanceof ChoiceDefinition) {
-            return (ChoiceDefinition)def;
+            return (ChoiceDefinition) def;
         }
 
         // okay end this and get back to the choice
         def = end();
         if (def instanceof WhenDefinition) {
-            return (ChoiceDefinition)def.getParent();
+            return (ChoiceDefinition) def.getParent();
         } else if (def instanceof OtherwiseDefinition) {
-            return (ChoiceDefinition)def.getParent();
+            return (ChoiceDefinition) def.getParent();
         } else {
-            return (ChoiceDefinition)def;
+            return (ChoiceDefinition) def;
         }
     }
 
     /**
-     * Ends the current block and returns back to the
-     * {@link org.apache.camel.model.rest.RestDefinition rest()} DSL.
+     * Ends the current block and returns back to the {@link org.apache.camel.model.rest.RestDefinition rest()} DSL.
      *
      * @return the builder
      */
@@ -1171,8 +1101,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Ends the current block and returns back to the {@link TryDefinition
-     * doTry()} DSL.
+     * Ends the current block and returns back to the {@link TryDefinition doTry()} DSL.
      *
      * @return the builder
      */
@@ -1181,17 +1110,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // are we already a try?
         if (def instanceof TryDefinition) {
-            return (TryDefinition)def;
+            return (TryDefinition) def;
         }
 
         // okay end this and get back to the try
         def = end();
-        return (TryDefinition)def;
+        return (TryDefinition) def;
     }
 
     /**
-     * Ends the current block and returns back to the {@link CircuitBreakerDefinition
-     * circuitBreaker()} DSL.
+     * Ends the current block and returns back to the {@link CircuitBreakerDefinition circuitBreaker()} DSL.
      *
      * @return the builder
      */
@@ -1200,19 +1128,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // are we already a try?
         if (def instanceof CircuitBreakerDefinition) {
-            return (CircuitBreakerDefinition)def;
+            return (CircuitBreakerDefinition) def;
         }
 
         // okay end this and get back to the try
         def = end();
-        return (CircuitBreakerDefinition)def;
+        return (CircuitBreakerDefinition) def;
     }
 
     /**
-     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent
-     * consumer EIP:</a> Creates an
-     * {@link org.apache.camel.processor.idempotent.IdempotentConsumer
-     * IdempotentConsumer} using a fluent builder.
+     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a> Creates an
+     * {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer} using a fluent builder.
      */
     public ExpressionClause<IdempotentConsumerDefinition> idempotentConsumer() {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
@@ -1221,13 +1147,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent
-     * consumer EIP:</a> Creates an
-     * {@link org.apache.camel.processor.idempotent.IdempotentConsumer
-     * IdempotentConsumer} to avoid duplicate messages
+     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a> Creates an
+     * {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer} to avoid duplicate messages
      *
-     * @param messageIdExpression expression to test of duplicate messages
-     * @return the builder
+     * @param  messageIdExpression expression to test of duplicate messages
+     * @return                     the builder
      */
     public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression) {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
@@ -1237,25 +1161,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent
-     * consumer EIP:</a> Creates an
-     * {@link org.apache.camel.processor.idempotent.IdempotentConsumer
-     * IdempotentConsumer} to avoid duplicate messages
+     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a> Creates an
+     * {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer} to avoid duplicate messages
      *
-     * @param messageIdExpression expression to test of duplicate messages
-     * @param idempotentRepository the repository to use for duplicate check
-     * @return the builder
+     * @param  messageIdExpression  expression to test of duplicate messages
+     * @param  idempotentRepository the repository to use for duplicate check
+     * @return                      the builder
      */
-    public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository) {
+    public IdempotentConsumerDefinition idempotentConsumer(
+            Expression messageIdExpression, IdempotentRepository idempotentRepository) {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition(messageIdExpression, idempotentRepository);
         addOutput(answer);
         return answer;
     }
 
     /**
-     * <a href="http://camel.apache.org/message-filter.html">Message Filter
-     * EIP:</a> Creates a predicate expression which only if it is <tt>true</tt>
-     * then the exchange is forwarded to the destination
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a> Creates a predicate expression
+     * which only if it is <tt>true</tt> then the exchange is forwarded to the destination
      *
      * @return the clause used to create the filter expression
      */
@@ -1267,12 +1189,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-filter.html">Message Filter
-     * EIP:</a> Creates a predicate which is applied and only if it is
-     * <tt>true</tt> then the exchange is forwarded to the destination
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a> Creates a predicate which is
+     * applied and only if it is <tt>true</tt> then the exchange is forwarded to the destination
      *
-     * @param predicate predicate to use
-     * @return the builder
+     * @param  predicate predicate to use
+     * @return           the builder
      */
     public FilterDefinition filter(@AsPredicate Predicate predicate) {
         FilterDefinition filter = new FilterDefinition(predicate);
@@ -1281,12 +1202,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-filter.html">Message Filter
-     * EIP:</a> Creates a predicate expression which only if it is <tt>true</tt>
-     * then the exchange is forwarded to the destination
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a> Creates a predicate expression
+     * which only if it is <tt>true</tt> then the exchange is forwarded to the destination
      *
-     * @param expression the predicate expression to use
-     * @return the builder
+     * @param  expression the predicate expression to use
+     * @return            the builder
      */
     public FilterDefinition filter(@AsPredicate ExpressionDefinition expression) {
         FilterDefinition filter = new FilterDefinition(expression);
@@ -1295,26 +1215,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-filter.html">Message Filter
-     * EIP:</a> Creates a predicate language expression which only if it is
-     * <tt>true</tt> then the exchange is forwarded to the destination
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a> Creates a predicate language
+     * expression which only if it is <tt>true</tt> then the exchange is forwarded to the destination
      *
-     * @param language language for expression
-     * @param expression the expression
-     * @return the builder
+     * @param  language   language for expression
+     * @param  expression the expression
+     * @return            the builder
      */
     public FilterDefinition filter(String language, @AsPredicate String expression) {
         return filter(new LanguageExpression(language, expression));
     }
 
     /**
-     * Creates a validation expression which only if it is <tt>true</tt> then
-     * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.PredicateValidationException}
-     * is thrown.
+     * Creates a validation expression which only if it is <tt>true</tt> then the exchange is forwarded to the
+     * destination. Otherwise a {@link org.apache.camel.support.processor.PredicateValidationException} is thrown.
      *
-     * @param expression the expression
-     * @return the builder
+     * @param  expression the expression
+     * @return            the builder
      */
     public ValidateDefinition validate(@AsPredicate Expression expression) {
         ValidateDefinition answer = new ValidateDefinition(expression);
@@ -1323,13 +1240,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Creates a validation expression which only if it is <tt>true</tt> then
-     * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.PredicateValidationException}
-     * is thrown.
+     * Creates a validation expression which only if it is <tt>true</tt> then the exchange is forwarded to the
+     * destination. Otherwise a {@link org.apache.camel.support.processor.PredicateValidationException} is thrown.
      *
-     * @param predicate the predicate
-     * @return the builder
+     * @param  predicate the predicate
+     * @return           the builder
      */
     public ValidateDefinition validate(@AsPredicate Predicate predicate) {
         ValidateDefinition answer = new ValidateDefinition(predicate);
@@ -1338,10 +1253,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Creates a validation expression which only if it is <tt>true</tt> then
-     * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.PredicateValidationException}
-     * is thrown.
+     * Creates a validation expression which only if it is <tt>true</tt> then the exchange is forwarded to the
+     * destination. Otherwise a {@link org.apache.camel.support.processor.PredicateValidationException} is thrown.
      *
      * @return the builder
      */
@@ -1355,7 +1268,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a Circuit Breaker EIP.
      * <p/>
-     * This requires having an implementation on the classpath such as camel-hystrix, or camel-microprofile-fault-tolerance.
+     * This requires having an implementation on the classpath such as camel-hystrix, or
+     * camel-microprofile-fault-tolerance.
      *
      * @return the builder
      */
@@ -1366,8 +1280,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/load-balancer.html">Load Balancer
-     * EIP:</a> Creates a loadbalance
+     * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a> Creates a loadbalance
      *
      * @return the builder
      */
@@ -1378,11 +1291,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/load-balancer.html">Load Balancer
-     * EIP:</a> Creates a loadbalance
+     * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a> Creates a loadbalance
      *
-     * @param loadBalancer a custom load balancer to use
-     * @return the builder
+     * @param  loadBalancer a custom load balancer to use
+     * @return              the builder
      */
     public LoadBalanceDefinition loadBalance(LoadBalancer loadBalancer) {
         LoadBalanceDefinition answer = new LoadBalanceDefinition();
@@ -1393,10 +1305,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a log message to be logged at INFO level.
      *
-     * @param message the log message, (you can use
-     *            {@link org.apache.camel.language.simple.SimpleLanguage}
-     *            syntax)
-     * @return the builder
+     * @param  message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @return         the builder
      */
     public Type log(String message) {
         LogDefinition answer = new LogDefinition(message);
@@ -1407,11 +1317,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a log message to be logged at the given level.
      *
-     * @param loggingLevel the logging level to use
-     * @param message the log message, (you can use
-     *            {@link org.apache.camel.language.simple.SimpleLanguage}
-     *            syntax)
-     * @return the builder
+     * @param  loggingLevel the logging level to use
+     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
+     *                      syntax)
+     * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, String message) {
         LogDefinition answer = new LogDefinition(message);
@@ -1423,12 +1332,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a log message to be logged at the given level and name.
      *
-     * @param loggingLevel the logging level to use
-     * @param logName the log name to use
-     * @param message the log message, (you can use
-     *            {@link org.apache.camel.language.simple.SimpleLanguage}
-     *            syntax)
-     * @return the builder
+     * @param  loggingLevel the logging level to use
+     * @param  logName      the log name to use
+     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
+     *                      syntax)
+     * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, String logName, String message) {
         LogDefinition answer = new LogDefinition(message);
@@ -1439,15 +1347,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Creates a log message to be logged at the given level using provided
-     * logger.
+     * Creates a log message to be logged at the given level using provided logger.
      *
-     * @param loggingLevel the logging level to use
-     * @param logger the logger to use
-     * @param message the log message, (you can use
-     *            {@link org.apache.camel.language.simple.SimpleLanguage}
-     *            syntax)
-     * @return the builder
+     * @param  loggingLevel the logging level to use
+     * @param  logger       the logger to use
+     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
+     *                      syntax)
+     * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, Logger logger, String message) {
         LogDefinition answer = new LogDefinition(message);
@@ -1460,13 +1366,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a log message to be logged at the given level and name.
      *
-     * @param loggingLevel the logging level to use
-     * @param logName the log name to use
-     * @param marker log marker name
-     * @param message the log message, (you can use
-     *            {@link org.apache.camel.language.simple.SimpleLanguage}
-     *            syntax)
-     * @return the builder
+     * @param  loggingLevel the logging level to use
+     * @param  logName      the log name to use
+     * @param  marker       log marker name
+     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
+     *                      syntax)
+     * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, String logName, String marker, String message) {
         LogDefinition answer = new LogDefinition(message);
@@ -1478,16 +1383,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Creates a log message to be logged at the given level using provided
-     * logger.
+     * Creates a log message to be logged at the given level using provided logger.
      *
-     * @param loggingLevel the logging level to use
-     * @param logger the logger to use
-     * @param marker log marker name
-     * @param message the log message, (you can use
-     *            {@link org.apache.camel.language.simple.SimpleLanguage}
-     *            syntax)
-     * @return the builder
+     * @param  loggingLevel the logging level to use
+     * @param  logger       the logger to use
+     * @param  marker       log marker name
+     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
+     *                      syntax)
+     * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, Logger logger, String marker, String message) {
         LogDefinition answer = new LogDefinition(message);
@@ -1499,9 +1402,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/content-based-router.html">Content Based
-     * Router EIP:</a> Creates a choice of one or more predicates with an
-     * otherwise clause
+     * <a href="http://camel.apache.org/content-based-router.html">Content Based Router EIP:</a> Creates a choice of one
+     * or more predicates with an otherwise clause
      *
      * @return the builder for a choice expression
      */
@@ -1523,14 +1425,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/recipient-list.html">Recipient List
-     * EIP:</a> Creates a dynamic recipient list allowing you to route messages
-     * to a number of dynamically specified recipients.
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a> Creates a dynamic recipient list
+     * allowing you to route messages to a number of dynamically specified recipients.
      * <p/>
      * Will use comma as default delimiter.
      *
-     * @param recipients expression to decide the destinations
-     * @return the builder
+     * @param  recipients expression to decide the destinations
+     * @return            the builder
      */
     public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<>(recipients);
@@ -1539,13 +1440,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/recipient-list.html">Recipient List
-     * EIP:</a> Creates a dynamic recipient list allowing you to route messages
-     * to a number of dynamically specified recipients
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a> Creates a dynamic recipient list
+     * allowing you to route messages to a number of dynamically specified recipients
      *
-     * @param recipients expression to decide the destinations
-     * @param delimiter a custom delimiter to use
-     * @return the builder
+     * @param  recipients expression to decide the destinations
+     * @param  delimiter  a custom delimiter to use
+     * @return            the builder
      */
     public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients, String delimiter) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<>(recipients);
@@ -1555,12 +1455,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/recipient-list.html">Recipient List
-     * EIP:</a> Creates a dynamic recipient list allowing you to route messages
-     * to a number of dynamically specified recipients
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a> Creates a dynamic recipient list
+     * allowing you to route messages to a number of dynamically specified recipients
      *
-     * @param delimiter a custom delimiter to use
-     * @return the builder
+     * @param  delimiter a custom delimiter to use
+     * @return           the builder
      */
     @AsEndpointUri
     public ExpressionClause<RecipientListDefinition<Type>> recipientList(String delimiter) {
@@ -1571,12 +1470,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/recipient-list.html">Recipient List
-     * EIP:</a> Creates a dynamic recipient list allowing you to route messages
-     * to a number of dynamically specified recipients
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a> Creates a dynamic recipient list
+     * allowing you to route messages to a number of dynamically specified recipients
      *
-     * @return the expression clause to configure the expression to decide the
-     *         destinations
+     * @return the expression clause to configure the expression to decide the destinations
      */
     @AsEndpointUri
     public ExpressionClause<RecipientListDefinition<Type>> recipientList() {
@@ -1586,18 +1483,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively
-     * through a series of processing steps where the sequence of steps is not
-     * known at design time and can vary for each message.
+     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a> Creates a routing slip allowing you to
+     * route a message consecutively through a series of processing steps where the sequence of steps is not known at
+     * design time and can vary for each message.
      * <p/>
-     * The route slip will be evaluated <i>once</i>, use
-     * {@link #dynamicRouter()} if you need even more dynamic routing.
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
-     * @param expression to decide the destinations
-     * @param uriDelimiter is the delimiter that will be used to split up the
-     *            list of URIs in the routing slip.
-     * @return the builder
+     * @param  expression   to decide the destinations
+     * @param  uriDelimiter is the delimiter that will be used to split up the list of URIs in the routing slip.
+     * @return              the builder
      */
     public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression, String uriDelimiter) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(expression, uriDelimiter);
@@ -1606,19 +1500,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively
-     * through a series of processing steps where the sequence of steps is not
-     * known at design time and can vary for each message.
+     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a> Creates a routing slip allowing you to
+     * route a message consecutively through a series of processing steps where the sequence of steps is not known at
+     * design time and can vary for each message.
      * <p/>
-     * The list of URIs will be split based on the default delimiter
-     * {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
+     * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
      * <p/>
-     * The route slip will be evaluated <i>once</i>, use
-     * {@link #dynamicRouter()} if you need even more dynamic routing.
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
-     * @param expression to decide the destinations
-     * @return the builder
+     * @param  expression to decide the destinations
+     * @return            the builder
      */
     public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(expression);
@@ -1627,19 +1518,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively
-     * through a series of processing steps where the sequence of steps is not
-     * known at design time and can vary for each message.
+     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a> Creates a routing slip allowing you to
+     * route a message consecutively through a series of processing steps where the sequence of steps is not known at
+     * design time and can vary for each message.
      * <p/>
-     * The list of URIs will be split based on the default delimiter
-     * {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
+     * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
      * <p/>
-     * The route slip will be evaluated <i>once</i>, use
-     * {@link #dynamicRouter()} if you need even more dynamic routing.
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
-     * @return the expression clause to configure the expression to decide the
-     *         destinations
+     * @return the expression clause to configure the expression to decide the destinations
      */
     public ExpressionClause<RoutingSlipDefinition<Type>> routingSlip() {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>();
@@ -1648,20 +1535,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router
-     * EIP:</a> Creates a dynamic router allowing you to route a message
-     * consecutively through a series of processing steps where the sequence of
-     * steps is not known at design time and can vary for each message.
+     * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router EIP:</a> Creates a dynamic router allowing
+     * you to route a message consecutively through a series of processing steps where the sequence of steps is not
+     * known at design time and can vary for each message.
      * <p/>
      * <br/>
-     * <b>Important:</b> The expression will be invoked repeatedly until it
-     * returns <tt>null</tt>, so be sure it does that, otherwise it will be
-     * invoked endlessly.
+     * <b>Important:</b> The expression will be invoked repeatedly until it returns <tt>null</tt>, so be sure it does
+     * that, otherwise it will be invoked endlessly.
      *
-     * @param expression to decide the destinations, which will be invoked
-     *            repeatedly until it evaluates <tt>null</tt> to indicate no
-     *            more destinations.
-     * @return the builder
+     * @param  expression to decide the destinations, which will be invoked repeatedly until it evaluates <tt>null</tt>
+     *                    to indicate no more destinations.
+     * @return            the builder
      */
     public DynamicRouterDefinition<Type> dynamicRouter(@AsEndpointUri Expression expression) {
         DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<>(expression);
@@ -1670,19 +1554,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router
-     * EIP:</a> Creates a dynamic router allowing you to route a message
-     * consecutively through a series of processing steps where the sequence of
-     * steps is not known at design time and can vary for each message.
+     * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router EIP:</a> Creates a dynamic router allowing
+     * you to route a message consecutively through a series of processing steps where the sequence of steps is not
+     * known at design time and can vary for each message.
      * <p/>
      * <br/>
-     * <b>Important:</b> The expression will be invoked repeatedly until it
-     * returns <tt>null</tt>, so be sure it does that, otherwise it will be
-     * invoked endlessly.
+     * <b>Important:</b> The expression will be invoked repeatedly until it returns <tt>null</tt>, so be sure it does
+     * that, otherwise it will be invoked endlessly.
      *
-     * @return the expression clause to configure the expression to decide the
-     *         destinations, which will be invoked repeatedly until it evaluates
-     *         <tt>null</tt> to indicate no more destinations.
+     * @return the expression clause to configure the expression to decide the destinations, which will be invoked
+     *         repeatedly until it evaluates <tt>null</tt> to indicate no more destinations.
      */
     @AsEndpointUri
     public ExpressionClause<DynamicRouterDefinition<Type>> dynamicRouter() {
@@ -1692,11 +1573,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
-     * Creates a sampling throttler allowing you to extract a sample of
-     * exchanges from the traffic on a route. It is configured with a sampling
-     * period, during which only a single exchange is allowed to pass through.
-     * All other exchanges will be stopped.
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a> Creates a sampling throttler allowing you
+     * to extract a sample of exchanges from the traffic on a route. It is configured with a sampling period, during
+     * which only a single exchange is allowed to pass through. All other exchanges will be stopped.
      * <p/>
      * Default period is one second.
      *
@@ -1707,15 +1586,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
-     * Creates a sampling throttler allowing you to extract a sample of
-     * exchanges from the traffic through a route. It is configured with a
-     * sampling period during which only a single exchange is allowed to pass
-     * through. All other exchanges will be stopped.
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a> Creates a sampling throttler allowing you
+     * to extract a sample of exchanges from the traffic through a route. It is configured with a sampling period during
+     * which only a single exchange is allowed to pass through. All other exchanges will be stopped.
      *
-     * @param samplePeriod this is the sample interval, only one exchange is
-     *            allowed through in this interval
-     * @return the builder
+     * @param  samplePeriod this is the sample interval, only one exchange is allowed through in this interval
+     * @return              the builder
      */
     public SamplingDefinition sample(Duration samplePeriod) {
         SamplingDefinition answer = new SamplingDefinition(samplePeriod);
@@ -1724,16 +1600,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
-     * Creates a sampling throttler allowing you to extract a sample of
-     * exchanges from the traffic through a route. It is configured with a
-     * sampling period during which only a single exchange is allowed to pass
-     * through. All other exchanges will be stopped.
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a> Creates a sampling throttler allowing you
+     * to extract a sample of exchanges from the traffic through a route. It is configured with a sampling period during
+     * which only a single exchange is allowed to pass through. All other exchanges will be stopped.
      *
-     * @param samplePeriod this is the sample interval, only one exchange is
-     *            allowed through in this interval
-     * @param unit this is the units for the samplePeriod e.g. Seconds
-     * @return the builder
+     * @param  samplePeriod this is the sample interval, only one exchange is allowed through in this interval
+     * @param  unit         this is the units for the samplePeriod e.g. Seconds
+     * @return              the builder
      */
     public SamplingDefinition sample(long samplePeriod, TimeUnit unit) {
         SamplingDefinition answer = new SamplingDefinition(samplePeriod, unit);
@@ -1742,15 +1615,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
-     * Creates a sampling throttler allowing you to extract a sample of
-     * exchanges from the traffic through a route. It is configured with a
-     * sampling message frequency during which only a single exchange is allowed
-     * to pass through. All other exchanges will be stopped.
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a> Creates a sampling throttler allowing you
+     * to extract a sample of exchanges from the traffic through a route. It is configured with a sampling message
+     * frequency during which only a single exchange is allowed to pass through. All other exchanges will be stopped.
      *
-     * @param messageFrequency this is the sample message frequency, only one
-     *            exchange is allowed through for this many messages received
-     * @return the builder
+     * @param  messageFrequency this is the sample message frequency, only one exchange is allowed through for this many
+     *                          messages received
+     * @return                  the builder
      */
     public SamplingDefinition sample(long messageFrequency) {
         SamplingDefinition answer = new SamplingDefinition(messageFrequency);
@@ -1759,16 +1630,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates
-     * a splitter allowing you split a message into a number of pieces and
-     * process them individually.
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates a splitter allowing you split a message
+     * into a number of pieces and process them individually.
      * <p>
-     * This splitter responds with the original input message. You can use a
-     * custom {@link AggregationStrategy} to control what to respond from the
-     * splitter.
+     * This splitter responds with the original input message. You can use a custom {@link AggregationStrategy} to
+     * control what to respond from the splitter.
      *
-     * @return the expression clause builder for the expression on which to
-     *         split
+     * @return the expression clause builder for the expression on which to split
      */
     public ExpressionClause<SplitDefinition> split() {
         SplitDefinition answer = new SplitDefinition();
@@ -1777,16 +1645,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates
-     * a splitter allowing you split a message into a number of pieces and
-     * process them individually.
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates a splitter allowing you split a message
+     * into a number of pieces and process them individually.
      * <p>
-     * This splitter responds with the original input message. You can use a
-     * custom {@link AggregationStrategy} to control what to respond from the
-     * splitter.
+     * This splitter responds with the original input message. You can use a custom {@link AggregationStrategy} to
+     * control what to respond from the splitter.
      *
-     * @param expression the expression on which to split the message
-     * @return the builder
+     * @param  expression the expression on which to split the message
+     * @return            the builder
      */
     public SplitDefinition split(Expression expression) {
         SplitDefinition answer = new SplitDefinition(expression);
@@ -1795,17 +1661,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates
-     * a splitter allowing you split a message into a number of pieces and
-     * process them individually.
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates a splitter allowing you split a message
+     * into a number of pieces and process them individually.
      * <p>
-     * The splitter responds with the answer produced by the given
-     * {@link AggregationStrategy}.
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
-     * @param expression the expression on which to split
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *            every part
-     * @return the builder
+     * @param  expression          the expression on which to split
+     * @param  aggregationStrategy the strategy used to aggregate responses for every part
+     * @return                     the builder
      */
     public SplitDefinition split(Expression expression, AggregationStrategy aggregationStrategy) {
         SplitDefinition answer = new SplitDefinition(expression);
@@ -1815,12 +1678,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
-     * Creates a resequencer allowing you to reorganize messages based on some
-     * comparator.
+     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a> Creates a resequencer allowing you to
+     * reorganize messages based on some comparator.
      *
-     * @return the expression clause for the expressions on which to compare
-     *         messages in order
+     * @return the expression clause for the expressions on which to compare messages in order
      */
     public ExpressionClause<ResequenceDefinition> resequence() {
         ResequenceDefinition answer = new ResequenceDefinition();
@@ -1831,12 +1692,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
-     * Creates a resequencer allowing you to reorganize messages based on some
-     * comparator.
+     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a> Creates a resequencer allowing you to
+     * reorganize messages based on some comparator.
      *
-     * @param expression the expression on which to compare messages in order
-     * @return the builder
+     * @param  expression the expression on which to compare messages in order
+     * @return            the builder
      */
     public ResequenceDefinition resequence(Expression expression) {
         ResequenceDefinition answer = new ResequenceDefinition(expression);
@@ -1845,12 +1705,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
-     * Creates an aggregator allowing you to combine a number of messages
-     * together into a single message.
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a> Creates an aggregator allowing you to
+     * combine a number of messages together into a single message.
      *
-     * @return the expression clause to be used as builder to configure the
-     *         correlation expression
+     * @return the expression clause to be used as builder to configure the correlation expression
      */
     public ExpressionClause<AggregateDefinition> aggregate() {
         AggregateDefinition answer = new AggregateDefinition();
@@ -1861,13 +1719,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
-     * Creates an aggregator allowing you to combine a number of messages
-     * together into a single message.
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a> Creates an aggregator allowing you to
+     * combine a number of messages together into a single message.
      *
-     * @param aggregationStrategy the strategy used for the aggregation
-     * @return the expression clause to be used as builder to configure the
-     *         correlation expression
+     * @param  aggregationStrategy the strategy used for the aggregation
+     * @return                     the expression clause to be used as builder to configure the correlation expression
      */
     public ExpressionClause<AggregateDefinition> aggregate(AggregationStrategy aggregationStrategy) {
         AggregateDefinition answer = new AggregateDefinition();
@@ -1879,15 +1735,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
-     * Creates an aggregator allowing you to combine a number of messages
-     * together into a single message.
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a> Creates an aggregator allowing you to
+     * combine a number of messages together into a single message.
      *
-     * @param correlationExpression the expression used to calculate the
-     *            correlation key. For a JMS message this could be the
-     *            expression <code>header("JMSDestination")</code> or
-     *            <code>header("JMSCorrelationID")</code>
-     * @return the builder
+     * @param  correlationExpression the expression used to calculate the correlation key. For a JMS message this could
+     *                               be the expression <code>header("JMSDestination")</code> or
+     *                               <code>header("JMSCorrelationID")</code>
+     * @return                       the builder
      */
     public AggregateDefinition aggregate(Expression correlationExpression) {
         AggregateDefinition answer = new AggregateDefinition(correlationExpression);
@@ -1896,16 +1750,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
-     * Creates an aggregator allowing you to combine a number of messages
-     * together into a single message.
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a> Creates an aggregator allowing you to
+     * combine a number of messages together into a single message.
      *
-     * @param correlationExpression the expression used to calculate the
-     *            correlation key. For a JMS message this could be the
-     *            expression <code>header("JMSDestination")</code> or
-     *            <code>header("JMSCorrelationID")</code>
-     * @param aggregationStrategy the strategy used for the aggregation
-     * @return the builder
+     * @param  correlationExpression the expression used to calculate the correlation key. For a JMS message this could
+     *                               be the expression <code>header("JMSDestination")</code> or
+     *                               <code>header("JMSCorrelationID")</code>
+     * @param  aggregationStrategy   the strategy used for the aggregation
+     * @return                       the builder
      */
     public AggregateDefinition aggregate(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         AggregateDefinition answer = new AggregateDefinition(correlationExpression, aggregationStrategy);
@@ -1914,12 +1766,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a> Creates a
-     * delayer allowing you to delay the delivery of messages to some
-     * destination.
+     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a> Creates a delayer allowing you to delay the
+     * delivery of messages to some destination.
      *
-     * @param delay an expression to calculate the delay time in millis
-     * @return the builder
+     * @param  delay an expression to calculate the delay time in millis
+     * @return       the builder
      */
     public DelayDefinition delay(Expression delay) {
         DelayDefinition answer = new DelayDefinition(delay);
@@ -1928,9 +1779,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a> Creates a
-     * delayer allowing you to delay the delivery of messages to some
-     * destination.
+     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a> Creates a delayer allowing you to delay the
+     * delivery of messages to some destination.
      *
      * @return the expression clause to create the expression
      */
@@ -1941,20 +1791,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a> Creates a
-     * delayer allowing you to delay the delivery of messages to some
-     * destination.
+     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a> Creates a delayer allowing you to delay the
+     * delivery of messages to some destination.
      *
-     * @param delay the delay in millis
-     * @return the builder
+     * @param  delay the delay in millis
+     * @return       the builder
      */
     public DelayDefinition delay(long delay) {
         return delay(ExpressionBuilder.constantExpression(delay));
     }
 
     /**
-     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
-     * Creates a throttler using a fluent builder.
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a> Creates a throttler using a fluent builder.
      *
      * @return the builder
      */
@@ -1965,35 +1813,30 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
-     * Creates a throttler allowing you to ensure that a specific endpoint does
-     * not get overloaded, or that we don't exceed an agreed SLA with some
-     * external service.
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a> Creates a throttler allowing you to ensure
+     * that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external
+     * service.
      * <p/>
-     * Will default use a time period of 1 second, so setting the
-     * maximumRequestCount to eg 10 will default ensure at most 10 messages per
-     * second.
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10 will default ensure at
+     * most 10 messages per second.
      *
-     * @param maximumRequestCount the maximum messages
-     * @return the builder
+     * @param  maximumRequestCount the maximum messages
+     * @return                     the builder
      */
     public ThrottleDefinition throttle(long maximumRequestCount) {
         return throttle(ExpressionBuilder.constantExpression(maximumRequestCount));
     }
 
     /**
-     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
-     * Creates a throttler allowing you to ensure that a specific endpoint does
-     * not get overloaded, or that we don't exceed an agreed SLA with some
-     * external service.
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a> Creates a throttler allowing you to ensure
+     * that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external
+     * service.
      * <p/>
-     * Will default use a time period of 1 second, so setting the
-     * maximumRequestCount to eg 10 will default ensure at most 10 messages per
-     * second.
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10 will default ensure at
+     * most 10 messages per second.
      *
-     * @param maximumRequestCount an expression to calculate the maximum request
-     *            count
-     * @return the builder
+     * @param  maximumRequestCount an expression to calculate the maximum request count
+     * @return                     the builder
      */
     public ThrottleDefinition throttle(Expression maximumRequestCount) {
         ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount);
@@ -2002,49 +1845,41 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
-     * Creates a throttler allowing you to ensure that a specific endpoint does
-     * not get overloaded, or that we don't exceed an agreed SLA with some
-     * external service. Here another parameter correlationExpressionKey is
-     * introduced for the functionality which will throttle based on the key
-     * expression to group exchanges. This will make key-based throttling
-     * instead of overall throttling.
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a> Creates a throttler allowing you to ensure
+     * that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external
+     * service. Here another parameter correlationExpressionKey is introduced for the functionality which will throttle
+     * based on the key expression to group exchanges. This will make key-based throttling instead of overall
+     * throttling.
      * <p/>
-     * Will default use a time period of 1 second, so setting the
-     * maximumRequestCount to eg 10 will default ensure at most 10 messages per
-     * second.
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10 will default ensure at
+     * most 10 messages per second.
      *
-     * @param maximumRequestCount an expression to calculate the maximum request
-     *            count
-     * @param correlationExpressionKey is a correlation key that can throttle by
-     *            the given key instead of overall throttling
-     * @return the builder
+     * @param  maximumRequestCount      an expression to calculate the maximum request count
+     * @param  correlationExpressionKey is a correlation key that can throttle by the given key instead of overall
+     *                                  throttling
+     * @return                          the builder
      */
     public ThrottleDefinition throttle(Expression maximumRequestCount, long correlationExpressionKey) {
-        ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount, ExpressionBuilder.constantExpression(correlationExpressionKey));
+        ThrottleDefinition answer
+                = new ThrottleDefinition(maximumRequestCount, ExpressionBuilder.constantExpression(correlationExpressionKey));
         addOutput(answer);
         return answer;
     }
 
     /**
-     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
-     * Creates a throttler allowing you to ensure that a specific endpoint does
-     * not get overloaded, or that we don't exceed an agreed SLA with some
-     * external service. Here another parameter correlationExpressionKey is
-     * introduced for the functionality which will throttle based on the key
-     * expression to group exchanges. This will make key-based throttling
-     * instead of overall throttling.
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a> Creates a throttler allowing you to ensure
+     * that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external
+     * service. Here another parameter correlationExpressionKey is introduced for the functionality which will throttle
+     * based on the key expression to group exchanges. This will make key-based throttling instead of overall
+     * throttling.
      * <p/>
-     * Will default use a time period of 1 second, so setting the
-     * maximumRequestCount to eg 10 will default ensure at most 10 messages per
-     * second.
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10 will default ensure at
+     * most 10 messages per second.
      *
-     * @param maximumRequestCount an expression to calculate the maximum request
-     *            count
-     * @param correlationExpressionKey is a correlation key as an expression
-     *            that can throttle by the given key instead of overall
-     *            throttling
-     * @return the builder
+     * @param  maximumRequestCount      an expression to calculate the maximum request count
+     * @param  correlationExpressionKey is a correlation key as an expression that can throttle by the given key instead
+     *                                  of overall throttling
+     * @return                          the builder
      */
     public ThrottleDefinition throttle(Expression maximumRequestCount, Expression correlationExpressionKey) {
         ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount, correlationExpressionKey);
@@ -2053,9 +1888,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop
-     * allowing to process the a message a number of times and possibly process
-     * them in a different way. Useful mostly for testing.
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop allowing to process the a message a
+     * number of times and possibly process them in a different way. Useful mostly for testing.
      *
      * @return the clause used to create the loop expression
      */
@@ -2066,12 +1900,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop
-     * allowing to process the a message a number of times and possibly process
-     * them in a different way.
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop allowing to process the a message a
+     * number of times and possibly process them in a different way.
      *
-     * @param expression the loop expression
-     * @return the builder
+     * @param  expression the loop expression
+     * @return            the builder
      */
     public LoopDefinition loop(Expression expression) {
         LoopDefinition loop = new LoopDefinition(expression);
@@ -2080,12 +1913,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a while
-     * loop allowing to process the a message while the predicate matches and
-     * possibly process them in a different way.
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a while loop allowing to process the a message
+     * while the predicate matches and possibly process them in a different way.
      *
-     * @param predicate the while loop predicate
-     * @return the builder
+     * @param  predicate the while loop predicate
+     * @return           the builder
      */
     public LoopDefinition loopDoWhile(@AsPredicate Predicate predicate) {
         LoopDefinition loop = new LoopDefinition(predicate);
@@ -2094,9 +1926,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop
-     * allowing to process the a message a number of times and possibly process
-     * them in a different way using a fluent builder.
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop allowing to process the a message a
+     * number of times and possibly process them in a different way using a fluent builder.
      *
      * @return the builder
      */
@@ -2108,12 +1939,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop
-     * allowing to process the a message a number of times and possibly process
-     * them in a different way.
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a> Creates a loop allowing to process the a message a
+     * number of times and possibly process them in a different way.
      *
-     * @param count the number of times
-     * @return the builder
+     * @param  count the number of times
+     * @return       the builder
      */
     public LoopDefinition loop(int count) {
         LoopDefinition loop = new LoopDefinition(new ConstantExpression(Integer.toString(count)));
@@ -2124,8 +1954,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sets the exception on the {@link org.apache.camel.Exchange}
      *
-     * @param exception the exception to throw
-     * @return the builder
+     * @param  exception the exception to throw
+     * @return           the builder
      */
     public Type throwException(Exception exception) {
         ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
@@ -2137,10 +1967,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sets the exception on the {@link org.apache.camel.Exchange}
      *
-     * @param type the exception class to use
-     * @param message the given message as caused message (supports simple
-     *            language)
-     * @return the builder
+     * @param  type    the exception class to use
+     * @param  message the given message as caused message (supports simple language)
+     * @return         the builder
      */
     public Type throwException(Class<? extends Exception> type, String message) {
         ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
@@ -2153,13 +1982,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Marks the exchange for rollback only.
      * <p/>
-     * Does <b>not</b> set any exception as opposed to {@link #rollback()}
-     * methods.
+     * Does <b>not</b> set any exception as opposed to {@link #rollback()} methods.
      *
      * @return the builder
-     * @see #rollback()
-     * @see #rollback(String)
-     * @see #markRollbackOnlyLast()
+     * @see    #rollback()
+     * @see    #rollback(String)
+     * @see    #markRollbackOnlyLast()
      */
     public Type markRollbackOnly() {
         RollbackDefinition answer = new RollbackDefinition();
@@ -2169,20 +1997,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Marks the exchange for rollback only, but only for the last (current)
-     * transaction.
+     * Marks the exchange for rollback only, but only for the last (current) transaction.
      * <p/>
-     * A last rollback is used when you have nested transactions and only want
-     * the last local transaction to rollback, where as the outer transaction
-     * can still be completed
+     * A last rollback is used when you have nested transactions and only want the last local transaction to rollback,
+     * where as the outer transaction can still be completed
      * <p/>
-     * Does <b>not</b> set any exception as opposed to {@link #rollback()}
-     * methods.
+     * Does <b>not</b> set any exception as opposed to {@link #rollback()} methods.
      *
      * @return the builder
-     * @see #rollback()
-     * @see #rollback(String)
-     * @see #markRollbackOnly()
+     * @see    #rollback()
+     * @see    #rollback(String)
+     * @see    #markRollbackOnly()
      */
     public Type markRollbackOnlyLast() {
         RollbackDefinition answer = new RollbackDefinition();
@@ -2192,32 +2017,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Marks the exchange for rollback only and sets an exception with a default
-     * message.
+     * Marks the exchange for rollback only and sets an exception with a default message.
      * <p/>
-     * This is done by setting a
-     * {@link org.apache.camel.RollbackExchangeException} on the Exchange and
-     * mark it for rollback.
+     * This is done by setting a {@link org.apache.camel.RollbackExchangeException} on the Exchange and mark it for
+     * rollback.
      *
      * @return the builder
-     * @see #markRollbackOnly()
+     * @see    #markRollbackOnly()
      */
     public Type rollback() {
         return rollback(null);
     }
 
     /**
-     * Marks the exchange for rollback and sets an exception with the provided
-     * message.
+     * Marks the exchange for rollback and sets an exception with the provided message.
      * <p/>
-     * This is done by setting a
-     * {@link org.apache.camel.RollbackExchangeException} on the Exchange and
-     * mark it for rollback.
+     * This is done by setting a {@link org.apache.camel.RollbackExchangeException} on the Exchange and mark it for
+     * rollback.
      *
-     * @param message an optional message used for logging purpose why the
-     *            rollback was triggered
-     * @return the builder
-     * @see #markRollbackOnly()
+     * @param  message an optional message used for logging purpose why the rollback was triggered
+     * @return         the builder
+     * @see            #markRollbackOnly()
      */
     public Type rollback(String message) {
         RollbackDefinition answer = new RollbackDefinition(message);
@@ -2226,13 +2046,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends
-     * messages to all its child outputs; so that each processor and destination
-     * gets a copy of the original message to avoid the processors interfering
-     * with each other using {@link ExchangePattern#InOnly}.
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends messages to all its child outputs; so that
+     * each processor and destination gets a copy of the original message to avoid the processors interfering with each
+     * other using {@link ExchangePattern#InOnly}.
      *
-     * @param endpoint the endpoint to wiretap to
-     * @return the builder
+     * @param  endpoint the endpoint to wiretap to
+     * @return          the builder
      */
     public WireTapDefinition<Type> wireTap(Endpoint endpoint) {
         WireTapDefinition answer = new WireTapDefinition();
@@ -2242,13 +2061,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends
-     * messages to all its child outputs; so that each processor and destination
-     * gets a copy of the original message to avoid the processors interfering
-     * with each other using {@link ExchangePattern#InOnly}.
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends messages to all its child outputs; so that
+     * each processor and destination gets a copy of the original message to avoid the processors interfering with each
+     * other using {@link ExchangePattern#InOnly}.
      *
-     * @param endpoint the endpoint to wiretap to
-     * @return the builder
+     * @param  endpoint the endpoint to wiretap to
+     * @return          the builder
      */
     public WireTapDefinition<Type> wireTap(@AsEndpointUri EndpointProducerBuilder endpoint) {
         WireTapDefinition answer = new WireTapDefinition();
@@ -2258,14 +2076,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends
-     * messages to all its child outputs; so that each processor and destination
-     * gets a copy of the original message to avoid the processors interfering
-     * with each other using {@link ExchangePattern#InOnly}.
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a> Sends messages to all its child outputs; so that
+     * each processor and destination gets a copy of the original message to avoid the processors interfering with each
+     * other using {@link ExchangePattern#InOnly}.
      *
-     * @param uri the dynamic endpoint to wiretap to (resolved using simple
-     *            language by default)
-     * @return the builder
+     * @param  uri the dynamic endpoint to wiretap to (resolved using simple language by default)
+     * @return     the builder
      */
     public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri) {
         WireTapDefinition answer = new WireTapDefinition();
@@ -2304,8 +2120,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Stops continue routing the current {@link org.apache.camel.Exchange} and
-     * marks it as completed.
+     * Stops continue routing the current {@link org.apache.camel.Exchange} and marks it as completed.
      *
      * @return the builder
      */
@@ -2316,11 +2131,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/exception-clause.html">Exception
-     * clause</a> for catching certain exceptions and handling them.
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a> for catching certain exceptions and
+     * handling them.
      *
-     * @param exceptionType the exception to catch
-     * @return the exception builder to configure
+     * @param  exceptionType the exception to catch
+     * @return               the exception builder to configure
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
@@ -2329,11 +2144,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/exception-clause.html">Exception
-     * clause</a> for catching certain exceptions and handling them.
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a> for catching certain exceptions and
+     * handling them.
      *
-     * @param exceptions list of exceptions to catch
-     * @return the exception builder to configure
+     * @param  exceptions list of exceptions to catch
+     * @return            the exception builder to configure
      */
     public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
@@ -2346,8 +2161,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Policy can be used for transactional policies.
      *
-     * @param policy the policy to apply
-     * @return the policy builder to configure
+     * @param  policy the policy to apply
+     * @return        the policy builder to configure
      */
     public PolicyDefinition policy(Policy policy) {
         PolicyDefinition answer = new PolicyDefinition(policy);
@@ -2360,8 +2175,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * Policy can be used for transactional policies.
      *
-     * @param ref reference to lookup a policy in the registry
-     * @return the policy builder to configure
+     * @param  ref reference to lookup a policy in the registry
+     * @return     the policy builder to configure
      */
     public PolicyDefinition policy(String ref) {
         PolicyDefinition answer = new PolicyDefinition();
@@ -2371,8 +2186,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Marks this route as transacted and uses the default transacted policy
-     * found in the registry.
+     * Marks this route as transacted and uses the default transacted policy found in the registry.
      *
      * @return the policy builder to configure
      */
@@ -2385,8 +2199,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Marks this route as transacted.
      *
-     * @param ref reference to lookup a transacted policy in the registry
-     * @return the policy builder to configure
+     * @param  ref reference to lookup a transacted policy in the registry
+     * @return     the policy builder to configure
      */
     public TransactedDefinition transacted(String ref) {
         TransactedDefinition answer = new TransactedDefinition();
@@ -2410,12 +2224,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     // -------------------------------------------------------------------------
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds the custom processor to this destination which
-     * could be a final destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds the custom processor
+     * to this destination which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param processor the custom {@link Processor}
-     * @return the builder
+     * @param  processor the custom {@link Processor}
+     * @return           the builder
      */
     public Type process(Processor processor) {
         ProcessDefinition answer = new ProcessDefinition(processor);
@@ -2424,13 +2237,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds the custom processor reference to this
-     * destination which could be a final destination, or could be a
-     * transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds the custom processor
+     * reference to this destination which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param ref reference to a {@link Processor} to lookup in the registry
-     * @return the builder
+     * @param  ref reference to a {@link Processor} to lookup in the registry
+     * @return     the builder
      */
     public Type process(String ref) {
         ProcessDefinition answer = new ProcessDefinition();
@@ -2440,10 +2251,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds the custom processor using a fluent builder to
-     * this destination which could be a final destination, or could be a
-     * transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds the custom processor
+     * using a fluent builder to this destination which could be a final destination, or could be a transformation in a
+     * pipeline
      *
      * @return the builder
      */
@@ -2456,18 +2266,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a
-     *            String
-     * @return the builder
+     * @param  bean the bean to invoke, or a reference to a bean if the type is a String
+     * @return      the builder
      */
     public Type bean(Object bean) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
-            answer.setRef((String)bean);
+            answer.setRef((String) bean);
         } else {
             answer.setBean(bean);
         }
@@ -2476,31 +2284,28 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a
-     *            String
-     * @return the builder
+     * @param  bean the bean to invoke, or a reference to a bean if the type is a String
+     * @return      the builder
      */
     public Type bean(Supplier<Object> bean) {
         return bean(bean.get());
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a String
-     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @return the builder
+     * @param  bean   the bean to invoke, or a reference to a bean if the type is a String
+     * @param  method the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @return        the builder
      */
     public Type bean(Object bean, String method) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
-            answer.setRef((String)bean);
+            answer.setRef((String) bean);
         } else {
             answer.setBean(bean);
         }
@@ -2510,45 +2315,42 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a String
-     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @return the builder
+     * @param  bean   the bean to invoke, or a reference to a bean if the type is a String
+     * @param  method the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @return        the builder
      */
     public Type bean(Supplier<Object> bean, String method) {
         return bean(bean.get(), method);
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a String
-     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param scope bean scope to use (singleton, request, prototype)
-     * @return the builder
+     * @param  bean   the bean to invoke, or a reference to a bean if the type is a String
+     * @param  method the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param  scope  bean scope to use (singleton, request, prototype)
+     * @return        the builder
      */
     public Type bean(Supplier<Object> bean, String method, BeanScope scope) {
         return bean(bean.get(), method, scope);
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a String
-     * @param scope bean scope to use (singleton, request, prototype)
-     * @return the builder
+     * @param  bean  the bean to invoke, or a reference to a bean if the type is a String
+     * @param  scope bean scope to use (singleton, request, prototype)
+     * @return       the builder
      */
     public Type bean(Object bean, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
-            answer.setRef((String)bean);
+            answer.setRef((String) bean);
         } else {
             answer.setBean(bean);
         }
@@ -2558,19 +2360,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a String
-     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param scope bean scope to use (singleton, request, prototype)
-     * @return the builder
+     * @param  bean   the bean to invoke, or a reference to a bean if the type is a String
+     * @param  method the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param  scope  bean scope to use (singleton, request, prototype)
+     * @return        the builder
      */
     public Type bean(Object bean, String method, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
-            answer.setRef((String)bean);
+            answer.setRef((String) bean);
         } else {
             answer.setBean(bean);
         }
@@ -2581,12 +2382,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param beanType the bean class, Camel will instantiate an object at runtime
-     * @return the builder
+     * @param  beanType the bean class, Camel will instantiate an object at runtime
+     * @return          the builder
      */
     public Type bean(Class<?> beanType) {
         BeanDefinition answer = new BeanDefinition();
@@ -2596,13 +2396,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param beanType the bean class, Camel will instantiate an object at runtime
-     * @param scope bean scope to use (singleton, request, prototype)
-     * @return the builder
+     * @param  beanType the bean class, Camel will instantiate an object at runtime
+     * @param  scope    bean scope to use (singleton, request, prototype)
+     * @return          the builder
      */
     public Type bean(Class<?> beanType, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
@@ -2613,13 +2412,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param beanType the bean class, Camel will instantiate an object at runtime
-     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @return the builder
+     * @param  beanType the bean class, Camel will instantiate an object at runtime
+     * @param  method   the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @return          the builder
      */
     public Type bean(Class<?> beanType, String method) {
         BeanDefinition answer = new BeanDefinition();
@@ -2630,14 +2428,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a bean which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
+     * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param beanType the bean class, Camel will instantiate an object at runtime
-     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param scope bean scope to use (singleton, request, prototype)
-     * @return the builder
+     * @param  beanType the bean class, Camel will instantiate an object at runtime
+     * @param  method   the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param  scope    bean scope to use (singleton, request, prototype)
+     * @return          the builder
      */
     public Type bean(Class<?> beanType, String method, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
@@ -2649,9 +2446,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a processor which sets the body on the IN
-     * message
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
+     * the body on the IN message
      *
      * @return a expression builder clause to set the body
      */
@@ -2663,12 +2459,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a processor which sets the body on the IN
-     * message
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
+     * the body on the IN message
      *
-     * @param expression the expression used to set the body
-     * @return the builder
+     * @param  expression the expression used to set the body
+     * @return            the builder
      */
     public Type setBody(Expression expression) {
         SetBodyDefinition answer = new SetBodyDefinition(expression);
@@ -2677,12 +2472,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a processor which sets the body on the IN
-     * message
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
+     * the body on the IN message
      *
-     * @param function the function that provides a value to the IN message body
-     * @return the builder
+     * @param  function the function that provides a value to the IN message body
+     * @return          the builder
      */
     public <Result> Type setBody(Function<Exchange, Result> function) {
         SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
@@ -2696,12 +2490,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a processor which sets the body on the OUT
-     * message
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
+     * the body on the OUT message
      *
-     * @param expression the expression used to set the body
-     * @return the builder
+     * @param  expression the expression used to set the body
+     * @return            the builder
      */
     public Type transform(Expression expression) {
         TransformDefinition answer = new TransformDefinition(expression);
@@ -2710,9 +2503,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a processor which sets the body on the OUT
-     * message
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
+     * the body on the OUT message
      *
      * @return a expression builder clause to set the body
      */
@@ -2726,8 +2518,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Executes a script (do not change the message body).
      *
-     * @param expression the expression used as the script.
-     * @return the builder
+     * @param  expression the expression used as the script.
+     * @return            the builder
      */
     public Type script(Expression expression) {
         ScriptDefinition answer = new ScriptDefinition(expression);
@@ -2750,8 +2542,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which sets the header on the IN message
      *
-     * @param name the header name
-     * @return a expression builder clause to set the header
+     * @param  name the header name
+     * @return      a expression builder clause to set the header
      */
     public ExpressionClause<ProcessorDefinition<Type>> setHeader(String name) {
         ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
@@ -2763,9 +2555,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which sets the header on the IN message
      *
-     * @param name the header name
-     * @param expression the expression used to set the header
-     * @return the builder
+     * @param  name       the header name
+     * @param  expression the expression used to set the header
+     * @return            the builder
      */
     public Type setHeader(String name, Expression expression) {
         SetHeaderDefinition answer = new SetHeaderDefinition(name, expression);
@@ -2776,9 +2568,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which sets the header on the IN message
      *
-     * @param name the header name
-     * @param supplier the supplier used to set the header
-     * @return the builder
+     * @param  name     the header name
+     * @param  supplier the supplier used to set the header
+     * @return          the builder
      */
     public Type setHeader(String name, final Supplier<Object> supplier) {
         SetHeaderDefinition answer = new SetHeaderDefinition(name, new ExpressionAdapter() {
@@ -2795,9 +2587,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which sets the exchange property
      *
-     * @param name the property name
-     * @param expression the expression used to set the property
-     * @return the builder
+     * @param  name       the property name
+     * @param  expression the expression used to set the property
+     * @return            the builder
      */
     public Type setProperty(String name, Expression expression) {
         SetPropertyDefinition answer = new SetPropertyDefinition(name, expression);
@@ -2808,9 +2600,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which sets the exchange property
      *
-     * @param name the property name
-     * @param supplier the supplier used to set the property
-     * @return the builder
+     * @param  name     the property name
+     * @param  supplier the supplier used to set the property
+     * @return          the builder
      */
     public Type setProperty(String name, final Supplier<Object> supplier) {
         SetPropertyDefinition answer = new SetPropertyDefinition(name, new ExpressionAdapter() {
@@ -2827,8 +2619,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which sets the exchange property
      *
-     * @param name the property name
-     * @return a expression builder clause to set the property
+     * @param  name the property name
+     * @return      a expression builder clause to set the property
      */
     public ExpressionClause<ProcessorDefinition<Type>> setProperty(String name) {
         ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<>(this);
@@ -2840,8 +2632,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the header on the IN message
      *
-     * @param name the header name
-     * @return the builder
+     * @param  name the header name
+     * @return      the builder
      */
     public Type removeHeader(String name) {
         RemoveHeaderDefinition answer = new RemoveHeaderDefinition(name);
@@ -2852,8 +2644,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the headers on the IN message
      *
-     * @param pattern a pattern to match header names to be removed
-     * @return the builder
+     * @param  pattern a pattern to match header names to be removed
+     * @return         the builder
      */
     public Type removeHeaders(String pattern) {
         RemoveHeadersDefinition answer = new RemoveHeadersDefinition(pattern);
@@ -2864,10 +2656,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the headers on the IN message
      *
-     * @param pattern a pattern to match header names to be removed
-     * @param excludePatterns one or more pattern of header names that should be
-     *            excluded (= preserved)
-     * @return the builder
+     * @param  pattern         a pattern to match header names to be removed
+     * @param  excludePatterns one or more pattern of header names that should be excluded (= preserved)
+     * @return                 the builder
      */
     public Type removeHeaders(String pattern, String... excludePatterns) {
         RemoveHeadersDefinition answer = new RemoveHeadersDefinition(pattern, excludePatterns);
@@ -2878,8 +2669,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the exchange property
      *
-     * @param name the property name
-     * @return the builder
+     * @param  name the property name
+     * @return      the builder
      */
     public Type removeProperty(String name) {
         RemovePropertyDefinition answer = new RemovePropertyDefinition(name);
@@ -2890,8 +2681,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the properties in the exchange
      *
-     * @param pattern a pattern to match properties names to be removed
-     * @return the builder
+     * @param  pattern a pattern to match properties names to be removed
+     * @return         the builder
      */
     public Type removeProperties(String pattern) {
         RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern);
@@ -2902,10 +2693,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the properties in the exchange
      *
-     * @param pattern a pattern to match properties names to be removed
-     * @param excludePatterns one or more pattern of properties names that
-     *            should be excluded (= preserved)
-     * @return the builder
+     * @param  pattern         a pattern to match properties names to be removed
+     * @param  excludePatterns one or more pattern of properties names that should be excluded (= preserved)
+     * @return                 the builder
      */
     public Type removeProperties(String pattern, String... excludePatterns) {
         RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern, excludePatterns);
@@ -2916,8 +2706,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Converts the IN message body to the specified type
      *
-     * @param type the type to convert to
-     * @return the builder
+     * @param  type the type to convert to
+     * @return      the builder
      */
     public Type convertBodyTo(Class<?> type) {
         addOutput(new ConvertBodyDefinition(type));
@@ -2927,10 +2717,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Converts the IN message body to the specified type
      *
-     * @param type the type to convert to
-     * @param charset the charset to use by type converters (not all converters
-     *            support specifc charset)
-     * @return the builder
+     * @param  type    the type to convert to
+     * @param  charset the charset to use by type converters (not all converters support specifc charset)
+     * @return         the builder
      */
     public Type convertBodyTo(Class<?> type, String charset) {
         addOutput(new ConvertBodyDefinition(type, charset));
@@ -2938,11 +2727,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sorts the expression using a default sorting based on toString
-     * representation.
+     * Sorts the expression using a default sorting based on toString representation.
      *
-     * @param expression the expression, must be convertable to {@link List}
-     * @return the builder
+     * @param  expression the expression, must be convertable to {@link List}
+     * @return            the builder
      */
     public Type sort(Expression expression) {
         return sort(expression, null);
@@ -2951,9 +2739,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sorts the expression using the given comparator
      *
-     * @param expression the expression, must be convertable to {@link List}
-     * @param comparator the comparator to use for sorting
-     * @return the builder
+     * @param  expression the expression, must be convertable to {@link List}
+     * @param  comparator the comparator to use for sorting
+     * @return            the builder
      */
     public <T> Type sort(Expression expression, Comparator<T> comparator) {
         addOutput(new SortDefinition<>(expression, comparator));
@@ -2972,10 +2760,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/claim-check.html">Claim Check
-     * EIP</a> allows you to replace message content with a claim check (a
-     * unique key), which can be used to retrieve the message content at a later
-     * time.
+     * The <a href="http://camel.apache.org/claim-check.html">Claim Check EIP</a> allows you to replace message content
+     * with a claim check (a unique key), which can be used to retrieve the message content at a later time.
      */
     public ClaimCheckDefinition claimCheck() {
         ClaimCheckDefinition answer = new ClaimCheckDefinition();
@@ -2984,10 +2770,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/claim-check.html">Claim Check
-     * EIP</a> allows you to replace message content with a claim check (a
-     * unique key), which can be used to retrieve the message content at a later
-     * time.
+     * The <a href="http://camel.apache.org/claim-check.html">Claim Check EIP</a> allows you to replace message content
+     * with a claim check (a unique key), which can be used to retrieve the message content at a later time.
      *
      * @param operation the claim check operation to use.
      */
@@ -2999,30 +2783,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/claim-check.html">Claim Check
-     * EIP</a> allows you to replace message content with a claim check (a
-     * unique key), which can be used to retrieve the message content at a later
-     * time.
+     * The <a href="http://camel.apache.org/claim-check.html">Claim Check EIP</a> allows you to replace message content
+     * with a claim check (a unique key), which can be used to retrieve the message content at a later time.
      *
      * @param operation the claim check operation to use.
-     * @param key the unique key to use for the get and set operations, can be
-     *            <tt>null</tt> for push/pop operations
+     * @param key       the unique key to use for the get and set operations, can be <tt>null</tt> for push/pop
+     *                  operations
      */
     public Type claimCheck(ClaimCheckOperation operation, String key) {
         return claimCheck(operation, key, null);
     }
 
     /**
-     * The <a href="http://camel.apache.org/claim-check.html">Claim Check
-     * EIP</a> allows you to replace message content with a claim check (a
-     * unique key), which can be used to retrieve the message content at a later
-     * time.
+     * The <a href="http://camel.apache.org/claim-check.html">Claim Check EIP</a> allows you to replace message content
+     * with a claim check (a unique key), which can be used to retrieve the message content at a later time.
      *
      * @param operation the claim check operation to use.
-     * @param key the unique key to use for the get and set operations, can be
-     *            <tt>null</tt> for push/pop operations
-     * @param filter describes what data to include/exclude when merging data
-     *            back when using get or pop operations.
+     * @param key       the unique key to use for the get and set operations, can be <tt>null</tt> for push/pop
+     *                  operations
+     * @param filter    describes what data to include/exclude when merging data back when using get or pop operations.
      */
     public Type claimCheck(ClaimCheckOperation operation, String key, String filter) {
         ClaimCheckDefinition answer = new ClaimCheckDefinition();
@@ -3034,78 +2813,65 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      * <p/>
-     * The difference between this and {@link #pollEnrich(String)} is that this
-     * uses a producer to obatin the additional data, where as pollEnrich uses a
-     * polling consumer.
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer to obatin the additional
+     * data, where as pollEnrich uses a polling consumer.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @return             the builder
+     * @see                org.apache.camel.processor.Enricher
      */
     public Type enrich(@AsEndpointUri String resourceUri) {
         return enrich(resourceUri, null);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri         URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy aggregation strategy to aggregate input data and additional data.
+     * @return                     the builder
+     * @see                        org.apache.camel.processor.Enricher
      */
     public Type enrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy) {
         return enrich(resourceUri, aggregationStrategy, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      * <p/>
-     * The difference between this and {@link #pollEnrich(String)} is that this
-     * uses a producer to obatin the additional data, where as pollEnrich uses a
-     * polling consumer.
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer to obatin the additional
+     * data, where as pollEnrich uses a polling consumer.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @return             the builder
+     * @see                org.apache.camel.processor.Enricher
      */
     public Type enrich(@AsEndpointUri EndpointProducerBuilder resourceUri) {
         return enrich(resourceUri, null);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri         URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy aggregation strategy to aggregate input data and additional data.
+     * @return                     the builder
+     * @see                        org.apache.camel.processor.Enricher
      */
     public Type enrich(@AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy) {
         return enrich(resourceUri, aggregationStrategy, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder. <blockquote>
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder. <blockquote>
      *
      * <pre>
      * {@code
@@ -3117,10 +2883,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * </blockquote>
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @return             the builder
+     * @see                org.apache.camel.processor.Enricher
      */
     public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
@@ -3129,10 +2894,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder.
      */
     public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
@@ -3141,22 +2905,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder.
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(
+            @AsEndpointUri String resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, shareUnitOfWork);
         return clause;
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder. <blockquote>
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder. <blockquote>
      *
      * <pre>
      * {@code
@@ -3168,75 +2931,71 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * </blockquote>
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @return             the builder
+     * @see                org.apache.camel.processor.Enricher
      */
     public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri EndpointProducerBuilder resourceUri) {
         return enrichWith(resourceUri.getUri());
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder.
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri EndpointProducerBuilder resourceUri, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(
+            @AsEndpointUri EndpointProducerBuilder resourceUri, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, false);
         return clause;
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder.
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri EndpointProducerBuilder resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(
+            @AsEndpointUri EndpointProducerBuilder resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, shareUnitOfWork);
         return clause;
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri          URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException whether to call
+     *                              {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                              if an exception was thrown.
+     * @return                      the builder
+     * @see                         org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+    public Type enrich(
+            @AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
         return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @param shareUnitOfWork whether to share unit of work
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri          URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException whether to call
+     *                              {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                              if an exception was thrown.
+     * @param  shareUnitOfWork      whether to share unit of work
+     * @return                      the builder
+     * @see                         org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException, boolean shareUnitOfWork) {
+    public Type enrich(
+            @AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException,
+            boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(new ConstantExpression(resourceUri));
         answer.setAggregationStrategy(aggregationStrategy);
@@ -3247,41 +3006,39 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri          URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException whether to call
+     *                              {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                              if an exception was thrown.
+     * @return                      the builder
+     * @see                         org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+    public Type enrich(
+            @AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
+            boolean aggregateOnException) {
         return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @param shareUnitOfWork whether to share unit of work
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
+     * @param  resourceUri          URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException whether to call
+     *                              {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                              if an exception was thrown.
+     * @param  shareUnitOfWork      whether to share unit of work
+     * @return                      the builder
+     * @see                         org.apache.camel.processor.Enricher
      */
-    public Type enrich(@AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException, boolean shareUnitOfWork) {
+    public Type enrich(
+            @AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
+            boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(resourceUri.expr());
         answer.setAggregationStrategy(aggregationStrategy);
@@ -3292,17 +3049,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code>.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code>.
      * <p/>
-     * The difference between this and {@link #pollEnrich(String)} is that this
-     * uses a producer to obtain the additional data, where as pollEnrich uses a
-     * polling consumer.
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer to obtain the additional
+     * data, where as pollEnrich uses a polling consumer.
      *
-     * @return a expression builder clause to set the expression to use for
-     *         computing the endpoint to use
-     * @see org.apache.camel.processor.PollEnricher
+     * @return a expression builder clause to set the expression to use for computing the endpoint to use
+     * @see    org.apache.camel.processor.PollEnricher
      */
     @AsEndpointUri
     public ExpressionClause<EnrichDefinition> enrich() {
@@ -3312,487 +3066,403 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * This method will <tt>block</tt> until data is available, use the method
-     * with timeout if you do not want to risk waiting a long time before data
-     * is available from the resourceUri.
+     * This method will <tt>block</tt> until data is available, use the method with timeout if you do not want to risk
+     * waiting a long time before data is available from the resourceUri.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @return             the builder
+     * @see                org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(@AsEndpointUri String resourceUri) {
         return pollEnrich(resourceUri, null);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * This method will <b>block</b> until data is available, use the method
-     * with timeout if you do not want to risk waiting a long time before data
-     * is available from the resourceUri.
+     * This method will <b>block</b> until data is available, use the method with timeout if you do not want to risk
+     * waiting a long time before data is available from the resourceUri.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri         URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy aggregation strategy to aggregate input data and additional data.
+     * @return                     the builder
+     * @see                        org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri         URI of resource endpoint for obtaining additional data.
+     * @param  timeout             timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategy aggregation strategy to aggregate input data and additional data.
+     * @return                     the builder
+     * @see                        org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategyRef Reference of aggregation strategy to
-     *            aggregate input data and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri            URI of resource endpoint for obtaining additional data.
+     * @param  timeout                timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @return                        the builder
+     * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * This method will <tt>block</tt> until data is available, use the method
-     * with timeout if you do not want to risk waiting a long time before data
-     * is available from the resourceUri.
+     * This method will <tt>block</tt> until data is available, use the method with timeout if you do not want to risk
+     * waiting a long time before data is available from the resourceUri.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @return             the builder
+     * @see                org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(EndpointProducerBuilder resourceUri) {
         return pollEnrich(resourceUri.getUri());
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * This method will <b>block</b> until data is available, use the method
-     * with timeout if you do not want to risk waiting a long time before data
-     * is available from the resourceUri.
+     * This method will <b>block</b> until data is available, use the method with timeout if you do not want to risk
+     * waiting a long time before data is available from the resourceUri.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri         URI of resource endpoint for obtaining additional data.
+     * @param  aggregationStrategy aggregation strategy to aggregate input data and additional data.
+     * @return                     the builder
+     * @see                        org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri         URI of resource endpoint for obtaining additional data.
+     * @param  timeout             timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategy aggregation strategy to aggregate input data and additional data.
+     * @return                     the builder
+     * @see                        org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(EndpointProducerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategyRef Reference of aggregation strategy to
-     *            aggregate input data and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri            URI of resource endpoint for obtaining additional data.
+     * @param  timeout                timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @return                        the builder
+     * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(EndpointProducerBuilder resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder using a {@link org.apache.camel.PollingConsumer} to poll
-     * the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
     public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri) {
         return pollEnrichWith(resourceUri, -1);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder using a {@link org.apache.camel.PollingConsumer} to poll
-     * the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
     public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri, long timeout) {
         return pollEnrichWith(resourceUri, timeout, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder using a {@link org.apache.camel.PollingConsumer} to poll
-     * the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri, long timeout, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(
+            @AsEndpointUri String resourceUri, long timeout, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         pollEnrich(resourceUri, timeout, clause, aggregateOnException);
         return clause;
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder using a {@link org.apache.camel.PollingConsumer} to poll
-     * the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
     public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(EndpointProducerBuilder resourceUri) {
         return pollEnrichWith(resourceUri, -1);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder using a {@link org.apache.camel.PollingConsumer} to poll
-     * the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
     public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(EndpointProducerBuilder resourceUri, long timeout) {
         return pollEnrichWith(resourceUri, timeout, false);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> and with an aggregation strategy created using
-     * a fluent builder using a {@link org.apache.camel.PollingConsumer} to poll
-     * the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
+     * builder using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(EndpointProducerBuilder resourceUri, long timeout, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(
+            EndpointProducerBuilder resourceUri, long timeout, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         pollEnrich(resourceUri, timeout, clause, aggregateOnException);
         return clause;
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri          URI of resource endpoint for obtaining additional data.
+     * @param  timeout              timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException whether to call
+     *                              {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                              if an exception was thrown.
+     * @return                      the builder
+     * @see                         org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+    public Type pollEnrich(
+            @AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy,
+            boolean aggregateOnException) {
         return pollEnrich(new ConstantExpression(resourceUri), timeout, aggregationStrategy, aggregateOnException);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategyRef Reference of aggregation strategy to
-     *            aggregate input data and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri            URI of resource endpoint for obtaining additional data.
+     * @param  timeout                timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException   whether to call
+     *                                {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                                if an exception was thrown.
+     * @return                        the builder
+     * @see                           org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+    public Type pollEnrich(
+            @AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         return pollEnrich(new ConstantExpression(resourceUri), timeout, aggregationStrategyRef, aggregateOnException);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @param  timeout     timeout in millis to wait at most for data to be available.
+     * @return             the builder
+     * @see                org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout) {
-        return pollEnrich(resourceUri, timeout, (String)null);
+        return pollEnrich(resourceUri, timeout, (String) null);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri          URI of resource endpoint for obtaining additional data.
+     * @param  timeout              timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException whether to call
+     *                              {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                              if an exception was thrown.
+     * @return                      the builder
+     * @see                         org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+    public Type pollEnrich(
+            @AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy,
+            boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(), timeout, aggregationStrategy, aggregateOnException);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategyRef Reference of aggregation strategy to
-     *            aggregate input data and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri            URI of resource endpoint for obtaining additional data.
+     * @param  timeout                timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException   whether to call
+     *                                {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                                if an exception was thrown.
+     * @return                        the builder
+     * @see                           org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+    public Type pollEnrich(
+            @AsEndpointUri EndpointProducerBuilder resourceUri, long timeout, String aggregationStrategyRef,
+            boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(), timeout, aggregationStrategyRef, aggregateOnException);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param resourceUri URI of resource endpoint for obtaining additional
-     *            data.
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  resourceUri URI of resource endpoint for obtaining additional data.
+     * @param  timeout     timeout in millis to wait at most for data to be available.
+     * @return             the builder
+     * @see                org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(@AsEndpointUri EndpointProducerBuilder resourceUri, long timeout) {
-        return pollEnrich(resourceUri, timeout, (String)null);
+        return pollEnrich(resourceUri, timeout, (String) null);
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param expression to use an expression to dynamically compute the
-     *            endpoint to poll from
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategyRef Reference of aggregation strategy to
-     *            aggregate input data and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  expression             to use an expression to dynamically compute the endpoint to poll from
+     * @param  timeout                timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException   whether to call
+     *                                {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                                if an exception was thrown.
+     * @return                        the builder
+     * @see                           org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+    public Type pollEnrich(
+            @AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
         pollEnrich.setTimeout(Long.toString(timeout));
@@ -3803,33 +3473,29 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @param expression to use an expression to dynamically compute the
-     *            endpoint to poll from
-     * @param timeout timeout in millis to wait at most for data to be
-     *            available.
-     * @param aggregationStrategy aggregation strategy to aggregate input data
-     *            and additional data.
-     * @param aggregateOnException whether to call
-     *            {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
-     *            if an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
+     * @param  expression           to use an expression to dynamically compute the endpoint to poll from
+     * @param  timeout              timeout in millis to wait at most for data to be available.
+     * @param  aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param  aggregateOnException whether to call
+     *                              {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)}
+     *                              if an exception was thrown.
+     * @return                      the builder
+     * @see                         org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(@AsEndpointUri Expression expression, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+    public Type pollEnrich(
+            @AsEndpointUri Expression expression, long timeout, AggregationStrategy aggregationStrategy,
+            boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
         pollEnrich.setTimeout(Long.toString(timeout));
@@ -3840,23 +3506,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content
-     * Enricher EIP</a> enriches an exchange with additional data obtained from
-     * a <code>resourceUri</code> using a
-     * {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
+     * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
+     * the endpoint.
      * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses
-     * a consumer to obtain the additional data, where as enrich uses a
-     * producer.
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer to obtain the additional
+     * data, where as enrich uses a producer.
      * <p/>
-     * The timeout controls which operation to use on
-     * {@link org.apache.camel.PollingConsumer}. If timeout is negative, we use
-     * <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}. If timeout is negative,
+     * we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt> otherwise we use
+     * <tt>receive(timeout)</tt>.
      *
-     * @return a expression builder clause to set the expression to use for
-     *         computing the endpoint to poll from
-     * @see org.apache.camel.processor.PollEnricher
+     * @return a expression builder clause to set the expression to use for computing the endpoint to poll from
+     * @see    org.apache.camel.processor.PollEnricher
      */
     @AsEndpointUri
     public ExpressionClause<PollEnrichDefinition> pollEnrich() {
@@ -3866,18 +3528,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Adds a onCompletion {@link org.apache.camel.spi.Synchronization} hook
-     * that invoke this route as a callback when the
-     * {@link org.apache.camel.Exchange} has finished being processed. The hook
-     * invoke callbacks for either onComplete or onFailure.
+     * Adds a onCompletion {@link org.apache.camel.spi.Synchronization} hook that invoke this route as a callback when
+     * the {@link org.apache.camel.Exchange} has finished being processed. The hook invoke callbacks for either
+     * onComplete or onFailure.
      * <p/>
-     * Will by default always trigger when the {@link org.apache.camel.Exchange}
-     * is complete (either with success or failed). <br/>
-     * You can limit the callback to either onComplete or onFailure but invoking
-     * the nested builder method.
+     * Will by default always trigger when the {@link org.apache.camel.Exchange} is complete (either with success or
+     * failed). <br/>
+     * You can limit the callback to either onComplete or onFailure but invoking the nested builder method.
      * <p/>
-     * For onFailure the caused exception is stored as a property on the
-     * {@link org.apache.camel.Exchange} with the key
+     * For onFailure the caused exception is stored as a property on the {@link org.apache.camel.Exchange} with the key
      * {@link org.apache.camel.Exchange#EXCEPTION_CAUGHT}.
      *
      * @return the builder
@@ -3899,9 +3558,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     // -------------------------------------------------------------------------
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Unmarshals the in body using a {@link DataFormat} expression to define
-     * the format of the input message and the output will be set on the out
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Unmarshals the in body using a
+     * {@link DataFormat} expression to define the format of the input message and the output will be set on the out
      * message body.
      *
      * @return the expression to create the {@link DataFormat}
@@ -3911,12 +3569,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Unmarshals the in body using the specified {@link DataFormat} and sets
-     * the output on the out message body.
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Unmarshals the in body using the specified
+     * {@link DataFormat} and sets the output on the out message body.
      *
-     * @param dataFormatType the dataformat
-     * @return the builder
+     * @param  dataFormatType the dataformat
+     * @return                the builder
      */
     public Type unmarshal(DataFormatDefinition dataFormatType) {
         addOutput(new UnmarshalDefinition(dataFormatType));
@@ -3924,35 +3581,31 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Unmarshals the in body using the specified {@link DataFormat} and sets
-     * the output on the out message body.
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Unmarshals the in body using the specified
+     * {@link DataFormat} and sets the output on the out message body.
      *
-     * @param dataFormat the dataformat
-     * @return the builder
+     * @param  dataFormat the dataformat
+     * @return            the builder
      */
     public Type unmarshal(DataFormat dataFormat) {
         return unmarshal(new DataFormatDefinition(dataFormat));
     }
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Unmarshals the in body using the specified {@link DataFormat} reference
-     * in the {@link org.apache.camel.spi.Registry} and sets the output on the
-     * out message body.
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Unmarshals the in body using the specified
+     * {@link DataFormat} reference in the {@link org.apache.camel.spi.Registry} and sets the output on the out message
+     * body.
      *
-     * @param dataTypeRef reference to a {@link DataFormat} to lookup in the
-     *            registry
-     * @return the builder
+     * @param  dataTypeRef reference to a {@link DataFormat} to lookup in the registry
+     * @return             the builder
      */
     public Type unmarshal(String dataTypeRef) {
         return unmarshal(new CustomDataFormat(dataTypeRef));
     }
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Marshals the in body using a {@link DataFormat} expression to define the
-     * format of the output which will be added to the out body.
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Marshals the in body using a
+     * {@link DataFormat} expression to define the format of the output which will be added to the out body.
      *
      * @return the expression to create the {@link DataFormat}
      */
@@ -3961,12 +3614,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Marshals the in body using the specified {@link DataFormat} and sets the
-     * output on the out message body.
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Marshals the in body using the specified
+     * {@link DataFormat} and sets the output on the out message body.
      *
-     * @param dataFormatType the dataformat
-     * @return the builder
+     * @param  dataFormatType the dataformat
+     * @return                the builder
      */
     public Type marshal(DataFormatDefinition dataFormatType) {
         addOutput(new MarshalDefinition(dataFormatType));
@@ -3974,26 +3626,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Marshals the in body using the specified {@link DataFormat} and sets the
-     * output on the out message body.
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Marshals the in body using the specified
+     * {@link DataFormat} and sets the output on the out message body.
      *
-     * @param dataFormat the dataformat
-     * @return the builder
+     * @param  dataFormat the dataformat
+     * @return            the builder
      */
     public Type marshal(DataFormat dataFormat) {
         return marshal(new DataFormatDefinition(dataFormat));
     }
 
     /**
-     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
-     * Marshals the in body the specified {@link DataFormat} reference in the
-     * {@link org.apache.camel.spi.Registry} and sets the output on the out
-     * message body.
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Marshals the in body the specified
+     * {@link DataFormat} reference in the {@link org.apache.camel.spi.Registry} and sets the output on the out message
+     * body.
      *
-     * @param dataTypeRef reference to a {@link DataFormat} to lookup in the
-     *            registry
-     * @return the builder
+     * @param  dataTypeRef reference to a {@link DataFormat} to lookup in the registry
+     * @return             the builder
      */
     public Type marshal(String dataTypeRef) {
         addOutput(new MarshalDefinition(new CustomDataFormat(dataTypeRef)));
@@ -4004,13 +3653,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sets whether or not to inherit the configured error handler. <br/>
      * The default value is <tt>true</tt>.
      * <p/>
-     * You can use this to disable using the inherited error handler for a given
-     * DSL such as a load balancer where you want to use a custom error handler
-     * strategy.
+     * You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you
+     * want to use a custom error handler strategy.
      *
-     * @param inheritErrorHandler whether to not to inherit the error handler
-     *            for this node
-     * @return the builder
+     * @param  inheritErrorHandler whether to not to inherit the error handler for this node
+     * @return                     the builder
      */
     public Type inheritErrorHandler(boolean inheritErrorHandler) {
         // set on last output
@@ -4030,7 +3677,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     @SuppressWarnings("unchecked")
     Type asType() {
-        return (Type)this;
+        return (Type) this;
     }
 
     // Properties
@@ -4061,8 +3708,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Returns a label to describe this node such as the expression if some kind
-     * of expression node
+     * Returns a label to describe this node such as the expression if some kind of expression node
      */
     @Override
     public String getLabel() {

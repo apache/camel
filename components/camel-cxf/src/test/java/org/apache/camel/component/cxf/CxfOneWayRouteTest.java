@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input
- * back to the oneway cxf EP.
+ * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input back to the oneway cxf
+ * EP.
  */
 public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     private static final QName SERVICE_NAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
@@ -56,13 +56,13 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         bindingDone = false;
         onCompeletedCalled = false;
     }
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfOneWayRouteBeans.xml");
     }
-    
+
     protected Greeter getCXFClient() throws Exception {
         Service service = Service.create(SERVICE_NAME);
         service.addPort(PORT_NAME, "http://schemas.xmlsoap.org/soap/", ROUTER_ADDRESS);
@@ -75,7 +75,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/camel-file/cxf-oneway-route");
-        
+
         Greeter client = getCXFClient();
         client.greetMeOneWay("lemac");
 
@@ -89,9 +89,9 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         assertTrue(onCompeletedCalled, "UnitOfWork done should be called");
         assertNull(bindingException, "exception occured: " + bindingException);
     }
-    
+
     public static class TestProcessor implements Processor {
-        static final byte[] MAGIC = {(byte)0xca, 0x3e, 0x1e};
+        static final byte[] MAGIC = { (byte) 0xca, 0x3e, 0x1e };
 
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -117,7 +117,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
             });
         }
     }
-    
+
     public static class TestCxfBinding extends DefaultCxfBinding {
 
         @Override
@@ -131,6 +131,6 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
                 bindingDone = true;
             }
         }
-        
+
     }
 }

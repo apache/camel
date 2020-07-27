@@ -54,13 +54,13 @@ public class ExecProducer extends DefaultProducer {
             executor = new DefaultExecCommandExecutor();
         }
 
-
         logger.log(String.format("Executing %s", execCommand), execCommand.getCommandLogLevel());
 
         ExecResult result = executor.execute(execCommand);
 
         ObjectHelper.notNull(result, "The command executor must return a not-null result");
-        logger.log(String.format("The command %s had exit value %s", execCommand, result.getExitValue()), execCommand.getCommandLogLevel());
+        logger.log(String.format("The command %s had exit value %s", execCommand, result.getExitValue()),
+                execCommand.getCommandLogLevel());
         if (result.getExitValue() != 0) {
             log.error("The command {} returned exit value {}", execCommand, result.getExitValue());
         }

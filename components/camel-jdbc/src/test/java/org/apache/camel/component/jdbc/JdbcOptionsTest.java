@@ -83,18 +83,18 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             assertEquals("No bean could be found in the registry for: xxx of type: javax.sql.DataSource",
-                e.getCause().getMessage());
+                    e.getCause().getMessage());
         }
     }
-    
+
     @Test
     public void testResettingAutoCommitOption() throws Exception {
         Connection connection = db.getConnection();
         assertTrue(connection.getAutoCommit());
         connection.close();
-        
+
         template.sendBody("direct:retrieve", "select * from customer");
-        
+
         connection = db.getConnection();
         assertTrue(connection.getAutoCommit());
         connection.close();

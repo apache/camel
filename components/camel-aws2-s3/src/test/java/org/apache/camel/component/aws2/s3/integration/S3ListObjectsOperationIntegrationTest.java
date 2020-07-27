@@ -43,7 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
-    S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
+    S3Client client
+            = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+                    .region(Region.EU_WEST_1).build();
 
     @EndpointInject
     private ProducerTemplate template;

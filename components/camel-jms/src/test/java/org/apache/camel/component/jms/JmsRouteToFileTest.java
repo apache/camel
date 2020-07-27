@@ -43,14 +43,14 @@ public class JmsRouteToFileTest extends CamelTestSupport {
     public void testRouteToFile() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
-        
+
         deleteDirectory("target/routetofile");
 
         template.sendBody("activemq:queue:hello", "Hello World");
 
         // pause to let file producer save the file
         result.assertIsSatisfied();
-        
+
         // do file assertions
         File dir = new File("target/routetofile");
         assertTrue(dir.isDirectory(), "Should be directory");

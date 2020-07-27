@@ -26,7 +26,7 @@ import org.apache.camel.processor.SetBodyProcessor;
 public class SetBodyReifier extends ExpressionReifier<SetBodyDefinition> {
 
     public SetBodyReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SetBodyDefinition)definition);
+        super(route, (SetBodyDefinition) definition);
     }
 
     @Override

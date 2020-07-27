@@ -23,18 +23,18 @@ public class MyChoiceRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         from("timer:foo")
-            .choice()
+                .choice()
                 .when(header("foo"))
-                    .to("log:foo")
+                .to("log:foo")
                 .endChoice()
                 .when(header("bar"))
-                    .to("log:bar")
-                    .to("mock:bar")
+                .to("log:bar")
+                .to("mock:bar")
                 .endChoice()
                 .otherwise()
-                    .to("log:other")
-                    .to("mock:other")
+                .to("log:other")
+                .to("mock:other")
                 .end()
-            .to("log:end");
+                .to("log:end");
     }
 }

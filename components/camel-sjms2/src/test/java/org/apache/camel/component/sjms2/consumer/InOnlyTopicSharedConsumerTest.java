@@ -48,7 +48,7 @@ public class InOnlyTopicSharedConsumerTest extends Jms2TestSupport {
     }
 
     /**
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      *
      * @return
      * @throws Exception

@@ -26,7 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 @ContextConfiguration
 public class CxfMtomRouterCxfMessageModeTest extends CxfMtomRouterPayloadModeTest {
     @Override
@@ -37,9 +36,9 @@ public class CxfMtomRouterCxfMessageModeTest extends CxfMtomRouterPayloadModeTes
         HelloService service = new HelloService(wsdl, HelloService.SERVICE);
         assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
-        ((BindingProvider)port).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port1 + "/CxfMtomRouterCxfMessageModeTest/jaxws-mtom/hello");
+        ((BindingProvider) port).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + port1 + "/CxfMtomRouterCxfMessageModeTest/jaxws-mtom/hello");
         return port;
     }
 

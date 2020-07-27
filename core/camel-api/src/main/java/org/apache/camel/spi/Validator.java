@@ -23,13 +23,12 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * <a href="http://camel.apache.org/validator.html">Validator</a>
- * performs message content validation according to the declared data type.
- * {@link org.apache.camel.processor.ContractAdvice} applies Validator if input/output type is declared on
- * a route with validation enabled.
- *  
- * @see {@link org.apache.camel.processor.ContractAdvice}
- * {@link org.apache.camel.model.InputTypeDefinition} {@link org.apache.camel.model.OutputTypeDefinition}
+ * <a href="http://camel.apache.org/validator.html">Validator</a> performs message content validation according to the
+ * declared data type. {@link org.apache.camel.processor.ContractAdvice} applies Validator if input/output type is
+ * declared on a route with validation enabled.
+ * 
+ * @see {@link org.apache.camel.processor.ContractAdvice} {@link org.apache.camel.model.InputTypeDefinition}
+ *      {@link org.apache.camel.model.OutputTypeDefinition}
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {
 
@@ -39,8 +38,8 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
     /**
      * Perform data validation with specified type.
      *
-     * @param message message to apply validation
-     * @param type the data type
+     * @param  message             message to apply validation
+     * @param  type                the data type
      * @throws ValidationException thrown if any validation error is detected
      */
     public abstract void validate(Message message, DataType type) throws ValidationException;

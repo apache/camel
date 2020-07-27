@@ -56,5 +56,5 @@ public class StubProducer extends SedaProducer {
 
         return super.process(exchange, cb);
     }
-    
+
 }

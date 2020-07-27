@@ -56,15 +56,18 @@ public class AWS2S3Component extends DefaultComponent {
         if (remaining.startsWith("arn:")) {
             remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
-        final AWS2S3Configuration configuration = this.configuration != null ? this.configuration.copy() : new AWS2S3Configuration();
+        final AWS2S3Configuration configuration
+                = this.configuration != null ? this.configuration.copy() : new AWS2S3Configuration();
         configuration.setBucketName(remaining);
         AWS2S3Endpoint endpoint = new AWS2S3Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
+        if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+            throw new IllegalArgumentException(
+                    "useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
 
         return endpoint;

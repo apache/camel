@@ -97,7 +97,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setSecureSocketProtocol("TLSv1.2");
         context.setSSLContextParameters(sslContextParameters);
-        ((SSLContextParametersAware)context.getComponent("https")).setUseGlobalSslContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("https")).setUseGlobalSslContextParameters(true);
         return context;
     }
 
@@ -110,9 +110,9 @@ public class HttpsRouteTest extends BaseJettyTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String)key);
+                System.clearProperty((String) key);
             } else {
-                System.setProperty((String)key, (String)value);
+                System.setProperty((String) key, (String) value);
             }
         }
     }
@@ -172,7 +172,7 @@ public class HttpsRouteTest extends BaseJettyTest {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
-        HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         SSLContext ssl = SSLContext.getInstance("TLSv1.2");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
@@ -201,8 +201,10 @@ public class HttpsRouteTest extends BaseJettyTest {
     }
 
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type",
+                "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type",
+                "application/xml");
     }
 
     protected void configureSslContextFactory(SslContextFactory sslContextFactory) {
@@ -222,7 +224,7 @@ public class HttpsRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                JettyHttpComponent componentJetty = (JettyHttpComponent)context.getComponent("jetty");
+                JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");

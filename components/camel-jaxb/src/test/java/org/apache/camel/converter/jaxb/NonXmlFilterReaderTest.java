@@ -57,9 +57,9 @@ public class NonXmlFilterReaderTest {
         when(readerMock.read(same(buffer), eq(3), eq(5))).thenAnswer(new Answer<Integer>() {
 
             public Integer answer(InvocationOnMock invocation) throws Throwable {
-                try (ConstantReader reader = new ConstantReader(new char[] {'a', 'b', 'c'})) {
+                try (ConstantReader reader = new ConstantReader(new char[] { 'a', 'b', 'c' })) {
                     Object[] args = invocation.getArguments();
-                    return reader.read((char[])args[0], (Integer)args[1], (Integer)args[2]);
+                    return reader.read((char[]) args[0], (Integer) args[1], (Integer) args[2]);
                 }
             }
         });
@@ -70,7 +70,7 @@ public class NonXmlFilterReaderTest {
         verify(nonXmlCharFiltererMock).filter(same(buffer), eq(3), eq(3));
 
         assertEquals(3, result, "Unexpected number of chars read");
-        assertArrayEquals(new char[] {0, 0, 0, 'a', 'b', 'c', 0, 0, 0, 0}, buffer, "Wrong buffer contents");
+        assertArrayEquals(new char[] { 0, 0, 0, 'a', 'b', 'c', 0, 0, 0, 0 }, buffer, "Wrong buffer contents");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class NonXmlFilterReaderTest {
         int result = nonXmlFilterReader.read(buffer, 3, 5);
 
         assertEquals(-1, result, "Unexpected number of chars read");
-        assertArrayEquals(new char[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buffer, "Buffer should not have been affected");
+        assertArrayEquals(new char[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, buffer, "Buffer should not have been affected");
     }
 
     static class ConstantReader extends Reader {

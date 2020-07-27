@@ -19,8 +19,7 @@ package org.apache.camel.dataformat.soap;
 import com.example.customerservice.GetCustomersByName;
 
 /**
- * Works like SoapMarshalTest but the data format is initialized by using the setters
- * instead of the constructor
+ * Works like SoapMarshalTest but the data format is initialized by using the setters instead of the constructor
  */
 public class SoapMarshalSetterTest extends SoapMarshalTest {
 
@@ -35,5 +34,5 @@ public class SoapMarshalSetterTest extends SoapMarshalTest {
         dataFormat.setElementNameStrategy(null);
         return dataFormat;
     }
-    
+
 }

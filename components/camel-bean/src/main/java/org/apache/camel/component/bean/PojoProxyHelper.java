@@ -23,8 +23,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * Create a dynamic proxy for a given interface and endpoint that sends the parameter object to the endpoint and optionally
- * receives a reply. Unlike the ProxyHelper this works only with methods that have only one parameter.
+ * Create a dynamic proxy for a given interface and endpoint that sends the parameter object to the endpoint and
+ * optionally receives a reply. Unlike the ProxyHelper this works only with methods that have only one parameter.
  */
 @Deprecated
 public final class PojoProxyHelper {
@@ -37,6 +37,7 @@ public final class PojoProxyHelper {
         Producer producer = endpoint.createProducer();
         // ensure the producer is started
         ServiceHelper.startService(producer);
-        return (T)Proxy.newProxyInstance(ProxyHelper.getClassLoader(interfaceClasses), interfaceClasses.clone(), new PojoMessageInvocationHandler(endpoint, producer));
+        return (T) Proxy.newProxyInstance(ProxyHelper.getClassLoader(interfaceClasses), interfaceClasses.clone(),
+                new PojoMessageInvocationHandler(endpoint, producer));
     }
 }

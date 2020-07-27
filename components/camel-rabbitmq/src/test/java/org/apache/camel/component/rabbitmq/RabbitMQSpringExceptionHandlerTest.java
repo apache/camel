@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -34,7 +33,6 @@ public class RabbitMQSpringExceptionHandlerTest extends CamelSpringTestSupport {
     @EndpointInject("rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest&connectionFactoryExceptionHandler=#customExceptionHandler")
     private Endpoint foo;
 
-
     protected String getConfigLocation() {
         return "classpath:/RabbitMQSpringExceptionHandlerIntTest-context.xml";
     }
@@ -48,14 +46,16 @@ public class RabbitMQSpringExceptionHandlerTest extends CamelSpringTestSupport {
     @Test
     public void checkComponentSetsExceptionHandler() throws Exception {
         Component comp = context().getComponent("rabbitmq");
-        RabbitMQEndpoint endp = (RabbitMQEndpoint) comp.createEndpoint("rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest&connectionFactoryExceptionHandler=#customExceptionHandler");
+        RabbitMQEndpoint endp = (RabbitMQEndpoint) comp.createEndpoint(
+                "rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest&connectionFactoryExceptionHandler=#customExceptionHandler");
         assertEquals(endp.getConnectionFactoryExceptionHandler().getClass(), CustomRabbitExceptionHandler.class);
     }
 
     @Test
     public void checkComponentIgnoresExceptionHandler() throws Exception {
         Component comp = context().getComponent("rabbitmq");
-        RabbitMQEndpoint endp = (RabbitMQEndpoint) comp.createEndpoint("rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest&connectionFactoryExceptionHandler=#customExceptionHandler&connectionFactory=#customConnectionFactory");
+        RabbitMQEndpoint endp = (RabbitMQEndpoint) comp.createEndpoint(
+                "rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest&connectionFactoryExceptionHandler=#customExceptionHandler&connectionFactory=#customConnectionFactory");
         assertNotEquals(endp.getConnectionFactory().getExceptionHandler().getClass(), CustomRabbitExceptionHandler.class);
     }
 

@@ -29,8 +29,8 @@ public enum BlobOperationsDefinition {
     // Operations on the container level
     //
     /**
-     * Creates a new container within a storage account. If a container with the same name already exists,
-     * the producer will ignore it.
+     * Creates a new container within a storage account. If a container with the same name already exists, the producer
+     * will ignore it.
      */
     createBlobContainer,
     /**
@@ -55,13 +55,13 @@ public enum BlobOperationsDefinition {
     /**
      * Downloads the entire blob into a file specified by the path.
      *
-     * The file will be created and must not exist, if the file already exists a {@link FileAlreadyExistsException}
-     * will be thrown.
+     * The file will be created and must not exist, if the file already exists a {@link FileAlreadyExistsException} will
+     * be thrown.
      */
     downloadBlobToFile,
     /**
-     * Generates the download link for the specified blob using shared access signatures (SAS). This by default only limit
-     * to 1hour of allowed access. However, you can override the default expiration duration through the headers.
+     * Generates the download link for the specified blob using shared access signatures (SAS). This by default only
+     * limit to 1hour of allowed access. However, you can override the default expiration duration through the headers.
      */
     downloadLink,
     /**
@@ -72,20 +72,19 @@ public enum BlobOperationsDefinition {
     uploadBlockBlob,
     /**
      * Uploads the specified block to the block blob's "staging area" to be later committed by a call to
-     * commitBlobBlockList. However in case header `CamelAzureStorageBlobCommitBlobBlockListLater` is set to false, this will
-     * also commit the blocks.
+     * commitBlobBlockList. However in case header `CamelAzureStorageBlobCommitBlobBlockListLater` is set to false, this
+     * will also commit the blocks.
      */
     stageBlockBlobList,
     /**
-     * Writes a blob by specifying the list of block IDs that are to make up the blob. In order to be written as part
-     * of a blob, a block must have been successfully written to the server in a prior `stageBlockBlobList` operation. You can
-     * call `commitBlobBlockList` to update a blob by uploading only those blocks that have changed, then committing the new
-     * and existing blocks together. Any blocks not specified in the block list and permanently deleted.
+     * Writes a blob by specifying the list of block IDs that are to make up the blob. In order to be written as part of
+     * a blob, a block must have been successfully written to the server in a prior `stageBlockBlobList` operation. You
+     * can call `commitBlobBlockList` to update a blob by uploading only those blocks that have changed, then committing
+     * the new and existing blocks together. Any blocks not specified in the block list and permanently deleted.
      */
     commitBlobBlockList,
     /**
-     * Returns the list of blocks that have been uploaded as part of a block blob using the specified block list
-     * filter.
+     * Returns the list of blocks that have been uploaded as part of a block blob using the specified block list filter.
      */
     getBlobBlockList,
     /**
@@ -93,8 +92,9 @@ public enum BlobOperationsDefinition {
      */
     createAppendBlob,
     /**
-     * Commits a new block of data to the end of the existing append blob. In case of header `CamelAzureStorageBlobAppendBlobCreated` is set to false,
-     * it will attempt to create the appendBlob through internal call to `createAppendBlob` operation.
+     * Commits a new block of data to the end of the existing append blob. In case of header
+     * `CamelAzureStorageBlobAppendBlobCreated` is set to false, it will attempt to create the appendBlob through
+     * internal call to `createAppendBlob` operation.
      */
     commitAppendBlob,
     /**
@@ -102,8 +102,9 @@ public enum BlobOperationsDefinition {
      */
     createPageBlob,
     /**
-     * Writes one or more pages to the page blob. The write size must be a multiple of 512. In case of header `CamelAzureStorageBlobPageBlockCreated` is set to false,
-     * it will attempt to create the appendBlob through internal call to `createPageBlob` operation.
+     * Writes one or more pages to the page blob. The write size must be a multiple of 512. In case of header
+     * `CamelAzureStorageBlobPageBlockCreated` is set to false, it will attempt to create the appendBlob through
+     * internal call to `createPageBlob` operation.
      */
     uploadPageBlob,
     /**

@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
  *
  */
 public class MyCoolRoute extends RouteBuilder {
-    
+
     @Override
     public void configure() throws Exception {
         from("direct:cool").routeId("cool").to("mock:cool");

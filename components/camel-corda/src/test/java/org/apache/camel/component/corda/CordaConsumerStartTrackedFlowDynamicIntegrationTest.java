@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CordaConsumerStartTrackedFlowDynamicIntegrationTest extends CordaConsumerTestSupport {
 
-
     @Test
     public void startTrackedFlowDynamicTest() throws Exception {
         //Expects CamelFlow is deployed on the node
@@ -43,9 +42,9 @@ public class CordaConsumerStartTrackedFlowDynamicIntegrationTest extends CordaCo
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + START_TRACKED_FLOW_DYNAMIC
-                    + "&flowLociClass=#flowLociClass"
-                    + "&arguments=#arguments")
-                        .to("mock:result");
+                     + "&flowLociClass=#flowLociClass"
+                     + "&arguments=#arguments")
+                             .to("mock:result");
             }
         };
     }

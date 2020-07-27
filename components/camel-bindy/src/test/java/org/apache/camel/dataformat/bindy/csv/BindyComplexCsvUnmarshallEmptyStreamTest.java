@@ -62,8 +62,8 @@ public class BindyComplexCsvUnmarshallEmptyStreamTest {
             BindyCsvDataFormat bindyCsvDataFormat = new BindyCsvDataFormat(TYPE);
             bindyCsvDataFormat.setAllowEmptyStream(true);
             from("direct:start")
-                .unmarshal(bindyCsvDataFormat)
-                .to("mock:result");
+                    .unmarshal(bindyCsvDataFormat)
+                    .to("mock:result");
         }
     }
 }

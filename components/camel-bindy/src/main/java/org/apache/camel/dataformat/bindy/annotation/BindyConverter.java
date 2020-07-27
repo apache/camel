@@ -23,8 +23,8 @@ import java.lang.annotation.RetentionPolicy;
 import org.apache.camel.dataformat.bindy.Format;
 
 /**
- * An annotation used to identify which converter class will be used to convert
- * the String field to the attribute's data type.
+ * An annotation used to identify which converter class will be used to convert the String field to the attribute's data
+ * type.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

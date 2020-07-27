@@ -28,8 +28,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Java class for BatchInfo complex type.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -55,8 +54,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "BatchInfo", propOrder = {"id", "jobId", "state", "stateMessage", "createdDate", "systemModstamp", "numberRecordsProcessed", "numberRecordsFailed",
-                                          "totalProcessingTime", "apiActiveProcessingTime", "apexProcessingTime"})
+@XmlType(name = "BatchInfo",
+         propOrder = {
+                 "id", "jobId", "state", "stateMessage", "createdDate", "systemModstamp", "numberRecordsProcessed",
+                 "numberRecordsFailed",
+                 "totalProcessingTime", "apiActiveProcessingTime", "apexProcessingTime" })
 public class BatchInfo {
 
     @XmlElement(required = true)
@@ -152,8 +154,7 @@ public class BatchInfo {
     /**
      * Gets the value of the createdDate property.
      *
-     * @return possible object is
-     *         {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @return possible object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getCreatedDate() {
         return createdDate;
@@ -162,8 +163,7 @@ public class BatchInfo {
     /**
      * Sets the value of the createdDate property.
      *
-     * @param value allowed object is
-     *            {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @param value allowed object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public void setCreatedDate(XMLGregorianCalendar value) {
         this.createdDate = value;
@@ -172,8 +172,7 @@ public class BatchInfo {
     /**
      * Gets the value of the systemModstamp property.
      *
-     * @return possible object is
-     *         {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @return possible object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getSystemModstamp() {
         return systemModstamp;
@@ -182,8 +181,7 @@ public class BatchInfo {
     /**
      * Sets the value of the systemModstamp property.
      *
-     * @param value allowed object is
-     *            {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @param value allowed object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public void setSystemModstamp(XMLGregorianCalendar value) {
         this.systemModstamp = value;

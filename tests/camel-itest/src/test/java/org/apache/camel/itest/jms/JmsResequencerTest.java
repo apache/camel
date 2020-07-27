@@ -39,17 +39,18 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class JmsResequencerTest extends CamelTestSupport  {
-    
+public class JmsResequencerTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsResequencerTest.class);
     private ReusableBean b1 = new ReusableBean("myBean1");
     private ReusableBean b2 = new ReusableBean("myBean2");
     private ReusableBean b3 = new ReusableBean("myBean3");
-    
+
     private MockEndpoint resultEndpoint;
 
-    public void sendBodyAndHeader(String endpointUri, final Object body, final String headerName,
-                                  final Object headerValue) {
+    public void sendBodyAndHeader(
+            String endpointUri, final Object body, final String headerName,
+            final Object headerValue) {
         template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -60,17 +61,17 @@ public class JmsResequencerTest extends CamelTestSupport  {
             }
         });
     }
-    
+
     @Test
     void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         sendAndVerifyMessages("activemq:queue:batch");
     }
-    
+
     @Test
     void testSendMessageToStream() throws Exception {
         sendAndVerifyMessages("activemq:queue:stream");
     }
-        
+
     private void sendAndVerifyMessages(String endpointUri) throws Exception {
         resultEndpoint.expectedBodiesReceived("msg1", "msg2", "msg3", "msg4", "msg5", "msg6");
         sendBodyAndHeader(endpointUri, "msg4", "seqnum", 4L);
@@ -90,16 +91,16 @@ public class JmsResequencerTest extends CamelTestSupport  {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        
+
         resultEndpoint = getMockEndpoint("mock:result");
-        
+
         Object lookedUpBean = context.getRegistry().lookupByName("myBean1");
         assertSame(b1, lookedUpBean, "Lookup of 'myBean' should return same object!");
         lookedUpBean = context.getRegistry().lookupByName("myBean2");
         assertSame(b2, lookedUpBean, "Lookup of 'myBean' should return same object!");
         lookedUpBean = context.getRegistry().lookupByName("myBean3");
         assertSame(b3, lookedUpBean, "Lookup of 'myBean' should return same object!");
-       
+
     }
 
     @Override
@@ -108,31 +109,31 @@ public class JmsResequencerTest extends CamelTestSupport  {
             public void configure() {
 
                 from("activemq:queue:batch")
-                    .to(callExecuteOnBean("myBean1"))
-                    .resequence(header("seqnum"))
-                    .batch(new BatchResequencerConfig(100, 2000L))
-                    .to(callExecuteOnBean("myBean2"))
-                    .to("activemq:queue:stop");
-                
+                        .to(callExecuteOnBean("myBean1"))
+                        .resequence(header("seqnum"))
+                        .batch(new BatchResequencerConfig(100, 2000L))
+                        .to(callExecuteOnBean("myBean2"))
+                        .to("activemq:queue:stop");
+
                 from("activemq:queue:stream")
-                    .to(callExecuteOnBean("myBean1"))
-                    .resequence(header("seqnum"))
-                    .stream()
-                    .to(callExecuteOnBean("myBean2"))
-                    .to("activemq:queue:stop");
+                        .to(callExecuteOnBean("myBean1"))
+                        .resequence(header("seqnum"))
+                        .stream()
+                        .to(callExecuteOnBean("myBean2"))
+                        .to("activemq:queue:stop");
 
                 from("activemq:queue:stop")
-                    .to(callExecuteOnBean("myBean3"))
-                    .to("mock:result");
+                        .to(callExecuteOnBean("myBean3"))
+                        .to("mock:result");
 
             }
         };
     }
-    
+
     private static String callExecuteOnBean(String beanName) {
         return "bean:" + beanName + "?method=execute";
     }
-    
+
     public class ReusableBean {
         public String body;
         private String name;

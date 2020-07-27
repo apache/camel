@@ -48,7 +48,8 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("throwExceptionOnFailure", "false");
+                restConfiguration().component("jetty").host("localhost").port(getPort())
+                        .endpointProperty("throwExceptionOnFailure", "false");
 
                 from("direct:start").to("rest:get:users/{id}/basic");
 

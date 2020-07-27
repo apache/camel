@@ -83,14 +83,14 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?delay=1000&noop=true")
-                    .setHeader("foo", constant("bar"))
-                    .aggregate(tar)
+                        .setHeader("foo", constant("bar"))
+                        .aggregate(tar)
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
-                    .to("file:target/out")
-                    .to("mock:aggregateToTarEntry")
-                    .log("Done processing tar file: ${header.CamelFileName}");
+                        .to("file:target/out")
+                        .to("mock:aggregateToTarEntry")
+                        .log("Done processing tar file: ${header.CamelFileName}");
             }
         };
 

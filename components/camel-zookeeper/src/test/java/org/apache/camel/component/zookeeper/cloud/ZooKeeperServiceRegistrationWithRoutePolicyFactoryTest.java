@@ -36,10 +36,10 @@ public class ZooKeeperServiceRegistrationWithRoutePolicyFactoryTest extends ZooK
             @Override
             public void configure() throws Exception {
                 fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
-                    .routeId(SERVICE_ID)
-                    .routeGroup(SERVICE_NAME)
-                    .noAutoStartup()
-                    .to("log:service-registry?level=INFO");
+                        .routeId(SERVICE_ID)
+                        .routeGroup(SERVICE_NAME)
+                        .noAutoStartup()
+                        .to("log:service-registry?level=INFO");
             }
         };
     }

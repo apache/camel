@@ -45,7 +45,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
     private String endpointPath;
     private Set<String> extendedAttributes;
 
-    public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations, GenericFileProcessStrategy<File> processStrategy) {
+    public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations,
+                        GenericFileProcessStrategy<File> processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
 
@@ -100,12 +101,14 @@ public class FileConsumer extends GenericFileConsumer<File> {
             // trace log as Windows/Unix can have different views what the file
             // is?
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(), file.isDirectory(), file.isFile(),
-                          file.isHidden());
+                LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
+                        file.isDirectory(), file.isFile(),
+                        file.isHidden());
             }
 
             // creates a generic file
-            GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
+            GenericFile<File> gf
+                    = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
@@ -181,12 +184,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
     /**
      * Creates a new GenericFile<File> based on the given file.
      *
-     * @param endpointPath the starting directory the endpoint was configured
-     *            with
-     * @param file the source file
-     * @param probeContentType whether to probe the content type of the file or
-     *            not
-     * @return wrapped as a GenericFile
+     * @param  endpointPath     the starting directory the endpoint was configured with
+     * @param  file             the source file
+     * @param  probeContentType whether to probe the content type of the file or not
+     * @return                  wrapped as a GenericFile
      */
     public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
         GenericFile<File> answer = new GenericFile<>(probeContentType);
@@ -255,7 +256,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
 
     @Override
     public FileEndpoint getEndpoint() {
-        return (FileEndpoint)super.getEndpoint();
+        return (FileEndpoint) super.getEndpoint();
     }
 
     private boolean fileHasMoved(GenericFile<File> file) {

@@ -23,27 +23,28 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SWFComponentConfigurationTest extends CamelTestSupport {
-    
+
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         SWFComponent component = context.getComponent("aws-swf", SWFComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        SWFEndpoint endpoint = (SWFEndpoint)component.createEndpoint("aws-swf://workflow");
-        
+        SWFEndpoint endpoint = (SWFEndpoint) component.createEndpoint("aws-swf://workflow");
+
         assertEquals("workflow", endpoint.getConfiguration().getType());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         SWFComponent component = context.getComponent("aws-swf", SWFComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
-        SWFEndpoint endpoint = (SWFEndpoint)component.createEndpoint("aws-swf://workflow?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+        SWFEndpoint endpoint = (SWFEndpoint) component
+                .createEndpoint("aws-swf://workflow?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+
         assertEquals("workflow", endpoint.getConfiguration().getType());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

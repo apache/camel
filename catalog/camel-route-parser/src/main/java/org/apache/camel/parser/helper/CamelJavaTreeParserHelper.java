@@ -65,8 +65,9 @@ public final class CamelJavaTreeParserHelper {
 
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
-    public List<CamelNodeDetails> parseCamelRouteTree(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-                                                      MethodSource<JavaClassSource> configureMethod) {
+    public List<CamelNodeDetails> parseCamelRouteTree(
+            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            MethodSource<JavaClassSource> configureMethod) {
 
         // find any from which is the start of the route
         CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
@@ -208,9 +209,10 @@ public final class CamelJavaTreeParserHelper {
         }
     }
 
-    private void parseExpression(CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
-                                 JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
-                                 Expression exp, CamelNodeDetails node) {
+    private void parseExpression(
+            CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
+            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+            Expression exp, CamelNodeDetails node) {
         if (exp == null) {
             return;
         }
@@ -223,13 +225,15 @@ public final class CamelJavaTreeParserHelper {
         }
     }
 
-    private CamelNodeDetails doParseCamelModels(CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
-                                                JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
-                                                MethodInvocation mi, CamelNodeDetails node) {
+    private CamelNodeDetails doParseCamelModels(
+            CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
+            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+            MethodInvocation mi, CamelNodeDetails node) {
         String name = mi.getName().getIdentifier();
 
         // special for Java DSL having some endXXX
-        boolean isEnd = "end".equals(name) || "endChoice".equals(name) || "endDoTry".equals(name) || "endHystrix".equals(name) || "endParent".equals(name) || "endRest".equals(name);
+        boolean isEnd = "end".equals(name) || "endChoice".equals(name) || "endDoTry".equals(name) || "endHystrix".equals(name)
+                || "endParent".equals(name) || "endRest".equals(name);
         boolean isRoute = "route".equals(name) || "from".equals(name) || "routeId".equals(name);
         // must be an eip model that has either input or output as we only want to track processors (also accept from)
         boolean isEip = camelCatalog.findModelNames().contains(name) && (hasInput(name) || hasOutput(name));
@@ -371,7 +375,8 @@ public final class CamelJavaTreeParserHelper {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
                     for (Annotation ann : field.getAnnotations()) {
-                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName()) || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
+                                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
                         if (valid) {
                             Expression exp = (Expression) ann.getInternal();
                             if (exp instanceof SingleMemberAnnotation) {
@@ -432,7 +437,8 @@ public final class CamelJavaTreeParserHelper {
                 String val2 = getLiteralValue(clazz, block, ie.getRightOperand());
 
                 // if numeric then we plus the values, otherwise we string concat
-                boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand()) && isNumericOperator(clazz, block, ie.getRightOperand());
+                boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand())
+                        && isNumericOperator(clazz, block, ie.getRightOperand());
                 if (numeric) {
                     long num1 = val1 != null ? Long.parseLong(val1) : 0;
                     long num2 = val2 != null ? Long.parseLong(val2) : 0;

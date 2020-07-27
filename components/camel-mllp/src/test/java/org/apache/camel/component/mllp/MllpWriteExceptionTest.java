@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpWriteExceptionTest extends MllpExceptionTestSupport {
     static final String TEST_EXCEPTION_MESSAGE = "Write Exception Message";

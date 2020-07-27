@@ -27,11 +27,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A {@link java.util.concurrent.CompletionService} that orders the completed tasks
- * in the same order as they where submitted.
+ * A {@link java.util.concurrent.CompletionService} that orders the completed tasks in the same order as they where
+ * submitted.
  */
 public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
-    
+
     private final Executor executor;
 
     // the idea to order the completed task in the same order as they where submitted is to leverage
@@ -153,8 +153,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
     }
 
     /**
-     * Marks the current task as timeout, which allows you to poll the next
-     * tasks which may already have been completed.
+     * Marks the current task as timeout, which allows you to poll the next tasks which may already have been completed.
      */
     public void timeoutTask() {
         index.incrementAndGet();

@@ -25,25 +25,25 @@ import org.junit.jupiter.api.Test;
 public class TracingClientRecipientListRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("a: log").setOperation("a-log-1")
-            .setParentId(1),
-        new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(8),
-        new SpanTestData().setLabel("b: log").setOperation("b-log-2")
-            .setParentId(4),
-        new SpanTestData().setLabel("b: delay").setOperation("b-delay-1")
-            .setParentId(4),
-        new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(8),
-        new SpanTestData().setLabel("c: log").setOperation("c-log-3")
-            .setParentId(7),
-        new SpanTestData().setLabel("c: delay").setOperation("c-delay-2")
-            .setParentId(7),
-        new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setParentId(8),
-        new SpanTestData().setLabel("a: recipientList").setOperation("direct-recipientList-1")
-            .setParentId(9),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("a: log").setOperation("a-log-1")
+                    .setParentId(1),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(8),
+            new SpanTestData().setLabel("b: log").setOperation("b-log-2")
+                    .setParentId(4),
+            new SpanTestData().setLabel("b: delay").setOperation("b-delay-1")
+                    .setParentId(4),
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(8),
+            new SpanTestData().setLabel("c: log").setOperation("c-log-3")
+                    .setParentId(7),
+            new SpanTestData().setLabel("c: delay").setOperation("c-delay-2")
+                    .setParentId(7),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(8),
+            new SpanTestData().setLabel("a: recipientList").setOperation("direct-recipientList-1")
+                    .setParentId(9),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public TracingClientRecipientListRouteTest() {
@@ -62,18 +62,19 @@ public class TracingClientRecipientListRouteTest extends CamelOpenTracingTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").recipientList(constant("seda:a,seda:b,seda:c")).id("direct-recipientList-1").routeId("start");
+                from("direct:start").recipientList(constant("seda:a,seda:b,seda:c")).id("direct-recipientList-1")
+                        .routeId("start");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}").id("a-log-1");
+                        .log("routing at ${routeId}").id("a-log-1");
 
                 from("seda:b").routeId("b")
-                    .log("routing at ${routeId}").id("b-log-2")
-                    .delay(simple("${random(1000,2000)}")).id("b-delay-1");
+                        .log("routing at ${routeId}").id("b-log-2")
+                        .delay(simple("${random(1000,2000)}")).id("b-delay-1");
 
                 from("seda:c").routeId("c")
-                    .log("routing at ${routeId}").id("c-log-3")
-                    .delay(simple("${random(0,100)}")).id("c-delay-2");
+                        .log("routing at ${routeId}").id("c-log-3")
+                        .delay(simple("${random(0,100)}")).id("c-delay-2");
             }
         };
     }

@@ -88,7 +88,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.process(exchange);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
@@ -120,7 +121,8 @@ public class WebsocketProducerTest {
             // expected
         }
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
@@ -147,7 +149,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.process(exchange);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(inMessage, times(1)).getMandatoryBody();
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL, false, Boolean.class);
@@ -195,7 +198,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.sendMessage(defaultWebsocket1, MESSAGE);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
@@ -210,7 +214,8 @@ public class WebsocketProducerTest {
 
         websocketProducer.sendMessage(defaultWebsocket1, MESSAGE);
 
-        InOrder inOrder = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
+        InOrder inOrder
+                = inOrder(endpoint, store, session, defaultWebsocket1, defaultWebsocket2, exchange, inMessage, remoteEndpoint);
         inOrder.verify(defaultWebsocket1, times(1)).getSession();
         inOrder.verify(session, times(1)).isOpen();
         inOrder.verifyNoMoreInteractions();

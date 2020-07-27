@@ -122,24 +122,24 @@ public class JCacheManager<K, V> implements Closeable {
             }
 
             provider = ObjectHelper.isNotEmpty(jcacheProvider.className())
-                ? Caching.getCachingProvider(jcacheProvider.className())
-                : Caching.getCachingProvider();
+                    ? Caching.getCachingProvider(jcacheProvider.className())
+                    : Caching.getCachingProvider();
 
             manager = provider.getCacheManager(
-                ObjectHelper.isNotEmpty(uri) ? URI.create(uri) : null,
-                null,
-                configuration.getCacheConfigurationProperties());
+                    ObjectHelper.isNotEmpty(uri) ? URI.create(uri) : null,
+                    null,
+                    configuration.getCacheConfigurationProperties());
 
             cache = manager.getCache(cacheName);
             if (cache == null) {
                 if (!configuration.isCreateCacheIfNotExists()) {
                     throw new IllegalStateException(
-                        "Cache " + cacheName + " does not exist and should not be created (createCacheIfNotExists=false)");
+                            "Cache " + cacheName + " does not exist and should not be created (createCacheIfNotExists=false)");
                 }
 
                 cache = manager.createCache(
-                    cacheName,
-                    getOrCreateCacheConfiguration());
+                        cacheName,
+                        getOrCreateCacheConfiguration());
             }
         }
 

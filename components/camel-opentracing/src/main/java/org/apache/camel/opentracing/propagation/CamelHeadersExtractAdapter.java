@@ -27,8 +27,8 @@ public final class CamelHeadersExtractAdapter implements TextMap {
 
     public CamelHeadersExtractAdapter(final Map<String, Object> map) {
         // Extract string valued map entries
-        map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e ->
-            this.map.put(e.getKey(), (String) e.getValue()));
+        map.entrySet().stream().filter(e -> e.getValue() instanceof String)
+                .forEach(e -> this.map.put(e.getKey(), (String) e.getValue()));
     }
 
     @Override

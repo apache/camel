@@ -50,7 +50,8 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     private final Predicate predicate;
     private final boolean copy;
 
-    public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate, boolean copy) {
+    public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate,
+                         boolean copy) {
         super(processor);
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
@@ -151,9 +152,9 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     /**
      * Prepares the exchange for the next iteration
      *
-     * @param exchange the exchange
-     * @param index the index of the next iteration
-     * @return the exchange to use
+     * @param  exchange the exchange
+     * @param  index    the index of the next iteration
+     * @return          the exchange to use
      */
     protected Exchange prepareExchange(Exchange exchange, int index) {
         if (copy) {

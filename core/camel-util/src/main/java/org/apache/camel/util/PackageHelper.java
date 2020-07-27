@@ -30,14 +30,16 @@ public final class PackageHelper {
     }
 
     /**
-     * Returns true if the version number of the given package name can be found and is greater than or equal to the minimum version.
+     * Returns true if the version number of the given package name can be found and is greater than or equal to the
+     * minimum version.
      *
-     * For package names which include multiple dots, dots after the leftmost are removed. So for example a spring version of 2.5.1 
-     * is converted to 2.51 so you can assert that it's >= 2.51 (so above 2.50 and less than 2.52 etc).
+     * For package names which include multiple dots, dots after the leftmost are removed. So for example a spring
+     * version of 2.5.1 is converted to 2.51 so you can assert that it's >= 2.51 (so above 2.50 and less than 2.52 etc).
      *
-     * @param packageName the Java package name to compare
-     * @param minimumVersion the minimum version number
-     * @return true if the package name can be determined and if it's greater than or equal to the minimum value
+     * @param  packageName    the Java package name to compare
+     * @param  minimumVersion the minimum version number
+     * @return                true if the package name can be determined and if it's greater than or equal to the
+     *                        minimum value
      */
     public static boolean isValidVersion(String packageName, double minimumVersion) {
         try {

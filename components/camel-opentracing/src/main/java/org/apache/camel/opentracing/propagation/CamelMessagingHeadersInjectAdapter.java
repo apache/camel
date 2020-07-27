@@ -53,8 +53,7 @@ public final class CamelMessagingHeadersInjectAdapter implements TextMap {
     }
 
     /**
-     * Encode all dashes because JMS specification doesn't allow them in
-     * property name
+     * Encode all dashes because JMS specification doesn't allow them in property name
      */
     private String encodeDash(String key) {
         if (key == null || key.isEmpty() || !jmsEncoding) {

@@ -213,12 +213,14 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:createAndRun").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
+                from("direct:createAndRun")
+                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
                 from("direct:stop").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
                 from("direct:start").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
                 from("direct:terminate").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
                 from("direct:describe").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstances");
-                from("direct:describeStatus").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstancesStatus");
+                from("direct:describeStatus")
+                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstancesStatus");
                 from("direct:reboot").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=rebootInstances");
                 from("direct:monitor").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=monitorInstances");
                 from("direct:unmonitor").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=unmonitorInstances");

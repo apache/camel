@@ -56,14 +56,14 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
         long startFileDeletionCheckTime = System.currentTimeMillis();
         boolean fileExists = true;
         while (System.currentTimeMillis() - startFileDeletionCheckTime < 3000) { // wait
-                                                                                 // up
-                                                                                 // to
-                                                                                 // 3000ms
-                                                                                 // for
-                                                                                 // file
-                                                                                 // to
-                                                                                 // be
-                                                                                 // deleted
+                                                                                // up
+                                                                                // to
+                                                                                // 3000ms
+                                                                                // for
+                                                                                // file
+                                                                                // to
+                                                                                // be
+                                                                                // deleted
             File file = new File(FTP_ROOT_DIR + "/poll/hello.txt");
             fileExists = file.exists();
 
@@ -81,7 +81,8 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:trigger").pollEnrich("ftp://admin@localhost:" + getPort() + "/poll?password=admin&delete=true").routeId("foo").to("mock:result");
+                from("vm:trigger").pollEnrich("ftp://admin@localhost:" + getPort() + "/poll?password=admin&delete=true")
+                        .routeId("foo").to("mock:result");
             }
         };
     }

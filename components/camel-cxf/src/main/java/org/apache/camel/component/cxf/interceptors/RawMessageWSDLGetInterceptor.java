@@ -49,15 +49,15 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
 
     @Override
     public void handleMessage(Message message) throws Fault {
-        String method = (String)message.get(Message.HTTP_REQUEST_METHOD);
-        String query = (String)message.get(Message.QUERY_STRING);
+        String method = (String) message.get(Message.HTTP_REQUEST_METHOD);
+        String query = (String) message.get(Message.QUERY_STRING);
 
         if (!"GET".equals(method) || StringUtils.isEmpty(query)) {
             return;
         }
 
-        String baseUri = (String)message.get(Message.REQUEST_URL);
-        String ctx = (String)message.get(Message.PATH_INFO);
+        String baseUri = (String) message.get(Message.REQUEST_URL);
+        String ctx = (String) message.get(Message.PATH_INFO);
 
         Map<String, String> map = UrlUtils.parseQueryString(query);
         if (isRecognizedQuery(map, baseUri, ctx, message.getExchange().getEndpoint().getEndpointInfo())) {
@@ -76,9 +76,9 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
             while (iterator.hasNext()) {
                 Interceptor<? extends Message> inInterceptor = iterator.next();
                 if (inInterceptor instanceof AbstractPhaseInterceptor) {
-                    AbstractPhaseInterceptor<?> interceptor = (AbstractPhaseInterceptor<?>)inInterceptor;
+                    AbstractPhaseInterceptor<?> interceptor = (AbstractPhaseInterceptor<?>) inInterceptor;
                     if (interceptor.getPhase().equals(Phase.PREPARE_SEND)
-                        || interceptor.getPhase().equals(Phase.PRE_STREAM)) {
+                            || interceptor.getPhase().equals(Phase.PRE_STREAM)) {
                         // just make sure we keep the right interceptors
                         continue;
                     }
@@ -109,8 +109,9 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
         }
     }
 
-    private boolean isRecognizedQuery(Map<String, String> map, String baseUri, String ctx,
-                                      EndpointInfo endpointInfo) {
+    private boolean isRecognizedQuery(
+            Map<String, String> map, String baseUri, String ctx,
+            EndpointInfo endpointInfo) {
 
         if (map.containsKey("wsdl") || map.containsKey("xsd")) {
             return true;

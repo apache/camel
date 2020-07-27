@@ -43,16 +43,18 @@ public interface MavenArtifactProvider {
     void addMavenRepository(String name, String url);
 
     /**
-     * Downloads the artifact using the Maven coordinates and scans the JAR for Camel components
-     * which will be added to the CamelCatalog.
+     * Downloads the artifact using the Maven coordinates and scans the JAR for Camel components which will be added to
+     * the CamelCatalog.
      *
-     * @param camelCatalog          The Camel Catalog
-     * @param groupId               Maven group id
-     * @param artifactId            Maven artifact id
-     * @param version               Maven version
-     * @return the names of the components that was added, or an empty set if none found or they already exists in the catalog
+     * @param  camelCatalog The Camel Catalog
+     * @param  groupId      Maven group id
+     * @param  artifactId   Maven artifact id
+     * @param  version      Maven version
+     * @return              the names of the components that was added, or an empty set if none found or they already
+     *                      exists in the catalog
      */
-    Set<String> addArtifactToCatalog(CamelCatalog camelCatalog,
-                                     String groupId, String artifactId, String version);
+    Set<String> addArtifactToCatalog(
+            CamelCatalog camelCatalog,
+            String groupId, String artifactId, String version);
 
 }

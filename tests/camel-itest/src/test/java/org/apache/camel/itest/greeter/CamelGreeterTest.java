@@ -43,16 +43,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration
 public class CamelGreeterTest {
     private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
-    
+
     private static Endpoint endpoint;
-    
+
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("CamelGreeterTest.port", Integer.toString(port));
     }
-    
+
     @Autowired
     protected CamelContext camelContext;
 

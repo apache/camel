@@ -125,9 +125,11 @@ public class Meta {
 
     @Override
     public String toString() {
-        return "Meta [feedDesc=" + feedDesc + ", currentUserId=" + currentUserId + ", requestedPollInterval=" + requestedPollInterval + ", olderAvailable=" + olderAvailable + ", followedReferences="
-                + followedReferences + ", ymodules=" + ymodules + ", likedMessageIds=" + likedMessageIds + ", feedName=" + feedName + ", realtime=" + realtime + ", directFromBody=" + directFromBody
-                + "]";
+        return "Meta [feedDesc=" + feedDesc + ", currentUserId=" + currentUserId + ", requestedPollInterval="
+               + requestedPollInterval + ", olderAvailable=" + olderAvailable + ", followedReferences="
+               + followedReferences + ", ymodules=" + ymodules + ", likedMessageIds=" + likedMessageIds + ", feedName="
+               + feedName + ", realtime=" + realtime + ", directFromBody=" + directFromBody
+               + "]";
     }
 
 }

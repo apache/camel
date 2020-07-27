@@ -82,12 +82,12 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending
                 // the response to the mock
                 from("direct:start").log("Aggregator received ${body}")
-                    // aggregated all use same expression and group the
-                    // exchanges so we get one single exchange containing all
-                    // the others
-                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2)
-                    // wait for 0.5 seconds to aggregate
-                    .completionTimeout(500L).to("mock:result");
+                        // aggregated all use same expression and group the
+                        // exchanges so we get one single exchange containing all
+                        // the others
+                        .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2)
+                        // wait for 0.5 seconds to aggregate
+                        .completionTimeout(500L).to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -143,7 +143,8 @@ public class BeanInfoTest {
         return info;
     }
 
-    protected void assertMethodPattern(BeanInfo info, String methodName, ExchangePattern expectedPattern) throws NoSuchMethodException {
+    protected void assertMethodPattern(BeanInfo info, String methodName, ExchangePattern expectedPattern)
+            throws NoSuchMethodException {
         Class<?> type = info.getType();
         Method method = type.getMethod(methodName);
         assertNotNull(method, "Could not find method: " + methodName);
@@ -225,7 +226,8 @@ public class BeanInfoTest {
         }
     }
 
-    public class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod implements IMethodInterface {
+    public class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod
+            implements IMethodInterface {
     }
 
 }

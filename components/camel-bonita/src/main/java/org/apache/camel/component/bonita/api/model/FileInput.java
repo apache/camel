@@ -27,7 +27,7 @@ public class FileInput implements Serializable {
         this.filename = filename;
         this.content = content;
     }
-    
+
     public String getFilename() {
         return filename;
     }
@@ -43,7 +43,5 @@ public class FileInput implements Serializable {
     public void setContent(byte[] content) {
         this.content = content;
     }
-
-    
 
 }

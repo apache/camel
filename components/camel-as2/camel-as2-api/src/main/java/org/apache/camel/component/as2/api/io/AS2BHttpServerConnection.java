@@ -54,7 +54,7 @@ public class AS2BHttpServerConnection extends DefaultBHttpServerConnection {
                                     HttpMessageParserFactory<HttpRequest> requestParserFactory,
                                     HttpMessageWriterFactory<HttpResponse> responseWriterFactory) {
         super(buffersize, fragmentSizeHint, chardecoder, charencoder, constraints, incomingContentStrategy,
-                outgoingContentStrategy, requestParserFactory, responseWriterFactory);
+              outgoingContentStrategy, requestParserFactory, responseWriterFactory);
     }
 
     @Override

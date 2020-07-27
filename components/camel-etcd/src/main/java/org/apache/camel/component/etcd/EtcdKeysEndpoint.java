@@ -26,11 +26,11 @@ import org.apache.camel.spi.UriEndpoint;
  * Get, set or delete keys in etcd key-value store.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-keys", title = "Etcd Keys", producerOnly = true,
-        syntax = "etcd-keys:path", category = {Category.CLUSTERING, Category.DATABASE})
+             syntax = "etcd-keys:path", category = { Category.CLUSTERING, Category.DATABASE })
 public class EtcdKeysEndpoint extends AbstractEtcdEndpoint {
 
     public EtcdKeysEndpoint(
-            String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
+                            String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
         super(uri, component, configuration, path);
     }
 

@@ -32,9 +32,11 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
     public void createProducerMinimalConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:report:/ISU_Camel/Custom_Report_Employees?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&reportFormat=json");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint("workday:report:/ISU_Camel/Custom_Report_Employees?" + "host=impl.workday.com" + "&tenant=camel"
+                                + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&reportFormat=json");
 
         WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
 
@@ -53,9 +55,11 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
 
         try {
 
-            WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-                .createEndpoint("workday:report:/ISU_Camel/Custom_Report_Employees?" + "tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
+            WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                    .createEndpoint("workday:report:/ISU_Camel/Custom_Report_Employees?" + "tenant=camel"
+                                    + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                    + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                    + "&format=json");
         } catch (Exception exception) {
 
             assertEquals(exception.getClass(), IllegalArgumentException.class);
@@ -70,13 +74,16 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
     public void createProducerUrlValidation() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:report:/ISU_Camel/Custom_Report_Employees?" + "host=camel.myworkday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&param=test1");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint("workday:report:/ISU_Camel/Custom_Report_Employees?" + "host=camel.myworkday.com"
+                                + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&param=test1");
 
         WorkdayReportProducer workdayProducer = new WorkdayReportProducer(workdayEndpoint);
         String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
 
-        assertEquals(workdayUri, "https://camel.myworkday.com/ccx/service/customreport2/camel/ISU_Camel/Custom_Report_Employees?param=test1&format=json");
+        assertEquals(workdayUri,
+                "https://camel.myworkday.com/ccx/service/customreport2/camel/ISU_Camel/Custom_Report_Employees?param=test1&format=json");
     }
 }

@@ -62,45 +62,46 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/bar").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketListener() {
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
 
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket webSocket, int i, String s) {
+                            @Override
+                            public void onClose(WebSocket webSocket, int i, String s) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                t.printStackTrace();
+                            }
 
-                    @Override
-                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                        received.add(payload);
-                        log.info("received --> " + payload);
-                        latch.countDown();
-                    }
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                                received.add(payload);
+                                log.info("received --> " + payload);
+                                latch.countDown();
+                            }
 
-                    @Override
-                    public void onPingFrame(byte[] payload) {
+                            @Override
+                            public void onPingFrame(byte[] payload) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onPongFrame(byte[] payload) {
+                            @Override
+                            public void onPongFrame(byte[] payload) {
 
-                    }
-                }).build()).get();
+                            }
+                        }).build())
+                .get();
 
         websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -152,7 +153,8 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
                             @Override
                             public void onPongFrame(byte[] payload) {
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         websocket.sendTextFrame("wine");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -171,11 +173,11 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setMinThreads(1);
                 websocketComponent.setMaxThreads(25);
-                
+
                 from("websocket://localhost:" + port + "/bar")
-                    .log(">>> Message received from BAR WebSocket Client : ${body}")
-                    .transform().simple("The bar has ${body}")
-                    .to("websocket://localhost:" + port + "/bar");
+                        .log(">>> Message received from BAR WebSocket Client : ${body}")
+                        .transform().simple("The bar has ${body}")
+                        .to("websocket://localhost:" + port + "/bar");
 
                 from("websocket://localhost:" + port + "/pub")
                         .log(">>> Message received from PUB WebSocket Client : ${body}")

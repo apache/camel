@@ -62,11 +62,11 @@ public class CryptoCmsComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception { // NOPMD
-                                                                                                                       // called
-                                                                                                                       // method
-                                                                                                                       // setProperties
-                                                                                                                       // throws
-                                                                                                                       // Exception
+                                                                                                                      // called
+                                                                                                                      // method
+                                                                                                                      // setProperties
+                                                                                                                      // throws
+                                                                                                                      // Exception
         ObjectHelper.notNull(getCamelContext(), "CamelContext");
 
         String scheme;
@@ -77,10 +77,11 @@ public class CryptoCmsComponent extends DefaultComponent {
             name = u.getPath();
         } catch (Exception e) {
             throw new MalformedURLException(// NOPMD -- the stack trace does not
-                                            // help in this case.
-                                            String.format("An invalid crypto-cms uri was provided '%s'."
-                                                          + " Check that the uri matches the format crypto-cms:sign://<name>, crypto-cms:verify://<name>, "
-                                                          + "crypto-cms:encrypt://<name>, or crypto-cms:decrpyt://<name>", uri));
+                    // help in this case.
+                    String.format("An invalid crypto-cms uri was provided '%s'."
+                                  + " Check that the uri matches the format crypto-cms:sign://<name>, crypto-cms:verify://<name>, "
+                                  + "crypto-cms:encrypt://<name>, or crypto-cms:decrpyt://<name>",
+                            uri));
         }
         Processor processor;
         CryptoOperation operation;
@@ -111,7 +112,8 @@ public class CryptoCmsComponent extends DefaultComponent {
             setProperties(config, parameters);
             processor = new EnvelopedDataDecryptor(config);
         } else {
-            String error = "Endpoint uri " + uri + " is wrong configured. Operation " + scheme + " is not supported. Supported operations are: sign, verify, encrypt, decrypt";
+            String error = "Endpoint uri " + uri + " is wrong configured. Operation " + scheme
+                           + " is not supported. Supported operations are: sign, verify, encrypt, decrypt";
             LOG.error(error);
             throw new IllegalStateException(error);
         }
@@ -122,8 +124,8 @@ public class CryptoCmsComponent extends DefaultComponent {
     }
 
     /**
-     * To configure the shared SignedDataVerifierConfiguration, which determines
-     * the uri parameters for the verify operation.
+     * To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify
+     * operation.
      */
     public void setSignedDataVerifierConfiguration(SignedDataVerifierConfiguration signedDataVerifierConfiguration) {
         this.signedDataVerifierConfiguration = signedDataVerifierConfiguration;
@@ -144,10 +146,11 @@ public class CryptoCmsComponent extends DefaultComponent {
     }
 
     /**
-     * To configure the shared EnvelopedDataDecryptorConfiguration, which
-     * determines the uri parameters for the decrypt operation.
+     * To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt
+     * operation.
      */
-    public void setEnvelopedDataDecryptorConfiguration(EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
+    public void setEnvelopedDataDecryptorConfiguration(
+            EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
         this.envelopedDataDecryptorConfiguration = envelopedDataDecryptorConfiguration;
     }
 

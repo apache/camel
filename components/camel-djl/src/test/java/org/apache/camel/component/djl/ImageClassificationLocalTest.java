@@ -71,7 +71,8 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
                         .process(exchange -> {
                             String filename = exchange.getIn().getHeader("CamelFileName", String.class);
                             Map<String, Float> result = exchange.getIn().getBody(Map.class);
-                            String max = Collections.max(result.entrySet(), Comparator.comparingDouble(Map.Entry::getValue)).getKey();
+                            String max = Collections.max(result.entrySet(), Comparator.comparingDouble(Map.Entry::getValue))
+                                    .getKey();
                             exchange.getIn().setBody(filename.startsWith(max));
                         })
                         .log("${header.CamelFileName} = ${body}")
@@ -83,7 +84,7 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
     private void loadLocalModel() throws IOException, MalformedModelException, TranslateException {
         // create deep learning model
         Model model = Model.newInstance();
-        model.setBlock(new Mlp(28 * 28, 10, new int[]{128, 64}));
+        model.setBlock(new Mlp(28 * 28, 10, new int[] { 128, 64 }));
         model.load(Paths.get(MODEL_DIR), MODEL_NAME);
         // create translator for pre-processing and postprocessing
         ImageClassificationTranslator.Builder builder = ImageClassificationTranslator.builder();

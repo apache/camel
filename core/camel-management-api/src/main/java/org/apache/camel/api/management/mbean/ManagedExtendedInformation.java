@@ -19,8 +19,8 @@ package org.apache.camel.api.management.mbean;
 import javax.management.openmbean.TabularData;
 
 /**
- * Additional information gathered if {@link org.apache.camel.ManagementStatisticsLevel} is configured to
- * be {@link org.apache.camel.ManagementStatisticsLevel#Extended}.
+ * Additional information gathered if {@link org.apache.camel.ManagementStatisticsLevel} is configured to be
+ * {@link org.apache.camel.ManagementStatisticsLevel#Extended}.
  */
 public interface ManagedExtendedInformation {
 

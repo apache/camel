@@ -32,11 +32,11 @@ import org.slf4j.LoggerFactory;
 
 public class CommitConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
-    
+
     private CommitService commitService;
-    
+
     private List<String> commitHashes = new ArrayList<>();
-    
+
     public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName) throws Exception {
         super(endpoint, processor);
 
@@ -49,7 +49,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             commitService = new CommitService();
         }
         initService(commitService);
-        
+
         LOG.info("GitHub CommitConsumer: Indexing current commits...");
         List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
         for (RepositoryCommit commit : commits) {
@@ -68,7 +68,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
                 commitHashes.add(commit.getSha());
             }
         }
-        
+
         while (!newCommits.empty()) {
             RepositoryCommit newCommit = newCommits.pop();
             Exchange e = getEndpoint().createExchange();

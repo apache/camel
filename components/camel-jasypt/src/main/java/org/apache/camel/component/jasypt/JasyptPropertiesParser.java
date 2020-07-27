@@ -39,7 +39,8 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     public static final String JASYPT_PREFIX_TOKEN = "ENC(";
     public static final String JASYPT_SUFFIX_TOKEN = ")";
 
-    private static final String JASYPT_REGEX = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
+    private static final String JASYPT_REGEX
+            = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
     private static final Pattern PATTERN = Pattern.compile(JASYPT_REGEX);
 
     private StringEncryptor encryptor;

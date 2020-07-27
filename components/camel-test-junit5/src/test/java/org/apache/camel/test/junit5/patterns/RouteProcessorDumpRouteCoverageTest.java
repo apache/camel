@@ -53,7 +53,8 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
     public static void checkDumpFilesCreatedAfterTests() {
         // should create that file when test is done
         assertFileExists("target/camel-route-coverage/RouteProcessorDumpRouteCoverageTest-testProcessorJunit5.xml");
-        assertFileExists("target/camel-route-coverage/RouteProcessorDumpRouteCoverageTest-testProcessorJunit5WithTestParameterInjection.xml");
+        assertFileExists(
+                "target/camel-route-coverage/RouteProcessorDumpRouteCoverageTest-testProcessorJunit5WithTestParameterInjection.xml");
     }
 
     @Override

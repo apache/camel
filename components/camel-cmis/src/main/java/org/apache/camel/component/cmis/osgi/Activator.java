@@ -30,7 +30,7 @@ public class Activator implements BundleActivator {
     public void start(BundleContext context) throws Exception {
         // get the reference of SessionFactory service
         reference = context.getServiceReference(SessionFactory.class.getName());
-        SessionFactory sessionFactory = (SessionFactory)context.getService(reference);
+        SessionFactory sessionFactory = (SessionFactory) context.getService(reference);
         SessionFactoryLocator.setSessionFactory(sessionFactory);
     }
 

@@ -24,5 +24,5 @@ public final class ApnsConstants {
 
     private ApnsConstants() {
     }
-    
+
 }

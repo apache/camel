@@ -29,7 +29,7 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertNotNull(endpoint.getConfiguration().getAmazonS3Client());
@@ -46,7 +46,7 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
 
         S3Component component = context.getComponent("aws-s3", S3Component.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-s3://MyBucket"));
+                () -> component.createEndpoint("aws-s3://MyBucket"));
     }
 
     @Test
@@ -54,18 +54,19 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&autoDiscoverClient=false");
+        S3Endpoint endpoint = (S3Endpoint) component
+                .createEndpoint("aws-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&autoDiscoverClient=false");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertNotSame(clientMock, endpoint.getConfiguration().getAmazonS3Client());
     }
-    
+
     @Test
     public void createEndpointWithCredentialsAndClientExistInRegistryWithAutodiscover() throws Exception {
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)");
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertSame(clientMock, endpoint.getConfiguration().getAmazonS3Client());

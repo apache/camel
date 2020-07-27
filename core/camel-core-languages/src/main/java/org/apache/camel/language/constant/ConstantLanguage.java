@@ -29,7 +29,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 @org.apache.camel.spi.annotations.Language("constant")
 public class ConstantLanguage implements Language, IsSingleton {
 
-    public static Expression constant(Object value) {        
+    public static Expression constant(Object value) {
         return ExpressionBuilder.constantExpression(value);
     }
 

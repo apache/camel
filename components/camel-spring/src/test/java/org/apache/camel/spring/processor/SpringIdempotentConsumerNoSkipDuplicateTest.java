@@ -29,7 +29,8 @@ public class SpringIdempotentConsumerNoSkipDuplicateTest extends SpringTestSuppo
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringIdempotentConsumerNoSkipDuplicateTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringIdempotentConsumerNoSkipDuplicateTest.xml");
     }
 
     @Test

@@ -24,8 +24,8 @@ import org.apache.camel.TypeConverter;
 /**
  * Another base class for {@link TypeConverter} implementations.
  * <p/>
- * Implementators need only to implement a {@link ConversionMethod}
- * method, and can rely on the default implementations of the other methods from this support class.
+ * Implementators need only to implement a {@link ConversionMethod} method, and can rely on the default implementations
+ * of the other methods from this support class.
  */
 public class SimpleTypeConverter implements TypeConverter {
 
@@ -53,7 +53,8 @@ public class SimpleTypeConverter implements TypeConverter {
     }
 
     @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+    public <T> T mandatoryConvertTo(Class<T> type, Object value)
+            throws TypeConversionException, NoTypeConversionAvailableException {
         T t = convertTo(type, null, value);
         if (t == null) {
             throw new NoTypeConversionAvailableException(value, type);
@@ -63,7 +64,8 @@ public class SimpleTypeConverter implements TypeConverter {
     }
 
     @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
+            throws TypeConversionException, NoTypeConversionAvailableException {
         T t = convertTo(type, exchange, value);
         if (t == null) {
             throw new NoTypeConversionAvailableException(value, type);

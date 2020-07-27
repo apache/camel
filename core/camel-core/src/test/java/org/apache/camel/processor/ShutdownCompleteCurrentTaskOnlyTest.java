@@ -66,8 +66,9 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(url)
-                    // let it complete only current task so we shutdown faster
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed().to("seda:foo");
+                        // let it complete only current task so we shutdown faster
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed()
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

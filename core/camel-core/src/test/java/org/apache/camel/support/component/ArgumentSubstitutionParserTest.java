@@ -50,9 +50,11 @@ public class ArgumentSubstitutionParserTest {
         signatures.add("public final java.util.Map<String, String> greetAll(java.util.Map<String> nameMap);");
         signatures.add("public final String[] greetTimes(String name, int times);");
         signatures.add("public final String greetInnerChild(org.apache.camel.support.component.TestProxy.InnerChild child);");
-        signatures.add("public final <T extends java.util.Date> T sayHiResource(java.util.Set<T> resourceType, String resourceId);");
+        signatures.add(
+                "public final <T extends java.util.Date> T sayHiResource(java.util.Set<T> resourceType, String resourceId);");
         signatures.add("public final <T extends java.util.Date> T with(T theDate);");
-        signatures.add("public final <T extends java.util.Date> String withDate(T theDate, Class<? extends java.util.Date> dateClass, Class<T> parameter, T parameters);");
+        signatures.add(
+                "public final <T extends java.util.Date> String withDate(T theDate, Class<? extends java.util.Date> dateClass, Class<T> parameter, T parameters);");
 
         parser.setSignatures(signatures);
 

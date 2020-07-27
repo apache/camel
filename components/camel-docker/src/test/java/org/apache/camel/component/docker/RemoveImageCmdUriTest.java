@@ -45,7 +45,8 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in").to("docker://" + getOperation().toString() + "?imageId=" + imageId + "&noPrune=" + noPrune + "&force=" + force);
+                from("direct:in").to("docker://" + getOperation().toString() + "?imageId=" + imageId + "&noPrune=" + noPrune
+                                     + "&force=" + force);
 
             }
         };

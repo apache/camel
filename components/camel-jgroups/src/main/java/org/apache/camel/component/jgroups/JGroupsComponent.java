@@ -74,8 +74,8 @@ public class JGroupsComponent extends DefaultComponent {
     }
 
     /**
-     * If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances).
-     * By default only regular messages are consumed by the endpoint.
+     * If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only
+     * org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
      */
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;

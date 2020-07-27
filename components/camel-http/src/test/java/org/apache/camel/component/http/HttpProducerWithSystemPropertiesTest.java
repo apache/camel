@@ -55,13 +55,11 @@ public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("User-Agent", "myCoolCamelCaseAgent");
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders))
+                .create();
         localServer.start();
 
         super.setUp();
@@ -80,7 +78,8 @@ public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyFromSystemProperties() throws Exception {
 
-        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?useSystemProperties=true";
+        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                             + "?useSystemProperties=true";
         Exchange exchange = template.request(endpointUri, exchange1 -> {
         });
 

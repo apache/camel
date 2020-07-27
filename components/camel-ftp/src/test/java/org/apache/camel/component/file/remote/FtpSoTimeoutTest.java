@@ -33,11 +33,9 @@ import org.junit.jupiter.api.Timeout;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test class used to demonstrate the problematic disconnect sequence of the
- * {@link FtpOperations}.
+ * Test class used to demonstrate the problematic disconnect sequence of the {@link FtpOperations}.
  * <p>
- * Setting the logging level of {@code org.apache.camel.file.remote} to
- * {@code TRACE} will provide useful information
+ * Setting the logging level of {@code org.apache.camel.file.remote} to {@code TRACE} will provide useful information
  * 
  * @author l.chiarello
  */
@@ -77,9 +75,11 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:with").to("ftp://localhost:" + serverSocket.getLocalPort() + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                from("direct:with").to("ftp://localhost:" + serverSocket.getLocalPort()
+                                       + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
 
-                from("direct:without").to("ftp://localhost:" + serverSocket.getLocalPort() + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                from("direct:without").to("ftp://localhost:" + serverSocket.getLocalPort()
+                                          + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
             }
         };
     }

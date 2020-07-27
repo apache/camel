@@ -69,8 +69,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To configure the {@link DefaultConfigurationProperties} on {@link org.apache.camel.CamelContext}
- * used by Camel Main, Camel Spring Boot and other runtimes.
+ * To configure the {@link DefaultConfigurationProperties} on {@link org.apache.camel.CamelContext} used by Camel Main,
+ * Camel Spring Boot and other runtimes.
  */
 public final class DefaultConfigurationConfigurer {
 
@@ -119,7 +119,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setStreamCaching(config.isStreamCachingEnabled());
         camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
         camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
-        camelContext.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
+        camelContext.getStreamCachingStrategy()
+                .setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
         camelContext.getStreamCachingStrategy().setSpoolCipher(config.getStreamCachingSpoolCipher());
         if (config.getStreamCachingSpoolDirectory() != null) {
             camelContext.getStreamCachingStrategy().setSpoolDirectory(config.getStreamCachingSpoolDirectory());
@@ -134,12 +135,15 @@ public final class DefaultConfigurationConfigurer {
             } else if ("Max".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
                 limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
             } else {
-                throw new IllegalArgumentException("Invalid option " + config.getStreamCachingSpoolUsedHeapMemoryLimit() + " must either be Committed or Max");
+                throw new IllegalArgumentException(
+                        "Invalid option " + config.getStreamCachingSpoolUsedHeapMemoryLimit()
+                                                   + " must either be Committed or Max");
             }
             camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryLimit(limit);
         }
         if (config.getStreamCachingSpoolUsedHeapMemoryThreshold() != 0) {
-            camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
+            camelContext.getStreamCachingStrategy()
+                    .setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
         }
 
         camelContext.setMessageHistory(config.isMessageHistory());
@@ -155,9 +159,12 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
-            camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(config.getJmxManagementStatisticsLevel());
-            camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(config.getJmxManagementNamePattern());
+            camelContext.getManagementStrategy().getManagementAgent()
+                    .setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
+            camelContext.getManagementStrategy().getManagementAgent()
+                    .setStatisticsLevel(config.getJmxManagementStatisticsLevel());
+            camelContext.getManagementStrategy().getManagementAgent()
+                    .setManagementNamePattern(config.getJmxManagementNamePattern());
         }
 
         // global endpoint configurations
@@ -174,7 +181,8 @@ public final class DefaultConfigurationConfigurer {
         }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
-            camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
+            camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(),
+                    config.getRouteFilterExcludePattern());
         }
 
         // supervising route controller
@@ -215,11 +223,11 @@ public final class DefaultConfigurationConfigurer {
     }
 
     /**
-     * Performs additional configuration to lookup beans of Camel types to configure
-     * additional configurations on the Camel context.
+     * Performs additional configuration to lookup beans of Camel types to configure additional configurations on the
+     * Camel context.
      * <p/>
-     * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean
-     * or in camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
+     * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean or in
+     * camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
      */
     public static void afterConfigure(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();
@@ -334,13 +342,19 @@ public final class DefaultConfigurationConfigurer {
         }
 
         final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
-        final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
+        registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(),
+                managementStrategy::addEventNotifier);
+        final Predicate<InterceptStrategy> containsInterceptStrategy
+                = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(),
+                camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);
-        final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
+        registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(),
+                camelContext::addLifecycleStrategy);
+        final Predicate<LogListener> containsLogListener
+                = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(),
+                camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
 
         // service registry
         Map<String, ServiceRegistry> serviceRegistries = registry.findByTypeWithName(ServiceRegistry.class);
@@ -358,7 +372,8 @@ public final class DefaultConfigurationConfigurer {
         }
 
         // SSL context parameters
-        GlobalSSLContextParametersSupplier sslContextParametersSupplier = getSingleBeanOfType(registry, GlobalSSLContextParametersSupplier.class);
+        GlobalSSLContextParametersSupplier sslContextParametersSupplier
+                = getSingleBeanOfType(registry, GlobalSSLContextParametersSupplier.class);
         if (sslContextParametersSupplier != null) {
             camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
         }
@@ -403,8 +418,9 @@ public final class DefaultConfigurationConfigurer {
         }
     }
 
-    private static <T> void registerPropertiesForBeanTypesWithCondition(final Registry registry, final Class<T> beanType, final Predicate<T> condition,
-                                                                        final Consumer<T> propertySetter) {
+    private static <T> void registerPropertiesForBeanTypesWithCondition(
+            final Registry registry, final Class<T> beanType, final Predicate<T> condition,
+            final Consumer<T> propertySetter) {
         final Map<String, T> beans = registry.findByTypeWithName(beanType);
         if (!ObjectHelper.isNotEmpty(beans)) {
             return;
@@ -439,7 +455,8 @@ public final class DefaultConfigurationConfigurer {
                 ThreadPoolProfile profile = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (profile.isDefaultProfile()) {
-                    LOG.info("Using custom default ThreadPoolProfile with id: {} and implementation: {}", entry.getKey(), profile);
+                    LOG.info("Using custom default ThreadPoolProfile with id: {} and implementation: {}", entry.getKey(),
+                            profile);
                     camelContext.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
                     defaultIds.add(entry.getKey());
                 } else {
@@ -450,7 +467,8 @@ public final class DefaultConfigurationConfigurer {
 
         // validate at most one is defined
         if (defaultIds.size() > 1) {
-            throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + defaultIds.size() + " ids: " + defaultIds);
+            throw new IllegalArgumentException(
+                    "Only exactly one default ThreadPoolProfile is allowed, was " + defaultIds.size() + " ids: " + defaultIds);
         }
     }
 

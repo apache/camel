@@ -58,7 +58,7 @@ public class KerberosAuthenticationTest {
 
         // when
         assertThrows(FileNotFoundException.class,
-            () -> underTest.loginWithKeytab());
+                () -> underTest.loginWithKeytab());
 
         // then
         /* exception was thrown */

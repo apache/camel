@@ -46,7 +46,8 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
         this.defaultConnectionOptions = defaultConnectionOptions;
     }
 
-    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final CamelContext context) {
+    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions,
+                                final CamelContext context) {
         super(context);
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;
@@ -67,7 +68,8 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         LOG.debug("Create endpoint - uri: {}, remaining: {}, parameters: {}", uri, remaining, parameters);
 
         final T1 connection = lookupConnection(uri, parameters);
@@ -87,7 +89,10 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
             try {
                 return this.connectionOptionsClazz.cast(connectionOptions);
             } catch (final ClassCastException e) {
-                throw new IllegalArgumentException(String.format("'%s' must by of type %s", Constants.PARAM_CONNECTION_OPTIONS, ClientOptions.class.getName()), e);
+                throw new IllegalArgumentException(
+                        String.format("'%s' must by of type %s", Constants.PARAM_CONNECTION_OPTIONS,
+                                ClientOptions.class.getName()),
+                        e);
             }
         }
 
@@ -98,7 +103,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
         // apply protocolOptions
 
         if (parameters.get(Constants.PARAM_PROTOCOL_OPTIONS) instanceof ProtocolOptions) {
-            options.setProtocolOptions((ProtocolOptions)parameters.get(Constants.PARAM_PROTOCOL_OPTIONS));
+            options.setProtocolOptions((ProtocolOptions) parameters.get(Constants.PARAM_PROTOCOL_OPTIONS));
         }
 
         // apply dataModuleOptions
@@ -151,7 +156,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
         final Object connectionId = parameters.get("connectionId");
 
-        return new ConnectionId(uri.getHost(), uri.getPort(), connectionId instanceof String ? (String)connectionId : null);
+        return new ConnectionId(uri.getHost(), uri.getPort(), connectionId instanceof String ? (String) connectionId : null);
     }
 
     private static ObjectAddress parseAddress(final String fullUri) {

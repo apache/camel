@@ -68,12 +68,14 @@ public class MainXmlTest {
 
     @Test
     public void testMainRoutesCollectorFile() throws Exception {
-        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,");
+        doTestMain(
+                "file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,");
     }
 
     @Test
     public void testMainRoutesCollectorScanInJarAndDir() throws Exception {
-        doTestMain("classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml");
+        doTestMain(
+                "classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml");
     }
 
     protected void doTestMain(String xmlRoutes) throws Exception {

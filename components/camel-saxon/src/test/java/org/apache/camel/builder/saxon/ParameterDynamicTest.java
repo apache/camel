@@ -37,10 +37,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ParameterDynamicTest {
 
     private static final String TEST_QUERY = new StringBuilder()
-        .append("xquery version \"3.0\" encoding \"UTF-8\";\n")
-        .append("declare variable $extParam as xs:boolean external := false();\n")
-        .append("if($extParam) then(true()) else (false())")
-        .toString();
+            .append("xquery version \"3.0\" encoding \"UTF-8\";\n")
+            .append("declare variable $extParam as xs:boolean external := false();\n")
+            .append("if($extParam) then(true()) else (false())")
+            .toString();
 
     private Configuration conf = new Configuration();
     private XQueryExpression query;

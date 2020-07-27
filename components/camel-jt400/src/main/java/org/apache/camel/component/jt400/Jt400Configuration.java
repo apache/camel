@@ -40,7 +40,12 @@ public class Jt400Configuration {
      * SearchTypes for reading from Keyed Data Queues
      */
     public enum SearchType {
-        EQ, NE, LT, LE, GT, GE
+        EQ,
+        NE,
+        LT,
+        LE,
+        GT,
+        GE
     }
 
     /**
@@ -74,12 +79,13 @@ public class Jt400Configuration {
         SAME(MessageQueue.SAME);
 
         private String jt400Value;
+
         private MessageAction(final String jt400Value) {
             this.jt400Value = jt400Value;
         }
+
         /**
-         * Returns the string literal value that can be used for
-         * APIs from the JTOpen (jt400) libraries
+         * Returns the string literal value that can be used for APIs from the JTOpen (jt400) libraries
          *
          * @return a value suitable for use with jt400 libraries
          */
@@ -94,37 +100,41 @@ public class Jt400Configuration {
     private static final Logger LOG = LoggerFactory.getLogger(Jt400Configuration.class);
 
     /**
-     * Constant used to specify that the default system CCSID be used (a
-     * negative CCSID is otherwise invalid).
+     * Constant used to specify that the default system CCSID be used (a negative CCSID is otherwise invalid).
      */
     private static final int DEFAULT_SYSTEM_CCSID = -1;
 
     private final AS400ConnectionPool connectionPool;
 
-    @UriPath(label = "security") @Metadata(required = true, secret = true)
+    @UriPath(label = "security")
+    @Metadata(required = true, secret = true)
     private String userID;
 
-    @UriPath(label = "security") @Metadata(required = true, secret = true)
+    @UriPath(label = "security")
+    @Metadata(required = true, secret = true)
     private String password;
 
-    @UriPath(label = "security") @Metadata(required = true)
+    @UriPath(label = "security")
+    @Metadata(required = true)
     private String systemName;
 
     @UriParam(label = "security")
     private boolean secured;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String objectPath;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private Jt400Type type;
 
     @UriParam
     private int ccsid = DEFAULT_SYSTEM_CCSID;
-    
+
     @UriParam(defaultValue = "text")
     private Format format = Format.text;
-    
+
     @UriParam
     private boolean guiAvailable;
 
@@ -155,14 +165,14 @@ public class Jt400Configuration {
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
         ObjectHelper.notNull(connectionPool, "connectionPool", this);
-        
+
         URI uri = new URI(endpointUri);
         String[] credentials = uri.getUserInfo().split(":");
         systemName = uri.getHost();
         userID = credentials[0];
         password = credentials[1];
         objectPath = uri.getPath();
-        
+
         this.connectionPool = connectionPool;
     }
 
@@ -211,8 +221,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the fully qualified integrated file system path name of the
-     * target object of this endpoint.
+     * Returns the fully qualified integrated file system path name of the target object of this endpoint.
      */
     public String getObjectPath() {
         return objectPath;
@@ -223,29 +232,29 @@ public class Jt400Configuration {
     }
 
     // Options
-    
+
     /**
-     * Returns the CCSID to use for the connection with the IBM i system.
-     * Returns -1 if the CCSID to use is the default system CCSID.
+     * Returns the CCSID to use for the connection with the IBM i system. Returns -1 if the CCSID to use is the default
+     * system CCSID.
      */
     public int getCssid() {
         return ccsid;
     }
-    
+
     /**
      * Sets the CCSID to use for the connection with the IBM i system.
      */
     public void setCcsid(int ccsid) {
         this.ccsid = (ccsid < 0) ? DEFAULT_SYSTEM_CCSID : ccsid;
     }
-    
+
     /**
      * Returns the data format for sending messages.
      */
     public Format getFormat() {
         return format;
     }
-    
+
     /**
      * Sets the data format for sending messages.
      */
@@ -253,18 +262,16 @@ public class Jt400Configuration {
         ObjectHelper.notNull(format, "format", this);
         this.format = format;
     }
-    
+
     /**
-     * Returns whether IBM i prompting is enabled in the environment running
-     * Camel.
+     * Returns whether IBM i prompting is enabled in the environment running Camel.
      */
     public boolean isGuiAvailable() {
         return guiAvailable;
     }
-    
+
     /**
-     * Sets whether IBM i prompting is enabled in the environment running
-     * Camel.
+     * Sets whether IBM i prompting is enabled in the environment running Camel.
      */
     public void setGuiAvailable(boolean guiAvailable) {
         this.guiAvailable = guiAvailable;
@@ -367,9 +374,8 @@ public class Jt400Configuration {
     }
 
     /**
-     * Action to be taken on messages when read from a message queue.
-     * Messages can be marked as old ("OLD"), removed from the queue
-     * ("REMOVE"), or neither ("SAME").
+     * Action to be taken on messages when read from a message queue. Messages can be marked as old ("OLD"), removed
+     * from the queue ("REMOVE"), or neither ("SAME").
      */
     public void setMessageAction(MessageAction messageAction) {
         this.messageAction = messageAction;
@@ -398,12 +404,10 @@ public class Jt400Configuration {
     }
 
     // AS400 connections
-    
+
     /**
-     * Obtains an {@code AS400} object that connects to this endpoint. Since
-     * these objects represent limited resources, clients have the
-     * responsibility of {@link #releaseConnection(AS400) releasing them} when
-     * done.
+     * Obtains an {@code AS400} object that connects to this endpoint. Since these objects represent limited resources,
+     * clients have the responsibility of {@link #releaseConnection(AS400) releasing them} when done.
      * 
      * @return an {@code AS400} object that connects to this endpoint
      */
@@ -426,16 +430,20 @@ public class Jt400Configuration {
             try {
                 system.setGuiAvailable(guiAvailable);
             } catch (PropertyVetoException e) {
-                LOG.warn("Failed to disable IBM i prompting in the environment running Camel. This exception will be ignored.", e);
+                LOG.warn("Failed to disable IBM i prompting in the environment running Camel. This exception will be ignored.",
+                        e);
             }
             return system; // Not null here.
         } catch (ConnectionPoolException e) {
-            throw new RuntimeCamelException(String.format("Unable to obtain an IBM i connection for system name '%s' and user ID '%s'", systemName, userID), e);
+            throw new RuntimeCamelException(
+                    String.format("Unable to obtain an IBM i connection for system name '%s' and user ID '%s'", systemName,
+                            userID),
+                    e);
         } catch (PropertyVetoException e) {
             throw new RuntimeCamelException("Unable to set the CSSID to use with " + system, e);
         }
     }
-    
+
     /**
      * Releases a previously obtained {@code AS400} object from use.
      * 

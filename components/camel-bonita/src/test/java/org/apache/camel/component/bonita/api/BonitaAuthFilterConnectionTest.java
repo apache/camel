@@ -62,7 +62,6 @@ public class BonitaAuthFilterConnectionTest {
         Mockito.when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap());
     }
 
-
     @AfterEach
     public void tearDown() {
         wireMockServer.stop();
@@ -75,21 +74,19 @@ public class BonitaAuthFilterConnectionTest {
         stubFor(post(urlEqualTo("/bonita/loginservice"))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something")));
 
-        BonitaAPIConfig bonitaApiConfig =
-                new BonitaAPIConfig("localhost", port, "username", "password");
+        BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
         assertEquals(1, requestContext.getHeaders().size());
     }
-    
+
     @Test
     public void testConnectionSupportCSRF() throws Exception {
         String port = wireMockServer.port() + "";
         stubFor(post(urlEqualTo("/bonita/loginservice"))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something", "X-Bonita-API-Token=something")));
 
-        BonitaAPIConfig bonitaApiConfig =
-                new BonitaAPIConfig("localhost", port, "username", "password");
+        BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
         assertEquals(2, requestContext.getHeaders().size());

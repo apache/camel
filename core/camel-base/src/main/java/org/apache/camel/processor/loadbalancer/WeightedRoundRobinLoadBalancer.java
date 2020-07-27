@@ -28,7 +28,7 @@ public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
     public WeightedRoundRobinLoadBalancer(List<Integer> distributionRatios) {
         super(distributionRatios);
     }
-    
+
     @Override
     protected synchronized AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         int counter = this.counter;

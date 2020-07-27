@@ -36,7 +36,8 @@ public class MongoDbStopEndpointTest extends AbstractMongoDbTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insertJsonString").routeId("insert").to(endpoint);
-                from("direct:findById").routeId("find").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true");
+                from("direct:findById").routeId("find").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true");
             }
         };
     }

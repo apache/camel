@@ -30,17 +30,18 @@ public class AvroConsumer extends DefaultConsumer {
     public AvroEndpoint getEndpoint() {
         return (AvroEndpoint) super.getEndpoint();
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ((AvroComponent)getEndpoint().getComponent()).register(getEndpoint().getConfiguration()
-            .getUriAuthority(), getEndpoint().getConfiguration().getMessageName(), this);
+        ((AvroComponent) getEndpoint().getComponent()).register(getEndpoint().getConfiguration()
+                .getUriAuthority(), getEndpoint().getConfiguration().getMessageName(), this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ((AvroComponent) getEndpoint().getComponent()).unregister(getEndpoint().getConfiguration().getUriAuthority(), getEndpoint().getConfiguration().getMessageName());
+        ((AvroComponent) getEndpoint().getComponent()).unregister(getEndpoint().getConfiguration().getUriAuthority(),
+                getEndpoint().getConfiguration().getMessageName());
         super.doStop();
     }
 }

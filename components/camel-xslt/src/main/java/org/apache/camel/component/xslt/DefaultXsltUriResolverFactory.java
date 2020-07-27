@@ -21,9 +21,8 @@ import javax.xml.transform.URIResolver;
 import org.apache.camel.CamelContext;
 
 /**
- * Default URI resolver factory which instantiates the camel default XSLT URI
- * resolver which can resolves absolute and relative URIs in the classpath and
- * file system.
+ * Default URI resolver factory which instantiates the camel default XSLT URI resolver which can resolves absolute and
+ * relative URIs in the classpath and file system.
  */
 public class DefaultXsltUriResolverFactory implements XsltUriResolverFactory {
 

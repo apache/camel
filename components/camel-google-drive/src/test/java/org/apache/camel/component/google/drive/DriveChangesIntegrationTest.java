@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveChangesIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
 
     @Test
     public void testGet() throws Exception {
@@ -43,10 +44,10 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
         if (!items.isEmpty()) {
             Change change = items.get(0);
             Long id = change.getId();
-    
+
             // using String message body for single parameter "changeId"
             final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
-    
+
             assertNotNull(result, "get result");
             LOG.debug("get: " + result);
         }
@@ -66,15 +67,15 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
+                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
 
                 // test route for list
                 from("direct://LIST")
-                    .to("google-drive://" + PATH_PREFIX + "/list");
+                        .to("google-drive://" + PATH_PREFIX + "/list");
 
                 // test route for watch
                 from("direct://WATCH")
-                    .to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
+                        .to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
 
             }
         };

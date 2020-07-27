@@ -58,7 +58,8 @@ public class CordaConsumer extends DefaultConsumer {
     private CordaRPCOps cordaRPCOps;
     private Subscription subscription;
 
-    public CordaConsumer(CordaEndpoint endpoint, Processor processor, CordaConfiguration configuration, CordaRPCOps cordaRPCOps) {
+    public CordaConsumer(CordaEndpoint endpoint, Processor processor, CordaConfiguration configuration,
+                         CordaRPCOps cordaRPCOps) {
         super(endpoint, processor);
         this.configuration = configuration;
         this.cordaRPCOps = cordaRPCOps;
@@ -86,10 +87,9 @@ public class CordaConsumer extends DefaultConsumer {
                 pageUpdateDataFeed = cordaRPCOps.vaultTrack(contractStateClass);
                 processSnapshot(exchange, pageUpdateDataFeed.getSnapshot());
                 subscription = pageUpdateDataFeed.getUpdates().subscribe(
-                    x -> processContractStateUpdate(x),
-                    t -> processError(t, CordaConstants.VAULT_TRACK),
-                    () -> processDone(CordaConstants.VAULT_TRACK)
-                );
+                        x -> processContractStateUpdate(x),
+                        t -> processError(t, CordaConstants.VAULT_TRACK),
+                        () -> processDone(CordaConstants.VAULT_TRACK));
                 break;
 
             case VAULT_TRACK_BY:
@@ -97,10 +97,9 @@ public class CordaConsumer extends DefaultConsumer {
                 pageUpdateDataFeed = cordaRPCOps.vaultTrackBy(criteria, pageSpec, sorting, contractStateClass);
                 processSnapshot(exchange, pageUpdateDataFeed.getSnapshot());
                 subscription = pageUpdateDataFeed.getUpdates().subscribe(
-                    x -> processContractStateUpdate(x),
-                    t -> processError(t, CordaConstants.VAULT_TRACK_BY),
-                    () -> processDone(CordaConstants.VAULT_TRACK_BY)
-                );
+                        x -> processContractStateUpdate(x),
+                        t -> processError(t, CordaConstants.VAULT_TRACK_BY),
+                        () -> processDone(CordaConstants.VAULT_TRACK_BY));
                 break;
 
             case VAULT_TRACK_BY_CRITERIA:
@@ -108,10 +107,9 @@ public class CordaConsumer extends DefaultConsumer {
                 pageUpdateDataFeed = cordaRPCOps.vaultTrackByCriteria(contractStateClass, criteria);
                 processSnapshot(exchange, pageUpdateDataFeed.getSnapshot());
                 subscription = pageUpdateDataFeed.getUpdates().subscribe(
-                    x -> processContractStateUpdate(x),
-                    t -> processError(t, CordaConstants.VAULT_TRACK_BY_CRITERIA),
-                    () -> processDone(CordaConstants.VAULT_TRACK_BY_CRITERIA)
-                );
+                        x -> processContractStateUpdate(x),
+                        t -> processError(t, CordaConstants.VAULT_TRACK_BY_CRITERIA),
+                        () -> processDone(CordaConstants.VAULT_TRACK_BY_CRITERIA));
                 break;
 
             case VAULT_TRACK_BY_WITH_PAGING_SPEC:
@@ -119,10 +117,9 @@ public class CordaConsumer extends DefaultConsumer {
                 pageUpdateDataFeed = cordaRPCOps.vaultTrackByWithPagingSpec(contractStateClass, criteria, pageSpec);
                 processSnapshot(exchange, pageUpdateDataFeed.getSnapshot());
                 subscription = pageUpdateDataFeed.getUpdates().subscribe(
-                    x -> processContractStateUpdate(x),
-                    t -> processError(t, CordaConstants.VAULT_TRACK_BY_WITH_PAGING_SPEC),
-                    () -> processDone(CordaConstants.VAULT_TRACK_BY_WITH_PAGING_SPEC)
-                );
+                        x -> processContractStateUpdate(x),
+                        t -> processError(t, CordaConstants.VAULT_TRACK_BY_WITH_PAGING_SPEC),
+                        () -> processDone(CordaConstants.VAULT_TRACK_BY_WITH_PAGING_SPEC));
                 break;
 
             case VAULT_TRACK_BY_WITH_SORTING:
@@ -130,10 +127,9 @@ public class CordaConsumer extends DefaultConsumer {
                 pageUpdateDataFeed = cordaRPCOps.vaultTrackByWithSorting(contractStateClass, criteria, sorting);
                 processSnapshot(exchange, pageUpdateDataFeed.getSnapshot());
                 subscription = pageUpdateDataFeed.getUpdates().subscribe(
-                    x -> processContractStateUpdate(x),
-                    t -> processError(t, CordaConstants.VAULT_TRACK_BY_WITH_SORTING),
-                    () -> processDone(CordaConstants.VAULT_TRACK_BY_WITH_SORTING)
-                );
+                        x -> processContractStateUpdate(x),
+                        t -> processError(t, CordaConstants.VAULT_TRACK_BY_WITH_SORTING),
+                        () -> processDone(CordaConstants.VAULT_TRACK_BY_WITH_SORTING));
                 break;
 
             case STATE_MACHINE_FEED:
@@ -141,10 +137,9 @@ public class CordaConsumer extends DefaultConsumer {
                 DataFeed<List<StateMachineInfo>, StateMachineUpdate> stateFeed = cordaRPCOps.stateMachinesFeed();
                 processSnapshot(exchange, stateFeed.getSnapshot());
                 subscription = stateFeed.getUpdates().subscribe(
-                    x -> processStateMachineUpdate(x),
-                    t -> processError(t, CordaConstants.STATE_MACHINE_FEED),
-                    () -> processDone(CordaConstants.STATE_MACHINE_FEED)
-                );
+                        x -> processStateMachineUpdate(x),
+                        t -> processError(t, CordaConstants.STATE_MACHINE_FEED),
+                        () -> processDone(CordaConstants.STATE_MACHINE_FEED));
                 break;
 
             case NETWORK_MAP_FEED:
@@ -153,36 +148,35 @@ public class CordaConsumer extends DefaultConsumer {
                 DataFeed<List<NodeInfo>, NetworkMapCache.MapChange> networkMapFeed = cordaRPCOps.networkMapFeed();
                 processSnapshot(exchange, networkMapFeed.getSnapshot());
                 subscription = networkMapFeed.getUpdates().subscribe(
-                    x -> proceedNetworkMapFeed(x),
-                    t -> processError(t, CordaConstants.NETWORK_MAP_FEED),
-                    () -> processDone(CordaConstants.NETWORK_MAP_FEED)
-                );
+                        x -> proceedNetworkMapFeed(x),
+                        t -> processError(t, CordaConstants.NETWORK_MAP_FEED),
+                        () -> processDone(CordaConstants.NETWORK_MAP_FEED));
                 break;
 
             case STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED:
                 LOG.debug("subscribing for operation: " + STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED);
 
-                DataFeed<List<StateMachineTransactionMapping>, StateMachineTransactionMapping> transactionFeed = cordaRPCOps.stateMachineRecordedTransactionMappingFeed();
+                DataFeed<List<StateMachineTransactionMapping>, StateMachineTransactionMapping> transactionFeed
+                        = cordaRPCOps.stateMachineRecordedTransactionMappingFeed();
                 processSnapshot(exchange, transactionFeed.getSnapshot());
                 subscription = transactionFeed.getUpdates().subscribe(
-                    x -> processTransactionMappingFeed(x),
-                    t -> processError(t, CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED),
-                    () -> processDone(CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED)
-                );
+                        x -> processTransactionMappingFeed(x),
+                        t -> processError(t, CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED),
+                        () -> processDone(CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED));
                 break;
 
             case START_TRACKED_FLOW_DYNAMIC:
                 LOG.debug("subscribing for operation: " + START_TRACKED_FLOW_DYNAMIC);
 
-                FlowProgressHandle<Object> objectFlowProgressHandle = cordaRPCOps.startTrackedFlowDynamic(configuration.getFlowLogicClass(), configuration.getFlowLogicArguments());
+                FlowProgressHandle<Object> objectFlowProgressHandle = cordaRPCOps
+                        .startTrackedFlowDynamic(configuration.getFlowLogicClass(), configuration.getFlowLogicArguments());
                 Object result = objectFlowProgressHandle.getReturnValue().get();
                 Observable<String> progress = objectFlowProgressHandle.getProgress();
                 processSnapshot(exchange, result);
                 subscription = progress.subscribe(
-                    x -> processFlowProcess(x),
-                    t -> processError(t, CordaConstants.START_TRACKED_FLOW_DYNAMIC),
-                    () -> processDone(CordaConstants.START_TRACKED_FLOW_DYNAMIC)
-                );
+                        x -> processFlowProcess(x),
+                        t -> processError(t, CordaConstants.START_TRACKED_FLOW_DYNAMIC),
+                        () -> processDone(CordaConstants.START_TRACKED_FLOW_DYNAMIC));
                 break;
 
             default:

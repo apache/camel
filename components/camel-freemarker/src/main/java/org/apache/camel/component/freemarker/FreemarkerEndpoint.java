@@ -36,7 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Transform messages using FreeMarker templates.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri",
+             producerOnly = true, category = { Category.TRANSFORMATION })
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
@@ -72,8 +73,8 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
@@ -134,7 +135,8 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI);
 
-                log.debug("{} set to {} creating new endpoint to handle exchange", FreemarkerConstants.FREEMARKER_RESOURCE_URI, newResourceUri);
+                log.debug("{} set to {} creating new endpoint to handle exchange", FreemarkerConstants.FREEMARKER_RESOURCE_URI,
+                        newResourceUri);
                 FreemarkerEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
                 return;
@@ -163,7 +165,8 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         Template template;
 
         if (reader != null) {
-            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
+            log.debug("Freemarker is evaluating template read from header {} using context: {}",
+                    FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
             template = new Template("temp", reader, new Configuration());
         } else {
             log.debug("Freemarker is evaluating {} using context: {}", path, dataModel);

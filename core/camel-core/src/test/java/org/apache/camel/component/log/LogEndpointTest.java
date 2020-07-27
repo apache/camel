@@ -95,7 +95,9 @@ public class LogEndpointTest extends ContextTestSupport {
         Exchange ex = createExchangeWithBody(null);
         ex.setProperty(Exchange.EXCEPTION_CAUGHT, new RuntimeException("test"));
         template.send("log:testShowCaughtException?showCaughtException=true", ex);
-        assertEquals("Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], CaughtExceptionType: java.lang.RuntimeException, CaughtExceptionMessage: test]", logged.get());
+        assertEquals(
+                "Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], CaughtExceptionType: java.lang.RuntimeException, CaughtExceptionMessage: test]",
+                logged.get());
     }
 
     @Test
@@ -105,7 +107,9 @@ public class LogEndpointTest extends ContextTestSupport {
         Exchange ex = createExchangeWithBody(null);
         ex.setException(new RuntimeException("test"));
         template.send("log:testShowException?showException=true", ex);
-        assertEquals("Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], ExceptionType: java.lang.RuntimeException, ExceptionMessage: test]", logged.get());
+        assertEquals(
+                "Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], ExceptionType: java.lang.RuntimeException, ExceptionMessage: test]",
+                logged.get());
     }
 
     @Override

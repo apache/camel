@@ -54,25 +54,28 @@ public class HttpBasicAuthTest extends BaseJettyTest {
 
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         return sh;
     }
 
     @Test
     public void testHttpBasicAuth() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=duck", "Hello World", String.class);
+        String out
+                = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=duck",
+                        "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testHttpBasicAuthInvalidPassword() throws Exception {
         try {
-            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=sorry", "Hello World", String.class);
+            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=sorry",
+                    "Hello World", String.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

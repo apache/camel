@@ -53,7 +53,7 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String resultGet = (String)exchange.getIn().getBody();
+        String resultGet = (String) exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
 
@@ -65,14 +65,15 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
 
-                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
-                    .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao Signorina").build());
+                exchange.getIn()
+                        .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                                .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao Signorina").build());
             }
         });
 
         assertMockEndpointsSatisfied();
 
-        String resultGet = (String)exchange.getIn().getBody();
+        String resultGet = (String) exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
 
@@ -91,7 +92,7 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String resultGet = (String)exchange.getIn().getBody();
+        String resultGet = (String) exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
 
@@ -100,11 +101,15 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:translateText").to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText").to("mock:result");
+                from("direct:translateText").to(
+                        "aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText")
+                        .to("mock:result");
                 from("direct:translateTextAuto")
-                    .to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&autodetectSourceLanguage=true").to("mock:result");
-                from("direct:translateTextPojo").to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&pojoRequest=true")
-                    .to("mock:result");
+                        .to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&autodetectSourceLanguage=true")
+                        .to("mock:result");
+                from("direct:translateTextPojo").to(
+                        "aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&pojoRequest=true")
+                        .to("mock:result");
             }
         };
     }

@@ -23,7 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
@@ -73,13 +72,14 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("greeting").description("Route saying {{greeting}}")
-                    .from("direct:{{foo}}")
-                    .transform(simple("Hello {{greeting}}"))
-                    .to("direct:common");
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("greeting")
+                        .description("Route saying {{greeting}}")
+                        .from("direct:{{foo}}")
+                        .transform(simple("Hello {{greeting}}"))
+                        .to("direct:common");
 
                 from("direct:common").routeId("common")
-                    .to("mock:common");
+                        .to("mock:common");
             }
         };
     }

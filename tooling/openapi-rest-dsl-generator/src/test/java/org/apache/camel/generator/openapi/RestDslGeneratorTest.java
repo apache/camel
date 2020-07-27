@@ -122,14 +122,14 @@ public class RestDslGeneratorTest {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
-            .withGeneratedTime(generated)
-            .withClassName("MyRestRoute")
-            .withPackageName("com.example")
-            .withIndent("\t")
-            .withSourceCodeTimestamps()
-            .withOperationFilter("find*,deletePet,updatePet")
-            .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
-            .generate(code);
+                .withGeneratedTime(generated)
+                .withClassName("MyRestRoute")
+                .withPackageName("com.example")
+                .withIndent("\t")
+                .withSourceCodeTimestamps()
+                .withOperationFilter("find*,deletePet,updatePet")
+                .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+                .generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/MyRestRouteFilter.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -142,12 +142,12 @@ public class RestDslGeneratorTest {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
-            .withGeneratedTime(generated)
-            .withClassName("MyRestRoute")
-            .withPackageName("com.example")
-            .withIndent("\t")
-            .withSourceCodeTimestamps()
-            .withDestinationGenerator(o -> "direct:rest-" + o.operationId).generate(code);
+                .withGeneratedTime(generated)
+                .withClassName("MyRestRoute")
+                .withPackageName("com.example")
+                .withIndent("\t")
+                .withSourceCodeTimestamps()
+                .withDestinationGenerator(o -> "direct:rest-" + o.operationId).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/MyRestRoute.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -160,10 +160,10 @@ public class RestDslGeneratorTest {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
-            .withGeneratedTime(generated)
-            .withRestComponent("servlet")
-            .withRestContextPath("/")
-            .generate(code);
+                .withGeneratedTime(generated)
+                .withRestComponent("servlet")
+                .withRestContextPath("/")
+                .generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/OpenApiPetstoreWithRestComponent.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -182,7 +182,8 @@ public class RestDslGeneratorTest {
         addVariableTo(server, "var1", "value1");
         addVariableTo(server, "var2", "value2");
 
-        assertThat(RestDslGenerator.resolveVariablesIn("{var2} before {var1} after {var2}", server)).isEqualTo("value2 before value1 after value2");
+        assertThat(RestDslGenerator.resolveVariablesIn("{var2} before {var1} after {var2}", server))
+                .isEqualTo("value2 before value1 after value2");
     }
 
     @Test
@@ -191,7 +192,8 @@ public class RestDslGeneratorTest {
         addVariableTo(server, "var1", "value1");
         addVariableTo(server, "var2", "value2");
 
-        assertThat(RestDslGenerator.resolveVariablesIn("before {var1} after {var2}", server)).isEqualTo("before value1 after value2");
+        assertThat(RestDslGenerator.resolveVariablesIn("before {var1} after {var2}", server))
+                .isEqualTo("before value1 after value2");
     }
 
     @Test

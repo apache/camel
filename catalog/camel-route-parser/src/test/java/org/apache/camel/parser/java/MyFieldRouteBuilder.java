@@ -25,7 +25,7 @@ public class MyFieldRouteBuilder extends RouteBuilder {
         String exists = "Override";
 
         from("timer:foo")
-            .toD("file:output?fileExist=" + exists)
-            .to("log:b");
+                .toD("file:output?fileExist=" + exists)
+                .to("log:b");
     }
 }

@@ -95,8 +95,8 @@ public class SortDefinition<T> extends ExpressionNode {
     /**
      * Sets the comparator to use for sorting
      *
-     * @param comparator the comparator to use for sorting
-     * @return the builder
+     * @param  comparator the comparator to use for sorting
+     * @return            the builder
      */
     public SortDefinition<T> comparator(Comparator<T> comparator) {
         setComparator(comparator);
@@ -106,8 +106,8 @@ public class SortDefinition<T> extends ExpressionNode {
     /**
      * Sets a reference to lookup for the comparator to use for sorting
      *
-     * @param ref reference for the comparator
-     * @return the builder
+     * @param  ref reference for the comparator
+     * @return     the builder
      */
     public SortDefinition<T> comparatorRef(String ref) {
         setComparatorRef(ref);

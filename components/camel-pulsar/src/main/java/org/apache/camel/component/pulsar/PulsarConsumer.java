@@ -71,7 +71,9 @@ public class PulsarConsumer extends DefaultConsumer {
         pulsarConsumers.addAll(consumers);
     }
 
-    private Collection<Consumer<byte[]>> createConsumers(final PulsarEndpoint endpoint, final ConsumerCreationStrategyFactory factory) throws Exception {
+    private Collection<Consumer<byte[]>> createConsumers(
+            final PulsarEndpoint endpoint, final ConsumerCreationStrategyFactory factory)
+            throws Exception {
 
         ConsumerCreationStrategy strategy = factory.getStrategy(endpoint.getPulsarConfiguration().getSubscriptionType());
 

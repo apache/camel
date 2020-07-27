@@ -29,7 +29,8 @@ public class CamelCustomPostProcessorOnRouteBuilderTest extends SpringTestSuppor
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/postprocessor/camelCustomPostProcessorOnRouteBuilderTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/postprocessor/camelCustomPostProcessorOnRouteBuilderTest.xml");
     }
 
     @Test

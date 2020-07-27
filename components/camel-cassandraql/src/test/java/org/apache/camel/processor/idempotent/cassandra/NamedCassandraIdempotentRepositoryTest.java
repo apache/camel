@@ -54,7 +54,9 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return cassandra.session.execute(String.format("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME='ID' and KEY='%s'", key)).one() != null;
+        return cassandra.session
+                .execute(String.format("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME='ID' and KEY='%s'", key)).one()
+               != null;
     }
 
     @Test

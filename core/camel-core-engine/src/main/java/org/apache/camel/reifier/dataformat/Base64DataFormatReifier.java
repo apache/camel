@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.Base64DataFormat;
 public class Base64DataFormatReifier extends DataFormatReifier<Base64DataFormat> {
 
     public Base64DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (Base64DataFormat)definition);
+        super(camelContext, (Base64DataFormat) definition);
     }
 
     @Override

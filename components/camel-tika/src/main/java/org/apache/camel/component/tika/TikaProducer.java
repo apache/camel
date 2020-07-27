@@ -59,7 +59,7 @@ public class TikaProducer extends DefaultProducer {
     private final String encoding;
 
     public TikaProducer(TikaEndpoint endpoint) {
-        this(endpoint,  null);
+        this(endpoint, null);
     }
 
     public TikaProducer(TikaEndpoint endpoint, Parser parser) {
@@ -155,8 +155,10 @@ public class TikaProducer extends DefaultProducer {
         return result;
     }
 
-    private TransformerHandler getTransformerHandler(OutputStream output, String method,
-                                                     boolean prettyPrint) throws TransformerConfigurationException, UnsupportedEncodingException {
+    private TransformerHandler getTransformerHandler(
+            OutputStream output, String method,
+            boolean prettyPrint)
+            throws TransformerConfigurationException, UnsupportedEncodingException {
         SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         TransformerHandler handler = factory.newTransformerHandler();

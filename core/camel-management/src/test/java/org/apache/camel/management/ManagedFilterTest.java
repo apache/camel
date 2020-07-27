@@ -74,7 +74,7 @@ public class ManagedFilterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .filter(header("foo")).id("mysend")
+                        .filter(header("foo")).id("mysend")
                         .to("mock:foo");
             }
         };

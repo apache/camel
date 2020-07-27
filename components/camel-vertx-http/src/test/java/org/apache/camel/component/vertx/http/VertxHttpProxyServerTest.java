@@ -30,8 +30,9 @@ public class VertxHttpProxyServerTest extends VertxHttpTestSupport {
     @Test
     public void testProxyConfiguration() {
         String result = template.requestBody(getProducerUri() + "?proxyHost=localhost&proxyPort="
-                + port2 + "&proxyUsername=foo"
-                + "&proxyPassword=bar&proxyType=HTTP", null, String.class);
+                                             + port2 + "&proxyUsername=foo"
+                                             + "&proxyPassword=bar&proxyType=HTTP",
+                null, String.class);
         assertEquals("Hello Proxied World", result);
     }
 

@@ -139,7 +139,8 @@ public class PdfAppendTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody();
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
-                    PDDocument doc = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()), userPass);
+                    PDDocument doc
+                            = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()), userPass);
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
                     String text = pdfTextStripper.getText(doc);
                     assertEquals(2, doc.getNumberOfPages());

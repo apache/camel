@@ -67,10 +67,9 @@ public class ThriftDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Defines a content type format in which thrift message will be
-     * serialized/deserialized from(to) the Java been. The format can either be
-     * native or json for either native binary thrift, json or simple json
-     * fields representation. The default value is binary.
+     * Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The
+     * format can either be native or json for either native binary thrift, json or simple json fields representation.
+     * The default value is binary.
      */
     public void setContentTypeFormat(String contentTypeFormat) {
         this.contentTypeFormat = contentTypeFormat;

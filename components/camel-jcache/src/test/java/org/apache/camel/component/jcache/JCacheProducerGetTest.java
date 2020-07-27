@@ -96,14 +96,13 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         assertFalse(cache.containsKey(key));
     }
 
-
     @Test
     public void testGetAndReplace() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         final Cache<Object, Object> cache = getCacheFromEndpoint("jcache://test-cache");
 
-        final String key  = randomString();
-        final String val  = randomString();
+        final String key = randomString();
+        final String val = randomString();
         final String val2 = randomString();
 
         cache.put(key, val);
@@ -135,7 +134,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         final Map<String, Object> headers = new HashMap<>();
         final Cache<Object, Object> cache = getCacheFromEndpoint("jcache://test-cache");
 
-        final String key  = randomString();
+        final String key = randomString();
         final String val2 = randomString();
 
         headers.clear();
@@ -197,19 +196,19 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:get")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:get");
                 from("direct:get-and-remove")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:get-and-remove");
                 from("direct:get-and-replace")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:get-and-replace");
                 from("direct:get-and-put")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:get-and-put");
                 from("direct:get-all")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:get-all");
             }
         };

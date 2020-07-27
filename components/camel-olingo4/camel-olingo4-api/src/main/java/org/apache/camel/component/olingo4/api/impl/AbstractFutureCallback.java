@@ -35,8 +35,8 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 
 /**
- * Helper implementation of {@link org.apache.http.concurrent.FutureCallback}
- * for {@link org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl}
+ * Helper implementation of {@link org.apache.http.concurrent.FutureCallback} for
+ * {@link org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl}
  */
 public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpResponse> {
 
@@ -52,12 +52,14 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
     public static HttpStatusCode checkStatus(HttpResponse response) throws ODataException, ODataClientErrorException {
         final StatusLine statusLine = response.getStatusLine();
         HttpStatusCode httpStatusCode = HttpStatusCode.fromStatusCode(statusLine.getStatusCode());
-        if (HttpStatusCode.BAD_REQUEST.getStatusCode() <= httpStatusCode.getStatusCode() && httpStatusCode.getStatusCode() <= NETWORK_CONNECT_TIMEOUT_ERROR) {
+        if (HttpStatusCode.BAD_REQUEST.getStatusCode() <= httpStatusCode.getStatusCode()
+                && httpStatusCode.getStatusCode() <= NETWORK_CONNECT_TIMEOUT_ERROR) {
             if (response.getEntity() != null) {
                 try {
                     final ContentType responseContentType = getContentTypeHeader(response);
 
-                    if (responseContentType != null && ODATA_MIME_TYPE_PATTERN.matcher(responseContentType.toContentTypeString()).matches()) {
+                    if (responseContentType != null
+                            && ODATA_MIME_TYPE_PATTERN.matcher(responseContentType.toContentTypeString()).matches()) {
                         final ODataReader reader = ODataClientFactory.getClient().getReader();
                         final ODataError error = reader.readError(response.getEntity().getContent(), responseContentType);
 
@@ -86,7 +88,7 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
         } finally {
             if (result instanceof Closeable) {
                 try {
-                    ((Closeable)result).close();
+                    ((Closeable) result).close();
                 } catch (final IOException ignore) {
                 }
             }

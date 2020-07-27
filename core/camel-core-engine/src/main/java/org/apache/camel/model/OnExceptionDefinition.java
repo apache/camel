@@ -168,9 +168,9 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
             ObjectHelper.firstNotNull(handledPolicy, handled, continuedPolicy, continued, retryWhilePolicy, retryWhile,
-                                      redeliveryPolicyType, useOriginalMessage, useOriginalBody, onRedeliveryRef,
-                                      onRedelivery, onExceptionOccurred)
-                .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
+                    redeliveryPolicyType, useOriginalMessage, useOriginalBody, onRedeliveryRef,
+                    onRedelivery, onExceptionOccurred)
+                    .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
         }
     }
 
@@ -186,8 +186,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets whether the exchange should be marked as handled or not.
      *
-     * @param handled handled or not
-     * @return the builder
+     * @param  handled handled or not
+     * @return         the builder
      */
     public OnExceptionDefinition handled(boolean handled) {
         Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
@@ -197,8 +197,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets whether the exchange should be marked as handled or not.
      *
-     * @param handled predicate that determines true or false
-     * @return the builder
+     * @param  handled predicate that determines true or false
+     * @return         the builder
      */
     public OnExceptionDefinition handled(@AsPredicate Predicate handled) {
         setHandledPolicy(handled);
@@ -208,8 +208,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets whether the exchange should be marked as handled or not.
      *
-     * @param handled expression that determines true or false
-     * @return the builder
+     * @param  handled expression that determines true or false
+     * @return         the builder
      */
     public OnExceptionDefinition handled(@AsPredicate Expression handled) {
         setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
@@ -217,13 +217,12 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether the exchange should handle and continue routing from the
-     * point of failure.
+     * Sets whether the exchange should handle and continue routing from the point of failure.
      * <p/>
      * If this option is enabled then its considered handled as well.
      *
-     * @param continued continued or not
-     * @return the builder
+     * @param  continued continued or not
+     * @return           the builder
      */
     public OnExceptionDefinition continued(boolean continued) {
         Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(continued));
@@ -235,8 +234,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * <p/>
      * If this option is enabled then its considered handled as well.
      *
-     * @param continued predicate that determines true or false
-     * @return the builder
+     * @param  continued predicate that determines true or false
+     * @return           the builder
      */
     public OnExceptionDefinition continued(@AsPredicate Predicate continued) {
         setContinuedPolicy(continued);
@@ -248,8 +247,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * <p/>
      * If this option is enabled then its considered handled as well.
      *
-     * @param continued expression that determines true or false
-     * @return the builder
+     * @param  continued expression that determines true or false
+     * @return           the builder
      */
     public OnExceptionDefinition continued(@AsPredicate Expression continued) {
         setContinuedPolicy(ExpressionToPredicateAdapter.toPredicate(continued));
@@ -257,14 +256,13 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets an additional predicate that should be true before the onException
-     * is triggered.
+     * Sets an additional predicate that should be true before the onException is triggered.
      * <p/>
-     * To be used for fine grained controlling whether a thrown exception should
-     * be intercepted by this exception type or not.
+     * To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type
+     * or not.
      *
-     * @param predicate predicate that determines true or false
-     * @return the builder
+     * @param  predicate predicate that determines true or false
+     * @return           the builder
      */
     public OnExceptionDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
@@ -276,8 +274,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * <p/>
      * Will continue retrying until predicate returns <tt>false</tt>.
      *
-     * @param retryWhile predicate that determines when to stop retrying
-     * @return the builder
+     * @param  retryWhile predicate that determines when to stop retrying
+     * @return            the builder
      */
     public OnExceptionDefinition retryWhile(@AsPredicate Predicate retryWhile) {
         setRetryWhilePolicy(retryWhile);
@@ -287,8 +285,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the back off multiplier
      *
-     * @param backOffMultiplier the back off multiplier
-     * @return the builder
+     * @param  backOffMultiplier the back off multiplier
+     * @return                   the builder
      */
     public OnExceptionDefinition backOffMultiplier(double backOffMultiplier) {
         getOrCreateRedeliveryPolicy().useExponentialBackOff();
@@ -299,8 +297,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the back off multiplier (supports property placeholders)
      *
-     * @param backOffMultiplier the back off multiplier
-     * @return the builder
+     * @param  backOffMultiplier the back off multiplier
+     * @return                   the builder
      */
     public OnExceptionDefinition backOffMultiplier(String backOffMultiplier) {
         getOrCreateRedeliveryPolicy().useExponentialBackOff();
@@ -311,8 +309,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the collision avoidance factor
      *
-     * @param collisionAvoidanceFactor the factor
-     * @return the builder
+     * @param  collisionAvoidanceFactor the factor
+     * @return                          the builder
      */
     public OnExceptionDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
         getOrCreateRedeliveryPolicy().useCollisionAvoidance();
@@ -323,8 +321,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the collision avoidance factor (supports property placeholders)
      *
-     * @param collisionAvoidanceFactor the factor
-     * @return the builder
+     * @param  collisionAvoidanceFactor the factor
+     * @return                          the builder
      */
     public OnExceptionDefinition collisionAvoidanceFactor(String collisionAvoidanceFactor) {
         getOrCreateRedeliveryPolicy().useCollisionAvoidance();
@@ -335,8 +333,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the collision avoidance percentage
      *
-     * @param collisionAvoidancePercent the percentage
-     * @return the builder
+     * @param  collisionAvoidancePercent the percentage
+     * @return                           the builder
      */
     public OnExceptionDefinition collisionAvoidancePercent(double collisionAvoidancePercent) {
         getOrCreateRedeliveryPolicy().useCollisionAvoidance();
@@ -347,8 +345,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the initial redelivery delay
      *
-     * @param delay delay in millis
-     * @return the builder
+     * @param  delay delay in millis
+     * @return       the builder
      */
     public OnExceptionDefinition redeliveryDelay(long delay) {
         getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
@@ -358,8 +356,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the initial redelivery delay (supports property placeholders)
      *
-     * @param delay delay in millis
-     * @return the builder
+     * @param  delay delay in millis
+     * @return       the builder
      */
     public OnExceptionDefinition redeliveryDelay(String delay) {
         getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
@@ -369,7 +367,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Allow synchronous delayed redelivery.
      *
-     * @see RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
+     * @see    RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
     public OnExceptionDefinition asyncDelayedRedelivery() {
@@ -380,8 +378,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the logging level to use when retries has exhausted
      *
-     * @param retriesExhaustedLogLevel the logging level
-     * @return the builder
+     * @param  retriesExhaustedLogLevel the logging level
+     * @return                          the builder
      */
     public OnExceptionDefinition retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         getOrCreateRedeliveryPolicy().retriesExhaustedLogLevel(retriesExhaustedLogLevel);
@@ -391,8 +389,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the logging level to use for logging retry attempts
      *
-     * @param retryAttemptedLogLevel the logging level
-     * @return the builder
+     * @param  retryAttemptedLogLevel the logging level
+     * @return                        the builder
      */
     public OnExceptionDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         getOrCreateRedeliveryPolicy().retryAttemptedLogLevel(retryAttemptedLogLevel);
@@ -408,8 +406,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log stacktrace for failed messages (supports property
-     * placeholders)
+     * Sets whether to log stacktrace for failed messages (supports property placeholders)
      */
     public OnExceptionDefinition logStackTrace(String logStackTrace) {
         getOrCreateRedeliveryPolicy().logStackTrace(logStackTrace);
@@ -425,8 +422,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log stacktrace for failed redelivery attempts (supports
-     * property placeholders)
+     * Sets whether to log stacktrace for failed redelivery attempts (supports property placeholders)
      */
     public OnExceptionDefinition logRetryStackTrace(String logRetryStackTrace) {
         getOrCreateRedeliveryPolicy().logRetryStackTrace(logRetryStackTrace);
@@ -442,8 +438,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log errors even if its handled (supports property
-     * placeholders)
+     * Sets whether to log errors even if its handled (supports property placeholders)
      */
     public OnExceptionDefinition logHandled(String logHandled) {
         getOrCreateRedeliveryPolicy().logHandled(logHandled);
@@ -451,11 +446,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether new exceptions should be logged or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * Sets whether new exceptions should be logged or not (supports property placeholders). Can be used to include or
+     * reduce verbose.
      * <p/>
-     * A new exception is an exception that was thrown while handling a previous
-     * exception.
+     * A new exception is an exception that was thrown while handling a previous exception.
      */
     public OnExceptionDefinition logNewException(boolean logNewException) {
         getOrCreateRedeliveryPolicy().logNewException(logNewException);
@@ -463,11 +457,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether new exceptions should be logged or not (supports property
-     * placeholders). Can be used to include or reduce verbose.
+     * Sets whether new exceptions should be logged or not (supports property placeholders). Can be used to include or
+     * reduce verbose.
      * <p/>
-     * A new exception is an exception that was thrown while handling a previous
-     * exception.
+     * A new exception is an exception that was thrown while handling a previous exception.
      */
     public OnExceptionDefinition logNewException(String logNewException) {
         getOrCreateRedeliveryPolicy().logNewException(logNewException);
@@ -483,8 +476,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log errors even if its continued (supports property
-     * placeholders)
+     * Sets whether to log errors even if its continued (supports property placeholders)
      */
     public OnExceptionDefinition logContinued(String logContinued) {
         getOrCreateRedeliveryPolicy().logContinued(logContinued);
@@ -540,8 +532,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log exhausted message body with message history. Requires
-     * <tt>logExhaustedMessageHistory</tt> to be enabled.
+     * Sets whether to log exhausted message body with message history. Requires <tt>logExhaustedMessageHistory</tt> to
+     * be enabled.
      */
     public OnExceptionDefinition logExhaustedMessageBody(boolean logExhaustedMessageBody) {
         getOrCreateRedeliveryPolicy().logExhaustedMessageBody(logExhaustedMessageBody);
@@ -549,8 +541,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets whether to log exhausted message body with message history. Requires
-     * <tt>logExhaustedMessageHistory</tt> to be enabled.
+     * Sets whether to log exhausted message body with message history. Requires <tt>logExhaustedMessageHistory</tt> to
+     * be enabled.
      */
     public OnExceptionDefinition logExhaustedMessageBody(String logExhaustedMessageBody) {
         getOrCreateRedeliveryPolicy().logExhaustedMessageBody(logExhaustedMessageBody);
@@ -565,8 +557,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * <li>-1 = redeliver forever</li>
      * </ul>
      *
-     * @param maximumRedeliveries the value
-     * @return the builder
+     * @param  maximumRedeliveries the value
+     * @return                     the builder
      */
     public OnExceptionDefinition maximumRedeliveries(int maximumRedeliveries) {
         getOrCreateRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
@@ -581,8 +573,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * <li>-1 = redeliver forever</li>
      * </ul>
      *
-     * @param maximumRedeliveries the value
-     * @return the builder
+     * @param  maximumRedeliveries the value
+     * @return                     the builder
      */
     public OnExceptionDefinition maximumRedeliveries(String maximumRedeliveries) {
         getOrCreateRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
@@ -612,8 +604,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the maximum delay between redelivery
      *
-     * @param maximumRedeliveryDelay the delay in millis
-     * @return the builder
+     * @param  maximumRedeliveryDelay the delay in millis
+     * @return                        the builder
      */
     public OnExceptionDefinition maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
@@ -621,11 +613,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets the maximum delay between redelivery (supports property
-     * placeholders)
+     * Sets the maximum delay between redelivery (supports property placeholders)
      *
-     * @param maximumRedeliveryDelay the delay in millis
-     * @return the builder
+     * @param  maximumRedeliveryDelay the delay in millis
+     * @return                        the builder
      */
     public OnExceptionDefinition maximumRedeliveryDelay(String maximumRedeliveryDelay) {
         getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
@@ -633,11 +624,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets a reference to a {@link RedeliveryPolicy} to lookup in the
-     * {@link org.apache.camel.spi.Registry} to be used.
+     * Sets a reference to a {@link RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
      *
-     * @param redeliveryPolicyRef reference to use for lookup
-     * @return the builder
+     * @param  redeliveryPolicyRef reference to use for lookup
+     * @return                     the builder
      */
     public OnExceptionDefinition redeliveryPolicyRef(String redeliveryPolicyRef) {
         setRedeliveryPolicyRef(redeliveryPolicyRef);
@@ -647,8 +637,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     /**
      * Sets the delay pattern with delay intervals.
      *
-     * @param delayPattern the delay pattern
-     * @return the builder
+     * @param  delayPattern the delay pattern
+     * @return              the builder
      */
     public OnExceptionDefinition delayPattern(String delayPattern) {
         getOrCreateRedeliveryPolicy().setDelayPattern(delayPattern);
@@ -656,48 +646,36 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Message} (original
-     * body and headers) when an {@link org.apache.camel.Exchange} is moved to
-     * the dead letter queue.
+     * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an
+     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
      * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have
-     * failed and the {@link org.apache.camel.Exchange} is doomed for failure.
-     * <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange}
-     * IN message we use the original IN message instead. This allows you to
-     * store the original input in the dead letter queue instead of the
-     * inprogress snapshot of the IN message. For instance if you route
-     * transform the IN body during routing and then failed. With the original
-     * exchange store in the dead letter queue it might be easier to manually re
-     * submit the {@link org.apache.camel.Exchange} again as the IN message is
-     * the same as when Camel received it. So you should be able to send the
-     * {@link org.apache.camel.Exchange} to the same input.
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
+     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
+     * the original exchange store in the dead letter queue it might be easier to manually re submit the
+     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
+     * able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the
-     * former includes both the original body and headers, where as the latter
-     * only includes the original body. You can use the latter to enrich the
-     * message with custom headers and include the original message body. The
-     * former wont let you do this, as its using the original message body and
-     * headers as they are. You cannot enable both useOriginalMessage and
-     * useOriginalBody.
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
+     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
+     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
-     * <b>Important:</b> The original input means the input message that are
-     * bounded by the current {@link org.apache.camel.spi.UnitOfWork}. An unit
-     * of work typically spans one route, or multiple routes if they are
-     * connected using internal endpoints such as direct or seda. When messages
-     * is passed via external endpoints such as JMS or HTTP then the consumer
-     * will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast,
-     * will create a new unit of work boundary for the messages in their
-     * sub-route (eg the splitted message); however these EIPs have an option
-     * named <tt>shareUnitOfWork</tt> which allows to combine with the parent
-     * unit of work in regard to error handling and therefore use the parent
-     * original message.
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
      * @return the builder
-     * @see #useOriginalBody()
+     * @see    #useOriginalBody()
      */
     public OnExceptionDefinition useOriginalMessage() {
         setUseOriginalMessage(Boolean.toString(true));
@@ -705,48 +683,36 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Message} body
-     * (original body only) when an {@link org.apache.camel.Exchange} is moved
-     * to the dead letter queue.
+     * Will use the original input {@link org.apache.camel.Message} body (original body only) when an
+     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
      * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have
-     * failed and the {@link org.apache.camel.Exchange} is doomed for failure.
-     * <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange}
-     * IN message we use the original IN message instead. This allows you to
-     * store the original input in the dead letter queue instead of the
-     * inprogress snapshot of the IN message. For instance if you route
-     * transform the IN body during routing and then failed. With the original
-     * exchange store in the dead letter queue it might be easier to manually re
-     * submit the {@link org.apache.camel.Exchange} again as the IN message is
-     * the same as when Camel received it. So you should be able to send the
-     * {@link org.apache.camel.Exchange} to the same input.
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
+     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
+     * the original exchange store in the dead letter queue it might be easier to manually re submit the
+     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
+     * able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the
-     * former includes both the original body and headers, where as the latter
-     * only includes the original body. You can use the latter to enrich the
-     * message with custom headers and include the original message body. The
-     * former wont let you do this, as its using the original message body and
-     * headers as they are. You cannot enable both useOriginalMessage and
-     * useOriginalBody.
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
+     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
+     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
-     * <b>Important:</b> The original input means the input message that are
-     * bounded by the current {@link org.apache.camel.spi.UnitOfWork}. An unit
-     * of work typically spans one route, or multiple routes if they are
-     * connected using internal endpoints such as direct or seda. When messages
-     * is passed via external endpoints such as JMS or HTTP then the consumer
-     * will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast,
-     * will create a new unit of work boundary for the messages in their
-     * sub-route (eg the splitted message); however these EIPs have an option
-     * named <tt>shareUnitOfWork</tt> which allows to combine with the parent
-     * unit of work in regard to error handling and therefore use the parent
-     * original message.
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
      * @return the builder
-     * @see #useOriginalMessage()
+     * @see    #useOriginalMessage()
      */
     public OnExceptionDefinition useOriginalBody() {
         setUseOriginalBody(Boolean.toString(true));
@@ -754,11 +720,9 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets a processor that should be processed <b>before</b> a redelivery
-     * attempt.
+     * Sets a processor that should be processed <b>before</b> a redelivery attempt.
      * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b>
-     * its being redelivered.
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
      */
     public OnExceptionDefinition onRedelivery(Processor processor) {
         setOnRedelivery(processor);
@@ -766,11 +730,9 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets a reference to a processor that should be processed <b>before</b> a
-     * redelivery attempt.
+     * Sets a reference to a processor that should be processed <b>before</b> a redelivery attempt.
      * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b>
-     * its being redelivered.
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
      *
      * @param ref reference to the processor
      */
@@ -780,9 +742,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets a processor that should be processed <b>just after</b> an exception
-     * occurred. Can be used to perform custom logging about the occurred
-     * exception at the exact time it happened.
+     * Sets a processor that should be processed <b>just after</b> an exception occurred. Can be used to perform custom
+     * logging about the occurred exception at the exact time it happened.
      * <p/>
      * Important: Any exception thrown from this processor will be ignored.
      */
@@ -792,9 +753,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     /**
-     * Sets a reference to a processor that should be processed <b>just
-     * after</b> an exception occurred. Can be used to perform custom logging
-     * about the occurred exception at the exact time it happened.
+     * Sets a reference to a processor that should be processed <b>just after</b> an exception occurred. Can be used to
+     * perform custom logging about the occurred exception at the exact time it happened.
      * <p/>
      * Important: Any exception thrown from this processor will be ignored.
      *

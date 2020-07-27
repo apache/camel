@@ -36,7 +36,6 @@ public final class IOTAConstants {
     protected static final String SEND_TRANSFER_OPERATION = "sendTransfer";
     protected static final String GET_NEW_ADDRESS_OPERATION = "getNewAddress";
     protected static final String GET_TRANSFERS_OPERATION = "getTransfers";
-    
 
     private IOTAConstants() {
     }

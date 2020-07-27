@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTest {
-    
+
     @Override
     @Test
     public void testGroupLines() throws Exception {
@@ -50,7 +50,8 @@ public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=4&groupStrategy=#myGroupStrategy").to("mock:result");
+                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=4&groupStrategy=#myGroupStrategy")
+                        .to("mock:result");
             }
         };
     }

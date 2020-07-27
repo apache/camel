@@ -45,8 +45,8 @@ public class SqlEndpointTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-        
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+
         super.setUp();
     }
 
@@ -54,7 +54,7 @@ public class SqlEndpointTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -70,8 +70,8 @@ public class SqlEndpointTest extends CamelTestSupport {
                 context.addEndpoint("mysql", sql);
 
                 from("direct:start")
-                    .to("mysql")
-                    .to("mock:result");
+                        .to("mysql")
+                        .to("mock:result");
             }
         };
     }

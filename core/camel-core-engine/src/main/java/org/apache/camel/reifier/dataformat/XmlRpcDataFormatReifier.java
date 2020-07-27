@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 public class XmlRpcDataFormatReifier extends DataFormatReifier<XmlRpcDataFormat> {
 
     public XmlRpcDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (XmlRpcDataFormat)definition);
+        super(camelContext, (XmlRpcDataFormat) definition);
     }
 
     @Override

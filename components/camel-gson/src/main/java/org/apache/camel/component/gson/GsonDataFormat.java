@@ -45,12 +45,13 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
- * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
+ * <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
 @Dataformat("json-gson")
 @Metadata(includeProperties = "unmarshalTypeName,prettyPrint,contentTypeHeader")
-public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
+public class GsonDataFormat extends ServiceSupport
+        implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     private CamelContext camelContext;
     private Gson gson;
@@ -71,8 +72,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     /**
-     * Use the default Gson {@link Gson} and with a custom
-     * unmarshal type
+     * Use the default Gson {@link Gson} and with a custom unmarshal type
      *
      * @param unmarshalType the custom unmarshal type
      */
@@ -81,12 +81,11 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     /**
-     * Use the default Gson {@link Gson} and with a custom
-     * unmarshal type and {@link ExclusionStrategy}
+     * Use the default Gson {@link Gson} and with a custom unmarshal type and {@link ExclusionStrategy}
      *
-     * @param unmarshalType the custom unmarshal type
-     * @param exclusionStrategies one or more custom ExclusionStrategy implementations
-     * @deprecated use the setter instead
+     * @param      unmarshalType       the custom unmarshal type
+     * @param      exclusionStrategies one or more custom ExclusionStrategy implementations
+     * @deprecated                     use the setter instead
      */
     @Deprecated
     public GsonDataFormat(Class<?> unmarshalType, ExclusionStrategy... exclusionStrategies) {
@@ -106,8 +105,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     /**
-     * Use the default Gson {@link Gson} and with a custom
-     * unmarshal generic type
+     * Use the default Gson {@link Gson} and with a custom unmarshal generic type
      *
      * @param unmarshalGenericType the custom unmarshal generic type
      */
@@ -118,7 +116,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     /**
      * Use a custom Gson mapper and and unmarshal token type
      *
-     * @param gson          the custom mapper
+     * @param gson                 the custom mapper
      * @param unmarshalGenericType the custom unmarshal generic type
      */
     public GsonDataFormat(Gson gson, Type unmarshalGenericType) {
@@ -330,7 +328,6 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     public void setDateFormatPattern(String dateFormatPattern) {
         this.dateFormatPattern = dateFormatPattern;
     }
-
 
     public boolean isContentTypeHeader() {
         return contentTypeHeader;

@@ -22,7 +22,7 @@ import java.util.List;
  * Strategy to control how lines should be grouped together.
  */
 public interface GroupStrategy {
-    
+
     Object groupLines(List<String> lines);
 
 }

@@ -39,7 +39,8 @@ public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("geocoder:address: ?apiKey=" + getApiKey()).to("log:result")
-                    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}").to("mock:result");
+                        .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
+                        .to("mock:result");
             }
         };
     }

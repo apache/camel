@@ -39,15 +39,15 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     void testCacheClear() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived((Object)null);
+        mock.expectedBodiesReceived((Object) null);
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_HAS_RESULT, false);
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_SUCCEEDED, true);
 
         fluentTemplate()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_CLEAR)
-            .to("direct://start")
-            .send();
-        
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_CLEAR)
+                .to("direct://start")
+                .send();
+
         assertMockEndpointsSatisfied();
     }
 
@@ -68,11 +68,11 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_SUCCEEDED, true);
 
         fluentTemplate()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withBody(val)
-            .to("direct://start")
-            .send();
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withBody(val)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
 
@@ -91,10 +91,10 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_SUCCEEDED, true);
 
         fluentTemplate()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_ALL)
-            .withBody(map)
-            .to("direct://start")
-            .send();
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_ALL)
+                .withBody(map)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
 
@@ -119,21 +119,21 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderValuesReceivedInAnyOrder(EhcacheConstants.OLD_VALUE, null, val1);
 
         fluentTemplate()
-            .clearHeaders()
-            .clearBody()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_IF_ABSENT)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withBody(val1)
-            .to("direct://start")
-            .send();
+                .clearHeaders()
+                .clearBody()
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_IF_ABSENT)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withBody(val1)
+                .to("direct://start")
+                .send();
         fluentTemplate()
-            .clearHeaders()
-            .clearBody()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_IF_ABSENT)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withBody(val2)
-            .to("direct://start")
-            .send();
+                .clearHeaders()
+                .clearBody()
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_IF_ABSENT)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withBody(val2)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
 
@@ -160,11 +160,11 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_SUCCEEDED, true);
 
         fluentTemplate()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_GET)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withBody(val)
-            .to("direct://start")
-            .send();
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_GET)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withBody(val)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
     }
@@ -183,10 +183,10 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_SUCCEEDED, true);
 
         fluentTemplate()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_GET_ALL)
-            .withHeader(EhcacheConstants.KEYS, keys)
-            .to("direct://start")
-            .send();
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_GET_ALL)
+                .withHeader(EhcacheConstants.KEYS, keys)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
 
@@ -215,10 +215,10 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_SUCCEEDED, true);
 
         fluentTemplate()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
-            .withHeader(EhcacheConstants.KEY, key)
-            .to("direct://start")
-            .send();
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
+                .withHeader(EhcacheConstants.KEY, key)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
 
@@ -240,24 +240,24 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderValuesReceivedInAnyOrder(EhcacheConstants.ACTION_SUCCEEDED, false, true);
 
         fluentTemplate()
-            .clearHeaders()
-            .clearBody()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withHeader(EhcacheConstants.OLD_VALUE, val2)
-            .to("direct://start")
-            .send();
+                .clearHeaders()
+                .clearBody()
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withHeader(EhcacheConstants.OLD_VALUE, val2)
+                .to("direct://start")
+                .send();
 
         assertTrue(cache.containsKey(key));
 
         fluentTemplate()
-            .clearHeaders()
-            .clearBody()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withHeader(EhcacheConstants.OLD_VALUE, val1)
-            .to("direct://start")
-            .send();
+                .clearHeaders()
+                .clearBody()
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withHeader(EhcacheConstants.OLD_VALUE, val1)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
 
@@ -278,10 +278,10 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderReceived(EhcacheConstants.ACTION_SUCCEEDED, true);
 
         fluentTemplate()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE_ALL)
-            .withHeader(EhcacheConstants.KEYS, keys)
-            .to("direct://start")
-            .send();
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE_ALL)
+                .withHeader(EhcacheConstants.KEYS, keys)
+                .to("direct://start")
+                .send();
 
         assertMockEndpointsSatisfied();
 
@@ -310,37 +310,37 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         assertEquals(val1, cache.get(key));
 
         fluentTemplate()
-            .clearHeaders()
-            .clearBody()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withBody(val2)
-            .to("direct://start")
-            .send();
+                .clearHeaders()
+                .clearBody()
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withBody(val2)
+                .to("direct://start")
+                .send();
 
         assertEquals(val2, cache.get(key));
 
         fluentTemplate()
-            .clearHeaders()
-            .clearBody()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withHeader(EhcacheConstants.OLD_VALUE, val1)
-            .withBody(val3)
-            .to("direct://start")
-            .send();
+                .clearHeaders()
+                .clearBody()
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withHeader(EhcacheConstants.OLD_VALUE, val1)
+                .withBody(val3)
+                .to("direct://start")
+                .send();
 
         assertEquals(val2, cache.get(key));
 
         fluentTemplate()
-            .clearHeaders()
-            .clearBody()
-            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
-            .withHeader(EhcacheConstants.KEY, key)
-            .withHeader(EhcacheConstants.OLD_VALUE, val2)
-            .withBody(val3)
-            .to("direct://start")
-            .send();
+                .clearHeaders()
+                .clearBody()
+                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
+                .withHeader(EhcacheConstants.KEY, key)
+                .withHeader(EhcacheConstants.OLD_VALUE, val2)
+                .withBody(val3)
+                .to("direct://start")
+                .send();
 
         assertEquals(val3, cache.get(key));
 
@@ -356,9 +356,9 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                  .toF("ehcache://%s?cacheManager=#cacheManager", TEST_CACHE_NAME)
-                    .to("log:org.apache.camel.component.ehcache?level=INFO&showAll=true&multiline=true")
-                    .to("mock:result");
+                        .toF("ehcache://%s?cacheManager=#cacheManager", TEST_CACHE_NAME)
+                        .to("log:org.apache.camel.component.ehcache?level=INFO&showAll=true&multiline=true")
+                        .to("mock:result");
             }
         };
     }

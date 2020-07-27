@@ -35,17 +35,18 @@ public final class MinaHelper {
     }
 
     /**
-     * Asynchronously writes the given body to MINA session. Will wait at most for
-     * {{ writeTimeout }} milliseconds until the body has been written.
+     * Asynchronously writes the given body to MINA session. Will wait at most for {{ writeTimeout }} milliseconds until
+     * the body has been written.
      *
-     * @param session  the MINA session
-     * @param body     the body to write (send)
-     * @param exchange the exchange
-     * @param writeTimeout maximum amount of time we wait for the WriteFuture to complete (in milliseconds)
-     * @throws CamelExchangeException is thrown if the body could not be written for some reasons
-     *                                (eg remote connection is closed etc.)
+     * @param  session                the MINA session
+     * @param  body                   the body to write (send)
+     * @param  exchange               the exchange
+     * @param  writeTimeout           maximum amount of time we wait for the WriteFuture to complete (in milliseconds)
+     * @throws CamelExchangeException is thrown if the body could not be written for some reasons (eg remote connection
+     *                                is closed etc.)
      */
-    public static void writeBody(IoSession session, Object body, Exchange exchange, long writeTimeout) throws CamelExchangeException {
+    public static void writeBody(IoSession session, Object body, Exchange exchange, long writeTimeout)
+            throws CamelExchangeException {
         // the write operation is asynchronous. Use WriteFuture to wait until the session has been written
         WriteFuture future = session.write(body);
         // must use a timeout as in some very high performance scenarios a write can cause thread hanging forever

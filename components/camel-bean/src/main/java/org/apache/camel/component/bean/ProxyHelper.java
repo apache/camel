@@ -37,22 +37,30 @@ public final class ProxyHelper {
      * Creates a Proxy which sends the exchange to the endpoint.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T createProxyObject(Endpoint endpoint, boolean binding, Producer producer, ClassLoader classLoader, Class<T>[] interfaces, MethodInfoCache methodCache) {
-        return (T) Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, binding, producer, methodCache));
+    public static <T> T createProxyObject(
+            Endpoint endpoint, boolean binding, Producer producer, ClassLoader classLoader, Class<T>[] interfaces,
+            MethodInfoCache methodCache) {
+        return (T) Proxy.newProxyInstance(classLoader, interfaces.clone(),
+                new CamelInvocationHandler(endpoint, binding, producer, methodCache));
     }
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T> interfaceClass, MethodInfoCache methodCache) throws Exception {
+    public static <T> T createProxy(
+            Endpoint endpoint, boolean binding, ClassLoader cl, Class<T> interfaceClass, MethodInfoCache methodCache)
+            throws Exception {
         return createProxy(endpoint, binding, cl, toArray(interfaceClass), methodCache);
     }
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache) throws Exception {
-        Producer producer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getDeferServiceFactory().createProducer(endpoint);
+    public static <T> T createProxy(
+            Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache)
+            throws Exception {
+        Producer producer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getDeferServiceFactory()
+                .createProducer(endpoint);
         return createProxyObject(endpoint, binding, producer, cl, interfaceClasses, methodCache);
     }
 
@@ -66,7 +74,8 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>... interfaceClasses)
+            throws Exception {
         return createProxy(endpoint, binding, cl, interfaceClasses, createMethodInfoCache(endpoint));
     }
 
@@ -94,12 +103,15 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, boolean binding, Producer producer, Class<T>... interfaceClasses) throws Exception {
-        return createProxyObject(endpoint, binding, producer, getClassLoader(interfaceClasses), interfaceClasses, createMethodInfoCache(endpoint));
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, Producer producer, Class<T>... interfaceClasses)
+            throws Exception {
+        return createProxyObject(endpoint, binding, producer, getClassLoader(interfaceClasses), interfaceClasses,
+                createMethodInfoCache(endpoint));
     }
 
     /**
-     * Returns the class loader of the first interface or throws {@link IllegalArgumentException} if there are no interfaces specified
+     * Returns the class loader of the first interface or throws {@link IllegalArgumentException} if there are no
+     * interfaces specified
      */
     protected static ClassLoader getClassLoader(Class<?>... interfaces) {
         if (interfaces == null || interfaces.length < 1) {
@@ -117,6 +129,6 @@ public final class ProxyHelper {
         // this method and it's usage is introduced to avoid compiler warnings
         // about the generic Class arrays in the case we've got only one single
         // Class to build a Proxy for
-        return new Class[] {interfaceClass};
+        return new Class[] { interfaceClass };
     }
 }

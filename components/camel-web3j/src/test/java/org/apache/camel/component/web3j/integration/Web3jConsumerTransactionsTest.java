@@ -41,8 +41,8 @@ public class Web3jConsumerTransactionsTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                        + OPERATION.toLowerCase() + "=" + TRANSACTION_OBSERVABLE)
-                        .to("mock:result");
+                     + OPERATION.toLowerCase() + "=" + TRANSACTION_OBSERVABLE)
+                             .to("mock:result");
             }
         };
     }

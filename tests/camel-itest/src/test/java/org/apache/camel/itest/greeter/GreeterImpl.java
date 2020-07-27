@@ -29,8 +29,7 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
 
 public class GreeterImpl implements Greeter {
 
-    private static final Logger LOG =
-        Logger.getLogger(GreeterImpl.class.getPackage().getName());
+    private static final Logger LOG = Logger.getLogger(GreeterImpl.class.getPackage().getName());
     private int oneWayCounter;
 
     public String greetMe(String me) {
@@ -55,21 +54,20 @@ public class GreeterImpl implements Greeter {
 
     public void pingMe(String messageIn) throws PingMeFault {
         FaultDetail faultDetail = new FaultDetail();
-        faultDetail.setMajor((short)2);
-        faultDetail.setMinor((short)1);
+        faultDetail.setMajor((short) 2);
+        faultDetail.setMinor((short) 1);
         LOG.info("Executing operation pingMe, throwing PingMeFault exception, message = "
                  + messageIn);
         LOG.info("Executing operation pingMe, throwing PingMeFault exception\n");
         throw new PingMeFault("PingMeFault raised by server", faultDetail);
     }
-    
+
     public int getOneWayCounter() {
         return oneWayCounter;
     }
-    
+
     public void resetOneWayCounter() {
         oneWayCounter = 0;
     }
-
 
 }

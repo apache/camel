@@ -25,8 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  * Java class for ConcurrencyModeEnum.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -43,8 +42,10 @@ import javax.xml.bind.annotation.XmlType;
 public enum ConcurrencyModeEnum {
 
     @XmlEnumValue("Parallel")
-    PARALLEL("Parallel"), @XmlEnumValue("Serial")
+    PARALLEL("Parallel"),
+    @XmlEnumValue("Serial")
     SERIAL("Serial");
+
     private final String value;
 
     ConcurrencyModeEnum(String v) {

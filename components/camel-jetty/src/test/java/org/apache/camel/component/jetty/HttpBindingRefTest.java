@@ -59,13 +59,15 @@ public class HttpBindingRefTest extends BaseJettyTest {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform().constant("Bye World");
+                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform()
+                        .constant("Bye World");
 
-                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        throw new IllegalStateException("Not implemented");
-                    }
-                });
+                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                throw new IllegalStateException("Not implemented");
+                            }
+                        });
             }
         };
     }

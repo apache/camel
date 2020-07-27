@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link io.netty.channel.ChannelFutureListener} that performs the disconnect logic when
- * sending the response is complete.
+ * A {@link io.netty.channel.ChannelFutureListener} that performs the disconnect logic when sending the response is
+ * complete.
  */
 public class ServerResponseFutureListener implements ChannelFutureListener {
 

@@ -25,7 +25,7 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 public class RoundRobinLoadBalancerReifier extends LoadBalancerReifier<RoundRobinLoadBalancerDefinition> {
 
     public RoundRobinLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
-        super(route, (RoundRobinLoadBalancerDefinition)definition);
+        super(route, (RoundRobinLoadBalancerDefinition) definition);
     }
 
     @Override

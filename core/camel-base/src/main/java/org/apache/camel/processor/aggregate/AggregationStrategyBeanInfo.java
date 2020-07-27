@@ -51,9 +51,11 @@ public class AggregationStrategyBeanInfo {
 
         // must have equal number of parameters
         if (size < 2) {
-            throw new IllegalArgumentException("The method " + method.getName() + " must have at least two parameters, has: " + size);
+            throw new IllegalArgumentException(
+                    "The method " + method.getName() + " must have at least two parameters, has: " + size);
         } else if (size % 2 != 0) {
-            throw new IllegalArgumentException("The method " + method.getName() + " must have equal number of parameters, has: " + size);
+            throw new IllegalArgumentException(
+                    "The method " + method.getName() + " must have equal number of parameters, has: " + size);
         }
 
         // must not have annotations as they are not supported (yet)
@@ -61,7 +63,9 @@ public class AggregationStrategyBeanInfo {
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] annotations = parameterAnnotations[i];
             if (annotations.length > 0) {
-                throw new IllegalArgumentException("Method parameter annotation: " + annotations[0] + " at index: " + i + " is not supported on method: " + method);
+                throw new IllegalArgumentException(
+                        "Method parameter annotation: " + annotations[0] + " at index: " + i + " is not supported on method: "
+                                                   + method);
             }
         }
 

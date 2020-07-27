@@ -34,14 +34,14 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-
 /**
  * Various tests used to validate the behaviour of Java Sockets.
  *
- * The tests were for experimentation and don't have any assertions in them - JUnit provided a convenient framework to explore this behaviour.  These tests shouldn't be run with a normal build since
- * they don't have any assertions and don't validate any results.
+ * The tests were for experimentation and don't have any assertions in them - JUnit provided a convenient framework to
+ * explore this behaviour. These tests shouldn't be run with a normal build since they don't have any assertions and
+ * don't validate any results.
  *
- * NOTE:  This class may be deleted in the future
+ * NOTE: This class may be deleted in the future
  */
 @Disabled(value = "Tests validating Java Socket behaviours")
 public class JavaSocketTests {
@@ -99,11 +99,14 @@ public class JavaSocketTests {
                                     case -1:
                                         if (echoSocket.isConnected() && !echoSocket.isClosed()) {
                                             log.info("Available returned {}", reader.available());
-                                            log.warn("Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
+                                            log.warn(
+                                                    "Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
                                             try {
                                                 echoSocket.close();
                                             } catch (Exception ex) {
-                                                log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
+                                                log.warn(
+                                                        "Exception encountered closing echoSocket after END_OF_STREAM received",
+                                                        ex);
                                             }
                                         }
                                         break;
@@ -132,7 +135,6 @@ public class JavaSocketTests {
                         log.error("Exception encountered closing server socket", ioEx);
                     }
                 }
-
 
                 log.info("Finished processing connection");
             }
@@ -204,11 +206,14 @@ public class JavaSocketTests {
                                     case -1:
                                         if (echoSocket.isConnected() && !echoSocket.isClosed()) {
                                             log.info("Available returned {}", reader.available());
-                                            log.warn("Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
+                                            log.warn(
+                                                    "Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
                                             try {
                                                 echoSocket.close();
                                             } catch (Exception ex) {
-                                                log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
+                                                log.warn(
+                                                        "Exception encountered closing echoSocket after END_OF_STREAM received",
+                                                        ex);
                                             }
                                         }
                                         break;
@@ -241,7 +246,6 @@ public class JavaSocketTests {
                         log.error("Exception encountered closing server socket", ioEx);
                     }
                 }
-
 
                 log.info("Finished processing connection");
             }

@@ -28,6 +28,7 @@ public class ByteFormatFactory extends AbstractFormatFactory {
         supportedClasses.add(byte.class);
         supportedClasses.add(Byte.class);
     }
+
     @Override
     public boolean canBuild(FormattingOptions formattingOptions) {
         return super.canBuild(formattingOptions)

@@ -103,9 +103,12 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     @Override
-    public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId, String correlationId, long requestTimeout) {
+    public String registerReply(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId,
+            String correlationId, long requestTimeout) {
         // add to correlation map
-        QueueReplyHandler handler = new QueueReplyHandler(replyManager, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
+        QueueReplyHandler handler
+                = new QueueReplyHandler(replyManager, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
         // Just make sure we don't override the old value of the correlationId
         ReplyHandler result = correlation.putIfAbsent(correlationId, handler, requestTimeout);
         if (result != null) {
@@ -115,8 +118,10 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         return correlationId;
     }
 
-    protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId, String correlationId,
-                                                       long requestTimeout);
+    protected abstract ReplyHandler createReplyHandler(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId,
+            String correlationId,
+            long requestTimeout);
 
     @Override
     public void cancelCorrelationId(String correlationId) {
@@ -152,18 +157,21 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     // timeout occurred do a WARN log so its easier to spot in
                     // the logs
                     if (LOG.isWarnEnabled()) {
-                        LOG.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
-                                 + " Setting ExchangeTimedOutException on {} and continue routing.", holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
-                                 ExchangeHelper.logIds(exchange));
+                        LOG.warn(
+                                "Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
+                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
+                                holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
+                                ExchangeHelper.logIds(exchange));
                     }
 
                     // no response, so lets set a timed out exception
-                    String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received on destination: " + replyTo;
+                    String msg = "reply message with correlationID: " + holder.getCorrelationId()
+                                 + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
 
                     messageConverter.populateRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage(), true,
-                                                            endpoint.isAllowMessageBodySerialization());
+                            endpoint.isAllowMessageBodySerialization());
 
                     // restore correlation id in case the remote server messed
                     // with it
@@ -188,11 +196,9 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected abstract Connection createListenerContainer() throws Exception;
 
     /**
-     * <b>IMPORTANT:</b> This logic is only being used due to high performance
-     * in-memory only testing using InOut over JMS. Its unlikely to happen in a
-     * real life situation with communication to a remote broker, which always
-     * will be slower to send back reply, before Camel had a chance to update
-     * it's internal correlation map.
+     * <b>IMPORTANT:</b> This logic is only being used due to high performance in-memory only testing using InOut over
+     * JMS. Its unlikely to happen in a real life situation with communication to a remote broker, which always will be
+     * slower to send back reply, before Camel had a chance to update it's internal correlation map.
      */
     protected ReplyHandler waitForProvisionCorrelationToBeUpdated(String correlationID, byte[] message) {
         // race condition, when using messageID as correlationID then we store a
@@ -226,7 +232,9 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
             if (answer != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}", correlationID, counter, answer);
+                    LOG.trace(
+                            "Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
+                            correlationID, counter, answer);
                 }
             }
         }

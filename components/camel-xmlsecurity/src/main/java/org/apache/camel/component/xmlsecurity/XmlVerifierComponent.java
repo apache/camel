@@ -39,9 +39,12 @@ public class XmlVerifierComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining,
-                                      Map<String, Object> parameters) throws Exception {
-        XmlVerifierConfiguration config = verifierConfiguration != null ? verifierConfiguration.copy() : new XmlVerifierConfiguration();
+    protected Endpoint createEndpoint(
+            String uri, String remaining,
+            Map<String, Object> parameters)
+            throws Exception {
+        XmlVerifierConfiguration config
+                = verifierConfiguration != null ? verifierConfiguration.copy() : new XmlVerifierConfiguration();
         XmlVerifierEndpoint endpoint = new XmlVerifierEndpoint(uri, this, config);
         endpoint.setName(remaining);
         setProperties(endpoint, parameters);

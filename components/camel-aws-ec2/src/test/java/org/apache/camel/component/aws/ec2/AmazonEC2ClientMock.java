@@ -58,7 +58,7 @@ import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 import org.apache.camel.util.ObjectHelper;
 
 public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
-    
+
     @Override
     public RunInstancesResult runInstances(RunInstancesRequest runInstancesRequest) {
         RunInstancesResult result = new RunInstancesResult();
@@ -73,7 +73,8 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
             ins.setInstanceType(runInstancesRequest.getInstanceType());
             ins.setInstanceId("instance-1");
             if (runInstancesRequest.getSecurityGroups() != null) {
-                if (runInstancesRequest.getSecurityGroups().contains("secgroup-1") && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
+                if (runInstancesRequest.getSecurityGroups().contains("secgroup-1")
+                        && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
                     GroupIdentifier id1 = new GroupIdentifier();
                     id1.setGroupId("id-1");
                     id1.setGroupName("secgroup-1");
@@ -101,14 +102,14 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
             }
             instances.add(ins);
             res.setInstances(instances);
-            result.setReservation(res); 
+            result.setReservation(res);
         } else {
             throw new AmazonServiceException("The image-id doesn't exists");
         }
         return result;
-        
+
     }
-    
+
     @Override
     public StartInstancesResult startInstances(StartInstancesRequest startInstancesRequest) {
         StartInstancesResult result = new StartInstancesResult();
@@ -129,9 +130,9 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
         } else {
             throw new AmazonServiceException("The image-id doesn't exists");
         }
-        return result;       
+        return result;
     }
-    
+
     @Override
     public StopInstancesResult stopInstances(StopInstancesRequest stopInstancesRequest) {
         StopInstancesResult result = new StopInstancesResult();
@@ -152,7 +153,7 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
         } else {
             throw new AmazonServiceException("The image-id doesn't exists");
         }
-        return result;        
+        return result;
     }
 
     @Override
@@ -175,9 +176,9 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
         } else {
             throw new AmazonServiceException("The image-id doesn't exists");
         }
-        return result;    
+        return result;
     }
-    
+
     @Override
     public DescribeInstancesResult describeInstances(DescribeInstancesRequest describeInstancesRequest) {
         DescribeInstancesResult result = new DescribeInstancesResult();
@@ -200,7 +201,7 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
             instances.add(ins1);
             res.setInstances(instances);
             list.add(res);
-            result.setReservations(list); 
+            result.setReservations(list);
         } else {
             if (describeInstancesRequest.getInstanceIds().contains("instance-1")) {
                 Collection<Reservation> list = new ArrayList<>();
@@ -216,12 +217,12 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
                 instances.add(ins);
                 res.setInstances(instances);
                 list.add(res);
-                result.setReservations(list); 
+                result.setReservations(list);
             }
         }
         return result;
     }
-    
+
     @Override
     public DescribeInstanceStatusResult describeInstanceStatus(DescribeInstanceStatusRequest describeInstanceStatusRequest) {
         DescribeInstanceStatusResult result = new DescribeInstanceStatusResult();
@@ -256,7 +257,7 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
     public RebootInstancesResult rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
         return new RebootInstancesResult();
     }
-    
+
     @Override
     public MonitorInstancesResult monitorInstances(MonitorInstancesRequest monitorInstancesRequest) {
         MonitorInstancesResult result = new MonitorInstancesResult();
@@ -269,14 +270,14 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
                 mon.setInstanceId(id);
                 Monitoring monitoring = new Monitoring();
                 monitoring.setState(MonitoringState.Enabled);
-                mon.setMonitoring(monitoring); 
+                mon.setMonitoring(monitoring);
                 coll.add(mon);
             }
             result.setInstanceMonitorings(coll);
         }
         return result;
     }
-    
+
     @Override
     public UnmonitorInstancesResult unmonitorInstances(UnmonitorInstancesRequest unmonitorInstancesRequest) {
         UnmonitorInstancesResult result = new UnmonitorInstancesResult();
@@ -289,19 +290,19 @@ public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
                 mon.setInstanceId(id);
                 Monitoring monitoring = new Monitoring();
                 monitoring.setState(MonitoringState.Disabled);
-                mon.setMonitoring(monitoring); 
+                mon.setMonitoring(monitoring);
                 coll.add(mon);
             }
             result.setInstanceMonitorings(coll);
         }
         return result;
     }
-    
+
     @Override
     public CreateTagsResult createTags(CreateTagsRequest createTagsRequest) {
         return new CreateTagsResult();
     }
-    
+
     @Override
     public DeleteTagsResult deleteTags(DeleteTagsRequest deleteTagsRequest) {
         return new DeleteTagsResult();

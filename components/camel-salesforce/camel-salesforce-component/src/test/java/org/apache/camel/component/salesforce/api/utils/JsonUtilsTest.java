@@ -48,7 +48,7 @@ public class JsonUtilsTest {
         ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         JsonSchema jsonSchema = objectMapper.readValue(basicApiJsonSchema, JsonSchema.class);
         assertTrue(jsonSchema.isObjectSchema());
-        assertFalse(((ObjectSchema)jsonSchema).getOneOf().isEmpty());
+        assertFalse(((ObjectSchema) jsonSchema).getOneOf().isEmpty());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class JsonUtilsTest {
         ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         JsonSchema jsonSchema = objectMapper.readValue(sObjectJsonSchema, JsonSchema.class);
         assertTrue(jsonSchema.isObjectSchema());
-        assertEquals(2, ((ObjectSchema)jsonSchema).getOneOf().size());
+        assertEquals(2, ((ObjectSchema) jsonSchema).getOneOf().size());
     }
 
 }

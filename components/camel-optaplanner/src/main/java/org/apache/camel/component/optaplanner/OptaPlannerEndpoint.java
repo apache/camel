@@ -33,7 +33,8 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * Solve planning problems with OptaPlanner.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", category = {Category.ENGINE, Category.PLANNING})
+@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile",
+             category = { Category.ENGINE, Category.PLANNING })
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver<Object>> SOLVERS = new HashMap<>();
 
@@ -95,7 +96,7 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         synchronized (SOLVERS) {
-            for (Map.Entry<String, Solver<Object>> solver: SOLVERS.entrySet()) {
+            for (Map.Entry<String, Solver<Object>> solver : SOLVERS.entrySet()) {
                 solver.getValue().terminateEarly();
                 SOLVERS.remove(solver.getKey());
             }

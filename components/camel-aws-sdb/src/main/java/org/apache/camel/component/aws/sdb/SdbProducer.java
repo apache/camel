@@ -22,8 +22,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
 /**
- * A Producer which sends messages to the Amazon SimpleDB Service
- * <a href="http://aws.amazon.com/simpledb/">AWS SDB</a>
+ * A Producer which sends messages to the Amazon SimpleDB Service <a href="http://aws.amazon.com/simpledb/">AWS SDB</a>
  */
 public class SdbProducer extends DefaultProducer {
 

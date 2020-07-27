@@ -24,8 +24,8 @@ import java.util.function.Predicate;
 import org.apache.camel.StaticService;
 
 /**
- * Component for property placeholders and loading properties from sources
- * (such as .properties file from classpath or file system)
+ * Component for property placeholders and loading properties from sources (such as .properties file from classpath or
+ * file system)
  */
 public interface PropertiesComponent extends StaticService {
 
@@ -47,8 +47,8 @@ public interface PropertiesComponent extends StaticService {
     /**
      * Parses the input text and resolve all property placeholders from within the text.
      *
-     * @param uri  input text
-     * @return text with resolved property placeholders
+     * @param  uri                      input text
+     * @return                          text with resolved property placeholders
      * @throws IllegalArgumentException is thrown if error during parsing
      */
     String parseUri(String uri);
@@ -56,8 +56,8 @@ public interface PropertiesComponent extends StaticService {
     /**
      * Looks up the property with the given key
      *
-     * @param key  the name of the property
-     * @return the property value if present
+     * @param  key the name of the property
+     * @return     the property value if present
      */
     Optional<String> resolveProperty(String key);
 
@@ -71,31 +71,35 @@ public interface PropertiesComponent extends StaticService {
     /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate.
      * </p>
-     * <pre>{@code
+     * 
+     * <pre>
+     * {
+     *     &#64;code
      *     PropertiesComponent pc = getPropertiesComponent();
      *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"));
-     * }</pre>
+     * }
+     * </pre>
      *
-     * @param filter the predicate used to filter out properties based on the key.
-     * @return the properties loaded.
+     * @param  filter the predicate used to filter out properties based on the key.
+     * @return        the properties loaded.
      */
     Properties loadProperties(Predicate<String> filter);
 
     /**
-     * Gets the configured properties locations.
-     * This may be empty if the properties component has only been configured with {@link PropertiesSource}.
+     * Gets the configured properties locations. This may be empty if the properties component has only been configured
+     * with {@link PropertiesSource}.
      */
     List<String> getLocations();
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. You can use comma to separate multiple locations. This option will
+     * override any default locations and only use the locations from this option.
      */
     void setLocation(String location);
 
     /**
-     * Adds the list of locations to the current locations, where to load properties.
-     * You can use comma to separate multiple locations.
+     * Adds the list of locations to the current locations, where to load properties. You can use comma to separate
+     * multiple locations.
      */
     void addLocation(String location);
 
@@ -120,14 +124,13 @@ public interface PropertiesComponent extends StaticService {
     void setInitialProperties(Properties initialProperties);
 
     /**
-     * Sets a special list of override properties that take precedence
-     * and will use first, if a property exist.
+     * Sets a special list of override properties that take precedence and will use first, if a property exist.
      */
     void setOverrideProperties(Properties overrideProperties);
 
     /**
-     * Sets a special list of local properties (ie thread local) that take precedence
-     * and will use first, if a property exist.
+     * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property
+     * exist.
      */
     void setLocalProperties(Properties localProperties);
 
@@ -139,8 +142,8 @@ public interface PropertiesComponent extends StaticService {
     /**
      * Encoding to use when loading properties file from the file system or classpath.
      * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
-     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * documented by {@link java.util.Properties#load(java.io.InputStream)}
      * <p/>
      * Important you must set encoding before setting locations.
      */

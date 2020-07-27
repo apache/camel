@@ -39,8 +39,10 @@ public class RestSecuritiesDefinition {
     @XmlTransient
     private RestDefinition rest;
 
-    @XmlElements({@XmlElement(name = "apiKey", type = RestSecurityApiKey.class), @XmlElement(name = "basicAuth", type = RestSecurityBasicAuth.class),
-                  @XmlElement(name = "oauth2", type = RestSecurityOAuth2.class)})
+    @XmlElements({
+            @XmlElement(name = "apiKey", type = RestSecurityApiKey.class),
+            @XmlElement(name = "basicAuth", type = RestSecurityBasicAuth.class),
+            @XmlElement(name = "oauth2", type = RestSecurityOAuth2.class) })
     private List<RestSecurityDefinition> securityDefinitions = new ArrayList<>();
 
     public RestSecuritiesDefinition() {

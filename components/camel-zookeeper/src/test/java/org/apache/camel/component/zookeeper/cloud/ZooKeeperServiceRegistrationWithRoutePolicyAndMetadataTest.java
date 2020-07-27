@@ -28,12 +28,12 @@ public class ZooKeeperServiceRegistrationWithRoutePolicyAndMetadataTest extends 
             @Override
             public void configure() throws Exception {
                 fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
-                    .routeId(SERVICE_ID)
-                    .routeProperty(ServiceDefinition.SERVICE_META_ID, SERVICE_ID)
-                    .routeProperty(ServiceDefinition.SERVICE_META_NAME, SERVICE_NAME)
-                    .routePolicy(new ServiceRegistrationRoutePolicy())
-                    .noAutoStartup()
-                    .to("log:service-registry?level=INFO");
+                        .routeId(SERVICE_ID)
+                        .routeProperty(ServiceDefinition.SERVICE_META_ID, SERVICE_ID)
+                        .routeProperty(ServiceDefinition.SERVICE_META_NAME, SERVICE_NAME)
+                        .routePolicy(new ServiceRegistrationRoutePolicy())
+                        .noAutoStartup()
+                        .to("log:service-registry?level=INFO");
             }
         };
     }

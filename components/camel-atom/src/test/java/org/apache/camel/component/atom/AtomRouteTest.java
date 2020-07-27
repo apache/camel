@@ -41,13 +41,14 @@ public class AtomRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         List<Exchange> list = endpoint.getReceivedExchanges();
-        String[] expectedTitles = {"Speaking at the Irish Java Technology Conference on Thursday and Friday",
-                                   "a great presentation on REST, JAX-WS and JSR 311",
-                                   "my slides on ActiveMQ and Camel from last weeks Dublin Conference",
-                                   "webcast today on Apache ActiveMQ",
-                                   "Feedback on my Camel talk at the IJTC conference",
-                                   "More thoughts on RESTful Message Queues",
-                                   "ActiveMQ webinar archive available"};
+        String[] expectedTitles = {
+                "Speaking at the Irish Java Technology Conference on Thursday and Friday",
+                "a great presentation on REST, JAX-WS and JSR 311",
+                "my slides on ActiveMQ and Camel from last weeks Dublin Conference",
+                "webcast today on Apache ActiveMQ",
+                "Feedback on my Camel talk at the IJTC conference",
+                "More thoughts on RESTful Message Queues",
+                "ActiveMQ webinar archive available" };
         int counter = 0;
         for (Exchange exchange : list) {
             Entry entry = exchange.getIn().getBody(Entry.class);

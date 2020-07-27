@@ -65,7 +65,8 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     public void testPingAsyncAsync() throws Exception {
         int messageCount = 10;
         for (int i = 1; i <= messageCount; i++) {
-            template.sendBody("direct:grpc-stream-async-async-route", PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
+            template.sendBody("direct:grpc-stream-async-async-route",
+                    PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
         }
 
         MockEndpoint replies = getMockEndpoint("mock:grpc-replies");
@@ -83,7 +84,8 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     public void testPingAsyncAsyncRecovery() throws Exception {
         int messageGroupCount = 5;
         for (int i = 1; i <= messageGroupCount; i++) {
-            template.sendBody("direct:grpc-stream-async-async-route", PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
+            template.sendBody("direct:grpc-stream-async-async-route",
+                    PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
         }
 
         template.sendBody("direct:grpc-stream-async-async-route", PingRequest.newBuilder().setPingName("error").build());
@@ -95,7 +97,8 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
         Thread.sleep(2000);
 
         for (int i = messageGroupCount + 1; i <= 2 * messageGroupCount; i++) {
-            template.sendBody("direct:grpc-stream-async-async-route", PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
+            template.sendBody("direct:grpc-stream-async-async-route",
+                    PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
         }
 
         replies.reset();
@@ -116,10 +119,11 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:grpc-stream-async-async-route")
-                    .to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync");
+                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                            + "/org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync");
 
                 from("direct:grpc-replies")
-                    .to("mock:grpc-replies");
+                        .to("mock:grpc-replies");
             }
         };
     }

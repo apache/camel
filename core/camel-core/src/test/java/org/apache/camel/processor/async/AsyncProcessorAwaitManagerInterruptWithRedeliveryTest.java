@@ -70,8 +70,10 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         verify(bean, atMost(4)).callMe();
 
         assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size());
-        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
+        assertEquals(1,
+                context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
+        assertEquals(1, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics()
+                .getThreadsInterrupted());
     }
 
     private void createThreadToInterrupt() {
@@ -87,7 +89,8 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
             int size = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size();
             assertEquals(1, size);
 
-            Collection<AsyncProcessorAwaitManager.AwaitThread> threads = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
+            Collection<AsyncProcessorAwaitManager.AwaitThread> threads
+                    = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
             AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
 
             // Interrupt it
@@ -108,7 +111,8 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
+                errorHandler(
+                        deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
 
                 from("direct:start").routeId("myRoute").to("mock:before").bean("myBean", "callMe").to("mock:result");
             }

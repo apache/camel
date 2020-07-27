@@ -45,7 +45,8 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
     // replace with your test queue name
     private final String ironmqQueue = "testqueue";
 
-    private final String ironMQEndpoint = "ironmq:" + ironmqQueue + "?projectId=" + projectId + "&token=" + token + "&maxMessagesPerPoll=100&wait=30&ironMQCloud=" + IRONMQCLOUD
+    private final String ironMQEndpoint = "ironmq:" + ironmqQueue + "?projectId=" + projectId + "&token=" + token
+                                          + "&maxMessagesPerPoll=100&wait=30&ironMQCloud=" + IRONMQCLOUD
                                           + "&concurrentConsumers=" + CONCURRENT_CONSUMERS + "&batchDelete=" + BATCH_DELETE;
     private final String sedaEndpoint = "seda:push?concurrentConsumers=" + CONCURRENT_CONSUMERS;
 
@@ -72,9 +73,10 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
             Thread.sleep(1000);
         }
         long delta = System.currentTimeMillis() - start;
-        int seconds = (int)delta / 1000;
+        int seconds = (int) delta / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
-        LOGGER.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
+        LOGGER.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES + " messages. Which is "
+                    + msgPrSec + " messages pr. second");
     }
 
     @Test
@@ -85,9 +87,10 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
         endpoint.expectedMessageCount(NO_OF_MESSAGES);
         assertMockEndpointsSatisfied(4, TimeUnit.MINUTES);
         long delta = System.currentTimeMillis() - start;
-        int seconds = (int)delta / 1000;
+        int seconds = (int) delta / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
-        LOGGER.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
+        LOGGER.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES + " messages. Which is "
+                    + msgPrSec + " messages pr. second");
     }
 
     @Override

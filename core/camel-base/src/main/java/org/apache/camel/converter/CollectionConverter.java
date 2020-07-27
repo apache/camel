@@ -32,8 +32,7 @@ import java.util.Set;
 import org.apache.camel.Converter;
 
 /**
- * Some core java.util Collection based
- * <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
+ * Some core java.util Collection based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
 @Converter(generateLoader = true)
 public final class CollectionConverter {
@@ -67,7 +66,7 @@ public final class CollectionConverter {
     public static <T> List<T> toList(Collection<T> collection) {
         return new ArrayList<>(collection);
     }
-    
+
     /**
      * Converts an {@link Iterator} to a {@link ArrayList}
      */
@@ -110,12 +109,12 @@ public final class CollectionConverter {
     }
 
     @Converter
-    public static <K, V> HashMap<K, V>  toHashMap(Map<? extends K, ? extends V> map) {
+    public static <K, V> HashMap<K, V> toHashMap(Map<? extends K, ? extends V> map) {
         return new HashMap<>(map);
     }
 
     /**
-     * Converts an {@link Iterable} into a {@link List} 
+     * Converts an {@link Iterable} into a {@link List}
      */
     @Converter
     public static <T> List<T> toList(Iterable<T> iterable) {

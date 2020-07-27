@@ -23,5 +23,6 @@ import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
 import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyMBean;
 
 @ManagedResource(description = "MicrometerEventNotifier")
-public final class MicrometerEventNotifierService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
+public final class MicrometerEventNotifierService extends AbstractMicrometerService
+        implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
 }

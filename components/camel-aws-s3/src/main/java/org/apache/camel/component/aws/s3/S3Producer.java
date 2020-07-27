@@ -67,8 +67,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon Web Service Simple Storage
- * Service <a href="http://aws.amazon.com/s3/">AWS S3</a>
+ * A Producer which sends messages to the Amazon Web Service Simple Storage Service
+ * <a href="http://aws.amazon.com/s3/">AWS S3</a>
  */
 public class S3Producer extends DefaultProducer {
 
@@ -126,10 +126,10 @@ public class S3Producer extends DefaultProducer {
         Object obj = exchange.getIn().getMandatoryBody();
         // Need to check if the message body is WrappedFile
         if (obj instanceof WrappedFile) {
-            obj = ((WrappedFile<?>)obj).getFile();
+            obj = ((WrappedFile<?>) obj).getFile();
         }
         if (obj instanceof File) {
-            filePayload = (File)obj;
+            filePayload = (File) obj;
         } else {
             throw new IllegalArgumentException("aws-s3: MultiPart upload requires a File input.");
         }
@@ -140,7 +140,8 @@ public class S3Producer extends DefaultProducer {
         }
 
         final String keyName = determineKey(exchange);
-        final InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest(getConfiguration().getBucketName(), keyName, objectMetadata);
+        final InitiateMultipartUploadRequest initRequest
+                = new InitiateMultipartUploadRequest(getConfiguration().getBucketName(), keyName, objectMetadata);
 
         String storageClass = determineStorageClass(exchange);
         if (storageClass != null) {
@@ -185,20 +186,24 @@ public class S3Producer extends DefaultProducer {
             for (int part = 1; filePosition < contentLength; part++) {
                 partSize = Math.min(partSize, contentLength - filePosition);
 
-                UploadPartRequest uploadRequest = new UploadPartRequest().withBucketName(getConfiguration().getBucketName()).withKey(keyName)
-                    .withUploadId(initResponse.getUploadId()).withPartNumber(part).withFileOffset(filePosition).withFile(filePayload).withPartSize(partSize);
+                UploadPartRequest uploadRequest
+                        = new UploadPartRequest().withBucketName(getConfiguration().getBucketName()).withKey(keyName)
+                                .withUploadId(initResponse.getUploadId()).withPartNumber(part).withFileOffset(filePosition)
+                                .withFile(filePayload).withPartSize(partSize);
 
                 LOG.trace("Uploading part [{}] for {}", part, keyName);
                 partETags.add(getEndpoint().getS3Client().uploadPart(uploadRequest).getPartETag());
 
                 filePosition += partSize;
             }
-            CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest(getConfiguration().getBucketName(), keyName, initResponse.getUploadId(), partETags);
+            CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest(
+                    getConfiguration().getBucketName(), keyName, initResponse.getUploadId(), partETags);
 
             uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
 
         } catch (Exception e) {
-            getEndpoint().getS3Client().abortMultipartUpload(new AbortMultipartUploadRequest(getConfiguration().getBucketName(), keyName, initResponse.getUploadId()));
+            getEndpoint().getS3Client().abortMultipartUpload(
+                    new AbortMultipartUploadRequest(getConfiguration().getBucketName(), keyName, initResponse.getUploadId()));
             throw e;
         }
 
@@ -224,10 +229,10 @@ public class S3Producer extends DefaultProducer {
         PutObjectRequest putObjectRequest = null;
         // Need to check if the message body is WrappedFile
         if (obj instanceof WrappedFile) {
-            obj = ((WrappedFile<?>)obj).getFile();
+            obj = ((WrappedFile<?>) obj).getFile();
         }
         if (obj instanceof File) {
-            filePayload = (File)obj;
+            filePayload = (File) obj;
             is = new FileInputStream(filePayload);
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
@@ -380,10 +385,12 @@ public class S3Producer extends DefaultProducer {
         final String rangeEnd = exchange.getIn().getHeader(S3Constants.RANGE_END, String.class);
 
         if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
-            throw new IllegalArgumentException("A Range start and range end header must be configured to perform a range get operation.");
+            throw new IllegalArgumentException(
+                    "A Range start and range end header must be configured to perform a range get operation.");
         }
 
-        GetObjectRequest req = new GetObjectRequest(bucketName, sourceKey).withRange(Long.parseLong(rangeStart), Long.parseLong(rangeEnd));
+        GetObjectRequest req
+                = new GetObjectRequest(bucketName, sourceKey).withRange(Long.parseLong(rangeStart), Long.parseLong(rangeEnd));
         S3Object res = s3Client.getObject(req);
 
         Message message = getMessageForResponse(exchange);
@@ -457,7 +464,8 @@ public class S3Producer extends DefaultProducer {
             }
         }
 
-        String encryption = exchange.getIn().getHeader(S3Constants.SERVER_SIDE_ENCRYPTION, getConfiguration().getServerSideEncryption(), String.class);
+        String encryption = exchange.getIn().getHeader(S3Constants.SERVER_SIDE_ENCRYPTION,
+                getConfiguration().getServerSideEncryption(), String.class);
         if (encryption != null) {
             objectMetadata.setSSEAlgorithm(encryption);
         }
@@ -466,11 +474,11 @@ public class S3Producer extends DefaultProducer {
     }
 
     /**
-     * Reads the bucket name from the header of the given exchange. If not
-     * provided, it's read from the endpoint configuration.
+     * Reads the bucket name from the header of the given exchange. If not provided, it's read from the endpoint
+     * configuration.
      *
-     * @param exchange The exchange to read the header from.
-     * @return The bucket name.
+     * @param  exchange                 The exchange to read the header from.
+     * @return                          The bucket name.
      * @throws IllegalArgumentException if the header could not be determined.
      */
     private String determineBucketName(final Exchange exchange) {
@@ -562,7 +570,7 @@ public class S3Producer extends DefaultProducer {
 
     @Override
     public S3Endpoint getEndpoint() {
-        return (S3Endpoint)super.getEndpoint();
+        return (S3Endpoint) super.getEndpoint();
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

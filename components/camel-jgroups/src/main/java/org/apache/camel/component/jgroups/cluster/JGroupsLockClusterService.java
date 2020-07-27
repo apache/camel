@@ -30,6 +30,7 @@ public class JGroupsLockClusterService extends AbstractCamelClusterService<JGrou
         this.jgroupsConfig = DEFAULT_JGROUPS_CONFIG;
         this.jgroupsClusterName = DEFAULT_JGROUPS_CLUSTERNAME;
     }
+
     public JGroupsLockClusterService(String jgroupsConfig, String jgroupsClusterName) {
         this.jgroupsConfig = jgroupsConfig;
         this.jgroupsClusterName = jgroupsClusterName;

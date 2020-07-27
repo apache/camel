@@ -49,7 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheetsTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsValuesIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsValuesApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsValuesApiMethod.class).getName();
 
     @Test
     public void testGet() throws Exception {
@@ -90,8 +91,7 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
         List<List<Object>> data = Arrays.asList(
                 Arrays.asList("A1", "B1"),
-                Arrays.asList("A2", "B2")
-        );
+                Arrays.asList("A2", "B2"));
 
         assertThatGoogleApi(getGoogleApiTestServer())
                 .updateValuesRequest(testSheet.getSpreadsheetId(), TEST_SHEET + "!A1:B2", data)
@@ -171,7 +171,8 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
         Spreadsheet testSheet = getSpreadsheet();
 
         assertThatGoogleApi(getGoogleApiTestServer())
-                .updateValuesRequest(spreadsheetId, TEST_SHEET + "!A1:B2", Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2")))
+                .updateValuesRequest(spreadsheetId, TEST_SHEET + "!A1:B2",
+                        Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2")))
                 .andReturnUpdateResponse();
 
         applyTestData(testSheet);

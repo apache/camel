@@ -79,24 +79,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test signing using all available signature methods, apart from EC-algorithms which are
- * tested in ECDSASignatureTest.
+ * Test signing using all available signature methods, apart from EC-algorithms which are tested in ECDSASignatureTest.
  */
 public class SignatureAlgorithmTest extends CamelTestSupport {
 
     private static String payload;
     private KeyPair keyPair;
-    
+
     static {
         boolean includeNewLine = true;
         if (TestSupport.getJavaMajorVersion() >= 9) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + (includeNewLine ? "\n" : "")
-            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+                  + (includeNewLine ? "\n" : "")
+                  + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
-    
+
     public SignatureAlgorithmTest() throws Exception {
         // BouncyCastle is required for some algorithms
         if (Security.getProvider("BC") == null) {
@@ -104,7 +103,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
             Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
             cons = c.getConstructor(new Class[] {});
 
-            Provider provider = (java.security.Provider)cons.newInstance();
+            Provider provider = (java.security.Provider) cons.newInstance();
             Security.insertProviderAt(provider, 2);
         }
     }
@@ -112,7 +111,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     @Override
     protected Registry createCamelRegistry() throws Exception {
         Registry registry = new SimpleRegistry();
-        
+
         Key secretKey = getSecretKey("testkey".getBytes("ASCII"));
 
         registry.bind("accessor", getKeyAccessor(keyPair.getPrivate()));
@@ -143,7 +142,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:hmacsha1")
@@ -297,7 +296,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
                         .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
                 // END SNIPPET: signature and digest algorithm
             }
-        }};
+        } };
     }
 
     //
@@ -309,42 +308,42 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
         sendBody("direct:hmacsha1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHMACSHA224() throws Exception {
         setupMock();
         sendBody("direct:hmacsha224", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHMACSHA256() throws Exception {
         setupMock();
         sendBody("direct:hmacsha256", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHMACSHA384() throws Exception {
         setupMock();
         sendBody("direct:hmacsha384", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHMACSHA512() throws Exception {
         setupMock();
         sendBody("direct:hmacsha512", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHMACRIPEMD160() throws Exception {
         setupMock();
         sendBody("direct:hmacripemd160", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     //
     // Public Key algorithms
     //
@@ -354,77 +353,77 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
         sendBody("direct:rsasha1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA224() throws Exception {
         setupMock();
         sendBody("direct:rsasha224", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA256() throws Exception {
         setupMock();
         sendBody("direct:rsasha256", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA384() throws Exception {
         setupMock();
         sendBody("direct:rsasha384", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA512() throws Exception {
         setupMock();
         sendBody("direct:rsasha512", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSARIPEMD160() throws Exception {
         setupMock();
         sendBody("direct:rsaripemd160", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA1MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha1_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA224MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha224_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA256MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha256_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA384MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha384_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA512MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha512_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     private MockEndpoint setupMock() {
         return setupMock(payload);
     }
@@ -532,14 +531,14 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     }
 
     /**
-     * KeySelector which retrieves the public key from the KeyValue element and
-     * returns it. NOTE: If the key algorithm doesn't match signature algorithm,
-     * then the public key will be ignored.
+     * KeySelector which retrieves the public key from the KeyValue element and returns it. NOTE: If the key algorithm
+     * doesn't match signature algorithm, then the public key will be ignored.
      */
     static class KeyValueKeySelector extends KeySelector {
         @Override
-        public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
-            throws KeySelectorException {
+        public KeySelectorResult select(
+                KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
+                throws KeySelectorException {
             if (keyInfo == null) {
                 throw new KeySelectorException("Null KeyInfo object!");
             }
@@ -604,7 +603,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     public static KeySelector getDefaultKeySelectorDsa() throws Exception {
         return TestKeystore.getKeySelector("bobdsa");
     }
-    
+
     public static XmlSignatureChecker getEnvelopingXmlSignatureChecker() {
         return new EnvelopingXmlSignatureChecker();
     }
@@ -638,13 +637,15 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     public static SecretKey getSecretKey(final byte[] secret) {
         return new SecretKey() {
             private static final long serialVersionUID = 5629454124145851381L;
-            
-            public String getFormat()   {
+
+            public String getFormat() {
                 return "RAW";
             }
-            public byte[] getEncoded()  {
+
+            public byte[] getEncoded() {
                 return secret;
             }
+
             public String getAlgorithm() {
                 return "SECRET";
             }

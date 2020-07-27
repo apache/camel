@@ -35,7 +35,9 @@ public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
         } catch (Exception e) {
             FailedToCreateRouteException ftce = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftce.getCause());
-            assertEquals("This doCatch should have a doTry as its parent on DoCatch[ [class java.io.IOException] -> [To[mock:fail]]]", iae.getMessage());
+            assertEquals(
+                    "This doCatch should have a doTry as its parent on DoCatch[ [class java.io.IOException] -> [To[mock:fail]]]",
+                    iae.getMessage());
         }
 
         try {

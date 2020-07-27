@@ -59,7 +59,8 @@ public class Security {
 
     @Override
     public String toString() {
-        return Security.class.getName() + " --> 22: " + this.getIdSource() + ", 48: " + this.getSecurityCode() + ", 54: " + this.getSide();
+        return Security.class.getName() + " --> 22: " + this.getIdSource() + ", 48: " + this.getSecurityCode() + ", 54: "
+               + this.getSide();
     }
 
 }

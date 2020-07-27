@@ -32,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test will look for the spring .xml file with the same class name
- * but postfixed with -config.xml as filename.
+ * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
  * <p/>
  */
 @CamelSpringTest
@@ -50,15 +49,15 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
     private MockEndpoint rollback;
 
     // the ok response to expect
-    private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";   
-    private String noAccess  = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
+    private String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+    private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Test
     void test404() {
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response
         Object out = template.requestBodyAndHeader(data,
-            "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "unknown");
+                "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "unknown");
 
         // compare response
         assertEquals(noAccess, out);
@@ -73,7 +72,7 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
         // will send and wait for a response
         try {
             template.requestBodyAndHeader(data,
-                "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
+                    "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should timeout");

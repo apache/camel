@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
     public LogReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (LogDefinition)definition);
+        super(route, (LogDefinition) definition);
     }
 
     @Override
@@ -66,7 +66,8 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
                 log.debug("Using custom Logger: {}", logger);
             } else if (availableLoggers.size() > 1) {
                 // we should log about this somewhere...
-                log.debug("More than one {} instance found in the registry. Falling back to create logger by name.", Logger.class.getName());
+                log.debug("More than one {} instance found in the registry. Falling back to create logger by name.",
+                        Logger.class.getName());
             }
         }
 
@@ -86,10 +87,12 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         // should be INFO by default
-        LoggingLevel level = definition.getLoggingLevel() != null ? parse(LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
+        LoggingLevel level = definition.getLoggingLevel() != null
+                ? parse(LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
-        return new LogProcessor(exp, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
+        return new LogProcessor(
+                exp, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
     }
 
     private MaskingFormatter getMaskingFormatter() {

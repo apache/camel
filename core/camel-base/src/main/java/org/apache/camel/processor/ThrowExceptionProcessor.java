@@ -33,7 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The processor which sets an {@link Exception} on the {@link Exchange}
  */
-public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware, CamelContextAware {
+public class ThrowExceptionProcessor extends AsyncProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, CamelContextAware {
     private String id;
     private String routeId;
     private CamelContext camelContext;
@@ -73,7 +74,8 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Tr
                 exchange.setException(cause);
             }
         } catch (Throwable e) {
-            exchange.setException(new CamelExchangeException("Error creating new instance of " + exception.getClass(), exchange, e));
+            exchange.setException(
+                    new CamelExchangeException("Error creating new instance of " + exception.getClass(), exchange, e));
         }
 
         callback.done(true);

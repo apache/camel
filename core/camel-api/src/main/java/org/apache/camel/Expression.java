@@ -17,17 +17,17 @@
 package org.apache.camel;
 
 /**
- * An <a href="http://camel.apache.org/expression.html">expression</a>
- * provides a plugin strategy for evaluating expressions on a message exchange.
+ * An <a href="http://camel.apache.org/expression.html">expression</a> provides a plugin strategy for evaluating
+ * expressions on a message exchange.
  */
 public interface Expression {
 
     /**
      * Returns the value of the expression on the given exchange
      *
-     * @param exchange the message exchange on which to evaluate the expression
-     * @param type the expected type of the evaluation result
-     * @return the value of the expression
+     * @param  exchange the message exchange on which to evaluate the expression
+     * @param  type     the expected type of the evaluation result
+     * @return          the value of the expression
      */
     <T> T evaluate(Exchange exchange, Class<T> type);
 

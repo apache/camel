@@ -56,10 +56,10 @@ public class DdbStreamEndpointTest {
     public void itExtractsTheSequenceNumber() throws Exception {
         when(sequenceNumberProvider.getSequenceNumber()).thenReturn("seq");
 
-        DdbStreamEndpoint undertest = (DdbStreamEndpoint)context.getEndpoint("aws-ddbstream://table"
-                + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
-                + "&iteratorType=AFTER_SEQUENCE_NUMBER"
-                + "&sequenceNumberProvider=#someSeqNumProv");
+        DdbStreamEndpoint undertest = (DdbStreamEndpoint) context.getEndpoint("aws-ddbstream://table"
+                                                                              + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
+                                                                              + "&iteratorType=AFTER_SEQUENCE_NUMBER"
+                                                                              + "&sequenceNumberProvider=#someSeqNumProv");
 
         assertEquals("seq", undertest.getSequenceNumber());
     }
@@ -67,20 +67,20 @@ public class DdbStreamEndpointTest {
     @Test
     public void itExtractsTheSequenceNumberFromALiteralString() throws Exception {
 
-        DdbStreamEndpoint undertest = (DdbStreamEndpoint)context.getEndpoint("aws-ddbstream://table"
-                + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
-                + "&iteratorType=AFTER_SEQUENCE_NUMBER"
-                + "&sequenceNumberProvider=seq");
+        DdbStreamEndpoint undertest = (DdbStreamEndpoint) context.getEndpoint("aws-ddbstream://table"
+                                                                              + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
+                                                                              + "&iteratorType=AFTER_SEQUENCE_NUMBER"
+                                                                              + "&sequenceNumberProvider=seq");
 
         assertEquals("seq", undertest.getSequenceNumber());
     }
 
     @Test
     public void onSequenceNumberAgnosticIteratorsTheProviderIsIgnored() throws Exception {
-        DdbStreamEndpoint undertest = (DdbStreamEndpoint)context.getEndpoint("aws-ddbstream://table"
-                + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
-                + "&iteratorType=LATEST"
-                + "&sequenceNumberProvider=#someSeqNumProv");
+        DdbStreamEndpoint undertest = (DdbStreamEndpoint) context.getEndpoint("aws-ddbstream://table"
+                                                                              + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
+                                                                              + "&iteratorType=LATEST"
+                                                                              + "&sequenceNumberProvider=#someSeqNumProv");
 
         assertEquals("", undertest.getSequenceNumber());
         verify(sequenceNumberProvider, never()).getSequenceNumber();
@@ -88,9 +88,9 @@ public class DdbStreamEndpointTest {
 
     @Test
     public void sequenceNumberFetchingThrowsSomethingUsefulIfMisconfigurered() throws Exception {
-        DdbStreamEndpoint undertest = (DdbStreamEndpoint)context.getEndpoint("aws-ddbstream://table"
-                + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
-                + "&iteratorType=AT_SEQUENCE_NUMBER"); // NOTE: missing sequence number provider parameter
+        DdbStreamEndpoint undertest = (DdbStreamEndpoint) context.getEndpoint("aws-ddbstream://table"
+                                                                              + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
+                                                                              + "&iteratorType=AT_SEQUENCE_NUMBER"); // NOTE: missing sequence number provider parameter
 
         try {
             undertest.getSequenceNumber();

@@ -32,5 +32,4 @@ public class CamelContextAwareBean implements CamelContextAware {
         this.camelContext = camelContext;
     }
 
-
 }

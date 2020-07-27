@@ -72,8 +72,9 @@ public class TcpServerAcceptThread extends Thread {
     /**
      * The main ServerSocket.accept() loop
      * <p/>
-     * NOTE:  When a connection is received, the Socket is checked after a brief delay in an attempt to determine if this is a load-balancer probe.  The test is done before the
-     * ConsumerClientSocketThread is created to avoid creating a large number of short lived threads, which is what can occur if the load balancer polling interval is very short.
+     * NOTE: When a connection is received, the Socket is checked after a brief delay in an attempt to determine if this
+     * is a load-balancer probe. The test is done before the ConsumerClientSocketThread is created to avoid creating a
+     * large number of short lived threads, which is what can occur if the load balancer polling interval is very short.
      */
     @Override
     public void run() {
@@ -107,7 +108,8 @@ public class TcpServerAcceptThread extends Thread {
                         try {
                             serverSocket.close();
                         } catch (Exception ex) {
-                            log.debug("Exception encountered closing ServerSocket after SocketException on accept() - ignoring", ex);
+                            log.debug("Exception encountered closing ServerSocket after SocketException on accept() - ignoring",
+                                    ex);
                         }
                     }
                     continue;

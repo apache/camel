@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.AvroDataFormat;
 public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
 
     public AvroDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (AvroDataFormat)definition);
+        super(camelContext, (AvroDataFormat) definition);
     }
 
     @Override

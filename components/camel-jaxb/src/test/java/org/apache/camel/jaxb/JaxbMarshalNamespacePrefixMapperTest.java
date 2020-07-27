@@ -44,7 +44,7 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
         Map<String, String> map = new HashMap<>();
         map.put("http://www.camel.apache.org/jaxb/example/order/1", "o");
         map.put("http://www.camel.apache.org/jaxb/example/address/1", "a");
-        
+
         return map;
     }
 
@@ -86,8 +86,8 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
                 df.setNamespacePrefixRef("myPrefix");
 
                 from("direct:start")
-                    .marshal(df)
-                    .to("mock:result");
+                        .marshal(df)
+                        .to("mock:result");
 
             }
         };

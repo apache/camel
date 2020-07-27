@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.IcalDataFormat;
 public class IcalDataFormatReifier extends DataFormatReifier<IcalDataFormat> {
 
     public IcalDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (IcalDataFormat)definition);
+        super(camelContext, (IcalDataFormat) definition);
     }
 
     @Override

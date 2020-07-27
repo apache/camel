@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InOnlyTopicProducerTest extends JmsTestSupport {
-    
+
     private static final String TEST_DESTINATION_NAME = "test.foo.topic";
-    
+
     public InOnlyTopicProducerTest() {
     }
-    
+
     @Override
     protected boolean useJmx() {
         return false;
@@ -54,20 +54,20 @@ public class InOnlyTopicProducerTest extends JmsTestSupport {
         Message message = mc.receive(5000);
         assertNotNull(message);
         assertTrue(message instanceof TextMessage);
-        
+
         TextMessage tm = (TextMessage) message;
         String text = tm.getText();
         assertNotNull(text);
-        
+
         template.sendBody("direct:finish", text);
-        
+
         mock.assertIsSatisfied();
         mc.close();
 
     }
 
     /**
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      *
      * @return
      * @throws Exception
@@ -77,10 +77,10 @@ public class InOnlyTopicProducerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("sjms:topic:" + TEST_DESTINATION_NAME);
-                
+                        .to("sjms:topic:" + TEST_DESTINATION_NAME);
+
                 from("direct:finish")
-                    .to("log:test.log.1?showBody=true", "mock:result");
+                        .to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }

@@ -38,17 +38,17 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.operator.OutputEncryptor;
 
 public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
-    
+
     private static final String CONTENT_DISPOSITION = "attachment; filename=\"smime.p7m\"";
-    
+
     private byte[] encryptedData;
-    
+
     public ApplicationPkcs7MimeEnvelopedDataEntity(MimeEntity entity2Encrypt,
-                                CMSEnvelopedDataGenerator dataGenerator,
-                                OutputEncryptor encryptor,
-                                String encryptedContentTransferEncoding,
-                                boolean isMainBody)
-            throws HttpException {
+                                                   CMSEnvelopedDataGenerator dataGenerator,
+                                                   OutputEncryptor encryptor,
+                                                   String encryptedContentTransferEncoding,
+                                                   boolean isMainBody)
+                                                                       throws HttpException {
         setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-data"),
                 new BasicNameValuePair("name", "smime.p7m")));
         setContentTransferEncoding(encryptedContentTransferEncoding);
@@ -60,17 +60,18 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
             throw new HttpException("Failed to create encrypted data");
         }
     }
-    
-    public ApplicationPkcs7MimeEnvelopedDataEntity(byte[] encryptedData, String encryptedContentTransferEncoding, boolean isMainBody) {
+
+    public ApplicationPkcs7MimeEnvelopedDataEntity(byte[] encryptedData, String encryptedContentTransferEncoding,
+                                                   boolean isMainBody) {
         this.encryptedData = Args.notNull(encryptedData, "encryptedData");
-        
+
         setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-data"),
                 new BasicNameValuePair("name", "smime.p7m")));
         setContentTransferEncoding(encryptedContentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
         setMainBody(isMainBody);
     }
-    
+
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
@@ -85,11 +86,11 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
                     canonicalOutstream.writeln(header.toString());
                 }
                 canonicalOutstream.writeln(); // ensure empty line between
-                                              // headers and body; RFC2046 -
-                                              // 5.1.1
+                                             // headers and body; RFC2046 -
+                                             // 5.1.1
             }
         }
-        
+
         // Write out signed data.
         String transferEncoding = getContentTransferEncoding() == null ? null : getContentTransferEncoding().getValue();
         try (OutputStream transferEncodedStream = EntityUtils.encode(ncos, transferEncoding)) {
@@ -99,18 +100,20 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
             throw new IOException("Failed to write to output stream", e);
         }
     }
-    
+
     public MimeEntity getEncryptedEntity(PrivateKey privateKey) throws HttpException {
         return EntityParser.parseEnvelopedEntity(encryptedData, privateKey);
     }
-    
-    private byte[] createEncryptedData(MimeEntity entity2Encrypt, CMSEnvelopedDataGenerator envelopedDataGenerator, OutputEncryptor encryptor) throws Exception {
+
+    private byte[] createEncryptedData(
+            MimeEntity entity2Encrypt, CMSEnvelopedDataGenerator envelopedDataGenerator, OutputEncryptor encryptor)
+            throws Exception {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             entity2Encrypt.writeTo(bos);
             bos.flush();
 
             CMSTypedData contentData = new CMSProcessableByteArray(bos.toByteArray());
-            CMSEnvelopedData  envelopedData = envelopedDataGenerator.generate(contentData, encryptor);
+            CMSEnvelopedData envelopedData = envelopedDataGenerator.generate(contentData, encryptor);
             return envelopedData.getEncoded();
         } catch (Exception e) {
             throw new Exception("", e);

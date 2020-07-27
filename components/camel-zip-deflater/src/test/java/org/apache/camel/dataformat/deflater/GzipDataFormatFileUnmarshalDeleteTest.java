@@ -61,12 +61,12 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
-                    .marshal().gzipDeflater()
-                    .to("file:target/data/gzip/out?fileName=${file:name}.gz");
+                        .marshal().gzipDeflater()
+                        .to("file:target/data/gzip/out?fileName=${file:name}.gz");
 
                 from("file:target/data/gzip/out?initialDelay=0&delay=10&delete=true")
-                    .unmarshal().gzipDeflater()
-                    .to("mock:result");
+                        .unmarshal().gzipDeflater()
+                        .to("mock:result");
             }
         };
     }

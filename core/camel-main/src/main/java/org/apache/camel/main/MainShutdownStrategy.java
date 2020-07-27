@@ -38,7 +38,7 @@ public interface MainShutdownStrategy {
      * Wait for main to complete.
      *
      * @param timeout the maximum time to wait
-     * @param unit the time unit of the {@code timeout} argument
+     * @param unit    the time unit of the {@code timeout} argument
      */
     void await(long timeout, TimeUnit unit) throws InterruptedException;
 }

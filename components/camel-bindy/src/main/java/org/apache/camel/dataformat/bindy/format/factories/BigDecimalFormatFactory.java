@@ -38,7 +38,8 @@ public class BigDecimalFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new BigDecimalFormat(formattingOptions.isImpliedDecimalSeparator(),
+        return new BigDecimalFormat(
+                formattingOptions.isImpliedDecimalSeparator(),
                 formattingOptions.getPrecision(),
                 formattingOptions.getLocale());
     }

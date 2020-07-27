@@ -48,18 +48,19 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
         // these boolean should be false by default
         boolean completionEager = parseBoolean(definition.getCompletionEager(), false);
 
-        return new IdempotentConsumer(expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
+        return new IdempotentConsumer(
+                expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
     }
 
     /**
-     * Strategy method to resolve the
-     * {@link org.apache.camel.spi.IdempotentRepository} to use
+     * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use
      *
      * @return the repository
      */
     protected <T> IdempotentRepository resolveMessageIdRepository() {
         if (definition.getMessageIdRepositoryRef() != null) {
-            definition.setMessageIdRepository(mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
+            definition.setMessageIdRepository(
+                    mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
         }
         return definition.getMessageIdRepository();
     }

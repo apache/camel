@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 @ContextConfiguration
 @CamelSpringTest
 public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
-    
+
     @EndpointInject("mock:result1")
     protected MockEndpoint resultEndpoint1;
 
     @EndpointInject("mock:result2")
     protected MockEndpoint resultEndpoint2;
-    
+
     @EndpointInject("mock:result3")
     protected MockEndpoint resultEndpoint3;
 
@@ -48,11 +48,12 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
 
     @Produce("direct:start2")
     protected ProducerTemplate template2;
-    
+
     @Produce("direct:start3")
     protected ProducerTemplate template3;
 
-    String header = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
+    String header
+            = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
 
     // String record5 = ",,,,,,,,,,"; // record with no data
 
@@ -135,7 +136,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
 
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testEmptyLineWithAllowEmptyStreamEqualsTrue() throws Exception {
@@ -144,7 +145,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
         template3.sendBody(record6);
         resultEndpoint3.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testNonEmptyLineWithAllowEmptyStreamEqualsTrue() throws Exception {
@@ -189,9 +190,12 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat formatOptional = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
-        BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory.Order.class);
-        BindyCsvDataFormat formatEmptyStream = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassemptystream.Order.class);
+        BindyCsvDataFormat formatOptional
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+        BindyCsvDataFormat formatMandatory
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory.Order.class);
+        BindyCsvDataFormat formatEmptyStream
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassemptystream.Order.class);
 
         @Override
         public void configure() {
@@ -199,6 +203,6 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
             from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
             from("direct:start3").unmarshal(formatEmptyStream).to("mock:result3");
         }
-         
+
     }
 }

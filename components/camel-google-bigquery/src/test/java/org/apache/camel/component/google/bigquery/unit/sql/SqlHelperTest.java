@@ -35,15 +35,17 @@ import static org.mockito.Mockito.when;
 
 public class SqlHelperTest {
 
-    String query = "INSERT INTO ${report}.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n" + "  region\n" + "FROM\n" + "  ${import}.test\n" + "WHERE\n"
+    String query = "INSERT INTO ${report}.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n"
+                   + "  region\n" + "FROM\n" + "  ${import}.test\n" + "WHERE\n"
                    + "  rec_date = @date AND id = @id\n";
 
-    String expected = "INSERT INTO report_data.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n" + "  region\n" + "FROM\n" + "  import_data.test\n"
+    String expected = "INSERT INTO report_data.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n"
+                      + "  region\n" + "FROM\n" + "  import_data.test\n"
                       + "WHERE\n" + "  rec_date = @date AND id = @id\n";
 
     Exchange exchange = Mockito.mock(Exchange.class);
     Message message = Mockito.mock(Message.class);
-    
+
     private CamelContext context = Mockito.mock(CamelContext.class);
 
     @Test
@@ -84,7 +86,7 @@ public class SqlHelperTest {
         when(exchange.getMessage()).thenReturn(message);
         when(message.getHeader(eq("report"), eq(String.class))).thenReturn("report_data");
         assertThrows(RuntimeExchangeException.class,
-            () -> SqlHelper.translateQuery(query, exchange));
+                () -> SqlHelper.translateQuery(query, exchange));
     }
 
     @Test

@@ -101,7 +101,8 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
                                 MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                                 exchange.getMessage().setBody(reply);
-                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
+                                        AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                             }
                         });
             }
@@ -137,7 +138,8 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
                                 MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                                 exchange.getMessage().setBody(reply);
-                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
+                                        AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                             }
                         });
             }
@@ -170,7 +172,8 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
                                 MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                                 exchange.getMessage().setBody(reply);
-                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
+                                        AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                             }
                         });
             }
@@ -202,7 +205,8 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
                                 MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
                                 exchange.getMessage().setBody(reply);
-                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE,
+                                        AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
                             }
                         });
             }
@@ -216,7 +220,8 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
                     Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, MyCoolBean.class);
             fail("Should fail");
         } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().startsWith("Content-type application/x-java-serialized-object is not allowed"));
+            assertTrue(
+                    e.getCause().getMessage().startsWith("Content-type application/x-java-serialized-object is not allowed"));
         }
     }
 

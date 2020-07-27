@@ -53,11 +53,11 @@ public class MicroProfileMetricsHistogramTest extends MicroProfileMetricsTestSup
             @Override
             public void configure() throws Exception {
                 from("direct:histogram")
-                    .to("microprofile-metrics:histogram:test-histogram?value=10");
+                        .to("microprofile-metrics:histogram:test-histogram?value=10");
 
                 from("direct:histogramFromHeader")
                         .setHeader(HEADER_HISTOGRAM_VALUE, constant(10))
-                    .to("microprofile-metrics:histogram:test-histogram-header");
+                        .to("microprofile-metrics:histogram:test-histogram-header");
             }
         };
     }

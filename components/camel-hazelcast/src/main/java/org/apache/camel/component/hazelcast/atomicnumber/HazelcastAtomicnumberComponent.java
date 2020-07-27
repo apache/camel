@@ -35,7 +35,9 @@ public class HazelcastAtomicnumberComponent extends HazelcastDefaultComponent {
     }
 
     @Override
-    protected HazelcastDefaultEndpoint doCreateEndpoint(String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance) throws Exception {
+    protected HazelcastDefaultEndpoint doCreateEndpoint(
+            String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance)
+            throws Exception {
         return new HazelcastAtomicnumberEndpoint(hzInstance, uri, this, remaining);
     }
 

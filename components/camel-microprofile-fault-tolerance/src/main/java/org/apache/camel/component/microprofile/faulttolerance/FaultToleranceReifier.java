@@ -51,7 +51,8 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         if (definition.getOnFallback() != null) {
             fallback = createProcessor(definition.getOnFallback());
         }
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
+        boolean fallbackViaNetwork
+                = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-microprofile-fault-tolerance does not support onFallbackViaNetwork");
         }
@@ -134,14 +135,16 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         Map<String, Object> properties = new HashMap<>();
 
         final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
-                .getConfigurerResolver().resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getSimpleName(), camelContext);
+                .getConfigurerResolver()
+                .resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getSimpleName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-            () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
-            () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID, FaultToleranceConfigurationDefinition.class)),
-            configurer);
+                () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
+                () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID,
+                        FaultToleranceConfigurationDefinition.class)),
+                configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
@@ -149,9 +152,9 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             final String ref = definition.getConfigurationRef();
 
             loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(ref),
-                () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)),
-                configurer);
+                    () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(ref),
+                    () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)),
+                    configurer);
         }
 
         // Extract properties from local configuration

@@ -59,8 +59,8 @@ public final class AtomixClientClusteredRoutePolicyFactoryMain {
             @Override
             public void configure() {
                 from("timer:clustered?delay=1000&period=1000")
-                    .routeId("route-" + id)
-                    .log("Route ${routeId} is running ...");
+                        .routeId("route-" + id)
+                        .log("Route ${routeId} is running ...");
             }
         });
 

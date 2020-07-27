@@ -26,7 +26,7 @@ import org.apache.camel.processor.ExchangePatternProcessor;
 public class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatternDefinition> {
 
     public SetExchangePatternReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SetExchangePatternDefinition)definition);
+        super(route, (SetExchangePatternDefinition) definition);
     }
 
     @Override

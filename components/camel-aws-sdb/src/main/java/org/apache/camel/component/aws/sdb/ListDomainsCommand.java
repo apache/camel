@@ -31,14 +31,14 @@ public class ListDomainsCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         ListDomainsRequest request = new ListDomainsRequest()
-            .withMaxNumberOfDomains(determineMaxNumberOfDomains())
-            .withNextToken(determineNextToken());
+                .withMaxNumberOfDomains(determineMaxNumberOfDomains())
+                .withNextToken(determineNextToken());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         ListDomainsResult result = this.sdbClient.listDomains(request);
-        
+
         log.trace("Received result [{}]", result);
-        
+
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(SdbConstants.NEXT_TOKEN, result.getNextToken());
         msg.setHeader(SdbConstants.DOMAIN_NAMES, result.getDomainNames());
@@ -51,7 +51,7 @@ public class ListDomainsCommand extends AbstractSdbCommand {
         }
         return maxNumberOfDomains;
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

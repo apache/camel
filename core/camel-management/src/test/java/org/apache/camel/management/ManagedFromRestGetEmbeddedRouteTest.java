@@ -79,18 +79,18 @@ public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
                 rest("/say/hello")
-                    .get()
+                        .get()
                         .route()
                         .to("mock:hello")
                         .transform(constant("Hello World"));
 
                 rest("/say/bye")
-                    .get().consumes("application/json")
+                        .get().consumes("application/json")
                         .route()
                         .to("mock:bye")
                         .transform(constant("Bye World"))
-                    .endRest()
-                    .post()
+                        .endRest()
+                        .post()
                         .to("mock:update");
             }
         };

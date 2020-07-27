@@ -74,7 +74,6 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
         return context;
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -82,23 +81,24 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
 
             public void configure() {
                 onException(MllpWriteException.class)
-                    .handled(true)
-                    .to(writeEx)
-                    .log(LoggingLevel.ERROR, routeId, "Write Error")
-                    .stop();
+                        .handled(true)
+                        .to(writeEx)
+                        .log(LoggingLevel.ERROR, routeId, "Write Error")
+                        .stop();
 
                 onException(MllpAcknowledgementReceiveException.class)
-                    .handled(true)
-                    .to(receiveEx)
-                    .log(LoggingLevel.ERROR, routeId, "Receive Error")
-                    .stop();
+                        .handled(true)
+                        .to(receiveEx)
+                        .log(LoggingLevel.ERROR, routeId, "Receive Error")
+                        .stop();
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Sending Message")
-                    .toF("mllp://%s:%d?connectTimeout=%d&receiveTimeout=%d&readTimeout=%d&idleTimeout=%s", mllpServer.getListenHost(), mllpServer.getListenPort(),
-                        CONNECT_TIMEOUT, RECEIVE_TIMEOUT, READ_TIMEOUT, IDLE_TIMEOUT)
-                    .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
-                    .to(complete);
+                        .log(LoggingLevel.INFO, routeId, "Sending Message")
+                        .toF("mllp://%s:%d?connectTimeout=%d&receiveTimeout=%d&readTimeout=%d&idleTimeout=%s",
+                                mllpServer.getListenHost(), mllpServer.getListenPort(),
+                                CONNECT_TIMEOUT, RECEIVE_TIMEOUT, READ_TIMEOUT, IDLE_TIMEOUT)
+                        .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
+                        .to(complete);
             }
         };
     }
@@ -124,7 +124,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
         Thread.sleep((long) (IDLE_TIMEOUT * 1.1));
 
         assertThrows(MllpJUnitResourceException.class,
-            () -> mllpServer.checkClientConnections());
+                () -> mllpServer.checkClientConnections());
     }
 
     @Test

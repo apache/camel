@@ -67,7 +67,8 @@ public class TryFinallyCaughtExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doFinally().to("mock:b").end().to("mock:result");
+                from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doFinally().to("mock:b").end()
+                        .to("mock:result");
             }
         };
     }

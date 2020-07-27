@@ -34,7 +34,7 @@ public class MyRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:a").to("mock:a");
     }
-    
+
     public CamelContext getCamelContext() {
         return ctx;
     }

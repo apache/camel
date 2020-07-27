@@ -44,41 +44,41 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
 /**
  * Helper for {@link RouteDefinition}
  * <p/>
- * Utility methods to help preparing {@link RouteDefinition} before they are
- * added to {@link org.apache.camel.CamelContext}.
+ * Utility methods to help preparing {@link RouteDefinition} before they are added to
+ * {@link org.apache.camel.CamelContext}.
  */
-@SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
+@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {
     }
 
     /**
-     * Gather all the endpoint uri's the route is using from the EIPs that has a
-     * static endpoint defined.
+     * Gather all the endpoint uri's the route is using from the EIPs that has a static endpoint defined.
      *
-     * @param route the route
-     * @param includeInputs whether to include inputs
-     * @param includeOutputs whether to include outputs
-     * @return the endpoints uris
+     * @param  route          the route
+     * @param  includeInputs  whether to include inputs
+     * @param  includeOutputs whether to include outputs
+     * @return                the endpoints uris
      */
-    public static Set<String> gatherAllStaticEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs) {
+    public static Set<String> gatherAllStaticEndpointUris(
+            CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs) {
         return gatherAllEndpointUris(camelContext, route, includeInputs, includeOutputs, false);
     }
 
     /**
-     * Gather all the endpoint uri's the route is using from the EIPs that has a
-     * static or dynamic endpoint defined.
+     * Gather all the endpoint uri's the route is using from the EIPs that has a static or dynamic endpoint defined.
      *
-     * @param route the route
-     * @param includeInput whether to include inputs
-     * @param includeOutputs whether to include outputs
-     * @param includeDynamic whether to include dynamic outputs which has been
-     *            in use during routing at runtime, gathered from the
-     *            {@link org.apache.camel.spi.RuntimeEndpointRegistry}.
-     * @return the endpoints uris
+     * @param  route          the route
+     * @param  includeInput   whether to include inputs
+     * @param  includeOutputs whether to include outputs
+     * @param  includeDynamic whether to include dynamic outputs which has been in use during routing at runtime,
+     *                        gathered from the {@link org.apache.camel.spi.RuntimeEndpointRegistry}.
+     * @return                the endpoints uris
      */
-    public static Set<String> gatherAllEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInput, boolean includeOutputs, boolean includeDynamic) {
+    public static Set<String> gatherAllEndpointUris(
+            CamelContext camelContext, RouteDefinition route, boolean includeInput, boolean includeOutputs,
+            boolean includeDynamic) {
         Set<String> answer = new LinkedHashSet<>();
 
         if (includeInput) {
@@ -123,8 +123,8 @@ public final class RouteDefinitionHelper {
     /**
      * Force assigning ids to the routes
      *
-     * @param context the camel context
-     * @param routes the routes
+     * @param  context   the camel context
+     * @param  routes    the routes
      * @throws Exception is thrown if error force assign ids to the routes
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
@@ -209,7 +209,8 @@ public final class RouteDefinitionHelper {
                 if (ObjectHelper.isNotEmpty(route.getInput())) {
                     FromDefinition fromDefinition = route.getInput();
                     String endpointUri = fromDefinition.getEndpointUri();
-                    if (ObjectHelper.isNotEmpty(endpointUri) && (endpointUri.startsWith("rest:") || endpointUri.startsWith("rest-api:"))) {
+                    if (ObjectHelper.isNotEmpty(endpointUri)
+                            && (endpointUri.startsWith("rest:") || endpointUri.startsWith("rest-api:"))) {
                         Map<String, Object> options = new HashMap<>(1);
                         options.put("routeId", route.getId());
                         endpointUri = URISupport.appendParametersToURI(endpointUri, options);
@@ -246,13 +247,11 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Validates that the target route has no duplicate id's from any of the
-     * existing routes.
+     * Validates that the target route has no duplicate id's from any of the existing routes.
      *
-     * @param target the target route
-     * @param routes the existing routes
-     * @return <tt>null</tt> if no duplicate id's detected, otherwise the first
-     *         found duplicate id is returned.
+     * @param  target the target route
+     * @param  routes the existing routes
+     * @return        <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
      */
     public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
         Set<String> routesIds = new LinkedHashSet<>();
@@ -296,7 +295,8 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    public static void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {
+    public static void prepareRouteForInit(
+            RouteDefinition route, List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {
         // filter the route into abstracts and lower
         for (ProcessorDefinition output : route.getOutputs()) {
             if (output.isAbstract()) {
@@ -313,52 +313,55 @@ public final class RouteDefinitionHelper {
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
      * @param context the camel context
-     * @param route the route
+     * @param route   the route
      */
     public static void prepareRoute(CamelContext context, RouteDefinition route) {
         prepareRoute(context, route, null, null, null, null, null);
     }
 
     /**
-     * Prepares the route which supports context scoped features such as
-     * onException, interceptors and onCompletions
+     * Prepares the route which supports context scoped features such as onException, interceptors and onCompletions
      * <p/>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
-     * @param context the camel context
-     * @param route the route
-     * @param onExceptions optional list of onExceptions
-     * @param intercepts optional list of interceptors
-     * @param interceptFromDefinitions optional list of interceptFroms
-     * @param interceptSendToEndpointDefinitions optional list of
-     *            interceptSendToEndpoints
-     * @param onCompletions optional list onCompletions
+     * @param context                            the camel context
+     * @param route                              the route
+     * @param onExceptions                       optional list of onExceptions
+     * @param intercepts                         optional list of interceptors
+     * @param interceptFromDefinitions           optional list of interceptFroms
+     * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
+     * @param onCompletions                      optional list onCompletions
      */
-    public static void prepareRoute(CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions, List<InterceptDefinition> intercepts,
-                                    List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
-                                    List<OnCompletionDefinition> onCompletions) {
+    public static void prepareRoute(
+            CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions,
+            List<InterceptDefinition> intercepts,
+            List<InterceptFromDefinition> interceptFromDefinitions,
+            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
+            List<OnCompletionDefinition> onCompletions) {
 
-        prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions, onCompletions);
+        prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions,
+                onCompletions);
     }
 
     /**
-     * Prepares the route which supports context scoped features such as
-     * onException, interceptors and onCompletions
+     * Prepares the route which supports context scoped features such as onException, interceptors and onCompletions
      * <p/>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
-     * @param context the camel context
-     * @param route the route
-     * @param onExceptions optional list of onExceptions
-     * @param intercepts optional list of interceptors
-     * @param interceptFromDefinitions optional list of interceptFroms
-     * @param interceptSendToEndpointDefinitions optional list of
-     *            interceptSendToEndpoints
-     * @param onCompletions optional list onCompletions
+     * @param context                            the camel context
+     * @param route                              the route
+     * @param onExceptions                       optional list of onExceptions
+     * @param intercepts                         optional list of interceptors
+     * @param interceptFromDefinitions           optional list of interceptFroms
+     * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
+     * @param onCompletions                      optional list onCompletions
      */
-    private static void prepareRouteImp(CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions, List<InterceptDefinition> intercepts,
-                                        List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
-                                        List<OnCompletionDefinition> onCompletions) {
+    private static void prepareRouteImp(
+            CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions,
+            List<InterceptDefinition> intercepts,
+            List<InterceptFromDefinition> interceptFromDefinitions,
+            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
+            List<OnCompletionDefinition> onCompletions) {
 
         // init the route inputs
         initRouteInput(context, route.getInput());
@@ -380,7 +383,8 @@ public final class RouteDefinitionHelper {
         // validate top-level violations
         validateTopLevel(route.getOutputs());
         // then interceptors
-        initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+        initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions,
+                interceptSendToEndpointDefinitions);
         // then on completion
         initOnCompletions(abstracts, upper, onCompletions);
         // then sagas
@@ -399,7 +403,7 @@ public final class RouteDefinitionHelper {
     /**
      * Sanity check the route, that it has input(s) and outputs.
      *
-     * @param route the route
+     * @param  route                    the route
      * @throws IllegalArgumentException is thrown if the route is invalid
      */
     public static void sanityCheckRoute(RouteDefinition route) {
@@ -423,8 +427,7 @@ public final class RouteDefinitionHelper {
     }
 
     /**
-     * Validates that top-level only definitions is not added in the wrong
-     * places, such as nested inside a splitter etc.
+     * Validates that top-level only definitions is not added in the wrong places, such as nested inside a splitter etc.
      */
     private static void validateTopLevel(List<ProcessorDefinition<?>> children) {
         for (ProcessorDefinition child : children) {
@@ -432,7 +435,8 @@ public final class RouteDefinitionHelper {
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(child);
             boolean parentIsRoute = child.getParent() == route;
             if (child.isTopLevelOnly() && !parentIsRoute) {
-                throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving " + child + " to the top of route.");
+                throw new IllegalArgumentException(
+                        "The output must be added as top-level on the route. Try moving " + child + " to the top of route.");
             }
             if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
                 validateTopLevel(child.getOutputs());
@@ -444,8 +448,9 @@ public final class RouteDefinitionHelper {
         // noop
     }
 
-    private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
-                                                         List<OnExceptionDefinition> onExceptions) {
+    private static void initParentAndErrorHandlerBuilder(
+            CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
+            List<OnExceptionDefinition> onExceptions) {
 
         if (context != null) {
             // let the route inherit the error handler builder from camel
@@ -456,7 +461,7 @@ public final class RouteDefinitionHelper {
             ErrorHandlerFactory builder = context.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
             if (builder != null) {
                 if (builder instanceof ErrorHandlerBuilder) {
-                    builder = ((ErrorHandlerBuilder)builder).cloneBuilder();
+                    builder = ((ErrorHandlerBuilder) builder).cloneBuilder();
                     route.setErrorHandlerFactoryIfNull(builder);
                 } else {
                     throw new UnsupportedOperationException("The ErrorHandlerFactory must implement ErrorHandlerBuilder");
@@ -475,7 +480,9 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initOnExceptions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper, List<OnExceptionDefinition> onExceptions) {
+    private static void initOnExceptions(
+            List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
+            List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
             for (OnExceptionDefinition output : onExceptions) {
@@ -510,9 +517,11 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
-                                         List<InterceptDefinition> intercepts, List<InterceptFromDefinition> interceptFromDefinitions,
-                                         List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+    private static void initInterceptors(
+            CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
+            List<ProcessorDefinition<?>> upper,
+            List<InterceptDefinition> intercepts, List<InterceptFromDefinition> interceptFromDefinitions,
+            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
         // move the abstracts interceptors into the dedicated list
         for (ProcessorDefinition processor : abstracts) {
@@ -520,25 +529,28 @@ public final class RouteDefinitionHelper {
                 if (interceptSendToEndpointDefinitions == null) {
                     interceptSendToEndpointDefinitions = new ArrayList<>();
                 }
-                interceptSendToEndpointDefinitions.add((InterceptSendToEndpointDefinition)processor);
+                interceptSendToEndpointDefinitions.add((InterceptSendToEndpointDefinition) processor);
             } else if (processor instanceof InterceptFromDefinition) {
                 if (interceptFromDefinitions == null) {
                     interceptFromDefinitions = new ArrayList<>();
                 }
-                interceptFromDefinitions.add((InterceptFromDefinition)processor);
+                interceptFromDefinitions.add((InterceptFromDefinition) processor);
             } else if (processor instanceof InterceptDefinition) {
                 if (intercepts == null) {
                     intercepts = new ArrayList<>();
                 }
-                intercepts.add((InterceptDefinition)processor);
+                intercepts.add((InterceptDefinition) processor);
             }
         }
 
         doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
     }
 
-    private static void doInitInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper, List<InterceptDefinition> intercepts,
-                                           List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+    private static void doInitInterceptors(
+            CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper,
+            List<InterceptDefinition> intercepts,
+            List<InterceptFromDefinition> interceptFromDefinitions,
+            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
@@ -619,13 +631,15 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initOnCompletions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper, List<OnCompletionDefinition> onCompletions) {
+    private static void initOnCompletions(
+            List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
+            List<OnCompletionDefinition> onCompletions) {
         List<OnCompletionDefinition> completions = new ArrayList<>();
 
         // find the route scoped onCompletions
         for (ProcessorDefinition out : abstracts) {
             if (out instanceof OnCompletionDefinition) {
-                completions.add((OnCompletionDefinition)out);
+                completions.add((OnCompletionDefinition) out);
             }
         }
 
@@ -653,7 +667,7 @@ public final class RouteDefinitionHelper {
         for (ProcessorDefinition<?> type : abstracts) {
             if (type instanceof SagaDefinition) {
                 if (saga == null) {
-                    saga = (SagaDefinition)type;
+                    saga = (SagaDefinition) type;
                 } else {
                     throw new IllegalArgumentException("The route can only have one saga defined");
                 }
@@ -676,7 +690,7 @@ public final class RouteDefinitionHelper {
         for (ProcessorDefinition<?> type : abstracts) {
             if (type instanceof TransactedDefinition) {
                 if (transacted == null) {
-                    transacted = (TransactedDefinition)type;
+                    transacted = (TransactedDefinition) type;
                 } else {
                     throw new IllegalArgumentException("The route can only have one transacted defined");
                 }
@@ -695,10 +709,10 @@ public final class RouteDefinitionHelper {
     /**
      * Force assigning ids to the give node and all its children (recursively).
      * <p/>
-     * This is needed when doing tracing or the likes, where each node should
-     * have its id assigned so the tracing can pin point exactly.
+     * This is needed when doing tracing or the likes, where each node should have its id assigned so the tracing can
+     * pin point exactly.
      *
-     * @param context the camel context
+     * @param context   the camel context
      * @param processor the node
      */
     public static void forceAssignIds(CamelContext context, final ProcessorDefinition processor) {

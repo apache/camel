@@ -74,7 +74,8 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, BoxApiName apiName,
+    protected Endpoint createEndpoint(
+            String uri, String methodName, BoxApiName apiName,
             BoxConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);

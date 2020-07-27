@@ -22,10 +22,9 @@ import java.net.CookiePolicy;
 import org.apache.camel.Exchange;
 
 /**
- * This implementation of the
- * {@link org.apache.camel.http.base.cookie.CookieHandler} interface keeps the
- * cookies with the instance of this object. If it is shared between endpoints
- * the sessions will be shared as long as they are sent to the same domain.
+ * This implementation of the {@link org.apache.camel.http.base.cookie.CookieHandler} interface keeps the cookies with
+ * the instance of this object. If it is shared between endpoints the sessions will be shared as long as they are sent
+ * to the same domain.
  */
 public class InstanceCookieHandler extends BaseCookieHandler {
     private CookieManager cookieHandler;

@@ -146,7 +146,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals(42.24, exchange.getIn().getHeader("doubleHeader"));
         assertEquals(true, exchange.getIn().getHeader("booleanHeader"));
         assertEquals(new Date(0), exchange.getIn().getHeader("dateHeader"));
-        assertArrayEquals("foo".getBytes(), (byte[])exchange.getIn().getHeader("byteArrayHeader"));
+        assertArrayEquals("foo".getBytes(), (byte[]) exchange.getIn().getHeader("byteArrayHeader"));
         assertEquals("Some really long string", exchange.getIn().getHeader("longStringHeader"));
         assertEquals(new Timestamp(4200), exchange.getIn().getHeader("timestampHeader"));
         assertEquals((byte) 0, exchange.getIn().getHeader("byteHeader"));
@@ -157,7 +157,8 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void creatingExecutorUsesThreadPoolSettings() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?threadPoolSize=20", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?threadPoolSize=20", RabbitMQEndpoint.class);
         assertEquals(20, endpoint.getThreadPoolSize());
 
         ThreadPoolExecutor executor = assertIsInstanceOf(ThreadPoolExecutor.class, endpoint.createExecutor());
@@ -180,7 +181,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     public void testMultiArgsPopulateCorrectEndpointProperties() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint(
                 "rabbitmq:localhost/exchange?arg.exchange.e1=v1&arg.exchange.e2=v2&arg.queue.q1=v3&arg.binding.b1=v4&arg.dlq.queue.dq1=v5&arg.dlq.binding.db1=v6",
-                                                        RabbitMQEndpoint.class);
+                RabbitMQEndpoint.class);
         assertEquals(6, endpoint.getArgs().size(), "Wrong number of args");
         assertEquals(1, endpoint.getBindingArgs().size(), "Wrong number of args (binding)");
         assertEquals(2, endpoint.getExchangeArgs().size(), "Wrong number of args (exchange)");
@@ -191,7 +192,8 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void brokerEndpointAddressesSettings() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?addresses=server1:12345,server2:12345", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?addresses=server1:12345,server2:12345",
+                RabbitMQEndpoint.class);
         assertEquals(2, endpoint.parseAddresses().length, "Wrong size of endpoint addresses.");
         assertEquals(new Address("server1", 12345), endpoint.parseAddresses()[0], "Get a wrong endpoint address.");
         assertEquals(new Address("server2", 12345), endpoint.parseAddresses()[1], "Get a wrong endpoint address.");
@@ -229,9 +231,13 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void testCreateConnectionFactoryCustom() throws Exception {
-        ConnectionFactory connectionFactory = createConnectionFactory("rabbitmq:localhost:1234/exchange" + "?username=userxxx" + "&password=passxxx" + "&connectionTimeout=123"
-                                                                      + "&requestedChannelMax=456" + "&requestedFrameMax=789" + "&requestedHeartbeat=987" + "&sslProtocol=true"
-                                                                      + "&automaticRecoveryEnabled=true" + "&networkRecoveryInterval=654" + "&topologyRecoveryEnabled=false");
+        ConnectionFactory connectionFactory
+                = createConnectionFactory("rabbitmq:localhost:1234/exchange" + "?username=userxxx" + "&password=passxxx"
+                                          + "&connectionTimeout=123"
+                                          + "&requestedChannelMax=456" + "&requestedFrameMax=789" + "&requestedHeartbeat=987"
+                                          + "&sslProtocol=true"
+                                          + "&automaticRecoveryEnabled=true" + "&networkRecoveryInterval=654"
+                                          + "&topologyRecoveryEnabled=false");
 
         assertEquals("localhost", connectionFactory.getHost());
         assertEquals(1234, connectionFactory.getPort());
@@ -249,37 +255,43 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithTransferExceptionEnabled() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?transferException=true", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?transferException=true", RabbitMQEndpoint.class);
         assertEquals(true, endpoint.isTransferException());
     }
 
     @Test
     public void createEndpointWithReplyTimeout() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?requestTimeout=2000", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?requestTimeout=2000", RabbitMQEndpoint.class);
         assertEquals(2000, endpoint.getRequestTimeout());
     }
 
     @Test
     public void createEndpointWithRequestTimeoutCheckerInterval() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?requestTimeoutCheckerInterval=1000", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?requestTimeoutCheckerInterval=1000", RabbitMQEndpoint.class);
         assertEquals(1000, endpoint.getRequestTimeoutCheckerInterval());
     }
 
     @Test
     public void createEndpointWithSkipQueueDeclareEnabled() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?skipQueueDeclare=true", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?skipQueueDeclare=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isSkipQueueDeclare());
     }
 
     @Test
     public void createEndpointWithSkipExchangeDeclareEnabled() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?skipExchangeDeclare=true", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?skipExchangeDeclare=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isSkipExchangeDeclare());
     }
 
     @Test
     public void createEndpointWithSkipQueueBindEndabled() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?SkipQueueBind=true", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?SkipQueueBind=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isSkipQueueBind());
     }
 
@@ -291,7 +303,8 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithExclusiveConsumerEnabled() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusiveConsumer=true", RabbitMQEndpoint.class);
+        RabbitMQEndpoint endpoint
+                = context.getEndpoint("rabbitmq:localhost/exchange?exclusiveConsumer=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isExclusiveConsumer());
     }
 

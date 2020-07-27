@@ -25,7 +25,8 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 
-public abstract class AbstractMicroProfileMetricsEventNotifier <T extends CamelEvent> extends EventNotifierSupport implements CamelContextAware {
+public abstract class AbstractMicroProfileMetricsEventNotifier<T extends CamelEvent> extends EventNotifierSupport
+        implements CamelContextAware {
 
     private final Class<T> eventType;
 
@@ -68,7 +69,8 @@ public abstract class AbstractMicroProfileMetricsEventNotifier <T extends CamelE
         }
 
         try {
-            MicroProfileMetricsEventNotifierService service = camelContext.hasService(MicroProfileMetricsEventNotifierService.class);
+            MicroProfileMetricsEventNotifierService service
+                    = camelContext.hasService(MicroProfileMetricsEventNotifierService.class);
             if (service == null) {
                 service = new MicroProfileMetricsEventNotifierService();
                 service.setMetricRegistry(getMetricRegistry());

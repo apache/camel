@@ -81,9 +81,8 @@ public class SetPropertyDefinition extends ExpressionNode {
     /**
      * Name of exchange property to set a new value.
      * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated
-     * exchange property name to be used. Otherwise a constant name will be
-     * used.
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated exchange property name to be used.
+     * Otherwise a constant name will be used.
      */
     public void setName(String name) {
         this.name = name;

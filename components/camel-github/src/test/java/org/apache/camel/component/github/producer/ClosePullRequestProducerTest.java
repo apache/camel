@@ -39,7 +39,6 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
     public static final String PULL_REQUEST_PRODUCER_ENDPOINT = "direct:validPullRequest";
     protected static final Logger LOG = LoggerFactory.getLogger(ClosePullRequestProducerTest.class);
     private long latestPullRequestId;
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -53,17 +52,14 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
                         .to("github://closePullRequest?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
-
         };
     }
-
 
     @Test
     public void testPullRequestCommentProducer() throws Exception {
         // Create a pull request
         PullRequest pullRequest = pullRequestService.addPullRequest("testPullRequestCommentProducer");
         latestPullRequestId = pullRequest.getId();
-
 
         // Close it
         Endpoint closePullRequestEndpoint = getMandatoryEndpoint(PULL_REQUEST_PRODUCER_ENDPOINT);
@@ -87,7 +83,6 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
         assertTrue(found, "Didn't find pull request " + latestPullRequestId);
     }
 
-
     public class ClosePullRequestProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -96,6 +91,5 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
         }
     }
-
 
 }

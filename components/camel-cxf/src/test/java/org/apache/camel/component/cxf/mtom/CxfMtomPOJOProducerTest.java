@@ -43,8 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
-
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  */
@@ -63,18 +61,18 @@ public class CxfMtomPOJOProducerTest {
     @BeforeEach
     public void setUp() throws Exception {
         endpoint = Endpoint.publish("http://localhost:" + port + "/CxfMtomPOJOProducerTest/jaxws-mtom/hello", getImpl());
-        SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(true);
-        
+
     }
-    
+
     @AfterEach
     public void tearDown() throws Exception {
         if (endpoint != null) {
             endpoint.stop();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testInvokingServiceFromCxfProducer() throws Exception {
@@ -84,39 +82,37 @@ public class CxfMtomPOJOProducerTest {
 
         final Holder<byte[]> photo = new Holder<>(MtomTestHelper.REQ_PHOTO_DATA);
         final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
-        
+
         Exchange exchange = context.createProducerTemplate().send("direct://testEndpoint", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new Object[] {photo, image});
-                
+                exchange.getIn().setBody(new Object[] { photo, image });
+
             }
-            
+
         });
-        
+
         assertEquals(2, exchange.getOut(AttachmentMessage.class).getAttachments().size(), "The attachement size should be 2");
-        
+
         Object[] result = exchange.getOut().getBody(Object[].class);
         Holder<byte[]> photo1 = (Holder<byte[]>) result[1];
-        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA,  photo1.value);
+        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, photo1.value);
         Holder<Image> image1 = (Holder<Image>) result[2];
         assertNotNull(image1.value);
         if (image.value instanceof BufferedImage) {
-            assertEquals(560, ((BufferedImage)image1.value).getWidth());
-            assertEquals(300, ((BufferedImage)image1.value).getHeight());            
+            assertEquals(560, ((BufferedImage) image1.value).getWidth());
+            assertEquals(300, ((BufferedImage) image1.value).getHeight());
         }
-        
+
     }
-    
+
     private Image getImage(String name) throws Exception {
         return ImageIO.read(getClass().getResource(name));
     }
-    
-    
+
     protected Object getImpl() {
         return new HelloImpl();
     }
-    
 
 }

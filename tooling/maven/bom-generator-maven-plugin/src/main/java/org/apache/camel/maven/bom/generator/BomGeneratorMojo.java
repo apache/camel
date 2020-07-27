@@ -89,7 +89,6 @@ public class BomGeneratorMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/${project.name}-pom.xml")
     protected File targetPom;
 
-
     /**
      * The user configuration
      */
@@ -314,14 +313,13 @@ public class BomGeneratorMojo extends AbstractMojo {
                 dependencyEl.appendChild(exclsEl);
             }
 
-
             dependenciesSection.appendChild(dependencyEl);
         }
 
-
     }
 
-    private void checkConflictsWithExternalBoms(Collection<Dependency> dependencies, Set<String> external) throws MojoFailureException {
+    private void checkConflictsWithExternalBoms(Collection<Dependency> dependencies, Set<String> external)
+            throws MojoFailureException {
         Set<String> errors = new TreeSet<>();
         for (Dependency d : dependencies) {
             String key = comparisonKey(d);
@@ -332,7 +330,8 @@ public class BomGeneratorMojo extends AbstractMojo {
 
         if (errors.size() > 0) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Found ").append(errors.size()).append(" conflicts between the current managed dependencies and the external BOMS:\n");
+            msg.append("Found ").append(errors.size())
+                    .append(" conflicts between the current managed dependencies and the external BOMS:\n");
             for (String error : errors) {
                 msg.append(" - ").append(error).append("\n");
             }
@@ -345,7 +344,8 @@ public class BomGeneratorMojo extends AbstractMojo {
         Set<String> provided = new HashSet<>();
         if (checkConflicts != null && checkConflicts.getBoms() != null) {
             for (ExternalBomConflictCheck check : checkConflicts.getBoms()) {
-                Set<String> bomProvided = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
+                Set<String> bomProvided
+                        = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
                 provided.addAll(bomProvided);
             }
         }
@@ -357,7 +357,9 @@ public class BomGeneratorMojo extends AbstractMojo {
         return getProvidedDependencyManagement(groupId, artifactId, version, new TreeSet<>());
     }
 
-    private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version, Set<String> gaChecked) throws Exception {
+    private Set<String> getProvidedDependencyManagement(
+            String groupId, String artifactId, String version, Set<String> gaChecked)
+            throws Exception {
         String ga = groupId + ":" + artifactId;
         gaChecked.add(ga);
         Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
@@ -369,7 +371,8 @@ public class BomGeneratorMojo extends AbstractMojo {
                 if ("pom".equals(dep.getType()) && "import".equals(dep.getScope())) {
                     String subGa = dep.getGroupId() + ":" + dep.getArtifactId();
                     if (!gaChecked.contains(subGa)) {
-                        Set<String> sub = getProvidedDependencyManagement(dep.getGroupId(), dep.getArtifactId(), resolveVersion(bomProject, dep.getVersion()), gaChecked);
+                        Set<String> sub = getProvidedDependencyManagement(dep.getGroupId(), dep.getArtifactId(),
+                                resolveVersion(bomProject, dep.getVersion()), gaChecked);
                         provided.addAll(sub);
                     }
                 } else {
@@ -401,7 +404,8 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private String comparisonKey(Dependency dependency) {
-        return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + (dependency.getType() != null ? dependency.getType() : "jar");
+        return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
+               + (dependency.getType() != null ? dependency.getType() : "jar");
     }
 
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {

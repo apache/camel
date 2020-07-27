@@ -34,7 +34,8 @@ public class SpringJacksonObjectMapperRegistryTest extends CamelSpringTestSuppor
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonObjectMapperRegistryTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jackson/SpringJacksonObjectMapperRegistryTest.xml");
     }
 
     @Test
@@ -55,10 +56,10 @@ public class SpringJacksonObjectMapperRegistryTest extends CamelSpringTestSuppor
 
         mock.assertIsSatisfied();
 
-        MyJsonObjectMapper mapper = (MyJsonObjectMapper)context.getRegistry().lookupByName("myJsonObjectMapper");
+        MyJsonObjectMapper mapper = (MyJsonObjectMapper) context.getRegistry().lookupByName("myJsonObjectMapper");
         assertNotNull(mapper);
 
-        JacksonDataFormat df = (JacksonDataFormat)DataFormatReifier.getDataFormat(context, "jack");
+        JacksonDataFormat df = (JacksonDataFormat) DataFormatReifier.getDataFormat(context, "jack");
         assertNotNull(df);
         assertSame(mapper, df.getObjectMapper());
     }

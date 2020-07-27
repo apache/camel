@@ -19,16 +19,17 @@ package org.apache.camel.component.cxf.jaxrs;
 public enum BindingStyle {
 
     /**
-     * <i>Only available for consumers.</i>
-     * This binding style processes request parameters, multiparts, etc. and maps them to IN headers, IN attachments and to the message body.
-     * It aims to eliminate low-level processing of {@link org.apache.cxf.message.MessageContentsList}.
-     * It also also adds more flexibility and simplicity to the response mapping.
+     * <i>Only available for consumers.</i> This binding style processes request parameters, multiparts, etc. and maps
+     * them to IN headers, IN attachments and to the message body. It aims to eliminate low-level processing of
+     * {@link org.apache.cxf.message.MessageContentsList}. It also also adds more flexibility and simplicity to the
+     * response mapping.
      */
     SimpleConsumer,
 
     /**
-     * This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack
-     * onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature.
+     * This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList}
+     * coming in from the CXF stack onto the IN message body. The user is then responsible for processing it according
+     * to the contract defined by the JAX-RS method signature.
      */
     Default,
 

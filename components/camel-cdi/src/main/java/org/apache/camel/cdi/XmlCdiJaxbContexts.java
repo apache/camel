@@ -34,7 +34,8 @@ enum XmlCdiJaxbContexts {
         try {
             context = JAXBContext.newInstance(String.join(":", packages));
         } catch (JAXBException cause) {
-            throw new IllegalStateException("Error while creating JAXB context for packages " + Arrays.toString(packages), cause);
+            throw new IllegalStateException(
+                    "Error while creating JAXB context for packages " + Arrays.toString(packages), cause);
         }
     }
 

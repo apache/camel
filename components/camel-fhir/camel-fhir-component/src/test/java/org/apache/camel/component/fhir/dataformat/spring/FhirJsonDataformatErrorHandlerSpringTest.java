@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSupport {
 
-    private static final String INPUT = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
+    private static final String INPUT
+            = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
     private MockEndpoint mockEndpoint;
 
     @Override
@@ -71,6 +72,7 @@ public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSup
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/fhir/json/FhirJsonDataFormatErrorHandlerSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/fhir/json/FhirJsonDataFormatErrorHandlerSpringTest.xml");
     }
 }

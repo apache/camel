@@ -42,9 +42,10 @@ public class HipchatConsumer extends ScheduledPollConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(HipchatConsumer.class);
 
-    private static final MapType MAP_TYPE = TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Object.class);
+    private static final MapType MAP_TYPE
+            = TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Object.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    
+
     private transient String hipchatConsumerToString;
 
     public HipchatConsumer(HipchatEndpoint endpoint, Processor processor) {
@@ -52,7 +53,7 @@ public class HipchatConsumer extends ScheduledPollConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {        
+    protected int poll() throws Exception {
         int messageCount = 0;
         for (String user : getConfig().consumableUsers()) {
             Exchange exchange = getEndpoint().createExchange();
@@ -64,7 +65,8 @@ public class HipchatConsumer extends ScheduledPollConsumer {
 
     private void processExchangeForUser(String user, Exchange exchange) throws Exception {
         String urlPath = String.format(getMostRecentMessageUrl(), user);
-        LOG.debug("Polling HipChat Api " + urlPath + " for new messages at " + Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime());
+        LOG.debug("Polling HipChat Api " + urlPath + " for new messages at "
+                  + Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime());
         HttpGet httpGet = new HttpGet(getConfig().hipChatUrl() + urlPath);
         CloseableHttpResponse response = executeGet(httpGet);
         exchange.getIn().setHeader(HipchatConstants.FROM_USER, user);
@@ -82,7 +84,8 @@ public class HipchatConsumer extends ScheduledPollConsumer {
                         Map<String, Object> item = items.get(0);
                         String date = (String) item.get(HipchatApiConstants.API_DATE);
                         String message = (String) item.get(HipchatApiConstants.API_MESSAGE);
-                        LOG.debug("Setting exchange body: " + message + ", header " + HipchatConstants.MESSAGE_DATE + ": " + date);
+                        LOG.debug("Setting exchange body: " + message + ", header " + HipchatConstants.MESSAGE_DATE + ": "
+                                  + date);
                         exchange.getIn().setHeader(HipchatConstants.FROM_USER_RESPONSE_STATUS, response.getStatusLine());
                         exchange.getIn().setHeader(HipchatConstants.MESSAGE_DATE, date);
                         exchange.getIn().setBody(message);
@@ -102,7 +105,8 @@ public class HipchatConsumer extends ScheduledPollConsumer {
     }
 
     private String getMostRecentMessageUrl() {
-        return getConfig().withAuthToken(HipchatApiConstants.URI_PATH_USER_LATEST_PRIVATE_CHAT) + "&" + HipchatApiConstants.DEFAULT_MAX_RESULT;
+        return getConfig().withAuthToken(HipchatApiConstants.URI_PATH_USER_LATEST_PRIVATE_CHAT) + "&"
+               + HipchatApiConstants.DEFAULT_MAX_RESULT;
     }
 
     private HipchatConfiguration getConfig() {
@@ -111,7 +115,7 @@ public class HipchatConsumer extends ScheduledPollConsumer {
 
     @Override
     public HipchatEndpoint getEndpoint() {
-        return (HipchatEndpoint)super.getEndpoint();
+        return (HipchatEndpoint) super.getEndpoint();
     }
 
     @Override

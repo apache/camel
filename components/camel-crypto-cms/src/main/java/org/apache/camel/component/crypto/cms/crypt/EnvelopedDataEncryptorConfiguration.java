@@ -60,23 +60,27 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
 
         List<Integer> allowedKeyLengthForAESandCamellia;
         if (isLimitedEncryptionStrength()) {
-            allowedKeyLengthForAESandCamellia = Arrays.asList(new Integer[] {128});
+            allowedKeyLengthForAESandCamellia = Arrays.asList(new Integer[] { 128 });
         } else {
-            allowedKeyLengthForAESandCamellia = Arrays.asList(new Integer[] {256, 192, 128});
+            allowedKeyLengthForAESandCamellia = Arrays.asList(new Integer[] { 256, 192, 128 });
         }
 
-        SUPPORTED_ENCRYPTION_ALGORITHMS.put(DESEDE_CBC_PKCS5_PADDING, Arrays.asList(new Integer[] {192, 128}));
-        SUPPORTED_ENCRYPTION_ALGORITHMS.put(DES_CBC_PKCS5_PADDING, Arrays.asList(new Integer[] {64, 56}));
+        SUPPORTED_ENCRYPTION_ALGORITHMS.put(DESEDE_CBC_PKCS5_PADDING, Arrays.asList(new Integer[] { 192, 128 }));
+        SUPPORTED_ENCRYPTION_ALGORITHMS.put(DES_CBC_PKCS5_PADDING, Arrays.asList(new Integer[] { 64, 56 }));
         SUPPORTED_ENCRYPTION_ALGORITHMS.put(AES_CBC_PKCS5_PADDING, allowedKeyLengthForAESandCamellia);
         SUPPORTED_ENCRYPTION_ALGORITHMS.put(CAMELLIA_CBC_PKCS5_PADDING, allowedKeyLengthForAESandCamellia);
-        SUPPORTED_ENCRYPTION_ALGORITHMS.put(RC2_CBC_PKCS5_PADDING, Arrays.asList(new Integer[] {128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40}));
-        SUPPORTED_ENCRYPTION_ALGORITHMS.put(CAST5_CBC_PKCS5_PADDING, Arrays.asList(new Integer[] {128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40}));
+        SUPPORTED_ENCRYPTION_ALGORITHMS.put(RC2_CBC_PKCS5_PADDING,
+                Arrays.asList(new Integer[] { 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40 }));
+        SUPPORTED_ENCRYPTION_ALGORITHMS.put(CAST5_CBC_PKCS5_PADDING,
+                Arrays.asList(new Integer[] { 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40 }));
     }
 
-    @UriParam(label = "encrypt", multiValue = true, description = "Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo")
+    @UriParam(label = "encrypt", multiValue = true,
+              description = "Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo")
     private final List<RecipientInfo> recipient = new ArrayList<>(3);
 
-    @UriParam(label = "encrypt", enums = "AES/CBC/PKCS5Padding,DESede/CBC/PKCS5Padding,Camellia/CBC/PKCS5Padding,CAST5/CBC/PKCS5Padding")
+    @UriParam(label = "encrypt",
+              enums = "AES/CBC/PKCS5Padding,DESede/CBC/PKCS5Padding,Camellia/CBC/PKCS5Padding,CAST5/CBC/PKCS5Padding")
     private String contentEncryptionAlgorithm;
 
     @UriParam(label = "encrypt")
@@ -122,7 +126,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
         }
         for (Object recipientOb : recipients) {
             if (recipientOb instanceof String) {
-                String recipientName = (String)recipientOb;
+                String recipientName = (String) recipientOb;
                 String valueNoHash = recipientName.replace("#", "");
                 if (getContext() != null) {
                     RecipientInfo recipient = getContext().getRegistry().lookupByNameAndType(valueNoHash, RecipientInfo.class);
@@ -140,9 +144,8 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
     }
 
     /**
-     * Encryption algorithm, for example "DESede/CBC/PKCS5Padding". Further
-     * possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding,
-     * Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding.
+     * Encryption algorithm, for example "DESede/CBC/PKCS5Padding". Further possible values: DESede/CBC/PKCS5Padding,
+     * AES/CBC/PKCS5Padding, Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding.
      */
     public void setContentEncryptionAlgorithm(String contentEncryptionAlgorithm) {
         this.contentEncryptionAlgorithm = contentEncryptionAlgorithm;
@@ -153,13 +156,11 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
     }
 
     /**
-     * Key length for the secret symmetric key used for the content encryption.
-     * Only used if the specified content-encryption algorithm allows keys of
-     * different sizes. If contentEncryptionAlgorithm=AES/CBC/PKCS5Padding or
-     * Camellia/CBC/PKCS5Padding then 128; if
-     * contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding then 192, 128; if
-     * strong encryption is enabled then for AES/CBC/PKCS5Padding and
-     * Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are possible.
+     * Key length for the secret symmetric key used for the content encryption. Only used if the specified
+     * content-encryption algorithm allows keys of different sizes. If contentEncryptionAlgorithm=AES/CBC/PKCS5Padding
+     * or Camellia/CBC/PKCS5Padding then 128; if contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding then 192, 128; if
+     * strong encryption is enabled then for AES/CBC/PKCS5Padding and Camellia/CBC/PKCS5Padding also the key lengths 192
+     * and 256 are possible.
      */
     public void setSecretKeyLength(int secretKeyLength) {
         this.secretKeyLength = secretKeyLength;
@@ -170,12 +171,11 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
     }
 
     /**
-     * Provider of the generator for the unprotected attributes. The default
-     * value is <code>null</code> which means no unprotected attribute is added
-     * to the Enveloped Data object. See
-     * https://tools.ietf.org/html/rfc5652#section-6.1.
+     * Provider of the generator for the unprotected attributes. The default value is <code>null</code> which means no
+     * unprotected attribute is added to the Enveloped Data object. See https://tools.ietf.org/html/rfc5652#section-6.1.
      */
-    public void setUnprotectedAttributesGeneratorProvider(AttributesGeneratorProvider unprotectedAttributeTableGeneratorProvider) {
+    public void setUnprotectedAttributesGeneratorProvider(
+            AttributesGeneratorProvider unprotectedAttributeTableGeneratorProvider) {
         this.unprotectedAttributesGeneratorProvider = unprotectedAttributeTableGeneratorProvider;
     }
 
@@ -184,8 +184,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
     }
 
     /**
-     * Provider for the originator info. See
-     * https://tools.ietf.org/html/rfc5652#section-6.1. The default value is
+     * Provider for the originator info. See https://tools.ietf.org/html/rfc5652#section-6.1. The default value is
      * <code>null</code>.
      */
     public void setOriginatorInformationProvider(OriginatorInformationProvider originatorInformationProvider) {
@@ -207,7 +206,8 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
         } else if (!SUPPORTED_ENCRYPTION_ALGORITHMS.keySet().contains(contentEncryptionAlgorithm)) {
             logErrorAndThrow(LOG, "Content encryption algorithm " + contentEncryptionAlgorithm + " not supported");
         } else if (!SUPPORTED_ENCRYPTION_ALGORITHMS.get(contentEncryptionAlgorithm).contains(secretKeyLength)) {
-            logErrorAndThrow(LOG, "Content encryption algorithm " + contentEncryptionAlgorithm + " does not supported secretKeyLength of " + secretKeyLength);
+            logErrorAndThrow(LOG, "Content encryption algorithm " + contentEncryptionAlgorithm
+                                  + " does not supported secretKeyLength of " + secretKeyLength);
         }
     }
 
@@ -236,7 +236,8 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
 
                 default:
                     // should not happen, has already been checked
-                    throw new IllegalStateException("Unsupported secret key length " + getSecretKeyLength() + " for algorithm AES");
+                    throw new IllegalStateException(
+                            "Unsupported secret key length " + getSecretKeyLength() + " for algorithm AES");
             }
 
         } else if (CAMELLIA_CBC_PKCS5_PADDING.equals(getContentEncryptionAlgorithm())) {
@@ -253,7 +254,8 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
                     break;
                 default:
                     // should not happen, has already been checked
-                    throw new IllegalStateException("Unsupported secret key length " + getSecretKeyLength() + " for algorithm Camellia");
+                    throw new IllegalStateException(
+                            "Unsupported secret key length " + getSecretKeyLength() + " for algorithm Camellia");
             }
 
         } else if (RC2_CBC_PKCS5_PADDING.equals(getContentEncryptionAlgorithm())) {
@@ -266,7 +268,8 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
 
         } else {
             // should not occur, has already been checked
-            throw new IllegalStateException("Content encryption algorithm " + getContentEncryptionAlgorithm() + " not supported");
+            throw new IllegalStateException(
+                    "Content encryption algorithm " + getContentEncryptionAlgorithm() + " not supported");
         }
 
     }

@@ -42,7 +42,8 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
 
     @Test
     public void testBrowsableNoFiles() throws Exception {
-        BrowsableEndpoint browse = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10", BrowsableEndpoint.class);
+        BrowsableEndpoint browse
+                = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10", BrowsableEndpoint.class);
         assertNotNull(browse);
 
         List<Exchange> list = browse.getExchanges();
@@ -57,7 +58,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         FileEndpoint endpoint = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10", FileEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();
@@ -79,10 +80,11 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/browse", "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file:target/data/browse", "B", Exchange.FILE_NAME, "b.txt");
 
-        FileEndpoint endpoint = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10&sortBy=file:name", FileEndpoint.class);
+        FileEndpoint endpoint
+                = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10&sortBy=file:name", FileEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();
@@ -108,10 +110,11 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/browse", "B", Exchange.FILE_NAME, "foo/b.txt");
         template.sendBodyAndHeader("file:target/data/browse", "C", Exchange.FILE_NAME, "bar/c.txt");
 
-        FileEndpoint endpoint = context.getEndpoint("file:target/data/browse?initialDelay=0&delay=10&recursive=true&sortBy=file:name", FileEndpoint.class);
+        FileEndpoint endpoint = context.getEndpoint(
+                "file:target/data/browse?initialDelay=0&delay=10&recursive=true&sortBy=file:name", FileEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();

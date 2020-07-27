@@ -299,8 +299,7 @@ public class ClusterServiceSelectorTest {
         try {
             CamelContext ctx = context = new DefaultCamelContext();
 
-            assertThrows(IllegalStateException.class, () ->
-                mandatoryLookupService(ctx, ClusterServiceSelectors.single()));
+            assertThrows(IllegalStateException.class, () -> mandatoryLookupService(ctx, ClusterServiceSelectors.single()));
         } finally {
             if (context != null) {
                 context.stop();
@@ -315,8 +314,7 @@ public class ClusterServiceSelectorTest {
         try {
             CamelContext ctx = context = new DefaultCamelContext();
 
-            assertThrows(IllegalStateException.class, () ->
-                mandatoryLookupService(ctx));
+            assertThrows(IllegalStateException.class, () -> mandatoryLookupService(ctx));
         } finally {
             if (context != null) {
                 context.stop();

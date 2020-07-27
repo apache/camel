@@ -41,8 +41,8 @@ public class Web3jConsumerBlockTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                        + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
-                        .to("mock:result");
+                     + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
+                             .to("mock:result");
             }
         };
     }

@@ -41,9 +41,11 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes, String produces,
-                                   RestConfiguration configuration, Map<String, Object> parameters)
-        throws Exception {
+    public Consumer createConsumer(
+            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes,
+            String produces,
+            RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
         // just use a seda endpoint for testing purpose
         String id;
         if (uriTemplate != null) {
@@ -57,7 +59,7 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
         }
 
         if (configuration.getConsumerProperties() != null) {
-            String ref = (String)configuration.getConsumerProperties().get("dummy");
+            String ref = (String) configuration.getConsumerProperties().get("dummy");
             if (ref != null) {
                 dummy = CamelContextHelper.mandatoryLookup(camelContext, ref.substring(1));
             }
@@ -70,8 +72,10 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
     }
 
     @Override
-    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration, Map<String, Object> parameters)
-        throws Exception {
+    public Consumer createApiConsumer(
+            CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration,
+            Map<String, Object> parameters)
+            throws Exception {
         // just use a seda endpoint for testing purpose
         String id = DefaultUuidGenerator.generateSanitizedId(contextPath);
         // remove leading dash as we add that ourselves

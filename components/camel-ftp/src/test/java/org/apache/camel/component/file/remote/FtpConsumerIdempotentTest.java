@@ -26,7 +26,8 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/idempotent?password=admin&binary=false&idempotent=true&delete=true&delay=1000";
+        return "ftp://admin@localhost:" + getPort()
+               + "/idempotent?password=admin&binary=false&idempotent=true&delete=true&delay=1000";
     }
 
     @Test

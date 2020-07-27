@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 public class ECS2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(ECS2Component.class);
-    
+
     @Metadata
     private ECS2Configuration configuration = new ECS2Configuration();
 
@@ -58,7 +58,8 @@ public class ECS2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getEcsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getEcsClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon ecs client or accessKey and secretKey must be specified");
         }
 

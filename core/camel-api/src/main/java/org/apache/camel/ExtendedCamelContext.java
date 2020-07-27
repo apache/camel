@@ -68,8 +68,8 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Sets the name (id) of the this context.
      * <p/>
-     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot etc.
-     * Important: Setting the name should only be set before CamelContext is started.
+     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
+     * etc. Important: Setting the name should only be set before CamelContext is started.
      *
      * @param name the name
      */
@@ -78,8 +78,8 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Sets the registry Camel should use for looking up beans by name or type.
      * <p/>
-     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot etc.
-     * Important: Setting the registry should only be set before CamelContext is started.
+     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
+     * etc. Important: Setting the registry should only be set before CamelContext is started.
      *
      * @param registry the registry such as DefaultRegistry or
      */
@@ -89,28 +89,26 @@ public interface ExtendedCamelContext extends CamelContext {
      * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
      *
      * @param done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
-     * @see #isSetupRoutes()
+     * @see        #isSetupRoutes()
      */
     void setupRoutes(boolean done);
 
     /**
      * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
      * <p/>
-     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
-     * they need to react differently.
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      * <p/>
-     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
-     * Spring or Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which
-     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature
-     * of especially Blueprint.
+     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus Spring or
+     * Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which can happen after the
+     * {@link CamelContext} itself is in started state, due the asynchronous event nature of especially Blueprint.
      *
      * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
      */
     boolean isSetupRoutes();
 
     /**
-     * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
-     * logic when an {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
+     * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom logic when an
+     * {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
      * <p/>
      * When a callback is registered it will be executed on the already registered endpoints allowing you to catch-up
      *
@@ -119,83 +117,81 @@ public interface ExtendedCamelContext extends CamelContext {
     void registerEndpointCallback(EndpointStrategy strategy);
 
     /**
-     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype).
-     * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created.
+     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype). If the name has a
+     * singleton endpoint registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created.
      *
-     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped,
-     * and therefore expected to be short lived and discarded after use (you must stop and shutdown the
-     * endpoint when no longer in use).
+     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped, and
+     * therefore expected to be short lived and discarded after use (you must stop and shutdown the endpoint when no
+     * longer in use).
      *
-     * @param uri the URI of the endpoint
-     * @return the endpoint
+     * @param  uri the URI of the endpoint
+     * @return     the endpoint
      *
-     * @see #getEndpoint(String)
+     * @see        #getEndpoint(String)
      */
     Endpoint getPrototypeEndpoint(String uri);
 
     /**
-     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype).
-     * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created.
+     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype). If the name has a
+     * singleton endpoint registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created.
      *
-     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped,
-     * and therefore expected to be short lived and discarded after use (you must stop and shutdown the
-     * endpoint when no longer in use).
+     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped, and
+     * therefore expected to be short lived and discarded after use (you must stop and shutdown the endpoint when no
+     * longer in use).
      *
-     * @param uri the URI of the endpoint
-     * @return the endpoint
+     * @param  uri the URI of the endpoint
+     * @return     the endpoint
      *
-     * @see #getEndpoint(String)
+     * @see        #getEndpoint(String)
      */
     Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri);
 
     /**
      * Is the given endpoint already registered in the {@link org.apache.camel.spi.EndpointRegistry}
      *
-     * @param uri the URI of the endpoint
-     * @return the registered endpoint or <tt>null</tt> if not registered
+     * @param  uri the URI of the endpoint
+     * @return     the registered endpoint or <tt>null</tt> if not registered
      */
     Endpoint hasEndpoint(NormalizedEndpointUri uri);
 
     /**
-     * Resolves the given name to an {@link Endpoint} of the specified type.
-     * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
+     * Resolves the given name to an {@link Endpoint} of the specified type. If the name has a singleton endpoint
+     * registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created and registered in the
+     * {@link org.apache.camel.spi.EndpointRegistry}.
      *
-     * @param uri the URI of the endpoint
-     * @return the endpoint
+     * @param  uri the URI of the endpoint
+     * @return     the endpoint
      *
-     * @see #getPrototypeEndpoint(String)
+     * @see        #getPrototypeEndpoint(String)
      */
     Endpoint getEndpoint(NormalizedEndpointUri uri);
 
     /**
-     * Resolves the given name to an {@link Endpoint} of the specified type.
-     * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
+     * Resolves the given name to an {@link Endpoint} of the specified type. If the name has a singleton endpoint
+     * registered, then the singleton is returned. Otherwise, a new {@link Endpoint} is created and registered in the
+     * {@link org.apache.camel.spi.EndpointRegistry}.
      *
-     * @param uri the URI of the endpoint
-     * @param parameters the parameters to customize the endpoint
-     * @return the endpoint
+     * @param  uri        the URI of the endpoint
+     * @param  parameters the parameters to customize the endpoint
+     * @return            the endpoint
      *
-     * @see #getPrototypeEndpoint(String)
+     * @see               #getPrototypeEndpoint(String)
      */
     Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters);
 
     /**
      * Normalizes the given uri.
      *
-     * @param uri  the uri
-     * @return a normalized uri
+     * @param  uri the uri
+     * @return     a normalized uri
      */
     NormalizedEndpointUri normalizeUri(String uri);
 
     /**
      * Returns the order in which the route inputs was started.
      * <p/>
-     * The order may not be according to the startupOrder defined on the route.
-     * For example a route could be started manually later, or new routes added at runtime.
+     * The order may not be according to the startupOrder defined on the route. For example a route could be started
+     * manually later, or new routes added at runtime.
      *
      * @return a list in the order how routes was started
      */
@@ -218,12 +214,13 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Creates a new multicast processor which sends an exchange to all the processors.
      *
-     * @param processors the list of processors to send to
-     * @param executor the executor to use
-     * @return a multicasting processor
+     * @param  processors the list of processors to send to
+     * @param  executor   the executor to use
+     * @return            a multicasting processor
      */
-    AsyncProcessor createMulticast(Collection<Processor> processors,
-                                   ExecutorService executor, boolean shutdownExecutorService);
+    AsyncProcessor createMulticast(
+            Collection<Processor> processors,
+            ExecutorService executor, boolean shutdownExecutorService);
 
     /**
      * Gets the default error handler builder which is inherited by the routes
@@ -335,8 +332,8 @@ public interface ExtendedCamelContext extends CamelContext {
     /**
      * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path
      *
-     * @param path the META-INF path
-     * @return the factory finder
+     * @param  path the META-INF path
+     * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
 
@@ -413,8 +410,7 @@ public interface ExtendedCamelContext extends CamelContext {
     BeanProcessorFactory getBeanProcessorFactory();
 
     /**
-     * Gets the default shared thread pool for error handlers which
-     * leverages this for asynchronous redelivery tasks.
+     * Gets the default shared thread pool for error handlers which leverages this for asynchronous redelivery tasks.
      */
     ScheduledExecutorService getErrorHandlerExecutorService();
 
@@ -494,8 +490,7 @@ public interface ExtendedCamelContext extends CamelContext {
     void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
 
     /**
-     * Whether event notification is applicable (possible).
-     * This API is used internally in Camel as optimization.
+     * Whether event notification is applicable (possible). This API is used internally in Camel as optimization.
      */
     boolean isEventNotificationApplicable();
 
@@ -555,8 +550,8 @@ public interface ExtendedCamelContext extends CamelContext {
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
 
     /**
-     * Internal {@link RouteController} that are only used internally by Camel to
-     * perform basic route operations. Do not use this as end user.
+     * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not
+     * use this as end user.
      */
     RouteController getInternalRouteController();
 

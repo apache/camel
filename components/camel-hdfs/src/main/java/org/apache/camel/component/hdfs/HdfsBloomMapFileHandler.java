@@ -44,9 +44,10 @@ class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
                     new Path(hdfsPath),
                     MapFile.Writer.keyClass(keyWritableClass),
                     MapFile.Writer.valueClass(valueWritableClass),
-                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    MapFile.Writer.progressable(() -> { })
-            );
+                    MapFile.Writer.compression(endpointConfig.getCompressionType(),
+                            endpointConfig.getCompressionCodec().getCodec()),
+                    MapFile.Writer.progressable(() -> {
+                    }));
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
@@ -84,7 +85,8 @@ class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
         try {
             MapFile.Reader reader = (BloomMapFile.Reader) hdfsistr.getIn();
             Holder<Integer> keySize = new Holder<>();
-            WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
+            WritableComparable<?> keyWritable
+                    = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
             if (reader.next(keyWritable, valueWritable)) {

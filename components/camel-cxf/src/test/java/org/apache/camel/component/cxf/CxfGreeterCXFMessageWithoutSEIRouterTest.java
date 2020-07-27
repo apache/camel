@@ -24,7 +24,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfGreeterCXFMessageWithoutSEIRouterTest extends CxfGreeterCXFMessageRouterTest {
-    
+
     protected static Endpoint endpoint;
 
     @AfterAll
@@ -34,18 +34,18 @@ public class CxfGreeterCXFMessageWithoutSEIRouterTest extends CxfGreeterCXFMessa
         }
     }
 
-
     @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1() 
-            + "/CxfGreeterCXFMessageWithoutSEIRouterTest/SoapContext/SoapPort";
-        endpoint = Endpoint.publish(address, implementor); 
+        String address = "http://localhost:" + getPort1()
+                         + "/CxfGreeterCXFMessageWithoutSEIRouterTest/SoapContext/SoapPort";
+        endpoint = Endpoint.publish(address, implementor);
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointCxfMessageWithoutSEIBeans.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/GreeterEndpointCxfMessageWithoutSEIBeans.xml");
     }
 
 }

@@ -48,7 +48,8 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
         Reader reader = null;
         if (is == null) {
             if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties file " + path + " not found in classpath"));
+                throw RuntimeCamelException.wrapRuntimeCamelException(
+                        new FileNotFoundException("Properties file " + path + " not found in classpath"));
             }
         } else {
             try {

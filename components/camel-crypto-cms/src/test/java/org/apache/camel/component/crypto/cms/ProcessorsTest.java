@@ -95,7 +95,7 @@ public class ProcessorsTest extends CamelTestSupport {
                 DefaultSignerInfo signerInfo = new DefaultSignerInfo();
 
                 signerInfo.setIncludeCertificates(true); // optional default
-                                                         // value is true
+                                                        // value is true
                 signerInfo.setSignatureAlgorithm("SHA256withRSA"); // mandatory
                 signerInfo.setPrivateKeyAlias("rsa");
                 signerInfo.setKeyStoreParameters(keystore);
@@ -103,7 +103,7 @@ public class ProcessorsTest extends CamelTestSupport {
                 SignedDataCreatorConfiguration config = new SignedDataCreatorConfiguration(new DefaultCamelContext());
                 config.addSigner(signerInfo);
                 config.setIncludeContent(true); // optional default value is
-                                                // true
+                                               // true
                 config.init();
                 SignedDataCreator signer = new SignedDataCreator(config);
 
@@ -112,8 +112,9 @@ public class ProcessorsTest extends CamelTestSupport {
 
                 SignedDataVerifier verifier = new SignedDataVerifier(verifierConf);
 
-                from("direct:start").to("log:before").process(signer).process(encryptor).to("log:signed_encrypted").process(decryptor).process(verifier).convertBodyTo(String.class)
-                    .to("log:after").to("mock:result");
+                from("direct:start").to("log:before").process(signer).process(encryptor).to("log:signed_encrypted")
+                        .process(decryptor).process(verifier).convertBodyTo(String.class)
+                        .to("log:after").to("mock:result");
 
             }
         };

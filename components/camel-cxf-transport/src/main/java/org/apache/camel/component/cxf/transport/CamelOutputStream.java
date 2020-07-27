@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 class CamelOutputStream extends CachedOutputStream {
     private static final Logger LOG = LoggerFactory.getLogger(CamelOutputStream.class);
-    
+
     /**
      * 
      */
@@ -69,7 +69,7 @@ class CamelOutputStream extends CachedOutputStream {
     @Override
     protected void doClose() throws IOException {
         isOneWay = outMessage.getExchange().isOneWay();
-        
+
         commitOutputMessage();
     }
 
@@ -77,7 +77,6 @@ class CamelOutputStream extends CachedOutputStream {
     protected void onWrite() throws IOException {
         // do nothing here
     }
-
 
     private void commitOutputMessage() throws IOException {
         ExchangePattern pattern;
@@ -97,7 +96,7 @@ class CamelOutputStream extends CachedOutputStream {
         // TODO support different encoding
         exchange.getIn().setBody(outputStream.getInputStream());
         LOG.debug("template sending request: {}", exchange.getIn());
-        
+
         if (outMessage.getExchange().isSynchronous()) {
             syncInvoke(exchange);
         } else {
@@ -106,7 +105,7 @@ class CamelOutputStream extends CachedOutputStream {
         }
 
     }
-    
+
     protected void syncInvoke(org.apache.camel.Exchange exchange) throws IOException {
         try {
             this.producer.process(exchange);
@@ -122,18 +121,18 @@ class CamelOutputStream extends CachedOutputStream {
         if (!isOneWay) {
             handleResponseInternal(exchange);
         }
-        
+
     }
-     
+
     protected void asyncInvokeFromWorkQueue(final org.apache.camel.Exchange exchange) throws IOException {
         Runnable runnable = new Runnable() {
             public void run() {
                 try {
                     syncInvoke(exchange);
                 } catch (Throwable e) {
-                    ((PhaseInterceptorChain)outMessage.getInterceptorChain()).abort();
+                    ((PhaseInterceptorChain) outMessage.getInterceptorChain()).abort();
                     outMessage.setContent(Exception.class, e);
-                    ((PhaseInterceptorChain)outMessage.getInterceptorChain()).unwind(outMessage);
+                    ((PhaseInterceptorChain) outMessage.getInterceptorChain()).unwind(outMessage);
                     MessageObserver mo = outMessage.getInterceptorChain().getFaultObserver();
                     if (mo == null) {
                         mo = outMessage.getExchange().get(MessageObserver.class);
@@ -142,26 +141,28 @@ class CamelOutputStream extends CachedOutputStream {
                 }
             }
         };
-        
+
         try {
             Executor ex = outMessage.getExchange().get(Executor.class);
             if (ex != null) {
-                outMessage.getExchange().put(Executor.class.getName() 
-                                             + ".USING_SPECIFIED", Boolean.TRUE);
+                outMessage.getExchange().put(Executor.class.getName()
+                                             + ".USING_SPECIFIED",
+                        Boolean.TRUE);
                 ex.execute(runnable);
             } else {
                 WorkQueueManager mgr = outMessage.getExchange().get(Bus.class)
-                    .getExtension(WorkQueueManager.class);
+                        .getExtension(WorkQueueManager.class);
                 AutomaticWorkQueue qu = mgr.getNamedWorkQueue("camel-cxf-conduit");
                 if (qu == null) {
                     qu = mgr.getAutomaticWorkQueue();
                 }
                 // need to set the time out somewhere
                 qu.execute(runnable);
-            } 
+            }
         } catch (RejectedExecutionException rex) {
             if (!hasLoggedAsyncWarning) {
-                LOG.warn("Executor rejected background task to retrieve the response.  Suggest increasing the workqueue settings.");
+                LOG.warn(
+                        "Executor rejected background task to retrieve the response.  Suggest increasing the workqueue settings.");
                 hasLoggedAsyncWarning = true;
             }
             LOG.info("Executor rejected background task to retrieve the response, running on current thread.");
@@ -174,6 +175,5 @@ class CamelOutputStream extends CachedOutputStream {
         inMessage = CxfMessageHelper.getCxfInMessage(this.headerFilterStrategy, exchange, true);
         this.observer.onMessage(inMessage);
     }
-    
-    
+
 }

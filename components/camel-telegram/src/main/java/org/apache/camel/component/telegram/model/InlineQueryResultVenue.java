@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a venue.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultvenue">
- * https://core.telegram.org/bots/api#inlinequeryresultvenue</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultvenue</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultVenue extends InlineQueryResult {

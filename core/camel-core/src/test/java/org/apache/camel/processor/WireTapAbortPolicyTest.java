@@ -89,8 +89,8 @@ public class WireTapAbortPolicyTest extends ContextTestSupport {
                         .build();
 
                 from("direct:start").to("log:foo")
-                    // pass in the custom pool to the wireTap DSL
-                    .wireTap("direct:tap").executorService(pool).to("mock:result");
+                        // pass in the custom pool to the wireTap DSL
+                        .wireTap("direct:tap").executorService(pool).to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:tap").delay(1000).to("mock:tap");

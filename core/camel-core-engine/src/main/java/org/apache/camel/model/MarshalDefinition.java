@@ -66,15 +66,15 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Marshals data into a specified format for transmission over a transport or
- * component
+ * Marshals data into a specified format for transmission over a transport or component
  */
 @Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
 
-    @XmlElements({@XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
+    @XmlElements({
+            @XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
             @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
             @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
             @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
@@ -114,7 +114,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
             @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
             @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(required = false, name = "zip", type = ZipDeflaterDataFormat.class),
-            @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class)})
+            @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
 
     public MarshalDefinition() {

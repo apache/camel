@@ -33,8 +33,8 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * An {@link AggregationStrategy} that adapts to a POJO.
  * <p/>
- * This allows end users to use POJOs for the aggregation logic, instead of having to implement the
- * Camel API {@link AggregationStrategy}.
+ * This allows end users to use POJOs for the aggregation logic, instead of having to implement the Camel API
+ * {@link AggregationStrategy}.
  */
 public final class AggregationStrategyBeanAdapter extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 
@@ -75,7 +75,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
     /**
      * Creates this adapter.
      *
-     * @param pojo the pojo to use.
+     * @param pojo       the pojo to use.
      * @param methodName the name of the method to call
      */
     public AggregationStrategyBeanAdapter(Object pojo, String methodName) {
@@ -87,7 +87,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
     /**
      * Creates this adapter.
      *
-     * @param type the class type of the pojo
+     * @param type       the class type of the pojo
      * @param methodName the name of the method to call
      */
     public AggregationStrategyBeanAdapter(Class<?> type, String methodName) {
@@ -161,8 +161,8 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
     /**
      * Validates whether the given method is valid.
      *
-     * @param method  the method
-     * @return true if valid, false to skip the method
+     * @param  method the method
+     * @return        true if valid, false to skip the method
      */
     protected boolean isValidMethod(Method method) {
         // must not be in the excluded list
@@ -198,7 +198,8 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
                     if (found == null) {
                         found = method;
                     } else {
-                        throw new IllegalArgumentException("The bean " + type + " has 2 or more methods with the name " + methodName);
+                        throw new IllegalArgumentException(
+                                "The bean " + type + " has 2 or more methods with the name " + methodName);
                     }
                 }
             }
@@ -208,14 +209,16 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
                     if (found == null) {
                         found = method;
                     } else {
-                        throw new IllegalArgumentException("The bean " + type + " has 2 or more methods and no explicit method name was configured.");
+                        throw new IllegalArgumentException(
+                                "The bean " + type + " has 2 or more methods and no explicit method name was configured.");
                     }
                 }
             }
         }
 
         if (found == null) {
-            throw new UnsupportedOperationException("Cannot find a valid method with name: " + methodName + " on bean type: " + type);
+            throw new UnsupportedOperationException(
+                    "Cannot find a valid method with name: " + methodName + " on bean type: " + type);
         }
 
         // if its not a static method then we must have an instance of the pojo

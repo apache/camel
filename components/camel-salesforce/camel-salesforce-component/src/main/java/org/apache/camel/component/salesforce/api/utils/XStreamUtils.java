@@ -65,10 +65,10 @@ public final class XStreamUtils {
                 typePermission = AnyTypePermission.ANY;
             } else if (pterm.indexOf('*') < 0) {
                 // exact type
-                typePermission = new ExplicitTypePermission(new String[] {pterm});
+                typePermission = new ExplicitTypePermission(new String[] { pterm });
             } else if (pterm.length() > 0) {
                 // wildcard type
-                typePermission = new WildcardTypePermission(new String[] {pterm});
+                typePermission = new WildcardTypePermission(new String[] { pterm });
             }
             if (typePermission != null) {
                 if (aod) {
@@ -81,7 +81,8 @@ public final class XStreamUtils {
     }
 
     public static XStream createXStream(final Class<?>... additionalTypes) {
-        final PureJavaReflectionProvider reflectionProvider = new PureJavaReflectionProvider(new FieldDictionary(new AnnotationFieldKeySorter()));
+        final PureJavaReflectionProvider reflectionProvider
+                = new PureJavaReflectionProvider(new FieldDictionary(new AnnotationFieldKeySorter()));
 
         // use NoNameCoder to avoid escaping __ in custom field names
         // and CompactWriter to avoid pretty printing

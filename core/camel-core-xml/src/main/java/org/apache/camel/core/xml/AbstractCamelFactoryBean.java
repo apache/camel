@@ -30,7 +30,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType implements CamelContextAware {
 
-    @XmlAttribute @Metadata(description = "Id of CamelContext to use if there are multiple CamelContexts in the same JVM")
+    @XmlAttribute
+    @Metadata(description = "Id of CamelContext to use if there are multiple CamelContexts in the same JVM")
     private String camelContextId;
     @XmlTransient
     private CamelContext camelContext;
@@ -42,8 +43,8 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     protected abstract CamelContext getCamelContextWithId(String camelContextId);
 
     /**
-     * If no explicit camelContext or camelContextId has been set
-     * then try to discover a default {@link CamelContext} to use.
+     * If no explicit camelContext or camelContextId has been set then try to discover a default {@link CamelContext} to
+     * use.
      */
     protected CamelContext discoverDefaultCamelContext() {
         return null;

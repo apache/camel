@@ -49,8 +49,8 @@ public class JettyValidatorStreamWithStreamCachingEnabledTest extends CamelTestS
                 context.setStreamCaching(true);
 
                 from("jetty:http://localhost:" + port + "/test")
-                    .to("validator:OptimizationRequest.xsd")
-                    .transform(constant("<ok/>"));
+                        .to("validator:OptimizationRequest.xsd")
+                        .transform(constant("<ok/>"));
             }
         };
     }

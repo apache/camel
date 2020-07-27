@@ -141,7 +141,6 @@ public class QuartzNameCollisionTest {
         camel.stop();
     }
 
-
     /**
      * Confirm the quartz trigger is removed on route stop.
      */

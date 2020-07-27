@@ -26,19 +26,18 @@ import java.util.TimerTask;
  * @see TimerTask
  */
 public class Timeout extends TimerTask {
-    
+
     private TimeoutHandler timeoutHandler;
-    
+
     private Timer timer;
-    
+
     private long timeout;
-    
+
     /**
-     * Creates a new timeout task using the given {@link Timer} instance and
-     * timeout value. The task is not scheduled immediately. It will be
-     * scheduled by calling this task's {@link #schedule()} method.
+     * Creates a new timeout task using the given {@link Timer} instance and timeout value. The task is not scheduled
+     * immediately. It will be scheduled by calling this task's {@link #schedule()} method.
      * 
-     * @param timer a timer
+     * @param timer   a timer
      * @param timeout a timeout value.
      */
     public Timeout(Timer timer, long timeout) {
@@ -54,17 +53,16 @@ public class Timeout extends TimerTask {
     public TimeoutHandler getTimeoutHandlers() {
         return timeoutHandler;
     }
-    
+
     /**
      * Sets a timeout handler for receiving timeout notifications.
      * 
-     * @param timeoutHandler
-     *            a timeout handler.
+     * @param timeoutHandler a timeout handler.
      */
     public void setTimeoutHandler(TimeoutHandler timeoutHandler) {
         this.timeoutHandler = timeoutHandler;
     }
-    
+
     /**
      * Schedules this timeout task.
      */

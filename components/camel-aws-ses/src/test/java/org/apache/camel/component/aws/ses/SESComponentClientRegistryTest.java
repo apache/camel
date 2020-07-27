@@ -36,26 +36,27 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalSESClientMisconfiguration() throws Exception {
 
         SesComponent component = new SesComponent(context);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-ses://from@example.com"));
+                () -> component.createEndpoint("aws-ses://from@example.com"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         SesComponent component = context.getComponent("aws-ses", SesComponent.class);
-        SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        SesEndpoint endpoint = (SesEndpoint) component
+                .createEndpoint("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 

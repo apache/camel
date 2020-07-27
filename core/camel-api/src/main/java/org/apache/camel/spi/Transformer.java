@@ -22,13 +22,12 @@ import org.apache.camel.Message;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * <a href="http://camel.apache.org/transformer.html">Transformer</a>
- * performs message transformation according to the declared data type.
- * {@link org.apache.camel.processor.ContractAdvice} looks for a required Transformer and apply if
+ * <a href="http://camel.apache.org/transformer.html">Transformer</a> performs message transformation according to the
+ * declared data type. {@link org.apache.camel.processor.ContractAdvice} looks for a required Transformer and apply if
  * input/output type declared on a route is different from current message type.
- *  
- * @see {@link org.apache.camel.processor.ContractAdvice}
- * {@link DataType} {@link org.apache.camel.model.InputTypeDefinition} {@link org.apache.camel.model.OutputTypeDefinition}
+ * 
+ * @see {@link org.apache.camel.processor.ContractAdvice} {@link DataType}
+ *      {@link org.apache.camel.model.InputTypeDefinition} {@link org.apache.camel.model.OutputTypeDefinition}
  */
 public abstract class Transformer extends ServiceSupport implements CamelContextAware {
 
@@ -41,8 +40,8 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
      * Perform data transformation with specified from/to type.
      *
      * @param message message to apply transformation
-     * @param from 'from' data type
-     * @param to 'to' data type
+     * @param from    'from' data type
+     * @param to      'to' data type
      */
     public abstract void transform(Message message, DataType from, DataType to) throws Exception;
 

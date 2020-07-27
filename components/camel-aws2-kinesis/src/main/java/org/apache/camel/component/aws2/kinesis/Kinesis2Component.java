@@ -44,14 +44,16 @@ public class Kinesis2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Kinesis2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Kinesis2Configuration();
+        Kinesis2Configuration configuration
+                = this.configuration != null ? this.configuration.copy() : new Kinesis2Configuration();
         configuration.setStreamName(remaining);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonKinesisClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
         }
         return endpoint;

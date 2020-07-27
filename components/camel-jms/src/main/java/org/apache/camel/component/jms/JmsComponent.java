@@ -61,11 +61,15 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     private JmsConfiguration configuration;
     @Metadata(label = "advanced", description = "To use a custom QueueBrowseStrategy when browsing queues")
     private QueueBrowseStrategy queueBrowseStrategy;
-    @Metadata(label = "advanced", description = "Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured."
-            + " If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.", defaultValue = "true")
+    @Metadata(label = "advanced",
+              description = "Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured."
+                            + " If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.",
+              defaultValue = "true")
     private boolean allowAutoWiredConnectionFactory = true;
-    @Metadata(label = "advanced", description = "Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured."
-            + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.", defaultValue = "true")
+    @Metadata(label = "advanced",
+              description = "Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured."
+                            + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.",
+              defaultValue = "true")
     private boolean allowAutoWiredDestinationResolver = true;
 
     public JmsComponent() {
@@ -126,8 +130,9 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return jmsComponentTransacted(connectionFactory, transactionManager);
     }
 
-    public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory,
-                                                      PlatformTransactionManager transactionManager) {
+    public static JmsComponent jmsComponentTransacted(
+            ConnectionFactory connectionFactory,
+            PlatformTransactionManager transactionManager) {
         JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
         configuration.setTransactionManager(transactionManager);
         configuration.setTransacted(true);
@@ -149,8 +154,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured.
-     * If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.
+     * Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured. If
+     * only one instance of ConnectionFactory is found then it will be used. This is enabled by default.
      */
     public boolean isAllowAutoWiredConnectionFactory() {
         return allowAutoWiredConnectionFactory;
@@ -193,7 +198,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return configuration.copy();
     }
 
-    public JmsOperations createInOutTemplate(JmsEndpoint endpoint, boolean pubSubDomain, String destination, long requestTimeout) {
+    public JmsOperations createInOutTemplate(
+            JmsEndpoint endpoint, boolean pubSubDomain, String destination, long requestTimeout) {
         return configuration.createInOutTemplate(endpoint, pubSubDomain, destination, requestTimeout);
     }
 
@@ -669,7 +675,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return JmsConfiguration.createDestinationResolver(destinationEndpoint);
     }
 
-    public void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint) throws Exception {
+    public void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint)
+            throws Exception {
         configuration.configureMessageListenerContainer(container, endpoint);
     }
 
@@ -1011,7 +1018,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     @Override
     protected void doInit() throws Exception {
         // only attempt to set connection factory if there is no transaction manager
-        if (configuration.getConnectionFactory() == null && configuration.getOrCreateTransactionManager() == null && isAllowAutoWiredConnectionFactory()) {
+        if (configuration.getConnectionFactory() == null && configuration.getOrCreateTransactionManager() == null
+                && isAllowAutoWiredConnectionFactory()) {
             Set<ConnectionFactory> beans = getCamelContext().getRegistry().findByType(ConnectionFactory.class);
             if (beans.size() == 1) {
                 ConnectionFactory cf = beans.iterator().next();
@@ -1051,14 +1059,15 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         if (asyncStartStopExecutorService == null) {
             // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
             // for each task, and the thread pool will shrink when no more tasks running
-            asyncStartStopExecutorService = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
+            asyncStartStopExecutorService
+                    = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
         }
         return asyncStartStopExecutorService;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
+            throws Exception {
 
         boolean pubSubDomain = false;
         boolean tempDestination = false;
@@ -1114,7 +1123,9 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         if (cfUsername != null && cfPassword != null) {
             cf = endpoint.getConfiguration().getOrCreateConnectionFactory();
             ObjectHelper.notNull(cf, "ConnectionFactory");
-            LOG.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
+            LOG.debug(
+                    "Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******",
+                    cfUsername);
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
             ucfa.setPassword(cfPassword);
@@ -1124,9 +1135,11 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
             // if only username or password was provided then fail
             if (cfUsername != null || cfPassword != null) {
                 if (cfUsername == null) {
-                    throw new IllegalArgumentException("Username must also be provided when using username/password as credentials.");
+                    throw new IllegalArgumentException(
+                            "Username must also be provided when using username/password as credentials.");
                 } else {
-                    throw new IllegalArgumentException("Password must also be provided when using username/password as credentials.");
+                    throw new IllegalArgumentException(
+                            "Password must also be provided when using username/password as credentials.");
                 }
             }
         }
@@ -1159,31 +1172,37 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return endpoint;
     }
 
-    protected JmsEndpoint createTemporaryTopicEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
+    protected JmsEndpoint createTemporaryTopicEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
         return new JmsTemporaryTopicEndpoint(uri, component, subject, configuration);
     }
 
-    protected JmsEndpoint createTopicEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
+    protected JmsEndpoint createTopicEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
         return new JmsEndpoint(uri, component, subject, true, configuration);
     }
 
-    protected JmsEndpoint createTemporaryQueueEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+    protected JmsEndpoint createTemporaryQueueEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
         return new JmsTemporaryQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
     }
 
-    protected JmsEndpoint createQueueEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+    protected JmsEndpoint createQueueEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
         return new JmsQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
     }
 
     /**
      * Resolves the standard supported {@link JmsKeyFormatStrategy} by a name which can be:
      * <ul>
-     *     <li>default - to use the default strategy</li>
-     *     <li>passthrough - to use the passthrough strategy</li>
+     * <li>default - to use the default strategy</li>
+     * <li>passthrough - to use the passthrough strategy</li>
      * </ul>
      *
-     * @param name  the name
-     * @return the strategy, or <tt>null</tt> if not a standard name.
+     * @param  name the name
+     * @return      the strategy, or <tt>null</tt> if not a standard name.
      */
     private static JmsKeyFormatStrategy resolveStandardJmsKeyFormatStrategy(String name) {
         if ("default".equalsIgnoreCase(name)) {
@@ -1196,8 +1215,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * A strategy method allowing the URI destination to be translated into the
-     * actual JMS destination name (say by looking up in JNDI or something)
+     * A strategy method allowing the URI destination to be translated into the actual JMS destination name (say by
+     * looking up in JNDI or something)
      */
     protected String convertPathToActualDestination(String path, Map<String, Object> parameters) {
         return path;
@@ -1206,8 +1225,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     /**
      * Factory method to create the default configuration instance
      *
-     * @return a newly created configuration object which can then be further
-     *         customized
+     * @return a newly created configuration object which can then be further customized
      */
     protected JmsConfiguration createConfiguration() {
         return new JmsConfiguration();

@@ -29,13 +29,14 @@ public final class CxfMessageHelper {
     private CxfMessageHelper() {
         //Helper class
     }
-    
-    public static org.apache.cxf.message.Message getCxfInMessage(HeaderFilterStrategy headerFilterStrategy,
-                                                                 org.apache.camel.Exchange exchange,
-                                                                 boolean isClient) {
+
+    public static org.apache.cxf.message.Message getCxfInMessage(
+            HeaderFilterStrategy headerFilterStrategy,
+            org.apache.camel.Exchange exchange,
+            boolean isClient) {
         MessageImpl answer = new MessageImpl();
         org.apache.cxf.message.Exchange cxfExchange = exchange
-            .getProperty(CamelTransportConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
+                .getProperty(CamelTransportConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         org.apache.camel.Message message;
         if (isClient && exchange.hasOut()) {
             message = exchange.getOut();

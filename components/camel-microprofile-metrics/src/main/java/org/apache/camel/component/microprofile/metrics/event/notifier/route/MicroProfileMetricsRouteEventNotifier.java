@@ -44,7 +44,8 @@ public class MicroProfileMetricsRouteEventNotifier extends AbstractMicroProfileM
 
     private AtomicIntegerGauge routesAdded = new AtomicIntegerGauge();
     private AtomicIntegerGauge routesRunning = new AtomicIntegerGauge();
-    private MicroProfileMetricsRouteEventNotifierNamingStrategy namingStrategy = MicroProfileMetricsRouteEventNotifierNamingStrategy.DEFAULT;
+    private MicroProfileMetricsRouteEventNotifierNamingStrategy namingStrategy
+            = MicroProfileMetricsRouteEventNotifierNamingStrategy.DEFAULT;
 
     public MicroProfileMetricsRouteEventNotifier() {
         super(RouteEvent.class);
@@ -59,20 +60,20 @@ public class MicroProfileMetricsRouteEventNotifier extends AbstractMicroProfileM
         Tag[] tags = namingStrategy.getTags(camelContext);
 
         Metadata routesAddedMetadata = new MetadataBuilder()
-            .withName(namingStrategy.getRouteAddedName())
-            .withDisplayName(ROUTES_ADDED_DISPLAY_NAME)
-            .withDescription(ROUTES_ADDED_DESCRIPTION)
-            .withType(MetricType.GAUGE)
-            .build();
+                .withName(namingStrategy.getRouteAddedName())
+                .withDisplayName(ROUTES_ADDED_DISPLAY_NAME)
+                .withDescription(ROUTES_ADDED_DESCRIPTION)
+                .withType(MetricType.GAUGE)
+                .build();
 
         metricRegistry.register(routesAddedMetadata, routesAdded, tags);
 
         Metadata routesRunningMetadata = new MetadataBuilder()
-            .withName(namingStrategy.getRouteRunningName())
-            .withDisplayName(ROUTES_RUNNING_DISPLAY_NAME)
-            .withDescription(ROUTES_RUNNING_DESCRIPTION)
-            .withType(MetricType.GAUGE)
-            .build();
+                .withName(namingStrategy.getRouteRunningName())
+                .withDisplayName(ROUTES_RUNNING_DISPLAY_NAME)
+                .withDescription(ROUTES_RUNNING_DESCRIPTION)
+                .withType(MetricType.GAUGE)
+                .build();
         metricRegistry.register(routesRunningMetadata, routesRunning, tags);
     }
 

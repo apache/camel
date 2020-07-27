@@ -24,7 +24,8 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesNamespacesComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesNamespacesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
+    protected KubernetesNamespacesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config)
+            throws Exception {
         KubernetesNamespacesEndpoint endpoint = new KubernetesNamespacesEndpoint(uri, this, config);
         return endpoint;
     }

@@ -35,7 +35,9 @@ public class HazelcastRingbufferComponent extends HazelcastDefaultComponent {
     }
 
     @Override
-    protected HazelcastDefaultEndpoint doCreateEndpoint(String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance) throws Exception {
+    protected HazelcastDefaultEndpoint doCreateEndpoint(
+            String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance)
+            throws Exception {
         HazelcastRingbufferEndpoint answer = new HazelcastRingbufferEndpoint(hzInstance, uri, this, remaining);
         return answer;
     }

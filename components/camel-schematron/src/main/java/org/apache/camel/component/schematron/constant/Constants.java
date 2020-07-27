@@ -32,7 +32,6 @@ public final class Constants {
     public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
     public static final String LINE_NUMBERING = "http://saxon.sf.net/feature/linenumbering";
 
-
     private Constants() {
         throw new IllegalStateException("Utility class should not be instantiated");
     }

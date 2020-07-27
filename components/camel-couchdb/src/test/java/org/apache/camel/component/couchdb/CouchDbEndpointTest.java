@@ -31,7 +31,8 @@ public class CouchDbEndpointTest {
 
     @Test
     void testCreateCouchExchangeHeadersAreSet() throws Exception {
-        try (CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent(new DefaultCamelContext()))) {
+        try (CouchDbEndpoint endpoint = new CouchDbEndpoint(
+                "couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent(new DefaultCamelContext()))) {
 
             String id = UUID.randomUUID().toString();
             String rev = UUID.randomUUID().toString();
@@ -52,7 +53,8 @@ public class CouchDbEndpointTest {
 
     @Test
     void assertSingleton() throws Exception {
-        try (CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
+        try (CouchDbEndpoint endpoint
+                = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
             assertTrue(endpoint.isSingleton());
         }
     }
@@ -66,7 +68,8 @@ public class CouchDbEndpointTest {
 
     @Test
     void testDefaultPortIsSet() throws Exception {
-        try (CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
+        try (CouchDbEndpoint endpoint
+                = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
             assertEquals(CouchDbEndpoint.DEFAULT_PORT, endpoint.getPort());
         }
     }

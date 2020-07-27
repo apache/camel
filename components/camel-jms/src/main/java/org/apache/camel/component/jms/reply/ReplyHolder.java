@@ -23,8 +23,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 
 /**
- * Holder which contains the {@link Exchange} and {@link org.apache.camel.AsyncCallback} to be used
- * when the reply arrives, so we can set the reply on the {@link Exchange} and continue routing using the callback.
+ * Holder which contains the {@link Exchange} and {@link org.apache.camel.AsyncCallback} to be used when the reply
+ * arrives, so we can set the reply on the {@link Exchange} and continue routing using the callback.
  */
 public class ReplyHolder {
 
@@ -69,8 +69,8 @@ public class ReplyHolder {
     /**
      * Gets the original correlation id, if one was set when sending the message.
      * <p/>
-     * Some JMS brokers will mess with the correlation id and send back a different/empty correlation id.
-     * So we need to remember it so we can restore the correlation id.
+     * Some JMS brokers will mess with the correlation id and send back a different/empty correlation id. So we need to
+     * remember it so we can restore the correlation id.
      */
     public String getOriginalCorrelationId() {
         return originalCorrelationId;
@@ -88,8 +88,8 @@ public class ReplyHolder {
     /**
      * Gets the received message
      *
-     * @return  the received message, or <tt>null</tt> if timeout occurred and no message has been received
-     * @see #isTimeout()
+     * @return the received message, or <tt>null</tt> if timeout occurred and no message has been received
+     * @see    #isTimeout()
      */
     public Message getMessage() {
         return message;
@@ -98,8 +98,8 @@ public class ReplyHolder {
     /**
      * Gets the JMS session from the received message
      *
-     * @return  the JMS session, or <tt>null</tt> if timeout occurred and no message has been received
-     * @see #isTimeout()
+     * @return the JMS session, or <tt>null</tt> if timeout occurred and no message has been received
+     * @see    #isTimeout()
      */
     public Session getSession() {
         return session;
@@ -108,8 +108,8 @@ public class ReplyHolder {
     /**
      * Whether timeout triggered or not.
      * <p/>
-     * A timeout is triggered if <tt>requestTimeout</tt> option has been configured, and a reply message has <b>not</b> been
-     * received within that time frame.
+     * A timeout is triggered if <tt>requestTimeout</tt> option has been configured, and a reply message has <b>not</b>
+     * been received within that time frame.
      */
     public boolean isTimeout() {
         return message == null;

@@ -29,8 +29,7 @@ import org.xbill.DNS.Type;
 /**
  * A producer for dig-like operations over DNS adresses.
  * <p/>
- * Inspired from Dig.java coming with the distribution of dnsjava,
- * though most if not all options are unsupported.
+ * Inspired from Dig.java coming with the distribution of dnsjava, though most if not all options are unsupported.
  */
 public class DnsDigProducer extends DefaultProducer {
 

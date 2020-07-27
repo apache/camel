@@ -26,6 +26,7 @@ import org.apache.camel.support.DefaultProducer;
 public class ChatScriptProducer extends DefaultProducer {
     private ChatScriptEndpoint endpoint;
     private ObjectMapper mapper = new ObjectMapper();
+
     public ChatScriptProducer(ChatScriptEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -67,7 +68,7 @@ public class ChatScriptProducer extends DefaultProducer {
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Unable to parse the input message. Error Message" + e.getMessage());
-        } 
+        }
         return ret;
     }
 

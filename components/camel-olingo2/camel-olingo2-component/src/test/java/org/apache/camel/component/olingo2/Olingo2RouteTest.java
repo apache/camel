@@ -64,8 +64,9 @@ public class Olingo2RouteTest extends CamelTestSupport {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException {
-        return (T)template().requestBodyAndHeaders(endpointUri, body, headers);
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
+            throws CamelExecutionException {
+        return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 
     @Test

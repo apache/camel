@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Test the functionality of {@link ExecProducer}
  */
 @CamelSpringTest
-@ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
+@ContextConfiguration(locations = { "exec-mock-executor-context.xml" })
 public class ExecProducerTest {
 
     @Produce("direct:input")
@@ -86,7 +86,7 @@ public class ExecProducerTest {
     @Test
     @DirtiesContext
     public void testOverrideArgs() {
-        final String[] args = {"-version", "classpath:c:/program files/test/"};
+        final String[] args = { "-version", "classpath:c:/program files/test/" };
         producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
@@ -124,7 +124,8 @@ public class ExecProducerTest {
                 exchange.getIn().setBody(input);
             }
         });
-        assertEquals(input, IOUtils.toString(execCommandExecutorMock.lastCommandResult.getCommand().getInput(), Charset.defaultCharset()));
+        assertEquals(input,
+                IOUtils.toString(execCommandExecutorMock.lastCommandResult.getCommand().getInput(), Charset.defaultCharset()));
     }
 
     @Test
@@ -142,7 +143,7 @@ public class ExecProducerTest {
         assertNotNull(result);
         assertNull(result.getCommand().getInput());
     }
-    
+
     @Test
     @DirtiesContext
     public void testNullInBody() throws IOException {

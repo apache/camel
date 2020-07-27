@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tempfile?password=admin&binary=false" + "&fileName=./foo/bar/message.txt&tempFileName=${file:onlyname.noext}.tmp";
+        return "ftp://admin@localhost:" + getPort() + "/tempfile?password=admin&binary=false"
+               + "&fileName=./foo/bar/message.txt&tempFileName=${file:onlyname.noext}.tmp";
     }
 
     @Override

@@ -87,14 +87,15 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start").split(body().tokenize(",")).parallelProcessing().executorService(service).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kaboom".equals(body)) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                }).to("mock:split");
+                from("direct:start").split(body().tokenize(",")).parallelProcessing().executorService(service)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        }).to("mock:split");
             }
         };
     }

@@ -30,15 +30,18 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Performs a query, poll, insert, update or delete in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement", category = {Category.DATABASE, Category.SQL})
+@UriEndpoint(firstVersion = "2.7.0", scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement",
+             category = { Category.DATABASE, Category.SQL })
 public class MyBatisEndpoint extends BaseMyBatisEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String statement;
     @UriParam(label = "producer")
     private StatementType statementType;
-    @UriParam(label = "consumer", description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
-        + " breaks out processing any further exchanges to cause a rollback eager.")
+    @UriParam(label = "consumer",
+              description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
+                            + " breaks out processing any further exchanges to cause a rollback eager.")
     private boolean transacted;
     @UriParam(label = "consumer", defaultValue = "0")
     private int maxMessagesPerPoll;
@@ -83,7 +86,8 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
     }
 
     /**
-     * The statement name in the MyBatis XML mapping file which maps to the query, insert, update or delete operation you wish to evaluate.
+     * The statement name in the MyBatis XML mapping file which maps to the query, insert, update or delete operation
+     * you wish to evaluate.
      */
     public void setStatement(String statement) {
         this.statement = statement;
@@ -105,8 +109,8 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
     }
 
     /**
-     * Enables or disables transaction. If enabled then if processing an exchange failed then the consumer
-     + break out processing any further exchanges to cause a rollback eager
+     * Enables or disables transaction. If enabled then if processing an exchange failed then the consumer + break out
+     * processing any further exchanges to cause a rollback eager
      */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
@@ -128,10 +132,10 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
     }
 
     /**
-     * This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges.
-     * This integer defines the maximum messages to deliver in single exchange. By default, no maximum is set.
-     * Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
-     * Set a value of 0 or negative to disable it.
+     * This option is intended to split results returned by the database pool into the batches and deliver them in
+     * multiple exchanges. This integer defines the maximum messages to deliver in single exchange. By default, no
+     * maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are
+     * thousands of files. Set a value of 0 or negative to disable it.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;

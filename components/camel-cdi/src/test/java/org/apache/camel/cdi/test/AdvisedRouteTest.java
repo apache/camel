@@ -75,12 +75,12 @@ public class AdvisedRouteTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(ManualStartupCamelContext.class, PropertyEndpointRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(ManualStartupCamelContext.class, PropertyEndpointRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -101,7 +101,7 @@ public class AdvisedRouteTest {
         outbound.expectedMessageCount(1);
         outbound.expectedBodiesReceived("test");
         outbound.expectedHeaderReceived("header", "n/a");
-        
+
         inbound.sendBody("test");
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);

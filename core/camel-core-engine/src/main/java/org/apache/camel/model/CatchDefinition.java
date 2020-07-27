@@ -97,9 +97,9 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     /**
      * The exceptions to catch.
      *
-     * @param exceptionClasses a list of the exception classes
-     * @return the builder
-     * @deprecated use {@link #exception(Class[])}
+     * @param      exceptionClasses a list of the exception classes
+     * @return                      the builder
+     * @deprecated                  use {@link #exception(Class[])}
      */
     @Deprecated
     public CatchDefinition exceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
@@ -110,8 +110,8 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     /**
      * The exception(s) to catch.
      *
-     * @param exceptions one or more exceptions
-     * @return the builder
+     * @param  exceptions one or more exceptions
+     * @return            the builder
      */
     public CatchDefinition exception(Class<? extends Throwable>... exceptions) {
         if (exceptionClasses == null) {
@@ -124,14 +124,13 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     }
 
     /**
-     * Sets an additional predicate that should be true before the onCatch is
-     * triggered.
+     * Sets an additional predicate that should be true before the onCatch is triggered.
      * <p/>
-     * To be used for fine grained controlling whether a thrown exception should
-     * be intercepted by this exception type or not.
+     * To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type
+     * or not.
      *
-     * @param predicate predicate that determines true or false
-     * @return the builder
+     * @param  predicate predicate that determines true or false
+     * @return           the builder
      */
     public CatchDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
@@ -141,9 +140,9 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     /**
      * Sets the exception class that the CatchType want to catch
      *
-     * @param exception the exception of class
-     * @return the builder
-     * @deprecated use {@link #exception(Class[])}
+     * @param      exception the exception of class
+     * @return               the builder
+     * @deprecated           use {@link #exception(Class[])}
      */
     @Deprecated
     public CatchDefinition exceptionClasses(Class<? extends Throwable> exception) {

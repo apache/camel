@@ -36,8 +36,9 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Manage files in Google Drive.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive", syntax = "google-drive:apiName/methodName",
-        consumerPrefix = "consumer", category = {Category.FILE, Category.CLOUD, Category.API})
+@UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive",
+             syntax = "google-drive:apiName/methodName",
+             consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API })
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
 
@@ -49,7 +50,8 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
 
     public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
                                GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleDriveApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+        super(uri, component, apiName, methodName, GoogleDriveApiCollection.getCollection().getHelper(apiName),
+              endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -128,7 +130,7 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     }
 
     public Drive getClient() {
-        return ((GoogleDriveComponent)getComponent()).getClient(configuration);
+        return ((GoogleDriveComponent) getComponent()).getClient(configuration);
     }
 
     @Override
@@ -141,8 +143,8 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     }
 
     /**
-     * To use the GoogleCalendarClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleDriveClientFactory}
+     * To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleDriveClientFactory}
      */
     public void setClientFactory(GoogleDriveClientFactory clientFactory) {
         this.clientFactory = clientFactory;

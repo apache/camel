@@ -40,7 +40,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonSESClient", mock);
 
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx&secretKey=yyy");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component
+                .createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx&secretKey=yyy");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -55,7 +56,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+        Ses2Endpoint endpoint
+                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -74,7 +76,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonSESClient", mock);
 
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com?" + "amazonSESClient=#amazonSESClient");
+        Ses2Endpoint endpoint
+                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?" + "amazonSESClient=#amazonSESClient");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertNull(endpoint.getConfiguration().getAccessKey());
@@ -100,9 +103,10 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("toList", to);
         context.getRegistry().bind("replyToList", replyAddress);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint)component
-            .createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx" + "&secretKey=yyy&to=#toList&subject=Subject"
-                            + "&returnPath=bounce@example.com&replyToAddresses=#replyToList");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component
+                .createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx"
+                                + "&secretKey=yyy&to=#toList&subject=Subject"
+                                + "&returnPath=bounce@example.com&replyToAddresses=#replyToList");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -155,7 +159,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
@@ -168,7 +172,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component
+                .createEndpoint("aws2-ses://from@example.com?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -182,8 +187,9 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Ses2Endpoint endpoint = (Ses2Endpoint)component
-            .createEndpoint("aws2-ses://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component
+                .createEndpoint(
+                        "aws2-ses://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

@@ -102,7 +102,8 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt", "Hello World", "birthday", date);
+        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt", "Hello World",
+                "birthday", date);
 
         assertFileExists(FTP_ROOT_DIR + "/filelanguage/mybirthday-19740420.txt");
     }

@@ -53,14 +53,12 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
 import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITION_RESOLVER;
 
 /**
- * A support class for that allows SPI to plugin and offer OpenApi API service listings as part of the Camel
- * component. This allows rest-dsl components such as servlet/jetty/netty-http to offer OpenApi API listings
- * with minimal effort.
+ * A support class for that allows SPI to plugin and offer OpenApi API service listings as part of the Camel component.
+ * This allows rest-dsl components such as servlet/jetty/netty-http to offer OpenApi API listings with minimal effort.
  */
 public class RestOpenApiSupport {
 
@@ -77,60 +75,60 @@ public class RestOpenApiSupport {
 
     public void initOpenApi(BeanConfig openApiConfig, Map<String, Object> config) {
         // configure openApi options
-        String s = (String)config.get("openapi.version");
+        String s = (String) config.get("openapi.version");
         if (s != null) {
             openApiConfig.setVersion(s);
         }
-        s = (String)config.get("base.path");
+        s = (String) config.get("base.path");
         if (s != null) {
             openApiConfig.setBasePath(s);
         }
-        s = (String)config.get("host");
+        s = (String) config.get("host");
         if (s != null) {
             openApiConfig.setHost(s);
         }
-        s = (String)config.get("cors");
+        s = (String) config.get("cors");
         if (s != null) {
             cors = "true".equalsIgnoreCase(s);
         }
-        s = (String)config.get("schemes");
+        s = (String) config.get("schemes");
         if (s == null) {
             // deprecated due typo
-            s = (String)config.get("schemas");
+            s = (String) config.get("schemas");
         }
         if (s != null) {
             String[] schemes = s.split(",");
             openApiConfig.setSchemes(schemes);
         } else {
             // assume http by default
-            openApiConfig.setSchemes(new String[] {"http"});
+            openApiConfig.setSchemes(new String[] { "http" });
         }
 
-        String version = (String)config.get("api.version");
-        String title = (String)config.get("api.title");
-        String description = (String)config.get("api.description");
-        String termsOfService = (String)config.get("api.termsOfService");
-        String licenseName = (String)config.get("api.license.name");
-        String licenseUrl = (String)config.get("api.license.url");
-        String contactName = (String)config.get("api.contact.name");
-        String contactUrl = (String)config.get("api.contact.url");
-        String contactEmail = (String)config.get("api.contact.email");
-        
+        String version = (String) config.get("api.version");
+        String title = (String) config.get("api.title");
+        String description = (String) config.get("api.description");
+        String termsOfService = (String) config.get("api.termsOfService");
+        String licenseName = (String) config.get("api.license.name");
+        String licenseUrl = (String) config.get("api.license.url");
+        String contactName = (String) config.get("api.contact.name");
+        String contactUrl = (String) config.get("api.contact.url");
+        String contactEmail = (String) config.get("api.contact.email");
+
         if (!openApiConfig.isOpenApi3()) {
 
             setInfoOas20(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
-                         contactName, contactUrl, contactEmail);
+                    contactName, contactUrl, contactEmail);
         } else {
             setInfoOas30(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
-                         contactName, contactUrl, contactEmail);
+                    contactName, contactUrl, contactEmail);
         }
 
-        
     }
 
-    private void setInfoOas30(BeanConfig openApiConfig, String version, String title, String description,
-                              String termsOfService, String licenseName, String licenseUrl,
-                              String contactName, String contactUrl, String contactEmail) {
+    private void setInfoOas30(
+            BeanConfig openApiConfig, String version, String title, String description,
+            String termsOfService, String licenseName, String licenseUrl,
+            String contactName, String contactUrl, String contactEmail) {
         Oas30Info info = new Oas30Info();
         info.version = version;
         info.title = title;
@@ -155,9 +153,10 @@ public class RestOpenApiSupport {
         openApiConfig.setInfo(info);
     }
 
-    private void setInfoOas20(BeanConfig openApiConfig, String version, String title, String description,
-                              String termsOfService, String licenseName, String licenseUrl,
-                              String contactName, String contactUrl, String contactEmail) {
+    private void setInfoOas20(
+            BeanConfig openApiConfig, String version, String title, String description,
+            String termsOfService, String licenseName, String licenseUrl,
+            String contactName, String contactUrl, String contactEmail) {
         Oas20Info info = new Oas20Info();
         info.version = version;
         info.title = title;
@@ -199,11 +198,12 @@ public class RestOpenApiSupport {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find JMX_REST_DEFINITION_RESOLVER on classpath."));
     }
 
-    public void renderResourceListing(CamelContext camelContext, RestApiResponseAdapter response,
-                                      BeanConfig openApiConfig, String contextId, String route, boolean json,
-                                      boolean yaml, Map<String, Object> headers, ClassResolver classResolver,
-                                      RestConfiguration configuration)
-        throws Exception {
+    public void renderResourceListing(
+            CamelContext camelContext, RestApiResponseAdapter response,
+            BeanConfig openApiConfig, String contextId, String route, boolean json,
+            boolean yaml, Map<String, Object> headers, ClassResolver classResolver,
+            RestConfiguration configuration)
+            throws Exception {
         LOG.trace("renderResourceListing");
 
         ObjectMapper mapper = new ObjectMapper();
@@ -223,10 +223,10 @@ public class RestOpenApiSupport {
 
         if (rests != null) {
             final Map<String, Object> apiProperties = configuration.getApiProperties() != null
-                ? configuration.getApiProperties() : new HashMap<>();
+                    ? configuration.getApiProperties() : new HashMap<>();
             if (json) {
-                response.setHeader(Exchange.CONTENT_TYPE, (String)apiProperties
-                    .getOrDefault("api.specification.contentType.json", "application/json"));
+                response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties
+                        .getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into openApi model
                 OasDocument openApi = reader.read(camelContext, rests, route, openApiConfig, contextId, classResolver);
@@ -245,8 +245,8 @@ public class RestOpenApiSupport {
 
                 response.writeBytes(bytes);
             } else {
-                response.setHeader(Exchange.CONTENT_TYPE, (String)apiProperties
-                    .getOrDefault("api.specification.contentType.yaml", "text/yaml"));
+                response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties
+                        .getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into openApi model
                 OasDocument openApi = reader.read(camelContext, rests, route, openApiConfig, contextId, classResolver);
@@ -278,10 +278,11 @@ public class RestOpenApiSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(CamelContext camelContext, RestApiResponseAdapter response, String contextId,
-                                    String contextIdPattern, boolean json, boolean yaml,
-                                    RestConfiguration configuration)
-        throws Exception {
+    public void renderCamelContexts(
+            CamelContext camelContext, RestApiResponseAdapter response, String contextId,
+            String contextIdPattern, boolean json, boolean yaml,
+            RestConfiguration configuration)
+            throws Exception {
         LOG.trace("renderCamelContexts");
 
         if (cors) {
@@ -378,108 +379,112 @@ public class RestOpenApiSupport {
     }
 
     static void setupXForwardedHeaders(OasDocument openApi, Map<String, Object> headers) {
-        
+
         String basePath = getBasePathFromOasDocument(openApi);
 
         if (openApi instanceof Oas20Document) {
-            String host = (String)headers.get(HEADER_HOST);
+            String host = (String) headers.get(HEADER_HOST);
             if (ObjectHelper.isNotEmpty(host)) {
-                ((Oas20Document)openApi).host = host;
+                ((Oas20Document) openApi).host = host;
             }
 
-            String forwardedPrefix = (String)headers.get(HEADER_X_FORWARDED_PREFIX);
+            String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
             if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
-                ((Oas20Document)openApi).basePath = URISupport.joinPaths(forwardedPrefix, basePath);
+                ((Oas20Document) openApi).basePath = URISupport.joinPaths(forwardedPrefix, basePath);
             }
 
-            String forwardedHost = (String)headers.get(HEADER_X_FORWARDED_HOST);
+            String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
             if (ObjectHelper.isNotEmpty(forwardedHost)) {
-                ((Oas20Document)openApi).host = forwardedHost;
+                ((Oas20Document) openApi).host = forwardedHost;
             }
 
-            String proto = (String)headers.get(HEADER_X_FORWARDED_PROTO);
+            String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
             if (ObjectHelper.isNotEmpty(proto)) {
                 String[] schemes = proto.split(",");
                 for (String scheme : schemes) {
                     String trimmedScheme = scheme.trim();
                     if (ObjectHelper.isNotEmpty(trimmedScheme)) {
-                        if (((Oas20Document)openApi).schemes == null) {
-                            ((Oas20Document)openApi).schemes = new ArrayList();
+                        if (((Oas20Document) openApi).schemes == null) {
+                            ((Oas20Document) openApi).schemes = new ArrayList();
                         }
-                        ((Oas20Document)openApi).schemes.add(trimmedScheme.toLowerCase());
+                        ((Oas20Document) openApi).schemes.add(trimmedScheme.toLowerCase());
                     }
                 }
             }
         } else if (openApi instanceof Oas30Document) {
-            
-            String host = (String)headers.get(HEADER_HOST);
-            
 
-            String forwardedPrefix = (String)headers.get(HEADER_X_FORWARDED_PREFIX);
-                            
+            String host = (String) headers.get(HEADER_HOST);
+
+            String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
+
             if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
                 basePath = URISupport.joinPaths(forwardedPrefix, basePath);
             }
 
-            String forwardedHost = (String)headers.get(HEADER_X_FORWARDED_HOST);
+            String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
             if (ObjectHelper.isNotEmpty(forwardedHost)) {
                 host = forwardedHost;
             }
 
-            String proto = (String)headers.get(HEADER_X_FORWARDED_PROTO);
-            if (((Oas30Document)openApi).getServers() != null) {
-                ((Oas30Document)openApi).getServers().clear();
+            String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
+            if (((Oas30Document) openApi).getServers() != null) {
+                ((Oas30Document) openApi).getServers().clear();
             }
             if (ObjectHelper.isNotEmpty(proto)) {
                 String[] schemes = proto.split(",");
                 for (String schema : schemes) {
                     String trimmedScheme = schema.trim();
-                    String serverUrl = new StringBuilder().append(trimmedScheme.toLowerCase()).append("://").append(host).append(basePath).toString();
-                    ((Oas30Document)openApi).addServer(serverUrl, null);
-                        
+                    String serverUrl = new StringBuilder().append(trimmedScheme.toLowerCase()).append("://").append(host)
+                            .append(basePath).toString();
+                    ((Oas30Document) openApi).addServer(serverUrl, null);
+
                 }
             } else {
-                ((Oas30Document)openApi).addServer(basePath, null);
+                ((Oas30Document) openApi).addServer(basePath, null);
             }
-            
+
         }
     }
-    
+
     public static String getHostFromOasDocument(final OasDocument openapi) {
         String host = null;
         if (openapi instanceof Oas20Document) {
-            host = ((Oas20Document)openapi).host;
+            host = ((Oas20Document) openapi).host;
         } else if (openapi instanceof Oas30Document) {
-            if (((Oas30Document)openapi).getServers() != null 
-                && ((Oas30Document)openapi).getServers().get(0) != null) {
+            if (((Oas30Document) openapi).getServers() != null
+                    && ((Oas30Document) openapi).getServers().get(0) != null) {
                 try {
-                    URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, (Oas30Server)((Oas30Document)openapi).getServers().get(0)));
+                    URL serverUrl = new URL(
+                            parseVariables(((Oas30Document) openapi).getServers().get(0).url,
+                                    (Oas30Server) ((Oas30Document) openapi).getServers().get(0)));
                     host = serverUrl.getHost();
-                
+
                 } catch (MalformedURLException e) {
                     LOG.info("error when parsing OpenApi 3.0 doc server url", e);
                 }
             }
         }
         return host;
-        
+
     }
-    
+
     public static String getBasePathFromOasDocument(final OasDocument openapi) {
         String basePath = null;
         if (openapi instanceof Oas20Document) {
-            basePath = ((Oas20Document)openapi).basePath;
+            basePath = ((Oas20Document) openapi).basePath;
         } else if (openapi instanceof Oas30Document) {
-            if (((Oas30Document)openapi).getServers() != null 
-                && ((Oas30Document)openapi).getServers().get(0) != null) {
+            if (((Oas30Document) openapi).getServers() != null
+                    && ((Oas30Document) openapi).getServers().get(0) != null) {
                 try {
-                    Oas30Server server = (Oas30Server)((Oas30Document)openapi).getServers().get(0);
+                    Oas30Server server = (Oas30Server) ((Oas30Document) openapi).getServers().get(0);
                     if (server.variables != null && server.variables.get("basePath") != null) {
                         basePath = server.variables.get("basePath").default_;
                     }
                     if (basePath == null) {
                         // parse server url as fallback
-                        URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, (Oas30Server)((Oas30Document)openapi).getServers().get(0)));
+                        URL serverUrl = new URL(
+                                parseVariables(((Oas30Document) openapi).getServers().get(0).url,
+                                        (Oas30Server) ((Oas30Document) openapi).getServers().get(0)));
                         basePath = serverUrl.getPath();
                         if (basePath.indexOf("//") == 0) {
                             // strip off the first "/" if double "/" exists
@@ -488,24 +493,24 @@ public class RestOpenApiSupport {
                         if ("/".equals(basePath)) {
                             basePath = "";
                         }
-                    } 
-                                    
+                    }
+
                 } catch (MalformedURLException e) {
                     //not a valid whole url, just the basePath
-                    basePath = ((Oas30Document)openapi).getServers().get(0).url;
+                    basePath = ((Oas30Document) openapi).getServers().get(0).url;
                 }
             }
-            
+
         }
         return basePath;
-        
+
     }
-    
+
     public static String parseVariables(String url, Oas30Server server) {
         Pattern p = Pattern.compile("\\{(.*?)\\}");
         Matcher m = p.matcher(url);
         while (m.find()) {
-           
+
             String var = m.group(1);
             if (server != null && server.variables != null && server.variables.get(var) != null) {
                 String varValue = server.variables.get(var).default_;
@@ -515,5 +520,3 @@ public class RestOpenApiSupport {
         return url;
     }
 }
-
-

@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.FlatpackDataFormat;
 public class FlatpackDataFormatReifier extends DataFormatReifier<FlatpackDataFormat> {
 
     public FlatpackDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (FlatpackDataFormat)definition);
+        super(camelContext, (FlatpackDataFormat) definition);
     }
 
     @Override

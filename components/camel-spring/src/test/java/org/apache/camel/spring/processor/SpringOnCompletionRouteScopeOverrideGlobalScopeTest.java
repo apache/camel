@@ -25,7 +25,8 @@ public class SpringOnCompletionRouteScopeOverrideGlobalScopeTest extends OnCompl
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringOnCompletionRouteScopeOverrideGlobalScopeTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/SpringOnCompletionRouteScopeOverrideGlobalScopeTest.xml");
     }
 
 }

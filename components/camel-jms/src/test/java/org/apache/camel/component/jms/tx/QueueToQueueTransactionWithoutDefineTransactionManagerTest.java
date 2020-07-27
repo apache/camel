@@ -30,7 +30,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/ActiveMQWithoutTransactionManager.xml");
     }
-    
+
     @Test
     public void testNoTransactionRollbackUsingXmlQueueToQueue() throws Exception {
 
@@ -43,7 +43,6 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
                 from("activemq:queue:foo?transacted=false").process(new ConditionalExceptionProcessor())
                         .to("activemq:queue:bar?transacted=false");
 
-
             }
         });
 
@@ -55,7 +54,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
 
         assertTrue(getConditionalExceptionProcessor().getCount() == 1,
                 "Expected only 1 calls to process() (1 failure) but encountered "
-                   + getConditionalExceptionProcessor().getCount() + ".");
+                                                                       + getConditionalExceptionProcessor().getCount() + ".");
     }
-    
+
 }

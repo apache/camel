@@ -32,7 +32,8 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
         mock.expectedBodiesReceived("body");
         mock.expectedHeaderReceived("cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
-        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
+        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails",
+                "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
         mock.assertIsSatisfied();
     }
@@ -43,7 +44,8 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
             public void configure() throws Exception {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-                from("direct:in").choice().when().xpath("/c:number = 55", Integer.class, ns, "cheeseDetails").to("mock:55").otherwise().to("mock:other").end();
+                from("direct:in").choice().when().xpath("/c:number = 55", Integer.class, ns, "cheeseDetails").to("mock:55")
+                        .otherwise().to("mock:other").end();
             }
         };
     }

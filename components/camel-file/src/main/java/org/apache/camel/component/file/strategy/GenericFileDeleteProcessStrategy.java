@@ -33,7 +33,9 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     private GenericFileRenamer<T> beginRenamer;
 
     @Override
-    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public boolean begin(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
 
         // must invoke super
         boolean result = super.begin(operations, endpoint, exchange, file);
@@ -54,7 +56,9 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void commit(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
 
         // special for file lock strategy as we must release that lock first
         // before we can delete the file
@@ -104,7 +108,9 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void rollback(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         try {
             deleteLocalWorkFile(exchange);
             operations.releaseRetrievedFileResources(exchange);

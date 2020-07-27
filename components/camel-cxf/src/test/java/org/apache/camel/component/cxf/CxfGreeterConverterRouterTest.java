@@ -25,6 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
+
     @AfterAll
     public static void stopService() {
         if (endpoint != null) {
@@ -36,8 +37,8 @@ public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest 
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1()
-            + "/CxfGreeterConverterRouterTest/SoapContext/SoapPort";
-        endpoint = Endpoint.publish(address, implementor); 
+                         + "/CxfGreeterConverterRouterTest/SoapContext/SoapPort";
+        endpoint = Endpoint.publish(address, implementor);
     }
 
     @Override

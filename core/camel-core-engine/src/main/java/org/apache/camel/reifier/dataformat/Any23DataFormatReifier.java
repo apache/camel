@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.Any23DataFormat;
 public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
 
     public Any23DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (Any23DataFormat)definition);
+        super(camelContext, (Any23DataFormat) definition);
     }
 
     @Override

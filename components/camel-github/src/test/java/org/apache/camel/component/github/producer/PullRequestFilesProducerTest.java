@@ -52,10 +52,8 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
                         .to("github://pullRequestFiles?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
-
         };
     }
-
 
     @Test
     public void testPullRequestFilesProducer() throws Exception {
@@ -77,7 +75,6 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
         assertEquals(resp.getMessage().getBody(), commitFiles);
     }
 
-
     public class MockPullFilesProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -86,6 +83,5 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestNumber);
         }
     }
-
 
 }

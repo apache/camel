@@ -33,29 +33,33 @@ import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.test.client.RequestMatcher;
 
 /**
- * Check if the MessageFilter is used and resolved from endpoint uri or global
- * context configuration.
+ * Check if the MessageFilter is used and resolved from endpoint uri or global context configuration.
  */
 @CamelSpringTest
-@ContextConfiguration(locations = {"classpath:org/apache/camel/component/spring/ws/MessageFilter-context.xml"})
+@ContextConfiguration(locations = { "classpath:org/apache/camel/component/spring/ws/MessageFilter-context.xml" })
 public class MessageFilterResolvingTest extends AbstractSmockClientTest {
     @Autowired
     private ProducerTemplate template;
 
-    private String body = "<customerCountRequest xmlns='http://springframework.org/spring-ws'>" + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
+    private String body = "<customerCountRequest xmlns='http://springframework.org/spring-ws'>"
+                          + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
 
     @Test
     public void globalTestHeaderAttribute() {
-        expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1"))).andExpect(soapHeader(new QName("http://virtualCheck/", "globalFilter")));
+        expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1")))
+                .andExpect(soapHeader(new QName("http://virtualCheck/", "globalFilter")));
 
-        template.sendBodyAndHeader("direct:sendWithGlobalFilter", body, "headerKey", new QName("http://newHeaderSupport/", "testHeaderValue1"));
+        template.sendBodyAndHeader("direct:sendWithGlobalFilter", body, "headerKey",
+                new QName("http://newHeaderSupport/", "testHeaderValue1"));
     }
 
     @Test
     public void localTestHeaderAttribute() {
-        expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1"))).andExpect(soapHeader(new QName("http://virtualCheck/", "localFilter")));
+        expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1")))
+                .andExpect(soapHeader(new QName("http://virtualCheck/", "localFilter")));
 
-        template.sendBodyAndHeader("direct:sendWithLocalFilter", body, "headerKey", new QName("http://newHeaderSupport/", "testHeaderValue1"));
+        template.sendBodyAndHeader("direct:sendWithLocalFilter", body, "headerKey",
+                new QName("http://newHeaderSupport/", "testHeaderValue1"));
 
     }
 
@@ -63,7 +67,8 @@ public class MessageFilterResolvingTest extends AbstractSmockClientTest {
     public void emptyTestHeaderAttribute() {
         expect(doesntContains(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1"))));
 
-        template.sendBodyAndHeader("direct:sendWithoutFilter", body, "headerKey", new QName("http://newHeaderSupport/", "testHeaderValue1"));
+        template.sendBodyAndHeader("direct:sendWithoutFilter", body, "headerKey",
+                new QName("http://newHeaderSupport/", "testHeaderValue1"));
 
     }
 
@@ -81,7 +86,7 @@ public class MessageFilterResolvingTest extends AbstractSmockClientTest {
             }
         };
     }
-   
+
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         createServer(applicationContext);

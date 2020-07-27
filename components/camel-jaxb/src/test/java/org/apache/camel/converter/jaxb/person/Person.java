@@ -25,9 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.converter.jaxb.address.Address;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -46,7 +48,7 @@ import org.apache.camel.converter.jaxb.address.Address;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"firstName", "lastName", "age", "address"})
+@XmlType(name = "", propOrder = { "firstName", "lastName", "age", "address" })
 @XmlRootElement(name = "person")
 public class Person {
 
@@ -62,10 +64,8 @@ public class Person {
     /**
      * Gets the value of the firstName property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getFirstName() {
         return firstName;
@@ -74,10 +74,8 @@ public class Person {
     /**
      * Sets the value of the firstName property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setFirstName(String value) {
         this.firstName = value;
@@ -86,10 +84,8 @@ public class Person {
     /**
      * Gets the value of the lastName property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getLastName() {
         return lastName;
@@ -98,10 +94,8 @@ public class Person {
     /**
      * Sets the value of the lastName property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setLastName(String value) {
         this.lastName = value;
@@ -110,10 +104,8 @@ public class Person {
     /**
      * Gets the value of the age property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     * @return possible object is {@link Integer }
+     * 
      */
     public Integer getAge() {
         return age;
@@ -122,10 +114,8 @@ public class Person {
     /**
      * Sets the value of the age property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     * @param value allowed object is {@link Integer }
+     * 
      */
     public void setAge(Integer value) {
         this.age = value;
@@ -134,10 +124,8 @@ public class Person {
     /**
      * Gets the value of the address property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Address }
-     *     
+     * @return possible object is {@link Address }
+     * 
      */
     public Address getAddress() {
         return address;
@@ -146,10 +134,8 @@ public class Person {
     /**
      * Sets the value of the address property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Address }
-     *     
+     * @param value allowed object is {@link Address }
+     * 
      */
     public void setAddress(Address value) {
         this.address = value;

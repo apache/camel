@@ -50,8 +50,7 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
     protected File classesDirectory;
 
     /**
-     * The name of the index file. Default's to
-     * 'target/classes/META-INF/jandex.idx'
+     * The name of the index file. Default's to 'target/classes/META-INF/jandex.idx'
      */
     @Parameter(defaultValue = "${project.build.directory}/classes/META-INF/jandex.idx")
     private File index;
@@ -60,7 +59,8 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
     private boolean showStaleFiles;
 
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         classesDirectory = new File(project.getBuild().getOutputDirectory());
         index = new File(project.getBuild().getOutputDirectory(), "META-INF/jandex.idx");
         showStaleFiles = Boolean.parseBoolean(project.getProperties().getProperty("showStaleFiles", "false"));
@@ -73,10 +73,12 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
             return;
         }
         try {
-            List<Path> inputs = Files.walk(classesDirectory.toPath()).filter(f -> f.getFileName().toString().endsWith(".class")).collect(Collectors.toList());
+            List<Path> inputs = Files.walk(classesDirectory.toPath()).filter(f -> f.getFileName().toString().endsWith(".class"))
+                    .collect(Collectors.toList());
             if (index.exists()) {
                 long lastmod = lastmod(index.toPath());
-                String stale = inputs.stream().filter(p -> lastmod(p) > lastmod).map(Path::toString).collect(Collectors.joining(", "));
+                String stale = inputs.stream().filter(p -> lastmod(p) > lastmod).map(Path::toString)
+                        .collect(Collectors.joining(", "));
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating index.");
                     if (showStaleFiles) {

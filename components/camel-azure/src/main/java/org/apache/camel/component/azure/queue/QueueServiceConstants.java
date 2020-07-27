@@ -20,14 +20,14 @@ public interface QueueServiceConstants {
 
     String OPERATION = "operation";
     String QUEUE_CLIENT = "AzureQueueClient";
-    
+
     String SERVICE_URI_SEGMENT = ".queue.core.windows.net";
     String QUEUE_SERVICE_REQUEST_OPTIONS = "QueueServiceRequestOptions";
     String QUEUE_REQUEST_OPTIONS = "QueueRequestOptions";
     String OPERATION_CONTEXT = "QueueOperationContext";
     String MESSAGE_UPDATE_FIELDS = "QueueMessageUpdateFields";
     String QUEUE_LISTING_DETAILS = "QueueListingDetails";
-    
+
     String QUEUE_CREATED = "QueueCreated";
-    
+
 }

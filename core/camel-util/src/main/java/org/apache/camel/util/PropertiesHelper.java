@@ -78,5 +78,5 @@ public final class PropertiesHelper {
             return !properties.isEmpty();
         }
     }
-    
+
 }

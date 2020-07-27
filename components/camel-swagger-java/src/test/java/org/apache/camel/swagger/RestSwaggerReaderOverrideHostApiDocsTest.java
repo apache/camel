@@ -39,12 +39,13 @@ public class RestSwaggerReaderOverrideHostApiDocsTest extends RestSwaggerReaderA
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setHost("http:mycoolserver:8888/myapi");
         RestSwaggerReader reader = new RestSwaggerReader();
 
-        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        Swagger swagger
+                = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();

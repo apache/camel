@@ -44,8 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link BoxTasksManager}
- * APIs.
+ * Test class for {@link BoxTasksManager} APIs.
  */
 public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
 

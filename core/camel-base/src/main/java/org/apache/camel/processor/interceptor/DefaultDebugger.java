@@ -109,7 +109,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
 
     @Override
     public void addSingleStepBreakpoint(final Breakpoint breakpoint) {
-        addSingleStepBreakpoint(breakpoint, new Condition[]{});
+        addSingleStepBreakpoint(breakpoint, new Condition[] {});
     }
 
     @Override
@@ -288,7 +288,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         }
     }
 
-    protected void onAfterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken, Breakpoint breakpoint) {
+    protected void onAfterProcess(
+            Exchange exchange, Processor processor, NamedNode definition, long timeTaken, Breakpoint breakpoint) {
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
@@ -310,7 +311,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         }
     }
 
-    private boolean matchConditions(Exchange exchange, Processor processor, NamedNode definition, BreakpointConditions breakpoint) {
+    private boolean matchConditions(
+            Exchange exchange, Processor processor, NamedNode definition, BreakpointConditions breakpoint) {
         for (Condition condition : breakpoint.getConditions()) {
             if (!condition.matchProcess(exchange, processor, definition)) {
                 return false;

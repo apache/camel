@@ -83,7 +83,8 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         // need a little sleep to ensure JMX is updated
         Thread.sleep(500);
 
-        Set<ObjectName> objectNames = getMBeanServer().queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null);
+        Set<ObjectName> objectNames = getMBeanServer()
+                .queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
 

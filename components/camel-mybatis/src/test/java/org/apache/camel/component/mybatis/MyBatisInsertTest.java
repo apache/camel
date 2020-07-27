@@ -50,8 +50,8 @@ public class MyBatisInsertTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis:insertAccount?statementType=Insert")
-                    .to("mock:result");
+                        .to("mybatis:insertAccount?statementType=Insert")
+                        .to("mock:result");
             }
         };
     }

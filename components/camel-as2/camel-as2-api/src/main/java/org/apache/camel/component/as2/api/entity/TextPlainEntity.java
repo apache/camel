@@ -62,5 +62,4 @@ public class TextPlainEntity extends MimeEntity {
         }
     }
 
-
 }

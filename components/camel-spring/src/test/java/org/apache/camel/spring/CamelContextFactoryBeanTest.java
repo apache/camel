@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelContextFactoryBeanTest {
-    
+
     private CamelContextFactoryBean factory;
 
     @BeforeEach
@@ -49,21 +49,21 @@ public class CamelContextFactoryBeanTest {
     public void testGetDefaultUuidGenerator() throws Exception {
         factory.setApplicationContext(new StaticApplicationContext());
         factory.afterPropertiesSet();
-        
+
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
-        
+
         assertTrue(uuidGenerator instanceof DefaultUuidGenerator);
     }
-    
+
     @Test
     public void testGetCustomUuidGenerator() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("uuidGenerator", SimpleUuidGenerator.class);
         factory.setApplicationContext(applicationContext);
         factory.afterPropertiesSet();
-        
+
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
-        
+
         assertTrue(uuidGenerator instanceof SimpleUuidGenerator);
     }
 

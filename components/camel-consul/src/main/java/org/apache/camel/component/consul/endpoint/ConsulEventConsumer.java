@@ -52,7 +52,8 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
     @Override
     protected void doStart() throws Exception {
-        this.scheduledExecutorService = this.executorServiceManager.newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
+        this.scheduledExecutorService
+                = this.executorServiceManager.newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
         super.doStart();
     }
 
@@ -80,7 +81,8 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
             scheduledExecutorService.schedule(new Runnable() {
                 @Override
                 public void run() {
-                    client.listEvents(key, QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(), EventWatcher.this);
+                    client.listEvents(key, QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(),
+                            EventWatcher.this);
                 }
             }, configuration.getBlockSeconds(), TimeUnit.SECONDS);
         }
@@ -135,8 +137,7 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
         }
 
         /**
-         * from spring-cloud-consul
-         * (https://github.com/spring-cloud/spring-cloud-consul):
+         * from spring-cloud-consul (https://github.com/spring-cloud/spring-cloud-consul):
          * spring-cloud-consul-bus/src/main/java/org/springframework/cloud/consul/bus/EventService.java
          */
         private List<Event> filterEvents(List<Event> toFilter, BigInteger lastIndex) {

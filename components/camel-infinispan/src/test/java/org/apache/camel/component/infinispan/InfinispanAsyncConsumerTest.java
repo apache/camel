@@ -38,10 +38,9 @@ public class InfinispanAsyncConsumerTest extends InfinispanTestSupport {
             @Override
             public void configure() {
                 from("infinispan:default?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
-                    .delayer(500)
-                    .to("mock:result");
+                        .delayer(500)
+                        .to("mock:result");
             }
         };
     }
 }
-

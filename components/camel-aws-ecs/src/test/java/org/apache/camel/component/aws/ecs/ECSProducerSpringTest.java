@@ -31,10 +31,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ECSProducerSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void kmsListClustersTest() throws Exception {
 
@@ -47,12 +47,12 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ListClustersResult resultGet = (ListClustersResult) exchange.getIn().getBody();
         assertEquals(1, resultGet.getClusterArns().size());
         assertEquals("Test", resultGet.getClusterArns().get(0));
     }
-    
+
     @Test
     public void ecsCreateClusterTest() throws Exception {
 
@@ -66,11 +66,11 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         CreateClusterResult resultGet = (CreateClusterResult) exchange.getIn().getBody();
         assertEquals("Test", resultGet.getCluster().getClusterName());
     }
-    
+
     @Test
     public void eksDescribeClusterTest() throws Exception {
 
@@ -84,11 +84,11 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DescribeClustersResult resultGet = exchange.getIn().getBody(DescribeClustersResult.class);
         assertEquals("Test", resultGet.getClusters().get(0).getClusterName());
     }
-    
+
     @Test
     public void eksDeleteClusterTest() throws Exception {
 
@@ -102,7 +102,7 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DeleteClusterResult resultGet = exchange.getIn().getBody(DeleteClusterResult.class);
         assertEquals("Test", resultGet.getCluster().getClusterName());
     }

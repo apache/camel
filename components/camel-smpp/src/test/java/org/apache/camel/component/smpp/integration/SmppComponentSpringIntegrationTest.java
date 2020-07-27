@@ -33,13 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Spring based integration test for the smpp component. To run this test, ensure that
- * the SMSC is running on:
- * host:     localhost
- * port:     2775
- * user:     smppclient
- * password: password
- * <br/>
+ * Spring based integration test for the smpp component. To run this test, ensure that the SMSC is running on: host:
+ * localhost port: 2775 user: smppclient password: password <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
  */
 @Disabled("Must be manually tested")
@@ -47,19 +42,19 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
     @EndpointInject("direct:start")
     private Endpoint start;
-    
+
     @Test
     public void sendSubmitSMInOut() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setBody("Hello SMPP World!");
 
         template.send(start, exchange);
-        
+
         assertMockEndpointsSatisfied();
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
@@ -70,20 +65,20 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.DONE_DATE));
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.SUBMIT_DATE));
         assertNull(resultExchange.getIn().getHeader(SmppConstants.ERROR));
-        
+
         assertNotNull(exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
-    
+
     @Test
     public void sendSubmitSMInOnly() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = start.createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody("Hello SMPP World!");
 
         template.send(start, exchange);
-        
+
         assertMockEndpointsSatisfied();
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
@@ -94,30 +89,32 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.DONE_DATE));
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.SUBMIT_DATE));
         assertNull(resultExchange.getIn().getHeader(SmppConstants.ERROR));
-        
+
         assertNotNull(exchange.getIn().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getIn().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
-    
+
     @Test
     public void sendLongSubmitSM() throws Exception {
         result.expectedMessageCount(2);
-        
+
         Exchange exchange = start.createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
+                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
 
         template.send(start, exchange);
-        
+
         assertMockEndpointsSatisfied();
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), result.getExchanges().get(0).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), result.getExchanges().get(1).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
-        
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(),
+                result.getExchanges().get(0).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(),
+                result.getExchanges().get(1).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
+
         assertNotNull(exchange.getIn().getHeader(SmppConstants.ID));
         assertEquals(2, exchange.getIn().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
-    
+
     @Test
     public void sendCancelSM() throws Exception {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
@@ -125,10 +122,10 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         exchange.getIn().setHeader(SmppConstants.ID, "1");
 
         template.send(start, exchange);
-        
+
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
-    
+
     @Test
     public void sendQuerySM() throws Exception {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
@@ -136,13 +133,13 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         exchange.getIn().setHeader(SmppConstants.ID, "1");
 
         template.send(start, exchange);
-        
+
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals((byte) 0, exchange.getMessage().getHeader(SmppConstants.ERROR));
         assertNotNull(exchange.getMessage().getHeader(SmppConstants.FINAL_DATE));
         assertEquals("DELIVERED", exchange.getMessage().getHeader(SmppConstants.MESSAGE_STATE));
     }
-    
+
     @Test
     public void sendReplaceSM() throws Exception {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
@@ -151,7 +148,7 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         exchange.getIn().setHeader(SmppConstants.ID, "1");
 
         template.send(start, exchange);
-        
+
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
@@ -161,26 +158,27 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
 
         template.send(start, exchange);
-        
+
         assertNotNull(exchange.getMessage().getHeader(SmppConstants.ID));
     }
-    
+
     @Test
     public void sendSubmitMultiSM() throws Exception {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
         exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
+                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
 
         template.send(start, exchange);
-        
+
         assertNotNull(exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals(2, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/smpp/integration/SmppComponentSpringIntegrationTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/smpp/integration/SmppComponentSpringIntegrationTest-context.xml");
     }
 }

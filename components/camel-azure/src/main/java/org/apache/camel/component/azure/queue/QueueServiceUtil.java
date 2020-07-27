@@ -27,21 +27,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.common.ExchangeUtil;
 
 public final class QueueServiceUtil {
-    private QueueServiceUtil() { 
+    private QueueServiceUtil() {
     }
-    
+
     public static URI prepareStorageQueueUri(QueueServiceConfiguration cfg) {
         StringBuilder uriBuilder = new StringBuilder();
         uriBuilder.append("https://")
-            .append(cfg.getAccountName())
-            .append(QueueServiceConstants.SERVICE_URI_SEGMENT)
-            .append("/" + cfg.getQueueName());
-        
+                .append(cfg.getAccountName())
+                .append(QueueServiceConstants.SERVICE_URI_SEGMENT)
+                .append("/" + cfg.getQueueName());
+
         return URI.create(uriBuilder.toString());
     }
-    
+
     public static CloudQueue createQueueClient(QueueServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         CloudQueue client = getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageQueueUri(cfg);
@@ -62,26 +62,26 @@ public final class QueueServiceUtil {
 
     public static void retrieveMessage(Exchange exchange, QueueServiceConfiguration cfg) throws Exception {
         CloudQueue client = createQueueClient(cfg);
-        QueueServiceRequestOptions opts = getRequestOptions(exchange);  
+        QueueServiceRequestOptions opts = getRequestOptions(exchange);
         int visibilityTimeout = cfg.getMessageVisibilityDelay();
         visibilityTimeout = visibilityTimeout != 0 ? visibilityTimeout : 30;
         CloudQueueMessage message = client.retrieveMessage(visibilityTimeout,
-                               opts.getRequestOpts(), opts.getOpContext());
+                opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(message);
     }
-    
+
     public static QueueServiceRequestOptions getRequestOptions(Exchange exchange) {
         QueueServiceRequestOptions opts = exchange.getIn().getHeader(
-            QueueServiceConstants.QUEUE_SERVICE_REQUEST_OPTIONS, QueueServiceRequestOptions.class);
+                QueueServiceConstants.QUEUE_SERVICE_REQUEST_OPTIONS, QueueServiceRequestOptions.class);
         if (opts != null) {
             return opts;
         } else {
             opts = new QueueServiceRequestOptions();
         }
-        QueueRequestOptions requestOpts =
-            exchange.getIn().getHeader(QueueServiceConstants.QUEUE_REQUEST_OPTIONS, QueueRequestOptions.class);
-        OperationContext opContext =
-            exchange.getIn().getHeader(QueueServiceConstants.OPERATION_CONTEXT, OperationContext.class);
+        QueueRequestOptions requestOpts
+                = exchange.getIn().getHeader(QueueServiceConstants.QUEUE_REQUEST_OPTIONS, QueueRequestOptions.class);
+        OperationContext opContext
+                = exchange.getIn().getHeader(QueueServiceConstants.OPERATION_CONTEXT, OperationContext.class);
         opts.setOpContext(opContext);
         opts.setRequestOpts(requestOpts);
         return opts;

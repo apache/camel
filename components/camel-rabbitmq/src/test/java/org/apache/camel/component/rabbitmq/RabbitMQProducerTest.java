@@ -197,7 +197,7 @@ public class RabbitMQProducerTest {
         assertEquals(42.24, props.getHeaders().get("doubleHeader"));
         assertEquals(true, props.getHeaders().get("booleanHeader"));
         assertEquals(new Date(0), props.getHeaders().get("dateHeader"));
-        assertArrayEquals("foo".getBytes(), (byte[])props.getHeaders().get("byteArrayHeader"));
+        assertArrayEquals("foo".getBytes(), (byte[]) props.getHeaders().get("byteArrayHeader"));
         assertNull(props.getHeaders().get("invalidHeader"));
     }
 

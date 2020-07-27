@@ -22,10 +22,10 @@ public class POP3Provider extends Provider {
 
     public POP3Provider() {
         super(Type.STORE,
-                "pop3",
-                "org.jvnet.mock_javamail.MockStore",
-                "Apache Software Foundation",
-                "1.0");
+              "pop3",
+              "org.jvnet.mock_javamail.MockStore",
+              "Apache Software Foundation",
+              "1.0");
     }
 
 }

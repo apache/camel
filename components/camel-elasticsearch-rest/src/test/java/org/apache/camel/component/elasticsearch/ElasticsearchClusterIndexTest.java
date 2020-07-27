@@ -42,7 +42,6 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchBaseTest {
         String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-
         indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
@@ -76,9 +75,9 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:indexWithIpAndPort")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter");
+                        .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter");
                 from("direct:indexWithSniffer")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true");
+                        .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true");
             }
         };
     }

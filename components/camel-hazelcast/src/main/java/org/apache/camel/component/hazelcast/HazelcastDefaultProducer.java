@@ -26,7 +26,7 @@ public abstract class HazelcastDefaultProducer extends DefaultProducer {
 
     @Override
     public HazelcastDefaultEndpoint getEndpoint() {
-        return (HazelcastDefaultEndpoint)super.getEndpoint();
+        return (HazelcastDefaultEndpoint) super.getEndpoint();
     }
 
     protected HazelcastOperation lookupOperation(Exchange exchange) {

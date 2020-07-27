@@ -39,9 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfProducerSoapFaultTest {
-    private static final String JAXWS_SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
-    private static final String JAXWS_ENDPOINT_URI = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
-    
+    private static final String JAXWS_SERVER_ADDRESS
+            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
+    private static final String JAXWS_ENDPOINT_URI
+            = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
+
     protected CamelContext camelContext;
     protected ProducerTemplate template;
 
@@ -63,17 +65,17 @@ public class CxfProducerSoapFaultTest {
         template.stop();
         camelContext.stop();
     }
-    
+
     @Test
     public void testAsyncSoapFault() throws Exception {
         invokeSoapFault(false);
     }
-    
+
     @Test
     public void testSyncSoapFault() throws Exception {
         invokeSoapFault(true);
     }
-        
+
     private void invokeSoapFault(boolean sync) throws Exception {
         String cxfEndpointURI = JAXWS_ENDPOINT_URI;
         if (sync) {
@@ -88,7 +90,7 @@ public class CxfProducerSoapFaultTest {
         String fileName = exchange.getOut().getHeader(Exchange.FILE_NAME, String.class);
         assertEquals("testFile", fileName, "Should get the file name from out message header");
     }
-    
+
     private Exchange sendJaxWsMessage(final String uri, final String message, final String operation) {
         Exchange exchange = template.request(uri, new Processor() {
             public void process(final Exchange exchange) {

@@ -39,9 +39,9 @@ public class CordaConsumerVaultTrackByCriteriaIntegrationTest extends CordaConsu
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY_CRITERIA
-                        + "&contractStateClass=#contractStateClass"
-                        + "&queryCriteria=#queryCriteria")
-                        .to("mock:result");
+                     + "&contractStateClass=#contractStateClass"
+                     + "&queryCriteria=#queryCriteria")
+                             .to("mock:result");
             }
         };
     }

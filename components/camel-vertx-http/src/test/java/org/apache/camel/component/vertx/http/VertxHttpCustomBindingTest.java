@@ -59,22 +59,27 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
             }
 
             @Override
-            public void populateResponseHeaders(Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy headerFilterStrategy) {
+            public void populateResponseHeaders(
+                    Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy headerFilterStrategy) {
                 // Noop
             }
 
             @Override
-            public Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly) throws Exception {
+            public Object processResponseBody(
+                    VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly)
+                    throws Exception {
                 return null;
             }
 
             @Override
-            public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result) throws Exception {
+            public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
+                    throws Exception {
                 return null;
             }
 
             @Override
-            public void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response) {
+            public void handleResponse(
+                    VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response) {
                 if (response.succeeded()) {
                     HttpResponse<Buffer> result = response.result();
                     exchange.getMessage().setBody(result.bodyAsString());

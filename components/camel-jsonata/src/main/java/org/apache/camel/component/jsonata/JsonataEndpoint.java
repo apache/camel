@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JSON to JSON transformation using JSONATA.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONATA", syntax = "jsonata:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONATA", syntax = "jsonata:resourceUri", producerOnly = true,
+             category = { Category.TRANSFORMATION })
 public class JsonataEndpoint extends ResourceEndpoint {
 
     private Expressions expressions;
@@ -91,21 +92,21 @@ public class JsonataEndpoint extends ResourceEndpoint {
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
-        
+
         JsonNode input;
         ObjectMapper mapper = new ObjectMapper();
         if (getInputType() == JsonataInputOutputType.JsonString) {
-            input =  mapper.readTree(exchange.getIn().getBody(InputStream.class));
+            input = mapper.readTree(exchange.getIn().getBody(InputStream.class));
         } else {
-            input = (JsonNode)exchange.getIn().getBody();
+            input = (JsonNode) exchange.getIn().getBody();
         }
 
         JsonNode output = null;
         if (expressions == null) {
             String spec = new BufferedReader(
-                      new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.joining("\n"));
+                    new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8))
+                            .lines()
+                            .collect(Collectors.joining("\n"));
             expressions = Expressions.parse(spec);
         }
         output = expressions.evaluate(input);

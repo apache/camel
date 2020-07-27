@@ -37,8 +37,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A proxy class for {@link BlobConfigurationOptionsProxy} and {@link BlobExchangeHeaders}. Ideally this
- * is responsible to obtain the correct configurations options either from configs or exchange headers
+ * A proxy class for {@link BlobConfigurationOptionsProxy} and {@link BlobExchangeHeaders}. Ideally this is responsible
+ * to obtain the correct configurations options either from configs or exchange headers
  */
 public class BlobConfigurationOptionsProxy {
 
@@ -146,11 +146,13 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public Long getDownloadLinkExpiration(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getDownloadLinkExpirationFromHeaders, configuration::getDownloadLinkExpiration, exchange);
+        return getOption(BlobExchangeHeaders::getDownloadLinkExpirationFromHeaders, configuration::getDownloadLinkExpiration,
+                exchange);
     }
 
     public boolean isCommitBlockListLater(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getCommitBlockListFlagFromHeaders, configuration::isCommitBlockListLater, exchange);
+        return getOption(BlobExchangeHeaders::getCommitBlockListFlagFromHeaders, configuration::isCommitBlockListLater,
+                exchange);
     }
 
     public BlockListType getBlockListType(final Exchange exchange) {
@@ -195,7 +197,8 @@ public class BlobConfigurationOptionsProxy {
 
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
-        return ObjectHelper.isEmpty(exchangeFn.apply(exchange)) ? fallbackFn.get()
+        return ObjectHelper.isEmpty(exchangeFn.apply(exchange))
+                ? fallbackFn.get()
                 : exchangeFn.apply(exchange);
     }
 }

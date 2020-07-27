@@ -30,7 +30,8 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringDualManagedThreadsThreadPoolTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringDualManagedThreadsThreadPoolTest.xml");
     }
 
     @Override

@@ -38,7 +38,8 @@ public class RestOpenApiProcessor implements Processor {
     private final RestConfiguration configuration;
 
     @SuppressWarnings("unchecked")
-    public RestOpenApiProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters, RestConfiguration configuration) {
+    public RestOpenApiProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters,
+                                RestConfiguration configuration) {
         this.contextIdPattern = contextIdPattern;
         this.contextIdListing = contextIdListing;
         this.configuration = configuration;
@@ -82,7 +83,8 @@ public class RestOpenApiProcessor implements Processor {
         try {
             // render list of camel contexts as root
             if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(exchange.getContext(), adapter, contextId, contextIdPattern, json, yaml, configuration);
+                support.renderCamelContexts(exchange.getContext(), adapter, contextId, contextIdPattern, json, yaml,
+                        configuration);
             } else {
                 String name;
                 if (contextIdListing && ObjectHelper.isNotEmpty(route)) {
@@ -118,7 +120,7 @@ public class RestOpenApiProcessor implements Processor {
                     adapter.noContent();
                 } else {
                     support.renderResourceListing(exchange.getContext(), adapter, openApiConfig, name, route, json, yaml,
-                        exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
+                            exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
                 }
             }
         } catch (Exception e) {

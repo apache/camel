@@ -17,9 +17,8 @@
 package org.apache.camel.processor.resequencer;
 
 /**
- * A strategy for comparing {@link Element} instances. This strategy uses
- * another {@link SequenceElementComparator} instance for comparing elements
- * contained by {@link Element} instances.
+ * A strategy for comparing {@link Element} instances. This strategy uses another {@link SequenceElementComparator}
+ * instance for comparing elements contained by {@link Element} instances.
  */
 class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
 
@@ -27,7 +26,7 @@ class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
      * A sequence element comparator this comparator delegates to.
      */
     private final SequenceElementComparator<E> comparator;
-    
+
     /**
      * Creates a new element comparator instance.
      * 
@@ -36,7 +35,7 @@ class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
     ElementComparator(SequenceElementComparator<E> comparator) {
         this.comparator = comparator;
     }
-    
+
     @Override
     public boolean predecessor(Element<E> o1, Element<E> o2) {
         return comparator.predecessor(o1.getObject(), o2.getObject());

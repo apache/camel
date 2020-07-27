@@ -51,11 +51,11 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_QU
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
 
-
 /**
  * Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol:hostname:port", category = {Category.DATABASE, Category.NOSQL})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol:hostname:port",
+             category = { Category.DATABASE, Category.NOSQL })
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
@@ -132,7 +132,6 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     // Connection fine tuning parameters
     @UriParam(label = "advanced", defaultValue = "2500", javaType = "java.time.Duration")
     private long queryTimeout = DEFAULT_QUERY_TIMEOUT;
-
 
     public CouchbaseEndpoint() {
     }
@@ -462,7 +461,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     public URI[] makeBootstrapURI() throws URISyntaxException {
 
         if (additionalHosts == null || "".equals(additionalHosts)) {
-            return new URI[]{new URI(protocol + "://" + hostname + ":" + port + "/pools")};
+            return new URI[] { new URI(protocol + "://" + hostname + ":" + port + "/pools") };
         }
         return getAllUris();
 

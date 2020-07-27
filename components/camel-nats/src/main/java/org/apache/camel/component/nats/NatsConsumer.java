@@ -48,7 +48,7 @@ public class NatsConsumer extends DefaultConsumer {
 
     @Override
     public NatsEndpoint getEndpoint() {
-        return (NatsEndpoint)super.getEndpoint();
+        return (NatsEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class NatsConsumer extends DefaultConsumer {
 
         LOG.debug("Getting Nats Connection");
         connection = getEndpoint().getConfiguration().getConnection() != null
-            ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
+                ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
 
         executor.submit(new NatsConsumingTask(connection, getEndpoint().getConfiguration()));
     }
@@ -119,9 +119,11 @@ public class NatsConsumer extends DefaultConsumer {
             try {
                 dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
                 if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
-                    dispatcher = dispatcher.subscribe(getEndpoint().getConfiguration().getTopic(), getEndpoint().getConfiguration().getQueueName());
+                    dispatcher = dispatcher.subscribe(getEndpoint().getConfiguration().getTopic(),
+                            getEndpoint().getConfiguration().getQueueName());
                     if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMaxMessages())) {
-                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(), Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
+                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(),
+                                Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
                     }
                     if (dispatcher.isActive()) {
                         setActive(true);
@@ -129,7 +131,8 @@ public class NatsConsumer extends DefaultConsumer {
                 } else {
                     dispatcher = dispatcher.subscribe(getEndpoint().getConfiguration().getTopic());
                     if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMaxMessages())) {
-                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(), Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
+                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(),
+                                Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
                     }
                     if (dispatcher.isActive()) {
                         setActive(true);
@@ -138,9 +141,9 @@ public class NatsConsumer extends DefaultConsumer {
             } catch (Throwable e) {
                 getExceptionHandler().handleException("Error during processing", e);
             }
-            
+
         }
-        
+
         class CamelNatsMessageHandler implements MessageHandler {
 
             @Override

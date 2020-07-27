@@ -34,7 +34,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
     }
-    
+
     @Test
     public void testAsyncEndpointOK() throws Exception {
         getMockEndpoint("mock:tap").expectedBodiesReceived("Hi Camel");
@@ -56,7 +56,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")
-                    .transacted()
+                        .transacted()
                         .process(exchange -> assertTrue(exchange.isTransacted(), "Exchange should be transacted"))
                         .to("async:bye:camel")
                         .wireTap("direct:tap")

@@ -55,7 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @UriParams
-public class SipConfiguration {    
+public class SipConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
     private static final String IMPLEMENTATION = "gov.nist";
 
@@ -64,7 +64,8 @@ public class SipConfiguration {
     private String protocol;
     private Map<String, Object> parameters;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private URI uri;
     @UriParam(label = "advanced")
     private AddressFactory addressFactory;
@@ -151,7 +152,7 @@ public class SipConfiguration {
         sipFactory = SipFactory.getInstance();
         sipFactory.setPathName(IMPLEMENTATION);
     }
-    
+
     public void initialize(URI uri, Map<String, Object> parameters, SipComponent component) {
         this.setParameters(parameters);
         this.setComponent(component);
@@ -160,22 +161,22 @@ public class SipConfiguration {
 
     public void parseURI() throws Exception {
         protocol = uri.getScheme();
-        
+
         if ((!protocol.equalsIgnoreCase("sip")) && (!protocol.equalsIgnoreCase("sips"))) {
             throw new IllegalArgumentException("Unrecognized SIP protocol: " + protocol + " for uri: " + uri);
         }
 
-        Map<String, Object> settings = URISupport.parseParameters(uri);        
+        Map<String, Object> settings = URISupport.parseParameters(uri);
 
         if (settings.containsKey("stackName")) {
             setStackName((String) settings.get("stackName"));
         }
         if (settings.containsKey("transport")) {
             setTransport((String) settings.get("transport"));
-        } 
+        }
         if (settings.containsKey("maxMessageSize")) {
             setMaxMessageSize(Integer.parseInt((String) settings.get("maxMessageSize")));
-        } 
+        }
         if (settings.containsKey("cacheConnections")) {
             setCacheConnections(Boolean.valueOf((String) settings.get("cacheConnections")));
         }
@@ -193,7 +194,7 @@ public class SipConfiguration {
         }
         if (settings.containsKey("eventHeaderName")) {
             setEventHeaderName((String) settings.get("eventHeaderName"));
-        } 
+        }
         if (settings.containsKey("eventId")) {
             setEventId((String) settings.get("eventId"));
         }
@@ -213,10 +214,10 @@ public class SipConfiguration {
             }
             if (settings.containsKey("fromHost")) {
                 setFromHost((String) settings.get("fromHost"));
-            } 
+            }
             if (settings.containsKey("fromPort")) {
                 setFromPort(Integer.parseInt((String) settings.get("fromPort")));
-            } 
+            }
             setToUser(uri.getUserInfo());
             setToHost(uri.getHost());
             setToPort(uri.getPort());
@@ -230,22 +231,24 @@ public class SipConfiguration {
                 }
                 if (settings.containsKey("toHost")) {
                     setToHost((String) settings.get("toHost"));
-                } 
+                }
                 if (settings.containsKey("toPort")) {
                     setToPort(Integer.parseInt((String) settings.get("toPort")));
-                } 
+                }
             }
         }
 
-        implementationDebugLogFile = component.getAndRemoveParameter(parameters, "implementationDebugLogFile", String.class, null);
-        implementationServerLogFile = component.getAndRemoveParameter(parameters, "implementationServerLogFile", String.class, null);
+        implementationDebugLogFile
+                = component.getAndRemoveParameter(parameters, "implementationDebugLogFile", String.class, null);
+        implementationServerLogFile
+                = component.getAndRemoveParameter(parameters, "implementationServerLogFile", String.class, null);
         implementationTraceLevel = component.getAndRemoveParameter(parameters, "implementationTraceLevel", String.class, "0");
-        
+
         LOG.trace("Consumer:" + consumer + " StackName:" + stackName);
         LOG.trace("From User: " + getFromUser() + " From host: " + getFromHost() + " From Port: " + getFromPort());
-         
+
         createFactoriesAndHeaders(parameters, component);
-        
+
         sipUri = component.resolveAndRemoveReferenceParameter(parameters, "sipUri", SipURI.class, null);
         if (sipUri == null) {
             sipUri = addressFactory.createSipURI(getToUser(), getToHost() + ":" + getToPort());
@@ -255,18 +258,18 @@ public class SipConfiguration {
         ObjectHelper.notNull(fromHost, "From Host");
         ObjectHelper.notNull(fromPort, "From Port");
         ObjectHelper.notNull(eventHeader, "Event Header");
-        ObjectHelper.notNull(eventHeaderName, "Event Header Name");        
-        ObjectHelper.notNull(eventId, "Event Id");        
-    }    
+        ObjectHelper.notNull(eventHeaderName, "Event Header Name");
+        ObjectHelper.notNull(eventId, "Event Id");
+    }
 
     @SuppressWarnings("unchecked")
     private void createFactoriesAndHeaders(Map<String, Object> parameters, SipComponent component) throws Exception {
         headerFactory = sipFactory.createHeaderFactory();
         addressFactory = sipFactory.createAddressFactory();
         setMessageFactory(sipFactory.createMessageFactory());
-        
+
         fromHeader = component.resolveAndRemoveReferenceParameter(parameters, "fromHeader", FromHeader.class, null);
-        if (fromHeader == null) { 
+        if (fromHeader == null) {
             createFromHeader();
         }
         if (!presenceAgent) {
@@ -276,26 +279,28 @@ public class SipConfiguration {
             }
         }
         viaHeaders = component.resolveAndRemoveReferenceParameter(parameters, "viaHeaders", List.class, null);
-        if (viaHeaders == null) {        
+        if (viaHeaders == null) {
             createViaHeaders();
         }
-        contentTypeHeader = component.resolveAndRemoveReferenceParameter(parameters, "contentTypeHeader", ContentTypeHeader.class, null);
+        contentTypeHeader
+                = component.resolveAndRemoveReferenceParameter(parameters, "contentTypeHeader", ContentTypeHeader.class, null);
         if (contentTypeHeader == null) {
             createContentTypeHeader();
         }
 
         callIdHeader = component.resolveAndRemoveReferenceParameter(parameters, "callIdHeader", CallIdHeader.class, null);
-        
-        maxForwardsHeader = component.resolveAndRemoveReferenceParameter(parameters, "maxForwardsHeader", MaxForwardsHeader.class, null);
-        if (maxForwardsHeader == null) {        
+
+        maxForwardsHeader
+                = component.resolveAndRemoveReferenceParameter(parameters, "maxForwardsHeader", MaxForwardsHeader.class, null);
+        if (maxForwardsHeader == null) {
             createMaxForwardsHeader();
         }
-        
+
         // Optional Headers
         eventHeader = component.resolveAndRemoveReferenceParameter(parameters, "eventHeader", EventHeader.class, null);
         if (eventHeader == null) {
             createEventHeader();
-        }        
+        }
         contactHeader = component.resolveAndRemoveReferenceParameter(parameters, "contactHeader", ContactHeader.class, null);
         if (contactHeader == null) {
             createContactHeader();
@@ -304,24 +309,26 @@ public class SipConfiguration {
         if (expiresHeader == null) {
             createExpiresHeader();
         }
-        extensionHeader = component.resolveAndRemoveReferenceParameter(parameters, "extensionHeader", ExtensionHeader.class, null);
+        extensionHeader
+                = component.resolveAndRemoveReferenceParameter(parameters, "extensionHeader", ExtensionHeader.class, null);
     }
 
-    public Request createSipRequest(long sequenceNumber, String requestMethod, Object body) throws ParseException, InvalidArgumentException {
+    public Request createSipRequest(long sequenceNumber, String requestMethod, Object body)
+            throws ParseException, InvalidArgumentException {
         //SipConfiguration configuration = sipPublisher.getConfiguration();
         CSeqHeader cSeqHeader = getHeaderFactory().createCSeqHeader(sequenceNumber, requestMethod);
 
         // Create the request.
         Request request = getMessageFactory().createRequest(
-            getSipUri(), 
-            requestMethod, 
-            getCallIdHeader(), 
-            cSeqHeader, 
-            getFromHeader(),
-            getToHeader(), 
-            getViaHeaders(), 
-            getMaxForwardsHeader());
-        
+                getSipUri(),
+                requestMethod,
+                getCallIdHeader(),
+                cSeqHeader,
+                getFromHeader(),
+                getToHeader(),
+                getViaHeaders(),
+                getMaxForwardsHeader());
+
         if (getEventHeader() != null) {
             request.addHeader(getEventHeader());
         }
@@ -335,25 +342,25 @@ public class SipConfiguration {
             request.addHeader(getExtensionHeader());
         }
         request.setContent(body, getContentTypeHeader());
-        
-        return request;       
+
+        return request;
     }
-    
+
     private void createFromHeader() throws ParseException {
         SipURI fromAddress = getAddressFactory().createSipURI(getFromUser(), getFromHost());
         fromAddress.setPort(Integer.valueOf(getFromPort()).intValue());
         Address fromNameAddress = addressFactory.createAddress(fromAddress);
         fromNameAddress.setDisplayName(getFromUser());
-        
-        setFromHeader(headerFactory.createFromHeader(fromNameAddress, getFromUser() + "_Header"));        
+
+        setFromHeader(headerFactory.createFromHeader(fromNameAddress, getFromUser() + "_Header"));
     }
-    
+
     private void createToHeader() throws ParseException {
         SipURI toAddress = getAddressFactory().createSipURI(getToUser(), getToHost());
         toAddress.setPort(getToPort());
         Address toNameAddress = addressFactory.createAddress(toAddress);
         toNameAddress.setDisplayName(getToUser());
-        
+
         setToHeader(headerFactory.createToHeader(toNameAddress, getToUser() + "_Header"));
     }
 
@@ -362,22 +369,22 @@ public class SipConfiguration {
         ViaHeader viaHeader = headerFactory.createViaHeader(getFromHost(), getFromPort(),
                 getTransport(), null);
 
-        viaHeaders.add(viaHeader);       
+        viaHeaders.add(viaHeader);
     }
 
     private void createContentTypeHeader() throws ParseException {
-        setContentTypeHeader(headerFactory.createContentTypeHeader(getContentType(), getContentSubType()));   
+        setContentTypeHeader(headerFactory.createContentTypeHeader(getContentType(), getContentSubType()));
     }
-    
+
     private void createMaxForwardsHeader() throws ParseException, InvalidArgumentException {
-        setMaxForwardsHeader(headerFactory.createMaxForwardsHeader(getMaxForwards()));   
+        setMaxForwardsHeader(headerFactory.createMaxForwardsHeader(getMaxForwards()));
     }
 
     private void createEventHeader() throws ParseException {
         eventHeader = getHeaderFactory().createEventHeader(getEventHeaderName());
-        eventHeader.setEventId(getEventId());        
+        eventHeader.setEventId(getEventId());
     }
-    
+
     private void createContactHeader() throws ParseException {
         SipURI contactURI = addressFactory.createSipURI(getFromUser(), getFromHost());
         contactURI.setTransportParam(getTransport());
@@ -391,9 +398,9 @@ public class SipConfiguration {
     }
 
     private void createExpiresHeader() throws ParseException, InvalidArgumentException {
-        expiresHeader = getHeaderFactory().createExpiresHeader(getMsgExpiration());        
+        expiresHeader = getHeaderFactory().createExpiresHeader(getMsgExpiration());
     }
-    
+
     Properties createInitialProperties() {
         Properties properties = new Properties();
         properties.setProperty("javax.sip.STACK_NAME", getStackName());
@@ -405,7 +412,7 @@ public class SipConfiguration {
             properties.setProperty("gov.nist.javax.sip.SERVER_LOG", implementationServerLogFile);
             properties.setProperty("gov.nist.javax.sip.TRACE_LEVEL", implementationTraceLevel);
         }
-        
+
         return properties;
     }
 
@@ -502,7 +509,8 @@ public class SipConfiguration {
     }
 
     /**
-     * Should connections be cached by the SipStack to reduce cost of connection creation. This is useful if the connection is used for long running conversations.
+     * Should connections be cached by the SipStack to reduce cost of connection creation. This is useful if the
+     * connection is used for long running conversations.
      */
     public void setCacheConnections(boolean cacheConnections) {
         this.cacheConnections = cacheConnections;
@@ -553,7 +561,8 @@ public class SipConfiguration {
     }
 
     /**
-     * Setting for specifying amount of time to wait for a Response and/or Acknowledgement can be received from another SIP stack
+     * Setting for specifying amount of time to wait for a Response and/or Acknowledgement can be received from another
+     * SIP stack
      */
     public void setReceiveTimeoutMillis(long receiveTimeoutMillis) {
         this.receiveTimeoutMillis = receiveTimeoutMillis;
@@ -694,7 +703,8 @@ public class SipConfiguration {
     }
 
     /**
-     * A custom Header object containing message originator settings. Must implement the type javax.sip.header.FromHeader
+     * A custom Header object containing message originator settings. Must implement the type
+     * javax.sip.header.FromHeader
      */
     public void setFromHeader(FromHeader fromHeader) {
         this.fromHeader = fromHeader;
@@ -716,8 +726,9 @@ public class SipConfiguration {
     }
 
     /**
-     * List of custom Header objects of the type javax.sip.header.ViaHeader.
-     * Each ViaHeader containing a proxy address for request forwarding. (Note this header is automatically updated by each proxy when the request arrives at its listener)
+     * List of custom Header objects of the type javax.sip.header.ViaHeader. Each ViaHeader containing a proxy address
+     * for request forwarding. (Note this header is automatically updated by each proxy when the request arrives at its
+     * listener)
      */
     public void setViaHeaders(List<ViaHeader> viaHeaders) {
         this.viaHeaders = viaHeaders;
@@ -728,7 +739,8 @@ public class SipConfiguration {
     }
 
     /**
-     * A custom Header object containing message content details. Must implement the type javax.sip.header.ContentTypeHeader
+     * A custom Header object containing message content details. Must implement the type
+     * javax.sip.header.ContentTypeHeader
      */
     public void setContentTypeHeader(ContentTypeHeader contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
@@ -750,8 +762,8 @@ public class SipConfiguration {
     }
 
     /**
-     * A custom Header object containing details on maximum proxy forwards.
-     * This header places a limit on the viaHeaders possible. Must implement the type javax.sip.header.MaxForwardsHeader
+     * A custom Header object containing details on maximum proxy forwards. This header places a limit on the viaHeaders
+     * possible. Must implement the type javax.sip.header.MaxForwardsHeader
      */
     public void setMaxForwardsHeader(MaxForwardsHeader maxForwardsHeader) {
         this.maxForwardsHeader = maxForwardsHeader;
@@ -762,7 +774,8 @@ public class SipConfiguration {
     }
 
     /**
-     * An optional custom Header object containing verbose contact details (email, phone number etc). Must implement the type javax.sip.header.ContactHeader
+     * An optional custom Header object containing verbose contact details (email, phone number etc). Must implement the
+     * type javax.sip.header.ContactHeader
      */
     public void setContactHeader(ContactHeader contactHeader) {
         this.contactHeader = contactHeader;
@@ -773,14 +786,16 @@ public class SipConfiguration {
     }
 
     /**
-     * A custom Header object containing user/application specific details. Must implement the type javax.sip.header.ExtensionHeader
+     * A custom Header object containing user/application specific details. Must implement the type
+     * javax.sip.header.ExtensionHeader
      */
     public void setExtensionHeader(ExtensionHeader extensionHeader) {
         this.extensionHeader = extensionHeader;
     }
 
     /**
-     * URI of the SIP server to connect to (the username and password can be included such as: john:secret@myserver:9999)
+     * URI of the SIP server to connect to (the username and password can be included such as:
+     * john:secret@myserver:9999)
      */
     public void setUri(URI uri) {
         this.uri = uri;
@@ -791,7 +806,8 @@ public class SipConfiguration {
     }
 
     /**
-     * This setting is used to determine whether the kind of header (FromHeader,ToHeader etc) that needs to be created for this endpoint
+     * This setting is used to determine whether the kind of header (FromHeader,ToHeader etc) that needs to be created
+     * for this endpoint
      */
     public void setConsumer(boolean consumer) {
         this.consumer = consumer;
@@ -861,7 +877,8 @@ public class SipConfiguration {
     }
 
     /**
-     * A custom Header object containing message expiration details. Must implement the type javax.sip.header.ExpiresHeader
+     * A custom Header object containing message expiration details. Must implement the type
+     * javax.sip.header.ExpiresHeader
      */
     public void setExpiresHeader(ExpiresHeader expiresHeader) {
         this.expiresHeader = expiresHeader;
@@ -872,11 +889,12 @@ public class SipConfiguration {
     }
 
     /**
-     * This setting is used to distinguish between a Presence Agent & a consumer.
-     * This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true.
+     * This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP
+     * Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to
+     * true.
      */
     public void setPresenceAgent(boolean presenceAgent) {
         this.presenceAgent = presenceAgent;
     }
-    
+
 }

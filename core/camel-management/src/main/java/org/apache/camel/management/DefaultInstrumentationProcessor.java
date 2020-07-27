@@ -28,17 +28,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
- * processing of exchanges.
+ * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for
+ * instrumenting processing of exchanges.
  * <p/>
- * This implementation has been optimised to work in dual mode, either as an advice or as a processor.
- * The former is faster and the latter is required when the error handler has been configured with redelivery enabled.
+ * This implementation has been optimised to work in dual mode, either as an advice or as a processor. The former is
+ * faster and the latter is required when the error handler has been configured with redelivery enabled.
  */
 public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
         implements InstrumentationProcessor<StopWatch>, Ordered {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInstrumentationProcessor.class);
-
 
     private PerformanceCounter counter;
     private String type;

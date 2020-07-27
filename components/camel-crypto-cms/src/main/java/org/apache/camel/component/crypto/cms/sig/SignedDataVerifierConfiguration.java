@@ -28,24 +28,20 @@ public interface SignedDataVerifierConfiguration extends CryptoCmsUnMarshallerCo
 
     /**
      * Indicates whether the value in the Signed Data header (given by
-     * {@link CryptoCmsConstants#CAMEL_CRYPTO_CMS_SIGNED_DATA} is base64
-     * encoded.
+     * {@link CryptoCmsConstants#CAMEL_CRYPTO_CMS_SIGNED_DATA} is base64 encoded.
      */
     boolean isSignedDataHeaderBase64();
 
     /**
-     * If <code>true</code> then the signatures of all signers are checked. If
-     * <code>false</code> then the verifier searches for a signer which matches
-     * with one of the specified certificates and verifies only the signature of
-     * the first found signer.
+     * If <code>true</code> then the signatures of all signers are checked. If <code>false</code> then the verifier
+     * searches for a signer which matches with one of the specified certificates and verifies only the signature of the
+     * first found signer.
      */
     boolean isVerifySignaturesOfAllSigners();
 
     /**
-     * Returns the collection of certificates whose public keys are used to
-     * verify the signatures contained in the Signed Data object if the
-     * certificates match the signer information given in the Signed Data
-     * object.
+     * Returns the collection of certificates whose public keys are used to verify the signatures contained in the
+     * Signed Data object if the certificates match the signer information given in the Signed Data object.
      */
     Collection<X509Certificate> getCertificates(Exchange exchange) throws CryptoCmsException;
 

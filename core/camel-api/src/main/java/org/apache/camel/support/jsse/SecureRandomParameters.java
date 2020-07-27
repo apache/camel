@@ -24,36 +24,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SecureRandomParameters extends JsseParameters {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SecureRandomParameters.class);
 
     /**
-     * The Random Number Generator algorithm identifier for the
-     * {@link SecureRandom} factory method used to create the
-     * {@link SecureRandom} represented by this object's configuration. See
-     * Appendix A in the <a href=
-     * "http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA"
-     * > Java Cryptography Architecture API Specification &amp; Reference</a>
-     * for information about standard RNG algorithm names.
+     * The Random Number Generator algorithm identifier for the {@link SecureRandom} factory method used to create the
+     * {@link SecureRandom} represented by this object's configuration. See Appendix A in the
+     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA" > Java
+     * Cryptography Architecture API Specification &amp; Reference</a> for information about standard RNG algorithm
+     * names.
      */
     protected String algorithm;
-    
+
     /**
-     * The optional provider identifier for the {@link SecureRandom} factory
-     * method used to create the {@link SecureRandom} represented by this
-     * object's configuration.
+     * The optional provider identifier for the {@link SecureRandom} factory method used to create the
+     * {@link SecureRandom} represented by this object's configuration.
      */
     protected String provider;
 
     /**
-     * Returns a {@code SecureRandom} instance initialized using the configured
-     * algorithm and provider, if specified.
+     * Returns a {@code SecureRandom} instance initialized using the configured algorithm and provider, if specified.
      * 
-     * @return the configured instance
+     * @return                          the configured instance
      *
-     * @throws GeneralSecurityException if the algorithm is not implemented by
-     *             any registered provider or if the identified provider does
-     *             not exist.
+     * @throws GeneralSecurityException if the algorithm is not implemented by any registered provider or if the
+     *                                  identified provider does not exist.
      */
     public SecureRandom createSecureRandom() throws GeneralSecurityException {
         LOG.debug("Creating SecureRandom from SecureRandomParameters: {}", this);
@@ -61,17 +56,17 @@ public class SecureRandomParameters extends JsseParameters {
         SecureRandom secureRandom;
         if (this.getProvider() != null) {
             secureRandom = SecureRandom.getInstance(this.parsePropertyValue(this.getAlgorithm()),
-                                                    this.parsePropertyValue(this.getProvider()));
+                    this.parsePropertyValue(this.getProvider()));
         } else {
             secureRandom = SecureRandom.getInstance(this.parsePropertyValue(this.getAlgorithm()));
         }
-        
+
         LOG.debug("SecureRandom [{}] is using provider [{}] and algorithm [{}].",
-                  new Object[] {secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm()});
+                new Object[] { secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm() });
 
         return secureRandom;
     }
-    
+
     /**
      * @see #setAlgorithm(String)
      */
@@ -80,13 +75,10 @@ public class SecureRandomParameters extends JsseParameters {
     }
 
     /**
-     * Sets the Random Number Generator (RNG) algorithm identifier for the
-     * {@link SecureRandom} factory method used to create the
-     * {@link SecureRandom} represented by this object's configuration.
-     * See Appendix A in the <a href=
-     * "http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA"
-     * > Java Cryptography Architecture Reference Guide</a>
-     * for information about standard RNG algorithm names.
+     * Sets the Random Number Generator (RNG) algorithm identifier for the {@link SecureRandom} factory method used to
+     * create the {@link SecureRandom} represented by this object's configuration. See Appendix A in the
+     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA" > Java
+     * Cryptography Architecture Reference Guide</a> for information about standard RNG algorithm names.
      *
      * @param value the algorithm identifier
      */
@@ -102,14 +94,13 @@ public class SecureRandomParameters extends JsseParameters {
     }
 
     /**
-     * Sets the optional provider identifier for the {@link SecureRandom}
-     * factory method used to create the {@link SecureRandom} represented by
-     * this object's configuration.
+     * Sets the optional provider identifier for the {@link SecureRandom} factory method used to create the
+     * {@link SecureRandom} represented by this object's configuration.
      * 
-     * @param value the provider identifier or {@code null} to use the highest
-     *            priority provider implementing the desired algorithm
-     *            
-     * @see Security#getProviders()
+     * @param value the provider identifier or {@code null} to use the highest priority provider implementing the
+     *              desired algorithm
+     * 
+     * @see         Security#getProviders()
      */
     public void setProvider(String value) {
         this.provider = value;

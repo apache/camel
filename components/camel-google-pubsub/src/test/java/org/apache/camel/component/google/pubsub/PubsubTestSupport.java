@@ -114,7 +114,8 @@ public class PubsubTestSupport extends ContainerAwareTestSupport {
                     .usePlaintext()
                     .build();
 
-            FixedTransportChannelProvider channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            FixedTransportChannelProvider channelProvider
+                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
             ProjectTopicName projectTopicName = ProjectTopicName.of(PROJECT_ID, topicName);

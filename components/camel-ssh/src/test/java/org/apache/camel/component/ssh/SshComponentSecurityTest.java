@@ -117,7 +117,8 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
                 sshComponent.getConfiguration().setHost("localhost");
                 sshComponent.getConfiguration().setPort(port);
                 sshComponent.getConfiguration().setUsername("smx");
-                sshComponent.getConfiguration().setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
+                sshComponent.getConfiguration()
+                        .setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
                 sshComponent.getConfiguration().setKeyType(KeyPairProvider.SSH_RSA);
 
                 getContext().addComponent("ssh-rsa", sshComponent);
@@ -135,13 +136,13 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
                         .to("mock:rsapkcs8");
 
                 from("direct:ssh-encrsaFile")
-                        .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/encrsa.pem&certResourcePassword=security")
+                        .to("ssh://smx@localhost:" + port
+                            + "?certResource=file:src/test/resources/encrsa.pem&certResourcePassword=security")
                         .to("mock:encrsaFile");
 
                 from("direct:ssh-ecFile")
                         .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/ec.pem")
                         .to("mock:ecFile");
-
 
                 from("direct:ssh-ecFilepkcs8")
                         .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/ecpkcs8.pem")

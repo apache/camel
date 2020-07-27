@@ -61,12 +61,12 @@ public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends CamelTestSuppo
             @Override
             public void configure() throws Exception {
                 from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
-                    .marshal().zipDeflater()
-                    .to("file:target/data/zip/out?fileName=${file:name}.zip");
+                        .marshal().zipDeflater()
+                        .to("file:target/data/zip/out?fileName=${file:name}.zip");
 
                 from("file:target/data/zip/out?initialDelay=0&delay=10&delete=true")
-                    .unmarshal().zipDeflater()
-                    .to("mock:result");
+                        .unmarshal().zipDeflater()
+                        .to("mock:result");
             }
         };
     }

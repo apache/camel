@@ -33,7 +33,6 @@ public class ConsumerMultiThreadTest extends SoroushBotTestSupport {
         mockEndpoint.assertIsSatisfied();
     }
 
-
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -42,8 +41,7 @@ public class ConsumerMultiThreadTest extends SoroushBotTestSupport {
                 from("soroush://" + SoroushAction.getMessage + "/5")
                         .threads(5).process(exchange -> {
                             Thread.sleep(1000);
-                        }
-                ).to("mock:supportForConcurrentThreadTest");
+                        }).to("mock:supportForConcurrentThreadTest");
             }
         };
     }

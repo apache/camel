@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class InfinispanIdempotentRepositoryIT extends CamelTestSupport {
 
     private RemoteCacheManager manager = new RemoteCacheManager();
-    
+
     @BeforeEach
     public void setupCache() {
         RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("idempotent", (String) null);
         assertNotNull(cache);
     }
-    
+
     @AfterEach
     public void cleanupCache() {
         manager.close();
@@ -53,8 +53,7 @@ public class InfinispanIdempotentRepositoryIT extends CamelTestSupport {
 
         final String messageId = UUID.randomUUID().toString();
         IntStream.range(0, 10).forEach(
-            i -> template().sendBodyAndHeader("direct:start", "message-" + i, "MessageID", messageId)
-        );
+                i -> template().sendBodyAndHeader("direct:start", "message-" + i, "MessageID", messageId));
 
         mock.assertIsSatisfied();
     }
@@ -65,21 +64,18 @@ public class InfinispanIdempotentRepositoryIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .idempotentConsumer(
-                        header("MessageID"),
-                        new InfinispanIdempotentRepository(
-                            new RemoteCacheManager(
-                                new ConfigurationBuilder()
-                                    .addServers("localhost")
-                                    .build(),
-                                true
-                            ),
-                            "idempotent"
-                        )
-                    )
-                    .skipDuplicate(true)
-                    .to("log:org.apache.camel.component.infinispan.processor.idempotent?level=INFO&showAll=true&multiline=true")
-                    .to("mock:result");
+                        .idempotentConsumer(
+                                header("MessageID"),
+                                new InfinispanIdempotentRepository(
+                                        new RemoteCacheManager(
+                                                new ConfigurationBuilder()
+                                                        .addServers("localhost")
+                                                        .build(),
+                                                true),
+                                        "idempotent"))
+                        .skipDuplicate(true)
+                        .to("log:org.apache.camel.component.infinispan.processor.idempotent?level=INFO&showAll=true&multiline=true")
+                        .to("mock:result");
             }
         };
     }

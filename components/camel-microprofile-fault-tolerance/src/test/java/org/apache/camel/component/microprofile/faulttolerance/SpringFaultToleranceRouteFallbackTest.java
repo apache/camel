@@ -28,7 +28,8 @@ public class SpringFaultToleranceRouteFallbackTest extends CamelSpringTestSuppor
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/microprofile/faulttolerance/SpringFaultToleranceRouteFallbackTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/microprofile/faulttolerance/SpringFaultToleranceRouteFallbackTest.xml");
     }
 
     @Test

@@ -72,8 +72,8 @@ public class MasterEndpointFailoverTest {
             @Override
             public void configure() throws Exception {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
-                    .to("log:result1")
-                    .to("mock:result1");
+                        .to("log:result1")
+                        .to("mock:result1");
             }
         });
         consumerContext2 = new DefaultCamelContext(registry);
@@ -81,8 +81,8 @@ public class MasterEndpointFailoverTest {
             @Override
             public void configure() throws Exception {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
-                    .to("log:result2")
-                    .to("mock:result2");
+                        .to("log:result2")
+                        .to("mock:result2");
             }
         });
         // Need to start at less one consumerContext to enable the vm queue for producerContext
@@ -117,14 +117,16 @@ public class MasterEndpointFailoverTest {
         assertMessageReceivedLoop(result2Endpoint, result1Endpoint, 3);
     }
 
-    protected void assertMessageReceivedLoop(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint, int count) throws Exception {
+    protected void assertMessageReceivedLoop(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint, int count)
+            throws Exception {
         for (int i = 0; i < count; i++) {
             Thread.sleep(1000);
             assertMessageReceived(masterEndpoint, standbyEndpoint);
         }
     }
 
-    protected void assertMessageReceived(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint) throws InterruptedException {
+    protected void assertMessageReceived(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint)
+            throws InterruptedException {
         masterEndpoint.reset();
         standbyEndpoint.reset();
 

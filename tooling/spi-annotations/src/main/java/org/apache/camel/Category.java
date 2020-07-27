@@ -17,8 +17,7 @@
 package org.apache.camel;
 
 /**
- * This enum set various categories options into the UriEndpoint.
- * This can be extended.
+ * This enum set various categories options into the UriEndpoint. This can be extended.
  */
 public enum Category {
     DATAMINING("datamining"),
@@ -119,6 +118,7 @@ public enum Category {
 
     /**
      * Returns the string representation of this value
+     * 
      * @return Returns the string representation of this value
      */
     public String getValue() {

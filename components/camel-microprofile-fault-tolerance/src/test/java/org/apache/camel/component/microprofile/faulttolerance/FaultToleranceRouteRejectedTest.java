@@ -58,7 +58,7 @@ public class FaultToleranceRouteRejectedTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .circuitBreaker().id("myFaultTolerance")
+                        .circuitBreaker().id("myFaultTolerance")
                         .faultToleranceConfiguration().failureRatio(100).successThreshold(1).requestVolumeThreshold(1).end()
                         .process(e -> {
                             if (counter++ < 1) {
@@ -66,8 +66,8 @@ public class FaultToleranceRouteRejectedTest extends CamelTestSupport {
                             }
                         })
                         .to("direct:foo").to("log:foo")
-                    .end()
-                    .to("log:result").to("mock:result");
+                        .end()
+                        .to("log:result").to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

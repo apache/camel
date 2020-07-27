@@ -25,19 +25,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
- * Contains the individual result of Composite API batch request. As batch
- * requests can partially succeed or fail make sure you check the
- * {@link #getStatusCode()} for status of the specific request. The result of
- * the request can vary from API to API so here it is given as {@link Object},
- * in most cases it will be a {@link Map} with string keys and values or other
- * {@link Map} as value. Requests made in JSON format hold some type information
- * (i.e. it is known what values are strings and what values are numbers), so in
- * general those will be more type friendly. Note that the responses will vary
- * between XML and JSON, this is due to the responses from Salesforce API being
- * different.
+ * Contains the individual result of Composite API batch request. As batch requests can partially succeed or fail make
+ * sure you check the {@link #getStatusCode()} for status of the specific request. The result of the request can vary
+ * from API to API so here it is given as {@link Object}, in most cases it will be a {@link Map} with string keys and
+ * values or other {@link Map} as value. Requests made in JSON format hold some type information (i.e. it is known what
+ * values are strings and what values are numbers), so in general those will be more type friendly. Note that the
+ * responses will vary between XML and JSON, this is due to the responses from Salesforce API being different.
  * <p>
- * For example response for SObject record creation in JSON will be:
- * <blockquote>
+ * For example response for SObject record creation in JSON will be: <blockquote>
  *
  * <pre>
  * {
@@ -52,8 +47,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  *
  * </blockquote>
  * <p>
- * Which will result in {@link #getResult()} returning {@link Map} created like:
- * <blockquote>
+ * Which will result in {@link #getResult()} returning {@link Map} created like: <blockquote>
  *
  * <pre>
  * {
@@ -80,8 +74,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  *
  * </blockquote>
  * <p>
- * And that results in {@link #getResult()} returning {@link Map} created like:
- * <blockquote>
+ * And that results in {@link #getResult()} returning {@link Map} created like: <blockquote>
  *
  * <pre>
  * {
@@ -98,8 +91,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  *
  * </blockquote>
  * <p>
- * Note the differences between type and nested {@link Map} one level deeper in
- * the case of XML.
+ * Note the differences between type and nested {@link Map} one level deeper in the case of XML.
  */
 @XStreamAlias("batchResult")
 public final class SObjectBatchResult implements Serializable {

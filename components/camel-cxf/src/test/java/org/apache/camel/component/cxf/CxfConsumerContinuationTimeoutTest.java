@@ -37,21 +37,22 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
     private static final String ECHO_METHOD = "ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"";
 
     private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-            + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
-            + "</ns1:echoResponse></soap:Body></soap:Envelope>";
-    private static final String ECHO_BOOLEAN_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-            + "<soap:Body><ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
-            + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
+                                                + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+                                                + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
+                                                + "</ns1:echoResponse></soap:Body></soap:Envelope>";
+    private static final String ECHO_BOOLEAN_RESPONSE
+            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+              + "<soap:Body><ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+              + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
+              + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
 
     protected final String simpleEndpointAddress = "http://localhost:"
-        + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService";
 
     protected ExecutorService pool;
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -59,8 +60,8 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
                 pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "MyPool");
 
                 from("direct:start")
-                    .setBody(constant("Sensitive Data"))
-                    .to(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW");
+                        .setBody(constant("Sensitive Data"))
+                        .to(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW");
 
                 from(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW").process(new AsyncProcessorSupport() {
                     @Override

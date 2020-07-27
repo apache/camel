@@ -24,5 +24,5 @@ public class MyRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:start").to("mock:result");
     }
-    
+
 }

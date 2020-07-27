@@ -20,4 +20,3 @@ package org.apache.camel.util.function;
 public interface ThrowingToLongFunction<I, T extends Throwable> {
     long apply(I in) throws T;
 }
-

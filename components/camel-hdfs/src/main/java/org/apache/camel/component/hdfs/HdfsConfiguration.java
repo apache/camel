@@ -41,11 +41,13 @@ public class HdfsConfiguration {
     private boolean wantAppend;
     private List<HdfsProducer.SplitStrategy> splitStrategies;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String hostName;
     @UriPath(defaultValue = "" + HdfsConstants.DEFAULT_PORT)
     private int port = HdfsConstants.DEFAULT_PORT;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String path;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean overwrite = true;
@@ -165,7 +167,8 @@ public class HdfsConfiguration {
         }
     }
 
-    private SequenceFile.CompressionType getCompressionType(Map<String, Object> hdfsSettings, String param, SequenceFile.CompressionType ct) {
+    private SequenceFile.CompressionType getCompressionType(
+            Map<String, Object> hdfsSettings, String param, SequenceFile.CompressionType ct) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
             return SequenceFile.CompressionType.valueOf(eit);
@@ -440,7 +443,8 @@ public class HdfsConfiguration {
     }
 
     /**
-     * When a file is opened for reading/writing the file is renamed with this suffix to avoid to read it during the writing phase.
+     * When a file is opened for reading/writing the file is renamed with this suffix to avoid to read it during the
+     * writing phase.
      */
     public void setOpenedSuffix(String openedSuffix) {
         this.openedSuffix = openedSuffix;
@@ -484,7 +488,8 @@ public class HdfsConfiguration {
     }
 
     /**
-     * How often (time in millis) in to run the idle checker background task. This option is only in use if the splitter strategy is IDLE.
+     * How often (time in millis) in to run the idle checker background task. This option is only in use if the splitter
+     * strategy is IDLE.
      */
     public void setCheckIdleInterval(int checkIdleInterval) {
         this.checkIdleInterval = checkIdleInterval;
@@ -507,19 +512,23 @@ public class HdfsConfiguration {
     }
 
     /**
-     * In the current version of Hadoop opening a file in append mode is disabled since it's not very reliable. So, for the moment,
-     * it's only possible to create new files. The Camel HDFS endpoint tries to solve this problem in this way:
+     * In the current version of Hadoop opening a file in append mode is disabled since it's not very reliable. So, for
+     * the moment, it's only possible to create new files. The Camel HDFS endpoint tries to solve this problem in this
+     * way:
      * <ul>
-     * <li>If the split strategy option has been defined, the hdfs path will be used as a directory and files will be created using the configured UuidGenerator.</li>
+     * <li>If the split strategy option has been defined, the hdfs path will be used as a directory and files will be
+     * created using the configured UuidGenerator.</li>
      * <li>Every time a splitting condition is met, a new file is created.</li>
      * </ul>
-     * The splitStrategy option is defined as a string with the following syntax:
-     * <br/><tt>splitStrategy=ST:value,ST:value,...</tt>
-     * <br/>where ST can be:
+     * The splitStrategy option is defined as a string with the following syntax: <br/>
+     * <tt>splitStrategy=ST:value,ST:value,...</tt> <br/>
+     * where ST can be:
      * <ul>
      * <li>BYTES a new file is created, and the old is closed when the number of written bytes is more than value</li>
-     * <li>MESSAGES a new file is created, and the old is closed when the number of written messages is more than value</li>
-     * <li>IDLE a new file is created, and the old is closed when no writing happened in the last value milliseconds</li>
+     * <li>MESSAGES a new file is created, and the old is closed when the number of written messages is more than
+     * value</li>
+     * <li>IDLE a new file is created, and the old is closed when no writing happened in the last value
+     * milliseconds</li>
      * </ul>
      */
     public void setSplitStrategy(String splitStrategy) {
@@ -531,10 +540,10 @@ public class HdfsConfiguration {
     }
 
     /**
-     * Whether to connect to the HDFS file system on starting the producer/consumer.
-     * If false then the connection is created on-demand. Notice that HDFS may take up till 15 minutes to establish
-     * a connection, as it has hardcoded 45 x 20 sec redelivery. By setting this option to false allows your
-     * application to startup, and not block for up till 15 minutes.
+     * Whether to connect to the HDFS file system on starting the producer/consumer. If false then the connection is
+     * created on-demand. Notice that HDFS may take up till 15 minutes to establish a connection, as it has hardcoded 45
+     * x 20 sec redelivery. By setting this option to false allows your application to startup, and not block for up
+     * till 15 minutes.
      */
     public void setConnectOnStartup(boolean connectOnStartup) {
         this.connectOnStartup = connectOnStartup;
@@ -545,11 +554,10 @@ public class HdfsConfiguration {
     }
 
     /**
-     * To define a maximum messages to gather per poll.
-     * By default a limit of 100 is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
-     * Values can only be greater than 0.
-     * Notice: If this option is in use then the limit will be applied on the valid files.
-     * For example if you have 100000 files and use maxMessagesPerPoll=500, then only the first 500 files will be picked up.
+     * To define a maximum messages to gather per poll. By default a limit of 100 is set. Can be used to set a limit of
+     * e.g. 1000 to avoid when starting up the server that there are thousands of files. Values can only be greater than
+     * 0. Notice: If this option is in use then the limit will be applied on the valid files. For example if you have
+     * 100000 files and use maxMessagesPerPoll=500, then only the first 500 files will be picked up.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
@@ -612,8 +620,8 @@ public class HdfsConfiguration {
     }
 
     /**
-     * The location of the keytab file used to authenticate with the kerberos nodes
-     * (contains pairs of kerberos principals and encrypted keys (which are derived from the Kerberos password))
+     * The location of the keytab file used to authenticate with the kerberos nodes (contains pairs of kerberos
+     * principals and encrypted keys (which are derived from the Kerberos password))
      */
     public void setKerberosKeytabLocation(String kerberosKeytabLocation) {
         this.kerberosKeytabLocation = kerberosKeytabLocation;
@@ -628,9 +636,9 @@ public class HdfsConfiguration {
     }
 
     /**
-     * Sets the download method to use when not using a local working directory.  If set to true,
-     * the remote files are streamed to the route as they are read.  When set to false, the remote files
-     * are loaded into memory before being sent into the route.
+     * Sets the download method to use when not using a local working directory. If set to true, the remote files are
+     * streamed to the route as they are read. When set to false, the remote files are loaded into memory before being
+     * sent into the route.
      */
     public void setStreamDownload(boolean streamDownload) {
         this.streamDownload = streamDownload;
@@ -639,8 +647,8 @@ public class HdfsConfiguration {
     /**
      * Get the label of the hdfs file system like: HOST_NAME:PORT/PATH
      *
-     * @param path the file path
-     * @return HOST_NAME:PORT/PATH
+     * @param  path the file path
+     * @return      HOST_NAME:PORT/PATH
      */
     String getFileSystemLabel(String path) {
         if (hasClusterConfiguration()) {

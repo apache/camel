@@ -32,7 +32,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send passive checks to Nagios using JSendNSCA.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "nagios", title = "Nagios", syntax = "nagios:host:port", producerOnly = true, category = {Category.MONITORING})
+@UriEndpoint(firstVersion = "2.3.0", scheme = "nagios", title = "Nagios", syntax = "nagios:host:port", producerOnly = true,
+             category = { Category.MONITORING })
 public class NagiosEndpoint extends DefaultEndpoint {
 
     private PassiveCheckSender sender;
@@ -72,8 +73,8 @@ public class NagiosEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Whether or not to use synchronous when sending a passive check.
-     * Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously.
+     * Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue
+     * routing the message and the passive check message will be send asynchronously.
      */
     public void setSendSync(boolean sendSync) {
         this.sendSync = sendSync;

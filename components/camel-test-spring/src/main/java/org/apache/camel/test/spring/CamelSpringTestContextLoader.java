@@ -59,35 +59,33 @@ import org.springframework.util.StringUtils;
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
 
 /**
- * Replacement for the default {@link GenericXmlContextLoader} that provides hooks for
- * processing some class level Camel related test annotations.
+ * Replacement for the default {@link GenericXmlContextLoader} that provides hooks for processing some class level Camel
+ * related test annotations.
  */
 public class CamelSpringTestContextLoader extends AbstractContextLoader {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringTestContextLoader.class);
-    
+
     /**
-     *  Modeled after the Spring implementation in {@link AbstractGenericContextLoader},
-     *  this method creates and refreshes the application context while providing for
-     *  processing of additional Camel specific post-refresh actions.  We do not provide the
-     *  pre-post hooks for customization seen in {@link AbstractGenericContextLoader} because
-     *  they probably are unnecessary for 90+% of users.
-     *  <p/>
-     *  For some functionality, we cannot use {@link org.springframework.test.context.TestExecutionListener} because we need
-     *  to both produce the desired outcome during application context loading, and also cleanup
-     *  after ourselves even if the test class never executes.  Thus the listeners, which
-     *  only run if the application context is successfully initialized are insufficient to
-     *  provide the behavior described above.
+     * Modeled after the Spring implementation in {@link AbstractGenericContextLoader}, this method creates and
+     * refreshes the application context while providing for processing of additional Camel specific post-refresh
+     * actions. We do not provide the pre-post hooks for customization seen in {@link AbstractGenericContextLoader}
+     * because they probably are unnecessary for 90+% of users.
+     * <p/>
+     * For some functionality, we cannot use {@link org.springframework.test.context.TestExecutionListener} because we
+     * need to both produce the desired outcome during application context loading, and also cleanup after ourselves
+     * even if the test class never executes. Thus the listeners, which only run if the application context is
+     * successfully initialized are insufficient to provide the behavior described above.
      */
     @Override
     public ApplicationContext loadContext(MergedContextConfiguration mergedConfig) throws Exception {
         Class<?> testClass = getTestClass();
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Loading ApplicationContext for merged context configuration [{}].", mergedConfig);
         }
-        
-        try {            
+
+        try {
             GenericApplicationContext context = createContext(testClass, mergedConfig);
             prepareContext(context, mergedConfig);
             loadBeanDefinitions(context, mergedConfig);
@@ -96,19 +94,17 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
             CamelAnnotationsHandler.cleanup(testClass);
         }
     }
-    
+
     /**
-     *  Modeled after the Spring implementation in {@link AbstractGenericContextLoader},
-     *  this method creates and refreshes the application context while providing for
-     *  processing of additional Camel specific post-refresh actions.  We do not provide the
-     *  pre-post hooks for customization seen in {@link AbstractGenericContextLoader} because
-     *  they probably are unnecessary for 90+% of users.
-     *  <p/>
-     *  For some functionality, we cannot use {@link org.springframework.test.context.TestExecutionListener} because we need
-     *  to both produce the desired outcome during application context loading, and also cleanup
-     *  after ourselves even if the test class never executes.  Thus the listeners, which
-     *  only run if the application context is successfully initialized are insufficient to
-     *  provide the behavior described above.
+     * Modeled after the Spring implementation in {@link AbstractGenericContextLoader}, this method creates and
+     * refreshes the application context while providing for processing of additional Camel specific post-refresh
+     * actions. We do not provide the pre-post hooks for customization seen in {@link AbstractGenericContextLoader}
+     * because they probably are unnecessary for 90+% of users.
+     * <p/>
+     * For some functionality, we cannot use {@link org.springframework.test.context.TestExecutionListener} because we
+     * need to both produce the desired outcome during application context loading, and also cleanup after ourselves
+     * even if the test class never executes. Thus the listeners, which only run if the application context is
+     * successfully initialized are insufficient to provide the behavior described above.
      */
     @Override
     public ApplicationContext loadContext(String... locations) throws Exception {
@@ -117,7 +113,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Loading ApplicationContext for locations [" + StringUtils.arrayToCommaDelimitedString(locations) + "].");
         }
-        
+
         try {
             GenericApplicationContext context = createContext(testClass, null);
             loadBeanDefinitions(context, locations);
@@ -134,32 +130,33 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     public String getResourceSuffix() {
         return "-context.xml";
     }
-    
+
     /**
      * Performs the bulk of the Spring application context loading/customization.
      *
-     * @param context the partially configured context.  The context should have the bean definitions loaded, but nothing else.
-     * @param testClass the test class being executed
-     * @return the initialized (refreshed) Spring application context
+     * @param  context   the partially configured context. The context should have the bean definitions loaded, but
+     *                   nothing else.
+     * @param  testClass the test class being executed
+     * @return           the initialized (refreshed) Spring application context
      *
      * @throws Exception if there is an error during initialization/customization
      */
     protected ApplicationContext loadContext(GenericApplicationContext context, Class<?> testClass) throws Exception {
-            
+
         AnnotationConfigUtils.registerAnnotationConfigProcessors(context);
-        
+
         // Pre CamelContext(s) instantiation setup
         CamelAnnotationsHandler.handleDisableJmx(context, testClass);
         CamelAnnotationsHandler.handleExcludeRoutes(context, testClass);
         CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
-        
+
         // Temporarily disable CamelContext start while the contexts are instantiated.
         SpringCamelContext.setNoStart(true);
         context.refresh();
         context.registerShutdownHook();
         // Turn CamelContext startup back on since the context's have now been instantiated.
         SpringCamelContext.setNoStart(false);
-        
+
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
         CamelAnnotationsHandler.handleRouteCoverage(context, testClass, s -> getTestMethod().getName());
         CamelAnnotationsHandler.handleProvidesBreakpoint(context, testClass);
@@ -169,7 +166,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
 
         // CamelContext(s) startup
         CamelAnnotationsHandler.handleCamelContextStartup(context, testClass);
-        
+
         return context;
     }
 
@@ -177,49 +174,52 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         new XmlBeanDefinitionReader(context).loadBeanDefinitions(mergedConfig.getLocations());
         new AnnotatedBeanDefinitionReader(context).register(mergedConfig.getClasses());
     }
-    
+
     protected void loadBeanDefinitions(GenericApplicationContext context, String... locations) {
         new XmlBeanDefinitionReader(context).loadBeanDefinitions(locations);
     }
-    
+
     /**
      * Creates and starts the Spring context while optionally starting any loaded Camel contexts.
      *
-     * @param testClass the test class that is being executed
-     * @return the loaded Spring context
+     * @param  testClass the test class that is being executed
+     * @return           the loaded Spring context
      */
     protected GenericApplicationContext createContext(Class<?> testClass, MergedContextConfiguration mergedConfig) {
         ApplicationContext parentContext = null;
         GenericApplicationContext routeExcludingContext = null;
-        
+
         if (mergedConfig != null) {
             parentContext = mergedConfig.getParentApplicationContext();
         }
-        
+
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
             Class<?>[] excludedClasses = testClass.getAnnotation(ExcludeRoutes.class).value();
-            
+
             if (excludedClasses.length > 0) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Setting up package scanning excluded classes as ExcludeRoutes "
-                            + "annotation was found. Excluding [" + StringUtils.arrayToCommaDelimitedString(excludedClasses) + "].");
+                              + "annotation was found. Excluding [" + StringUtils.arrayToCommaDelimitedString(excludedClasses)
+                              + "].");
                 }
-                
+
                 if (parentContext == null) {
                     routeExcludingContext = new GenericApplicationContext();
                 } else {
                     routeExcludingContext = new GenericApplicationContext(parentContext);
                 }
-                routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
+                routeExcludingContext.registerBeanDefinition("excludingResolver",
+                        new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
                 routeExcludingContext.refresh();
-                
-                ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
+
+                ExcludingPackageScanClassResolver excludingResolver
+                        = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
                 List<Class<?>> excluded = Arrays.asList(excludedClasses);
                 excludingResolver.setExcludedClasses(new HashSet<>(excluded));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Not enabling package scanning excluded classes as ExcludeRoutes "
-                            + "annotation was found but no classes were excluded.");
+                              + "annotation was found but no classes were excluded.");
                 }
             }
         }
@@ -235,16 +235,16 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 context = new GenericApplicationContext();
             }
         }
-        
+
         return context;
     }
 
     /**
-     * Returns the class under test in order to enable inspection of annotations while the
-     * Spring context is being created.
+     * Returns the class under test in order to enable inspection of annotations while the Spring context is being
+     * created.
      * 
      * @return the test class that is being executed
-     * @see CamelSpringTestHelper
+     * @see    CamelSpringTestHelper
      */
     protected Class<?> getTestClass() {
         return CamelSpringTestHelper.getTestClass();
@@ -254,7 +254,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      * Returns the test method under test.
      *
      * @return the method that is being executed
-     * @see CamelSpringTestHelper
+     * @see    CamelSpringTestHelper
      */
     protected Method getTestMethod() {
         return CamelSpringTestHelper.getTestMethod();

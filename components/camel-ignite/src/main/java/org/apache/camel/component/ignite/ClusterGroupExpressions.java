@@ -23,7 +23,7 @@ import org.apache.ignite.cluster.ClusterGroup;
  * Convenient set of commonly used {@link ClusterGroupExpression}s.
  */
 public final class ClusterGroupExpressions {
-    
+
     public static final ClusterGroupExpression FOR_CLIENTS = new ClusterGroupExpression() {
         @Override
         public ClusterGroup getClusterGroup(Ignite ignite) {
@@ -80,6 +80,7 @@ public final class ClusterGroupExpressions {
         }
     };
 
-    private ClusterGroupExpressions() { }
-    
+    private ClusterGroupExpressions() {
+    }
+
 }

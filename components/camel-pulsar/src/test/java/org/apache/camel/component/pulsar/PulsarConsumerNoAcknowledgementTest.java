@@ -38,7 +38,8 @@ public class PulsarConsumerNoAcknowledgementTest extends PulsarTestSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&ackTimeoutMillis=1000")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                    + "&ackTimeoutMillis=1000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -84,7 +85,8 @@ public class PulsarConsumerNoAcknowledgementTest extends PulsarTestSupport {
     public void testAMessageIsConsumedMultipleTimes() throws Exception {
         to.expectedMinimumMessageCount(2);
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer
+                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
         producer.send("Hello World!");
 

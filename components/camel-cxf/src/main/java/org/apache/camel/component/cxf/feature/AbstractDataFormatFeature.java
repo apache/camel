@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractDataFormatFeature extends AbstractFeature {
     protected static final Collection<Class<?>> REMOVING_FAULT_IN_INTERCEPTORS;
-    
+
     static {
         REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<>();
         REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
@@ -44,10 +44,11 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     // The interceptors which need to be keeped
     protected Set<String> inInterceptorNames = new HashSet<>();
     protected Set<String> outInterceptorNames = new HashSet<>();
+
     protected abstract Logger getLogger();
 
-
-    protected void removeInterceptorWhichIsOutThePhases(List<Interceptor<? extends Message>> interceptors, String[] phaseNames, Set<String> needToBeKept) {
+    protected void removeInterceptorWhichIsOutThePhases(
+            List<Interceptor<? extends Message>> interceptors, String[] phaseNames, Set<String> needToBeKept) {
         for (Interceptor<? extends Message> i : interceptors) {
             boolean outside = false;
             if (i instanceof PhaseInterceptor) {
@@ -72,8 +73,9 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
         }
     }
 
-    protected void removeInterceptors(List<Interceptor<? extends Message>> interceptors, 
-                                      Collection<Class<?>> toBeRemovedInterceptors) {
+    protected void removeInterceptors(
+            List<Interceptor<? extends Message>> interceptors,
+            Collection<Class<?>> toBeRemovedInterceptors) {
         for (Interceptor<? extends Message> interceptor : interceptors) {
             if (toBeRemovedInterceptors.contains(interceptor.getClass())) {
                 getLogger().info("removing the interceptor " + interceptor);
@@ -81,39 +83,40 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
             }
         }
     }
-    
-    protected void removeInterceptor(List<Interceptor<? extends Message>> interceptors, 
-                                     Class<? extends Interceptor<? extends Message>> cls) {
+
+    protected void removeInterceptor(
+            List<Interceptor<? extends Message>> interceptors,
+            Class<? extends Interceptor<? extends Message>> cls) {
         for (Interceptor<? extends Message> interceptor : interceptors) {
             if (interceptor.getClass().equals(cls)) {
                 interceptors.remove(interceptor);
             }
-        }        
+        }
     }
-    
+
     protected void removeFaultInInterceptorFromClient(Client client) {
         removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
         removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
         removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
         removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
     }
-    
+
     public void addInIntercepters(List<Interceptor<? extends Message>> interceptors) {
         for (Interceptor<? extends Message> interceptor : interceptors) {
             inInterceptorNames.add(interceptor.getClass().getName());
         }
     }
-    
+
     public void addOutInterceptors(List<Interceptor<? extends Message>> interceptors) {
         for (Interceptor<? extends Message> interceptor : interceptors) {
             outInterceptorNames.add(interceptor.getClass().getName());
         }
     }
-    
+
     public Set<String> getInInterceptorNames() {
         return inInterceptorNames;
     }
-    
+
     public Set<String> getOutInterceptorNames() {
         return outInterceptorNames;
     }

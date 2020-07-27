@@ -25,7 +25,8 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
      * Used for selecting if the memory limit is <tt>committed</tt> or <tt>maximum</tt> heap memory setting.
      */
     enum SpoolUsedHeapMemoryLimit {
-        Committed, Max
+        Committed,
+        Max
     }
 
     @ManagedAttribute(description = "Whether stream caching is enabled")

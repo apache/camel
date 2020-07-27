@@ -29,9 +29,8 @@ import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A {@link Producer} that defers being started, until {@link org.apache.camel.CamelContext} has been started, this
- * ensures that the producer is able to adapt to changes that may otherwise occur during starting
- * CamelContext. If we do not defer starting the producer it may not adapt to those changes, and
- * send messages to wrong endpoints.
+ * ensures that the producer is able to adapt to changes that may otherwise occur during starting CamelContext. If we do
+ * not defer starting the producer it may not adapt to those changes, and send messages to wrong endpoints.
  */
 public class DeferProducer extends ServiceSupport implements Producer, AsyncProcessor {
 

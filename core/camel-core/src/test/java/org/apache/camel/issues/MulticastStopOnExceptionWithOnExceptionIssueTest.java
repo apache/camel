@@ -104,7 +104,8 @@ public class MulticastStopOnExceptionWithOnExceptionIssueTest extends ContextTes
             public void configure() throws Exception {
                 onException(Exception.class).handled(true).to("log:onException").to("mock:end4").transform(constant("Stop!"));
 
-                from("direct:start").multicast().stopOnException().to("mock:end1", "mock:end2").end().to("mock:end3").transform(constant("Hello to you too!"));
+                from("direct:start").multicast().stopOnException().to("mock:end1", "mock:end2").end().to("mock:end3")
+                        .transform(constant("Hello to you too!"));
             }
         };
     }

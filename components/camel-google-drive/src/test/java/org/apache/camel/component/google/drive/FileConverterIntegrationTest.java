@@ -35,38 +35,39 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FileConverterIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileConverterIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-    
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/convertertest");
         super.setUp();
     }
-    
+
     @Test
     public void testFileConverter() throws Exception {
         template.sendBodyAndHeader("file://target/convertertest", "Hello!", "CamelFileName", "greeting.txt");
-    
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         assertMockEndpointsSatisfied();
- 
+
         File file = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.File.class);
-        
+
         assertEquals("Hello!", context.getTypeConverter().convertTo(String.class, mock.getReceivedExchanges().get(0), file));
 
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("file://target/convertertest?noop=true")
-                    .convertBodyTo(File.class)
-                    .to("google-drive://drive-files/insert?inBody=content")
-                    .to("mock:result");
+                        .convertBodyTo(File.class)
+                        .to("google-drive://drive-files/insert?inBody=content")
+                        .to("mock:result");
             }
         };
     }

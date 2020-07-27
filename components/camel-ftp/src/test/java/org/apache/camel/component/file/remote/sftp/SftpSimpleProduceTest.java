@@ -32,7 +32,8 @@ public class SftpSimpleProduceTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin",
+                "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue(file.exists(), "File should exist: " + file);
@@ -45,7 +46,9 @@ public class SftpSimpleProduceTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(
+                "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin", "Bye World",
+                Exchange.FILE_NAME, "bye.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/bye.txt");
         assertTrue(file.exists(), "File should exist: " + file);
@@ -58,8 +61,10 @@ public class SftpSimpleProduceTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin", "Farewell World", Exchange.FILE_NAME,
-                                   "farewell.txt");
+        template.sendBodyAndHeader(
+                "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin",
+                "Farewell World", Exchange.FILE_NAME,
+                "farewell.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/myother/farewell.txt");
         assertTrue(file.exists(), "File should exist: " + file);

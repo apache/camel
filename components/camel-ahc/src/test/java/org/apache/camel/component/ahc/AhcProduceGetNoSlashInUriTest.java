@@ -41,9 +41,9 @@ public class AhcProduceGetNoSlashInUriTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // no // slash in uri should still work
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        // no // slash in uri should still work
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .transform(constant("Bye World"));

@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 /**
- * The JAXB POJOs for the
- * <a href="http://camel.apache.org/transformer.html">Transformers</a> used to
- * transform message contents according to declared data types inside
- * <a href="http://camel.apache.org/components.html">components</a>
+ * The JAXB POJOs for the <a href="http://camel.apache.org/transformer.html">Transformers</a> used to transform message
+ * contents according to declared data types inside <a href="http://camel.apache.org/components.html">components</a>
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                     elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.validator;

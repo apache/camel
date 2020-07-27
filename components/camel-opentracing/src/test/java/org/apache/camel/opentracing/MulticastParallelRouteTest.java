@@ -24,13 +24,13 @@ import org.junit.jupiter.api.Test;
 public class MulticastParallelRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(2).addLogMessage("routing at b"),
-        new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setParentId(2).addLogMessage("routing at c"),
-        new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(2).addLogMessage("routing at b"),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(2).addLogMessage("routing at c"),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public MulticastParallelRouteTest() {
@@ -52,19 +52,19 @@ public class MulticastParallelRouteTest extends CamelOpenTracingTestSupport {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .multicast().parallelProcessing()
-                    .to("seda:b", "seda:c")
-                    .end()
-                    .log("End of routing");
+                        .log("routing at ${routeId}")
+                        .multicast().parallelProcessing()
+                        .to("seda:b", "seda:c")
+                        .end()
+                        .log("End of routing");
 
                 from("seda:b").routeId("b")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(0,100)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

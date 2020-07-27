@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
     public ResequenceReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (ResequenceDefinition)definition);
+        super(route, (ResequenceDefinition) definition);
     }
 
     @Override
@@ -61,11 +61,10 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
     }
 
     /**
-     * Creates a batch {@link Resequencer} instance applying the given
-     * <code>config</code>.
+     * Creates a batch {@link Resequencer} instance applying the given <code>config</code>.
      *
-     * @param config batch resequencer configuration.
-     * @return the configured batch resequencer.
+     * @param  config    batch resequencer configuration.
+     * @return           the configured batch resequencer.
      * @throws Exception can be thrown
      */
     @SuppressWarnings("deprecation")
@@ -95,11 +94,10 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
     }
 
     /**
-     * Creates a {@link StreamResequencer} instance applying the given
-     * <code>config</code>.
+     * Creates a {@link StreamResequencer} instance applying the given <code>config</code>.
      *
-     * @param config stream resequencer configuration.
-     * @return the configured stream resequencer.
+     * @param  config    stream resequencer configuration.
+     * @return           the configured stream resequencer.
      * @throws Exception can be thrwon
      */
     protected StreamResequencer createStreamResequencer(StreamResequencerConfig config) throws Exception {

@@ -35,7 +35,7 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
     @UriParam(label = "sign", defaultValue = "true")
     private Boolean includeContent = Boolean.TRUE;
 
-    @UriParam(label = "sign", javaType = "java.lang.String", 
+    @UriParam(label = "sign", javaType = "java.lang.String",
               description = "Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma")
     private List<SignerInfo> signer = new ArrayList<>();
 
@@ -48,9 +48,8 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
     }
 
     /**
-     * Indicates whether the signed content should be included into the Signed
-     * Data instance. If false then a detached Signed Data instance is created
-     * in the header CamelCryptoCmsSignedData.
+     * Indicates whether the signed content should be included into the Signed Data instance. If false then a detached
+     * Signed Data instance is created in the header CamelCryptoCmsSignedData.
      */
     public void setIncludeContent(Boolean includeContent) {
         this.includeContent = includeContent;

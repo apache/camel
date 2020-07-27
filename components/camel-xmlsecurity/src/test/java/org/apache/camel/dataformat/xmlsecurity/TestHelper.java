@@ -44,37 +44,38 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestHelper {
-    
-    protected static final String NS_XML_FRAGMENT = "<ns1:cheesesites xmlns:ns1=\"http://cheese.xmlsecurity.camel.apache.org/\">" 
-        + "<netherlands>"
-        + "<source>cow</source>"
-        + "<cheese>gouda</cheese>"
-        + "</netherlands>"
-        + "<italy>"
-        + "<source>cow</source>"
-        + "<cheese>gorgonzola</cheese>"
-        + "</italy>"
-        + "<france>"
-        + "<source>goat</source>"
-        + "<cheese>brie</cheese>"
-        + "</france>"
-        + "</ns1:cheesesites>";
-    
+
+    protected static final String NS_XML_FRAGMENT
+            = "<ns1:cheesesites xmlns:ns1=\"http://cheese.xmlsecurity.camel.apache.org/\">"
+              + "<netherlands>"
+              + "<source>cow</source>"
+              + "<cheese>gouda</cheese>"
+              + "</netherlands>"
+              + "<italy>"
+              + "<source>cow</source>"
+              + "<cheese>gorgonzola</cheese>"
+              + "</italy>"
+              + "<france>"
+              + "<source>goat</source>"
+              + "<cheese>brie</cheese>"
+              + "</france>"
+              + "</ns1:cheesesites>";
+
     protected static final String XML_FRAGMENT = "<cheesesites>"
-        + "<netherlands>"
-        + "<source>cow</source>"
-        + "<cheese>gouda</cheese>"
-        + "</netherlands>"
-        + "<italy>"
-        + "<source>cow</source>"
-        + "<cheese>gorgonzola</cheese>"
-        + "</italy>"
-        + "<france>"
-        + "<source>goat</source>"
-        + "<cheese>brie</cheese>"
-        + "</france>"
-        + "</cheesesites>";
-    
+                                                 + "<netherlands>"
+                                                 + "<source>cow</source>"
+                                                 + "<cheese>gouda</cheese>"
+                                                 + "</netherlands>"
+                                                 + "<italy>"
+                                                 + "<source>cow</source>"
+                                                 + "<cheese>gorgonzola</cheese>"
+                                                 + "</italy>"
+                                                 + "<france>"
+                                                 + "<source>goat</source>"
+                                                 + "<cheese>brie</cheese>"
+                                                 + "</france>"
+                                                 + "</cheesesites>";
+
     static final boolean HAS_3DES;
     static {
         boolean ok = false;
@@ -87,18 +88,19 @@ public class TestHelper {
         }
         HAS_3DES = ok;
     }
-    
+
     static final boolean UNRESTRICTED_POLICIES_INSTALLED;
     static {
         boolean ok = false;
         try {
-            byte[] data = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+            byte[] data = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
 
             SecretKey key192 = new SecretKeySpec(
-                new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                    new byte[] {
+                            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                             0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17},
-                            "AES");
+                            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 },
+                    "AES");
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.ENCRYPT_MODE, key192);
             c.doFinal(data);
@@ -108,7 +110,7 @@ public class TestHelper {
         }
         UNRESTRICTED_POLICIES_INSTALLED = ok;
     }
-    
+
     Logger log = LoggerFactory.getLogger(TestHelper.class);
 
     protected void sendText(final String fragment, CamelContext context) throws Exception {
@@ -124,7 +126,7 @@ public class TestHelper {
             }
         });
     }
-      
+
     protected Document testEncryption(String fragment, CamelContext context) throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:encrypted", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
@@ -139,12 +141,11 @@ public class TestHelper {
         assertTrue(hasEncryptedData(inDoc), "The XML message has no encrypted data.");
         return inDoc;
     }
-    
 
     protected void testEncryption(CamelContext context) throws Exception {
         testEncryption(XML_FRAGMENT, context);
     }
-    
+
     protected void testDecryption(String fragment, CamelContext context) throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:decrypted", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
@@ -158,17 +159,18 @@ public class TestHelper {
             logMessage(exchange, inDoc);
         }
         assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
-        
+
         // verify that the decrypted message matches what was sent
         Diff xmlDiff = DiffBuilder.compare(fragment).withTest(inDoc).checkForIdentical().build();
-        
-        assertFalse(xmlDiff.hasDifferences(), "The decrypted document does not match the control document:\n" + xmlDiff.toString());
+
+        assertFalse(xmlDiff.hasDifferences(),
+                "The decrypted document does not match the control document:\n" + xmlDiff.toString());
     }
-    
+
     protected void testDecryption(CamelContext context) throws Exception {
         testDecryption(XML_FRAGMENT, context);
     }
-    
+
     protected void testDecryptionNoEncryptedKey(CamelContext context) throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:decrypted", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
@@ -181,24 +183,24 @@ public class TestHelper {
         log.info(xmlStr);
         assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
     }
-    
+
     private boolean hasEncryptedData(Document doc) throws Exception {
         NodeList nodeList = doc.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
         return nodeList.getLength() > 0;
     }
-    
+
     private void logMessage(Exchange exchange, Document inDoc) throws Exception {
         XmlConverter converter = new XmlConverter();
         String xmlStr = converter.toString(inDoc, exchange);
-        log.debug(xmlStr);   
+        log.debug(xmlStr);
     }
-    
+
     private Document getDocumentForInMessage(Exchange exchange) {
         byte[] body = exchange.getIn().getBody(byte[].class);
         Document d = createDocumentfromInputStream(new ByteArrayInputStream(body), exchange.getContext());
         return d;
     }
-    
+
     private Document createDocumentfromInputStream(InputStream is, CamelContext context) {
         return context.getTypeConverter().convertTo(Document.class, is);
     }

@@ -59,18 +59,19 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
     private static TTransport clientTransport;
     private static TServer server;
     private static TProtocol protocol;
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({ "rawtypes" })
     private static Calculator.Processor processor;
 
     @BeforeEach
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
 
         TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
 
         sslParams.setKeyStore(KEY_STORE_PATH, SECURITY_STORE_PASSWORD);
-        serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, InetAddress.getByName("localhost"), sslParams);
+        serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT,
+                InetAddress.getByName("localhost"), sslParams);
         ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(serverTransport);
 
         args.processor(processor);

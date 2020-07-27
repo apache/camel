@@ -34,7 +34,8 @@ public class LocalTimeFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new LocalTimePatternFormat(formattingOptions.getPattern(),
+        return new LocalTimePatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getTimezone(),
                 formattingOptions.getLocale());
     }

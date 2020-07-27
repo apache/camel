@@ -36,20 +36,20 @@ public class CamelProxyTest extends TestSupport {
         String reply = sender.hello("World");
 
         assertEquals("Hello World", reply);
-        
+
         // test sending inOnly message
         MyProxySender anotherSender = ac.getBean("myAnotherProxySender", MyProxySender.class);
         SpringCamelContext context = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         MockEndpoint result = resolveMandatoryEndpoint(context, "mock:result", MockEndpoint.class);
         result.expectedBodiesReceived("Hello my friends!");
-        
+
         anotherSender.greeting("Hello my friends!");
         result.assertIsSatisfied();
-        
+
         result.reset();
         // test sending inOnly message with other sender
         MyProxySender myProxySenderWithCamelContextId = ac.getBean("myProxySenderWithCamelContextId", MyProxySender.class);
-        
+
         result.expectedBodiesReceived("Hello my friends again!");
         myProxySenderWithCamelContextId.greeting("Hello my friends again!");
         result.assertIsSatisfied();
@@ -57,5 +57,5 @@ public class CamelProxyTest extends TestSupport {
         // we're done so let's properly close the application context
         IOHelper.close(ac);
     }
-    
+
 }

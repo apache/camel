@@ -46,11 +46,16 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/hello").apiDocs(false).consumes("application/json").produces("application/json").get("/hi/{name}").description("Saying hi").param().name("name")
-                    .type(RestParamType.path).dataType("string").description("Who is it").endParam().to("log:hi").get("/bye/{name}").apiDocs(true).description("Saying bye").param()
-                    .name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam().responseMessage().code(200).message("A reply message")
-                    .endResponseMessage().to("log:bye").post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml").param()
-                    .name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam().to("log:bye");
+                rest("/hello").apiDocs(false).consumes("application/json").produces("application/json").get("/hi/{name}")
+                        .description("Saying hi").param().name("name")
+                        .type(RestParamType.path).dataType("string").description("Who is it").endParam().to("log:hi")
+                        .get("/bye/{name}").apiDocs(true).description("Saying bye").param()
+                        .name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
+                        .responseMessage().code(200).message("A reply message")
+                        .endResponseMessage().to("log:bye").post("/bye").description("To update the greeting message")
+                        .consumes("application/xml").produces("application/xml").param()
+                        .name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting")
+                        .endParam().to("log:bye");
             }
         };
     }
@@ -59,13 +64,14 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
         OasDocument openApi = null;
-        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
-        
+        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
+
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -79,21 +85,21 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));
         assertFalse(json.contains("\"/hello/hi/{name}\""));
-        
+
         context.stop();
     }
 
-    
     @Test
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         RestOpenApiReader reader = new RestOpenApiReader();
         OasDocument openApi = null;
-        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
-        
+        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
+
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -107,7 +113,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));
         assertFalse(json.contains("\"/hello/hi/{name}\""));
-        
+
         context.stop();
     }
 

@@ -30,8 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SessionTransactionSynchronization is called at the completion of each
- * {@link org.apache.camel.Exchange}.
+ * SessionTransactionSynchronization is called at the completion of each {@link org.apache.camel.Exchange}.
  */
 public class SessionBatchTransactionSynchronization implements Synchronization {
     private static final Logger LOG = LoggerFactory.getLogger(SessionBatchTransactionSynchronization.class);
@@ -43,7 +42,8 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
     private final TimedTaskManager timedTaskManager;
 
     public SessionBatchTransactionSynchronization(TimedTaskManager timedTaskManager,
-                                                  Session session, TransactionCommitStrategy commitStrategy, long batchTransactionTimeout) {
+                                                  Session session, TransactionCommitStrategy commitStrategy,
+                                                  long batchTransactionTimeout) {
         this.timedTaskManager = timedTaskManager;
         this.session = session;
         if (commitStrategy == null) {
@@ -123,8 +123,7 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
         }
 
         /**
-         * When the timer executes, either commits or rolls back the session
-         * transaction.
+         * When the timer executes, either commits or rolls back the session transaction.
          */
         @Override
         public void run() {
@@ -138,7 +137,9 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
                     }
                     ((BatchTransactionCommitStrategy) commitStrategy).reset();
                 } catch (Exception e) {
-                    LOG.warn("Failed to commit the session during timeout: " + e.getMessage() + ". This exception will be ignored.", e);
+                    LOG.warn("Failed to commit the session during timeout: " + e.getMessage()
+                             + ". This exception will be ignored.",
+                            e);
                 }
             } finally {
                 lock.writeLock().unlock();

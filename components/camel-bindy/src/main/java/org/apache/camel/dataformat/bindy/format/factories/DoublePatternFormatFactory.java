@@ -38,7 +38,8 @@ public class DoublePatternFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new DoublePatternFormat(formattingOptions.getPattern(),
+        return new DoublePatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getLocale());
     }
 

@@ -39,7 +39,7 @@ public class CamelMessagingHeadersInjectAdapterTest {
     public void cannotGetIterator() {
         CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map, true);
         assertThrows(UnsupportedOperationException.class,
-            () -> adapter.iterator());
+                () -> adapter.iterator());
     }
 
     @Test

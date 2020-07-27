@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
- * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the
- * Spring {@link org.springframework.context.ApplicationContext}.
+ * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the Spring
+ * {@link org.springframework.context.ApplicationContext}.
  */
 public class ContextScanRouteBuilderFinder {
     private static final Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
@@ -36,7 +36,8 @@ public class ContextScanRouteBuilderFinder {
     private final PackageScanFilter filter;
     private final boolean includeNonSingletons;
 
-    public ContextScanRouteBuilderFinder(SpringCamelContext camelContext, PackageScanFilter filter, boolean includeNonSingletons) {
+    public ContextScanRouteBuilderFinder(SpringCamelContext camelContext, PackageScanFilter filter,
+                                         boolean includeNonSingletons) {
         this.applicationContext = camelContext.getApplicationContext();
         this.filter = filter;
         this.includeNonSingletons = includeNonSingletons;

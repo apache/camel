@@ -52,14 +52,15 @@ public class FileConsumerMoveAndMoveFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/failed?move=moved&initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kabom".equals(body)) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                }).convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/failed?move=moved&initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kabom".equals(body)) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -40,10 +40,10 @@ public class NettyCamelWebsiteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                    .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-                    .to("netty-http:http://camel.apache.org/")
-                    .to("log:test")
-                    .to("mock:test");
+                        .setHeader(Exchange.HTTP_METHOD, constant("GET"))
+                        .to("netty-http:http://camel.apache.org/")
+                        .to("log:test")
+                        .to("mock:test");
             }
         };
     }

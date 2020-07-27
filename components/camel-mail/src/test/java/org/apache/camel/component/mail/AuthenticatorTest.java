@@ -40,8 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AuthenticatorTest extends CamelTestSupport {
 
     /**
-     * Checks that the authenticator does dynamically return passwords for the
-     * smtp endpoint.
+     * Checks that the authenticator does dynamically return passwords for the smtp endpoint.
      */
     @Test
     public void testSendAndReceiveMails() throws Exception {
@@ -121,7 +120,8 @@ public class AuthenticatorTest extends CamelTestSupport {
 
                 from("pop3://localhost?initialDelay=100&delay=100&authenticator=#authPop3").removeHeader("to")
                         .to("smtp://localhost?authenticator=#authSmtp&to=james4@localhost");
-                from("imap://localhost?initialDelay=200&delay=100&authenticator=#authImap").convertBodyTo(String.class).to("mock:result");
+                from("imap://localhost?initialDelay=200&delay=100&authenticator=#authImap").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

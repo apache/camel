@@ -111,7 +111,7 @@ public class JGroupsComponentTest extends CamelTestSupport {
     public void shouldCreateChannel() throws Exception {
         // When
         JGroupsEndpoint endpoint = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
-        JGroupsComponent component = (JGroupsComponent)endpoint.getComponent();
+        JGroupsComponent component = (JGroupsComponent) endpoint.getComponent();
 
         // Then
         assertNotNull(component.getChannel());

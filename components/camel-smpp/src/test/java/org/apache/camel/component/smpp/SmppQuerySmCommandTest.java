@@ -38,15 +38,15 @@ public class SmppQuerySmCommandTest {
     private SMPPSession session;
     private SmppConfiguration config;
     private SmppQuerySmCommand command;
-    
+
     @BeforeEach
     public void setUp() {
         session = mock(SMPPSession.class);
         config = new SmppConfiguration();
-        
+
         command = new SmppQuerySmCommand(session, config);
     }
-    
+
     @Test
     public void executeWithConfigurationData() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -54,15 +54,15 @@ public class SmppQuerySmCommandTest {
         exchange.getIn().setHeader(SmppConstants.ID, "1");
         when(session.queryShortMessage("1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616"))
                 .thenReturn(new QuerySmResult("-300101010000004+", MessageState.DELIVERED, (byte) 0));
-        
+
         command.execute(exchange);
-        
+
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals("DELIVERED", exchange.getMessage().getHeader(SmppConstants.MESSAGE_STATE));
         assertEquals((byte) 0, exchange.getMessage().getHeader(SmppConstants.ERROR));
         assertNotNull(exchange.getMessage().getHeader(SmppConstants.FINAL_DATE));
     }
-    
+
     @Test
     public void execute() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -73,9 +73,9 @@ public class SmppQuerySmCommandTest {
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
         when(session.queryShortMessage("1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818"))
                 .thenReturn(new QuerySmResult("-300101010000004+", MessageState.DELIVERED, (byte) 0));
-        
+
         command.execute(exchange);
-        
+
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
         assertEquals("DELIVERED", exchange.getMessage().getHeader(SmppConstants.MESSAGE_STATE));
         assertEquals((byte) 0, exchange.getMessage().getHeader(SmppConstants.ERROR));

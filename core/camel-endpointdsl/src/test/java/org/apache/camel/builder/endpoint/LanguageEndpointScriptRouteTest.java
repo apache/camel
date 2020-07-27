@@ -40,9 +40,9 @@ public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         context.createFluentProducerTemplate()
-            .to(direct("start"))
-            .withBody("World")
-            .send();
+                .to(direct("start"))
+                .withBody("World")
+                .send();
 
         assertMockEndpointsSatisfied();
     }

@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test that uses a dynamic proxy for CustomerService to send a request as SOAP
- * and work with a static return SOAP message.
+ * Test that uses a dynamic proxy for CustomerService to send a request as SOAP and work with a static return SOAP
+ * message.
  */
 public class SoapClientTest extends CamelTestSupport {
 

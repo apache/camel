@@ -29,11 +29,12 @@ import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.Validator;
 
-public abstract class ValidatorReifier<T> extends AbstractReifier  {
+public abstract class ValidatorReifier<T> extends AbstractReifier {
 
     private static final Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> VALIDATORS;
     static {
-        Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>>> map
+                = new HashMap<>();
         map.put(CustomValidatorDefinition.class, CustomValidatorReifier::new);
         map.put(EndpointValidatorDefinition.class, EndpointValidatorReifier::new);
         map.put(PredicateValidatorDefinition.class, PredicateValidatorReifier::new);
@@ -48,12 +49,16 @@ public abstract class ValidatorReifier<T> extends AbstractReifier  {
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<?> processorClass, BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> creator) {
+    public static void registerReifier(
+            Class<?> processorClass,
+            BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> creator) {
         VALIDATORS.put(processorClass, creator);
     }
 
-    public static ValidatorReifier<? extends ValidatorDefinition> reifier(CamelContext camelContext, ValidatorDefinition definition) {
-        BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> reifier = VALIDATORS.get(definition.getClass());
+    public static ValidatorReifier<? extends ValidatorDefinition> reifier(
+            CamelContext camelContext, ValidatorDefinition definition) {
+        BiFunction<CamelContext, ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> reifier
+                = VALIDATORS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(camelContext, definition);
         }

@@ -25,10 +25,8 @@ import org.apache.pulsar.client.api.PulsarClientException;
 /**
  * Acknowledge the receipt of a message using the Pulsar consumer.
  * <p>
- * Available on the {@link Exchange} if
- * {@link PulsarConfiguration#isAllowManualAcknowledgement()} is true. An
- * alternative to the default may be provided by implementing
- * {@link PulsarMessageReceiptFactory}.
+ * Available on the {@link Exchange} if {@link PulsarConfiguration#isAllowManualAcknowledgement()} is true. An
+ * alternative to the default may be provided by implementing {@link PulsarMessageReceiptFactory}.
  */
 public interface PulsarMessageReceipt {
 
@@ -40,8 +38,7 @@ public interface PulsarMessageReceipt {
     void acknowledge() throws PulsarClientException;
 
     /**
-     * Acknowledge receipt of all of the messages in the stream up to and
-     * including this message synchronously.
+     * Acknowledge receipt of all of the messages in the stream up to and including this message synchronously.
      *
      * @see org.apache.pulsar.client.api.Consumer#acknowledgeCumulative(MessageId)
      */
@@ -55,8 +52,7 @@ public interface PulsarMessageReceipt {
     CompletableFuture<Void> acknowledgeAsync();
 
     /**
-     * Acknowledge receipt of all of the messages in the stream up to and
-     * including this message asynchronously.
+     * Acknowledge receipt of all of the messages in the stream up to and including this message asynchronously.
      *
      * @see org.apache.pulsar.client.api.Consumer#acknowledgeCumulativeAsync(MessageId)
      */
@@ -65,10 +61,8 @@ public interface PulsarMessageReceipt {
     /**
      * Acknowledge the failure to process this message.
      *
-     * @see org.apache.pulsar.client.api.Consumer#negativeAcknowledge(MessageId)
-     *      Note: Available in Puslar 2.4.0. Implementations with earlier
-     *      versions should return an
-     *      {@link java.lang.UnsupportedOperationException}.
+     * @see org.apache.pulsar.client.api.Consumer#negativeAcknowledge(MessageId) Note: Available in Puslar 2.4.0.
+     *      Implementations with earlier versions should return an {@link java.lang.UnsupportedOperationException}.
      */
     void negativeAcknowledge();
 

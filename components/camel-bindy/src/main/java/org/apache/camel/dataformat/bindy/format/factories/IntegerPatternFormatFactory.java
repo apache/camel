@@ -38,7 +38,8 @@ public class IntegerPatternFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new IntegerPatternFormat(formattingOptions.getPattern(),
+        return new IntegerPatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getLocale());
     }
 

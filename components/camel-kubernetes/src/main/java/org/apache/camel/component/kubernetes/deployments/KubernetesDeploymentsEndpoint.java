@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Deployments and get notified on Deployment changes.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "kubernetes-deployments", title = "Kubernetes Deployments", syntax = "kubernetes-deployments:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.20.0", scheme = "kubernetes-deployments", title = "Kubernetes Deployments",
+             syntax = "kubernetes-deployments:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesDeploymentsEndpoint(String uri, KubernetesDeploymentsComponent component, KubernetesConfiguration config) {

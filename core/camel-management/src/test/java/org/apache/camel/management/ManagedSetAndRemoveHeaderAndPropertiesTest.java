@@ -83,14 +83,14 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .setHeader("foo", constant("bar")).id("setFoo")
-                    .setProperty("beer", constant("yes")).id("setBeer")
-                    .removeHeader("foo").id("unsetFoo")
-                    .removeHeaders("foo").id("unsetFoos")
-                    .removeProperty("beer").id("unsetBeer")
-                    .removeProperties("beer").id("unsetBeers")
-                    .to("log:foo").id("logFoo")
-                    .to("mock:result").id("mockResult");
+                        .setHeader("foo", constant("bar")).id("setFoo")
+                        .setProperty("beer", constant("yes")).id("setBeer")
+                        .removeHeader("foo").id("unsetFoo")
+                        .removeHeaders("foo").id("unsetFoos")
+                        .removeProperty("beer").id("unsetBeer")
+                        .removeProperties("beer").id("unsetBeers")
+                        .to("log:foo").id("logFoo")
+                        .to("mock:result").id("mockResult");
             }
         };
     }

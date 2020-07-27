@@ -52,11 +52,10 @@ public class MyBatisBeanInsertTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis-bean:AccountService:insertBeanAccount")
-                    .to("mock:result");
+                        .to("mybatis-bean:AccountService:insertBeanAccount")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

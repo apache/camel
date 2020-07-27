@@ -41,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The tests are Disabledd by default, because they are OS-specific. On demand
- * they can be run manually to validate the documentation examples for that OS.
+ * The tests are Disabledd by default, because they are OS-specific. On demand they can be run manually to validate the
+ * documentation examples for that OS.
  */
 
 public class ExecDocumentationExamplesTest extends CamelTestSupport {
@@ -54,7 +54,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     private static final String ANT_BUILD_FILE_CONTENT = buildAntFileContent();
 
     private static final String TEST_MSG = "Hello Camel Exec!";
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ExecDocumentationExamplesTest.class);
 
     @Produce("direct:javaVersion")
@@ -76,7 +76,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     @Disabled
     public void testExecLinuxWordCount() throws Exception {
         // use type conversion here
-        ExecResult body = templateWordCount.requestBody((Object)"test", ExecResult.class);
+        ExecResult body = templateWordCount.requestBody((Object) "test", ExecResult.class);
         assertNotNull(body);
 
     }
@@ -87,7 +87,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     @Test
     @Disabled
     public void testJavaVersion() throws Exception {
-        ExecResult body = templateJavaVersion.requestBody((Object)"test", ExecResult.class);
+        ExecResult body = templateJavaVersion.requestBody((Object) "test", ExecResult.class);
         InputStream out = body.getStdout();
         InputStream err = body.getStderr();
         // Strange that Sun Java 1.5 writes the -version in the syserr
@@ -101,7 +101,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     @Test
     @Disabled
     public void testWinJavaVersionWorkingDir() throws Exception {
-        ExecResult body = templateJavaVersionWorkingDir.requestBody((Object)"test", ExecResult.class);
+        ExecResult body = templateJavaVersionWorkingDir.requestBody((Object) "test", ExecResult.class);
         InputStream out = body.getStdout();
         InputStream err = body.getStderr();
         // Strange that Sun Java 1.5 writes the -version in the syserr
@@ -122,7 +122,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         f.createNewFile();
         FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT, Charset.defaultCharset());
         assertTrue(f.exists(), "You must create a sample build file!");
-        ExecResult body = templateExecAnt.requestBody((Object)"test", ExecResult.class);
+        ExecResult body = templateExecAnt.requestBody((Object) "test", ExecResult.class);
         String stdout = IOUtils.toString(body.getStdout(), Charset.defaultCharset());
         assertNull(body.getStderr());
         assertTrue(stdout.contains(TEST_MSG), "The ant script should print" + TEST_MSG);
@@ -140,7 +140,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT, Charset.defaultCharset());
         assertTrue(f.exists(), "You must create a sample build file!");
         // use type conversion here
-        InputStream body = templateExecAntWithOutFile.requestBody((Object)"test", InputStream.class);
+        InputStream body = templateExecAntWithOutFile.requestBody((Object) "test", InputStream.class);
         String bodyString = IOUtils.toString(body, Charset.defaultCharset());
         assertTrue(bodyString.contains(TEST_MSG), "The ant script should print" + TEST_MSG);
         f.delete();
@@ -168,22 +168,25 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
                 // example 1 in the component docs
                 from("direct:javaVersion").to("exec:java?args=-version -server");
                 // example 2 in the component docs
-                from("direct:javaVersionWorkingDir").to("exec:" + buildJavaExecutablePath() + "?args=-version -Duser.name=Camel&workingDir=C:/temp");
+                from("direct:javaVersionWorkingDir")
+                        .to("exec:" + buildJavaExecutablePath() + "?args=-version -Duser.name=Camel&workingDir=C:/temp");
 
                 // advanced, test ant
                 from("direct:execAnt").to("exec:ant.bat?args=-f " + ANT_BUILD_FILE_NAME);
 
                 // advanced, test ant with out file
-                from("direct:execAntWithOutFile").to("exec:ant.bat?args=-f " + ANT_BUILD_FILE_NAME + " -l " + ANT_OUT_FILE_NAME + "&outFile=" + ANT_OUT_FILE_NAME)
-                    .process(new Processor() {
+                from("direct:execAntWithOutFile")
+                        .to("exec:ant.bat?args=-f " + ANT_BUILD_FILE_NAME + " -l " + ANT_OUT_FILE_NAME + "&outFile="
+                            + ANT_OUT_FILE_NAME)
+                        .process(new Processor() {
 
-                        public void process(Exchange exchange) throws Exception {
-                            InputStream outFile = exchange.getIn().getBody(InputStream.class);
-                            // do something with the out file here
-                            log.info(IOUtils.toString(outFile, Charset.defaultCharset()));
-                        }
+                            public void process(Exchange exchange) throws Exception {
+                                InputStream outFile = exchange.getIn().getBody(InputStream.class);
+                                // do something with the out file here
+                                log.info(IOUtils.toString(outFile, Charset.defaultCharset()));
+                            }
 
-                    });
+                        });
             }
         };
     }

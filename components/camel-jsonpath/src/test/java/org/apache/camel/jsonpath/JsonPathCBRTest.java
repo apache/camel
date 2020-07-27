@@ -32,44 +32,46 @@ public class JsonPathCBRTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when().jsonpath("$.store.book[?(@.price < 10)]")
-                            .to("mock:cheap")
-                        .when().jsonpath("$.store.book[?(@.price < 30)]")
-                            .to("mock:average")
-                        .otherwise()
-                            .to("mock:expensive");
-                
-                from("direct:bicycle")
-                    .choice()
-                        .when().method(new BeanPredicate())
-                            .to("mock:cheap")
-                        .otherwise()
-                            .to("mock:expensive");
-                
-                from("direct:bicycle2")
-                    .choice()
-                    .when(PredicateBuilder.isLessThan(ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"), ExpressionBuilder.constantExpression(100)))
                         .to("mock:cheap")
-                    .otherwise()
+                        .when().jsonpath("$.store.book[?(@.price < 30)]")
+                        .to("mock:average")
+                        .otherwise()
+                        .to("mock:expensive");
+
+                from("direct:bicycle")
+                        .choice()
+                        .when().method(new BeanPredicate())
+                        .to("mock:cheap")
+                        .otherwise()
+                        .to("mock:expensive");
+
+                from("direct:bicycle2")
+                        .choice()
+                        .when(PredicateBuilder.isLessThan(
+                                ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"),
+                                ExpressionBuilder.constantExpression(100)))
+                        .to("mock:cheap")
+                        .otherwise()
                         .to("mock:expensive");
             }
         };
     }
-    
+
     public static class BeanPredicate {
         public boolean checkPrice(@JsonPath("$.store.bicycle.price") double price) {
             return price < 100;
         }
     }
-    
+
     @Test
     public void testCheapBicycle() throws Exception {
         sendMessageToBicycleRoute("direct:bicycle");
         resetMocks();
         sendMessageToBicycleRoute("direct:bicycle2");
     }
-    
+
     private void sendMessageToBicycleRoute(String startPoint) throws Exception {
         getMockEndpoint("mock:cheap").expectedMessageCount(1);
         getMockEndpoint("mock:average").expectedMessageCount(0);

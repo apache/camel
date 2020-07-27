@@ -69,10 +69,9 @@ public class AckModeNoneTest extends PubsubTestSupport {
     }
 
     /**
-     * Expecting two messages received for the one sent. With Ack mode set to
-     * NONE the same message will be delivered again and again, after the
-     * deadline expiration. Setting deadline to 1 second and waiting for more
-     * than 2 to ensure the message has been resent.
+     * Expecting two messages received for the one sent. With Ack mode set to NONE the same message will be delivered
+     * again and again, after the deadline expiration. Setting deadline to 1 second and waiting for more than 2 to
+     * ensure the message has been resent.
      *
      * @throws Exception
      */

@@ -73,7 +73,7 @@ public class GoraProducerTest extends GoraTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp()  {
+    public void setUp() {
         //setup mocks
         mockCamelExchange = mock(Exchange.class);
         mockGoraEndpoint = mock(GoraEndpoint.class);
@@ -88,7 +88,7 @@ public class GoraProducerTest extends GoraTestSupport {
     public void processShouldThrowExceptionIfOperationIsNull() throws Exception {
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         assertThrows(RuntimeException.class,
-            () -> producer.process(mockCamelExchange));
+                () -> producer.process(mockCamelExchange));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class GoraProducerTest extends GoraTestSupport {
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         assertThrows(RuntimeException.class,
-            () -> producer.process(mockCamelExchange));
+                () -> producer.process(mockCamelExchange));
 
         verify(mockCamelExchange, atMost(1)).getIn();
         verify(mockCamelMessage, atMost(1)).getHeader(GoraAttribute.GORA_OPERATION.value);

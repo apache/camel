@@ -52,7 +52,8 @@ public class LumberjackChannelInitializerTest {
         // And the first map should contains valid data (we're assuming it's also valid for the other ones)
         Map first = (Map) messages.get(0);
         assertEquals("log", first.get("type"));
-        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log", first.get("source"));
+        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
+                first.get("source"));
 
         // And we should have replied twice (one per window)
         assertEquals(2, channel.outboundMessages().size());

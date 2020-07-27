@@ -32,10 +32,12 @@ public class JcloudsMultipleBlobStoreTest extends CamelTestSupport {
     private static final String TEST_BLOB1 = "testBlob1";
     private static final String TEST_BLOB2 = "testBlob2";
 
-    BlobStoreContext blobStoreContext1 = ContextBuilder.newBuilder("transient").name("b1").credentials("identity", "credential").build(BlobStoreContext.class);
+    BlobStoreContext blobStoreContext1 = ContextBuilder.newBuilder("transient").name("b1").credentials("identity", "credential")
+            .build(BlobStoreContext.class);
     BlobStore blobStore1 = blobStoreContext1.getBlobStore();
 
-    BlobStoreContext blobStoreContext2 = ContextBuilder.newBuilder("transient").name("b2").credentials("identity", "credential").build(BlobStoreContext.class);
+    BlobStoreContext blobStoreContext2 = ContextBuilder.newBuilder("transient").name("b2").credentials("identity", "credential")
+            .build(BlobStoreContext.class);
     BlobStore blobStore2 = blobStoreContext2.getBlobStore();
 
     @Test

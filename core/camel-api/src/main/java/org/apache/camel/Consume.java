@@ -23,17 +23,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Subscribes a method to an {@link Endpoint} either via its
- * <a href="http://camel.apache.org/uris.html">URI</a> or via the name of the endpoint reference
- * which is then resolved in a registry such as the Spring Application Context.
+ * Subscribes a method to an {@link Endpoint} either via its <a href="http://camel.apache.org/uris.html">URI</a> or via
+ * the name of the endpoint reference which is then resolved in a registry such as the Spring Application Context.
  * <p/>
  * When a message {@link Exchange} is received from the {@link Endpoint} then the
- * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
- * mechanism is used to map the incoming {@link Message} to the method parameters.
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> mechanism is used to map the incoming
+ * {@link Message} to the method parameters.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface Consume {
 
     /**
@@ -55,11 +54,11 @@ public @interface Consume {
     String property() default "";
 
     /**
-     * Optional predicate (using simple language) to only consume if the predicate matches .
-     * This can be used to filter messages.
+     * Optional predicate (using simple language) to only consume if the predicate matches . This can be used to filter
+     * messages.
      * <p/>
-     * Notice that only the first method that matches the predicate will be used.
-     * And if no predicate matches then the message is dropped.
+     * Notice that only the first method that matches the predicate will be used. And if no predicate matches then the
+     * message is dropped.
      */
     String predicate() default "";
 }

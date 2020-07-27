@@ -52,12 +52,10 @@ public class OptaPlannerConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").
-                        to("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml");
+                from("direct:in").to("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml");
 
-                from("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml").
-                        to("log:com.mycompany.order?showAll=true&multiline=true").
-                        to("mock:result");
+                from("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml")
+                        .to("log:com.mycompany.order?showAll=true&multiline=true").to("mock:result");
             }
         };
     }

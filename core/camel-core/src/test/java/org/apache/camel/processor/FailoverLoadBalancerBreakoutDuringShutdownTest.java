@@ -26,8 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests that the failover load balancer will break out if CamelContext is
- * shutting down.
+ * Tests that the failover load balancer will break out if CamelContext is shutting down.
  */
 public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestSupport {
 
@@ -59,8 +58,8 @@ public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestS
             public void configure() throws Exception {
 
                 from("seda:start").to("mock:before")
-                    // just keep on failover
-                    .loadBalance().failover(-1, false, true).to("direct:a").to("direct:b").end().to("mock:after");
+                        // just keep on failover
+                        .loadBalance().failover(-1, false, true).to("direct:a").to("direct:b").end().to("mock:after");
 
                 from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

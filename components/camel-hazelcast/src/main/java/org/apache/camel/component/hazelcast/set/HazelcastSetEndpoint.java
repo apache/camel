@@ -29,10 +29,12 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed set.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-set", title = "Hazelcast Set", syntax = "hazelcast-set:cacheName", category = {Category.CACHE, Category.DATAGRID})
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-set", title = "Hazelcast Set", syntax = "hazelcast-set:cacheName",
+             category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastSetEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastSetEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
+    public HazelcastSetEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
+                                String cacheName) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         setCommand(HazelcastCommand.set);
     }

@@ -38,7 +38,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS MQ instances.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-mq", title = "AWS MQ", syntax = "aws-mq:label", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-mq", title = "AWS MQ", syntax = "aws-mq:label", producerOnly = true,
+             category = { Category.CLOUD, Category.MESSAGING })
 public class MQEndpoint extends ScheduledPollEndpoint {
 
     private AmazonMQ mqClient;
@@ -65,7 +66,8 @@ public class MQEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        mqClient = configuration.getAmazonMqClient() != null ? configuration.getAmazonMqClient() : (AmazonMQClient)createMQClient();
+        mqClient = configuration.getAmazonMqClient() != null
+                ? configuration.getAmazonMqClient() : (AmazonMQClient) createMQClient();
     }
 
     @Override
@@ -102,7 +104,8 @@ public class MQEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonMQClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonMQClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonMQClientBuilder.standard().withCredentials(credentialsProvider);
             }

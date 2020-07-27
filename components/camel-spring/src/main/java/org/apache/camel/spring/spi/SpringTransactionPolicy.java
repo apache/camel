@@ -116,7 +116,8 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         return answer;
     }
 
-    protected TransactionErrorHandler createTransactionErrorHandler(Route route, Processor processor, ErrorHandlerBuilder builder) {
+    protected TransactionErrorHandler createTransactionErrorHandler(
+            Route route, Processor processor, ErrorHandlerBuilder builder) {
         TransactionErrorHandler answer;
         try {
             answer = (TransactionErrorHandler) ErrorHandlerReifier.reifier(route, builder).createErrorHandler(processor);

@@ -67,12 +67,12 @@ public class AmazonAthenaClientMock implements AthenaClient {
 
     @Override
     public GetQueryExecutionResponse getQueryExecution(GetQueryExecutionRequest getQueryExecutionRequest)
-        throws SdkException {
+            throws SdkException {
         QueryExecution defaultResult = QueryExecution.builder()
-            .queryExecutionId("11111111-1111-1111-1111-111111111111")
-            .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
-            .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-            .build();
+                .queryExecutionId("11111111-1111-1111-1111-111111111111")
+                .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
+                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                .build();
         QueryExecution result = getQueryExecutionResults.isEmpty() ? defaultResult : getQueryExecutionResults.poll();
 
         // if query execution id is 3333..., sleep for 500 ms to imitate a long running query
@@ -85,51 +85,50 @@ public class AmazonAthenaClientMock implements AthenaClient {
         }
 
         return GetQueryExecutionResponse.builder()
-            .queryExecution(result)
-            .build();
+                .queryExecution(result)
+                .build();
     }
 
     @Override
     public ListQueryExecutionsResponse listQueryExecutions(ListQueryExecutionsRequest listQueryExecutionsRequest)
-        throws SdkException {
+            throws SdkException {
         return ListQueryExecutionsResponse.builder()
-            .queryExecutionIds(
-                "11111111-1111-1111-1111-111111111111",
-                "22222222-2222-2222-2222-222222222222"
-            )
-            .nextToken(listQueryExecutionsRequest.nextToken())
-            .build();
+                .queryExecutionIds(
+                        "11111111-1111-1111-1111-111111111111",
+                        "22222222-2222-2222-2222-222222222222")
+                .nextToken(listQueryExecutionsRequest.nextToken())
+                .build();
     }
 
     @Override
     public StartQueryExecutionResponse startQueryExecution(StartQueryExecutionRequest startQueryExecutionRequest)
-        throws SdkException {
+            throws SdkException {
         String defaultResult = "11111111-1111-1111-1111-111111111111";
         String result = startQueryExecutionResults.isEmpty() ? defaultResult : startQueryExecutionResults.poll();
 
         return StartQueryExecutionResponse.builder()
-            .queryExecutionId(result)
-            .build();
+                .queryExecutionId(result)
+                .build();
     }
 
     @Override
     public GetQueryResultsResponse getQueryResults(GetQueryResultsRequest getQueryResultsRequest) throws SdkException {
         return GetQueryResultsResponse.builder()
-            .nextToken(null)
-            .resultSet(ResultSet.builder()
-                .resultSetMetadata(ResultSetMetadata.builder()
-                    .columnInfo(ColumnInfo.builder().name("id").build())
-                    .build())
-                .rows(Row.builder()
-                    .data(Datum.builder().varCharValue("42").build())
-                    .build())
-                .build())
-            .build();
+                .nextToken(null)
+                .resultSet(ResultSet.builder()
+                        .resultSetMetadata(ResultSetMetadata.builder()
+                                .columnInfo(ColumnInfo.builder().name("id").build())
+                                .build())
+                        .rows(Row.builder()
+                                .data(Datum.builder().varCharValue("42").build())
+                                .build())
+                        .build())
+                .build();
     }
 
     @Override
     public GetQueryResultsIterable getQueryResultsPaginator(GetQueryResultsRequest getQueryResultsRequest)
-        throws SdkException {
+            throws SdkException {
         return new GetQueryResultsIterable(this, getQueryResultsRequest);
     }
 

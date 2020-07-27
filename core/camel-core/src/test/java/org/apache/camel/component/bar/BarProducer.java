@@ -27,7 +27,7 @@ public class BarProducer extends DefaultProducer {
 
     @Override
     public BarEndpoint getEndpoint() {
-        return (BarEndpoint)super.getEndpoint();
+        return (BarEndpoint) super.getEndpoint();
     }
 
     @Override

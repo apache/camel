@@ -28,10 +28,10 @@ public class AhcComponentClientConfigWithClientConfigUriParametersTest extends A
     @Test
     public void testAhcComponentClientConfig() throws Exception {
         super.testAhcComponentClientConfig();
-        
+
         Endpoint ahcEndpoint = context.getEndpoint(getAhcEndpointUri());
         assertTrue(ahcEndpoint instanceof AhcEndpoint);
-        
+
         assertEquals(1, ((AhcEndpoint) ahcEndpoint).getClientConfig().getMaxConnections());
         assertEquals(3, ((AhcEndpoint) ahcEndpoint).getClientConfig().getMaxRequestRetry());
         assertEquals(true, ((AhcEndpoint) ahcEndpoint).getClientConfig().isFollowRedirect());

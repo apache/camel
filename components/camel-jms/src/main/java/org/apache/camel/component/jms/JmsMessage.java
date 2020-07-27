@@ -133,8 +133,8 @@ public class JmsMessage extends DefaultMessage {
     /**
      * Returns the underlying JMS session.
      * <p/>
-     * This may be <tt>null</tt> if using {@link org.apache.camel.component.jms.JmsPollingConsumer},
-     * or the broker component from Apache ActiveMQ 5.11.x or older.
+     * This may be <tt>null</tt> if using {@link org.apache.camel.component.jms.JmsPollingConsumer}, or the broker
+     * component from Apache ActiveMQ 5.11.x or older.
      */
     public Session getJmsSession() {
         return jmsSession;
@@ -200,8 +200,7 @@ public class JmsMessage extends DefaultMessage {
     }
 
     /**
-     * Ensure that the headers have been populated from the underlying JMS message
-     * before we start mutating the headers
+     * Ensure that the headers have been populated from the underlying JMS message before we start mutating the headers
      */
     protected void ensureInitialHeaders() {
         if (jmsMessage != null && !hasPopulatedHeaders()) {

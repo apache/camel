@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sniHostNames", propOrder = {"sniHostName"})
+@XmlType(name = "sniHostNames", propOrder = { "sniHostName" })
 public class SNIHostNamesDefinition {
 
     @XmlElement(name = "sniHostName")

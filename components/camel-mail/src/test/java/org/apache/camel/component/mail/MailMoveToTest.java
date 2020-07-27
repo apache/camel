@@ -86,7 +86,7 @@ public class MailMoveToTest extends CamelTestSupport {
 
     private void prepareMailbox() throws Exception {
         Mailbox.clearAll();
-        String[] mailUser = new String[] {"jones", "jones2"};
+        String[] mailUser = new String[] { "jones", "jones2" };
         for (String username : mailUser) {
             JavaMailSender sender = new DefaultJavaMailSender();
             Store store = sender.getSession().getStore("pop3");
@@ -109,13 +109,15 @@ public class MailMoveToTest extends CamelTestSupport {
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
-        return new RoutesBuilder[] {new RouteBuilder() {
+        return new RoutesBuilder[] { new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&delete=false&moveTo=moveToFolder&initialDelay=100&delay=100").to("mock:result");
+                from("imap://jones@localhost?password=secret&delete=false&moveTo=moveToFolder&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones2@localhost?password=secret&delete=true&moveTo=moveToFolder&initialDelay=100&delay=100").to("mock:result2");
+                from("imap://jones2@localhost?password=secret&delete=true&moveTo=moveToFolder&initialDelay=100&delay=100")
+                        .to("mock:result2");
             }
         } };
     }

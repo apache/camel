@@ -37,13 +37,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @WebTest
 public class ResteasySimpleConsumerTest {
-    
+
     @Resource
     URI baseUri;
-    
+
     @Deployment
     public static Archive<?> createTestArchive() {
 
@@ -64,7 +63,8 @@ public class ResteasySimpleConsumerTest {
         Response response = target.request().get();
 
         assertEquals(200, response.getStatus());
-        assertEquals("Added this message from bean to original message from Rest Service -> Message1 from Rest service", response.readEntity(String.class));
+        assertEquals("Added this message from bean to original message from Rest Service -> Message1 from Rest service",
+                response.readEntity(String.class));
     }
 
     @Test

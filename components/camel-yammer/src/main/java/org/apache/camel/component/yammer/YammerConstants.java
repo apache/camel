@@ -19,7 +19,7 @@ package org.apache.camel.component.yammer;
 public final class YammerConstants {
 
     public static final String YAMMER_BASE_API_URL = "https://www.yammer.com/api/v1/";
-    
+
     private YammerConstants() {
     }
 }

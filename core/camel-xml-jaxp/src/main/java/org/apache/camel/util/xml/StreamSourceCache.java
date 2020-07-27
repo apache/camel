@@ -55,7 +55,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             readCache = null;
         }
     }
-    
+
     public StreamSourceCache(StreamCache streamCache) {
         this.streamCache = streamCache;
         if (streamCache instanceof InputStream) {
@@ -68,7 +68,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             this.readCache = null;
         }
     }
-    
+
     @Override
     public void reset() {
         if (streamCache != null) {
@@ -111,7 +111,6 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
-    
     @Override
     public long length() {
         if (streamCache != null) {

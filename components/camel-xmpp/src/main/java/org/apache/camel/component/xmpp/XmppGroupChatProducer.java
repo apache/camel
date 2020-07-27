@@ -106,7 +106,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
                 if (endpoint.isTestConnectionOnStartup()) {
                     throw new RuntimeException("Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
                 } else {
-                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.", e.getMessage());
+                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.",
+                            e.getMessage());
                 }
             }
         }
@@ -118,7 +119,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
         super.doStart();
     }
 
-    protected synchronized void initializeChat() throws InterruptedException, SmackException, XMPPException, XmppStringprepException {
+    protected synchronized void initializeChat()
+            throws InterruptedException, SmackException, XMPPException, XmppStringprepException {
         if (chat == null) {
             room = endpoint.resolveRoom(connection);
             String roomPassword = endpoint.getRoomPassword();

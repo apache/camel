@@ -39,19 +39,20 @@ import org.slf4j.LoggerFactory;
  * Extends the mock component by pulling messages from another endpoint on startup to set the expected message bodies.
  *
  * That is, you use the test endpoint in a route and messages arriving on it will be implicitly compared to some
- * expected messages extracted from some other location.
- * So you can use, for example, an expected set of message bodies as files.
- * This will then set up a properly configured Mock endpoint, which is only valid if the received messages
+ * expected messages extracted from some other location. So you can use, for example, an expected set of message bodies
+ * as files. This will then set up a properly configured Mock endpoint, which is only valid if the received messages
  * match the number of expected messages and their message payloads are equal.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
+@UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name",
+             producerOnly = true, label = "core,testing", lenientProperties = true)
 public class DataSetTestEndpoint extends MockEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSetTestEndpoint.class);
 
     private Endpoint expectedMessageEndpoint;
 
-    @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = true)
+    @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing")
+    @Metadata(required = true)
     private String name;
     @UriParam
     private boolean anyOrder;
@@ -138,9 +139,8 @@ public class DataSetTestEndpoint extends MockEndpoint {
     }
 
     /**
-     * If enabled the messages loaded from the test endpoint will be split using new line delimiters
-     * so each line is an expected message.
-     * <br/>
+     * If enabled the messages loaded from the test endpoint will be split using new line delimiters so each line is an
+     * expected message. <br/>
      * For example to use a file endpoint to load a file where each line is an expected message.
      */
     public void setSplit(boolean split) {
@@ -152,9 +152,8 @@ public class DataSetTestEndpoint extends MockEndpoint {
     }
 
     /**
-     * The split delimiter to use when split is enabled.
-     * By default the delimiter is new line based.
-     * The delimiter can be a regular expression.
+     * The split delimiter to use when split is enabled. By default the delimiter is new line based. The delimiter can
+     * be a regular expression.
      */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;

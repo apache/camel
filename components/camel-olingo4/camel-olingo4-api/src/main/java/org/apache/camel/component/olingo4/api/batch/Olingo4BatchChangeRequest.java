@@ -41,8 +41,10 @@ public class Olingo4BatchChangeRequest extends Olingo4BatchRequest {
 
     @Override
     public String toString() {
-        return new StringBuilder("Batch Change Request{ ").append(resourceUri).append("/").append(resourcePath).append(", headers=").append(headers).append(", contentId=")
-            .append(contentId).append(", operation=").append(operation).append(", body=").append(body).append('}').toString();
+        return new StringBuilder("Batch Change Request{ ").append(resourceUri).append("/").append(resourcePath)
+                .append(", headers=").append(headers).append(", contentId=")
+                .append(contentId).append(", operation=").append(operation).append(", body=").append(body).append('}')
+                .toString();
     }
 
     public static Olingo4BatchChangeRequestBuilder resourcePath(String resourcePath) {

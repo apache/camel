@@ -68,7 +68,8 @@ public class SqlProducerOutputHeaderTest extends CamelTestSupport {
                 // required for the sql component
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:query").to("sql:select max(id) from projects?outputType=SelectOne&outputHeader=MaxProjectID").to("mock:query");
+                from("direct:query").to("sql:select max(id) from projects?outputType=SelectOne&outputHeader=MaxProjectID")
+                        .to("mock:query");
             }
         };
     }

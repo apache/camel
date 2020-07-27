@@ -31,9 +31,9 @@ import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.staxutils.StaxUtils;
 
 public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultTest {
-    
+
     protected static final String DETAILS = "<detail></detail>";
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -51,7 +51,7 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
                         exchange.getOut().setBody(fault);
                     }
                 });
-                
+
             }
         };
     }

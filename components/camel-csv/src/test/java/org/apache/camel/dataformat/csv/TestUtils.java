@@ -33,8 +33,8 @@ final class TestUtils {
     /**
      * Create a map with the given key/value pairs
      *
-     * @param strings key/value pairs
-     * @return Map with the given key/value pairs
+     * @param  strings key/value pairs
+     * @return         Map with the given key/value pairs
      */
     static Map<String, String> asMap(String... strings) {
         if (strings.length % 2 == 1) {

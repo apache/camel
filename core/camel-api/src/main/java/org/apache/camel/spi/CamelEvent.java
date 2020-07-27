@@ -68,8 +68,8 @@ public interface CamelEvent {
     Object getSource();
 
     /**
-     * This interface is implemented by all events that contain an exception and is used to
-     * retrieve the exception in a universal way.
+     * This interface is implemented by all events that contain an exception and is used to retrieve the exception in a
+     * universal way.
      */
     interface FailureEvent extends CamelEvent {
 

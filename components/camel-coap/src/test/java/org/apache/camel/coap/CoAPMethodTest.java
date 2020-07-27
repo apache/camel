@@ -40,7 +40,8 @@ public class CoAPMethodTest extends CoAPTestSupport {
 
     @Test
     void testCoAPMethodHeader() {
-        String result = template.requestBodyAndHeader("coap://localhost:" + PORT + "/test/c", null, CoAPConstants.COAP_METHOD, "DELETE", String.class);
+        String result = template.requestBodyAndHeader("coap://localhost:" + PORT + "/test/c", null, CoAPConstants.COAP_METHOD,
+                "DELETE", String.class);
         assertEquals("DELETE: /test/c", result);
     }
 

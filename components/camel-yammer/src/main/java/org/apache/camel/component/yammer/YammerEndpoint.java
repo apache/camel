@@ -27,7 +27,8 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Interact with the Yammer enterprise social network.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "yammer", title = "Yammer", syntax = "yammer:function", category = {Category.SOCIAL, Category.CLOUD, Category.API})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "yammer", title = "Yammer", syntax = "yammer:function",
+             category = { Category.SOCIAL, Category.CLOUD, Category.API })
 public class YammerEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -89,7 +90,8 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
 
     @Override
     protected String createEndpointUri() {
-        return String.format("yammer://%s?consumerKey=%s&consumerSecret=%s&accessToken=%s", config.getFunction(), config.getConsumerKey(), config.getConsumerSecret(), config.getAccessToken());
+        return String.format("yammer://%s?consumerKey=%s&consumerSecret=%s&accessToken=%s", config.getFunction(),
+                config.getConsumerKey(), config.getConsumerSecret(), config.getAccessToken());
     }
 
 }

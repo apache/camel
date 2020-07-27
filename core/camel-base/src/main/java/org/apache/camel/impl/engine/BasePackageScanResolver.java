@@ -47,7 +47,8 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
             }
         } catch (Exception e) {
             // Ignore this exception
-            log.warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.", e.getMessage());
+            log.warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.",
+                    e.getMessage());
         }
 
         classLoaders.add(BasePackageScanResolver.class.getClassLoader());
@@ -68,8 +69,8 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
     }
 
     /**
-     * To specify a set of accepted schemas to use for loading resources as URL connections
-     * (besides http and https schemas)
+     * To specify a set of accepted schemas to use for loading resources as URL connections (besides http and https
+     * schemas)
      */
     public void setAcceptableSchemes(String schemes) {
         if (schemes != null) {
@@ -102,12 +103,12 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
     /**
      * Strategy to get the resources by the given classloader.
      * <p/>
-     * Notice that in WebSphere platforms there is a {@link WebSpherePackageScanClassResolver}
-     * to take care of WebSphere's oddity of resource loading.
+     * Notice that in WebSphere platforms there is a {@link WebSpherePackageScanClassResolver} to take care of
+     * WebSphere's oddity of resource loading.
      *
-     * @param loader  the classloader
-     * @param packageName   the packagename for the package to load
-     * @return  URL's for the given package
+     * @param  loader      the classloader
+     * @param  packageName the packagename for the package to load
+     * @return             URL's for the given package
      * @throws IOException is thrown by the classloader
      */
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {

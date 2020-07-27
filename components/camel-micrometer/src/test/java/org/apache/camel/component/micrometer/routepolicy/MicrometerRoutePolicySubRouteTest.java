@@ -53,11 +53,11 @@ public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePo
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo")
-                    .to("direct:bar")
-                    .to("mock:foo");
+                        .to("direct:bar")
+                        .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

@@ -29,9 +29,8 @@ import java.io.UnsupportedEncodingException;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * A helper class which provides a JAXP {@link javax.xml.transform.Source
- * Source} from a String which can be read as many times as required. Encoding
- * is default UTF-8.
+ * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a String which can be read as
+ * many times as required. Encoding is default UTF-8.
  */
 public class StringSource extends StreamSource implements Externalizable {
     private String text;
@@ -92,7 +91,8 @@ public class StringSource extends StreamSource implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00) + (getPublicId() != null ? 0x04 : 0x00) + (getSystemId() != null ? 0x08 : 0x00);
+        int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00) + (getPublicId() != null ? 0x04 : 0x00)
+                + (getSystemId() != null ? 0x08 : 0x00);
         out.writeByte(b);
         if ((b & 0x01) != 0) {
             out.writeUTF(text);

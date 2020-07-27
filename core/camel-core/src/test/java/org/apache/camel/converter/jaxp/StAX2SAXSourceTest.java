@@ -47,7 +47,8 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
     public void testDefaultPrefixInRootElementWithCopyTransformer() throws Exception {
         TransformerFactory trf = TransformerFactory.newInstance();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        XMLStreamReader reader = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, new StringReader(TEST_XML));
+        XMLStreamReader reader
+                = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, new StringReader(TEST_XML));
         // ensure UTF-8 encoding
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.toString());

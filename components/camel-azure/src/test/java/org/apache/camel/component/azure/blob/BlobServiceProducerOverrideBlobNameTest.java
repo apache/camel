@@ -33,7 +33,8 @@ public class BlobServiceProducerOverrideBlobNameTest {
     @BeforeEach
     public void setUp() {
         CamelContext context = new DefaultCamelContext();
-        BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?credentialsAccountKey=aKey&credentialsAccountName=name");
+        BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context
+                .getEndpoint("azure-blob://camelazure/container/blob?credentialsAccountKey=aKey&credentialsAccountName=name");
         exchange = new DefaultExchange(context);
         producer = new BlobServiceProducer(endpoint);
     }

@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Communicate with Salesforce using Java DTOs.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", category = {Category.CLOUD, Category.API, Category.CRM})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce",
+             syntax = "salesforce:operationName:topicName", category = { Category.CLOUD, Category.API, Category.CRM })
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
@@ -55,7 +56,8 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", description = "The replayId value to use when subscribing")
     private Long replayId;
 
-    public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent, SalesforceEndpointConfig configuration, OperationName operationName, String topicName) {
+    public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent, SalesforceEndpointConfig configuration,
+                              OperationName operationName, String topicName) {
         super(uri, salesforceComponent);
 
         this.configuration = configuration;
@@ -84,7 +86,8 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         // consumer requires a topicName, operation name must be the invalid
         // topic name
         if (topicName == null) {
-            throw new IllegalArgumentException(String.format("Invalid topic name %s, matches a producer operation name", operationName.value()));
+            throw new IllegalArgumentException(
+                    String.format("Invalid topic name %s, matches a producer operation name", operationName.value()));
         }
 
         final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
@@ -95,7 +98,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     @Override
     public SalesforceComponent getComponent() {
-        return (SalesforceComponent)super.getComponent();
+        return (SalesforceComponent) super.getComponent();
     }
 
     public SalesforceEndpointConfig getConfiguration() {

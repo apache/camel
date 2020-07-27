@@ -25,16 +25,16 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
 /**
- * Use this to get an access token from yammer. You will need the 
- * consumer key and secret key for your app registered with yammer to do this.
+ * Use this to get an access token from yammer. You will need the consumer key and secret key for your app registered
+ * with yammer to do this.
  */
 public final class YammerAccessCodeGenerator {
 
     private static final Token EMPTY_TOKEN = null;
-    
+
     private YammerAccessCodeGenerator() {
     }
-    
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
@@ -47,10 +47,10 @@ public final class YammerAccessCodeGenerator {
         String apiSecret = in.nextLine();
 
         OAuthService service = new ServiceBuilder()
-            .provider(YammerApi.class)
-            .apiKey(apiKey)
-            .apiSecret(apiSecret)
-            .build();
+                .provider(YammerApi.class)
+                .apiKey(apiKey)
+                .apiSecret(apiSecret)
+                .build();
 
         String authorizationUrl = service.getAuthorizationUrl(EMPTY_TOKEN);
         System.out

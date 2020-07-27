@@ -29,7 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default configurer resolver that looks for configurer factories in <b>META-INF/services/org/apache/camel/configurer/</b>.
+ * Default configurer resolver that looks for configurer factories in
+ * <b>META-INF/services/org/apache/camel/configurer/</b>.
  */
 public class DefaultConfigurerResolver implements ConfigurerResolver {
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
@@ -45,7 +46,8 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         }
 
         // lookup in registry first
-        GeneratedPropertyConfigurer configurer = context.getRegistry().lookupByNameAndType(name, GeneratedPropertyConfigurer.class);
+        GeneratedPropertyConfigurer configurer
+                = context.getRegistry().lookupByNameAndType(name, GeneratedPropertyConfigurer.class);
         if (configurer != null) {
             return configurer;
         }
@@ -70,14 +72,16 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found configurer: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(), name);
+            getLog().debug("Found configurer: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
+                    name);
         }
 
         // create the component
         if (GeneratedPropertyConfigurer.class.isAssignableFrom(type)) {
             return (GeneratedPropertyConfigurer) context.getInjector().newInstance(type, false);
         } else {
-            throw new IllegalArgumentException("Type is not a GeneratedPropertyConfigurer implementation. Found: " + type.getName());
+            throw new IllegalArgumentException(
+                    "Type is not a GeneratedPropertyConfigurer implementation. Found: " + type.getName());
         }
     }
 

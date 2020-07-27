@@ -40,7 +40,10 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
     private static final Logger LOG = LoggerFactory.getLogger(DurationRoutePolicy.class);
 
     enum Action {
-        STOP_CAMEL_CONTEXT, STOP_ROUTE, SUSPEND_ROUTE, SUSPEND_ALL_ROUTES
+        STOP_CAMEL_CONTEXT,
+        STOP_ROUTE,
+        SUSPEND_ROUTE,
+        SUSPEND_ALL_ROUTES
     }
 
     private CamelContext camelContext;
@@ -120,7 +123,8 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
         }
 
         if (executorService == null) {
-            executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "DurationRoutePolicy[" + routeId + "]");
+            executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "DurationRoutePolicy[" + routeId + "]");
         }
 
         if (maxSeconds > 0) {

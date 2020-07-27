@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  * Manage workflows in the AWS Simple Workflow service.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "aws-swf", title = "AWS Simple Workflow (SWF)", syntax = "aws-swf:type",
-category = {Category.CLOUD, Category.WORKFLOW})
+             category = { Category.CLOUD, Category.WORKFLOW })
 public class SWFEndpoint extends DefaultEndpoint {
 
     private AmazonSimpleWorkflowClient amazonSWClient;
@@ -61,13 +61,15 @@ public class SWFEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return isWorkflow()
-                ? new SWFWorkflowProducer(this, new CamelSWFWorkflowClient(this, configuration)) : new SWFActivityProducer(this, new CamelSWFActivityClient(configuration));
+                ? new SWFWorkflowProducer(this, new CamelSWFWorkflowClient(this, configuration))
+                : new SWFActivityProducer(this, new CamelSWFActivityClient(configuration));
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer consumer = isWorkflow()
-                ? new SWFWorkflowConsumer(this, processor, configuration) : new SWFActivityConsumer(this, processor, configuration);
+                ? new SWFWorkflowConsumer(this, processor, configuration)
+                : new SWFActivityConsumer(this, processor, configuration);
         configureConsumer(consumer);
         return consumer;
     }
@@ -104,7 +106,8 @@ public class SWFEndpoint extends DefaultEndpoint {
             setProperties(clientConfiguration, configuration.getClientConfigurationParameters());
         }
 
-        AmazonSimpleWorkflowClientBuilder builder = AmazonSimpleWorkflowClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+        AmazonSimpleWorkflowClientBuilder builder = AmazonSimpleWorkflowClientBuilder.standard()
+                .withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             builder = builder.withRegion(Regions.valueOf(configuration.getRegion()));
         }
@@ -118,8 +121,10 @@ public class SWFEndpoint extends DefaultEndpoint {
     public StartWorkflowOptions getStartWorkflowOptions() {
         StartWorkflowOptions startWorkflowOptions = new StartWorkflowOptions();
         try {
-            PropertyBindingSupport.bindProperties(getCamelContext(), startWorkflowOptions, configuration.getStartWorkflowOptionsParameters());
-            PropertyBindingSupport.bindProperties(getCamelContext(), startWorkflowOptions, configuration.getStartWorkflowOptionsParameters());
+            PropertyBindingSupport.bindProperties(getCamelContext(), startWorkflowOptions,
+                    configuration.getStartWorkflowOptionsParameters());
+            PropertyBindingSupport.bindProperties(getCamelContext(), startWorkflowOptions,
+                    configuration.getStartWorkflowOptionsParameters());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -153,5 +158,3 @@ public class SWFEndpoint extends DefaultEndpoint {
         return configuration;
     }
 }
-
-

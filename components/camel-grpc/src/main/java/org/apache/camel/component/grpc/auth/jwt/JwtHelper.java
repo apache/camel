@@ -41,7 +41,8 @@ public final class JwtHelper {
         }
     }
 
-    public static Algorithm selectAlgorithm(JwtAlgorithm algorithmName, String secret) throws IllegalArgumentException, UnsupportedEncodingException {
+    public static Algorithm selectAlgorithm(JwtAlgorithm algorithmName, String secret)
+            throws IllegalArgumentException, UnsupportedEncodingException {
         switch (algorithmName) {
             case HMAC256:
                 return Algorithm.HMAC256(secret);

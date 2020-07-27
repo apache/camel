@@ -38,7 +38,8 @@ import org.apache.camel.support.AsyncProcessorSupport;
  * Implementation of the Hystrix EIP.
  */
 @ManagedResource(description = "Managed Hystrix Processor")
-public class HystrixProcessor extends AsyncProcessorSupport implements Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+public class HystrixProcessor extends AsyncProcessorSupport
+        implements Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private String id;
     private final HystrixCommandGroupKey groupKey;
@@ -193,7 +194,8 @@ public class HystrixProcessor extends AsyncProcessorSupport implements Navigate<
             if (fallbackViaNetwork) {
                 fallbackCommand = new HystrixProcessorCommandFallbackViaNetwork(fallbackSetter, exchange, fallback);
             }
-            HystrixProcessorCommand command = new HystrixProcessorCommand(setter, exchange, processor, fallback, fallbackCommand);
+            HystrixProcessorCommand command
+                    = new HystrixProcessorCommand(setter, exchange, processor, fallback, fallbackCommand);
             command.execute();
 
             // enrich exchange with details from hystrix about the command execution

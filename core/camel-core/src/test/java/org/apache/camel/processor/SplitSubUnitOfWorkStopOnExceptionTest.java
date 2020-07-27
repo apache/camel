@@ -71,7 +71,8 @@ public class SplitSubUnitOfWorkStopOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().to("mock:b").to("direct:line").end().to("mock:result");
+                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().to("mock:b")
+                        .to("direct:line").end().to("mock:result");
 
                 from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
             }

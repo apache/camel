@@ -48,8 +48,8 @@ public class VelocityBodyAsDomainObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("velocity:org/apache/camel/component/velocity/BodyAsDomainObject.vm")
-                    .to("mock:result");
+                        .to("velocity:org/apache/camel/component/velocity/BodyAsDomainObject.vm")
+                        .to("mock:result");
             }
         };
     }
@@ -77,11 +77,11 @@ public class VelocityBodyAsDomainObjectTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "MyPerson{"
-                + "givenName='"
-                + givenName + '\''
-                + ", familyName='"
-                + familyName + '\''
-                + '}';
+                   + "givenName='"
+                   + givenName + '\''
+                   + ", familyName='"
+                   + familyName + '\''
+                   + '}';
         }
     }
 

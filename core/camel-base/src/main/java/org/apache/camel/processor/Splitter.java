@@ -46,26 +46,30 @@ import org.apache.camel.util.IOHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Implements a dynamic <a
- * href="http://camel.apache.org/splitter.html">Splitter</a> pattern
- * where an expression is evaluated to iterate through each of the parts of a
- * message and then each part is then send to some endpoint.
+ * Implements a dynamic <a href="http://camel.apache.org/splitter.html">Splitter</a> pattern where an expression is
+ * evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
 
     private final Expression expression;
 
-    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
+                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
+                    boolean stopOnException, long timeout, Processor onPrepare,
                     boolean useSubUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout,
+        this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService,
+             shutdownExecutorService, streaming, stopOnException, timeout,
              onPrepare, useSubUnitOfWork, parallelAggregate, false);
     }
 
-    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
+                    AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
+                    boolean stopOnException, long timeout, Processor onPrepare,
                     boolean useSubUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
-        super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException,
+        super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
+              shutdownExecutorService, streaming, stopOnException,
               timeout, onPrepare, useSubUnitOfWork, parallelAggregate, stopOnAggregateException);
         this.expression = expression;
         notNull(expression, "expression");
@@ -219,7 +223,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         public void close() throws IOException {
             IOHelper.closeIterator(value);
         }
-       
+
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
@@ -269,7 +273,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     public Expression getExpression() {
         return expression;
     }
-    
+
     private static Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
         Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
         // we do not want to copy the message history for splitted sub-messages

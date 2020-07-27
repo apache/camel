@@ -41,11 +41,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link CamelInternalProcessorAdvice} that binds the REST DSL incoming
- * and outgoing messages from sources of json or xml to Java Objects.
+ * A {@link CamelInternalProcessorAdvice} that binds the REST DSL incoming and outgoing messages from sources of json or
+ * xml to Java Objects.
  * <p/>
- * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform
- * from xml/json to Java Objects and reverse again.
+ * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform from xml/json to Java
+ * Objects and reverse again.
  * <p/>
  * The rest producer side is implemented in {@link org.apache.camel.component.rest.RestProducerBindingProcessor}
  *
@@ -81,7 +81,8 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                              boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
                              Map<String, String> corsHeaders,
                              Map<String, String> queryDefaultValues,
-                             boolean requiredBody, Set<String> requiredQueryParameters, Set<String> requiredHeaders) throws Exception {
+                             boolean requiredBody, Set<String> requiredQueryParameters,
+                             Set<String> requiredHeaders) throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -134,7 +135,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         this.requiredQueryParameters = requiredQueryParameters;
         this.requiredHeaders = requiredHeaders;
     }
-    
+
     @Override
     public Map<String, Object> before(Exchange exchange) throws Exception {
         Map<String, Object> state = new HashMap<>();
@@ -144,7 +145,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         unmarshal(exchange, state);
         return state;
     }
-    
+
     @Override
     public void after(Exchange exchange, Map<String, Object> state) throws Exception {
         if (enableCORS) {
@@ -239,7 +240,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 body = MessageHelper.extractBodyAsString(exchange.getIn());
                 if (body != null) {
                     if (exchange.getIn() instanceof DataTypeAware) {
-                        ((DataTypeAware)exchange.getIn()).setBody(body, new DataType(isJson ? "json" : "xml"));
+                        ((DataTypeAware) exchange.getIn()).setBody(body, new DataType(isJson ? "json" : "xml"));
                     } else {
                         exchange.getIn().setBody(body);
                     }
@@ -282,7 +283,8 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                     return;
                 }
             }
-            if (requiredQueryParameters != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
+            if (requiredQueryParameters != null
+                    && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
                 // this is a bad request, the client did not include some of the required query parameters
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
                 exchange.getMessage().setBody("Some of the required query parameters are missing.");
@@ -325,12 +327,14 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             state.put(STATE_KEY_DO_MARSHAL, STATE_JSON);
         } else {
             if (bindingMode.contains("xml")) {
-                exchange.setException(new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
+                exchange.setException(
+                        new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
             } else {
-                exchange.setException(new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
+                exchange.setException(
+                        new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
             }
         }
-        
+
     }
 
     private void marshal(Exchange exchange, Map<String, Object> state) {
@@ -351,7 +355,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         boolean isJson = false;
 
         // accept takes precedence
-        String accept = (String)state.get(STATE_KEY_ACCEPT);
+        String accept = (String) state.get(STATE_KEY_ACCEPT);
         if (accept != null) {
             isXml = accept.toLowerCase(Locale.ENGLISH).contains("xml");
             isJson = accept.toLowerCase(Locale.ENGLISH).contains("json");
@@ -433,9 +437,11 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                     // okay for auto we do not mind if we could not bind
                 } else {
                     if (bindingMode.contains("xml")) {
-                        exchange.setException(new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
+                        exchange.setException(new CamelExchangeException(
+                                "Cannot bind to xml as message body is not xml compatible", exchange));
                     } else {
-                        exchange.setException(new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
+                        exchange.setException(new CamelExchangeException(
+                                "Cannot bind to json as message body is not json compatible", exchange));
                     }
                 }
             }
@@ -447,7 +453,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     private void setOutputDataType(Exchange exchange, DataType type) {
         Message target = exchange.getMessage();
         if (target instanceof DataTypeAware) {
-            ((DataTypeAware)target).setDataType(type);
+            ((DataTypeAware) target).setDataType(type);
         }
     }
 

@@ -69,8 +69,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        String reply = template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
-                                                     String.class);
+        String reply = template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
+                HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
+                String.class);
 
         assertEquals("OK", reply);
     }
@@ -105,8 +106,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        MyCoolBean reply = template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
-                                                         HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, MyCoolBean.class);
+        MyCoolBean reply
+                = template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
+                        HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, MyCoolBean.class);
 
         assertEquals(456, reply.getId());
         assertEquals("Camel rocks", reply.getName());
@@ -209,8 +211,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
         try {
-            template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
-                                          MyCoolBean.class);
+            template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
+                    HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
+                    MyCoolBean.class);
             fail("Should fail");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

@@ -52,14 +52,14 @@ public class GooglePubsubProducer extends DefaultProducer {
     }
 
     /**
-     * The incoming message is expected to be either - a List of Exchanges
-     * (aggregated) - an Exchange
+     * The incoming message is expected to be either - a List of Exchanges (aggregated) - an Exchange
      */
     @Override
     public void process(Exchange exchange) throws Exception {
 
         if (logger.isDebugEnabled()) {
-            logger.debug("uploader thread/id: " + Thread.currentThread().getId() + " / " + exchange.getExchangeId() + " . api call completed.");
+            logger.debug("uploader thread/id: " + Thread.currentThread().getId() + " / " + exchange.getExchangeId()
+                         + " . api call completed.");
         }
 
         if (exchange.getIn().getBody() instanceof List) {

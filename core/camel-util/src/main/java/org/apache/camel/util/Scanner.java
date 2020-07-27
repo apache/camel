@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 import static org.apache.camel.util.BufferCaster.cast;
 
 public final class Scanner implements Iterator<String>, Closeable {
-  
+
     static {
         WHITESPACE_PATTERN = Pattern.compile("\\s+");
         FIND_ANY_PATTERN = Pattern.compile("(?s).*");
@@ -56,7 +56,7 @@ public final class Scanner implements Iterator<String>, Closeable {
             return size() >= 7;
         }
     };
-    
+
     private static final Pattern WHITESPACE_PATTERN;
 
     private static final Pattern FIND_ANY_PATTERN;
@@ -86,7 +86,7 @@ public final class Scanner implements Iterator<String>, Closeable {
     public Scanner(String source, String pattern) {
         this(new StringReader(Objects.requireNonNull(source, "source")), cachePattern(pattern));
     }
-    
+
     public Scanner(String source, Pattern pattern) {
         this(new StringReader(Objects.requireNonNull(source, "source")), pattern);
     }

@@ -57,4 +57,3 @@ public class Separator {
         this.value = value;
     }
 }
-

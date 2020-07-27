@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = { CounterRouteTest.TestConfig.class })
+                      classes = { CounterRouteTest.TestConfig.class })
 @MockEndpoints
 public class CounterRouteTest {
 
@@ -62,7 +62,6 @@ public class CounterRouteTest {
     private ProducerTemplate producer4;
 
     private MeterRegistry registry;
-
 
     @Configuration
     public static class TestConfig extends SingleRouteCamelConfiguration {

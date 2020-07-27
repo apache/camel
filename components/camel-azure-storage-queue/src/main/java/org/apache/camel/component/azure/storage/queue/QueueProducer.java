@@ -103,11 +103,13 @@ public class QueueProducer extends DefaultProducer {
     }
 
     private QueueOperations getQueueOperations(final Exchange exchange) {
-        return new QueueOperations(configuration, queueServiceClientWrapper.getQueueClientWrapper(determineQueueName(exchange)));
+        return new QueueOperations(
+                configuration, queueServiceClientWrapper.getQueueClientWrapper(determineQueueName(exchange)));
     }
 
     private String determineQueueName(final Exchange exchange) {
-        final String queueName = ObjectHelper.isEmpty(QueueExchangeHeaders.getQueueNameFromHeaders(exchange)) ? configuration.getQueueName()
+        final String queueName = ObjectHelper.isEmpty(QueueExchangeHeaders.getQueueNameFromHeaders(exchange))
+                ? configuration.getQueueName()
                 : QueueExchangeHeaders.getQueueNameFromHeaders(exchange);
 
         if (ObjectHelper.isEmpty(queueName)) {

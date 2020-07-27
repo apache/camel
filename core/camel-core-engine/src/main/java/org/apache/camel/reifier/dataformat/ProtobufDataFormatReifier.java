@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.ProtobufDataFormat;
 public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFormat> {
 
     public ProtobufDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (ProtobufDataFormat)definition);
+        super(camelContext, (ProtobufDataFormat) definition);
     }
 
     @Override

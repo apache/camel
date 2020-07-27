@@ -41,14 +41,14 @@ public class DebugSpringTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected void debugBefore(Exchange exchange, Processor processor,
-                               ProcessorDefinition<?> definition, String id, String shortName) {
+    protected void debugBefore(
+            Exchange exchange, Processor processor,
+            ProcessorDefinition<?> definition, String id, String shortName) {
         // this method is invoked before we are about to enter the given processor
         // from your Java editor you can just add a breakpoint in the code line below
         LOG.info("Before " + definition + " with body " + exchange.getIn().getBody());
         debugged = true;
     }
-
 
     @Test
     public void testDebugger() throws Exception {
@@ -71,13 +71,12 @@ public class DebugSpringTest extends CamelSpringTestSupport {
             public void configure() throws Exception {
                 // this is the route we want to debug
                 from("direct:start")
-                    .to("mock:a")
-                    .transform(body().prepend("Hello "))
-                    .to("mock:b");
+                        .to("mock:a")
+                        .transform(body().prepend("Hello "))
+                        .to("mock:b");
             }
         };
     }
-    
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

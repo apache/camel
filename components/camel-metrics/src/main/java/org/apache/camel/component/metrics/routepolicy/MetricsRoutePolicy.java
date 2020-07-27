@@ -30,7 +30,8 @@ import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link com.codahale.metrics.MetricRegistry}.
+ * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using
+ * {@link com.codahale.metrics.MetricRegistry}.
  * <p/>
  * The metrics is reported in JMX by default, but this can be configured.
  */
@@ -128,8 +129,8 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
     /**
      * The name pattern to use.
      * <p/>
-     * Uses dot as separators, but you can change that.
-     * The values <tt>##name##</tt>, <tt>##routeId##</tt>, and <tt>##type##</tt> will be replaced with actual value.
+     * Uses dot as separators, but you can change that. The values <tt>##name##</tt>, <tt>##routeId##</tt>, and
+     * <tt>##type##</tt> will be replaced with actual value.
      */
     public void setNamePattern(String namePattern) {
         this.namePattern = namePattern;

@@ -32,7 +32,8 @@ public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpr
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
     }
 
     @Test

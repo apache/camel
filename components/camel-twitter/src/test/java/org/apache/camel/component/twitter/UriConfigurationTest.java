@@ -44,7 +44,7 @@ public class UriConfigurationTest {
         assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
         assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
     }
-    
+
     @Test
     public void testPageSetting() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?count=50&numberOfPages=2");
@@ -54,13 +54,14 @@ public class UriConfigurationTest {
         assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
         assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
     }
-    
+
     @Test
     public void testHttpProxySetting() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter-search:foo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
+        Endpoint endpoint = context.getEndpoint(
+                "twitter-search:foo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
-        
+
         assertEquals("example.com", twitterEndpoint.getProperties().getHttpProxyHost());
         assertEquals(Integer.valueOf(3338), twitterEndpoint.getProperties().getHttpProxyPort());
         assertEquals("test", twitterEndpoint.getProperties().getHttpProxyUser());
@@ -70,7 +71,8 @@ public class UriConfigurationTest {
     @Test
     public void testDirectMessageEndpoint() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-directmessage:foo");
-        assertTrue(endpoint instanceof TwitterDirectMessageEndpoint, "Endpoint not a TwitterDirectMessageEndpoint: " + endpoint);
+        assertTrue(endpoint instanceof TwitterDirectMessageEndpoint,
+                "Endpoint not a TwitterDirectMessageEndpoint: " + endpoint);
     }
 
     @Test
@@ -83,19 +85,19 @@ public class UriConfigurationTest {
     public void testTimelineEndpoint() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-timeline:home");
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
-        TwitterTimelineEndpoint timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
+        TwitterTimelineEndpoint timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
         assertEquals(TimelineType.HOME, timelineEndpoint.getTimelineType());
         endpoint = context.getEndpoint("twitter-timeline:mentions");
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
-        timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
+        timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
         assertEquals(TimelineType.MENTIONS, timelineEndpoint.getTimelineType());
         endpoint = context.getEndpoint("twitter-timeline:retweetsofme");
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
-        timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
+        timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
         assertEquals(TimelineType.RETWEETSOFME, timelineEndpoint.getTimelineType());
         endpoint = context.getEndpoint("twitter-timeline:user");
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
-        timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
+        timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
         assertEquals(TimelineType.USER, timelineEndpoint.getTimelineType());
     }
 }

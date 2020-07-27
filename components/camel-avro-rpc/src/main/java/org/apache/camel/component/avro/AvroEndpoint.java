@@ -37,7 +37,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Produce or consume Apache Avro RPC services.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro RPC", syntax = "avro:transport:host:port/messageName", category = {Category.RPC})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro RPC", syntax = "avro:transport:host:port/messageName",
+             category = { Category.RPC })
 public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriParam
@@ -92,7 +93,7 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
                 try {
                     Field f = protocolClass.getField("PROTOCOL");
                     if (f != null) {
-                        Protocol protocol = (Protocol)f.get(null);
+                        Protocol protocol = (Protocol) f.get(null);
                         config.setProtocol(protocol);
                     }
                 } catch (NoSuchFieldException e) {
@@ -118,10 +119,11 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
                     : Collections.singleton(messageMap.get(config.getMessageName()));
             for (Protocol.Message message : messagesToCheck) {
                 if (message.getRequest().getFields().size() != 1) {
-                    throw new IllegalArgumentException("Single parameter option can't be used with message "
-                            + message.getName() + " because it has " + message.getRequest().getFields().size()
-                            + " parameters defined"
-                    );
+                    throw new IllegalArgumentException(
+                            "Single parameter option can't be used with message "
+                                                       + message.getName() + " because it has "
+                                                       + message.getRequest().getFields().size()
+                                                       + " parameters defined");
                 }
             }
         }

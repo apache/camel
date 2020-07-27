@@ -28,7 +28,8 @@ public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest 
     @Test
     public void testFailWithoutException() throws Exception {
         try {
-            String out = template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null, String.class);
+            String out = template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null,
+                    String.class);
             assertEquals("Fail", out);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -39,7 +40,8 @@ public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest 
     @Test
     public void testFailWithException() throws Exception {
         try {
-            template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
+            template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null,
+                    String.class);
             fail("Should throw an exception");
         } catch (Throwable t) {
             NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) t.getCause();

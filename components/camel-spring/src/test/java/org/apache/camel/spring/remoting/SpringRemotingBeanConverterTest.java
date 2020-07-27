@@ -26,13 +26,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringRemotingBeanConverterTest {
-    
+
     @Test
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
 
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext, true);
-        
+
         Invoker invoker = applicationContext.getBean("invokerProxy", Invoker.class);
         String response = invoker.invoke(new Bean.SubClass());
         assertEquals("Hello from Sub", response);

@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
 
@@ -44,8 +44,8 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&delay=50&initialDelay=0"
-                        + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
-                        .to("mock:result");
+                     + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
+                             .to("mock:result");
             }
         };
     }

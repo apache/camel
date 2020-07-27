@@ -25,7 +25,7 @@ import org.apache.camel.support.builder.Namespaces;
 
 public final class NamespacesHelper {
 
-    private NamespacesHelper() {       
+    private NamespacesHelper() {
     }
 
     public static Namespaces namespaces(Element element) {

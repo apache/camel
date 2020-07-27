@@ -52,12 +52,18 @@ public class CookieHandlerTest extends CamelTestSupport {
      */
     public static Stream<Arguments> data() {
         return Stream.of(
-                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2, "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"),
-                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0, "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"),
-                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "InstanceCookieHandler with ACCEPT_ALL"),
-                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"),
-                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0, "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"),
-                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ALL"));
+                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.example.com/acme/foo", 2, "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.sub.example.com/acme/foo", 0, "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2,
+                        "InstanceCookieHandler with ACCEPT_ALL"),
+                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.sub.example.com/acme/foo", 0, "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2,
+                        "ExchangeCookieHandler with ACCEPT_ALL"));
     }
 
     @Override
@@ -69,11 +75,15 @@ public class CookieHandlerTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void setReceiveAndTestCookie(CookieHandler cookieHandler, CookiePolicy cookiePolicy, String uriStr, int expectedNumberOfCookieValues, String description) throws IOException, URISyntaxException {
+    public void setReceiveAndTestCookie(
+            CookieHandler cookieHandler, CookiePolicy cookiePolicy, String uriStr, int expectedNumberOfCookieValues,
+            String description)
+            throws IOException, URISyntaxException {
         URI uri = new URI(uriStr);
         cookieHandler.setCookiePolicy(cookiePolicy);
         Map<String, List<String>> headerMap = new HashMap<>();
-        headerMap.put("Set-Cookie", Collections.singletonList("Customer=\"WILE_E_COYOTE\";Version=1;Path=\"/acme\";Domain=\".example.com\""));
+        headerMap.put("Set-Cookie",
+                Collections.singletonList("Customer=\"WILE_E_COYOTE\";Version=1;Path=\"/acme\";Domain=\".example.com\""));
         cookieHandler.storeCookies(exchange, uri, headerMap);
 
         Map<String, List<String>> cookieHeaders = cookieHandler.loadCookies(exchange, uri);

@@ -50,7 +50,7 @@ public class ManagedCBRTest extends ManagementTestSupport {
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-b\"");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
-        
+
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-c\"");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
@@ -70,17 +70,17 @@ public class ManagedCBRTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("route")
-                    .to("mock:a").id("task-a")
-                    .choice().id("choice")
+                        .to("mock:a").id("task-a")
+                        .choice().id("choice")
                         .when(simple("${body} contains 'Camel'")).id("when")
-                            .to("mock:b").id("task-b")
-                            .to("mock:c").id("task-c")
+                        .to("mock:b").id("task-b")
+                        .to("mock:c").id("task-c")
                         .when(simple("${body} contains 'Donkey'")).id("when2")
-                            .to("mock:d").id("task-d")
+                        .to("mock:d").id("task-d")
                         .otherwise().id("otherwise")
-                            .to("mock:e").id("task-e")
-                    .end()
-                    .to("mock:done").id("task-done");
+                        .to("mock:e").id("task-e")
+                        .end()
+                        .to("mock:done").id("task-done");
             }
         };
     }

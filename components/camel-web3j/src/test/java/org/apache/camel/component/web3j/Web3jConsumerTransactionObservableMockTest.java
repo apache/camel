@@ -46,7 +46,7 @@ public class Web3jConsumerTransactionObservableMockTest extends Web3jMockTestSup
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Transaction>)args[0]).call(new Transaction());
+                ((Action1<Transaction>) args[0]).call(new Transaction());
                 return subscription;
             }
         });
@@ -65,7 +65,7 @@ public class Web3jConsumerTransactionObservableMockTest extends Web3jMockTestSup
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Throwable>)args[1]).call(new RuntimeException("Error"));
+                ((Action1<Throwable>) args[1]).call(new RuntimeException("Error"));
                 return subscription;
             }
         });
@@ -85,7 +85,7 @@ public class Web3jConsumerTransactionObservableMockTest extends Web3jMockTestSup
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action0)args[2]).call();
+                ((Action0) args[2]).call();
                 return subscription;
             }
         });

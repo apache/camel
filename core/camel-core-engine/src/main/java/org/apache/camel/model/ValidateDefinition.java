@@ -62,9 +62,8 @@ public class ValidateDefinition extends ExpressionNode {
     }
 
     /**
-     * Expression to use for validation as a predicate. The expression should
-     * return either <tt>true</tt> or <tt>false</tt>. If returning
-     * <tt>false</tt> the message is invalid and an exception is thrown.
+     * Expression to use for validation as a predicate. The expression should return either <tt>true</tt> or
+     * <tt>false</tt>. If returning <tt>false</tt> the message is invalid and an exception is thrown.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

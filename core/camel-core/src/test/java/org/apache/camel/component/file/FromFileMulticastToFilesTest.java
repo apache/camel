@@ -37,9 +37,12 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/multicast?initialDelay=0&delay=10").multicast().pipeline().transform(body().prepend("HEADER:"))
-                    .to("file://target/data/multicast/out/?fileName=header.txt").to("mock:header").end().pipeline().transform(body().prepend("FOOTER:"))
-                    .to("file://target/data/multicast/out/?fileName=footer.txt").to("mock:footer").end().end().to("mock:end");
+                from("file://target/data/multicast?initialDelay=0&delay=10").multicast().pipeline()
+                        .transform(body().prepend("HEADER:"))
+                        .to("file://target/data/multicast/out/?fileName=header.txt").to("mock:header").end().pipeline()
+                        .transform(body().prepend("FOOTER:"))
+                        .to("file://target/data/multicast/out/?fileName=footer.txt").to("mock:footer").end().end()
+                        .to("mock:end");
             }
         });
         context.start();
@@ -66,9 +69,12 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/multicast?initialDelay=0&delay=10").multicast().parallelProcessing().pipeline().transform(body().prepend("HEADER:"))
-                    .to("file://target/data/multicast/out/?fileName=header.txt").to("mock:header").end().pipeline().transform(body().prepend("FOOTER:"))
-                    .to("file://target/data/multicast/out/?fileName=footer.txt").to("mock:footer").end().end().to("mock:end");
+                from("file://target/data/multicast?initialDelay=0&delay=10").multicast().parallelProcessing().pipeline()
+                        .transform(body().prepend("HEADER:"))
+                        .to("file://target/data/multicast/out/?fileName=header.txt").to("mock:header").end().pipeline()
+                        .transform(body().prepend("FOOTER:"))
+                        .to("file://target/data/multicast/out/?fileName=footer.txt").to("mock:footer").end().end()
+                        .to("mock:end");
             }
         });
         context.start();

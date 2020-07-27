@@ -39,12 +39,12 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(1L, "val1", "val2", "")
-        );
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(2L, "val3", "val4", "")
-        );
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(1L, "val1", "val2", ""));
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(2L, "val3", "val4", ""));
 
         mock.assertIsSatisfied();
 
@@ -69,19 +69,18 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(123L, "val1", "val2", "")
-        );
-        template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
-                new MyPersistentObject(123L, "val3", "val4", "")
-        );
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(123L, "val1", "val2", ""));
+        template.sendBody(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                new MyPersistentObject(123L, "val3", "val4", ""));
 
         mock.assertIsSatisfied();
 
         assertEquals(
                 1,
-                template.requestBody("direct:listAll", null, List.class).size()
-        );
+                template.requestBody("direct:listAll", null, List.class).size());
 
         List<Exchange> sorted = sortByChangeTimestamp(mock.getExchanges());
         Exchange change1 = sorted.get(0);
@@ -104,19 +103,18 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        template.sendBodyAndHeader(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+        template.sendBodyAndHeader(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 new MyPersistentObject(123L, "val1", "val2", ""),
-                NitriteConstants.OPERATION, new InsertOperation()
-        );
-        template.sendBodyAndHeader(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
+                NitriteConstants.OPERATION, new InsertOperation());
+        template.sendBodyAndHeader(
+                String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 null,
-                NitriteConstants.OPERATION, new RemoveRepositoryOperation(ObjectFilters.eq("key1", "val1"))
-        );
+                NitriteConstants.OPERATION, new RemoveRepositoryOperation(ObjectFilters.eq("key1", "val1")));
 
         assertEquals(
                 0,
-                template.requestBody("direct:listAll", null, List.class).size()
-        );
+                template.requestBody("direct:listAll", null, List.class).size());
 
         mock.assertIsSatisfied();
 

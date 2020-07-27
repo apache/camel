@@ -24,8 +24,7 @@ import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.spi.SynchronizationVetoable;
 
 /**
- * Simple {@link Synchronization} adapter with empty methods for easier overriding
- * of single methods.
+ * Simple {@link Synchronization} adapter with empty methods for easier overriding of single methods.
  */
 public class SynchronizationAdapter implements SynchronizationVetoable, Ordered, SynchronizationRouteAware {
 

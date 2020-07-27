@@ -70,8 +70,9 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(3).end().to("mock:a").recipientList(header("foo"))
-                    .aggregationStrategy(new MyAggregationStrategy()).parallelProcessing();
+                from("direct:start").onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(3).end().to("mock:a")
+                        .recipientList(header("foo"))
+                        .aggregationStrategy(new MyAggregationStrategy()).parallelProcessing();
             }
         });
         context.start();

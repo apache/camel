@@ -41,7 +41,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.IOUtils;
 
 @Dataformat("protobuf")
-public class ProtobufDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
+public class ProtobufDataFormat extends ServiceSupport
+        implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     public static final String CONTENT_TYPE_FORMAT_NATIVE = "native";
     public static final String CONTENT_TYPE_FORMAT_JSON = "json";
@@ -88,9 +89,10 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
 
     public void setDefaultInstance(Object instance) {
         if (instance instanceof Message) {
-            this.defaultInstance = (Message)instance;
+            this.defaultInstance = (Message) instance;
         } else {
-            throw new IllegalArgumentException("The argument for setDefaultInstance should be subClass of com.google.protobuf.Message");
+            throw new IllegalArgumentException(
+                    "The argument for setDefaultInstance should be subClass of com.google.protobuf.Message");
         }
     }
 
@@ -145,10 +147,12 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
         }
     }
 
-    private Message convertGraphToMessage(final Exchange exchange, final Object inputData) throws NoTypeConversionAvailableException {
+    private Message convertGraphToMessage(final Exchange exchange, final Object inputData)
+            throws NoTypeConversionAvailableException {
         if (!(inputData instanceof Message)) {
             // we just need to make sure input data is not a proto type
-            final Map<?, ?> messageInMap = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, inputData);
+            final Map<?, ?> messageInMap
+                    = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, inputData);
             if (messageInMap != null) {
                 return ProtobufConverter.toProto(messageInMap, defaultInstance);
             }
@@ -182,17 +186,20 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
         return builder.build();
     }
 
-    protected Message loadDefaultInstance(final String className, final CamelContext context) throws CamelException, ClassNotFoundException {
+    protected Message loadDefaultInstance(final String className, final CamelContext context)
+            throws CamelException, ClassNotFoundException {
         Class<?> instanceClass = context.getClassResolver().resolveMandatoryClass(className);
         if (Message.class.isAssignableFrom(instanceClass)) {
             try {
                 Method method = instanceClass.getMethod("getDefaultInstance");
-                return (Message)method.invoke(null);
+                return (Message) method.invoke(null);
             } catch (final Exception ex) {
-                throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with " + className + ", caused by " + ex);
+                throw new CamelException(
+                        "Can't set the defaultInstance of ProtobufferDataFormat with " + className + ", caused by " + ex);
             }
         } else {
-            throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with " + className
+            throw new CamelException(
+                    "Can't set the defaultInstance of ProtobufferDataFormat with " + className
                                      + ", as the class is not a subClass of com.google.protobuf.Message");
         }
     }

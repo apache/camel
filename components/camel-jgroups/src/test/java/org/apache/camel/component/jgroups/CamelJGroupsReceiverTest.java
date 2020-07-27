@@ -52,7 +52,7 @@ public class CamelJGroupsReceiverTest {
         message.setSrc(null);
         // When
         assertThrows(JGroupsException.class,
-            () -> receiver.receive(message));
+                () -> receiver.receive(message));
     }
 
 }

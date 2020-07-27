@@ -26,6 +26,6 @@ public class MyConcatFieldRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         from(ftp)
-            .to("log:b");
+                .to("log:b");
     }
 }

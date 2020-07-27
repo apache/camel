@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
              scheme = "azure-queue",
              title = "Azure Storage Queue Service (Deprecated)",
              syntax = "azure-blob:containerAndQueueUri",
-             category = {Category.CLOUD, Category.MESSAGING})
+             category = { Category.CLOUD, Category.MESSAGING })
 public class QueueServiceEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Container Queue compact Uri")

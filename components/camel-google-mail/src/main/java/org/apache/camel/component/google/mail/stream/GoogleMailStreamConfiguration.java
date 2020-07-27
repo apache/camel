@@ -83,8 +83,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 access token. This typically expires after an hour so
-     * refreshToken is recommended for long term usage.
+     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -95,9 +94,8 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can
-     * obtain a new accessToken whenever the current one expires - a necessity
-     * if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -175,7 +173,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
 
     public GoogleMailStreamConfiguration copy() {
         try {
-            return (GoogleMailStreamConfiguration)super.clone();
+            return (GoogleMailStreamConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

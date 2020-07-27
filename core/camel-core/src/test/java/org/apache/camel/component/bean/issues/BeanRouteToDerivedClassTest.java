@@ -50,7 +50,8 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
     @Test
     public void testDerivedClassCalledWithNoCustomProcessor() throws Exception {
-        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
+        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class,
+                new MyMessageToProcessorConverter());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -77,7 +78,8 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
     @Test
     public void testDerivedClassCalledWithCustomProcessor() throws Exception {
-        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
+        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class,
+                new MyMessageToProcessorConverter());
 
         context.addRoutes(new RouteBuilder() {
             @Override

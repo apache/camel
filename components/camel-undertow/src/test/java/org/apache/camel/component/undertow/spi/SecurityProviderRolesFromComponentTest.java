@@ -36,7 +36,7 @@ public class SecurityProviderRolesFromComponentTest extends AbstractSecurityProv
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext =  super.createCamelContext();
+        CamelContext camelContext = super.createCamelContext();
         UndertowComponent component = camelContext.getComponent("undertow", UndertowComponent.class);
         component.setAllowedRoles("user");
         return camelContext;

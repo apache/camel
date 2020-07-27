@@ -49,8 +49,8 @@ public class ManagedRouteController extends ManagedService implements ManagedRou
     public Collection<String> getControlledRoutes() {
         if (controller != null) {
             return controller.getControlledRoutes().stream()
-                .map(Route::getId)
-                .collect(Collectors.toList());
+                    .map(Route::getId)
+                    .collect(Collectors.toList());
         }
 
         return Collections.emptyList();

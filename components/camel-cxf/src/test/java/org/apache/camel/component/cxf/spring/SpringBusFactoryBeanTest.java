@@ -26,14 +26,14 @@ public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[]{"org/apache/camel/component/cxf/spring/SpringBusFactoryBeans.xml"};
+        return new String[] { "org/apache/camel/component/cxf/spring/SpringBusFactoryBeans.xml" };
     }
-    
+
     @Test
     public void getTheBusInstance() {
         Bus bus = ctx.getBean("cxfBus", Bus.class);
         assertNotNull(bus, "The bus should not be null");
-        
+
         bus = ctx.getBean("myBus", Bus.class);
         assertNotNull(bus, "The bus should not be null");
 

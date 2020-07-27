@@ -99,8 +99,8 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
                 context.getStreamCachingStrategy().setSpoolDirectory("target/data/cachedir/#name#/");
 
                 from("direct:start").routeId("foo")
-                    .convertBodyTo(int.class)
-                    .to("mock:a");
+                        .convertBodyTo(int.class)
+                        .to("mock:a");
             }
         };
     }

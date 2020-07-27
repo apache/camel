@@ -43,7 +43,8 @@ public class WebhookConfiguration implements Cloneable {
      * Note: all properties start with the 'webhook' prefix to avoid collision with the delegate endpoint.
      */
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String endpointUri;
 
     @UriParam
@@ -106,8 +107,8 @@ public class WebhookConfiguration implements Cloneable {
     /**
      * Computes the path part of the webhook.
      *
-     * @param external indicates if it's the path seen by the external provider or the internal one.
-     * @return the webhook full path
+     * @param  external indicates if it's the path seen by the external provider or the internal one.
+     * @return          the webhook full path
      */
     public String computeFullPath(boolean external) {
         // calculate the url to the rest service
@@ -175,8 +176,8 @@ public class WebhookConfiguration implements Cloneable {
     }
 
     /**
-     * A default path is computed for the webhook if not provided by the user.
-     * It uses a hash of the delegate endpoint in order for it to be reproducible.
+     * A default path is computed for the webhook if not provided by the user. It uses a hash of the delegate endpoint
+     * in order for it to be reproducible.
      *
      * This is not random on purpose.
      */
@@ -226,8 +227,8 @@ public class WebhookConfiguration implements Cloneable {
     }
 
     /**
-     * The first (base) path element where the webhook will be exposed.
-     * It's a good practice to set it to a random string, so that it cannot be guessed by unauthorized parties.
+     * The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random
+     * string, so that it cannot be guessed by unauthorized parties.
      */
     public void setWebhookBasePath(String webhookBasePath) {
         this.webhookBasePath = webhookBasePath;

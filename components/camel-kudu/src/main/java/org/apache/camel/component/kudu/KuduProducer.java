@@ -73,7 +73,6 @@ public class KuduProducer extends DefaultProducer {
         KuduClient connection = endpoint.getKuduClient();
         KuduTable table = connection.openTable(tableName);
 
-
         Insert insert = table.newInsert();
         PartialRow row = insert.getRow();
 
@@ -96,9 +95,8 @@ public class KuduProducer extends DefaultProducer {
         KuduClient connection = endpoint.getKuduClient();
 
         Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCHEMA);
-        CreateTableOptions builder = (CreateTableOptions)
-                exchange.getIn()
-                        .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
+        CreateTableOptions builder = (CreateTableOptions) exchange.getIn()
+                .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
         connection.createTable(tableName, schema, builder);
 
     }

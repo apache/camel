@@ -85,7 +85,8 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
                 exchange.getIn().setHeader(Ses2Constants.TO, Arrays.asList("anotherTo1@example.com", "anotherTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.RETURN_PATH, "anotherBounce@example.com");
-                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES, Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
+                        Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
             }
         });
@@ -110,7 +111,8 @@ public class SesComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws2-ses://from@example.com" + "?to=#toList" + "&subject=Subject" + "&returnPath=bounce@example.com" + "&replyToAddresses=#replyToList"
+                from("direct:start").to("aws2-ses://from@example.com" + "?to=#toList" + "&subject=Subject"
+                                        + "&returnPath=bounce@example.com" + "&replyToAddresses=#replyToList"
                                         + "&amazonSESClient=#amazonSESClient");
             }
         };

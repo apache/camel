@@ -35,9 +35,11 @@ public class RemovePropertiesReifier extends ProcessorReifier<RemovePropertiesDe
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPattern(), "patterns", this);
         if (definition.getExcludePatterns() != null) {
-            return new RemovePropertiesProcessor(parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
+            return new RemovePropertiesProcessor(
+                    parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
         } else if (definition.getExcludePattern() != null) {
-            return new RemovePropertiesProcessor(parseString(definition.getPattern()), parseStrings(new String[] {definition.getExcludePattern()}));
+            return new RemovePropertiesProcessor(
+                    parseString(definition.getPattern()), parseStrings(new String[] { definition.getExcludePattern() }));
         } else {
             return new RemovePropertiesProcessor(parseString(definition.getPattern()), null);
         }

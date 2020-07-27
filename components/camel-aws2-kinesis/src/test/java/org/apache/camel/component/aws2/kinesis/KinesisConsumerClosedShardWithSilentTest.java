@@ -76,12 +76,14 @@ public class KinesisConsumerClosedShardWithSilentTest {
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).
-             thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build());
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
+                .nextShardIterator("nextShardIterator")
+                .records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build());
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
-            .thenReturn(DescribeStreamResponse.builder().streamDescription(StreamDescription.builder().shards(shardList).build()).build());
+                .thenReturn(DescribeStreamResponse.builder()
+                        .streamDescription(StreamDescription.builder().shards(shardList).build()).build());
         when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
-            .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
+                .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
     }
 
     @Test
@@ -89,7 +91,8 @@ public class KinesisConsumerClosedShardWithSilentTest {
         undertest.poll();
 
         final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).describeStream(describeStreamReqCap.capture());
         assertThat(describeStreamReqCap.getValue().streamName(), is("streamName"));
@@ -106,7 +109,8 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
         undertest.poll();
 
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
         assertThat(getShardIteratorReqCap.getValue().streamName(), is("streamName"));
@@ -122,7 +126,8 @@ public class KinesisConsumerClosedShardWithSilentTest {
         undertest.poll();
 
         final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).describeStream(describeStreamReqCap.capture());
         assertThat(describeStreamReqCap.getValue().streamName(), is("streamName"));

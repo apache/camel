@@ -54,21 +54,20 @@ public class RibbonServiceCallRouteTest extends CamelTestSupport {
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .component("http")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
                 from("jetty:http://localhost:9090")
-                    .to("mock:9090")
-                    .transform().constant("9090");
+                        .to("mock:9090")
+                        .transform().constant("9090");
                 from("jetty:http://localhost:9091")
-                    .to("mock:9091")
-                    .transform().constant("9091");
+                        .to("mock:9091")
+                        .transform().constant("9091");
             }
         };
     }
 }
-

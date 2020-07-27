@@ -151,6 +151,7 @@ public final class UniVocityFixedWidthDataFormatUnmarshalSpringTest extends Came
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/univocity/UniVocityFixedWidthDataFormatUnmarshalSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/univocity/UniVocityFixedWidthDataFormatUnmarshalSpringTest.xml");
     }
 }

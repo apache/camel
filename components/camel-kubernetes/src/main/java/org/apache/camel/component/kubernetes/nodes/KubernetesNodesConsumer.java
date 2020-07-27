@@ -51,7 +51,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -90,10 +90,12 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> w = getEndpoint().getKubernetesClient().nodes();
+            NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> w
+                    = getEndpoint().getKubernetesClient().nodes();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(), getEndpoint().getKubernetesConfiguration().getLabelValue());
+                    && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
+                w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
+                        getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
                 w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());

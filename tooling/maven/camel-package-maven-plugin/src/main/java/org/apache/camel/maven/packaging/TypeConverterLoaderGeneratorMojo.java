@@ -47,7 +47,8 @@ import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
-@Mojo(name = "generate-type-converter-loader", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "generate-type-converter-loader", threadSafe = true,
+      requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName CONVERTER_ANNOTATION = DotName.createSimple("org.apache.camel.Converter");
@@ -186,9 +187,11 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             for (Map.Entry<String, Map<Type, MethodInfo>> to : converters.getConverters().entrySet()) {
                 for (Map.Entry<Type, MethodInfo> from : to.getValue().entrySet()) {
                     boolean allowNull = isAllowNull(from.getValue());
-                    writer.append("        addTypeConverter(registry, ").append(to.getKey()).append(".class").append(", ").append(toString(from.getKey())).append(".class, ")
+                    writer.append("        addTypeConverter(registry, ").append(to.getKey()).append(".class").append(", ")
+                            .append(toString(from.getKey())).append(".class, ")
                             .append(Boolean.toString(allowNull)).append(",\n");
-                    writer.append("            (type, exchange, value) -> ").append(toJava(from.getValue(), converterClasses)).append(");\n");
+                    writer.append("            (type, exchange, value) -> ").append(toJava(from.getValue(), converterClasses))
+                            .append(");\n");
                 }
             }
             writer.append("    }\n");
@@ -207,7 +210,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             for (MethodInfo ee : converters.getFallbackConverters()) {
                 boolean allowNull = isAllowNull(ee);
                 boolean canPromote = isFallbackCanPromote(ee);
-                writer.append("        addFallbackTypeConverter(registry, ").append(Boolean.toString(allowNull)).append(", ").append(Boolean.toString(canPromote)).append(", ")
+                writer.append("        addFallbackTypeConverter(registry, ").append(Boolean.toString(allowNull)).append(", ")
+                        .append(Boolean.toString(canPromote)).append(", ")
                         .append("(type, exchange, value) -> ").append(toJavaFallback(ee, converterClasses)).append(");\n");
             }
             writer.append("    }\n");
@@ -215,7 +219,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
             writer
                     .append("    private static void addFallbackTypeConverter(TypeConverterRegistry registry, boolean allowNull, boolean canPromote, SimpleTypeConverter.ConversionMethod method) { \n");
-            writer.append("        registry.addFallbackTypeConverter(new SimpleTypeConverter(allowNull, method), canPromote);\n");
+            writer.append(
+                    "        registry.addFallbackTypeConverter(new SimpleTypeConverter(allowNull, method), canPromote);\n");
             writer.append("    }\n");
             writer.append("\n");
         }
@@ -292,11 +297,11 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
         ClassConverters() {
             this.comparator = (o1, o2) -> o1.toString().compareTo(o2.toString());
-//                    processingEnv.getTypeUtils().isAssignable(o1, o2)
-//                        ? -1
-//                        : processingEnv.getTypeUtils().isAssignable(o2, o1)
-//                            ? +1
-//                            : o1.toString().compareTo(o2.toString());
+            //                    processingEnv.getTypeUtils().isAssignable(o1, o2)
+            //                        ? -1
+            //                        : processingEnv.getTypeUtils().isAssignable(o2, o1)
+            //                            ? +1
+            //                            : o1.toString().compareTo(o2.toString());
         }
 
         public boolean isIgnoreOnLoadError() {

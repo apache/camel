@@ -145,8 +145,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     /**
-     * Creates the {@link ModelCamelContext} using
-     * {@link org.apache.camel.support.DefaultRegistry} as registry.
+     * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -162,10 +161,8 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     /**
-     * Creates the {@link CamelContext} using the given {@link BeanRepository}
-     * as first-choice repository, and the
-     * {@link org.apache.camel.support.SimpleRegistry} as fallback, via the
-     * {@link DefaultRegistry} implementation.
+     * Creates the {@link CamelContext} using the given {@link BeanRepository} as first-choice repository, and the
+     * {@link org.apache.camel.support.SimpleRegistry} as fallback, via the {@link DefaultRegistry} implementation.
      *
      * @param repository the bean repository.
      */
@@ -1128,7 +1125,8 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
+    public AsyncProcessor createMulticast(
+            Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
         return getExtendedCamelContext().createMulticast(processors, executor, shutdownExecutorService);
     }
 
@@ -1529,7 +1527,8 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 

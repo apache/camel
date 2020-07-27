@@ -20,8 +20,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 
 /**
- * This is an endpoint when sending to it, is intercepted and is routed in a detour, with the following flow:
- * before, send to original endpoint (can be skipped), after (optional).
+ * This is an endpoint when sending to it, is intercepted and is routed in a detour, with the following flow: before,
+ * send to original endpoint (can be skipped), after (optional).
  */
 public interface InterceptSendToEndpoint extends Endpoint {
 

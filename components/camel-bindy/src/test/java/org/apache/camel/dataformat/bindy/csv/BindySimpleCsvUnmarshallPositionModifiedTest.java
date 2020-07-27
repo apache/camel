@@ -88,7 +88,8 @@ public class BindySimpleCsvUnmarshallPositionModifiedTest {
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
+        BindyCsvDataFormat orderBindyDataFormat
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
 
         @Override
         public void configure() {
@@ -101,6 +102,6 @@ public class BindySimpleCsvUnmarshallPositionModifiedTest {
             from(URI_DIRECT_START).unmarshal(orderBindyDataFormat).to(URI_MOCK_RESULT);
 
         }
-          
+
     }
 }

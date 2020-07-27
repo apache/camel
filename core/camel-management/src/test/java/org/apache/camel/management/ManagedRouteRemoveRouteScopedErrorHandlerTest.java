@@ -91,9 +91,9 @@ public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTes
             @Override
             public void configure() throws Exception {
                 from("seda:foo")
-                    // route scoped error handler
-                    .errorHandler(deadLetterChannel("mock:dead"))
-                    .to("mock:result");
+                        // route scoped error handler
+                        .errorHandler(deadLetterChannel("mock:dead"))
+                        .to("mock:result");
             }
         };
     }

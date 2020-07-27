@@ -30,7 +30,8 @@ public class MulticastThreadPoolProfileTest extends MulticastParallelTest {
             @Override
             public void configure() throws Exception {
                 // register thread pool profile
-                ThreadPoolProfile profile = new ThreadPoolProfileBuilder("myProfile").poolSize(5).maxPoolSize(10).maxQueueSize(20).build();
+                ThreadPoolProfile profile
+                        = new ThreadPoolProfileBuilder("myProfile").poolSize(5).maxPoolSize(10).maxQueueSize(20).build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
                 from("direct:start").multicast(new AggregationStrategy() {
@@ -44,10 +45,10 @@ public class MulticastThreadPoolProfileTest extends MulticastParallelTest {
                         return oldExchange;
                     }
                 })
-                    // and refer to the profile here
-                    .parallelProcessing().executorServiceRef("myProfile").to("direct:a", "direct:b")
-                    // use end to indicate end of multicast route
-                    .end().to("mock:result");
+                        // and refer to the profile here
+                        .parallelProcessing().executorServiceRef("myProfile").to("direct:a", "direct:b")
+                        // use end to indicate end of multicast route
+                        .end().to("mock:result");
 
                 from("direct:a").delay(100).setBody(constant("A"));
 

@@ -38,7 +38,7 @@ public class ManagedDualCamelContextTest extends TestSupport {
         context.addRoutes(createRouteBuilder());
         return context;
     }
-    
+
     @Test
     public void testDualCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)

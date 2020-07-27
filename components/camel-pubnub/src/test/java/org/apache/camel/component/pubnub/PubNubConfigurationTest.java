@@ -30,7 +30,7 @@ public class PubNubConfigurationTest extends CamelTestSupport {
     public void createEndpointWithIllegalArguments() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("pubnub"));
+                () -> component.createEndpoint("pubnub"));
     }
 
     @Test
@@ -46,8 +46,9 @@ public class PubNubConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
-        PubNubEndpoint endpoint = (PubNubEndpoint)component
-            .createEndpoint("pubnub:xxx?subscribeKey=mysubkey&publishKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&secure=false&authKey=authKey");
+        PubNubEndpoint endpoint = (PubNubEndpoint) component
+                .createEndpoint(
+                        "pubnub:xxx?subscribeKey=mysubkey&publishKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&secure=false&authKey=authKey");
 
         assertEquals("xxx", endpoint.getConfiguration().getChannel());
         assertEquals("mysubkey", endpoint.getConfiguration().getSubscribeKey());

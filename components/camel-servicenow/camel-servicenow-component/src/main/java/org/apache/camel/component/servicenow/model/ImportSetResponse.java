@@ -35,9 +35,9 @@ public class ImportSetResponse {
 
     @JsonCreator
     public ImportSetResponse(
-        @JsonProperty("import_set") String importSet,
-        @JsonProperty("staging_table") String stagingTable,
-        @JsonProperty("result") List<ImportSetResult> results) {
+                             @JsonProperty("import_set") String importSet,
+                             @JsonProperty("staging_table") String stagingTable,
+                             @JsonProperty("result") List<ImportSetResult> results) {
         this.importSet = importSet;
         this.stagingTable = stagingTable;
         this.results = results == null ? Collections.emptyList() : results;

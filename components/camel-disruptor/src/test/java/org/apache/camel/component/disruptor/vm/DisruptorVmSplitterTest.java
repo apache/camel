@@ -25,9 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
-   
+
     @BindToRegistry("splitterBean")
-    private SplitWordsBean swb =  new SplitWordsBean();
+    private SplitWordsBean swb = new SplitWordsBean();
 
     @Test
     void testSplitUsingMethodCall() throws Exception {
@@ -38,7 +38,6 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() {

@@ -67,9 +67,8 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance
-     * to lookup and use from the registry. When using this, then any other circuit breaker options
-     * are not in use.
+     * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use
+     * from the registry. When using this, then any other circuit breaker options are not in use.
      */
     public void setCircuitBreakerRef(String circuitBreakerRef) {
         this.circuitBreakerRef = circuitBreakerRef;
@@ -80,8 +79,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Control how long the circuit breaker stays open.
-     * The value are in seconds and the default is 5 seconds.
+     * Control how long the circuit breaker stays open. The value are in seconds and the default is 5 seconds.
      */
     public void setDelay(Long delay) {
         this.delay = delay;
@@ -92,8 +90,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Controls the number of trial calls which are allowed when the circuit breaker is half-open
-     * Default value is 1.
+     * Controls the number of trial calls which are allowed when the circuit breaker is half-open Default value is 1.
      */
     public void setSuccessThreshold(Integer successThreshold) {
         this.successThreshold = successThreshold;
@@ -104,8 +101,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Controls the size of the rolling window used when the circuit breaker is closed
-     * Default value is 20.
+     * Controls the size of the rolling window used when the circuit breaker is closed Default value is 20.
      */
     public void setRequestVolumeThreshold(Integer requestVolumeThreshold) {
         this.requestVolumeThreshold = requestVolumeThreshold;
@@ -116,8 +112,8 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the failure rate threshold in percentage.
-     * If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls.
+     * Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold
+     * the CircuitBreaker transitions to open and starts short-circuiting calls.
      * <p>
      * The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.
      */
@@ -130,8 +126,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Whether timeout is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether timeout is enabled or not on the circuit breaker. Default is false.
      */
     public void setTimeoutEnabled(Boolean timeoutEnabled) {
         this.timeoutEnabled = timeoutEnabled;
@@ -142,8 +137,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the thread execution timeout.
-     * Default value is 1000 milliseconds.
+     * Configures the thread execution timeout. Default value is 1000 milliseconds.
      */
     public void setTimeoutDuration(Long timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
@@ -154,8 +148,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the pool size of the thread pool when timeout is enabled.
-     * Default value is 10.
+     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
      */
     public void setTimeoutPoolSize(Integer timeoutPoolSize) {
         this.timeoutPoolSize = timeoutPoolSize;
@@ -177,8 +170,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Whether bulkhead is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether bulkhead is enabled or not on the circuit breaker. Default is false.
      */
     public void setBulkheadEnabled(Boolean bulkheadEnabled) {
         this.bulkheadEnabled = bulkheadEnabled;
@@ -189,8 +181,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the max amount of concurrent calls the bulkhead will support.
-     * Default value is 10.
+     * Configures the max amount of concurrent calls the bulkhead will support. Default value is 10.
      */
     public void setBulkheadMaxConcurrentCalls(Integer bulkheadMaxConcurrentCalls) {
         this.bulkheadMaxConcurrentCalls = bulkheadMaxConcurrentCalls;
@@ -201,8 +192,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the task queue size for holding waiting tasks to be processed by the bulkhead.
-     * Default value is 10.
+     * Configures the task queue size for holding waiting tasks to be processed by the bulkhead. Default value is 10.
      */
     public void setBulkheadWaitingTaskQueue(Integer bulkheadWaitingTaskQueue) {
         this.bulkheadWaitingTaskQueue = bulkheadWaitingTaskQueue;
@@ -220,9 +210,8 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance
-     * to lookup and use from the registry. When using this, then any other circuit breaker options
-     * are not in use.
+     * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use
+     * from the registry. When using this, then any other circuit breaker options are not in use.
      */
     public FaultToleranceConfigurationProperties withCircuitBreakerRef(String circuitBreakerRef) {
         this.circuitBreakerRef = circuitBreakerRef;
@@ -230,8 +219,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Control how long the circuit breaker stays open.
-     * The value are in seconds and the default is 5 seconds.
+     * Control how long the circuit breaker stays open. The value are in seconds and the default is 5 seconds.
      */
     public FaultToleranceConfigurationProperties withDelay(Long delay) {
         this.delay = delay;
@@ -239,8 +227,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Controls the number of trial calls which are allowed when the circuit breaker is half-open
-     * Default value is 1.
+     * Controls the number of trial calls which are allowed when the circuit breaker is half-open Default value is 1.
      */
     public FaultToleranceConfigurationProperties withSuccessThreshold(Integer successThreshold) {
         this.successThreshold = successThreshold;
@@ -248,8 +235,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Controls the size of the rolling window used when the circuit breaker is closed
-     * Default value is 20.
+     * Controls the size of the rolling window used when the circuit breaker is closed Default value is 20.
      */
     public FaultToleranceConfigurationProperties withRequestVolumeThreshold(Integer requestVolumeThreshold) {
         this.requestVolumeThreshold = requestVolumeThreshold;
@@ -257,8 +243,8 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the failure rate threshold in percentage.
-     * If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls.
+     * Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold
+     * the CircuitBreaker transitions to open and starts short-circuiting calls.
      * <p>
      * The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.
      */
@@ -268,8 +254,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Whether timeout is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether timeout is enabled or not on the circuit breaker. Default is false.
      */
     public FaultToleranceConfigurationProperties withTimeoutEnabled(Boolean timeoutEnabled) {
         this.timeoutEnabled = timeoutEnabled;
@@ -277,8 +262,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the thread execution timeout.
-     * Default value is 1000 milliseconds.
+     * Configures the thread execution timeout. Default value is 1000 milliseconds.
      */
     public FaultToleranceConfigurationProperties withTimeoutDuration(Long timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
@@ -286,8 +270,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the pool size of the thread pool when timeout is enabled.
-     * Default value is 10.
+     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
      */
     public FaultToleranceConfigurationProperties withTimeoutPoolSize(Integer timeoutPoolSize) {
         this.timeoutPoolSize = timeoutPoolSize;
@@ -297,14 +280,14 @@ public class FaultToleranceConfigurationProperties {
     /**
      * References to a custom thread pool to use when timeout is enabled
      */
-    public FaultToleranceConfigurationProperties withTimeoutScheduledExecutorServiceRef(String timeoutScheduledExecutorServiceRef) {
+    public FaultToleranceConfigurationProperties withTimeoutScheduledExecutorServiceRef(
+            String timeoutScheduledExecutorServiceRef) {
         this.timeoutScheduledExecutorServiceRef = timeoutScheduledExecutorServiceRef;
         return this;
     }
 
     /**
-     * Whether bulkhead is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether bulkhead is enabled or not on the circuit breaker. Default is false.
      */
     public FaultToleranceConfigurationProperties withBulkheadEnabled(Boolean bulkheadEnabled) {
         this.bulkheadEnabled = bulkheadEnabled;
@@ -312,8 +295,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the max amount of concurrent calls the bulkhead will support.
-     * Default value is 10.
+     * Configures the max amount of concurrent calls the bulkhead will support. Default value is 10.
      */
     public FaultToleranceConfigurationProperties withBulkheadMaxConcurrentCalls(Integer bulkheadMaxConcurrentCalls) {
         this.bulkheadMaxConcurrentCalls = bulkheadMaxConcurrentCalls;
@@ -321,8 +303,7 @@ public class FaultToleranceConfigurationProperties {
     }
 
     /**
-     * Configures the task queue size for holding waiting tasks to be processed by the bulkhead.
-     * Default value is 10.
+     * Configures the task queue size for holding waiting tasks to be processed by the bulkhead. Default value is 10.
      */
     public FaultToleranceConfigurationProperties withBulkheadWaitingTaskQueue(Integer bulkheadWaitingTaskQueue) {
         this.bulkheadWaitingTaskQueue = bulkheadWaitingTaskQueue;

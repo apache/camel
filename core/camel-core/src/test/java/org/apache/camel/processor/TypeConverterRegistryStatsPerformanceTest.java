@@ -66,7 +66,7 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").transform().method(TypeConverterRegistryStatsPerformanceTest.class, "transformMe")
-                    .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMeAlso").to("mock:result");
+                        .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMeAlso").to("mock:result");
             }
         };
     }

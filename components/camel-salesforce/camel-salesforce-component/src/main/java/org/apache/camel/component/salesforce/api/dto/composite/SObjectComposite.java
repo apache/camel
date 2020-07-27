@@ -41,20 +41,15 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
- * Executes a series of REST API requests in a single call. You can use the
- * output of one request as the input to a subsequent request. The response
- * bodies and HTTP statuses of the requests are returned in a single response
- * body. The entire request counts as a single call toward your API limits. The
- * requests in a composite call are called subrequests. All subrequests are
- * executed in the context of the same user. In a subrequest’s body, you specify
- * a reference ID that maps to the subrequest’s response. You can then refer to
- * the ID in the url or body fields of later subrequests by using a
- * JavaScript-like reference notation. Most requests that are supported in the
- * Composite batch API the helper builder methods are provided. For batch
- * requests that do not have their corresponding helper builder method, use
- * {@link #addGeneric(Method, String)} or
- * {@link #addGeneric(Method, String, Object)} methods. To build the batch use:
- * <blockquote>
+ * Executes a series of REST API requests in a single call. You can use the output of one request as the input to a
+ * subsequent request. The response bodies and HTTP statuses of the requests are returned in a single response body. The
+ * entire request counts as a single call toward your API limits. The requests in a composite call are called
+ * subrequests. All subrequests are executed in the context of the same user. In a subrequest’s body, you specify a
+ * reference ID that maps to the subrequest’s response. You can then refer to the ID in the url or body fields of later
+ * subrequests by using a JavaScript-like reference notation. Most requests that are supported in the Composite batch
+ * API the helper builder methods are provided. For batch requests that do not have their corresponding helper builder
+ * method, use {@link #addGeneric(Method, String)} or {@link #addGeneric(Method, String, Object)} methods. To build the
+ * batch use: <blockquote>
  *
  * <pre>
  * {@code
@@ -78,7 +73,10 @@ import static org.apache.camel.util.StringHelper.notEmpty;
 public final class SObjectComposite implements Serializable {
 
     public enum Method {
-        DELETE, GET, PATCH, POST
+        DELETE,
+        GET,
+        PATCH,
+        POST
     }
 
     public static final PayloadFormat REQUIRED_PAYLOAD_FORMAT = PayloadFormat.JSON;
@@ -100,12 +98,10 @@ public final class SObjectComposite implements Serializable {
     private final Version version;
 
     /**
-     * Create new composite request. You must specify the API version of the
-     * batch request. The API version cannot be newer than the version
-     * configured in the Salesforce Camel component. Some of the batched
-     * requests are available only from certain Salesforce API versions, when
-     * this is the case it is noted in the documentation of the builder method,
-     * if uncertain consult the Salesforce API documentation.
+     * Create new composite request. You must specify the API version of the batch request. The API version cannot be
+     * newer than the version configured in the Salesforce Camel component. Some of the batched requests are available
+     * only from certain Salesforce API versions, when this is the case it is noted in the documentation of the builder
+     * method, if uncertain consult the Salesforce API documentation.
      *
      * @param apiVersion API version for the batch request
      */
@@ -121,11 +117,12 @@ public final class SObjectComposite implements Serializable {
     /**
      * Add create SObject to the composite request.
      *
-     * @param data object to create
-     * @return this batch builder
+     * @param  data object to create
+     * @return      this batch builder
      */
     public SObjectComposite addCreate(final AbstractDescribedSObjectBase data, final String referenceId) {
-        addCompositeRequest(new CompositeRequest(Method.POST, apiPrefix + "/sobjects/" + typeOf(data) + "/", data, referenceId));
+        addCompositeRequest(
+                new CompositeRequest(Method.POST, apiPrefix + "/sobjects/" + typeOf(data) + "/", data, referenceId));
 
         return this;
     }
@@ -133,9 +130,9 @@ public final class SObjectComposite implements Serializable {
     /**
      * Add delete SObject with identifier to the composite request.
      *
-     * @param type type of SObject
-     * @param id identifier of the object
-     * @return this batch builder
+     * @param  type type of SObject
+     * @param  id   identifier of the object
+     * @return      this batch builder
      */
     public SObjectComposite addDelete(final String type, final String id, final String referenceId) {
         addCompositeRequest(new CompositeRequest(Method.DELETE, rowBaseUrl(type, id), referenceId));
@@ -144,33 +141,30 @@ public final class SObjectComposite implements Serializable {
     }
 
     /**
-     * Generic way to add requests to composite with {@code richInput} payload.
-     * Given URL starts from the version, so in order to update SObject specify
-     * just {@code /sobjects/Account/identifier} which results in
-     * {@code /services/data/v37.0/sobjects/Account/identifier}. Note the
-     * leading slash.
+     * Generic way to add requests to composite with {@code richInput} payload. Given URL starts from the version, so in
+     * order to update SObject specify just {@code /sobjects/Account/identifier} which results in
+     * {@code /services/data/v37.0/sobjects/Account/identifier}. Note the leading slash.
      *
-     * @param method HTTP method
-     * @param url URL starting from the version
-     * @param richInput body of the request, to be placed in richInput
-     * @return this batch builder
+     * @param  method    HTTP method
+     * @param  url       URL starting from the version
+     * @param  richInput body of the request, to be placed in richInput
+     * @return           this batch builder
      */
-    public SObjectComposite addGeneric(final Method method, final String url, final Object richInput, final String referenceId) {
+    public SObjectComposite addGeneric(
+            final Method method, final String url, final Object richInput, final String referenceId) {
         addCompositeRequest(new CompositeRequest(method, apiPrefix + url, richInput, referenceId));
 
         return this;
     }
 
     /**
-     * Generic way to add requests to composite. Given URL starts from the
-     * version, so in order to retrieve SObject specify just
-     * {@code /sobjects/Account/identifier} which results in
-     * {@code /services/data/v37.0/sobjects/Account/identifier}. Note the
-     * leading slash.
+     * Generic way to add requests to composite. Given URL starts from the version, so in order to retrieve SObject
+     * specify just {@code /sobjects/Account/identifier} which results in
+     * {@code /services/data/v37.0/sobjects/Account/identifier}. Note the leading slash.
      *
-     * @param method HTTP method
-     * @param url URL starting from the version
-     * @return this batch builder
+     * @param  method HTTP method
+     * @param  url    URL starting from the version
+     * @return        this batch builder
      */
     public SObjectComposite addGeneric(final Method method, final String url, final String referenceId) {
         addGeneric(method, url, null, referenceId);
@@ -181,10 +175,10 @@ public final class SObjectComposite implements Serializable {
     /**
      * Add field retrieval of an SObject by identifier to the composite request.
      *
-     * @param type type of SObject
-     * @param id identifier of SObject
-     * @param fields to return
-     * @return this batch builder
+     * @param  type   type of SObject
+     * @param  id     identifier of SObject
+     * @param  fields to return
+     * @return        this batch builder
      */
     public SObjectComposite addGet(final String type, final String id, final String referenceId, final String... fields) {
         final String fieldsParameter = composeFieldsParameter(fields);
@@ -195,24 +189,23 @@ public final class SObjectComposite implements Serializable {
     }
 
     /**
-     * Add field retrieval of an SObject by external identifier to the composite
-     * request.
+     * Add field retrieval of an SObject by external identifier to the composite request.
      *
-     * @param type type of SObject
-     * @param fieldName external identifier field name
-     * @param fieldValue external identifier field value
-     * @return this batch builder
+     * @param  type       type of SObject
+     * @param  fieldName  external identifier field name
+     * @param  fieldValue external identifier field value
+     * @return            this batch builder
      */
-    public SObjectComposite addGetByExternalId(final String type, final String fieldName, final String fieldValue, final String referenceId) {
+    public SObjectComposite addGetByExternalId(
+            final String type, final String fieldName, final String fieldValue, final String referenceId) {
         addCompositeRequest(new CompositeRequest(Method.GET, rowBaseUrl(type, fieldName, fieldValue), referenceId));
 
         return this;
     }
 
     /**
-     * Add retrieval of related SObject fields by identifier. For example
-     * {@code Account} has a relation to {@code CreatedBy}. To fetch fields from
-     * that related object ({@code User} SObject) use: <blockquote>
+     * Add retrieval of related SObject fields by identifier. For example {@code Account} has a relation to
+     * {@code CreatedBy}. To fetch fields from that related object ({@code User} SObject) use: <blockquote>
      *
      * <pre>
      * {@code batch.addGetRelated("Account", identifier, "CreatedBy", "Name", "Id")}
@@ -220,18 +213,20 @@ public final class SObjectComposite implements Serializable {
      *
      * </blockquote>
      *
-     * @param type type of SObject
-     * @param id identifier of SObject
-     * @param relation name of the related SObject field
-     * @param fields to return
-     * @return this batch builder
+     * @param  type     type of SObject
+     * @param  id       identifier of SObject
+     * @param  relation name of the related SObject field
+     * @param  fields   to return
+     * @return          this batch builder
      */
-    public SObjectComposite addGetRelated(final String type, final String id, final String relation, final String referenceId, final String... fields) {
+    public SObjectComposite addGetRelated(
+            final String type, final String id, final String relation, final String referenceId, final String... fields) {
         version.requireAtLeast(36, 0);
 
         final String fieldsParameter = composeFieldsParameter(fields);
 
-        addCompositeRequest(new CompositeRequest(Method.GET, rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter, referenceId));
+        addCompositeRequest(new CompositeRequest(
+                Method.GET, rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter, referenceId));
 
         return this;
     }
@@ -239,8 +234,8 @@ public final class SObjectComposite implements Serializable {
     /**
      * Add retrieval of SObject records by query to the composite.
      *
-     * @param query SOQL query to execute
-     * @return this batch builder
+     * @param  query SOQL query to execute
+     * @return       this batch builder
      */
     public SObjectComposite addQuery(final String query, final String referenceId) {
         addCompositeRequest(new CompositeRequest(Method.GET, apiPrefix + "/query/?q=" + notEmpty(query, "query"), referenceId));
@@ -251,45 +246,47 @@ public final class SObjectComposite implements Serializable {
     /**
      * Add retrieval of all SObject records by query to the composite.
      *
-     * @param query SOQL query to execute
-     * @return this batch builder
+     * @param  query SOQL query to execute
+     * @return       this batch builder
      */
     public SObjectComposite addQueryAll(final String query, final String referenceId) {
-        addCompositeRequest(new CompositeRequest(Method.GET, apiPrefix + "/queryAll/?q=" + notEmpty(query, "query"), referenceId));
+        addCompositeRequest(
+                new CompositeRequest(Method.GET, apiPrefix + "/queryAll/?q=" + notEmpty(query, "query"), referenceId));
 
         return this;
     }
 
     /**
-     * Add update of SObject record to the composite. The given {@code data}
-     * parameter must contain only the fields that need updating and must not
-     * contain the {@code Id} field. So set any fields to {@code null} that you
-     * do not want changed along with {@code Id} field.
+     * Add update of SObject record to the composite. The given {@code data} parameter must contain only the fields that
+     * need updating and must not contain the {@code Id} field. So set any fields to {@code null} that you do not want
+     * changed along with {@code Id} field.
      *
-     * @param type type of SObject
-     * @param id identifier of SObject
-     * @param data SObject with fields to change
-     * @return this batch builder
+     * @param  type type of SObject
+     * @param  id   identifier of SObject
+     * @param  data SObject with fields to change
+     * @return      this batch builder
      */
-    public SObjectComposite addUpdate(final String type, final String id, final AbstractSObjectBase data, final String referenceId) {
+    public SObjectComposite addUpdate(
+            final String type, final String id, final AbstractSObjectBase data, final String referenceId) {
         addCompositeRequest(new CompositeRequest(Method.PATCH, rowBaseUrl(type, notEmpty(id, "data.Id")), data, referenceId));
 
         return this;
     }
 
     /**
-     * Add update of SObject record by external identifier to the composite. The
-     * given {@code data} parameter must contain only the fields that need
-     * updating and must not contain the {@code Id} field. So set any fields to
+     * Add update of SObject record by external identifier to the composite. The given {@code data} parameter must
+     * contain only the fields that need updating and must not contain the {@code Id} field. So set any fields to
      * {@code null} that you do not want changed along with {@code Id} field.
      *
-     * @param type type of SObject
-     * @param fieldName name of the field holding the external identifier
-     * @param fieldValue external identifier field value
-     * @param data SObject with fields to change
-     * @return this batch builder
+     * @param  type       type of SObject
+     * @param  fieldName  name of the field holding the external identifier
+     * @param  fieldValue external identifier field value
+     * @param  data       SObject with fields to change
+     * @return            this batch builder
      */
-    public SObjectComposite addUpdateByExternalId(final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data, final String referenceId) {
+    public SObjectComposite addUpdateByExternalId(
+            final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data,
+            final String referenceId) {
 
         addCompositeRequest(new CompositeRequest(Method.PATCH, rowBaseUrl(type, fieldName, fieldValue), data, referenceId));
 
@@ -297,19 +294,19 @@ public final class SObjectComposite implements Serializable {
     }
 
     /**
-     * Add insert or update of SObject record by external identifier to the
-     * composite. The given {@code data} parameter must contain only the fields
-     * that need updating and must not contain the {@code Id} field. So set any
-     * fields to {@code null} that you do not want changed along with {@code Id}
-     * field.
+     * Add insert or update of SObject record by external identifier to the composite. The given {@code data} parameter
+     * must contain only the fields that need updating and must not contain the {@code Id} field. So set any fields to
+     * {@code null} that you do not want changed along with {@code Id} field.
      *
-     * @param type type of SObject
-     * @param fieldName name of the field holding the external identifier
-     * @param fieldValue external identifier field value
-     * @param data SObject with fields to change
-     * @return this batch builder
+     * @param  type       type of SObject
+     * @param  fieldName  name of the field holding the external identifier
+     * @param  fieldValue external identifier field value
+     * @param  data       SObject with fields to change
+     * @return            this batch builder
      */
-    public SObjectComposite addUpsertByExternalId(final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data, final String referenceId) {
+    public SObjectComposite addUpsertByExternalId(
+            final String type, final String fieldName, final String fieldValue, final AbstractSObjectBase data,
+            final String referenceId) {
 
         return addUpdateByExternalId(type, fieldName, fieldValue, data, referenceId);
     }
@@ -339,23 +336,25 @@ public final class SObjectComposite implements Serializable {
     }
 
     /**
-     * Returns all object types nested within this composite request, needed for
-     * serialization.
+     * Returns all object types nested within this composite request, needed for serialization.
      *
      * @return all object types in this composite request
      */
     @SuppressWarnings("rawtypes")
     public Class[] objectTypes() {
         final Set<Class<?>> types = Stream
-            .concat(Stream.of(SObjectComposite.class, BatchRequest.class), compositeRequests.stream().map(CompositeRequest::getBody).filter(Objects::nonNull).map(Object::getClass))
-            .collect(Collectors.toSet());
+                .concat(Stream.of(SObjectComposite.class, BatchRequest.class),
+                        compositeRequests.stream().map(CompositeRequest::getBody).filter(Objects::nonNull)
+                                .map(Object::getClass))
+                .collect(Collectors.toSet());
 
         return types.toArray(new Class[types.size()]);
     }
 
     void addCompositeRequest(final CompositeRequest compositeRequest) {
         if (compositeRequests.size() >= MAX_COMPOSITE_OPERATIONS) {
-            throw new IllegalArgumentException("You can add up to " + MAX_COMPOSITE_OPERATIONS
+            throw new IllegalArgumentException(
+                    "You can add up to " + MAX_COMPOSITE_OPERATIONS
                                                + " requests in a single composite request. Split your requests across multiple composite request.");
         }
         compositeRequests.add(compositeRequest);

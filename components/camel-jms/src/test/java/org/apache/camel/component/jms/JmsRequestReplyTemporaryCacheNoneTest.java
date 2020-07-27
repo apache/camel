@@ -72,7 +72,9 @@ public class JmsRequestReplyTemporaryCacheNoneTest extends CamelTestSupport {
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("ReplyToCacheLevelName cannot be CACHE_NONE when using temporary reply queues. The value must be either CACHE_CONSUMER, or CACHE_SESSION", iae.getMessage());
+            assertEquals(
+                    "ReplyToCacheLevelName cannot be CACHE_NONE when using temporary reply queues. The value must be either CACHE_CONSUMER, or CACHE_SESSION",
+                    iae.getMessage());
         }
     }
 }

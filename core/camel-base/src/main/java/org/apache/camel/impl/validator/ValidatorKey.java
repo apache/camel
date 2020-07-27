@@ -21,8 +21,7 @@ import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.DataType;
 
 /**
- * Key used in {@link org.apache.camel.spi.ValidatorRegistry} in {@link CamelContext},
- * to ensure a consistent lookup.
+ * Key used in {@link org.apache.camel.spi.ValidatorRegistry} in {@link CamelContext}, to ensure a consistent lookup.
  */
 public final class ValidatorKey extends ValueHolder<String> {
 

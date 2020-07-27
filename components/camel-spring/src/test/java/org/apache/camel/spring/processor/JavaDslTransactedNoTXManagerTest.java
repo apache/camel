@@ -35,8 +35,8 @@ public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transacted()
-                    .to("mock:result");
+                        .transacted()
+                        .to("mock:result");
             }
         });
         try {

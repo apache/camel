@@ -36,7 +36,7 @@ public enum AS2DispositionType {
     }
 
     public static AS2DispositionType parseDispositionType(String dispositionTypeString) {
-        switch(dispositionTypeString) {
+        switch (dispositionTypeString) {
             case "processed":
                 return PROCESSED;
             case "failed":

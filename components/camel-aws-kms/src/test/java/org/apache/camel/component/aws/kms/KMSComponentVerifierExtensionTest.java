@@ -40,7 +40,8 @@ public class KMSComponentVerifierExtensionTest extends CamelTestSupport {
     public void testParameters() throws Exception {
         Component component = context().getComponent("aws-kms");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -57,7 +58,8 @@ public class KMSComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivity() throws Exception {
         Component component = context().getComponent("aws-kms");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");

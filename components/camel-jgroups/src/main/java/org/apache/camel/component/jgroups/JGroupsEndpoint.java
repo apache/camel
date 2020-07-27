@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Exchange messages with JGroups clusters.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", category = {Category.CLUSTERING, Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName",
+             category = { Category.CLUSTERING, Category.MESSAGING })
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
@@ -52,14 +53,16 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     private JChannel channel;
     private JChannel resolvedChannel;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String clusterName;
     @UriParam
     private String channelProperties;
     @UriParam(label = "consumer")
     private boolean enableViewMessages;
 
-    public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName, String channelProperties, boolean enableViewMessages) {
+    public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName,
+                           String channelProperties, boolean enableViewMessages) {
         super(endpointUri, component);
         this.channel = channel;
         this.clusterName = clusterName;
@@ -187,8 +190,8 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances).
-     * By default only regular messages are consumed by the endpoint.
+     * If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only
+     * org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
      */
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;

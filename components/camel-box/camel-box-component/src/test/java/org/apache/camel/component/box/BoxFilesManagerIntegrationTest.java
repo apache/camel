@@ -49,8 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Test class for {@link BoxFilesManager}
- * APIs.
+ * Test class for {@link BoxFilesManager} APIs.
  */
 public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 

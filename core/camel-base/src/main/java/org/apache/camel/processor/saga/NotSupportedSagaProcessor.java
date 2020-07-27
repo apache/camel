@@ -28,7 +28,8 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class NotSupportedSagaProcessor extends SagaProcessor {
 
-    public NotSupportedSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService, SagaCompletionMode completionMode, CamelSagaStep step) {
+    public NotSupportedSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+                                     SagaCompletionMode completionMode, CamelSagaStep step) {
         super(camelContext, childProcessor, sagaService, completionMode, step);
         if (!step.isEmpty()) {
             throw new IllegalArgumentException("Saga configuration is not allowed when propagation is set to NOT_SUPPORTED");

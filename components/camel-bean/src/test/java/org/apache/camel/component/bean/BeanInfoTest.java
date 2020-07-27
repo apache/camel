@@ -64,7 +64,9 @@ public class BeanInfoTest {
         beanComponent = new BeanComponent();
         lenient().when(context.getComponent("bean", BeanComponent.class)).thenReturn(beanComponent);
         lenient().when(context.getRegistry()).thenReturn(registry);
-        lenient().when(registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class))
+        lenient()
+                .when(registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY,
+                        ParameterMappingStrategy.class))
                 .thenReturn(null);
     }
 

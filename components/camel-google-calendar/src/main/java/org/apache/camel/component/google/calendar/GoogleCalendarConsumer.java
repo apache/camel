@@ -35,12 +35,13 @@ public class GoogleCalendarConsumer extends AbstractApiConsumer<GoogleCalendarAp
     public GoogleCalendarConsumer(GoogleCalendarEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
-    
+
     @Override
     protected Object doInvokeMethod(Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(properties);
         try {
-            BeanIntrospection beanIntrospection = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection
+                    = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }
@@ -48,6 +49,6 @@ public class GoogleCalendarConsumer extends AbstractApiConsumer<GoogleCalendarAp
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
-    }    
-    
+    }
+
 }

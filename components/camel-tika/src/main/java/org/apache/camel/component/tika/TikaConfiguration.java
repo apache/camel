@@ -61,23 +61,24 @@ public class TikaConfiguration {
     /**
      * Tika Output Format. Supported output formats.
      * <ul>
-     *   <li>xml: Returns Parsed Content as XML. </li>
-     *   <li>html: Returns Parsed Content as HTML. </li>
-     *   <li>text: Returns Parsed Content as Text. </li>
-     *   <li>textMain: Uses the <a href="http://code.google.com/p/boilerpipe/">boilerpipe</a> library to automatically extract the main content from a web page. </li>
+     * <li>xml: Returns Parsed Content as XML.</li>
+     * <li>html: Returns Parsed Content as HTML.</li>
+     * <li>text: Returns Parsed Content as Text.</li>
+     * <li>textMain: Uses the <a href="http://code.google.com/p/boilerpipe/">boilerpipe</a> library to automatically
+     * extract the main content from a web page.</li>
      * </ul>
      */
     public void setTikaParseOutputFormat(TikaParseOutputFormat tikaParseOutputFormat) {
         this.tikaParseOutputFormat = tikaParseOutputFormat;
     }
-    
+
     public String getTikaParseOutputEncoding() {
         return tikaParseOutputEncoding;
     }
-    
+
     /**
-     * Tika Parse Output Encoding - Used to specify the character encoding of the parsed output.  
-     * Defaults to Charset.defaultCharset().
+     * Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to
+     * Charset.defaultCharset().
      */
     public void setTikaParseOutputEncoding(String tikaParseOutputEncoding) {
         this.tikaParseOutputEncoding = tikaParseOutputEncoding;

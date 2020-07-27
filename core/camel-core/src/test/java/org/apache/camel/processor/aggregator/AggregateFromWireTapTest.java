@@ -54,13 +54,14 @@ public class AggregateFromWireTapTest extends ContextTestSupport {
                 from("direct:start").wireTap("direct:tap").to("mock:end");
 
                 from("direct:tap")
-                    // just use a constant correlation expression as we want to
-                    // agg everything
-                    // in the same group. set batch size to two which means to
-                    // fire when we
-                    // have aggregated 2 messages, if not the timeout of 5 sec
-                    // will kick in
-                    .aggregate(constant(true), new MyAggregationStrategy()).completionSize(2).completionTimeout(5000L).to("direct:aggregated").end();
+                        // just use a constant correlation expression as we want to
+                        // agg everything
+                        // in the same group. set batch size to two which means to
+                        // fire when we
+                        // have aggregated 2 messages, if not the timeout of 5 sec
+                        // will kick in
+                        .aggregate(constant(true), new MyAggregationStrategy()).completionSize(2).completionTimeout(5000L)
+                        .to("direct:aggregated").end();
 
                 from("direct:aggregated").to("mock:aggregated");
             }

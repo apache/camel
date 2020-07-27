@@ -34,24 +34,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class XmlToJsonTest {
-    
+
     private static final String ABC_ORDER_PATH = "org/apache/camel/component/dozer/abc-order.xml";
     private static final String XYZ_ORDER_PATH = "org/apache/camel/component/dozer/xyz-order.json";
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
-    
+
     @Produce("direct:start")
     private ProducerTemplate startEndpoint;
-    
+
     @Autowired
     private CamelContext camelContext;
-    
+
     @AfterEach
     public void tearDown() {
         resultEndpoint.reset();
     }
-    
+
     @Test
     void testXmlToJson() throws Exception {
         resultEndpoint.expectedMessageCount(1);
@@ -61,7 +61,7 @@ public class XmlToJsonTest {
         String result = resultEndpoint.getExchanges().get(0).getIn().getBody(String.class);
         assertEquals(getResourceAsString(XYZ_ORDER_PATH), result);
     }
-    
+
     @Test
     void testMultipleSends() throws Exception {
         resultEndpoint.expectedMessageCount(2);
@@ -74,7 +74,7 @@ public class XmlToJsonTest {
         assertEquals(getResourceAsString(XYZ_ORDER_PATH), result1);
         assertEquals(getResourceAsString(XYZ_ORDER_PATH), result2);
     }
-    
+
     private String getResourceAsString(String resourcePath) {
         InputStream is = getClass().getClassLoader().getResourceAsStream(resourcePath);
         return camelContext.getTypeConverter().convertTo(String.class, is);

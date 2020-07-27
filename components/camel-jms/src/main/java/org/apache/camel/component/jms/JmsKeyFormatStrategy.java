@@ -24,16 +24,16 @@ public interface JmsKeyFormatStrategy {
     /**
      * Encodes the key before its sent as a {@link javax.jms.Message} message.
      *
-     * @param key  the original key
-     * @return the encoded key
+     * @param  key the original key
+     * @return     the encoded key
      */
     String encodeKey(String key);
 
     /**
      * Decodes the key after its received from a {@link javax.jms.Message} message.
      *
-     * @param key the encoded key
-     * @return the decoded key as the original key
+     * @param  key the encoded key
+     * @return     the decoded key as the original key
      */
     String decodeKey(String key);
 }

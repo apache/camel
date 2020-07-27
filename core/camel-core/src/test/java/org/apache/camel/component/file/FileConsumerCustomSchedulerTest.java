@@ -69,7 +69,8 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/file/custom?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10").routeId("foo").noAutoStartup().to("mock:result");
+                from("file:target/data/file/custom?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10")
+                        .routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

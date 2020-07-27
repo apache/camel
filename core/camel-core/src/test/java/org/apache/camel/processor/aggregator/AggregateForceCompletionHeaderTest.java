@@ -26,8 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 /**
- * To test CAMEL-4118 support for completing all aggregation groups with a
- * signal message
+ * To test CAMEL-4118 support for completing all aggregation groups with a signal message
  */
 public class AggregateForceCompletionHeaderTest extends ContextTestSupport {
 
@@ -90,7 +89,8 @@ public class AggregateForceCompletionHeaderTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(10).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(10)
+                        .to("mock:aggregated");
             }
         };
     }

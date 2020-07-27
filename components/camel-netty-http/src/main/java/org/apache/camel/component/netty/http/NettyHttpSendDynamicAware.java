@@ -35,8 +35,7 @@ public class NettyHttpSendDynamicAware extends HttpSendDynamicAware {
         if (port != null) {
             baseUrl += ":" + port;
         }
-        return new String[]{baseUrl, path};
+        return new String[] { baseUrl, path };
     }
 
 }
-

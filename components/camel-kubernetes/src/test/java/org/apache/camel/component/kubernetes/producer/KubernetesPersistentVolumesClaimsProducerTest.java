@@ -51,7 +51,9 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     @Test
     public void listTest() throws Exception {
         server.expect().withPath("/api/v1/namespaces/test/persistentvolumeclaims")
-            .andReturn(200, new PersistentVolumeClaimListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200,
+                        new PersistentVolumeClaimListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         List<PersistentVolumeClaim> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
@@ -59,8 +61,12 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
 
     @Test
     public void listByLabelsTest() throws Exception {
-        server.expect().withPath("/api/v1/namespaces/test/persistentvolumeclaims?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new PersistentVolumeClaimListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect()
+                .withPath("/api/v1/namespaces/test/persistentvolumeclaims?labelSelector="
+                          + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(200,
+                        new PersistentVolumeClaimListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             Map<String, String> labels = new HashMap<>();
@@ -77,7 +83,8 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     public void createListAndDeletePersistentVolumeClaim() throws Exception {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("pvc1");
-        server.expect().withPath("/api/v1/namespaces/test/persistentvolumeclaims/pvc1").andReturn(200, new PersistentVolumeClaimBuilder().withMetadata(meta).build()).once();
+        server.expect().withPath("/api/v1/namespaces/test/persistentvolumeclaims/pvc1")
+                .andReturn(200, new PersistentVolumeClaimBuilder().withMetadata(meta).build()).once();
         Exchange ex = template.request("direct:delete", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, "pvc1");
@@ -93,9 +100,12 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").to("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaims");
-                from("direct:listByLabels").to("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels");
-                from("direct:delete").to("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=deletePersistentVolumeClaim");
+                from("direct:list").to(
+                        "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaims");
+                from("direct:listByLabels").to(
+                        "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels");
+                from("direct:delete").to(
+                        "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=deletePersistentVolumeClaim");
             }
         };
     }

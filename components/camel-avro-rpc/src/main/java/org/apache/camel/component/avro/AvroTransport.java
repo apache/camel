@@ -18,5 +18,6 @@ package org.apache.camel.component.avro;
 
 public enum AvroTransport {
 
-    http, netty
+    http,
+    netty
 }

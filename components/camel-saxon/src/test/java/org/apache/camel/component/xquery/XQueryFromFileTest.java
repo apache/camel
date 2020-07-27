@@ -49,7 +49,8 @@ public class XQueryFromFileTest extends CamelTestSupport {
         String xml = exchange.getIn().getBody(String.class);
         assertNotNull(xml, "The transformed XML should not be null");
         assertEquals("<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
-            + "<body>Hello world!</body></mail></transformed>", xml, "transformed");
+                     + "<body>Hello world!</body></mail></transformed>",
+                xml, "transformed");
     }
 
     @Override
@@ -65,8 +66,8 @@ public class XQueryFromFileTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/xquery")
-                    .to("xquery:org/apache/camel/component/xquery/transform.xquery")
-                    .to("mock:result");
+                        .to("xquery:org/apache/camel/component/xquery/transform.xquery")
+                        .to("mock:result");
             }
         };
     }

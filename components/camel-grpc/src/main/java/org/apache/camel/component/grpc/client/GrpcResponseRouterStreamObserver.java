@@ -74,7 +74,8 @@ public class GrpcResponseRouterStreamObserver extends ServiceSupport implements 
 
     @Override
     protected void doStart() throws Exception {
-        this.endpoint = CamelContextHelper.getMandatoryEndpoint(sourceEndpoint.getCamelContext(), configuration.getStreamRepliesTo());
+        this.endpoint
+                = CamelContextHelper.getMandatoryEndpoint(sourceEndpoint.getCamelContext(), configuration.getStreamRepliesTo());
         this.producer = endpoint.createAsyncProducer();
         ServiceHelper.startService(producer);
     }

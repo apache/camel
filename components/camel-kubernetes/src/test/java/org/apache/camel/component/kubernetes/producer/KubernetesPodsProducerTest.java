@@ -48,12 +48,15 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/api/v1/pods").andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        server.expect().withPath("/api/v1/namespaces/test/pods").andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/api/v1/pods")
+                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/api/v1/namespaces/test/pods")
+                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().build()).once();
         List<Pod> result = template.requestBody("direct:list", "", List.class);
         assertEquals(3, result.size());
-        
-        Exchange ex = template.request("direct:list", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+
+        Exchange ex = template.request("direct:list",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
         List<Pod> resultNamespaced = ex.getMessage().getBody(List.class);
 
         assertEquals(2, resultNamespaced.size());
@@ -62,7 +65,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/pods?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("key1", "value1");
@@ -113,7 +116,8 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPods");
-                from("direct:listByLabels").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPodsByLabels");
+                from("direct:listByLabels")
+                        .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPodsByLabels");
                 from("direct:getPod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=getPod");
                 from("direct:deletePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=deletePod");
             }

@@ -27,8 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.core.xml.AbstractCamelProducerTemplateFactoryBean;
 
 /**
- * A factory for creating a new {@link org.apache.camel.ProducerTemplate}
- * instance with a minimum of XML
+ * A factory for creating a new {@link org.apache.camel.ProducerTemplate} instance with a minimum of XML
  */
 @XmlRootElement(name = "template")
 @XmlAccessorType(XmlAccessType.FIELD)

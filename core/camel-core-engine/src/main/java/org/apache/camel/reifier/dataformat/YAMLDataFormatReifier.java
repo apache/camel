@@ -30,7 +30,7 @@ import org.apache.camel.model.dataformat.YAMLTypeFilterType;
 public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
 
     public YAMLDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (YAMLDataFormat)definition);
+        super(camelContext, (YAMLDataFormat) definition);
     }
 
     @Override

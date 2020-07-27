@@ -19,7 +19,12 @@ package org.apache.camel.component.twitter.data;
 import org.apache.camel.component.twitter.TwitterHelper;
 
 public enum TimelineType {
-    PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME, UNKNOWN;
+    PUBLIC,
+    HOME,
+    USER,
+    MENTIONS,
+    RETWEETSOFME,
+    UNKNOWN;
 
     private static final TimelineType[] VALUES = values();
 

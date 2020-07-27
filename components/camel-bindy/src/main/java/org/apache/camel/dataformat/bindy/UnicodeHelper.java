@@ -26,9 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class replicates the essential parts of the String class in order to aid
- * proper work for Unicode chars in the presense of UTF-16. So for all operations 
- * please see {@link String} with the same signature. This class is equally immutable.
+ * This class replicates the essential parts of the String class in order to aid proper work for Unicode chars in the
+ * presense of UTF-16. So for all operations please see {@link String} with the same signature. This class is equally
+ * immutable.
  */
 public class UnicodeHelper implements Serializable {
     /**
@@ -39,28 +39,26 @@ public class UnicodeHelper implements Serializable {
          * One "char" is one Unicode codepoint, which is the standard case.
          */
         CODEPOINTS,
-        
+
         /**
          * One "char" is one graphem.
          */
         GRAPHEME;
     }
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(UnicodeHelper.class);
-    
+
     private String input;
-    
+
     private List<Integer> splitted;
 
     private Method method;
-    
+
     /**
      * Create instance.
      * 
-     * @param input
-     *         String, that is to be wrapped.
-     * @param method 
-     *         Method, that is used to determin "chars" of string.
+     * @param input  String, that is to be wrapped.
+     * @param method Method, that is used to determin "chars" of string.
      */
     public UnicodeHelper(final String input, final Method method) {
         this.input = input;
@@ -76,8 +74,7 @@ public class UnicodeHelper implements Serializable {
     }
 
     /**
-     * @return
-     *         Returns the method used to determining the string length.
+     * @return Returns the method used to determining the string length.
      */
     public Method getMethod() {
         return method;
@@ -88,17 +85,17 @@ public class UnicodeHelper implements Serializable {
      */
     public String substring(final int beginIndex) {
         split();
-        
+
         final int beginChar = splitted.get(beginIndex);
         return input.substring(beginChar);
     }
-    
+
     /**
      * @see String#substring(int, int)
      */
     public String substring(final int beginIndex, final int endIndex) {
         split();
-        
+
         final int beginChar = splitted.get(beginIndex);
         final int endChar = splitted.get(endIndex);
         return input.substring(beginChar, endChar);
@@ -109,23 +106,23 @@ public class UnicodeHelper implements Serializable {
      */
     public int length() {
         split();
-        
+
         return splitted.size() - 1;
     }
-    
+
     /**
      * @see String#indexOf(String)
      */
     public int indexOf(final String str) {
         return indexOf(str, 0);
-    }   
-    
+    }
+
     /**
      * @see String#indexOf(String, int)
      */
     public int indexOf(final String str, final int fromIndex) {
         split();
-        
+
         final int len = new UnicodeHelper(str, method).length();
 
         for (int index = fromIndex; index + len < length(); index++) {
@@ -136,38 +133,39 @@ public class UnicodeHelper implements Serializable {
 
         return -1;
     }
-    
+
     private void split() {
         if (this.splitted != null) {
             return;
         }
-        
+
         if (method.equals(Method.CODEPOINTS)) {
             splitCodepoints();
-            
+
         } else /* (method.equals(Method.GRAPHEME)) */ {
             splitGrapheme();
         }
-        
+
         LOG.debug("\"{}\" is splitted into {} ({} {}).", input, splitted, splitted.size() - 1, method);
         if (LOG.isTraceEnabled()) {
             for (int i = 0; i < splitted.size() - 2; i++) {
-                LOG.trace("segment [{},{}[=\"{}\".", splitted.get(i), splitted.get(i + 1), input.substring(splitted.get(i), splitted.get(i + 1)));
+                LOG.trace("segment [{},{}[=\"{}\".", splitted.get(i), splitted.get(i + 1),
+                        input.substring(splitted.get(i), splitted.get(i + 1)));
             }
         }
     }
 
     private void splitCodepoints() {
         final List<Integer> result = new ArrayList<>();
-        
+
         int i = 0;
         final int len = input.length();
         while (i < len) {
             result.add(i);
-            i += (Character.codePointAt(input, i) > 0xffff) ? 2 : 1; 
+            i += (Character.codePointAt(input, i) > 0xffff) ? 2 : 1;
         }
         result.add(len);
-        
+
         this.splitted = result;
     }
 
@@ -180,7 +178,7 @@ public class UnicodeHelper implements Serializable {
         //
         final BreakIterator bit = BreakIterator.getCharacterInstance();
         bit.setText(input);
-        
+
         result.add(bit.first());
         for (int end = bit.next(); end != BreakIterator.DONE; end = bit.next()) {
             result.add(end);

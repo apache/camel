@@ -58,7 +58,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     public RabbitMQEndpoint getEndpoint() {
-        return (RabbitMQEndpoint)super.getEndpoint();
+        return (RabbitMQEndpoint) super.getEndpoint();
     }
 
     /**
@@ -134,7 +134,8 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         }
         // Open connection, and start message listener in background
         Integer networkRecoveryInterval = getEndpoint().getNetworkRecoveryInterval();
-        final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
+        final long connectionRetryInterval
+                = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
         startConsumerCallable = new StartConsumerCallable(connectionRetryInterval);
         executor.submit(startConsumerCallable);
     }
@@ -195,8 +196,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     }
 
     /**
-     * Task in charge of opening connection and adding listener when consumer is
-     * started and broker is not available.
+     * Task in charge of opening connection and adding listener when consumer is started and broker is not available.
      */
     private class StartConsumerCallable implements Callable<Void> {
         private final long connectionRetryInterval;

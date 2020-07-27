@@ -52,7 +52,8 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         }
 
         boolean reject = parseBoolean(definition.getRejectExecution(), false);
-        Throttler answer = new Throttler(camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
+        Throttler answer = new Throttler(
+                camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
         // should be true by default

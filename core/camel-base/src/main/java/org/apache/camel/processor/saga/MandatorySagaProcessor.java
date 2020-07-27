@@ -29,7 +29,8 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class MandatorySagaProcessor extends SagaProcessor {
 
-    public MandatorySagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService, SagaCompletionMode completionMode, CamelSagaStep step) {
+    public MandatorySagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+                                  SagaCompletionMode completionMode, CamelSagaStep step) {
         super(camelContext, childProcessor, sagaService, completionMode, step);
     }
 
@@ -40,9 +41,10 @@ public class MandatorySagaProcessor extends SagaProcessor {
                 exchange.setException(new CamelExchangeException("Exchange is not part of a saga", exchange));
                 callback.done(false);
             } else {
-                coordinator.beginStep(exchange, step).whenComplete((done, ex2) -> ifNotException(ex2, exchange, callback, () -> {
-                    super.process(exchange, doneSync -> callback.done(false));
-                }));
+                coordinator.beginStep(exchange, step)
+                        .whenComplete((done, ex2) -> ifNotException(ex2, exchange, callback, () -> {
+                            super.process(exchange, doneSync -> callback.done(false));
+                        }));
             }
         }));
         return false;

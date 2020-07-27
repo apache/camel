@@ -122,7 +122,8 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines = (List<String>)getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines
+                = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("abc", lines.get(0));
         assertEquals("def", lines.get(1));
@@ -136,7 +137,8 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines = (List<String>)getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines
+                = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("++abc++", lines.get(0));
         assertEquals("++def++", lines.get(1));

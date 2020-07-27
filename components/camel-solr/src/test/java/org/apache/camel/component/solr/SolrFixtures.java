@@ -39,7 +39,9 @@ public class SolrFixtures {
     private static int httpsPort;
 
     public enum TestServerType {
-        USE_HTTP, USE_HTTPS, USE_CLOUD
+        USE_HTTP,
+        USE_HTTPS,
+        USE_CLOUD
     }
 
     TestServerType serverType;

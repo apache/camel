@@ -72,48 +72,48 @@ public class JettyFailoverRoundRobinTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // load balance using failover in round robin mode.
-                    // Also do not inherit error handler which means the failover LB will not fallback
-                    // and use error handler but trigger failover to next endpoint immediately.
-                    // -1 is to indicate that failover LB should newer exhaust and keep trying
-                    .loadBalance().failover(-1, false, true)
+                        // load balance using failover in round robin mode.
+                        // Also do not inherit error handler which means the failover LB will not fallback
+                        // and use error handler but trigger failover to next endpoint immediately.
+                        // -1 is to indicate that failover LB should newer exhaust and keep trying
+                        .loadBalance().failover(-1, false, true)
                         // this is the four endpoints we will load balance with failover
                         .to(hbad, hbad2, hgood, hgood2);
                 // END SNIPPET: e1
 
                 from(bad)
-                    .to("mock:bad")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                            exchange.getIn().setBody("Something bad happened");
-                        }
-                    });
+                        .to("mock:bad")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                                exchange.getIn().setBody("Something bad happened");
+                            }
+                        });
 
                 from(bad2)
-                    .to("mock:bad2")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                            exchange.getIn().setBody("Not found");
-                        }
-                    });
+                        .to("mock:bad2")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                                exchange.getIn().setBody("Not found");
+                            }
+                        });
 
                 from(good)
-                    .to("mock:good")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setBody("Good");
-                        }
-                    });
+                        .to("mock:good")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setBody("Good");
+                            }
+                        });
 
                 from(good2)
-                    .to("mock:good2")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setBody("Also good");
-                        }
-                    });
+                        .to("mock:good2")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setBody("Also good");
+                            }
+                        });
             }
         };
     }

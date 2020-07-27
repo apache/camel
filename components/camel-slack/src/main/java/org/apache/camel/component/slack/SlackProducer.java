@@ -54,7 +54,7 @@ public class SlackProducer extends DefaultProducer {
         Object payload = exchange.getIn().getBody();
         if (payload instanceof SlackMessage) {
             slackMessage = (SlackMessage) payload;
-        } else { 
+        } else {
             slackMessage = new SlackMessage();
             slackMessage.setText(exchange.getIn().getBody(String.class));
         }

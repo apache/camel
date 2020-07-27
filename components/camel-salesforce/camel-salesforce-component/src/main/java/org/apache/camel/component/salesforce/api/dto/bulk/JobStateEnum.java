@@ -25,8 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  * Java class for JobStateEnum.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -45,10 +44,14 @@ import javax.xml.bind.annotation.XmlType;
 public enum JobStateEnum {
 
     @XmlEnumValue("Open")
-    OPEN("Open"), @XmlEnumValue("Closed")
-    CLOSED("Closed"), @XmlEnumValue("Aborted")
-    ABORTED("Aborted"), @XmlEnumValue("Failed")
+    OPEN("Open"),
+    @XmlEnumValue("Closed")
+    CLOSED("Closed"),
+    @XmlEnumValue("Aborted")
+    ABORTED("Aborted"),
+    @XmlEnumValue("Failed")
     FAILED("Failed");
+
     private final String value;
 
     JobStateEnum(String v) {

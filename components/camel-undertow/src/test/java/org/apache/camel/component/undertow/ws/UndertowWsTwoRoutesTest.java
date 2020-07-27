@@ -48,28 +48,29 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
             final CountDownLatch latch = new CountDownLatch(1);
             final AsyncHttpClient c = new DefaultAsyncHttpClient();
             final WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/bar").execute(
-                new WebSocketUpgradeHandler.Builder()
-                    .addWebSocketListener(new WebSocketListener() {
-                        @Override
-                        public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                            received.add(message);
-                            LOG.info("received --> " + message);
-                            latch.countDown();
-                        }
+                    new WebSocketUpgradeHandler.Builder()
+                            .addWebSocketListener(new WebSocketListener() {
+                                @Override
+                                public void onTextFrame(String message, boolean finalFragment, int rsv) {
+                                    received.add(message);
+                                    LOG.info("received --> " + message);
+                                    latch.countDown();
+                                }
 
-                        @Override
-                        public void onOpen(WebSocket websocket) {
-                        }
+                                @Override
+                                public void onOpen(WebSocket websocket) {
+                                }
 
-                        @Override
-                        public void onClose(WebSocket websocket, int code, String reason) {
-                        }
+                                @Override
+                                public void onClose(WebSocket websocket, int code, String reason) {
+                                }
 
-                        @Override
-                        public void onError(Throwable t) {
-                            t.printStackTrace();
-                        }
-                    }).build()).get();
+                                @Override
+                                public void onError(Throwable t) {
+                                    t.printStackTrace();
+                                }
+                            }).build())
+                    .get();
 
             websocket.sendTextFrame("Beer");
             assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -80,7 +81,6 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
             websocket.sendCloseFrame();
             c.close();
         }
-
 
         // We call the route WebSocket PUB
         {
@@ -97,7 +97,6 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
                                     latch.countDown();
                                 }
 
-
                                 @Override
                                 public void onOpen(WebSocket websocket) {
                                 }
@@ -110,7 +109,8 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
                                 public void onError(Throwable t) {
                                     t.printStackTrace();
                                 }
-                            }).build()).get();
+                            }).build())
+                    .get();
 
             websocket.sendTextFrame("wine");
             assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -130,10 +130,10 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
             public void configure() {
 
                 int port = getPort();
-                from("undertow:ws://localhost:" + port  + "/bar")
-                    .log(">>> Message received from BAR WebSocket Client : ${body}")
-                    .transform().simple("The bar has ${body}")
-                    .to("undertow:ws://localhost:" + port + "/bar");
+                from("undertow:ws://localhost:" + port + "/bar")
+                        .log(">>> Message received from BAR WebSocket Client : ${body}")
+                        .transform().simple("The bar has ${body}")
+                        .to("undertow:ws://localhost:" + port + "/bar");
 
                 from("undertow:ws://localhost:" + port + "/pub")
                         .log(">>> Message received from PUB WebSocket Client : ${body}")

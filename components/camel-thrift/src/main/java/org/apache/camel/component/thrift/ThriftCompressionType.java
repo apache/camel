@@ -24,7 +24,7 @@ public enum ThriftCompressionType {
      * No compression defined
      */
     NONE,
-        
+
     /**
      * Standard Java utility zlib implementation
      */

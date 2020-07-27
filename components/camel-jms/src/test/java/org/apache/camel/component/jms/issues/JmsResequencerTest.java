@@ -41,7 +41,7 @@ public class JmsResequencerTest extends CamelSpringTestSupport {
     public void testStreamResequencer() throws Exception {
         testResequencer("activemq:queue:in2");
     }
-    
+
     private void testResequencer(String endpoint) throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(100);

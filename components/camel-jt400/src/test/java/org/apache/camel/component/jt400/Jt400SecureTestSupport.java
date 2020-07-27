@@ -23,9 +23,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Useful base class for JT400 secured component unit tests. It creates a mock
- * secured connection pool, registers it under the ID {@code "mockPool"} and
- * releases it after the test runs.
+ * Useful base class for JT400 secured component unit tests. It creates a mock secured connection pool, registers it
+ * under the ID {@code "mockPool"} and releases it after the test runs.
  */
 public abstract class Jt400SecureTestSupport extends CamelTestSupport {
 

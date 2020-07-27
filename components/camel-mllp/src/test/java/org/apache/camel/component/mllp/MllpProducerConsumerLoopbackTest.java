@@ -75,10 +75,10 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
             public void configure() {
                 fromF("mllp://%s:%d?autoAck=true&readTimeout=5000", mllpHost, mllpPort).id(routeId)
-                    .convertBodyTo(String.class)
-                    .to(acknowledged)
-                    .process(new PassthroughProcessor("after send to result"))
-                    .log(LoggingLevel.DEBUG, routeId, "Receiving: ${body}");
+                        .convertBodyTo(String.class)
+                        .to(acknowledged)
+                        .process(new PassthroughProcessor("after send to result"))
+                        .log(LoggingLevel.DEBUG, routeId, "Receiving: ${body}");
             }
         };
 
@@ -87,9 +87,9 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
             public void configure() {
                 from(source.getDefaultEndpoint()).routeId(routeId)
-                    .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
-                    .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
-                    .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
+                        .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
+                        .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
+                        .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
             }
         };
 
@@ -102,7 +102,8 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         acknowledged.expectedBodiesReceived(testMessage);
 
         String acknowledgement = source.requestBody((Object) testMessage, String.class);
-        assertThat("Should be acknowledgment for message 1", acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|00001")));
+        assertThat("Should be acknowledgment for message 1", acknowledgement,
+                CoreMatchers.containsString(String.format("MSA|AA|00001")));
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
@@ -117,10 +118,10 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             String testMessage = Hl7TestMessageGenerator.generateMessage(i);
             acknowledged.message(i - 1).body().isEqualTo(testMessage);
             String acknowledgement = source.requestBody((Object) testMessage, String.class);
-            assertThat("Should be acknowledgment for message " + i, acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
+            assertThat("Should be acknowledgment for message " + i, acknowledgement,
+                    CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
 }
-

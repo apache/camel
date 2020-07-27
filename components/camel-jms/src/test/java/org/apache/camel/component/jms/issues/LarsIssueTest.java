@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when
- * forwarding a JMS message from one destination to another
+ * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
+ * one destination to another
  */
-public class LarsIssueTest  extends CamelTestSupport {
+public class LarsIssueTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LarsIssueTest.class);
 
     @Test

@@ -48,9 +48,9 @@ public abstract class EtcdTestSupport extends ContainerAwareTestSupport {
 
     protected String getClientUri() {
         return String.format(
-            "http://%s:%d",
-            getContainerHost(CONTAINER_NAME),
-            getContainerPort(CONTAINER_NAME, ETCD_CLIENT_PORT));
+                "http://%s:%d",
+                getContainerHost(CONTAINER_NAME),
+                getContainerPort(CONTAINER_NAME, ETCD_CLIENT_PORT));
     }
 
     protected EtcdClient getClient() {
@@ -83,13 +83,13 @@ public abstract class EtcdTestSupport extends ContainerAwareTestSupport {
 
     public static GenericContainer etcdContainer() {
         return new GenericContainer(CONTAINER_IMAGE)
-            .withNetworkAliases(CONTAINER_NAME)
-            .withExposedPorts(ETCD_CLIENT_PORT, ETCD_PEER_PORT)
-            .waitingFor(Wait.forLogMessageContaining("etcdserver: set the initial cluster version", 1))
-            .withCommand(
-                "-name", CONTAINER_NAME + "-0",
-                "-advertise-client-urls", "http://" + DockerClientFactory.instance().dockerHostIpAddress() + ":" + ETCD_CLIENT_PORT,
-                "-listen-client-urls", "http://0.0.0.0:" + ETCD_CLIENT_PORT
-            );
+                .withNetworkAliases(CONTAINER_NAME)
+                .withExposedPorts(ETCD_CLIENT_PORT, ETCD_PEER_PORT)
+                .waitingFor(Wait.forLogMessageContaining("etcdserver: set the initial cluster version", 1))
+                .withCommand(
+                        "-name", CONTAINER_NAME + "-0",
+                        "-advertise-client-urls",
+                        "http://" + DockerClientFactory.instance().dockerHostIpAddress() + ":" + ETCD_CLIENT_PORT,
+                        "-listen-client-urls", "http://0.0.0.0:" + ETCD_CLIENT_PORT);
     }
 }

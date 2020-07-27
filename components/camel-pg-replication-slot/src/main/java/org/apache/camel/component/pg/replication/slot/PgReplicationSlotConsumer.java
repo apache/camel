@@ -183,7 +183,8 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     private void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
-            getExceptionHandler().handleException("Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            getExceptionHandler().handleException(
+                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
     }
 
@@ -197,7 +198,8 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     }
 
     private boolean isSlotCreated() throws SQLException {
-        String sql = String.format("SELECT count(*) FROM pg_replication_slots WHERE slot_name = '%s';", this.endpoint.getSlot());
+        String sql
+                = String.format("SELECT count(*) FROM pg_replication_slots WHERE slot_name = '%s';", this.endpoint.getSlot());
 
         try (Statement statement = this.connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
             resultSet.next();

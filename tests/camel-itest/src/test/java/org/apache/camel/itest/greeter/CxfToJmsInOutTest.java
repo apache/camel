@@ -38,7 +38,7 @@ public class CxfToJmsInOutTest {
         //things to set them into the URL's in the spring contexts 
         System.setProperty("CxfToJmsInOutTest.port", Integer.toString(port));
     }
-    
+
     @Autowired
     protected ProducerTemplate template;
 
@@ -57,7 +57,8 @@ public class CxfToJmsInOutTest {
         inputEndpoint.expectedBodiesReceived("Willem");
         outputEndpoint.expectedBodiesReceived("Hello Willem");
 
-        String out = template.requestBodyAndHeader("cxf://bean:serviceEndpoint", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out = template.requestBodyAndHeader("cxf://bean:serviceEndpoint", "Willem", CxfConstants.OPERATION_NAME,
+                "greetMe", String.class);
         assertEquals("Hello Willem", out);
 
         inputEndpoint.assertIsSatisfied();

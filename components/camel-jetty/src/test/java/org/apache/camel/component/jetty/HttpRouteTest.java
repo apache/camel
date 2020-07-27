@@ -106,7 +106,8 @@ public class HttpRouteTest extends BaseJettyTest {
 
     @Test
     public void testEchoEndpointWithIgnoreResponseBody() throws Exception {
-        String out = template.requestBody("http://localhost:" + port1 + "/echo?ignoreResponseBody=true", "HelloWorld", String.class);
+        String out = template.requestBody("http://localhost:" + port1 + "/echo?ignoreResponseBody=true", "HelloWorld",
+                String.class);
         assertNull(out, "Get a wrong output ");
     }
 
@@ -165,8 +166,9 @@ public class HttpRouteTest extends BaseJettyTest {
 
     @Test
     public void testDisableStreamCache() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port3 + "/noStreamCache", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
-                                                        "application/xml", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port3 + "/noStreamCache",
+                new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
+                "application/xml", String.class);
 
         assertEquals("OK", response, "Get a wrong output ");
     }
@@ -175,7 +177,8 @@ public class HttpRouteTest extends BaseJettyTest {
     public void testRequestBufferSize() throws Exception {
         InputStream in = this.getClass().getResourceAsStream("/META-INF/LICENSE.txt");
         int fileSize = in.available();
-        String response = template.requestBodyAndHeader("http://localhost:" + port4 + "/requestBufferSize", in, Exchange.CONTENT_TYPE, "application/txt", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port4 + "/requestBufferSize", in,
+                Exchange.CONTENT_TYPE, "application/txt", String.class);
         assertEquals(fileSize, response.length(), "Got a wrong response.");
     }
 
@@ -212,7 +215,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         try {
-                            HttpMessage message = (HttpMessage)exchange.getIn();
+                            HttpMessage message = (HttpMessage) exchange.getIn();
                             HttpSession session = message.getRequest().getSession();
                             assertNotNull(session, "we should get session here");
                         } catch (Exception e) {
@@ -264,15 +267,16 @@ public class HttpRouteTest extends BaseJettyTest {
                     }
                 });
 
-                from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true").noStreamCaching().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        InputStream is = (InputStream)exchange.getIn().getBody();
-                        assertTrue(is instanceof org.eclipse.jetty.server.HttpInput, "It should be a raw inputstream");
-                        String request = exchange.getIn().getBody(String.class);
-                        assertEquals("This is a test", request, "Got a wrong request");
-                        exchange.getOut().setBody("OK");
-                    }
-                });
+                from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true").noStreamCaching()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                InputStream is = (InputStream) exchange.getIn().getBody();
+                                assertTrue(is instanceof org.eclipse.jetty.server.HttpInput, "It should be a raw inputstream");
+                                String request = exchange.getIn().getBody(String.class);
+                                assertEquals("This is a test", request, "Got a wrong request");
+                                exchange.getOut().setBody("OK");
+                            }
+                        });
 
                 from("jetty:http://localhost:" + port4 + "/requestBufferSize").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

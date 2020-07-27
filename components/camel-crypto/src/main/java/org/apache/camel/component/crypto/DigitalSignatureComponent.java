@@ -50,8 +50,10 @@ public class DigitalSignatureComponent extends DefaultComponent {
         try {
             config.setCryptoOperation(new URI(remaining).getScheme());
         } catch (Exception e) {
-            throw new MalformedURLException(String.format("An invalid crypto uri was provided '%s'."
-                    + " Check the uri matches the format crypto:sign or crypto:verify", uri));
+            throw new MalformedURLException(
+                    String.format("An invalid crypto uri was provided '%s'."
+                                  + " Check the uri matches the format crypto:sign or crypto:verify",
+                            uri));
         }
         Endpoint endpoint = new DigitalSignatureEndpoint(uri, this, config);
         setProperties(endpoint, parameters);

@@ -41,7 +41,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Map between Java beans using the Dozer mapping library.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true,
+             category = { Category.TRANSFORMATION })
 public class DozerEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);
@@ -124,7 +125,8 @@ public class DozerEndpoint extends DefaultEndpoint {
 
         if (mapper == null) {
             if (configuration.getMappingConfiguration() == null) {
-                URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
+                URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(),
+                        configuration.getMappingFile());
 
                 DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
                 config.setCustomConvertersWithId(getCustomConvertersWithId());
@@ -142,7 +144,8 @@ public class DozerEndpoint extends DefaultEndpoint {
                 // if bean mapping builders have been defined skip loading the "default" mapping file.
                 if (isNullOrEmpty(configuration.getMappingConfiguration().getBeanMappingBuilders())) {
                     if (config.getMappingFiles() == null || config.getMappingFiles().size() <= 0) {
-                        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
+                        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(),
+                                configuration.getMappingFile());
                         config.setMappingFiles(Arrays.asList(url.toString()));
                     }
                 }

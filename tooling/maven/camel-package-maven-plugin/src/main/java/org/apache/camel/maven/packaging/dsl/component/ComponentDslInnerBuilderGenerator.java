@@ -23,8 +23,8 @@ import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * DSL Generator class that generates component specific builder interface that contains the fluent methods, placed as inner
- * of the main component builder factory. E.g: KafkaComponentBuilderFactory.KafkaComponentBuilder
+ * DSL Generator class that generates component specific builder interface that contains the fluent methods, placed as
+ * inner of the main component builder factory. E.g: KafkaComponentBuilderFactory.KafkaComponentBuilder
  */
 public final class ComponentDslInnerBuilderGenerator {
     private static final String BUILDER_SUFFIX = "Builder";
@@ -39,7 +39,8 @@ public final class ComponentDslInnerBuilderGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslInnerBuilderGenerator generateClass(final JavaClass javaClass, final ComponentModel componentModel) {
+    public static ComponentDslInnerBuilderGenerator generateClass(
+            final JavaClass javaClass, final ComponentModel componentModel) {
         return new ComponentDslInnerBuilderGenerator(javaClass, componentModel);
     }
 
@@ -75,7 +76,8 @@ public final class ComponentDslInnerBuilderGenerator {
                     .setReturnType(getGeneratedInterfaceName())
                     .setName(StringUtils.uncapitalize(componentOptionModel.getName()))
                     .addParameter(componentOptionModel.getJavaType(), componentOptionModel.getName())
-                    .setBody(String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(), componentOptionModel.getName()), "return this;");
+                    .setBody(String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(),
+                            componentOptionModel.getName()), "return this;");
             if (componentOptionModel.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }

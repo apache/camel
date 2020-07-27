@@ -24,9 +24,8 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.support.ObjectHelper;
 
 /**
- * A simple implementation of {@link Injector} which just uses reflection to
- * instantiate new objects using their zero argument constructor. For more
- * complex implementations try the Spring or CDI implementations.
+ * A simple implementation of {@link Injector} which just uses reflection to instantiate new objects using their zero
+ * argument constructor. For more complex implementations try the Spring or CDI implementations.
  */
 public class ReflectionInjector implements Injector {
 
@@ -42,7 +41,7 @@ public class ReflectionInjector implements Injector {
             // lookup factory method
             Method fm = type.getMethod(factoryMethod);
             if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers()) && fm.getReturnType() == type) {
-                answer = (T)fm.invoke(null);
+                answer = (T) fm.invoke(null);
             }
         } catch (Exception e) {
             throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);

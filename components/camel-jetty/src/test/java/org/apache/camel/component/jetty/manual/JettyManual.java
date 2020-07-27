@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Used for manual unit test, eg to curl to upload a file with: curl -F
- * data=@src/test/data/plain.txt http://localhost:9080/myapp/myservice
+ * Used for manual unit test, eg to curl to upload a file with: curl -F data=@src/test/data/plain.txt
+ * http://localhost:9080/myapp/myservice
  */
 public class JettyManual extends CamelTestSupport {
 
@@ -46,12 +46,13 @@ public class JettyManual extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:" + AvailablePortFinder.getNextAvailable() + "/ myapp / myservice").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        assertNotNull(body, "Body should not be null");
-                    }
-                }).transform(constant("OK")).setHeader("Content-Type", constant("text/plain")).to("mock:result");
+                from("jetty:http://localhost:" + AvailablePortFinder.getNextAvailable() + "/ myapp / myservice")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                assertNotNull(body, "Body should not be null");
+                            }
+                        }).transform(constant("OK")).setHeader("Content-Type", constant("text/plain")).to("mock:result");
             }
         };
     }

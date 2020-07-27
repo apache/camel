@@ -62,13 +62,15 @@ public final class FacebookPropertiesHelper {
 
     /**
      * Apply properties for {@link Reading} type to the supplied {@link FacebookEndpointConfiguration}.
+     * 
      * @param configuration endpoint configuration to update
-     * @param options properties to apply to the reading field in configuration
+     * @param options       properties to apply to the reading field in configuration
      */
-    public static void configureReadingProperties(FacebookEndpointConfiguration configuration,
-                                                  Map<String, Object> options) {
+    public static void configureReadingProperties(
+            FacebookEndpointConfiguration configuration,
+            Map<String, Object> options) {
         final Map<String, Object> readingProperties = PropertiesHelper.extractProperties(
-            options, FacebookConstants.READING_PREFIX);
+                options, FacebookConstants.READING_PREFIX);
         if (!readingProperties.isEmpty()) {
             try {
                 // add to an existing reading reference?
@@ -102,7 +104,7 @@ public final class FacebookPropertiesHelper {
     /**
      * Gets exchange header properties that start with {@link FacebookConstants}.FACEBOOK_PROPERTY_PREFIX.
      *
-     * @param exchange Camel exchange
+     * @param exchange   Camel exchange
      * @param properties map to collect properties with required prefix
      */
     public static Map<String, Object> getExchangeProperties(Exchange exchange, Map<String, Object> properties) {
@@ -117,8 +119,9 @@ public final class FacebookPropertiesHelper {
         return properties;
     }
 
-    public static void getEndpointProperties(CamelContext camelContext, FacebookEndpointConfiguration configuration,
-                                             Map<String, Object> properties) {
+    public static void getEndpointProperties(
+            CamelContext camelContext, FacebookEndpointConfiguration configuration,
+            Map<String, Object> properties) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         if (beanIntrospection.getProperties(configuration, properties, null, false)) {
             final Set<String> names = properties.keySet();

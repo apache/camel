@@ -26,10 +26,9 @@ import java.util.concurrent.ThreadFactory;
  * Scheduled thread pool executor that creates {@link RejectableFutureTask} instead of
  * {@link java.util.concurrent.FutureTask} when registering new tasks for execution.
  * <p/>
- * Instances of {@link RejectableFutureTask} are required to handle {@link ThreadPoolRejectedPolicy#Discard}
- * and {@link ThreadPoolRejectedPolicy#DiscardOldest} policies correctly, e.g. notify
- * {@link Callable} and {@link Runnable} tasks when they are rejected.
- * To be notified of rejection tasks have to implement {@link Rejectable} interface: <br/>
+ * Instances of {@link RejectableFutureTask} are required to handle {@link ThreadPoolRejectedPolicy#Discard} and
+ * {@link ThreadPoolRejectedPolicy#DiscardOldest} policies correctly, e.g. notify {@link Callable} and {@link Runnable}
+ * tasks when they are rejected. To be notified of rejection tasks have to implement {@link Rejectable} interface: <br/>
  * <code><pre>
  * public class RejectableTask implements Runnable, Rejectable {
  *     &#064;Override
@@ -43,8 +42,8 @@ import java.util.concurrent.ThreadFactory;
  * }
  * </pre></code>
  * <p/>
- * If the task does not implement {@link Rejectable} interface the behavior is exactly the same as with
- * ordinary {@link ScheduledThreadPoolExecutor}.
+ * If the task does not implement {@link Rejectable} interface the behavior is exactly the same as with ordinary
+ * {@link ScheduledThreadPoolExecutor}.
  *
  * @see RejectableFutureTask
  * @see Rejectable
@@ -64,7 +63,8 @@ public class RejectableScheduledThreadPoolExecutor extends ScheduledThreadPoolEx
         super(corePoolSize, handler);
     }
 
-    public RejectableScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+    public RejectableScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory,
+                                                 RejectedExecutionHandler handler) {
         super(corePoolSize, threadFactory, handler);
     }
 

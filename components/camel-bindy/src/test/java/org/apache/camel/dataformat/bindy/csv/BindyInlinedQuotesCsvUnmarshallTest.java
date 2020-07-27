@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration
 @CamelSpringTest
 public class BindyInlinedQuotesCsvUnmarshallTest {
-    
+
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
 
@@ -62,7 +62,8 @@ public class BindyInlinedQuotesCsvUnmarshallTest {
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
+        BindyCsvDataFormat camelDataFormat
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
 
         @Override
         public void configure() {

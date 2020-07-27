@@ -36,10 +36,11 @@ public class FtpsOperations extends FtpOperations {
     }
 
     @Override
-    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
+            throws GenericFileOperationFailedException {
         boolean answer = super.connect(configuration, exchange);
 
-        FtpsConfiguration config = (FtpsConfiguration)configuration;
+        FtpsConfiguration config = (FtpsConfiguration) configuration;
         if (answer) {
             try {
                 String execProt = config.getExecProt();
@@ -64,9 +65,11 @@ public class FtpsOperations extends FtpOperations {
                     getFtpClient().execPROT(execProt);
                 }
             } catch (SSLException e) {
-                throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+                throw new GenericFileOperationFailedException(
+                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             } catch (IOException e) {
-                throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+                throw new GenericFileOperationFailedException(
+                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             } finally {
                 if (exchange != null) {
                     // store client reply information after the operation
@@ -81,7 +84,7 @@ public class FtpsOperations extends FtpOperations {
 
     @Override
     protected FTPSClient getFtpClient() {
-        return (FTPSClient)super.getFtpClient();
+        return (FTPSClient) super.getFtpClient();
     }
 
 }

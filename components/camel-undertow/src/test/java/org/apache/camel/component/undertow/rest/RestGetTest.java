@@ -36,7 +36,7 @@ public class RestGetTest extends BaseUndertowTest {
             public void configure() {
                 restConfiguration().component("undertow").host("localhost").port(getPort());
                 rest("/users/")
-                    .get("{id}/basic")
+                        .get("{id}/basic")
                         .route()
                         .to("mock:input")
                         .process(exchange -> {

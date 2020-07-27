@@ -25,9 +25,8 @@ import org.apache.camel.Exchange;
 import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
 
 /**
- * {@link MessageSentCallback} used to enrich the Camel {@link Exchange} with
- * the actual <tt>JMSMessageID</tt> after sending to a JMS Destination using
- * {@link org.apache.camel.ExchangePattern#InOnly} style.
+ * {@link MessageSentCallback} used to enrich the Camel {@link Exchange} with the actual <tt>JMSMessageID</tt> after
+ * sending to a JMS Destination using {@link org.apache.camel.ExchangePattern#InOnly} style.
  */
 public class InOnlyMessageSentCallback implements MessageSentCallback {
 

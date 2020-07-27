@@ -28,8 +28,8 @@ import org.apache.camel.component.hbase.model.HBaseData;
 import org.apache.camel.component.hbase.model.HBaseRow;
 
 /**
- * A default {@link CellMappingStrategy} implementation.
- * It distinguishes between multiple cell, by reading headers with index suffix.
+ * A default {@link CellMappingStrategy} implementation. It distinguishes between multiple cell, by reading headers with
+ * index suffix.
  * <p/>
  * In case of multiple headers:
  * <ul>
@@ -48,15 +48,17 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
         HBaseCell hCell = new HBaseCell();
 
         if (message != null) {
-            Object id =  message.getHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(index));
+            Object id = message.getHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(index));
             String rowClassName = message.getHeader(HBaseAttribute.HBASE_ROW_TYPE.asHeader(index), String.class);
-            Class<?> rowClass = rowClassName == null || rowClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(rowClassName);
+            Class<?> rowClass = rowClassName == null || rowClassName.isEmpty()
+                    ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(rowClassName);
             String columnFamily = (String) message.getHeader(HBaseAttribute.HBASE_FAMILY.asHeader(index));
             String columnName = (String) message.getHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(index));
-            Object value =  message.getHeader(HBaseAttribute.HBASE_VALUE.asHeader(index));
+            Object value = message.getHeader(HBaseAttribute.HBASE_VALUE.asHeader(index));
 
             String valueClassName = message.getHeader(HBaseAttribute.HBASE_VALUE_TYPE.asHeader(index), String.class);
-            Class<?> valueClass = valueClassName == null || valueClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(valueClassName);
+            Class<?> valueClass = valueClassName == null || valueClassName.isEmpty()
+                    ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(valueClassName);
 
             //Id can be accepted as null when using get, scan etc.
             if (id == null && columnFamily == null && columnName == null) {
@@ -118,12 +120,12 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
             if (hRow.getId() != null) {
                 Set<HBaseCell> cells = hRow.getCells();
                 for (HBaseCell cell : cells) {
-                    message.setHeader(HBaseAttribute.HBASE_VALUE.asHeader(index++), getValueForColumn(cells, cell.getFamily(), cell.getQualifier()));
+                    message.setHeader(HBaseAttribute.HBASE_VALUE.asHeader(index++),
+                            getValueForColumn(cells, cell.getFamily(), cell.getQualifier()));
                 }
             }
         }
     }
-
 
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.

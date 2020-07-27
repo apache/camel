@@ -52,7 +52,8 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.message(0).header(headerToFilter).isNull();
 
-        template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/?" + options, "message", headerToFilter, "headerValue");
+        template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/?" + options, "message", headerToFilter,
+                "headerValue");
 
         assertMockEndpointsSatisfied();
     }

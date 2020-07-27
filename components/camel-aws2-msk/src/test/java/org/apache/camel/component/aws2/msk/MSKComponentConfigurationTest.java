@@ -30,7 +30,7 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
         MSK2Component component = context.getComponent("aws2-msk", MSK2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        MSK2Endpoint endpoint = (MSK2Endpoint)component.createEndpoint("aws2-msk://label");
+        MSK2Endpoint endpoint = (MSK2Endpoint) component.createEndpoint("aws2-msk://label");
 
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
@@ -42,7 +42,8 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        MSK2Endpoint endpoint = (MSK2Endpoint)component.createEndpoint("aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        MSK2Endpoint endpoint
+                = (MSK2Endpoint) component.createEndpoint("aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
@@ -55,8 +56,9 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        MSK2Endpoint endpoint = (MSK2Endpoint)component
-            .createEndpoint("aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+        MSK2Endpoint endpoint = (MSK2Endpoint) component
+                .createEndpoint(
+                        "aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

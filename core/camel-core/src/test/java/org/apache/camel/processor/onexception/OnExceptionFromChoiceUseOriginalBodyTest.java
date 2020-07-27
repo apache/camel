@@ -96,14 +96,17 @@ public class OnExceptionFromChoiceUseOriginalBodyTest extends ContextTestSupport
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                onException(MyTechnicalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true).to("mock:tech");
-                onException(MyFunctionalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true).to("mock:func");
+                onException(MyTechnicalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true)
+                        .to("mock:tech");
+                onException(MyFunctionalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true)
+                        .to("mock:func");
 
                 from("direct:tech").setBody(constant("<order><type>myType</type><user>Tech</user></order>")).to("direct:route");
 
                 from("direct:func").setBody(constant("<order><type>myType</type><user>Func</user></order>")).to("direct:route");
 
-                from("direct:route").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise().to("mock:otherwise");
+                from("direct:route").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise()
+                        .to("mock:otherwise");
             }
         };
     }

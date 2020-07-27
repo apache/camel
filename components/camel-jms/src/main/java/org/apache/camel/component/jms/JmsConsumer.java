@@ -32,8 +32,9 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.JmsUtils;
 
 /**
- * A {@link org.apache.camel.Consumer} which uses Spring's {@link AbstractMessageListenerContainer} implementations
- * to consume JMS messages.
+ * A {@link org.apache.camel.Consumer} which uses Spring's {@link AbstractMessageListenerContainer} implementations to
+ * consume JMS messages.
+ * 
  * @see DefaultJmsMessageListenerContainer
  * @see SimpleJmsMessageListenerContainer
  */
@@ -89,11 +90,11 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     /**
      * Sets the {@link ExecutorService} the {@link AbstractMessageListenerContainer} is using (if any).
      * <p/>
-     * The {@link AbstractMessageListenerContainer} may use a private thread pool, and then when this consumer
-     * is stopped, we need to shutdown this thread pool as well, to clean up all resources.
-     * If a shared thread pool is used by the {@link AbstractMessageListenerContainer} then the lifecycle
-     * of that shared thread pool is handled elsewhere (not by this consumer); and therefore
-     * the <tt>shutdownExecutorService</tt> parameter should be <tt>false</tt>.
+     * The {@link AbstractMessageListenerContainer} may use a private thread pool, and then when this consumer is
+     * stopped, we need to shutdown this thread pool as well, to clean up all resources. If a shared thread pool is used
+     * by the {@link AbstractMessageListenerContainer} then the lifecycle of that shared thread pool is handled
+     * elsewhere (not by this consumer); and therefore the <tt>shutdownExecutorService</tt> parameter should be
+     * <tt>false</tt>.
      *
      * @param executorService         the thread pool
      * @param shutdownExecutorService whether to shutdown the thread pool when this consumer stops
@@ -150,7 +151,9 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                     try {
                         prepareAndStartListenerContainer();
                     } catch (Throwable e) {
-                        LOG.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        LOG.warn("Error starting listener container on destination: " + getDestinationName()
+                                 + ". This exception will be ignored.",
+                                e);
                     }
                 }
 
@@ -166,7 +169,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         // mark as initialized for the first time
         initialized = true;
     }
-    
+
     protected void prepareAndStartListenerContainer() {
         listenerContainer.afterPropertiesSet();
 
@@ -213,7 +216,9 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                         try {
                             stopAndDestroyListenerContainer();
                         } catch (Throwable e) {
-                            LOG.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            LOG.warn("Error stopping listener container on destination: " + getDestinationName()
+                                     + ". This exception will be ignored.",
+                                    e);
                         }
                     }
 
@@ -246,7 +251,8 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             if (listenerContainer != null) {
                 startListenerContainer();
             } else {
-                LOG.warn("The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
+                LOG.warn(
+                        "The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
             }
         }
     }
@@ -260,12 +266,12 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     }
 
     /**
-     * Set the JMS message selector expression (or {@code null} if none).
-     * Default is none.
-     * <p>See the JMS specification for a detailed definition of selector expressions.
-     * <p>Note: The message selector may be replaced at runtime, with the listener
-     * container picking up the new selector value immediately (works e.g. with
-     * DefaultMessageListenerContainer, as long as the cache level is less than
+     * Set the JMS message selector expression (or {@code null} if none). Default is none.
+     * <p>
+     * See the JMS specification for a detailed definition of selector expressions.
+     * <p>
+     * Note: The message selector may be replaced at runtime, with the listener container picking up the new selector
+     * value immediately (works e.g. with DefaultMessageListenerContainer, as long as the cache level is less than
      * CACHE_CONSUMER). However, this is considered advanced usage; use it with care!
      */
     @ManagedAttribute(description = "Changes the JMS selector, as long the cache level is less than CACHE_CONSUMER.")

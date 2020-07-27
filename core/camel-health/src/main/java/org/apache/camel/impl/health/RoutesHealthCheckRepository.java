@@ -109,11 +109,11 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
         // }
         //
         return this.context != null && enabled
-            ? this.context.getRoutes()
-                .stream()
-                .filter(route -> route.getId() != null)
-                .map(this::toRouteHealthCheck)
-            : Stream.empty();
+                ? this.context.getRoutes()
+                        .stream()
+                        .filter(route -> route.getId() != null)
+                        .map(this::toRouteHealthCheck)
+                : Stream.empty();
     }
 
     // *****************************

@@ -35,7 +35,7 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         endpoint.expectedMessageCount(1);
 
         template.sendBody("direct:start",
-            "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+                "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
         assertMockEndpointsSatisfied();
 
@@ -44,7 +44,8 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         String xml = exchange.getIn().getBody(String.class);
         assertNotNull(xml, "The transformed XML should not be null");
         assertEquals("<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
-            + "<body>Hello world!</body></mail></transformed>", xml, "transformed");
+                     + "<body>Hello world!</body></mail></transformed>",
+                xml, "transformed");
 
         TestBean bean = getMandatoryBean(TestBean.class, "testBean");
         assertEquals("Hey", bean.getSubject(), "bean.subject");

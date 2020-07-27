@@ -25,10 +25,10 @@ public class InterceptFromWithStopRouteTest extends InterceptFromRouteTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 interceptFrom().filter(header("foo").isEqualTo("bar")).to("mock:b")
-                    // need end to end filter
-                    .end()
-                    // stop continue routing no matter what
-                    .stop();
+                        // need end to end filter
+                        .end()
+                        // stop continue routing no matter what
+                        .stop();
 
                 from("direct:start").to("mock:a");
             }

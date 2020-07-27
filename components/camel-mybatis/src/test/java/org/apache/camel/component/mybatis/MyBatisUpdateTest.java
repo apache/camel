@@ -56,8 +56,8 @@ public class MyBatisUpdateTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:updateAccount?statementType=Update")
-                    .to("mock:result");
+                        .to("mybatis:updateAccount?statementType=Update")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

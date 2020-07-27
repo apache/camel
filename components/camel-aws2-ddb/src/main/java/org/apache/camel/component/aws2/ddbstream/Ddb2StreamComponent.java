@@ -53,14 +53,16 @@ public class Ddb2StreamComponent extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Table name must be specified.");
         }
-        Ddb2StreamConfiguration configuration = this.configuration != null ? this.configuration.copy() : new Ddb2StreamConfiguration();
+        Ddb2StreamConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new Ddb2StreamConfiguration();
         configuration.setTableName(remaining);
         Ddb2StreamEndpoint endpoint = new Ddb2StreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getAmazonDynamoDbStreamsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonDynamoDbStreamsClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBStreamsClient or accessKey and secretKey must be specified");
         }
         return endpoint;

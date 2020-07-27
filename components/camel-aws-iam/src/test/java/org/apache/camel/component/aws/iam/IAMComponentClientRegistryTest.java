@@ -32,37 +32,38 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
         IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
-        IAMEndpoint endpoint = (IAMEndpoint)component.createEndpoint("aws-iam://TestDomain");
+        IAMEndpoint endpoint = (IAMEndpoint) component.createEndpoint("aws-iam://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getIamClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
         IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-iam://TestDomain"));
+                () -> component.createEndpoint("aws-iam://TestDomain"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
         IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
-        IAMEndpoint endpoint = (IAMEndpoint)component.createEndpoint("aws-iam://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        IAMEndpoint endpoint = (IAMEndpoint) component
+                .createEndpoint("aws-iam://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getIamClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
         IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
-        IAMEndpoint endpoint = (IAMEndpoint)component.createEndpoint("aws-iam://TestDomain?accessKey=xxx&secretKey=yyy");
+        IAMEndpoint endpoint = (IAMEndpoint) component.createEndpoint("aws-iam://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getIamClient());
     }

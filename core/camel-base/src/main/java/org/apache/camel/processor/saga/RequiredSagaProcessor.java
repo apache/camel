@@ -31,37 +31,41 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class RequiredSagaProcessor extends SagaProcessor {
 
-    public RequiredSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService, SagaCompletionMode completionMode, CamelSagaStep step) {
+    public RequiredSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+                                 SagaCompletionMode completionMode, CamelSagaStep step) {
         super(camelContext, childProcessor, sagaService, completionMode, step);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        getCurrentSagaCoordinator(exchange).whenComplete((existingCoordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
-            CompletableFuture<CamelSagaCoordinator> coordinatorFuture;
-            final boolean inheritedCoordinator;
-            if (existingCoordinator != null) {
-                coordinatorFuture = CompletableFuture.completedFuture(existingCoordinator);
-                inheritedCoordinator = true;
-            } else {
-                coordinatorFuture = sagaService.newSaga();
-                inheritedCoordinator = false;
-            }
+        getCurrentSagaCoordinator(exchange)
+                .whenComplete((existingCoordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
+                    CompletableFuture<CamelSagaCoordinator> coordinatorFuture;
+                    final boolean inheritedCoordinator;
+                    if (existingCoordinator != null) {
+                        coordinatorFuture = CompletableFuture.completedFuture(existingCoordinator);
+                        inheritedCoordinator = true;
+                    } else {
+                        coordinatorFuture = sagaService.newSaga();
+                        inheritedCoordinator = false;
+                    }
 
-            coordinatorFuture.whenComplete((coordinator, ex2) -> ifNotException(ex2, exchange, !inheritedCoordinator, coordinator, existingCoordinator, callback, () -> {
-                setCurrentSagaCoordinator(exchange, coordinator);
-                coordinator.beginStep(exchange, step).whenComplete((done, ex3) -> ifNotException(ex3, exchange, !inheritedCoordinator, coordinator, existingCoordinator, callback, () -> {
-                    super.process(exchange, doneSync -> {
-                        if (!inheritedCoordinator) {
-                            // Saga starts and ends here
-                            handleSagaCompletion(exchange, coordinator, null, callback);
-                        } else {
-                            callback.done(false);
-                        }
-                    });
+                    coordinatorFuture.whenComplete((coordinator, ex2) -> ifNotException(ex2, exchange, !inheritedCoordinator,
+                            coordinator, existingCoordinator, callback, () -> {
+                                setCurrentSagaCoordinator(exchange, coordinator);
+                                coordinator.beginStep(exchange, step).whenComplete((done, ex3) -> ifNotException(ex3, exchange,
+                                        !inheritedCoordinator, coordinator, existingCoordinator, callback, () -> {
+                                            super.process(exchange, doneSync -> {
+                                                if (!inheritedCoordinator) {
+                                                    // Saga starts and ends here
+                                                    handleSagaCompletion(exchange, coordinator, null, callback);
+                                                } else {
+                                                    callback.done(false);
+                                                }
+                                            });
+                                        }));
+                            }));
                 }));
-            }));
-        }));
 
         return false;
     }

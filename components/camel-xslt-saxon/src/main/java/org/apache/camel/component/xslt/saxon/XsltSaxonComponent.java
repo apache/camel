@@ -45,25 +45,22 @@ public class XsltSaxonComponent extends XsltComponent {
     }
 
     /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
+     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
      */
     public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
         this.saxonExtensionFunctions = extensionFunctions;
     }
 
     /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
+     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
      */
     public void setSaxonExtensionFunctions(String extensionFunctions) {
         this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
-            getCamelContext(),
-            extensionFunctions,
-            Object.class
-        );
+                getCamelContext(),
+                extensionFunctions,
+                Object.class);
     }
 
     public Configuration getSaxonConfiguration() {
@@ -93,7 +90,8 @@ public class XsltSaxonComponent extends XsltComponent {
     }
 
     @Override
-    protected void configureEndpoint(Endpoint endpoint, final String remaining, Map<String, Object> parameters) throws Exception {
+    protected void configureEndpoint(Endpoint endpoint, final String remaining, Map<String, Object> parameters)
+            throws Exception {
         XsltSaxonEndpoint saxon = (XsltSaxonEndpoint) endpoint;
         saxon.setContentCache(isContentCache());
         saxon.setSaxonConfiguration(saxonConfiguration);

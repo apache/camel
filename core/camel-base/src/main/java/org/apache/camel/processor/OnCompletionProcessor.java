@@ -60,8 +60,10 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     private final boolean useOriginalBody;
     private final boolean afterConsumer;
 
-    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService, boolean shutdownExecutorService,
-                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody, boolean afterConsumer) {
+    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
+                                 boolean shutdownExecutorService,
+                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody,
+                                 boolean afterConsumer) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
         this.camelContext = camelContext;
@@ -141,7 +143,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
      * Processes the exchange by the processors
      *
      * @param processor the processor
-     * @param exchange the exchange
+     * @param exchange  the exchange
      */
     protected static void doProcess(Processor processor, Exchange exchange) {
         ExtendedExchange ee = (ExtendedExchange) exchange;
@@ -189,8 +191,8 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     /**
      * Prepares the {@link Exchange} to send as onCompletion.
      *
-     * @param exchange the current exchange
-     * @return the exchange to be routed in onComplete
+     * @param  exchange the current exchange
+     * @return          the exchange to be routed in onComplete
      */
     protected Exchange prepareExchange(Exchange exchange) {
         Exchange answer;
@@ -272,7 +274,6 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 // predicate did not match so do not route the onComplete
                 return;
             }
-
 
             // must use a copy as we dont want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);

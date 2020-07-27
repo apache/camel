@@ -50,8 +50,10 @@ public class ManagedErrorHandlerTest extends ManagementTestSupport {
         String name1 = on1.getCanonicalName();
         String name2 = on2.getCanonicalName();
 
-        assertTrue(name1.contains("CamelDefaultErrorHandlerBuilder") || name2.contains("CamelDefaultErrorHandlerBuilder"), "Should be a default error handler");
-        assertTrue(name1.contains("DeadLetterChannelBuilder") || name2.contains("DeadLetterChannelBuilder"), "Should be a dead letter error handler");
+        assertTrue(name1.contains("CamelDefaultErrorHandlerBuilder") || name2.contains("CamelDefaultErrorHandlerBuilder"),
+                "Should be a default error handler");
+        assertTrue(name1.contains("DeadLetterChannelBuilder") || name2.contains("DeadLetterChannelBuilder"),
+                "Should be a dead letter error handler");
     }
 
     @Override

@@ -38,17 +38,17 @@ public final class TwitterConverter {
     @Converter
     public static String toString(Status status) throws ParseException {
         return new StringBuilder()
-            .append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ")
-            .append(status.getText())
-            .toString();
+                .append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ")
+                .append(status.getText())
+                .toString();
     }
 
     @Converter
     public static String toString(DirectMessage dm) throws ParseException {
         return new StringBuilder()
-            .append(dm.getCreatedAt()).append(" (").append(dm.getSenderId()).append(") ")
-            .append(dm.getText())
-            .toString();
+                .append(dm.getCreatedAt()).append(" (").append(dm.getSenderId()).append(") ")
+                .append(dm.getText())
+                .toString();
     }
 
     @Converter
@@ -75,11 +75,11 @@ public final class TwitterConverter {
     @Converter
     public static String toString(UserList userList) throws ParseException {
         return new StringBuilder()
-             .append(userList.getCreatedAt()).append(" (").append(userList.getUser().getScreenName()).append(") ")
-             .append(userList.getFullName())
-             .append(',')
-             .append(userList.getURI())
-             .append(',')
-             .toString();
+                .append(userList.getCreatedAt()).append(" (").append(userList.getUser().getScreenName()).append(") ")
+                .append(userList.getFullName())
+                .append(',')
+                .append(userList.getURI())
+                .append(',')
+                .toString();
     }
 }

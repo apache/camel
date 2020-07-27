@@ -39,10 +39,8 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_TT
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
 
-
 /**
- * Couchbase producer generates various type of operations. PUT, GET, and DELETE
- * are currently supported
+ * Couchbase producer generates various type of operations. PUT, GET, and DELETE are currently supported
  */
 public class CouchbaseProducer extends DefaultProducer {
 
@@ -95,7 +93,8 @@ public class CouchbaseProducer extends DefaultProducer {
                 this.persistTo = PersistTo.FOUR;
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported persistTo parameter. Supported values are 0 to 4. Currently provided: " + persistTo);
+                throw new IllegalArgumentException(
+                        "Unsupported persistTo parameter. Supported values are 0 to 4. Currently provided: " + persistTo);
         }
 
         switch (replicateTo) {
@@ -112,7 +111,8 @@ public class CouchbaseProducer extends DefaultProducer {
                 this.replicateTo = ReplicateTo.THREE;
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported replicateTo parameter. Supported values are 0 to 3. Currently provided: " + replicateTo);
+                throw new IllegalArgumentException(
+                        "Unsupported replicateTo parameter. Supported values are 0 to 3. Currently provided: " + replicateTo);
         }
 
     }
@@ -124,7 +124,8 @@ public class CouchbaseProducer extends DefaultProducer {
 
         String id = (headers.containsKey(HEADER_ID)) ? exchange.getIn().getHeader(HEADER_ID, String.class) : endpoint.getId();
 
-        int ttl = (headers.containsKey(HEADER_TTL)) ? Integer.parseInt(exchange.getIn().getHeader(HEADER_TTL, String.class)) : DEFAULT_TTL;
+        int ttl = (headers.containsKey(HEADER_TTL))
+                ? Integer.parseInt(exchange.getIn().getHeader(HEADER_TTL, String.class)) : DEFAULT_TTL;
 
         if (endpoint.isAutoStartIdForInserts()) {
             id = Long.toString(startId);
@@ -159,17 +160,21 @@ public class CouchbaseProducer extends DefaultProducer {
         }
     }
 
-    private Boolean setDocument(String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo) throws Exception {
+    private Boolean setDocument(String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo)
+            throws Exception {
         return setDocument(id, expiry, obj, producerRetryAttempts, persistTo, replicateTo);
     }
 
-    private Boolean setDocument(String id, int expiry, Object obj, int retryAttempts, PersistTo persistTo, ReplicateTo replicateTo) throws Exception {
+    private Boolean setDocument(
+            String id, int expiry, Object obj, int retryAttempts, PersistTo persistTo, ReplicateTo replicateTo)
+            throws Exception {
 
         UpsertOptions options = UpsertOptions.upsertOptions()
                 .expiry(Duration.ofSeconds(expiry))
                 .durability(persistTo, replicateTo)
                 .timeout(Duration.ofMillis(retryAttempts * producerRetryPause))
-                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause), Duration.ofMillis(producerRetryPause), 1));
+                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause),
+                        Duration.ofMillis(producerRetryPause), 1));
 
         MutationResult result = collection.upsert(id, obj, options);
         if (LOG.isDebugEnabled()) {

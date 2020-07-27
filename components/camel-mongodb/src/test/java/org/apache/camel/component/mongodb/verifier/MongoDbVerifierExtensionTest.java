@@ -42,7 +42,8 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
 
     protected ComponentVerifierExtension getExtension() {
         Component component = context().getComponent(SCHEME);
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         return verifier;
     }
@@ -55,7 +56,8 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         //Given
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
         //Then
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
@@ -68,7 +70,8 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         //Given
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
         //Then
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertTrue(result.getErrors().get(0).getDescription().startsWith("Unable to connect"));
@@ -81,7 +84,8 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
         parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         //Given
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
         //Then
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertTrue(result.getErrors().get(0).getDescription().startsWith("password should be set"));
@@ -95,7 +99,8 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
         parameters.put("user", USER);
         parameters.put("password", "wrongPassword");
         //Given
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
         //Then
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertTrue(result.getErrors().get(0).getDescription().startsWith("Unable to authenticate"));
@@ -110,7 +115,8 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
         parameters.put("password", PASSWORD);
         parameters.put("adminDB", "someAdminDB");
         //Given
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
         //Then
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertTrue(result.getErrors().get(0).getDescription().startsWith("Unable to authenticate"));
@@ -124,7 +130,8 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         //Given
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
         //Then
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertTrue(result.getErrors().get(0).getDescription().startsWith("Unable to connect"));

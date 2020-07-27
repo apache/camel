@@ -63,21 +63,20 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
         assertEquals(1, set.size());
 
         // update existing route, and add a 2nd
-        String xml =
-                  "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
-                + "<route id=\"myRoute\">"
-                + "  <from uri=\"direct:start\"/>"
-                + "  <log message=\"This is a changed route saying ${body}\"/>"
-                + "  <to uri=\"{{somewhere}}\"/>"
-                + "</route>"
-                + "<route id=\"myOtherRoute\">"
-                + "  <from uri=\"seda:bar\"/>"
-                + "  <to uri=\"{{theBar}}\"/>"
-                + "</route>"
-                + "</routes>";
+        String xml = "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
+                     + "<route id=\"myRoute\">"
+                     + "  <from uri=\"direct:start\"/>"
+                     + "  <log message=\"This is a changed route saying ${body}\"/>"
+                     + "  <to uri=\"{{somewhere}}\"/>"
+                     + "</route>"
+                     + "<route id=\"myOtherRoute\">"
+                     + "  <from uri=\"seda:bar\"/>"
+                     + "  <to uri=\"{{theBar}}\"/>"
+                     + "</route>"
+                     + "</routes>";
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
-        mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
 
         // there should be 2 routes now
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -113,21 +112,21 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
         assertEquals(1, set.size());
 
         // update existing route, and add a 2nd
-        String xml =
-                  "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
-                + "<route id=\"myRoute\">"
-                + "  <from uri=\"direct:start\"/>"
-                + "  <log message=\"This is a changed route saying ${body}\"/>"
-                + "  <to uri=\"%7B%7Bsomewhere%7D%7D\"/>"
-                + "</route>"
-                + "<route id=\"myOtherRoute\">"
-                + "  <from uri=\"seda:bar\"/>"
-                + "  <to uri=\"%7B%7BtheBar%7D%7D\"/>"
-                + "</route>"
-                + "</routes>";
+        String xml = "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
+                     + "<route id=\"myRoute\">"
+                     + "  <from uri=\"direct:start\"/>"
+                     + "  <log message=\"This is a changed route saying ${body}\"/>"
+                     + "  <to uri=\"%7B%7Bsomewhere%7D%7D\"/>"
+                     + "</route>"
+                     + "<route id=\"myOtherRoute\">"
+                     + "  <from uri=\"seda:bar\"/>"
+                     + "  <to uri=\"%7B%7BtheBar%7D%7D\"/>"
+                     + "</route>"
+                     + "</routes>";
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
-        mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[]{xml, true}, new String[]{"java.lang.String", "boolean"});
+        mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[] { xml, true },
+                new String[] { "java.lang.String", "boolean" });
 
         // there should be 2 routes now
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -150,8 +149,8 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
-                    .log("Got ${body}")
-                    .to("mock:result");
+                        .log("Got ${body}")
+                        .to("mock:result");
             }
         };
     }

@@ -50,8 +50,8 @@ public class FileDelayTest extends ContextTestSupport {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
                 from(file("target/data/files/").delay(2).timeUnit(TimeUnit.SECONDS).delete(true).maxMessagesPerPoll(1))
-                    .convertBodyTo(String.class)
-                    .to(mock("result"));
+                        .convertBodyTo(String.class)
+                        .to(mock("result"));
             }
         };
     }

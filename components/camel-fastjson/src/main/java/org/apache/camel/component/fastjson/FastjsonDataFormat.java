@@ -36,12 +36,13 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
- * using <a href="https://github.com/alibaba/fastjson">Fastjson</a> to marshal to and from JSON.
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
+ * <a href="https://github.com/alibaba/fastjson">Fastjson</a> to marshal to and from JSON.
  */
 @Dataformat("json-fastjson")
 @Metadata(includeProperties = "unmarshalTypeName,prettyprint,contentTypeHeader")
-public class FastjsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
+public class FastjsonDataFormat extends ServiceSupport
+        implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     private CamelContext camelContext;
     private FastJsonConfig config;

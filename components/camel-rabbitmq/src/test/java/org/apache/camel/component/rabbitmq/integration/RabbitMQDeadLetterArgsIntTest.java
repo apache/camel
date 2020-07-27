@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
-    private static final String LOCAL_RABBITMQ_PARAMS = "hostname=localhost&portNumber=5672&username=cameltest&password=cameltest";
+    private static final String LOCAL_RABBITMQ_PARAMS
+            = "hostname=localhost&portNumber=5672&username=cameltest&password=cameltest";
     private static final String QUEUE = "queue";
     private static final String DLQ = QUEUE + "_dlq";
     private static final String QUEUE_SKIP_DECLARE = "queue_skip_declare";
@@ -113,19 +114,28 @@ public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
         assertEquals(10, endpoint.getDlqArgs().get("x-max-priority"));
 
         String rabbitApiResponse = template.requestBody(
-                String.format("http://localhost:%s/api/queues?authUsername=cameltest&authPassword=cameltest&authMethod=Basic&httpMethod=GET", DockerTestUtils.EXPOSE_PORT_MANAGEMENT),
+                String.format(
+                        "http://localhost:%s/api/queues?authUsername=cameltest&authPassword=cameltest&authMethod=Basic&httpMethod=GET",
+                        DockerTestUtils.EXPOSE_PORT_MANAGEMENT),
                 "", String.class);
 
         JsonArray rabbitApiResponseJson = (JsonArray) Jsoner.deserialize(rabbitApiResponse);
         JsonObject dlqObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(DLQ)).findAny().orElse(null);
-        JsonObject queueObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(QUEUE)).findAny().orElse(null);
-        JsonObject queueSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(QUEUE_SKIP_DECLARE)).findAny().orElse(null);
-        JsonObject dlqSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(DLQ_SKIP_DECLARE)).findAny().orElse(null);
+        JsonObject queueObject
+                = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(QUEUE)).findAny().orElse(null);
+        JsonObject queueSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream()
+                .filter(jsonQueueFilter(QUEUE_SKIP_DECLARE)).findAny().orElse(null);
+        JsonObject dlqSkipDeclareObject
+                = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(DLQ_SKIP_DECLARE)).findAny().orElse(null);
 
-        assertNotNull(dlqObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ, rabbitApiResponse));
-        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE, rabbitApiResponse));
-        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE_SKIP_DECLARE, rabbitApiResponse));
-        assertNotNull(dlqSkipDeclareObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ_SKIP_DECLARE, rabbitApiResponse));
+        assertNotNull(dlqObject,
+                String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ, rabbitApiResponse));
+        assertNotNull(queueObject,
+                String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE, rabbitApiResponse));
+        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'",
+                QUEUE_SKIP_DECLARE, rabbitApiResponse));
+        assertNotNull(dlqSkipDeclareObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'",
+                DLQ_SKIP_DECLARE, rabbitApiResponse));
 
         assertEquals(BigDecimal.valueOf(10), dlqObject.getMap("arguments").get("x-max-priority"));
         assertEquals(BigDecimal.valueOf(5), dlqSkipDeclareObject.getMap("arguments").get("x-max-priority"));

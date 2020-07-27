@@ -86,7 +86,8 @@ public class ElSqlConsumerDeleteTest extends CamelTestSupport {
                 break;
             }
         }
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class), "Should have deleted all 3 rows");
+        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class),
+                "Should have deleted all 3 rows");
     }
 
     @Override
@@ -95,7 +96,8 @@ public class ElSqlConsumerDeleteTest extends CamelTestSupport {
             @Override
             public void configure() {
                 getContext().getComponent("elsql", ElsqlComponent.class).setDataSource(db);
-                getContext().getComponent("elsql", ElsqlComponent.class).setResourceUri("elsql/projects.elsql,elsql/delete.elsql");
+                getContext().getComponent("elsql", ElsqlComponent.class)
+                        .setResourceUri("elsql/projects.elsql,elsql/delete.elsql");
 
                 from("elsql:allProjects?consumer.onConsume=deleteProject")
                         .to("mock:result");

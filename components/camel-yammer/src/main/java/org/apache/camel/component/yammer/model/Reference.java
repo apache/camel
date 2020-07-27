@@ -90,7 +90,8 @@ public class Reference {
 
     @Override
     public String toString() {
-        return "Reference [url=" + url + ", permalink=" + permalink + ", normalizedName=" + normalizedName + ", id=" + id + ", type=" + type + ", name=" + name + ", webUrl=" + webUrl + "]";
+        return "Reference [url=" + url + ", permalink=" + permalink + ", normalizedName=" + normalizedName + ", id=" + id
+               + ", type=" + type + ", name=" + name + ", webUrl=" + webUrl + "]";
     }
 
 }

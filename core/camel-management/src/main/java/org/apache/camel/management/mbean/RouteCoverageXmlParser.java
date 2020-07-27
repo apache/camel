@@ -44,8 +44,8 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
  * <p/>
  * The coverage details:
  * <ul>
- *     <li>exchangesTotal - Total number of exchanges</li>
- *     <li>totalProcessingTime - Total processing time in millis</li>
+ * <li>exchangesTotal - Total number of exchanges</li>
+ * <li>totalProcessingTime - Total processing time in millis</li>
  * </ul>
  * Is included as attributes on the route nodes.
  */
@@ -57,10 +57,10 @@ public final class RouteCoverageXmlParser {
     /**
      * Parses the XML.
      *
-     * @param camelContext the CamelContext
-     * @param is           the XML content as an input stream
-     * @return the DOM model of the routes with coverage information stored as attributes
-     * @throws Exception is thrown if error parsing
+     * @param  camelContext the CamelContext
+     * @param  is           the XML content as an input stream
+     * @return              the DOM model of the routes with coverage information stored as attributes
+     * @throws Exception    is thrown if error parsing
      */
     public static Document parseXml(final CamelContext camelContext, final InputStream is) throws Exception {
         final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -81,7 +81,8 @@ public final class RouteCoverageXmlParser {
             }
 
             @Override
-            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+                    throws SAXException {
                 addTextIfNeeded();
 
                 final Element el = doc.createElement(qName);
@@ -106,7 +107,8 @@ public final class RouteCoverageXmlParser {
                             Element parent = elementStack.peek();
                             if (parent != null) {
                                 String routeId = parent.getAttribute("id");
-                                ManagedRouteMBean route = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(routeId);
+                                ManagedRouteMBean route
+                                        = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(routeId);
                                 if (route != null) {
                                     long total = route.getExchangesTotal();
                                     el.setAttribute("exchangesTotal", "" + total);
@@ -117,7 +119,8 @@ public final class RouteCoverageXmlParser {
                                 }
                             }
                         } else {
-                            ManagedProcessorMBean processor = camelContext.getExtension(ManagedCamelContext.class).getManagedProcessor(id);
+                            ManagedProcessorMBean processor
+                                    = camelContext.getExtension(ManagedCamelContext.class).getManagedProcessor(id);
                             if (processor != null) {
                                 long total = processor.getExchangesTotal();
                                 el.setAttribute("exchangesTotal", "" + total);

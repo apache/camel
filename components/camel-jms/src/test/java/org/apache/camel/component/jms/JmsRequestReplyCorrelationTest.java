@@ -44,9 +44,8 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     private static final String REPLY_BODY = "Bye World";
 
     /**
-     * When the setting useMessageIdAsCorrelationid is false and
-     * a correlation id is set on the message then we expect the reply
-     * to contain the same correlation id.
+     * When the setting useMessageIdAsCorrelationid is false and a correlation id is set on the message then we expect
+     * the reply to contain the same correlation id.
      */
     @Test
     public void testRequestReplyCorrelationByGivenCorrelationId() throws Exception {
@@ -66,10 +65,10 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
         assertEquals("a", out.getMessage().getHeader("JMSCorrelationID"));
     }
-    
+
     /**
-     * As the correlationID should be unique when receiving the reply message, 
-     * now we just expect to get an exception here.
+     * As the correlationID should be unique when receiving the reply message, now we just expect to get an exception
+     * here.
      */
     @Test
     public void testRequestReplyCorrelationWithDuplicateId() throws Exception {
@@ -86,7 +85,7 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         });
         // Added use the notify to make sure the message is processed, so we get the exception later
         notify.matches(1, TimeUnit.SECONDS);
-        
+
         Exchange out = template.send("jms:queue:helloDelay", ExchangePattern.InOut, exchange -> {
             Message in = exchange.getIn();
             in.setBody("Hello World");
@@ -97,16 +96,13 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
 
         assertNotNull(out.getException(), "We are expecting the exception here!");
         assertTrue(out.getException() instanceof IllegalArgumentException, "Get a wrong exception");
-        
+
     }
 
-
     /**
-     * When the setting useMessageIdAsCorrelationid is false and
-     * a correlation id is not set on the message then we expect the reply
-     * to contain the correlation id dynamically generated on send.
-     * Ideally we should also check what happens if the correlation id
-     * was not set on send but this is currently not done.
+     * When the setting useMessageIdAsCorrelationid is false and a correlation id is not set on the message then we
+     * expect the reply to contain the correlation id dynamically generated on send. Ideally we should also check what
+     * happens if the correlation id was not set on send but this is currently not done.
      */
     @Test
     public void testRequestReplyCorrelationWithoutGivenCorrelationId() throws Exception {
@@ -130,10 +126,9 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     }
 
     /**
-     * When the setting useMessageIdAsCorrelationid is false and
-     * a correlation id is set to empty String ("") the message then we expect the reply
-     * to contain the correlation id dynamically generated on send.
-     */     
+     * When the setting useMessageIdAsCorrelationid is false and a correlation id is set to empty String ("") the
+     * message then we expect the reply to contain the correlation id dynamically generated on send.
+     */
     @Test
     public void testRequestReplyCorrelationWithEmptyString() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -156,9 +151,8 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     }
 
     /**
-     * When the setting useMessageIdAsCorrelationid is true for the client and
-     * false for the server and a correlation id is not set on the message then
-     * we expect the reply to contain the message is from the sent message
+     * When the setting useMessageIdAsCorrelationid is true for the client and false for the server and a correlation id
+     * is not set on the message then we expect the reply to contain the message is from the sent message
      */
     @Test
     public void testRequestReplyCorrelationWithoutGivenCorrelationIdAndUseMessageIdonClient() throws Exception {
@@ -183,11 +177,9 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     }
 
     /**
-     * When the setting useMessageIdAsCorrelationid is true and
-     * a correlation id is set on the message then we expect the reply
-     * to contain the messageId of the sent message. Here we test only that
-     * it is not the correlation id given as the messageId is not know
-     * beforehand.
+     * When the setting useMessageIdAsCorrelationid is true and a correlation id is set on the message then we expect
+     * the reply to contain the messageId of the sent message. Here we test only that it is not the correlation id given
+     * as the messageId is not know beforehand.
      */
     @Test
     public void testRequestReplyCorrelationByMessageId() throws Exception {
@@ -209,11 +201,10 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     }
 
     /**
-     * When the setting useMessageIdAsCorrelationid is true for the client and
-     * false for the server and a correlation id is set on the message then
-     * we expect the client to omit the correlation id on the JMS message to force
-     * the server to use the message id. But the correlation id should still be
-     * available on the client exchange message afterwards.
+     * When the setting useMessageIdAsCorrelationid is true for the client and false for the server and a correlation id
+     * is set on the message then we expect the client to omit the correlation id on the JMS message to force the server
+     * to use the message id. But the correlation id should still be available on the client exchange message
+     * afterwards.
      */
     @Test
     public void testRequestReplyCorrelationByMessageIdWithGivenCorrelationId() throws Exception {

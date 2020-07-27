@@ -25,11 +25,11 @@ import java.lang.annotation.Target;
 /**
  * Marks a parameter as being a header on an inbound {@link Message}
  *
- * @see Message#getHeader(String) 
+ * @see Message#getHeader(String)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.PARAMETER })
+@Target({ ElementType.PARAMETER })
 public @interface Header {
 
     /**

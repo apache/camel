@@ -41,19 +41,19 @@ public class ThriftConfiguration {
 
     @UriParam(label = "producer")
     private String method;
-    
+
     @UriParam(defaultValue = "BINARY")
     private ThriftExchangeProtocol exchangeProtocol = ThriftExchangeProtocol.BINARY;
-    
+
     @UriParam(label = "security", defaultValue = "PLAINTEXT")
     private ThriftNegotiationType negotiationType = ThriftNegotiationType.PLAINTEXT;
-    
+
     @UriParam(label = "security")
     private SSLContextParameters sslParameters;
-    
+
     @UriParam(defaultValue = "NONE")
     private ThriftCompressionType compressionType = ThriftCompressionType.NONE;
-    
+
     @UriParam(label = "consumer")
     private int clientTimeout;
 
@@ -64,8 +64,7 @@ public class ThriftConfiguration {
     private int maxPoolSize = ThriftConstants.THRIFT_CONSUMER_MAX_POOL_SIZE;
 
     /**
-     * Fully qualified service name from the thrift descriptor file
-     * (package dot service definition name)
+     * Fully qualified service name from the thrift descriptor file (package dot service definition name)
      */
     public String getService() {
         return service;
@@ -85,7 +84,7 @@ public class ThriftConfiguration {
     public void setMethod(String method) {
         this.method = method;
     }
-    
+
     /**
      * Exchange protocol serialization type
      */
@@ -118,7 +117,7 @@ public class ThriftConfiguration {
     public void setSslParameters(SSLContextParameters sslParameters) {
         this.sslParameters = sslParameters;
     }
-    
+
     /**
      * Protocol compression mechanism type
      */
@@ -131,9 +130,8 @@ public class ThriftConfiguration {
     }
 
     /**
-     * The Thrift server host name. This is localhost or 0.0.0.0 (if not
-     * defined) when being a consumer or remote server host name when using
-     * producer.
+     * The Thrift server host name. This is localhost or 0.0.0.0 (if not defined) when being a consumer or remote server
+     * host name when using producer.
      */
     public String getHost() {
         return host;
@@ -153,7 +151,7 @@ public class ThriftConfiguration {
     public void setPort(int port) {
         this.port = port;
     }
-    
+
     /**
      * Client timeout for consumers
      */
@@ -186,14 +184,14 @@ public class ThriftConfiguration {
     public void setMaxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
-    
+
     public void parseURI(URI uri, Map<String, Object> parameters, ThriftComponent component) {
         setHost(uri.getHost());
-        
+
         if (uri.getPort() != -1) {
             setPort(uri.getPort());
         }
-        
+
         setService(uri.getPath().substring(1));
-    }    
+    }
 }

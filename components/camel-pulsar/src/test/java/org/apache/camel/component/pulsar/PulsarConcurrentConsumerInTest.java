@@ -98,7 +98,8 @@ public class PulsarConcurrentConsumerInTest extends PulsarTestSupport {
     public void testMultipleMessageConsumedByClusterwithConcurrentConfiguration() throws Exception {
         to.expectedMinimumMessageCount(1);
 
-        Producer<String> producer = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer
+                = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
         for (int i = 0; i < NUMBER_OF_CONSUMERS; i++) {
             producer.send("Hello World!");

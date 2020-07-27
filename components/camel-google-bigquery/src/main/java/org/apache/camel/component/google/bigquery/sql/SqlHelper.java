@@ -39,10 +39,10 @@ public final class SqlHelper {
     }
 
     /**
-     * Resolve the query by loading the query from the classpath or file
-     * resource if needed.
+     * Resolve the query by loading the query from the classpath or file resource if needed.
      */
-    public static String resolveQuery(CamelContext camelContext, String query, String placeholder) throws NoTypeConversionAvailableException, IOException {
+    public static String resolveQuery(CamelContext camelContext, String query, String placeholder)
+            throws NoTypeConversionAvailableException, IOException {
         String answer = query;
         if (ResourceHelper.hasScheme(query)) {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, query);
@@ -55,11 +55,11 @@ public final class SqlHelper {
     }
 
     /**
-     * Replaces pattern in query in form of "${param}" with values from message
-     * header Raises an error if param value not found in headers
+     * Replaces pattern in query in form of "${param}" with values from message header Raises an error if param value
+     * not found in headers
      * 
-     * @param exchange
-     * @return Translated query text
+     * @param  exchange
+     * @return          Translated query text
      */
     public static String translateQuery(String query, Exchange exchange) {
         Message message = exchange.getMessage();
@@ -72,7 +72,8 @@ public final class SqlHelper {
             if (value == null) {
                 value = exchange.getProperty(paramKey, String.class);
                 if (value == null) {
-                    throw new RuntimeExchangeException("SQL pattern with name '" + paramKey + "' not found in the message headers", exchange);
+                    throw new RuntimeExchangeException(
+                            "SQL pattern with name '" + paramKey + "' not found in the message headers", exchange);
                 }
             }
 
@@ -86,8 +87,8 @@ public final class SqlHelper {
     /**
      * Extracts list of parameters in form "@name" from query text
      * 
-     * @param query
-     * @return list of parameter names
+     * @param  query
+     * @return       list of parameter names
      */
     public static Set<String> extractParameterNames(String query) {
         Matcher matcher = parameterPattern.matcher(query);

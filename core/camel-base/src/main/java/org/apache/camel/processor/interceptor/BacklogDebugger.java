@@ -47,13 +47,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which
- * can be used from JMX with {@link org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}.
+ * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which can be used from JMX with
+ * {@link org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}.
  * <p/>
- * This implementation allows to set breakpoints (with or without a condition) and inspect the {@link Exchange}
- * dumped in XML in {@link BacklogTracerEventMessage} format. There is operations to resume suspended breakpoints
- * to continue routing the {@link Exchange}. There is also step functionality so you can single step a given
- * {@link Exchange}.
+ * This implementation allows to set breakpoints (with or without a condition) and inspect the {@link Exchange} dumped
+ * in XML in {@link BacklogTracerEventMessage} format. There is operations to resume suspended breakpoints to continue
+ * routing the {@link Exchange}. There is also step functionality so you can single step a given {@link Exchange}.
  * <p/>
  * This implementation will only break the first {@link Exchange} that arrives to a breakpoint. If Camel routes using
  * concurrency then sub-sequent {@link Exchange} will continue to be routed, if there breakpoint already holds a
@@ -111,8 +110,8 @@ public final class BacklogDebugger extends ServiceSupport {
     /**
      * Creates a new backlog debugger.
      *
-     * @param context Camel context
-     * @return a new backlog debugger
+     * @param  context Camel context
+     * @return         a new backlog debugger
      */
     public static BacklogDebugger createDebugger(CamelContext context) {
         return new BacklogDebugger(context);
@@ -256,7 +255,8 @@ public final class BacklogDebugger extends ServiceSupport {
             if (remove) {
                 removeMessageBodyOnBreakpoint(nodeId);
             } else {
-                Class<?> oldType = se.getExchange().getMessage().getBody() != null ? se.getExchange().getMessage().getBody().getClass() : null;
+                Class<?> oldType = se.getExchange().getMessage().getBody() != null
+                        ? se.getExchange().getMessage().getBody().getClass() : null;
                 setMessageBodyOnBreakpoint(nodeId, body, oldType);
             }
         }
@@ -269,7 +269,8 @@ public final class BacklogDebugger extends ServiceSupport {
             if (remove) {
                 removeMessageBodyOnBreakpoint(nodeId);
             } else {
-                logger.log("Breakpoint at node " + nodeId + " is updating message body on exchangeId: " + se.getExchange().getExchangeId() + " with new body: " + body);
+                logger.log("Breakpoint at node " + nodeId + " is updating message body on exchangeId: "
+                           + se.getExchange().getExchangeId() + " with new body: " + body);
                 // preserve type
                 if (type != null) {
                     se.getExchange().getMessage().setBody(body, type);
@@ -283,25 +284,31 @@ public final class BacklogDebugger extends ServiceSupport {
     public void removeMessageBodyOnBreakpoint(String nodeId) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            logger.log("Breakpoint at node " + nodeId + " is removing message body on exchangeId: " + se.getExchange().getExchangeId());
+            logger.log("Breakpoint at node " + nodeId + " is removing message body on exchangeId: "
+                       + se.getExchange().getExchangeId());
             se.getExchange().getMessage().setBody(null);
         }
     }
 
-    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value) throws NoTypeConversionAvailableException {
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value)
+            throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            Class<?> oldType = se.getExchange().getMessage().getHeader(headerName) != null ? se.getExchange().getMessage().getHeader(headerName).getClass() : null;
+            Class<?> oldType = se.getExchange().getMessage().getHeader(headerName) != null
+                    ? se.getExchange().getMessage().getHeader(headerName).getClass() : null;
             setMessageHeaderOnBreakpoint(nodeId, headerName, value, oldType);
         }
     }
 
-    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, Class<?> type) throws NoTypeConversionAvailableException {
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, Class<?> type)
+            throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            logger.log("Breakpoint at node " + nodeId + " is updating message header on exchangeId: " + se.getExchange().getExchangeId() + " with header: " + headerName + " and value: " + value);
+            logger.log("Breakpoint at node " + nodeId + " is updating message header on exchangeId: "
+                       + se.getExchange().getExchangeId() + " with header: " + headerName + " and value: " + value);
             if (type != null) {
-                Object convertedValue = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
+                Object convertedValue
+                        = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
                 se.getExchange().getMessage().setHeader(headerName, convertedValue);
             } else {
                 se.getExchange().getMessage().setHeader(headerName, value);
@@ -320,7 +327,8 @@ public final class BacklogDebugger extends ServiceSupport {
     public void removeMessageHeaderOnBreakpoint(String nodeId, String headerName) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            logger.log("Breakpoint at node " + nodeId + " is removing message header on exchangeId: " + se.getExchange().getExchangeId() + " with header: " + headerName);
+            logger.log("Breakpoint at node " + nodeId + " is removing message header on exchangeId: "
+                       + se.getExchange().getExchangeId() + " with header: " + headerName);
             se.getExchange().getMessage().removeHeader(headerName);
         }
     }
@@ -378,8 +386,8 @@ public final class BacklogDebugger extends ServiceSupport {
     /**
      * Gets the exchanged suspended at the given breakpoint id or null if there is none at that id.
      *
-     * @param id - node id for the breakpoint
-     * @return The suspended exchange or null if there isn't one suspended at the given breakpoint.
+     * @param  id - node id for the breakpoint
+     * @return    The suspended exchange or null if there isn't one suspended at the given breakpoint.
      */
     public Exchange getSuspendedExchange(String id) {
         SuspendedExchange suspendedExchange = suspendedBreakpoints.get(id);
@@ -505,10 +513,12 @@ public final class BacklogDebugger extends ServiceSupport {
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
+            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(),
+                    isBodyIncludeFiles(), getBodyMaxChars());
             long uid = debugCounter.incrementAndGet();
 
-            BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
+            BacklogTracerEventMessage msg
+                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // suspend at this breakpoint
@@ -519,7 +529,8 @@ public final class BacklogDebugger extends ServiceSupport {
                 try {
                     boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                     if (!hit) {
-                        logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchangeId, LoggingLevel.WARN);
+                        logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchangeId,
+                                LoggingLevel.WARN);
                     } else {
                         logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchangeId);
                     }
@@ -565,10 +576,12 @@ public final class BacklogDebugger extends ServiceSupport {
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
+            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(),
+                    isBodyIncludeFiles(), getBodyMaxChars());
             long uid = debugCounter.incrementAndGet();
 
-            BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
+            BacklogTracerEventMessage msg
+                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
@@ -576,11 +589,14 @@ public final class BacklogDebugger extends ServiceSupport {
             suspendedBreakpoints.put(toNode, se);
 
             // now wait until we should continue
-            logger.log("StepBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
+            logger.log(
+                    "StepBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
             try {
                 boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                 if (!hit) {
-                    logger.log("StepBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchange.getExchangeId(), LoggingLevel.WARN);
+                    logger.log("StepBreakpoint at node " + toNode + " timed out and is continued exchangeId: "
+                               + exchange.getExchangeId(),
+                            LoggingLevel.WARN);
                 } else {
                     logger.log("StepBreakpoint at node " + toNode + " is continued exchangeId: " + exchange.getExchangeId());
                 }

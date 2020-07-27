@@ -26,17 +26,17 @@ import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 public class ProducerWss4JSecurityHeaderTestInterceptor extends Wss4jSecurityInterceptor {
 
     public static boolean isX509DataPresent;
-    
+
     @Override
     protected void validateMessage(SoapMessage soapMessage, MessageContext messageContext) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             soapMessage.writeTo(out);
         } catch (IOException exception) {
-          // do nothing - because this is a sample class
+            // do nothing - because this is a sample class
         }
         String strMsg = new String(out.toByteArray());
-          
+
         isX509DataPresent = strMsg.contains("X509Data");
         super.validateMessage(soapMessage, messageContext);
     }

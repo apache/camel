@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
  * Perform caching operations using Caffeine Cache.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-cache", title = "Caffeine Cache",
-        syntax = "caffeine-cache:cacheName", category = {Category.CACHE, Category.DATAGRID, Category.CLUSTERING}, producerOnly = true)
+             syntax = "caffeine-cache:cacheName", category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING },
+             producerOnly = true)
 public class CaffeineCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)
@@ -47,7 +48,8 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     private Cache cache;
 
-    CaffeineCacheEndpoint(String uri, CaffeineCacheComponent component, String cacheName, CaffeineConfiguration configuration) throws Exception {
+    CaffeineCacheEndpoint(String uri, CaffeineCacheComponent component, String cacheName,
+                          CaffeineConfiguration configuration) throws Exception {
         super(uri, component);
 
         this.cacheName = cacheName;

@@ -77,11 +77,13 @@ public class JavaClass {
         isStatic = aStatic;
         return this;
     }
+
     public JavaClass setPackagePrivate() {
         isPublic = false;
         isPackagePrivate = true;
         return this;
     }
+
     public JavaClass setPublic() {
         isPublic = true;
         isPackagePrivate = false;
@@ -91,6 +93,7 @@ public class JavaClass {
     public String getPackage() {
         return packageName;
     }
+
     public JavaClass setPackage(String packageName) {
         this.packageName = packageName;
         return this;
@@ -99,10 +102,12 @@ public class JavaClass {
     public String getName() {
         return name;
     }
+
     public JavaClass setName(String name) {
         this.name = name;
         return this;
     }
+
     public String getCanonicalName() {
         if (parent != null) {
             return parent.getCanonicalName() + "$" + name;
@@ -110,13 +115,16 @@ public class JavaClass {
             return packageName + "." + name;
         }
     }
+
     public JavaClass extendSuperType(JavaClass extend) {
         return extendSuperType(extend.getName());
     }
+
     public JavaClass extendSuperType(String extendsName) {
         this.extendsName = extendsName;
         return this;
     }
+
     public String getSuperType() {
         return extendsName;
     }
@@ -129,15 +137,19 @@ public class JavaClass {
     public List<String> getImports() {
         return imports;
     }
+
     public void addImport(Class<?> clazz) {
         addImport(clazz.getName());
     }
+
     public void addImport(String importName) {
         this.imports.add(importName);
     }
+
     public void removeImport(String importName) {
         this.imports.remove(importName);
     }
+
     public void removeImport(JavaClass importName) {
         removeImport(importName.getCanonicalName());
     }
@@ -150,6 +162,7 @@ public class JavaClass {
             throw new IllegalArgumentException("Unable to parse type", e);
         }
     }
+
     public Annotation addAnnotation(Class<?> type) {
         if (!java.lang.annotation.Annotation.class.isAssignableFrom(type)) {
             throw new IllegalStateException("Not an annotation: " + type.getName());
@@ -206,6 +219,7 @@ public class JavaClass {
     public boolean isClass() {
         return isClass;
     }
+
     public JavaClass setClass(boolean isClass) {
         this.isClass = isClass;
         return this;
@@ -214,6 +228,7 @@ public class JavaClass {
     public boolean isAbstract() {
         return isAbstract;
     }
+
     public JavaClass setAbstract(boolean isAbstract) {
         this.isAbstract = isAbstract;
         return this;
@@ -222,6 +237,7 @@ public class JavaClass {
     public boolean isEnum() {
         return isEnum;
     }
+
     public JavaClass setEnum(boolean isEnum) {
         this.isEnum = isEnum;
         return this;
@@ -283,15 +299,15 @@ public class JavaClass {
 
         if (isEnum) {
             sb.append(indent)
-                .append(isPublic ? "public " : "")
-                .append(isStatic ? "static " : "")
-                .append("enum ").append(name).append(" {\n")
-                .append(indent)
-                .append("    ")
-                .append(String.join(",\n" + indent + "    ", values))
-                .append(";\n")
-                .append(indent)
-                .append("}");
+                    .append(isPublic ? "public " : "")
+                    .append(isStatic ? "static " : "")
+                    .append("enum ").append(name).append(" {\n")
+                    .append(indent)
+                    .append("    ")
+                    .append(String.join(",\n" + indent + "    ", values))
+                    .append(";\n")
+                    .append(indent)
+                    .append("}");
             return;
 
         }
@@ -332,7 +348,8 @@ public class JavaClass {
             if (!implementNames.isEmpty()) {
                 sb.append("\n");
                 sb.append(indent).append(isClass ? "        implements\n" : "        extends\n");
-                sb.append(implementNames.stream().map(name -> indent + "            " + name).collect(Collectors.joining(",\n")));
+                sb.append(
+                        implementNames.stream().map(name -> indent + "            " + name).collect(Collectors.joining(",\n")));
             }
             sb.append(" {\n");
         }
@@ -387,20 +404,24 @@ public class JavaClass {
         methods.forEach(m -> addImports(imports, m));
         properties.forEach(p -> addImports(imports, p));
     }
+
     private void addImports(Set<String> imports, Annotation annotation) {
         addImports(imports, annotation.type);
     }
+
     private void addImports(Set<String> imports, Property property) {
         addImports(imports, property.field);
         addImports(imports, property.accessor);
         addImports(imports, property.mutator);
     }
+
     private void addImports(Set<String> imports, Field field) {
         if (field != null) {
             field.annotations.forEach(a -> addImports(imports, a));
             addImports(imports, field.type);
         }
     }
+
     private void addImports(Set<String> imports, Method method) {
         if (method != null) {
             method.annotations.forEach(a -> addImports(imports, a));
@@ -408,6 +429,7 @@ public class JavaClass {
             method.parameters.forEach(p -> addImports(imports, p.type));
         }
     }
+
     private void addImports(Set<String> imports, GenericType type) {
         if (type != null) {
             addImports(imports, type.getRawClass());
@@ -416,6 +438,7 @@ public class JavaClass {
             }
         }
     }
+
     private void addImports(Set<String> imports, Class clazz) {
         if (clazz != null) {
             if (clazz.isArray()) {
@@ -425,7 +448,6 @@ public class JavaClass {
             }
         }
     }
-
 
     private void printMethod(StringBuilder sb, String indent, Method method) {
         if (fields.size() + properties.size() > 0) {
@@ -471,10 +493,10 @@ public class JavaClass {
             sb2.append(method.name);
             sb2.append("(");
             sb2.append(method.parameters.stream()
-                .map(p -> p.vararg
-                        ? typeOf(p) + "... " + p.name
-                        : typeOf(p) + " " + p.name)
-                .collect(Collectors.joining(", ")));
+                    .map(p -> p.vararg
+                            ? typeOf(p) + "... " + p.name
+                            : typeOf(p) + " " + p.name)
+                    .collect(Collectors.joining(", ")));
 
             sb2.append(") ");
             if (!method.exceptions.isEmpty()) {
@@ -515,10 +537,10 @@ public class JavaClass {
                 if (method.parameters.size() > 0) {
                     sb.append("(\n");
                     sb.append(method.parameters.stream()
-                        .map(p -> p.vararg
-                                ? indent + "        " + typeOf(p) + "... " + p.name
-                                : indent + "        " + typeOf(p) + " " + p.name)
-                        .collect(Collectors.joining(",\n")));
+                            .map(p -> p.vararg
+                                    ? indent + "        " + typeOf(p) + "... " + p.name
+                                    : indent + "        " + typeOf(p) + " " + p.name)
+                            .collect(Collectors.joining(",\n")));
                     sb.append(")");
                 } else {
                     sb.append("()");
@@ -644,8 +666,8 @@ public class JavaClass {
 
     private String shortName(String name) {
         String s = name.replace('$', '.');
-//        int idx = s.lastIndexOf('.');
-//        return idx > 0 ? s.substring(idx + 1) : s;
+        //        int idx = s.lastIndexOf('.');
+        //        return idx > 0 ? s.substring(idx + 1) : s;
         s = s.replaceAll("([a-z][a-z0-9]+\\.([a-z][a-z0-9_]+\\.)*([A-Z][a-zA-Z0-9_]+\\.)?)([A-za-z]+)", "$4");
         if (s.startsWith(this.name + ".")) {
             s = s.substring(this.name.length() + 1);

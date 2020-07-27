@@ -21,12 +21,12 @@ package org.apache.camel.component.jms;
  */
 public enum JmsMessageType {
 
-    Bytes, 
-    Map, 
-    Object, 
-    Stream, 
+    Bytes,
+    Map,
+    Object,
+    Stream,
     Text,
-    
+
     /**
      * BlobMessage which is not supported by all JMS implementations
      */

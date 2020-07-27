@@ -42,11 +42,11 @@ public class AhcGoogleTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://www.google.se")
-                    .to("log:result?showAll=true")
-                    .convertBodyTo(String.class)
-                    .log("Google responded with body:\n${body}")
-                    .to("mock:result");
+                        .to("ahc:http://www.google.se")
+                        .to("log:result?showAll=true")
+                        .convertBodyTo(String.class)
+                        .log("Google responded with body:\n${body}")
+                        .to("mock:result");
             }
         };
     }

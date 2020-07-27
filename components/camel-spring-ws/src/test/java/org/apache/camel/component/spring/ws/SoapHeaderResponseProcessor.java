@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * Returns the request as the response so it can be analysed (eg. for presence
- * of SOAP Headers). The SOAP Header will be copied from in to out.
+ * Returns the request as the response so it can be analysed (eg. for presence of SOAP Headers). The SOAP Header will be
+ * copied from in to out.
  */
 public class SoapHeaderResponseProcessor implements Processor {
 

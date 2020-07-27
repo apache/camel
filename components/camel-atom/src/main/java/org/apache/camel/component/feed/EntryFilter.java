@@ -16,20 +16,18 @@
  */
 package org.apache.camel.component.feed;
 
-
 /**
- * Filter used by the {@link org.apache.camel.component.feed.FeedEntryPollingConsumer} to filter entries
- * from the feed.
+ * Filter used by the {@link org.apache.camel.component.feed.FeedEntryPollingConsumer} to filter entries from the feed.
  */
 public interface EntryFilter {
 
     /**
      * Tests to be used as filtering the feed for only entries of interest, such as only new entries, etc.
      *
-     * @param endpoint  the endpoint
-     * @param feed      the feed
-     * @param entry     the given entry to filter
-     * @return  <tt>true</tt> to include the entry, <ff>false</tt> to skip it
+     * @param  endpoint the endpoint
+     * @param  feed     the feed
+     * @param  entry    the given entry to filter
+     * @return          <tt>true</tt> to include the entry, <ff>false</tt> to skip it
      */
     boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry);
 

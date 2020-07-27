@@ -161,7 +161,6 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
         assertEquals(expectedMessage(null, null), instance.getMessage());
     }
 
-
     private String expectedMessage(String hl7Message, String hl7Acknowledgment) {
         StringBuilder expectedMessageBuilder = new StringBuilder();
 
@@ -169,18 +168,18 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
 
         if (hl7Message != null) {
             expectedMessageBuilder.append("\n\t{hl7Message [")
-                .append(hl7Message.length())
-                .append("] = ")
-                .append(hl7Message.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))
-                .append("}");
+                    .append(hl7Message.length())
+                    .append("] = ")
+                    .append(hl7Message.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))
+                    .append("}");
         }
 
         if (hl7Acknowledgment != null) {
             expectedMessageBuilder.append("\n\t{hl7Acknowledgement [")
-                .append(hl7Acknowledgment.length())
-                .append("] = ")
-                .append(hl7Acknowledgment.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))
-                .append("}");
+                    .append(hl7Acknowledgment.length())
+                    .append("] = ")
+                    .append(hl7Acknowledgment.replaceAll("\r", "<0x0D CR>").replaceAll("\n", "<0x0A LF>"))
+                    .append("}");
         }
 
         return expectedMessageBuilder.toString();

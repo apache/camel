@@ -58,7 +58,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     public MllpTcpClientProducer(MllpEndpoint endpoint) throws SocketException {
         super(endpoint);
 
-        log = LoggerFactory.getLogger(String.format("%s.%s.%d", this.getClass().getName(), endpoint.getHostname(), endpoint.getPort()));
+        log = LoggerFactory
+                .getLogger(String.format("%s.%s.%d", this.getClass().getName(), endpoint.getHostname(), endpoint.getPort()));
 
         log.trace("Constructing MllpTcpClientProducer for endpoint URI {}", endpoint.getEndpointUri());
 
@@ -148,7 +149,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             byte[] hl7MessageBytes = null;
             Object messageBody = message.getBody();
             if (messageBody == null) {
-                String exceptionMessage = String.format("process(%s) [%s] - message body is null", exchange.getExchangeId(), socket);
+                String exceptionMessage
+                        = String.format("process(%s) [%s] - message body is null", exchange.getExchangeId(), socket);
                 exchange.setException(new MllpInvalidMessageException(exceptionMessage, hl7MessageBytes));
                 return;
             } else if (messageBody instanceof byte[]) {
@@ -168,19 +170,24 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                 mllpBuffer.writeTo(socket);
             } catch (MllpSocketException writeEx) {
                 // Connection may have been reset - try one more time
-                log.debug("process({}) [{}] - exception encountered writing payload - attempting reconnect", exchange.getExchangeId(), socket, writeEx);
+                log.debug("process({}) [{}] - exception encountered writing payload - attempting reconnect",
+                        exchange.getExchangeId(), socket, writeEx);
                 try {
                     checkConnection();
                     log.trace("process({}) [{}] - reconnected succeeded - resending payload", exchange.getExchangeId(), socket);
                     try {
                         mllpBuffer.writeTo(socket);
                     } catch (MllpSocketException retryWriteEx) {
-                        String exceptionMessage = String.format("process(%s) [%s] - exception encountered attempting to write payload after reconnect", exchange.getExchangeId(), socket);
+                        String exceptionMessage = String.format(
+                                "process(%s) [%s] - exception encountered attempting to write payload after reconnect",
+                                exchange.getExchangeId(), socket);
                         log.warn(exceptionMessage, retryWriteEx);
-                        exchange.setException(new MllpWriteException(exceptionMessage, mllpBuffer.toByteArrayAndReset(), retryWriteEx));
+                        exchange.setException(
+                                new MllpWriteException(exceptionMessage, mllpBuffer.toByteArrayAndReset(), retryWriteEx));
                     }
                 } catch (IOException reconnectEx) {
-                    String exceptionMessage = String.format("process(%s) [%s] - exception encountered attempting to reconnect", exchange.getExchangeId(), socket);
+                    String exceptionMessage = String.format("process(%s) [%s] - exception encountered attempting to reconnect",
+                            exchange.getExchangeId(), socket);
                     log.warn(exceptionMessage, reconnectEx);
                     exchange.setException(new MllpWriteException(exceptionMessage, mllpBuffer.toByteArrayAndReset(), writeEx));
                     mllpBuffer.resetSocket(socket);
@@ -194,31 +201,37 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                     mllpBuffer.readFrom(socket);
                 } catch (MllpSocketException receiveAckEx) {
                     // Connection may have been reset - try one more time
-                    log.debug("process({}) [{}] - exception encountered reading acknowledgement - attempting reconnect", exchange.getExchangeId(), socket, receiveAckEx);
+                    log.debug("process({}) [{}] - exception encountered reading acknowledgement - attempting reconnect",
+                            exchange.getExchangeId(), socket, receiveAckEx);
                     try {
                         checkConnection();
                     } catch (IOException reconnectEx) {
-                        String exceptionMessage = String.format("process(%s) [%s] - exception encountered attempting to reconnect after acknowledgement read failure",
+                        String exceptionMessage = String.format(
+                                "process(%s) [%s] - exception encountered attempting to reconnect after acknowledgement read failure",
                                 exchange.getExchangeId(), socket);
                         log.warn(exceptionMessage, reconnectEx);
-                        exchange.setException(new MllpAcknowledgementReceiveException(exceptionMessage, hl7MessageBytes, receiveAckEx));
+                        exchange.setException(
+                                new MllpAcknowledgementReceiveException(exceptionMessage, hl7MessageBytes, receiveAckEx));
                         mllpBuffer.resetSocket(socket);
                     }
 
                     if (exchange.getException() == null) {
-                        log.trace("process({}) [{}] - resending payload after successful reconnect", exchange.getExchangeId(), socket);
+                        log.trace("process({}) [{}] - resending payload after successful reconnect", exchange.getExchangeId(),
+                                socket);
                         try {
                             mllpBuffer.setEnvelopedMessage(hl7MessageBytes);
                             mllpBuffer.writeTo(socket);
                         } catch (MllpSocketException writeRetryEx) {
-                            String exceptionMessage = String.format("process(%s) [%s] - exception encountered attempting to write payload after read failure and successful reconnect",
+                            String exceptionMessage = String.format(
+                                    "process(%s) [%s] - exception encountered attempting to write payload after read failure and successful reconnect",
                                     exchange.getExchangeId(), socket);
                             log.warn(exceptionMessage, writeRetryEx);
                             exchange.setException(new MllpWriteException(exceptionMessage, hl7MessageBytes, receiveAckEx));
                         }
 
                         if (exchange.getException() == null) {
-                            log.trace("process({}) [{}] - resend succeeded - reading acknowledgement from external system", exchange.getExchangeId(), socket);
+                            log.trace("process({}) [{}] - resend succeeded - reading acknowledgement from external system",
+                                    exchange.getExchangeId(), socket);
                             try {
                                 mllpBuffer.reset();
                                 mllpBuffer.readFrom(socket);
@@ -226,18 +239,22 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 String exceptionMessageFormat = mllpBuffer.isEmpty()
                                         ? "process(%s) [%s] - exception encountered reading MLLP Acknowledgement after successful reconnect and resend"
                                         : "process(%s) [%s] - exception encountered reading complete MLLP Acknowledgement after successful reconnect and resend";
-                                String exceptionMessage = String.format(exceptionMessageFormat, exchange.getExchangeId(), socket);
+                                String exceptionMessage
+                                        = String.format(exceptionMessageFormat, exchange.getExchangeId(), socket);
                                 log.warn(exceptionMessage, secondReceiveEx);
                                 // Send the original exception to the exchange
-                                exchange.setException(new MllpAcknowledgementReceiveException(exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx));
+                                exchange.setException(new MllpAcknowledgementReceiveException(
+                                        exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx));
                             } catch (SocketTimeoutException secondReadTimeoutEx) {
                                 String exceptionMessageFormat = mllpBuffer.isEmpty()
                                         ? "process(%s) [%s] - timeout receiving MLLP Acknowledgment after successful reconnect and resend"
                                         : "process(%s) [%s] - timeout receiving complete MLLP Acknowledgment after successful reconnect and resend";
-                                String exceptionMessage = String.format(exceptionMessageFormat, exchange.getExchangeId(), socket);
+                                String exceptionMessage
+                                        = String.format(exceptionMessageFormat, exchange.getExchangeId(), socket);
                                 log.warn(exceptionMessage, secondReadTimeoutEx);
                                 // Send the original exception to the exchange
-                                exchange.setException(new MllpAcknowledgementTimeoutException(exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx));
+                                exchange.setException(new MllpAcknowledgementTimeoutException(
+                                        exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), receiveAckEx));
                                 mllpBuffer.resetSocket(socket);
                             }
                         }
@@ -248,7 +265,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                             : "process(%s) [%s] - timeout receiving complete MLLP Acknowledgment";
                     String exceptionMessage = String.format(exceptionMessageFormat, exchange.getExchangeId(), socket);
                     log.warn(exceptionMessage, timeoutEx);
-                    exchange.setException(new MllpAcknowledgementTimeoutException(exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), timeoutEx));
+                    exchange.setException(new MllpAcknowledgementTimeoutException(
+                            exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset(), timeoutEx));
                     mllpBuffer.resetSocket(socket);
                 }
 
@@ -256,10 +274,13 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                     if (mllpBuffer.hasCompleteEnvelope()) {
                         byte[] acknowledgementBytes = mllpBuffer.toMllpPayload();
 
-                        log.debug("process({}) [{}] - populating message headers with the acknowledgement from the external system", exchange.getExchangeId(), socket);
+                        log.debug(
+                                "process({}) [{}] - populating message headers with the acknowledgement from the external system",
+                                exchange.getExchangeId(), socket);
                         message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
                         if (acknowledgementBytes != null && acknowledgementBytes.length > 0) {
-                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, new String(acknowledgementBytes, getConfiguration().getCharset(exchange, acknowledgementBytes)));
+                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, new String(
+                                    acknowledgementBytes, getConfiguration().getCharset(exchange, acknowledgementBytes)));
                         } else {
                             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
                         }
@@ -267,14 +288,17 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         if (getConfiguration().isValidatePayload()) {
                             String exceptionMessage = Hl7Util.generateInvalidPayloadExceptionMessage(acknowledgementBytes);
                             if (exceptionMessage != null) {
-                                exchange.setException(new MllpInvalidAcknowledgementException(exceptionMessage, hl7MessageBytes, acknowledgementBytes));
+                                exchange.setException(new MllpInvalidAcknowledgementException(
+                                        exceptionMessage, hl7MessageBytes, acknowledgementBytes));
                             }
                         }
 
                         if (exchange.getException() == null) {
-                            log.debug("process({}) [{}] - processing the acknowledgement from the external system", exchange.getExchangeId(), socket);
+                            log.debug("process({}) [{}] - processing the acknowledgement from the external system",
+                                    exchange.getExchangeId(), socket);
                             try {
-                                message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, processAcknowledgment(hl7MessageBytes, acknowledgementBytes));
+                                message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE,
+                                        processAcknowledgment(hl7MessageBytes, acknowledgementBytes));
                             } catch (MllpNegativeAcknowledgementException nackEx) {
                                 message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, nackEx.getAcknowledgmentType());
                                 exchange.setException(nackEx);
@@ -283,8 +307,10 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                             getEndpoint().checkAfterSendProperties(exchange, socket, log);
                         }
                     } else {
-                        String exceptionMessage = String.format("process(%s) [%s] - invalid acknowledgement received", exchange.getExchangeId(), socket);
-                        exchange.setException(new MllpInvalidAcknowledgementException(exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset()));
+                        String exceptionMessage = String.format("process(%s) [%s] - invalid acknowledgement received",
+                                exchange.getExchangeId(), socket);
+                        exchange.setException(new MllpInvalidAcknowledgementException(
+                                exceptionMessage, hl7MessageBytes, mllpBuffer.toByteArrayAndReset()));
                     }
                 }
             }
@@ -321,13 +347,17 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                      */
                     if (hl7AcknowledgementBytes.length > i + 7) {
                         // We can safely peek ahead
-                        if (bM == hl7AcknowledgementBytes[i + 1] && bS == hl7AcknowledgementBytes[i + 2] && bA == hl7AcknowledgementBytes[i + 3] && fieldDelim == hl7AcknowledgementBytes[i + 4]) {
+                        if (bM == hl7AcknowledgementBytes[i + 1] && bS == hl7AcknowledgementBytes[i + 2]
+                                && bA == hl7AcknowledgementBytes[i + 3] && fieldDelim == hl7AcknowledgementBytes[i + 4]) {
                             // Found the beginning of the MSA - the next two bytes should be our acknowledgement code
                             msaStartIndex = i + 1;
                             if (bA != hl7AcknowledgementBytes[i + 5] && bC != hl7AcknowledgementBytes[i + 5]) {
-                                String errorMessage = String.format("processAcknowledgment(hl7MessageBytes[%d], hl7AcknowledgementBytes[%d]) - unsupported acknowledgement type: '%s'",
-                                        hl7MessageBytes == null ? -1 : hl7MessageBytes.length, hl7AcknowledgementBytes.length, new String(hl7AcknowledgementBytes, i + 5, 2));
-                                throw new MllpInvalidAcknowledgementException(errorMessage, hl7MessageBytes, hl7AcknowledgementBytes);
+                                String errorMessage = String.format(
+                                        "processAcknowledgment(hl7MessageBytes[%d], hl7AcknowledgementBytes[%d]) - unsupported acknowledgement type: '%s'",
+                                        hl7MessageBytes == null ? -1 : hl7MessageBytes.length, hl7AcknowledgementBytes.length,
+                                        new String(hl7AcknowledgementBytes, i + 5, 2));
+                                throw new MllpInvalidAcknowledgementException(
+                                        errorMessage, hl7MessageBytes, hl7AcknowledgementBytes);
                             } else {
                                 switch (hl7AcknowledgementBytes[i + 6]) {
                                     case bA:
@@ -341,20 +371,26 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                     case bE:
                                         // We have an AE or CE
                                         if (bA == hl7AcknowledgementBytes[i + 5]) {
-                                            throw new MllpApplicationErrorAcknowledgementException(hl7MessageBytes, hl7AcknowledgementBytes);
+                                            throw new MllpApplicationErrorAcknowledgementException(
+                                                    hl7MessageBytes, hl7AcknowledgementBytes);
                                         } else {
-                                            throw new MllpCommitErrorAcknowledgementException(hl7MessageBytes, hl7AcknowledgementBytes);
+                                            throw new MllpCommitErrorAcknowledgementException(
+                                                    hl7MessageBytes, hl7AcknowledgementBytes);
                                         }
                                     case bR:
                                         // We have an AR or CR
                                         if (bA == hl7AcknowledgementBytes[i + 5]) {
-                                            throw new MllpApplicationRejectAcknowledgementException(hl7MessageBytes, hl7AcknowledgementBytes);
+                                            throw new MllpApplicationRejectAcknowledgementException(
+                                                    hl7MessageBytes, hl7AcknowledgementBytes);
                                         } else {
-                                            throw new MllpCommitRejectAcknowledgementException(hl7MessageBytes, hl7AcknowledgementBytes);
+                                            throw new MllpCommitRejectAcknowledgementException(
+                                                    hl7MessageBytes, hl7AcknowledgementBytes);
                                         }
                                     default:
-                                        String errorMessage = "Unsupported acknowledgement type: " + new String(hl7AcknowledgementBytes, i + 5, 2);
-                                        throw new MllpInvalidAcknowledgementException(errorMessage, hl7MessageBytes, hl7AcknowledgementBytes);
+                                        String errorMessage = "Unsupported acknowledgement type: "
+                                                              + new String(hl7AcknowledgementBytes, i + 5, 2);
+                                        throw new MllpInvalidAcknowledgementException(
+                                                errorMessage, hl7MessageBytes, hl7AcknowledgementBytes);
                                 }
                             }
 
@@ -366,7 +402,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             }
             if (-1 == msaStartIndex && getConfiguration().isValidatePayload()) {
                 // Didn't find an MSA
-                throw new MllpInvalidAcknowledgementException("MSA Not found in acknowledgement", hl7MessageBytes, hl7AcknowledgementBytes);
+                throw new MllpInvalidAcknowledgementException(
+                        "MSA Not found in acknowledgement", hl7MessageBytes, hl7AcknowledgementBytes);
             }
         }
 
@@ -433,7 +470,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             cachedCombinedAddress = MllpSocketBuffer.formatAddressString(localSocketAddress, remoteSocketAddress);
 
             if (getConfiguration().hasIdleTimeout()) {
-                log.debug("Scheduling initial idle producer connection check of {} in {} milliseconds", getConnectionAddress(), getConfiguration().getIdleTimeout());
+                log.debug("Scheduling initial idle producer connection check of {} in {} milliseconds", getConnectionAddress(),
+                        getConfiguration().getIdleTimeout());
                 idleTimeoutExecutor.schedule(this, getConfiguration().getIdleTimeout(), TimeUnit.MILLISECONDS);
             }
         } else {
@@ -451,22 +489,28 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                 if (getEndpoint().hasLastConnectionActivityTicks()) {
                     long idleTime = System.currentTimeMillis() - getEndpoint().getLastConnectionActivityTicks();
                     if (log.isDebugEnabled()) {
-                        log.debug("Checking {} for idle connection: {} - {}", getConnectionAddress(), idleTime, getConfiguration().getIdleTimeout());
+                        log.debug("Checking {} for idle connection: {} - {}", getConnectionAddress(), idleTime,
+                                getConfiguration().getIdleTimeout());
                     }
                     if (idleTime >= getConfiguration().getIdleTimeout()) {
-                        log.info("MLLP Connection idle time of '{}' milliseconds met or exceeded the idle producer timeout of '{}' milliseconds - resetting connection",
+                        log.info(
+                                "MLLP Connection idle time of '{}' milliseconds met or exceeded the idle producer timeout of '{}' milliseconds - resetting connection",
                                 idleTime, getConfiguration().getIdleTimeout());
                         mllpBuffer.resetSocket(socket);
                     } else {
                         long minDelay = 100;
-                        long delay = Long.min(Long.max(minDelay, getConfiguration().getIdleTimeout() - idleTime), getConfiguration().getIdleTimeout());
+                        long delay = Long.min(Long.max(minDelay, getConfiguration().getIdleTimeout() - idleTime),
+                                getConfiguration().getIdleTimeout());
                         if (log.isDebugEnabled()) {
-                            log.debug("Scheduling idle producer connection check of {} in {} milliseconds", getConnectionAddress(), delay);
+                            log.debug("Scheduling idle producer connection check of {} in {} milliseconds",
+                                    getConnectionAddress(), delay);
                         }
                         idleTimeoutExecutor.schedule(this, delay, TimeUnit.MILLISECONDS);
                     }
                 } else {
-                    log.debug("No activity detected since initial connection - scheduling idle producer connection check in {} milliseconds", getConfiguration().getIdleTimeout());
+                    log.debug(
+                            "No activity detected since initial connection - scheduling idle producer connection check in {} milliseconds",
+                            getConfiguration().getIdleTimeout());
                     idleTimeoutExecutor.schedule(this, getConfiguration().getIdleTimeout(), TimeUnit.MILLISECONDS);
                 }
             }
@@ -484,7 +528,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         public Thread newThread(Runnable r) {
             Thread timeoutThread = Executors.defaultThreadFactory().newThread(r);
 
-            timeoutThread.setName(String.format("%s[%s]-idle-timeout-thread", MllpTcpClientProducer.class.getSimpleName(), endpointKey));
+            timeoutThread.setName(
+                    String.format("%s[%s]-idle-timeout-thread", MllpTcpClientProducer.class.getSimpleName(), endpointKey));
 
             return timeoutThread;
         }

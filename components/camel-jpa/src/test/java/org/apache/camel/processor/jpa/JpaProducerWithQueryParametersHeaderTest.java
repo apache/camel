@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JpaProducerWithQueryParametersHeaderTest {
-    
+
     protected DefaultCamelContext camelContext;
     protected ProducerTemplate template;
 
@@ -46,13 +46,14 @@ public class JpaProducerWithQueryParametersHeaderTest {
         Customer c2 = new Customer();
         c2.setName("Dummy");
         template.sendBody("direct:addCustomer", c2);
-        
+
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "${body}");
 
-        List list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params, List.class);
+        List list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params,
+                List.class);
         assertEquals(1, list.size());
-        assertEquals("Willem", ((Customer)list.get(0)).getName());
+        assertEquals("Willem", ((Customer) list.get(0)).getName());
 
         int integer = template.requestBody("direct:deleteCustomers", null, int.class);
         assertEquals(2, integer);
@@ -66,12 +67,12 @@ public class JpaProducerWithQueryParametersHeaderTest {
             @Override
             public void configure() throws Exception {
                 from("direct:namedQuery")
-                    .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName");
-                
+                        .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName");
+
                 from("direct:addCustomer")
-                    .to("jpa://" + Customer.class.getName());
+                        .to("jpa://" + Customer.class.getName());
                 from("direct:deleteCustomers")
-                    .to("jpa://" + Customer.class.getName() + "?query=delete from " + Customer.class.getName());
+                        .to("jpa://" + Customer.class.getName() + "?query=delete from " + Customer.class.getName());
 
             }
         });

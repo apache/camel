@@ -85,15 +85,14 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     }
 
     /**
-     * If the consumer needs to defer done the {@link org.apache.camel.spi.UnitOfWork} on
-     * the processed {@link Exchange} then this method should be use to create and start
-     * the {@link UnitOfWork} on the exchange.
+     * If the consumer needs to defer done the {@link org.apache.camel.spi.UnitOfWork} on the processed {@link Exchange}
+     * then this method should be use to create and start the {@link UnitOfWork} on the exchange.
      *
-     * @param exchange the exchange
-     * @return the created and started unit of work
+     * @param  exchange  the exchange
+     * @return           the created and started unit of work
      * @throws Exception is thrown if error starting the unit of work
      *
-     * @see #doneUoW(org.apache.camel.Exchange)
+     * @see              #doneUoW(org.apache.camel.Exchange)
      */
     public UnitOfWork createUoW(Exchange exchange) throws Exception {
         // if the exchange doesn't have from route id set, then set it if it originated
@@ -102,20 +101,20 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
             exchange.adapt(ExtendedExchange.class).setFromRouteId(route.getId());
         }
 
-        UnitOfWork uow = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
+        UnitOfWork uow = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
+                .createUnitOfWork(exchange);
         exchange.adapt(ExtendedExchange.class).setUnitOfWork(uow);
         uow.start();
         return uow;
     }
 
     /**
-     * If the consumer needs to defer done the {@link org.apache.camel.spi.UnitOfWork} on
-     * the processed {@link Exchange} then this method should be executed when the consumer
-     * is finished processing the message.
+     * If the consumer needs to defer done the {@link org.apache.camel.spi.UnitOfWork} on the processed {@link Exchange}
+     * then this method should be executed when the consumer is finished processing the message.
      *
      * @param exchange the exchange
      *
-     * @see #createUoW(org.apache.camel.Exchange)
+     * @see            #createUoW(org.apache.camel.Exchange)
      */
     public void doneUoW(Exchange exchange) {
         UnitOfWorkHelper.doneUow(exchange.getUnitOfWork(), exchange);
@@ -132,9 +131,8 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     }
 
     /**
-     * Provides an {@link org.apache.camel.AsyncProcessor} interface to the configured
-     * processor on the consumer. If the processor does not implement the interface,
-     * it will be adapted so that it does.
+     * Provides an {@link org.apache.camel.AsyncProcessor} interface to the configured processor on the consumer. If the
+     * processor does not implement the interface, it will be adapted so that it does.
      */
     public AsyncProcessor getAsyncProcessor() {
         return asyncProcessor;
@@ -180,7 +178,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
      * Handles the given exception using the {@link #getExceptionHandler()}
      *
      * @param message additional message about the exception
-     * @param t the exception to handle
+     * @param t       the exception to handle
      */
     protected void handleException(String message, Throwable t) {
         Throwable newt = (t == null) ? new IllegalArgumentException("Handling [null] exception") : t;

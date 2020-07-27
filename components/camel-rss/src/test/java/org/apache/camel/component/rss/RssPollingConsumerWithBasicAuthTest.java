@@ -27,7 +27,8 @@ public class RssPollingConsumerWithBasicAuthTest extends RssPollingConsumerTest 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("rss:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=false&username=camel&password=camelPass").to("mock:result");
+                from("rss:http://localhost:" + JettyTestServer.getInstance().port
+                     + "/?splitEntries=false&username=camel&password=camelPass").to("mock:result");
             }
         };
     }

@@ -36,13 +36,14 @@ import org.apache.camel.spi.UriPath;
  * Serve HTTP requests by a Servlet.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "servlet", extendsScheme = "http", title = "Servlet",
-        syntax = "servlet:contextPath", consumerOnly = true, category = {Category.HTTP})
+             syntax = "servlet:contextPath", consumerOnly = true, category = { Category.HTTP })
 @Metadata(excludeProperties = "httpUri")
 public class ServletEndpoint extends HttpCommonEndpoint {
 
     private HttpBinding binding;
 
-    @UriPath(label = "consumer") @Metadata(required = true)
+    @UriPath(label = "consumer")
+    @Metadata(required = true)
     private String contextPath;
     @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;
@@ -124,10 +125,11 @@ public class ServletEndpoint extends HttpCommonEndpoint {
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
      * <p/>
-     * The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together.
-     * Remove disableStreamCache to use AttachmentMultipartBinding.
+     * The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove
+     * disableStreamCache to use AttachmentMultipartBinding.
      * <p/>
-     * This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+     * This is turn off by default as this may require servlet specific configuration to enable this when using
+     * Servlet's.
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
@@ -148,7 +150,8 @@ public class ServletEndpoint extends HttpCommonEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("You cannot create producer with servlet endpoint, please consider to use http endpoint.");
+        throw new UnsupportedOperationException(
+                "You cannot create producer with servlet endpoint, please consider to use http endpoint.");
     }
 
     @Override

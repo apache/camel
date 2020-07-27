@@ -84,7 +84,7 @@ public final class DispositionNotificationContentUtils {
 
         public Field(String name, String value) {
             this.name = Args.notNull(name, "name");
-            this.elements = new Element[] {new Element(value, null)};
+            this.elements = new Element[] { new Element(value, null) };
         }
 
         public String getName() {
@@ -137,7 +137,8 @@ public final class DispositionNotificationContentUtils {
     private DispositionNotificationContentUtils() {
     }
 
-    public static AS2MessageDispositionNotificationEntity parseDispositionNotification(List<CharArrayBuffer> dispositionNotificationFields)
+    public static AS2MessageDispositionNotificationEntity parseDispositionNotification(
+            List<CharArrayBuffer> dispositionNotificationFields)
             throws ParseException {
         String reportingUA = null;
         String mtaName = null;
@@ -155,7 +156,7 @@ public final class DispositionNotificationContentUtils {
         for (int i = 0; i < dispositionNotificationFields.size(); i++) {
             final CharArrayBuffer fieldLine = dispositionNotificationFields.get(i);
             final Field field = parseDispositionField(fieldLine);
-            switch(field.getName().toLowerCase()) {
+            switch (field.getName().toLowerCase()) {
                 case REPORTING_UA: {
                     if (field.getElements().length < 1) {
                         throw new ParseException("Invalid '" + MDNField.REPORTING_UA + "' field: UA name is missing");
@@ -174,7 +175,8 @@ public final class DispositionNotificationContentUtils {
                 case FINAL_RECIPIENT: {
                     Element[] elements = field.getElements();
                     if (elements.length < 2) {
-                        throw new ParseException("Invalid '" + MDNField.FINAL_RECIPIENT + "' field: recipient address is missing");
+                        throw new ParseException(
+                                "Invalid '" + MDNField.FINAL_RECIPIENT + "' field: recipient address is missing");
                     }
                     finalRecipient = elements[1].getValue();
                     break;
@@ -190,7 +192,9 @@ public final class DispositionNotificationContentUtils {
                     }
                     dispositionMode = DispositionMode.parseDispositionMode(elements[0].getValue());
                     if (dispositionMode == null) {
-                        throw new ParseException("Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '" + elements[0].getValue() + "'");
+                        throw new ParseException(
+                                "Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '"
+                                                 + elements[0].getValue() + "'");
                     }
 
                     String dispositionTypeString = elements[1].getValue();
@@ -199,7 +203,8 @@ public final class DispositionNotificationContentUtils {
                         dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString);
                     } else {
                         dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString.substring(0, slash));
-                        dispositionModifier = AS2DispositionModifier.parseDispositionType(dispositionTypeString.substring(slash + 1));
+                        dispositionModifier
+                                = AS2DispositionModifier.parseDispositionType(dispositionTypeString.substring(slash + 1));
                     }
                     break;
                 }
@@ -220,7 +225,8 @@ public final class DispositionNotificationContentUtils {
                     Element element = elements[0];
                     String[] parameters = element.getParameters();
                     if (parameters.length < 1) {
-                        throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: digest algorithm ID is missing");
+                        throw new ParseException(
+                                "Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: digest algorithm ID is missing");
                     }
                     String digestAlgorithmId = parameters[0];
                     String encodedMessageDigest = element.getValue();
@@ -232,7 +238,8 @@ public final class DispositionNotificationContentUtils {
             }
         }
 
-        return new AS2MessageDispositionNotificationEntity(reportingUA,
+        return new AS2MessageDispositionNotificationEntity(
+                reportingUA,
                 mtaName,
                 finalRecipient,
                 originalMessageId,

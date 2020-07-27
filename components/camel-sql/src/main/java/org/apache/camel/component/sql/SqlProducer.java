@@ -53,7 +53,8 @@ public class SqlProducer extends DefaultProducer {
     private final boolean useMessageBodyForSql;
     private int parametersCount;
 
-    public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate, SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
+    public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate,
+                       SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
                        boolean batch, boolean alwaysPopulateStatement, boolean useMessageBodyForSql) {
         super(endpoint);
         this.jdbcTemplate = jdbcTemplate;
@@ -98,10 +99,11 @@ public class SqlProducer extends DefaultProducer {
             String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
             sql = queryHeader != null ? queryHeader : resolvedQuery;
         }
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters(), exchange);
+        final String preparedQuery
+                = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters(), exchange);
 
-        final Boolean shouldRetrieveGeneratedKeys =
-            exchange.getIn().getHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+        final Boolean shouldRetrieveGeneratedKeys
+                = exchange.getIn().getHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
         PreparedStatementCreator statementCreator = new PreparedStatementCreator() {
             @Override
@@ -119,7 +121,7 @@ public class SqlProducer extends DefaultProducer {
                     } else {
                         throw new IllegalArgumentException(
                                 "Header specifying expected returning columns isn't an instance of String[] or int[] but "
-                                        + expectedGeneratedColumns.getClass());
+                                                           + expectedGeneratedColumns.getClass());
                     }
                 }
             }
@@ -151,7 +153,8 @@ public class SqlProducer extends DefaultProducer {
                             }
                             while (iterator != null && iterator.hasNext()) {
                                 Object value = iterator.next();
-                                Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                                Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected,
+                                        exchange, value);
                                 sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                                 ps.addBatch();
                             }
@@ -162,7 +165,8 @@ public class SqlProducer extends DefaultProducer {
                             } else {
                                 value = exchange.getIn().getBody();
                             }
-                            Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                            Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected,
+                                    exchange, value);
                             sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                         }
                     }
@@ -211,7 +215,7 @@ public class SqlProducer extends DefaultProducer {
                                         exchange.getOut().setBody(data);
                                     }
                                     exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 1);
-                                } else { 
+                                } else {
                                     if (getEndpoint().isNoop()) {
                                         exchange.getOut().setBody(exchange.getIn().getBody());
                                     } else if (getEndpoint().getOutputHeader() != null) {
@@ -253,7 +257,9 @@ public class SqlProducer extends DefaultProducer {
         });
     }
 
-    protected void processStreamList(Exchange exchange, PreparedStatementCreator statementCreator, String sql, String preparedQuery) throws Exception {
+    protected void processStreamList(
+            Exchange exchange, PreparedStatementCreator statementCreator, String sql, String preparedQuery)
+            throws Exception {
         LOG.trace("processStreamList: {}", preparedQuery);
 
         // do not use the jdbcTemplate as it will auto-close connection/ps/rs when exiting the execute method
@@ -280,7 +286,8 @@ public class SqlProducer extends DefaultProducer {
                     }
                     while (iterator != null && iterator.hasNext()) {
                         Object value = iterator.next();
-                        Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                        Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected,
+                                exchange, value);
                         sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                         ps.addBatch();
                     }
@@ -291,7 +298,8 @@ public class SqlProducer extends DefaultProducer {
                     } else {
                         value = exchange.getIn().getBody();
                     }
-                    Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                    Iterator<?> i
+                            = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
                     sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                 }
             }

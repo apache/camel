@@ -40,9 +40,9 @@ public class LanguageEndpointStaticTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         context.createFluentProducerTemplate()
-            .to(direct("start"))
-            .withBody("World")
-            .send();
+                .to(direct("start"))
+                .withBody("World")
+                .send();
 
         assertMockEndpointsSatisfied();
     }
@@ -53,8 +53,8 @@ public class LanguageEndpointStaticTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(direct("start"))
-                    .to(language("simple").script("Hello ${body}"))
-                    .to(mock("result"));
+                        .to(language("simple").script("Hello ${body}"))
+                        .to(mock("result"));
             }
         };
     }

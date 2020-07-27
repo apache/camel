@@ -98,7 +98,8 @@ public class MavenVersionManagerTest {
         boolean loaded = catalog.loadVersion(version);
         assertTrue(loaded);
 
-        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(), catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(),
+                catalog.getRuntimeProvider().getProviderArtifactId(), version);
         assertTrue(loaded);
 
         assertEquals(version, catalog.getLoadedVersion());
@@ -122,7 +123,8 @@ public class MavenVersionManagerTest {
         boolean loaded = catalog.loadVersion(version);
         assertTrue(loaded);
 
-        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(), catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(),
+                catalog.getRuntimeProvider().getProviderArtifactId(), version);
         assertTrue(loaded);
 
         assertEquals(version, catalog.getLoadedVersion());

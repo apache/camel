@@ -19,9 +19,8 @@ package org.apache.camel.component.disruptor;
 import org.apache.camel.Exchange;
 
 /**
- * This interface describes an immutable container of an Exchange and provides handles for
- * {@link DisruptorConsumer}s to correctly deal with the on completion synchronization, even in multicast
- * circumstances.
+ * This interface describes an immutable container of an Exchange and provides handles for {@link DisruptorConsumer}s to
+ * correctly deal with the on completion synchronization, even in multicast circumstances.
  */
 public interface SynchronizedExchange {
     Exchange getExchange();

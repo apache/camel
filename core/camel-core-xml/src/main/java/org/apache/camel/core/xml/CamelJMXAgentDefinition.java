@@ -33,31 +33,44 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelJMXAgentDefinition extends IdentifiedType {
 
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String disabled;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String onlyRegisterProcessorWithCustomId;
-    @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
+    @XmlAttribute
+    @Metadata(defaultValue = "org.apache.camel")
     private String mbeanServerDefaultDomain;
-    @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
+    @XmlAttribute
+    @Metadata(defaultValue = "org.apache.camel")
     private String mbeanObjectDomainName;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String usePlatformMBeanServer;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String registerAlways;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String registerNewRoutes;
-    @XmlAttribute @Metadata(defaultValue = "Default")
+    @XmlAttribute
+    @Metadata(defaultValue = "Default")
     private String statisticsLevel;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String loadStatisticsEnabled;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String endpointRuntimeStatisticsEnabled;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String includeHostName;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String useHostIPAddress;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String mask;
 
     public String getDisabled() {
@@ -186,7 +199,8 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     }
 
     /**
-     * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
+     * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and
+     * attributes.
      */
     public void setMask(String mask) {
         this.mask = mask;

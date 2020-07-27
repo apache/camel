@@ -23,7 +23,6 @@ public final class TestStoredFunction {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestStoredFunction.class);
 
-
     private TestStoredFunction() {
     }
 

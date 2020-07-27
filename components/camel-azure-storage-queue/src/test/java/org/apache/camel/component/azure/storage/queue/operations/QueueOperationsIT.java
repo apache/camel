@@ -114,7 +114,8 @@ class QueueOperationsIT extends CamelTestSupport {
         assertNotNull(response.getHeaders().get(QueueConstants.EXPIRATION_TIME));
         assertNotNull(response.getHeaders().get(QueueConstants.POP_RECEIPT));
 
-        final QueueMessageItem messageItem = clientWrapper.receiveMessages(1, Duration.ofSeconds(30), null).stream().findFirst().get();
+        final QueueMessageItem messageItem
+                = clientWrapper.receiveMessages(1, Duration.ofSeconds(30), null).stream().findFirst().get();
 
         assertEquals("testing message", messageItem.getMessageText());
 
@@ -188,7 +189,8 @@ class QueueOperationsIT extends CamelTestSupport {
 
         // check the what we have in the queue
         final QueueOperationResponse peekResponse = operations.peekMessages(exchange);
-        @SuppressWarnings("unchecked") final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
+        @SuppressWarnings("unchecked")
+        final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
 
         assertEquals(1, peekedMessageItems.size());
         assertEquals(sentMessage2.getHeaders().get(QueueConstants.MESSAGE_ID), peekedMessageItems.get(0).getMessageId());
@@ -221,7 +223,8 @@ class QueueOperationsIT extends CamelTestSupport {
 
         // check the what we have in the queue
         final QueueOperationResponse peekResponse = operations.peekMessages(exchange);
-        @SuppressWarnings("unchecked") final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
+        @SuppressWarnings("unchecked")
+        final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
 
         assertEquals(1, peekedMessageItems.size());
         assertEquals("updated message-1", peekedMessageItems.get(0).getMessageText());

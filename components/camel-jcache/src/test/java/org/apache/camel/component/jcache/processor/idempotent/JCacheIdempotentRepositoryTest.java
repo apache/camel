@@ -92,7 +92,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     public void doesNotRemoveMissingKey() throws Exception {
         assertFalse(repository.remove("One"));
     }
-    
+
     @Test
     public void clearCache() throws Exception {
         assertTrue(repository.add("One"));
@@ -100,9 +100,9 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
 
         assertTrue(cache.containsKey("One"));
         assertTrue(cache.containsKey("Two"));
-        
+
         repository.clear();
-        
+
         assertFalse(cache.containsKey("One"));
         assertFalse(cache.containsKey("Two"));
     }

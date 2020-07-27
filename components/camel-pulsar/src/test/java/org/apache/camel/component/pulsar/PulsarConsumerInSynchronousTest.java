@@ -47,31 +47,30 @@ public class PulsarConsumerInSynchronousTest extends PulsarTestSupport {
     private static final String TOPIC_URI_SYNCHRONOUS_TRUE = "persistent://public/default/synchronousTrue";
     private static final String TOPIC_URI_SYNCHRONOUS_DEFAULT = "persistent://public/default/synchronousDefault";
 
-    private static final String TOPIC_URI_SYNCHRONOUS_TRUE_THROWS_EXCEPTION =
-            "persistent://public/default/synchronousTrueThrowsException";
+    private static final String TOPIC_URI_SYNCHRONOUS_TRUE_THROWS_EXCEPTION
+            = "persistent://public/default/synchronousTrueThrowsException";
 
-    private static final String TOPIC_URI_SYNCHRONOUS_TRUE_MANUAL_ACK =
-            "persistent://public/default/synchronousTrueManualAck";
+    private static final String TOPIC_URI_SYNCHRONOUS_TRUE_MANUAL_ACK = "persistent://public/default/synchronousTrueManualAck";
 
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI_SYNCHRONOUS_TRUE + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-            + "&synchronous=true")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                    + "&synchronous=true")
     private Endpoint synchronousTrue;
 
     @EndpointInject("pulsar:" + TOPIC_URI_SYNCHRONOUS_DEFAULT + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint synchronousDefault;
 
     @EndpointInject("pulsar:" + TOPIC_URI_SYNCHRONOUS_TRUE_THROWS_EXCEPTION + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-            + "&synchronous=true")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                    + "&synchronous=true")
     private Endpoint synchronousTrueThrowsException;
 
     @EndpointInject("pulsar:" + TOPIC_URI_SYNCHRONOUS_TRUE_MANUAL_ACK + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-            + "&synchronous=true" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                    + "&synchronous=true" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
     private Endpoint synchronousTrueManualAck;
 
     @EndpointInject("mock:result")
@@ -96,7 +95,7 @@ public class PulsarConsumerInSynchronousTest extends PulsarTestSupport {
                 @Override
                 public void process(final Exchange exchange) throws PulsarClientException {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(
+                    PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn().getHeader(
                             PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 }

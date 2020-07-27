@@ -58,6 +58,6 @@ public class HttpSNIHostNameTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/http/CamelHttpContext.xml"});
+        return new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/component/http/CamelHttpContext.xml" });
     }
 }

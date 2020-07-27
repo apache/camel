@@ -18,5 +18,8 @@ package org.apache.camel.component.crypto.cms;
 
 public enum CryptoOperation {
 
-    sign, verify, encrypt, decrypt
+    sign,
+    verify,
+    encrypt,
+    decrypt
 }

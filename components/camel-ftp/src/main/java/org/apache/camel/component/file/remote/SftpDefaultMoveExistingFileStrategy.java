@@ -34,7 +34,8 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName) throws GenericFileOperationFailedException {
+    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+            throws GenericFileOperationFailedException {
         // need to evaluate using a dummy and simulate the file first, to have
         // access to all the file attributes
         // create a dummy exchange as Exchange is needed for expression
@@ -54,9 +55,10 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
         // leading paths
         to = FileUtil.stripLeadingSeparator(to);
         // normalize accordingly to configuration
-        to = ((SftpEndpoint)endpoint).getConfiguration().normalizePath(to);
+        to = ((SftpEndpoint) endpoint).getConfiguration().normalizePath(to);
         if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+            throw new GenericFileOperationFailedException(
+                    "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
 
         // do we have a sub directory
@@ -72,7 +74,9 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
                 LOG.trace("Deleting existing file: {}", to);
                 operations.deleteFile(to);
             } else {
-                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException(
+                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
+                                                              + to);
             }
         }
 

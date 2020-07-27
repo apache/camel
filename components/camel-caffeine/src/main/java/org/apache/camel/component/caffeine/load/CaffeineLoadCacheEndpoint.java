@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
  * Perform caching operations using Caffeine Cache with an attached CacheLoader.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-loadcache", title = "Caffeine LoadCache",
-        syntax = "caffeine-loadcache:cacheName", category = {Category.CACHE, Category.DATAGRID, Category.CLUSTERING}, producerOnly = true)
+             syntax = "caffeine-loadcache:cacheName", category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING },
+             producerOnly = true)
 public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)
@@ -47,7 +48,8 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
 
     private LoadingCache cache;
 
-    CaffeineLoadCacheEndpoint(String uri, CaffeineLoadCacheComponent component, String cacheName, CaffeineConfiguration configuration) throws Exception {
+    CaffeineLoadCacheEndpoint(String uri, CaffeineLoadCacheComponent component, String cacheName,
+                              CaffeineConfiguration configuration) throws Exception {
         super(uri, component);
 
         this.cacheName = cacheName;
@@ -62,7 +64,7 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         if (ObjectHelper.isNotEmpty(configuration.getCache())) {
-            cache = (LoadingCache)configuration.getCache();
+            cache = (LoadingCache) configuration.getCache();
         } else {
             Caffeine<Object, Object> builder = Caffeine.newBuilder();
             if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {

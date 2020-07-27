@@ -46,7 +46,6 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

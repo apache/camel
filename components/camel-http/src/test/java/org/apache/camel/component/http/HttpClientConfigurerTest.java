@@ -27,7 +27,8 @@ public class HttpClientConfigurerTest extends CamelTestSupport {
 
     @Test
     public void testHttpClientConfigurer() throws Exception {
-        HttpClientConfigurer gotConfigurer = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
+        HttpClientConfigurer gotConfigurer
+                = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
         assertSame(configurer, gotConfigurer);
     }
 
@@ -40,7 +41,7 @@ public class HttpClientConfigurerTest extends CamelTestSupport {
                 getContext().getComponent("http", HttpComponent.class).setHttpClientConfigurer(configurer);
 
                 from("direct:start")
-                    .to("http://www.google.com/search");
+                        .to("http://www.google.com/search");
             }
         };
     }

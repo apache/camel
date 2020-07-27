@@ -20,9 +20,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Message to edit animation, audio, document, photo, or video messages.
- * If a message is a part of a message album, then it can be edited only to a photo or a video.
- * Otherwise, message type can be changed arbitrarily.
+ * Message to edit animation, audio, document, photo, or video messages. If a message is a part of a message album, then
+ * it can be edited only to a photo or a video. Otherwise, message type can be changed arbitrarily.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EditMessageMediaMessage extends OutgoingMessage {
@@ -41,12 +40,11 @@ public class EditMessageMediaMessage extends OutgoingMessage {
     /**
      * Builds {@link EditMessageMediaMessage} instance.
      *
-     * @param chatId               Unique identifier for the target chat or username of the target channel.
-     * @param messageId            Identifier of the message to edit. Required if inline_message_id is not specified.
-     * @param inlineMessageId      Required if chat_id and message_id are not specified.
-     *                             Identifier of the inline message.
-     * @param media                The media to send.
-     * @param replyMarkup          An inline keyboard that appears right next to the message it belongs to.
+     * @param chatId          Unique identifier for the target chat or username of the target channel.
+     * @param messageId       Identifier of the message to edit. Required if inline_message_id is not specified.
+     * @param inlineMessageId Required if chat_id and message_id are not specified. Identifier of the inline message.
+     * @param media           The media to send.
+     * @param replyMarkup     An inline keyboard that appears right next to the message it belongs to.
      */
     public EditMessageMediaMessage(String chatId, Integer messageId, String inlineMessageId, InputMedia media,
                                    InlineKeyboardMarkup replyMarkup) {
@@ -114,7 +112,7 @@ public class EditMessageMediaMessage extends OutgoingMessage {
 
         public EditMessageMediaMessage build() {
             return new EditMessageMediaMessage(
-                chatId, messageId, inlineMessageId, media, replyMarkup);
+                    chatId, messageId, inlineMessageId, media, replyMarkup);
         }
     }
 }

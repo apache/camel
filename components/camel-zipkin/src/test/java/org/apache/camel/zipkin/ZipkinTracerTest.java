@@ -27,7 +27,6 @@ import zipkin2.reporter.Reporter;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 public class ZipkinTracerTest extends CamelTestSupport {
 
     private ZipkinTracer zipkin;

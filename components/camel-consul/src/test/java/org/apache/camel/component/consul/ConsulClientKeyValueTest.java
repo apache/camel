@@ -40,7 +40,8 @@ public class ConsulClientKeyValueTest extends ConsulTestSupport {
         mock.expectedBodiesReceived(val);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulKeyValueActions.PUT).withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:kv").send();
+        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulKeyValueActions.PUT)
+                .withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:kv").send();
 
         mock.assertIsSatisfied();
 

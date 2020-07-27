@@ -49,13 +49,12 @@ public final class AtomixMapConsumer extends AbstractAtomixClientConsumer<Atomix
         super.doStart();
 
         this.map = getAtomixEndpoint()
-            .getAtomix()
-            .getMap(
-                resourceName,
-                new DistributedMap.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
-                new DistributedMap.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
-            .join();
-
+                .getAtomix()
+                .getMap(
+                        resourceName,
+                        new DistributedMap.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
+                        new DistributedMap.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
+                .join();
 
         Object key = getAtomixEndpoint().getConfiguration().getKey();
         if (key == null) {

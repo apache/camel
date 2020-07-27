@@ -25,5 +25,6 @@ import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
  * Service holding the {@link MicrometerMessageHistory} which registers all message history metrics.
  */
 @ManagedResource(description = "MicrometerMessageHistory")
-public final class MicrometerMessageHistoryService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerMessageHistoryMBean {
+public final class MicrometerMessageHistoryService extends AbstractMicrometerService
+        implements CamelContextAware, StaticService, MicrometerMessageHistoryMBean {
 }

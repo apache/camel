@@ -93,15 +93,21 @@ public class SignedDataCreator extends CryptoCmsMarshallerAbstract {
 
             ContentSigner contentSigner;
             try {
-                contentSigner = new JcaContentSignerBuilder(signer.getSignatureAlgorithm(exchange)).setProvider(BouncyCastleProvider.PROVIDER_NAME).build(key);
+                contentSigner = new JcaContentSignerBuilder(signer.getSignatureAlgorithm(exchange))
+                        .setProvider(BouncyCastleProvider.PROVIDER_NAME).build(key);
             } catch (OperatorCreationException e) {
-                throw new CryptoCmsInvalidKeyException("The private key of the signer information  '" + signer + "' does not fit to the specified signature algorithm '"
-                                                       + signer.getSignatureAlgorithm(exchange) + "': " + e.getMessage(), e);
+                throw new CryptoCmsInvalidKeyException(
+                        "The private key of the signer information  '" + signer
+                                                       + "' does not fit to the specified signature algorithm '"
+                                                       + signer.getSignatureAlgorithm(exchange) + "': " + e.getMessage(),
+                        e);
             }
 
-            JcaSignerInfoGeneratorBuilder signerBuilder = new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                .build());
-            signerBuilder.setSignedAttributeGenerator(signer.getSignedAttributeGenerator(exchange)).setUnsignedAttributeGenerator(signer.getUnsignedAttributeGenerator(exchange));
+            JcaSignerInfoGeneratorBuilder signerBuilder = new JcaSignerInfoGeneratorBuilder(
+                    new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                            .build());
+            signerBuilder.setSignedAttributeGenerator(signer.getSignedAttributeGenerator(exchange))
+                    .setUnsignedAttributeGenerator(signer.getUnsignedAttributeGenerator(exchange));
 
             gen.addSignerInfoGenerator(signerBuilder.build(contentSigner, signerCert));
 

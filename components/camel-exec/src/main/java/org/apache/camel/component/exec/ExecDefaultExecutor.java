@@ -37,7 +37,7 @@ public class ExecDefaultExecutor extends DefaultExecutor {
     }
 
     public int getExitValue() {
-        if (process != null)  {
+        if (process != null) {
             try {
                 return process.exitValue();
             } catch (IllegalThreadStateException e) {

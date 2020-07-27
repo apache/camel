@@ -110,7 +110,8 @@ public class AmazonMQClientMock extends AbstractAmazonMQ {
     }
 
     @Override
-    public DescribeConfigurationRevisionResult describeConfigurationRevision(DescribeConfigurationRevisionRequest describeConfigurationRevisionRequest) {
+    public DescribeConfigurationRevisionResult describeConfigurationRevision(
+            DescribeConfigurationRevisionRequest describeConfigurationRevisionRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -134,7 +135,8 @@ public class AmazonMQClientMock extends AbstractAmazonMQ {
     }
 
     @Override
-    public ListConfigurationRevisionsResult listConfigurationRevisions(ListConfigurationRevisionsRequest listConfigurationRevisionsRequest) {
+    public ListConfigurationRevisionsResult listConfigurationRevisions(
+            ListConfigurationRevisionsRequest listConfigurationRevisionsRequest) {
         throw new UnsupportedOperationException();
     }
 

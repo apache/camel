@@ -36,7 +36,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 public class RecipientListReifier extends ProcessorReifier<RecipientListDefinition<?>> {
 
     public RecipientListReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (RecipientListDefinition<?>)definition);
+        super(route, (RecipientListDefinition<?>) definition);
     }
 
     @Override
@@ -113,16 +113,18 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = lookup(parseString(definition.getStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy)aggStrategy;
+                strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
+                AggregationStrategyBeanAdapter adapter
+                        = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
                 if (definition.getStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                throw new IllegalArgumentException(
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
             }
         }
 
@@ -132,7 +134,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(camelContext);
+            ((CamelContextAware) strategy).setCamelContext(camelContext);
         }
 
         if (parseBoolean(definition.getShareUnitOfWork(), false)) {

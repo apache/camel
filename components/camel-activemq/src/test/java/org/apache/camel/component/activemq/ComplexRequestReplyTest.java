@@ -42,7 +42,7 @@ public class ComplexRequestReplyTest {
     private CamelContext senderContext;
     private CamelContext brokerAContext;
     private CamelContext brokerBContext;
-    
+
     private String brokerAUri;
     private String brokerBUri;
 
@@ -82,30 +82,28 @@ public class ComplexRequestReplyTest {
 
         ProducerTemplate requester = senderContext.createProducerTemplate();
         LOG.info("*** Sending Request 1");
-        String response = (String)requester.requestBody(fromEndpoint, "This is a request");
+        String response = (String) requester.requestBody(fromEndpoint, "This is a request");
         assertNotNull(response != null);
         LOG.info("Got response: " + response);
 
         /**
-         * You actually don't need to restart the broker, just wait long enough
-         * and the next next send will take out a closed connection and
-         * reconnect, and if you happen to hit the broker you weren't on last
-         * time, then you will see the failure.
+         * You actually don't need to restart the broker, just wait long enough and the next next send will take out a
+         * closed connection and reconnect, and if you happen to hit the broker you weren't on last time, then you will
+         * see the failure.
          */
 
         TimeUnit.SECONDS.sleep(20);
 
         /**
-         * I restart the broker after the wait that exceeds the idle timeout
-         * value of the PooledConnectionFactory to show that it doesn't matter
-         * now as the older connection has already been closed.
+         * I restart the broker after the wait that exceeds the idle timeout value of the PooledConnectionFactory to
+         * show that it doesn't matter now as the older connection has already been closed.
          */
         LOG.info("Restarting Broker A now.");
         shutdownBrokerA();
         createBrokerA();
 
         LOG.info("*** Sending Request 2");
-        response = (String)requester.requestBody(fromEndpoint, "This is a request");
+        response = (String) requester.requestBody(fromEndpoint, "This is a request");
         assertNotNull(response != null);
         LOG.info("Got response: " + response);
     }
@@ -184,11 +182,13 @@ public class ComplexRequestReplyTest {
     private CamelContext createBrokerCamelContext(String brokerName) throws Exception {
 
         CamelContext camelContext = new DefaultCamelContext();
-        camelContext.addComponent("activemq", ActiveMQComponent.activeMQComponent("vm://" + brokerName + "?create=false&waitForStart=10000"));
+        camelContext.addComponent("activemq",
+                ActiveMQComponent.activeMQComponent("vm://" + brokerName + "?create=false&waitForStart=10000"));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(brokerEndpoint).setBody().simple("Returning ${body}").log("***Reply sent to ${header.JMSReplyTo} CoorId = ${header.JMSCorrelationID}");
+                from(brokerEndpoint).setBody().simple("Returning ${body}")
+                        .log("***Reply sent to ${header.JMSReplyTo} CoorId = ${header.JMSCorrelationID}");
             }
         });
         camelContext.start();

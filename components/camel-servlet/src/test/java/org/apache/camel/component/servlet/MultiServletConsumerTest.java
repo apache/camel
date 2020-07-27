@@ -79,7 +79,7 @@ public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
                 .addServlet(Servlets.servlet("CamelServlet1", CamelHttpTransportServlet.class)
                         .addMapping("/services1/*"))
                 .addServlet(Servlets.servlet("CamelServlet2", CamelHttpTransportServlet.class)
-                    .addMapping("/services2/*"));
+                        .addMapping("/services2/*"));
     }
 
 }

@@ -38,7 +38,8 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
         this.initConsumer();
     }
 
-    public AbstractWordpressConsumer(WordpressEndpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
+    public AbstractWordpressConsumer(WordpressEndpoint endpoint, Processor processor,
+                                     ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor, scheduledExecutorService);
         this.configuration = endpoint.getConfiguration();
         this.initConsumer();

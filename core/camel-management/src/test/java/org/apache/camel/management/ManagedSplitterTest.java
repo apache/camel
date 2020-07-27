@@ -77,7 +77,7 @@ public class ManagedSplitterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(simple("${body}")).id("mysend")
+                        .split(simple("${body}")).id("mysend")
                         .to("mock:foo");
             }
         };

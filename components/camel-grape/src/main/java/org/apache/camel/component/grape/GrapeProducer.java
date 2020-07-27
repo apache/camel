@@ -47,7 +47,8 @@ public class GrapeProducer extends DefaultProducer {
                     Grape.grab(map);
                     getEndpoint().getComponent().getPatchesRepository().install(rawCoordinates);
                 } catch (IllegalArgumentException ex) {
-                    MavenCoordinates coordinates = MavenCoordinates.parseMavenCoordinates(getEndpoint().getDefaultCoordinates());
+                    MavenCoordinates coordinates
+                            = MavenCoordinates.parseMavenCoordinates(getEndpoint().getDefaultCoordinates());
                     map.put("classLoader", classLoader);
                     map.put("group", coordinates.getGroupId());
                     map.put("module", coordinates.getArtifactId());
@@ -74,7 +75,7 @@ public class GrapeProducer extends DefaultProducer {
 
     @Override
     public GrapeEndpoint getEndpoint() {
-        return (GrapeEndpoint)super.getEndpoint();
+        return (GrapeEndpoint) super.getEndpoint();
     }
 
 }

@@ -34,7 +34,7 @@ public class OptaPlannerComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OptaPlannerConfiguration configuration = new OptaPlannerConfiguration();
         configuration.setConfigFile(remaining);
-        
+
         // [CAMEL-11889] Kie assumes that the TCCL can load its services
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
@@ -44,7 +44,7 @@ public class OptaPlannerComponent extends DefaultComponent {
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }
-        
+
         OptaPlannerEndpoint answer = new OptaPlannerEndpoint(uri, this, configuration);
         setProperties(answer, parameters);
         return answer;

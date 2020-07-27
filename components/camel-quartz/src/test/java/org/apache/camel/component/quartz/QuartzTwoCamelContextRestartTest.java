@@ -79,5 +79,4 @@ public class QuartzTwoCamelContextRestartTest {
         mock1.assertIsSatisfied();
     }
 
-
 }

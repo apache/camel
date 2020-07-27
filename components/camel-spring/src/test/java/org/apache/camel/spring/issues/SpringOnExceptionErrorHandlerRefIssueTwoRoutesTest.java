@@ -28,7 +28,8 @@ public class SpringOnExceptionErrorHandlerRefIssueTwoRoutesTest extends OnExcept
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringOnExceptionErrorHandlerRefIssueTwoRoutesTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/issues/SpringOnExceptionErrorHandlerRefIssueTwoRoutesTest.xml");
     }
 
 }

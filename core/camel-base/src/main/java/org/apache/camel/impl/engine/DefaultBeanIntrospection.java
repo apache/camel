@@ -106,7 +106,8 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         } else if (args == null) {
             line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + "]";
         } else {
-            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: " + obj + "]";
+            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: "
+                   + obj + "]";
         }
 
         if (preStartDone) {
@@ -183,7 +184,10 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    public boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) throws Exception {
+    public boolean setProperty(
+            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
+            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
+            throws Exception {
         invoked.incrementAndGet();
         if (!preStartDone || logger.shouldLog()) {
             Object text = value;
@@ -192,7 +196,8 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
             }
             log("setProperty", target, name, text);
         }
-        return IntrospectionSupport.setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern, allowPrivateSetter, ignoreCase);
+        return IntrospectionSupport.setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern,
+                allowPrivateSetter, ignoreCase);
     }
 
     @Override
@@ -209,7 +214,8 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    public Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
+    public Set<Method> findSetterMethods(
+            Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         invoked.incrementAndGet();
         if (!preStartDone || logger.shouldLog()) {
             log("findSetterMethods", clazz);

@@ -192,8 +192,8 @@ public class RouteTemplateTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                    .from("direct:{{foo}}")
-                    .to("mock:{{bar}}");
+                        .from("direct:{{foo}}")
+                        .to("mock:{{bar}}");
             }
         };
     }

@@ -45,7 +45,7 @@ public class VelocitySetTemplateViaHeaderTest extends CamelTestSupport {
         template.send("direct:a", createLetter("org/apache/camel/component/velocity/letter.vm"));
 
         mock.assertIsSatisfied();
-        
+
         mock.reset();
 
         mock.expectedMessageCount(1);

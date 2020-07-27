@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.athena.model.GetQueryExecutionResponse;
 import software.amazon.awssdk.services.athena.model.QueryExecutionState;
 
-
 /**
  * Package-private class to encapsulate the logic of running queries, waiting for completion states, retrying, etc.
  */
@@ -76,7 +75,7 @@ class Athena2QueryHelper {
     }
 
     /**
-     * Record that a query attempt was made.  This is relevant b/c only so many attempts are permitted.
+     * Record that a query attempt was made. This is relevant b/c only so many attempts are permitted.
      */
     void markAttempt() {
         if (attempts == 0) {
@@ -134,8 +133,8 @@ class Athena2QueryHelper {
         long millisWaited = now - this.startMs;
         if (millisWaited >= this.waitTimeout) {
             LOG.trace("AWS Athena start query execution waited for {}, which exceeded wait timeout of {}",
-                millisWaited,
-                this.waitTimeout);
+                    millisWaited,
+                    this.waitTimeout);
             return false;
         }
 
@@ -168,7 +167,7 @@ class Athena2QueryHelper {
         } catch (InterruptedException e) {
             this.interrupted = Thread.interrupted(); // store, then clear, interrupt status
             LOG.trace(
-                "AWS Athena start query execution wait thread was interrupted; will return at earliest opportunity");
+                    "AWS Athena start query execution wait thread was interrupted; will return at earliest opportunity");
         }
         this.currentDelay = this.delay;
     }
@@ -179,9 +178,9 @@ class Athena2QueryHelper {
     boolean isComplete(GetQueryExecutionResponse getQueryExecutionResponse) {
         QueryExecutionState state = getQueryExecutionResponse.queryExecution().status().state();
         return state == QueryExecutionState.SUCCEEDED
-            || state == QueryExecutionState.FAILED
-            || state == QueryExecutionState.CANCELLED
-            || state == QueryExecutionState.UNKNOWN_TO_SDK_VERSION;
+                || state == QueryExecutionState.FAILED
+                || state == QueryExecutionState.CANCELLED
+                || state == QueryExecutionState.UNKNOWN_TO_SDK_VERSION;
     }
 
     /**
@@ -205,15 +204,15 @@ class Athena2QueryHelper {
 
             } else {
                 LOG.trace("AWS Athena start query execution detected failure ({})",
-                    getQueryExecutionResponse.queryExecution().status().state());
+                        getQueryExecutionResponse.queryExecution().status().state());
                 this.isFailure = true;
             }
         }
     }
 
     /**
-     * Decide if it'd be worthwhile to retry a failed query.  Depending on the value of {@code retry}, this may
-     * {@code always} or {@code never} retry.  But some of the other values allow for retrying on certain query failure
+     * Decide if it'd be worthwhile to retry a failed query. Depending on the value of {@code retry}, this may
+     * {@code always} or {@code never} retry. But some of the other values allow for retrying on certain query failure
      * conditions.
      */
     boolean shouldRetry(GetQueryExecutionResponse getQueryExecutionResponse) {
@@ -221,7 +220,7 @@ class Athena2QueryHelper {
 
         if (this.retry.contains("never")) {
             LOG.trace("AWS Athena start query execution detected error ({}), marked as not retryable",
-                stateChangeReason);
+                    stateChangeReason);
             return false;
         }
 
@@ -232,17 +231,17 @@ class Athena2QueryHelper {
 
         // Generic errors happen sometimes in Athena.  It's possible that a retry will fix the problem.
         if (stateChangeReason != null && stateChangeReason.contains("GENERIC_INTERNAL_ERROR")
-            && (this.retry.contains("generic") || this.retry.contains("retryable"))) {
+                && (this.retry.contains("generic") || this.retry.contains("retryable"))) {
             LOG.trace("AWS Athena start query execution detected generic error ({}), marked as retryable",
-                stateChangeReason);
+                    stateChangeReason);
             return true;
         }
 
         // Resource exhaustion happens sometimes in Athena.  It's possible that a retry will fix the problem.
         if (stateChangeReason != null && stateChangeReason.contains("exhausted resources at this scale factor")
-            && (this.retry.contains("exhausted") || this.retry.contains("retryable"))) {
+                && (this.retry.contains("exhausted") || this.retry.contains("retryable"))) {
             LOG.trace("AWS Athena start query execution detected resource exhaustion error ({}), marked as retryable",
-                stateChangeReason);
+                    stateChangeReason);
             return true;
         }
 
@@ -331,9 +330,10 @@ class Athena2QueryHelper {
             }
         }
 
-        if (finalRetry.size() > 1 && (finalRetry.contains("retryable") || finalRetry.contains("always") || finalRetry.contains("never"))) {
+        if (finalRetry.size() > 1
+                && (finalRetry.contains("retryable") || finalRetry.contains("always") || finalRetry.contains("never"))) {
             throw new IllegalArgumentException(
-                "AWS Athena retry is invalid - provide only one mutually exclusive option (retryable, always, never)");
+                    "AWS Athena retry is invalid - provide only one mutually exclusive option (retryable, always, never)");
         }
 
         List<String> valid = Arrays.asList("never", "always", "retryable", "exhausted", "generic");
@@ -346,15 +346,14 @@ class Athena2QueryHelper {
 
         if (!invalid.isEmpty()) {
             throw new IllegalArgumentException(
-                "AWS Athena retry is invalid - invalid values provided: " + invalid + ".  Valid values: " + valid
-            );
+                    "AWS Athena retry is invalid - invalid values provided: " + invalid + ".  Valid values: " + valid);
         }
 
         return Collections.unmodifiableSet(finalRetry);
     }
 
     /**
-     * Max number of times to try a query.  Set to greater than 1 for retries.
+     * Max number of times to try a query. Set to greater than 1 for retries.
      */
     private Integer determineMaxAttempts(final Exchange exchange, Athena2Configuration configuration) {
         Integer maxAttempts = exchange.getIn().getHeader(Athena2Constants.MAX_ATTEMPTS, Integer.class);
@@ -376,19 +375,19 @@ class Athena2QueryHelper {
     }
 
     /**
-     * If the query is up for retry, should the wait timeout be reset?  For example, if {@code waitTimeout} is set to
-     * 60_000 ms, setting {@code resetWaitTimeoutOnRetry} to {@code true} would allow for another 60_000 ms to
-     * elapse before timing out.  With {@code resetWaitTimeoutOnRetry} set to {@code false}, the timer would not reset
-     * when starting the query over again.
+     * If the query is up for retry, should the wait timeout be reset? For example, if {@code waitTimeout} is set to
+     * 60_000 ms, setting {@code resetWaitTimeoutOnRetry} to {@code true} would allow for another 60_000 ms to elapse
+     * before timing out. With {@code resetWaitTimeoutOnRetry} set to {@code false}, the timer would not reset when
+     * starting the query over again.
      */
     private boolean determineResetWaitTimeoutOnRetry(final Exchange exchange, Athena2Configuration configuration) {
-        Boolean resetWaitTimeoutOnRetry =
-            exchange.getIn().getHeader(Athena2Constants.RESET_WAIT_TIMEOUT_ON_RETRY, Boolean.class);
+        Boolean resetWaitTimeoutOnRetry
+                = exchange.getIn().getHeader(Athena2Constants.RESET_WAIT_TIMEOUT_ON_RETRY, Boolean.class);
 
         if (ObjectHelper.isEmpty(resetWaitTimeoutOnRetry)) {
             resetWaitTimeoutOnRetry = configuration.isResetWaitTimeoutOnRetry();
             LOG.trace("AWS Athena reset wait timeout on retry is missing, using default one [{}]",
-                resetWaitTimeoutOnRetry);
+                    resetWaitTimeoutOnRetry);
         }
 
         if (ObjectHelper.isEmpty(resetWaitTimeoutOnRetry)) {

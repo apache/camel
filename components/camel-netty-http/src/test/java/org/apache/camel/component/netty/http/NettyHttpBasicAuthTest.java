@@ -58,7 +58,7 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
     @Test
     public void testBasicAuthFailed() throws Exception {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
-            () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class));
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class));
         NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
         assertEquals(401, cause.getStatusCode());
     }
@@ -70,7 +70,8 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization",
+                auth, String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -82,7 +83,8 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
         try {
             // password is invalid so we should get a 401
             String auth = "Basic c2NvdHQ6dHlwbw==";
-            template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+            template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth,
+                    String.class);
         } catch (CamelExecutionException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(401, cause.getStatusCode());
@@ -95,8 +97,8 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration=#mySecurityConfig")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

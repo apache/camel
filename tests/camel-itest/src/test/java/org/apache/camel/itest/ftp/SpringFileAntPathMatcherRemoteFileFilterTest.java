@@ -46,14 +46,14 @@ import org.springframework.test.context.ContextConfiguration;
 @CamelSpringTest
 @ContextConfiguration
 public class SpringFileAntPathMatcherRemoteFileFilterTest {
-   
+
     private static int ftpPort = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("SpringFileAntPathMatcherRemoteFileFilterTest.ftpPort", Integer.toString(ftpPort));
     }
-    
+
     protected FtpServer ftpServer;
 
     protected String expectedBody = "Godday World";
@@ -64,7 +64,7 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest {
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 
-    @DisabledOnOs({OS.AIX, OS.WINDOWS, OS.SOLARIS})
+    @DisabledOnOs({ OS.AIX, OS.WINDOWS, OS.SOLARIS })
     @Test
     void testAntPatchMatherFilter() throws Exception {
 
@@ -111,4 +111,3 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest {
     }
 
 }
-

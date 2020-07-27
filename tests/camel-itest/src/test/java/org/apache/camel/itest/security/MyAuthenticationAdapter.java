@@ -25,7 +25,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 public class MyAuthenticationAdapter extends DefaultAuthenticationAdapter {
-    
+
     @Override
     protected Authentication convertToAuthentication(Subject subject) {
         Authentication answer = null;
@@ -40,14 +40,15 @@ public class MyAuthenticationAdapter extends DefaultAuthenticationAdapter {
 
     private String getName(Principal p) {
         try {
-            return (String)p.getClass().getMethod("getName").invoke(p);
+            return (String) p.getClass().getMethod("getName").invoke(p);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
     private String getPassword(Principal p) {
         try {
-            return (String)p.getClass().getMethod("getPassword").invoke(p);
+            return (String) p.getClass().getMethod("getPassword").invoke(p);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

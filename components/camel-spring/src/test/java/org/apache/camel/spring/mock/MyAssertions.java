@@ -23,8 +23,7 @@ import org.springframework.beans.factory.InitializingBean;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * An example bean which adds some expectations on some mock endpoints and then
- * asserts that the expectactions are met.
+ * An example bean which adds some expectations on some mock endpoints and then asserts that the expectactions are met.
  */
 // START SNIPPET: example
 public class MyAssertions implements InitializingBean {

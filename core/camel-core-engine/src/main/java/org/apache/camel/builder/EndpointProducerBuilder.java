@@ -29,38 +29,32 @@ import org.apache.camel.Expression;
  */
 public interface EndpointProducerBuilder extends EndpointProducerResolver {
     /**
-     * Builds the url of this endpoint. This API is only intended for Camel
-     * internally.
+     * Builds the url of this endpoint. This API is only intended for Camel internally.
      */
     String getUri();
 
     /**
-     * Adds an option to this endpoint. This API is only intended for Camel
-     * internally.
+     * Adds an option to this endpoint. This API is only intended for Camel internally.
      */
     void doSetProperty(String name, Object value);
 
     /**
-     * Adds a multi-value option to this endpoint. This API is only intended for Camel
-     * internally.
+     * Adds a multi-value option to this endpoint. This API is only intended for Camel internally.
      */
     void doSetMultiValueProperty(String name, String key, Object value);
 
     /**
-     * Adds multi-value options to this endpoint. This API is only intended for Camel
-     * internally.
+     * Adds multi-value options to this endpoint. This API is only intended for Camel internally.
      */
     void doSetMultiValueProperties(String name, String prefix, Map<String, Object> values);
 
     /**
-     * Builds an expression of this endpoint url. This API is only intended for
-     * Camel internally.
+     * Builds an expression of this endpoint url. This API is only intended for Camel internally.
      */
     Expression expr();
 
     /**
-     * Builds a dynamic expression of this endpoint url. This API is only intended for
-     * Camel internally.
+     * Builds a dynamic expression of this endpoint url. This API is only intended for Camel internally.
      */
     Expression expr(CamelContext camelContext);
 

@@ -37,7 +37,6 @@ public class MinaComponentWithConfigurationTest extends CamelTestSupport {
         cfg2.setPort(4455);
         cfg2.setProtocol("udp");
 
-
         MinaEndpoint e1 = (MinaEndpoint) comp.createEndpoint(cfg1);
         MinaEndpoint e2 = (MinaEndpoint) comp.createEndpoint(cfg2);
 

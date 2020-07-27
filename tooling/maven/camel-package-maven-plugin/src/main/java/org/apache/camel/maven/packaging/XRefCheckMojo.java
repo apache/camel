@@ -94,8 +94,8 @@ public class XRefCheckMojo extends AbstractMojo {
         for (String component : componentPaths.keySet()) {
             for (String nav : componentNavs.get(component)) {
                 Optional<Path> n = componentPaths.get(component).stream().map(p -> p.resolve(nav))
-                    .filter(Files::isRegularFile)
-                    .findFirst();
+                        .filter(Files::isRegularFile)
+                        .findFirst();
                 if (n.isPresent()) {
                     Path f = n.get();
                     Path m = f.getParent();

@@ -28,10 +28,12 @@ import org.springframework.core.Constants;
 import org.springframework.util.PropertyPlaceholderHelper;
 
 /**
- * A {@link PropertyPlaceholderConfigurer} that bridges Camel's <a href="http://camel.apache.org/using-propertyplaceholder.html">
- * property placeholder</a> with the Spring property placeholder mechanism.
+ * A {@link PropertyPlaceholderConfigurer} that bridges Camel's
+ * <a href="http://camel.apache.org/using-propertyplaceholder.html"> property placeholder</a> with the Spring property
+ * placeholder mechanism.
  */
-public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements PropertiesParser, PropertiesSource {
+public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer
+        implements PropertiesParser, PropertiesSource {
 
     // NOTE: this class must be in the spi package as if its in the root package, then Spring fails to parse the XML
     // files due some weird spring issue. But that is okay as having this class in the spi package is fine anyway.
@@ -42,12 +44,14 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
 
     @Override
-    protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+    protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props)
+            throws BeansException {
         super.processProperties(beanFactoryToProcess, props);
         // store all the spring properties so we can refer to them later
         properties.putAll(props);
         // create helper
-        helper = new PropertyPlaceholderHelper(placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
+        helper = new PropertyPlaceholderHelper(
+                placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
     }
 
     public int getSystemPropertiesMode() {
@@ -106,9 +110,9 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     /**
      * Resolves the placeholders using Spring's property placeholder functionality.
      *
-     * @param text   the text which may contain spring placeholders
-     * @param properties the properties
-     * @return the parsed text with replaced placeholders, or the original text as is
+     * @param  text       the text which may contain spring placeholders
+     * @param  properties the properties
+     * @return            the parsed text with replaced placeholders, or the original text as is
      */
     protected String springResolvePlaceholders(String text, PropertiesLookup properties) {
         return helper.replacePlaceholders(text, new BridgePropertyPlaceholderResolver(properties));

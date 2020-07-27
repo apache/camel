@@ -31,7 +31,9 @@ public class ElsqlSqlPrepareStatementStrategy implements SqlPrepareStatementStra
     }
 
     @Override
-    public Iterator<?> createPopulateIterator(String query, String preparedQuery, int expectedParams, Exchange exchange, Object value) throws SQLException {
+    public Iterator<?> createPopulateIterator(
+            String query, String preparedQuery, int expectedParams, Exchange exchange, Object value)
+            throws SQLException {
         return null;
     }
 

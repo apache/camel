@@ -49,14 +49,13 @@ public interface HealthCheckRepository extends HasId {
     /**
      * Adds a health check configuration
      *
-     * @param id             the health check id (can use patterns)
-     * @param configuration  the configuration
+     * @param id            the health check id (can use patterns)
+     * @param configuration the configuration
      */
     void addConfiguration(String id, HealthCheckConfiguration configuration);
 
     /**
-     * Returns a sequential {@code Stream} with the known {@link HealthCheck}
-     * as its source.
+     * Returns a sequential {@code Stream} with the known {@link HealthCheck} as its source.
      */
     Stream<HealthCheck> stream();
 }

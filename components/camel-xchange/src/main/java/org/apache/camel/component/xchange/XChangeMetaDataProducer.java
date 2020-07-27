@@ -26,7 +26,7 @@ import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CUR
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
 public class XChangeMetaDataProducer extends DefaultProducer {
-    
+
     public XChangeMetaDataProducer(XChangeEndpoint endpoint) {
         super(endpoint);
     }
@@ -41,7 +41,7 @@ public class XChangeMetaDataProducer extends DefaultProducer {
 
         XChangeEndpoint endpoint = getEndpoint();
         XChangeMethod method = endpoint.getConfiguration().getMethod();
-        
+
         if (XChangeMethod.currencies == method) {
             Object body = endpoint.getCurrencies();
             exchange.getMessage().setBody(body);

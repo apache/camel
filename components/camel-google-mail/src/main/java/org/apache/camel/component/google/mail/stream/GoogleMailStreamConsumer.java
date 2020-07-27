@@ -62,7 +62,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public GoogleMailStreamEndpoint getEndpoint() {
-        return (GoogleMailStreamEndpoint)super.getEndpoint();
+        return (GoogleMailStreamEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -132,7 +132,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Strategy to delete the message after being processed.
      *
-     * @param exchange the exchange
+     * @param  exchange    the exchange
      * @throws IOException
      */
     protected void processCommit(Exchange exchange, String unreadLabelId) {
@@ -145,7 +145,9 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
                 List<String> remove = new ArrayList<>();
                 remove.add(unreadLabelId);
                 ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(remove);
-                getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
+                getClient().users().messages()
+                        .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods)
+                        .execute();
 
                 LOG.trace("Marked email {} as read", id);
             }
@@ -158,7 +160,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Strategy when processing the exchange failed.
      *
-     * @param exchange the exchange
+     * @param  exchange    the exchange
      * @throws IOException
      */
     protected void processRollback(Exchange exchange, String unreadLabelId) {
@@ -168,7 +170,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);
             ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(add);
-            getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
+            getClient().users().messages()
+                    .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
         } catch (Exception e) {
             getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
         }

@@ -69,11 +69,11 @@ public class JmsSimpleRequestReply2Test extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .inOut("activemq:queue:foo")
-                    .to("mock:result");
+                        .inOut("activemq:queue:foo")
+                        .to("mock:result");
 
                 from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
             }
         };
     }

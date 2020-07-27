@@ -94,14 +94,16 @@ public class CamelWebSocketHandler implements HttpHandler {
      * Send the given {@code message} to the given {@code channel} and report the outcome to the given {@code callback}
      * within the given {@code timeoutMillis}.
      *
-     * @param channel       the channel to sent the {@code message} to
-     * @param message       the message to send
-     * @param callback      where to report the outcome
-     * @param timeoutMillis the timeout in milliseconds
+     * @param  channel       the channel to sent the {@code message} to
+     * @param  message       the message to send
+     * @param  callback      where to report the outcome
+     * @param  timeoutMillis the timeout in milliseconds
      * @throws IOException
      */
-    private static void send(WebSocketChannel channel, Object message, ExtendedWebSocketCallback callback,
-                             long timeoutMillis) throws IOException {
+    private static void send(
+            WebSocketChannel channel, Object message, ExtendedWebSocketCallback callback,
+            long timeoutMillis)
+            throws IOException {
         if (channel.isOpen()) {
             if (message instanceof String) {
                 WebSockets.sendText((String) message, channel, callback);
@@ -118,7 +120,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             } else {
                 throw new RuntimeCamelException(
                         "Unexpected type of message " + message.getClass().getName() + "; expected String, byte[], "
-                                + Reader.class.getName() + " or " + InputStream.class.getName());
+                                                + Reader.class.getName() + " or " + InputStream.class.getName());
             }
         } else {
             callback.closedBeforeSent(channel);
@@ -137,18 +139,21 @@ public class CamelWebSocketHandler implements HttpHandler {
      * Send the given {@code message} to one or more channels selected using the given {@code peerFilter} within the
      * given {@code timeout} and report the outcome to the given {@code camelExchange} and {@code camelCallback}.
      *
-     * @param peerFilter    a {@link Predicate} to apply to the set of peers obtained via {@link #delegate}'s
-     *                      {@link WebSocketProtocolHandshakeHandler#getPeerConnections()}
-     * @param message       the message to send
-     * @param camelExchange to notify about the outcome
-     * @param camelCallback to notify about the outcome
-     * @param timeout       in milliseconds
-     * @return {@code true} if the execution finished synchronously or {@code false} otherwise
+     * @param  peerFilter    a {@link Predicate} to apply to the set of peers obtained via {@link #delegate}'s
+     *                       {@link WebSocketProtocolHandshakeHandler#getPeerConnections()}
+     * @param  message       the message to send
+     * @param  camelExchange to notify about the outcome
+     * @param  camelCallback to notify about the outcome
+     * @param  timeout       in milliseconds
+     * @return               {@code true} if the execution finished synchronously or {@code false} otherwise
      * @throws IOException
      */
-    public boolean send(Predicate<WebSocketChannel> peerFilter, Object message, final int timeout,
-                        final Exchange camelExchange, final AsyncCallback camelCallback) throws IOException {
-        List<WebSocketChannel> targetPeers = delegate.getPeerConnections().stream().filter(peerFilter).collect(Collectors.toList());
+    public boolean send(
+            Predicate<WebSocketChannel> peerFilter, Object message, final int timeout,
+            final Exchange camelExchange, final AsyncCallback camelCallback)
+            throws IOException {
+        List<WebSocketChannel> targetPeers
+                = delegate.getPeerConnections().stream().filter(peerFilter).collect(Collectors.toList());
         if (targetPeers.isEmpty()) {
             camelCallback.done(true);
             return true;
@@ -168,14 +173,16 @@ public class CamelWebSocketHandler implements HttpHandler {
     public void setConsumer(UndertowConsumer consumer) {
         synchronized (consumerLock) {
             if (consumer != null && this.consumer != null) {
-                throw new IllegalStateException("Cannot call " + getClass().getName()
-                        + ".setConsumer(UndertowConsumer) with a non-null consumer before unsetting it via setConsumer(null)");
+                throw new IllegalStateException(
+                        "Cannot call " + getClass().getName()
+                                                + ".setConsumer(UndertowConsumer) with a non-null consumer before unsetting it via setConsumer(null)");
             }
             this.consumer = consumer;
         }
     }
 
-    void sendEventNotificationIfNeeded(String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
+    void sendEventNotificationIfNeeded(
+            String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
         synchronized (consumerLock) {
             synchronized (consumerLock) {
                 if (consumer != null) {
@@ -262,8 +269,9 @@ public class CamelWebSocketHandler implements HttpHandler {
                 peers.remove(channel);
                 final String connectionKey = (String) channel.getAttribute(UndertowConstants.CONNECTION_KEY);
                 if (connectionKey == null) {
-                    throw new RuntimeCamelException(UndertowConstants.CONNECTION_KEY + " attribute not found on "
-                            + WebSocketChannel.class.getSimpleName() + " " + channel);
+                    throw new RuntimeCamelException(
+                            UndertowConstants.CONNECTION_KEY + " attribute not found on "
+                                                    + WebSocketChannel.class.getSimpleName() + " " + channel);
                 }
                 if (errors == null) {
                     errors = new HashMap<>();
@@ -289,8 +297,9 @@ public class CamelWebSocketHandler implements HttpHandler {
             LOG.debug("onFullBinaryMessage()");
             final String connectionKey = (String) channel.getAttribute(UndertowConstants.CONNECTION_KEY);
             if (connectionKey == null) {
-                throw new RuntimeCamelException(UndertowConstants.CONNECTION_KEY + " attribute not found on "
-                        + WebSocketChannel.class.getSimpleName() + " " + channel);
+                throw new RuntimeCamelException(
+                        UndertowConstants.CONNECTION_KEY + " attribute not found on "
+                                                + WebSocketChannel.class.getSimpleName() + " " + channel);
             }
             final Pooled<ByteBuffer[]> data = message.getData();
             try {
@@ -325,8 +334,9 @@ public class CamelWebSocketHandler implements HttpHandler {
             LOG.debug("onFullTextMessage(): {}", text);
             final String connectionKey = (String) channel.getAttribute(UndertowConstants.CONNECTION_KEY);
             if (connectionKey == null) {
-                throw new RuntimeCamelException(UndertowConstants.CONNECTION_KEY + " attribute not found on "
-                        + WebSocketChannel.class.getSimpleName() + " " + channel);
+                throw new RuntimeCamelException(
+                        UndertowConstants.CONNECTION_KEY + " attribute not found on "
+                                                + WebSocketChannel.class.getSimpleName() + " " + channel);
             }
             synchronized (consumerLock) {
                 if (consumer != null) {

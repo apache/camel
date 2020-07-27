@@ -116,8 +116,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * To configure a special tag for the operations within this rest
-     * definition.
+     * To configure a special tag for the operations within this rest definition.
      */
     public void setTag(String tag) {
         this.tag = tag;
@@ -128,9 +127,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * To define the content type what the REST service consumes (accept as
-     * input), such as application/xml or application/json. This option will
-     * override what may be configured on a parent level
+     * To define the content type what the REST service consumes (accept as input), such as application/xml or
+     * application/json. This option will override what may be configured on a parent level
      */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
@@ -141,9 +139,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * To define the content type what the REST service produces (uses for
-     * output), such as application/xml or application/json This option will
-     * override what may be configured on a parent level
+     * To define the content type what the REST service produces (uses for output), such as application/xml or
+     * application/json This option will override what may be configured on a parent level
      */
     public void setProduces(String produces) {
         this.produces = produces;
@@ -154,8 +151,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Sets the binding mode to use. This option will override what may be
-     * configured on a parent level
+     * Sets the binding mode to use. This option will override what may be configured on a parent level
      * <p/>
      * The default value is auto
      */
@@ -190,10 +186,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to skip binding on output if there is a custom HTTP error code
-     * header. This allows to build custom error messages that do not bind to
-     * json / xml etc, as success messages otherwise will do. This option will
-     * override what may be configured on a parent level
+     * Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
+     * messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override
+     * what may be configured on a parent level
      */
     public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
@@ -204,12 +199,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the
-     * Content-Type and Accept headers from the client is supported by the
-     * Rest-DSL configuration of its consumes/produces settings.
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
+     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
      * <p/>
-     * This can be turned on, to enable this check. In case of validation error,
-     * then HTTP Status codes 415 or 406 is returned.
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is
+     * returned.
      * <p/>
      * The default value is false.
      */
@@ -222,8 +216,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to enable CORS headers in the HTTP response. This option will
-     * override what may be configured on a parent level
+     * Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent
+     * level
      * <p/>
      * The default value is false.
      */
@@ -236,8 +230,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Whether to include or exclude the VerbDefinition in API documentation.
-     * This option will override what may be configured on a parent level
+     * Whether to include or exclude the VerbDefinition in API documentation. This option will override what may be
+     * configured on a parent level
      * <p/>
      * The default value is true.
      */
@@ -571,11 +565,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * Routes directly to the given static endpoint.
      * <p/>
-     * If you need additional routing capabilities, then use {@link #route()}
-     * instead.
+     * If you need additional routing capabilities, then use {@link #route()} instead.
      *
-     * @param uri the uri of the endpoint
-     * @return this builder
+     * @param  uri the uri of the endpoint
+     * @return     this builder
      */
     public RestDefinition to(String uri) {
         // add to last verb
@@ -593,11 +586,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * Routes directly to the given dynamic endpoint.
      * <p/>
-     * If you need additional routing capabilities, then use {@link #route()}
-     * instead.
+     * If you need additional routing capabilities, then use {@link #route()} instead.
      *
-     * @param uri the uri of the endpoint
-     * @return this builder
+     * @param  uri the uri of the endpoint
+     * @return     this builder
      */
     public RestDefinition toD(String uri) {
         // add to last verb
@@ -662,10 +654,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Transforms this REST definition into a list of
-     * {@link org.apache.camel.model.RouteDefinition} which Camel routing engine
-     * can add and run. This allows us to define REST services using this REST
-     * DSL and turn those into regular Camel routes.
+     * Transforms this REST definition into a list of {@link org.apache.camel.model.RouteDefinition} which Camel routing
+     * engine can add and run. This allows us to define REST services using this REST DSL and turn those into regular
+     * Camel routes.
      *
      * @param camelContext The Camel context
      */
@@ -725,9 +716,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Transforms the rest api configuration into a
-     * {@link org.apache.camel.model.RouteDefinition} which Camel routing engine
-     * uses to service the rest api docs.
+     * Transforms the rest api configuration into a {@link org.apache.camel.model.RouteDefinition} which Camel routing
+     * engine uses to service the rest api docs.
      */
     public static RouteDefinition asRouteApiDefinition(CamelContext camelContext, RestConfiguration configuration) {
         RouteDefinition answer = new RouteDefinition();
@@ -774,7 +764,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     @SuppressWarnings("rawtypes")
-    private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component, String producerComponent) {
+    private void addRouteDefinition(
+            CamelContext camelContext, List<RouteDefinition> answer, String component, String producerComponent) {
         for (VerbDefinition verb : getVerbs()) {
             // either the verb has a singular to or a embedded route
             RouteDefinition route = verb.getRoute();

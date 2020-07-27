@@ -51,7 +51,7 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
         Exchange exchange = sendJaxWsMessage("hello");
         assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
         org.apache.camel.Message out = exchange.getOut();
-        String result =  out.getBody(String.class);
+        String result = out.getBody(String.class);
         assertStringContains(result, "Bonjour");
 
         exchange = sendJaxWsMessage("");
@@ -63,7 +63,8 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
     private Exchange sendJaxWsMessage(final String personIdString) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>" + personIdString + "</personId></GetPerson>\n";
+                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>" + personIdString
+                              + "</personId></GetPerson>\n";
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "GetPerson");
             }

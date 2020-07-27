@@ -22,7 +22,14 @@ import java.io.Serializable;
  * Represents the status of a {@link Service} instance
  */
 public enum ServiceStatus implements Serializable {
-    Initializing, Initialized, Starting, Started, Stopping, Stopped, Suspending, Suspended;
+    Initializing,
+    Initialized,
+    Starting,
+    Started,
+    Stopping,
+    Stopped,
+    Suspending,
+    Suspended;
 
     public boolean isStartable() {
         return this == Initialized || this == Stopped || this == Suspended;

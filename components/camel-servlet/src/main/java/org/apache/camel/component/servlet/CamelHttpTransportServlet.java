@@ -68,7 +68,7 @@ public class CamelHttpTransportServlet extends CamelServlet {
             HttpRegistryProvider existing = httpRegistry.getCamelServlet(name);
             if (existing != null) {
                 String msg = "Duplicate ServletName detected: " + name + ". Existing: " + existing + " This: " + this.toString()
-                        + ". Its advised to use unique ServletName per Camel application.";
+                             + ". Its advised to use unique ServletName per Camel application.";
                 // always log so people can see it easier
                 if (isIgnoreDuplicateServletName()) {
                     LOG.warn(msg);
@@ -82,7 +82,7 @@ public class CamelHttpTransportServlet extends CamelServlet {
 
         LOG.info("Initialized CamelHttpTransportServlet[name={}, contextPath={}]", getServletName(), contextPath);
     }
-    
+
     @Override
     public void destroy() {
         DefaultHttpRegistry.removeHttpRegistry(getServletName());
@@ -92,13 +92,14 @@ public class CamelHttpTransportServlet extends CamelServlet {
         }
         LOG.info("Destroyed CamelHttpTransportServlet[{}]", getServletName());
     }
-    
+
     private ServletEndpoint getServletEndpoint(HttpConsumer consumer) {
         if (!(consumer.getEndpoint() instanceof ServletEndpoint)) {
-            throw new RuntimeException("Invalid consumer type. Must be ServletEndpoint but is " 
-                    + consumer.getClass().getName());
+            throw new RuntimeException(
+                    "Invalid consumer type. Must be ServletEndpoint but is "
+                                       + consumer.getClass().getName());
         }
-        return (ServletEndpoint)consumer.getEndpoint();
+        return (ServletEndpoint) consumer.getEndpoint();
     }
 
     @Override
@@ -123,4 +124,3 @@ public class CamelHttpTransportServlet extends CamelServlet {
         }
     }
 }
-

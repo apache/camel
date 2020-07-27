@@ -39,8 +39,8 @@ public class MinaFileUdpTest extends BaseMinaTest {
                 // lets setup a server
                 from(String.format("mina:udp://localhost:%1$s?sync=false&textline=true", getPort())).to("mock:results");
 
-                from("file:src/test/data?noop=true").
-                    to(String.format("mina:udp://localhost:%1$s?sync=false&textline=true", getPort()));
+                from("file:src/test/data?noop=true")
+                        .to(String.format("mina:udp://localhost:%1$s?sync=false&textline=true", getPort()));
             }
         };
     }

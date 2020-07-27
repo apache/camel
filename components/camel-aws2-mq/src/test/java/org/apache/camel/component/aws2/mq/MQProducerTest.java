@@ -62,12 +62,12 @@ public class MQProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListBrokersResponse resultGet = (ListBrokersResponse)exchange.getIn().getBody();
+        ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
         assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
         assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
     }
-    
+
     @Test
     public void mqListBrokersPojoTest() throws Exception {
 
@@ -82,7 +82,7 @@ public class MQProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListBrokersResponse resultGet = (ListBrokersResponse)exchange.getIn().getBody();
+        ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
         assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
         assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
@@ -113,7 +113,7 @@ public class MQProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateBrokerResponse resultGet = (CreateBrokerResponse)exchange.getIn().getBody();
+        CreateBrokerResponse resultGet = (CreateBrokerResponse) exchange.getIn().getBody();
         assertEquals(resultGet.brokerId(), "1");
         assertEquals(resultGet.brokerArn(), "test");
     }
@@ -132,7 +132,7 @@ public class MQProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteBrokerResponse resultGet = (DeleteBrokerResponse)exchange.getIn().getBody();
+        DeleteBrokerResponse resultGet = (DeleteBrokerResponse) exchange.getIn().getBody();
         assertEquals(resultGet.brokerId(), "1");
     }
 
@@ -168,7 +168,7 @@ public class MQProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        UpdateBrokerResponse resultGet = (UpdateBrokerResponse)exchange.getIn().getBody();
+        UpdateBrokerResponse resultGet = (UpdateBrokerResponse) exchange.getIn().getBody();
         assertEquals(resultGet.brokerId(), "1");
     }
 
@@ -189,7 +189,7 @@ public class MQProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        DescribeBrokerResponse resultGet = (DescribeBrokerResponse)exchange.getIn().getBody();
+        DescribeBrokerResponse resultGet = (DescribeBrokerResponse) exchange.getIn().getBody();
         assertEquals(resultGet.brokerId(), "1");
     }
 
@@ -198,13 +198,21 @@ public class MQProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:listBrokers").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers").to("mock:result");
-                from("direct:listBrokersPojo").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers&pojoRequest=true").to("mock:result");
-                from("direct:createBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker").to("mock:result");
-                from("direct:deleteBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker").to("mock:result");
-                from("direct:rebootBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker").to("mock:result");
-                from("direct:updateBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=updateBroker").to("mock:result");
-                from("direct:describeBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=describeBroker").to("mock:result");
+                from("direct:listBrokers").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers")
+                        .to("mock:result");
+                from("direct:listBrokersPojo")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers&pojoRequest=true")
+                        .to("mock:result");
+                from("direct:createBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker")
+                        .to("mock:result");
+                from("direct:deleteBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker")
+                        .to("mock:result");
+                from("direct:rebootBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker")
+                        .to("mock:result");
+                from("direct:updateBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=updateBroker")
+                        .to("mock:result");
+                from("direct:describeBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=describeBroker")
+                        .to("mock:result");
             }
         };
     }

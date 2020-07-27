@@ -57,7 +57,6 @@ public final class VertxPlatformHttpSupport {
         final int code = determineResponseCode(exchange, message.getBody());
         response.setStatusCode(code);
 
-
         // copy headers from Message to Response
         if (headerFilterStrategy != null) {
             for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
@@ -196,10 +195,10 @@ public final class VertxPlatformHttpSupport {
     }
 
     static void populateCamelHeaders(
-        RoutingContext ctx,
-        Map<String, Object> headersMap,
-        Exchange exchange,
-        HeaderFilterStrategy headerFilterStrategy) {
+            RoutingContext ctx,
+            Map<String, Object> headersMap,
+            Exchange exchange,
+            HeaderFilterStrategy headerFilterStrategy) {
 
         final HttpServerRequest request = ctx.request();
         headersMap.put(Exchange.HTTP_PATH, request.path());

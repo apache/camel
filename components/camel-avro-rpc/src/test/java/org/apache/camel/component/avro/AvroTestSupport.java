@@ -24,7 +24,6 @@ public class AvroTestSupport extends CamelTestSupport {
     protected int port = 9100;
     protected int avroPort = setupFreePort("avroport");
     protected int avroPortReflection = setupFreePort("avroPortReflection");
-    
 
     public int setupFreePort(String name) {
         port = AvailablePortFinder.getNextAvailable();

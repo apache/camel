@@ -58,7 +58,7 @@ public class SqlProducerInTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("direct:query", "Hi there!", "names", new String[]{"Camel", "AMQ"});
+        template.requestBodyAndHeader("direct:query", "Hi there!", "names", new String[] { "Camel", "AMQ" });
 
         assertMockEndpointsSatisfied();
 
@@ -117,9 +117,9 @@ public class SqlProducerInTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql:classpath:sql/selectProjectsIn.sql")
-                    .to("log:query")
-                    .to("mock:query");
+                        .to("sql:classpath:sql/selectProjectsIn.sql")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

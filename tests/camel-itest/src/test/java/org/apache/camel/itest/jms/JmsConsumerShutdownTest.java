@@ -83,7 +83,6 @@ public class JmsConsumerShutdownTest {
         end.assertIsSatisfied();
     }
 
-
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() {
@@ -97,8 +96,8 @@ public class JmsConsumerShutdownTest {
 
             from("direct:dir")
                     .onException(Exception.class)
-                        .redeliveryDelay(1000)
-                        .maximumRedeliveries(-1) // forever
+                    .redeliveryDelay(1000)
+                    .maximumRedeliveries(-1) // forever
                     .end()
                     .to("mock:exception");
 

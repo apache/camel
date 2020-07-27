@@ -55,28 +55,28 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from(cxfRsEndpointUri)
-                    // should be able to convert to Customer
-                    .convertBodyTo(Customer.class)
-                    .to("mock:result")
-                    .process(exchange-> {
-                        // respond with OK
-                        CachedOutputStream cos = new CachedOutputStream(exchange);
-                        cos.write(RESPONSE.getBytes("UTF-8"));
-                        cos.close();
-                        exchange.getOut().setBody(cos.newStreamCache());
+                        // should be able to convert to Customer
+                        .convertBodyTo(Customer.class)
+                        .to("mock:result")
+                        .process(exchange -> {
+                            // respond with OK
+                            CachedOutputStream cos = new CachedOutputStream(exchange);
+                            cos.write(RESPONSE.getBytes("UTF-8"));
+                            cos.close();
+                            exchange.getOut().setBody(cos.newStreamCache());
 
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
-                            @Override
-                            public void onComplete(Exchange exchange) {
-                                template.sendBody("mock:onComplete", "");
-                            }
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                                @Override
+                                public void onComplete(Exchange exchange) {
+                                    template.sendBody("mock:onComplete", "");
+                                }
 
-                            @Override
-                            public void onFailure(Exchange exchange) {
+                                @Override
+                                public void onFailure(Exchange exchange) {
 
-                            }
+                                }
+                            });
                         });
-                    });
 
             }
         };
@@ -90,7 +90,6 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
 
         MockEndpoint onComplete = getMockEndpoint("mock:onComplete");
         onComplete.expectedMessageCount(1);
-
 
         HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");

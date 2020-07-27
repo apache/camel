@@ -34,7 +34,8 @@ public class Jt400ConfigurationSecureConnectionTest extends Jt400SecureTestSuppo
     public void setUp() throws Exception {
         super.setUp();
 
-        jt400Configuration = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
+        jt400Configuration
+                = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
         jt400Configuration.setCcsid(37);
         jt400Configuration.setSecured(true);
         connection = jt400Configuration.getConnection();

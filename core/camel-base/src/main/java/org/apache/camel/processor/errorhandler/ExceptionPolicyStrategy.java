@@ -21,8 +21,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 
 /**
- * A strategy to determine which {@link ExceptionPolicyKey} should handle the thrown
- * exception.
+ * A strategy to determine which {@link ExceptionPolicyKey} should handle the thrown exception.
  *
  * @see DefaultExceptionPolicyStrategy DefaultExceptionPolicy
  */
@@ -31,10 +30,10 @@ public interface ExceptionPolicyStrategy {
     /**
      * Resolves the {@link ExceptionPolicyKey} that should handle the thrown exception.
      *
-     * @param exceptionPolicies the configured exception policies to resolve from
-     * @param exchange           the exchange
-     * @param exception          the exception that was thrown
-     * @return the resolved exception type to handle this exception, <tt>null</tt> if none found.
+     * @param  exceptionPolicies the configured exception policies to resolve from
+     * @param  exchange          the exchange
+     * @param  exception         the exception that was thrown
+     * @return                   the resolved exception type to handle this exception, <tt>null</tt> if none found.
      */
     ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicies, Exchange exchange, Throwable exception);
 

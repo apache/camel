@@ -34,25 +34,23 @@ public class ComprehensiveTrackingTest extends CamelAwsXRayTestSupport {
 
     public ComprehensiveTrackingTest() {
         super(
-                TestDataBuilder.createTrace().inRandomOrder()
-                        .withSegment(TestDataBuilder.createSegment("start").inRandomOrder()
-                                .withSubsegment(TestDataBuilder.createSubsegment("seda:d"))
-                                .withSubsegment(TestDataBuilder.createSubsegment("direct:a"))
-                        )
-                        .withSegment(TestDataBuilder.createSegment("a")
-                                        .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
-                                        .withSubsegment(TestDataBuilder.createSubsegment("seda:c"))
-                                // no tracing of the invoke checker bean as it wasn't annotated with
-                                // @XRayTrace
-                        )
-                        .withSegment(TestDataBuilder.createSegment("b"))
-                        .withSegment(TestDataBuilder.createSegment("c")
-                                // disabled by the LogSegmentDecorator (-> .to("log:...");
-                                //.withSubsegment(TestDataBuilder.createSubsegment("log:test"))
-                        )
-                        .withSegment(TestDataBuilder.createSegment("d"))
-                        .withSegment(TestDataBuilder.createSegment("test"))
-        );
+              TestDataBuilder.createTrace().inRandomOrder()
+                      .withSegment(TestDataBuilder.createSegment("start").inRandomOrder()
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:d"))
+                              .withSubsegment(TestDataBuilder.createSubsegment("direct:a")))
+                      .withSegment(TestDataBuilder.createSegment("a")
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:c"))
+                      // no tracing of the invoke checker bean as it wasn't annotated with
+                      // @XRayTrace
+                      )
+                      .withSegment(TestDataBuilder.createSegment("b"))
+                      .withSegment(TestDataBuilder.createSegment("c")
+                      // disabled by the LogSegmentDecorator (-> .to("log:...");
+                      //.withSubsegment(TestDataBuilder.createSubsegment("log:test"))
+                      )
+                      .withSegment(TestDataBuilder.createSegment("d"))
+                      .withSegment(TestDataBuilder.createSegment("test")));
     }
 
     @Test

@@ -57,7 +57,6 @@ public class SpringSecurityBearerTokenTest extends AbstractSpringSecurityBearerT
         }
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

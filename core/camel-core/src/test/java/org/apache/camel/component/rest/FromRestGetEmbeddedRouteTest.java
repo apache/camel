@@ -79,7 +79,8 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
                 restConfiguration().host("localhost");
                 rest("/say/hello").get().route().to("mock:hello").transform(constant("Hello World"));
 
-                rest("/say/bye").get().consumes("application/json").route().to("mock:bye").transform(constant("Bye World")).endRest().post().to("mock:update");
+                rest("/say/bye").get().consumes("application/json").route().to("mock:bye").transform(constant("Bye World"))
+                        .endRest().post().to("mock:update");
             }
         };
     }

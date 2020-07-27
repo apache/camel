@@ -92,7 +92,8 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         return oldExchange;
                     }
                 }).aggregationRepository(AggregateLostGroupIssueTest.this::getAggregationRepository)
-                        .completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10).to("log:aggregated").to("mock:result");
+                        .completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10).to("log:aggregated")
+                        .to("mock:result");
             }
         };
     }

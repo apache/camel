@@ -52,15 +52,15 @@ public class JmsInOnlyWithReplyToDisabledTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=queue:bar&disableReplyTo=true")
-                    .to("mock:done");
+                        .to("activemq:queue:foo?replyTo=queue:bar&disableReplyTo=true")
+                        .to("mock:done");
 
                 from("activemq:queue:foo")
-                    .to("mock:foo")
-                    .transform(body().prepend("Bye "));
+                        .to("mock:foo")
+                        .transform(body().prepend("Bye "));
 
                 from("activemq:queue:bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

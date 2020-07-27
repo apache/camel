@@ -54,14 +54,14 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
         Exchange resp = template.send(endpoint, exchange);
         Message out = resp.getMessage();
         assertTrue(out.getHeaders().containsValue(body[0][0][0])
-                        && out.getHeaders().containsValue(body[1][0][0])
-                        && !out.getHeaders().containsValue(body[2][0][0]),
+                && out.getHeaders().containsValue(body[1][0][0])
+                && !out.getHeaders().containsValue(body[2][0][0]),
                 "two first keys returned");
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
-     * to define the routes for testing
+     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder} to define
+     * the routes for testing
      */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

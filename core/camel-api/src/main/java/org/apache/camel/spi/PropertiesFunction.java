@@ -29,8 +29,8 @@ public interface PropertiesFunction {
     /**
      * Applies the function
      *
-     * @param remainder    the remainder value
-     * @return a value as the result of the function
+     * @param  remainder the remainder value
+     * @return           a value as the result of the function
      */
     String apply(String remainder);
 

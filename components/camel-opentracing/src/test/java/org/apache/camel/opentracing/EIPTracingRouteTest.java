@@ -29,33 +29,33 @@ import org.junit.jupiter.api.Test;
 public class EIPTracingRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("a-log-1 server").setOperation("a-log-1")
-            .setParentId(11),
-        new SpanTestData().setLabel("b-log server").setOperation("b-log")
-            .setParentId(3),
-        new SpanTestData().setLabel("b-delay server").setOperation("b-delay")
-            .setParentId(3),
-        new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(4).addLogMessage("routing at b"),
-        new SpanTestData().setLabel("a-to-1 server").setOperation("a-to-1")
-            .setParentId(11),
-        new SpanTestData().setLabel("a-delay server").setOperation("a-delay")
-            .setParentId(11),
-        new SpanTestData().setLabel("c-to server").setOperation("c-to")
-            .setParentId(8).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
-        new SpanTestData().setLabel("c-delay server").setOperation("c-delay")
-            .setParentId(8),
-        new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setParentId(9),
-        new SpanTestData().setLabel("a-to-2 server").setOperation("a-to-2")
-            .setParentId(11),
-        new SpanTestData().setLabel("a-log-2 server").setOperation("a-log-2")
-            .setParentId(11),
-        new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(12).addLogMessage("routing at a").addLogMessage("End of routing"),
-        new SpanTestData().setLabel("direct-to server").setOperation("direct-to")
-            .setParentId(13),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("a-log-1 server").setOperation("a-log-1")
+                    .setParentId(11),
+            new SpanTestData().setLabel("b-log server").setOperation("b-log")
+                    .setParentId(3),
+            new SpanTestData().setLabel("b-delay server").setOperation("b-delay")
+                    .setParentId(3),
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(4).addLogMessage("routing at b"),
+            new SpanTestData().setLabel("a-to-1 server").setOperation("a-to-1")
+                    .setParentId(11),
+            new SpanTestData().setLabel("a-delay server").setOperation("a-delay")
+                    .setParentId(11),
+            new SpanTestData().setLabel("c-to server").setOperation("c-to")
+                    .setParentId(8).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
+            new SpanTestData().setLabel("c-delay server").setOperation("c-delay")
+                    .setParentId(8),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(9),
+            new SpanTestData().setLabel("a-to-2 server").setOperation("a-to-2")
+                    .setParentId(11),
+            new SpanTestData().setLabel("a-log-2 server").setOperation("a-log-2")
+                    .setParentId(11),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(12).addLogMessage("routing at a").addLogMessage("End of routing"),
+            new SpanTestData().setLabel("direct-to server").setOperation("direct-to")
+                    .setParentId(13),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public EIPTracingRouteTest() {
@@ -83,19 +83,19 @@ public class EIPTracingRouteTest extends CamelOpenTracingTestSupport {
                         .to("seda:a").id("direct-to");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}").id("a-log-1")
-                    .to("seda:b").id("a-to-1")
-                    .delay(2000).id("a-delay")
-                    .to("seda:c").id("a-to-2")
-                    .log("End of routing").id("a-log-2");
+                        .log("routing at ${routeId}").id("a-log-1")
+                        .to("seda:b").id("a-to-1")
+                        .delay(2000).id("a-delay")
+                        .to("seda:c").id("a-to-2")
+                        .log("End of routing").id("a-log-2");
 
                 from("seda:b").routeId("b")
-                    .log("routing at ${routeId}").id("b-log")
-                    .delay(simple("${random(1000,2000)}")).id("b-delay");
+                        .log("routing at ${routeId}").id("b-log")
+                        .delay(simple("${random(1000,2000)}")).id("b-delay");
 
                 from("seda:c").routeId("c")
-                    .to("log:test").id("c-to")
-                    .delay(simple("${random(0,100)}")).id("c-delay");
+                        .to("log:test").id("c-to")
+                        .delay(simple("${random(0,100)}")).id("c-delay");
             }
         };
     }

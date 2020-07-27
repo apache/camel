@@ -56,12 +56,13 @@ public class AsyncEndpointFailOverLoadBalanceOnlyAsyncTest extends ContextTestSu
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).loadBalance().failover()
-                    // the last would succeed
-                    .to("async:bye:camel?failFirstAttempts=5", "async:bye:moon?failFirstAttempts=5", "async:bye:world").end().process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("log:after").to("mock:after").to("mock:result");
+                        // the last would succeed
+                        .to("async:bye:camel?failFirstAttempts=5", "async:bye:moon?failFirstAttempts=5", "async:bye:world")
+                        .end().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

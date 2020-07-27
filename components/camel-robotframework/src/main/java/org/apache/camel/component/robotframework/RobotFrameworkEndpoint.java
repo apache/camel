@@ -32,13 +32,15 @@ import org.robotframework.RobotFramework;
 /**
  * Pass camel exchanges to acceptence test written in Robot DSL.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework", syntax = "robotframework:resourceUri", category = {Category.TESTING})
+@UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework",
+             syntax = "robotframework:resourceUri", category = { Category.TESTING })
 public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
     @UriParam
     private RobotFrameworkCamelConfiguration configuration;
 
-    public RobotFrameworkEndpoint(String uri, RobotFrameworkComponent component, String resourceUri, RobotFrameworkCamelConfiguration configuration) {
+    public RobotFrameworkEndpoint(String uri, RobotFrameworkComponent component, String resourceUri,
+                                  RobotFrameworkCamelConfiguration configuration) {
         super(uri, component, resourceUri);
         this.configuration = configuration;
     }
@@ -103,27 +105,55 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         generatedArguments.addFlagToArguments(configuration.isTimestampOutputs(), "-T");
         generatedArguments.addFlagToArguments(configuration.isWarnOnSkippedFiles(), "--warnonskippedfiles");
 
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getMetadata() != null ? configuration.getMetadata() : "").split(",")), "-M");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getTags() != null ? configuration.getTags() : "").split(",")), "-G");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getTests() != null ? configuration.getTests() : "").split(",")), "-t");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getSuites() != null ? configuration.getSuites() : "").split(",")), "-s");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getIncludes() != null ? configuration.getIncludes() : "").split(",")), "-i");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getExcludes() != null ? configuration.getExcludes() : "").split(",")), "-e");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getCriticalTags() != null ? configuration.getCriticalTags() : "").split(",")), "-c");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getNonCriticalTags() != null ? configuration.getNonCriticalTags() : "").split(",")), "-n");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getMetadata() != null ? configuration.getMetadata() : "").split(",")), "-M");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getTags() != null ? configuration.getTags() : "").split(",")), "-G");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getTests() != null ? configuration.getTests() : "").split(",")), "-t");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getSuites() != null ? configuration.getSuites() : "").split(",")), "-s");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getIncludes() != null ? configuration.getIncludes() : "").split(",")), "-i");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getExcludes() != null ? configuration.getExcludes() : "").split(",")), "-e");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getCriticalTags() != null ? configuration.getCriticalTags() : "").split(",")),
+                "-c");
+        generatedArguments.addListToArguments(
+                Arrays.asList(
+                        (configuration.getNonCriticalTags() != null ? configuration.getNonCriticalTags() : "").split(",")),
+                "-n");
 
         // create variables from camel exchange to pass into robot
-        List<String> variables = RobotFrameworkCamelUtils.createRobotVariablesFromCamelExchange(exchange, isAllowContextMapAll());
+        List<String> variables
+                = RobotFrameworkCamelUtils.createRobotVariablesFromCamelExchange(exchange, isAllowContextMapAll());
         exchange.getIn().setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_VARIABLES, variables);
         generatedArguments.addListToArguments(variables, "-v");
 
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getVariableFiles() != null ? configuration.getVariableFiles() : "").split(",")), "-V");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getTagStatIncludes() != null ? configuration.getTagStatIncludes() : "").split(",")), "--tagstatinclude");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getTagStatExcludes() != null ? configuration.getTagStatExcludes() : "").split(",")), "--tagstatexclude");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getCombinedTagStats() != null ? configuration.getCombinedTagStats() : "").split(",")), "--tagstatcombine");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getTagDocs() != null ? configuration.getTagDocs() : "").split(",")), "--tagdoc");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getTagStatLinks() != null ? configuration.getTagStatLinks() : "").split(",")), "--tagstatlink");
-        generatedArguments.addListToArguments(Arrays.asList((configuration.getListeners() != null ? configuration.getListeners() : "").split(",")), "--listener");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getVariableFiles() != null ? configuration.getVariableFiles() : "").split(",")),
+                "-V");
+        generatedArguments.addListToArguments(
+                Arrays.asList(
+                        (configuration.getTagStatIncludes() != null ? configuration.getTagStatIncludes() : "").split(",")),
+                "--tagstatinclude");
+        generatedArguments.addListToArguments(
+                Arrays.asList(
+                        (configuration.getTagStatExcludes() != null ? configuration.getTagStatExcludes() : "").split(",")),
+                "--tagstatexclude");
+        generatedArguments.addListToArguments(
+                Arrays.asList(
+                        (configuration.getCombinedTagStats() != null ? configuration.getCombinedTagStats() : "").split(",")),
+                "--tagstatcombine");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getTagDocs() != null ? configuration.getTagDocs() : "").split(",")), "--tagdoc");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getTagStatLinks() != null ? configuration.getTagStatLinks() : "").split(",")),
+                "--tagstatlink");
+        generatedArguments.addListToArguments(
+                Arrays.asList((configuration.getListeners() != null ? configuration.getListeners() : "").split(",")),
+                "--listener");
 
         // process path and set robot env by that to specify which test cases to
         // run
@@ -138,7 +168,8 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI);
-            log.debug("{} set to {} setting resourceUri to pass robotframework", RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, newResourceUri);
+            log.debug("{} set to {} setting resourceUri to pass robotframework",
+                    RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, newResourceUri);
             path = newResourceUri;
         }
 

@@ -69,19 +69,20 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     public void testPingSyncSyncMethodInvocation() throws Exception {
         LOG.info("gRPC PingSyncSync method test start");
         // Testing simple sync method invoke with host and port parameters
-        PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         Object pongResponse = template.requestBody("direct:grpc-sync-sync", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse)pongResponse).getPongId(), GRPC_TEST_PING_ID);
-        assertEquals(((PongResponse)pongResponse).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
+        assertEquals(((PongResponse) pongResponse).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
 
         // Testing simple sync method with name described in .proto file instead
         // of generated class
         pongResponse = template.requestBody("direct:grpc-sync-proto-method-name", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse)pongResponse).getPongId(), GRPC_TEST_PING_ID);
+        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
     }
 
     @Test
@@ -91,10 +92,11 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         for (int id = 0; id < MULTIPLE_RUN_TEST_COUNT; id++) {
             PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE + id).setPingId(id).build();
             Object pongResponse = template.requestBody("direct:grpc-sync-sync", pingRequest);
-            assertEquals(((PongResponse)pongResponse).getPongId(), id);
+            assertEquals(((PongResponse) pongResponse).getPongId(), id);
         }
-        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {}", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
-                 Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {}",
+                stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
+                Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.elapsed(TimeUnit.MILLISECONDS)));
     }
 
     @Test
@@ -102,13 +104,14 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     public void testPingSyncAsyncMethodInvocation() throws Exception {
         LOG.info("gRPC PingSyncAsync method test start");
         // Testing simple method with sync request and asyc response in synchronous invocation style
-        PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         Object pongResponse = template.requestBody("direct:grpc-sync-async", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof List<?>);
-        assertEquals(((List<PongResponse>)pongResponse).get(0).getPongId(), GRPC_TEST_PONG_ID01);
-        assertEquals(((List<PongResponse>)pongResponse).get(1).getPongId(), GRPC_TEST_PONG_ID02);
-        assertEquals(((List<PongResponse>)pongResponse).get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(((List<PongResponse>) pongResponse).get(0).getPongId(), GRPC_TEST_PONG_ID01);
+        assertEquals(((List<PongResponse>) pongResponse).get(1).getPongId(), GRPC_TEST_PONG_ID02);
+        assertEquals(((List<PongResponse>) pongResponse).get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
     }
 
     @Override
@@ -116,10 +119,15 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:grpc-sync-sync").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true");
+                from("direct:grpc-sync-sync")
+                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                            + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true");
                 from("direct:grpc-sync-proto-method-name")
-                    .to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=PingSyncSync&synchronous=true");
-                from("direct:grpc-sync-async").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingSyncAsync&synchronous=true");
+                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                            + "/org.apache.camel.component.grpc.PingPong?method=PingSyncSync&synchronous=true");
+                from("direct:grpc-sync-async")
+                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                            + "/org.apache.camel.component.grpc.PingPong?method=pingSyncAsync&synchronous=true");
             }
         };
     }
@@ -130,17 +138,22 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     static class PingPongImpl extends PingPongGrpc.PingPongImplBase {
         @Override
         public void pingSyncSync(PingRequest request, StreamObserver<PongResponse> responseObserver) {
-            LOG.info("gRPC server received data from PingPong service PingId={} PingName={}", request.getPingId(), request.getPingName());
-            PongResponse response = PongResponse.newBuilder().setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE).setPongId(request.getPingId()).build();
+            LOG.info("gRPC server received data from PingPong service PingId={} PingName={}", request.getPingId(),
+                    request.getPingName());
+            PongResponse response = PongResponse.newBuilder().setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(request.getPingId()).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }
 
         @Override
         public void pingSyncAsync(PingRequest request, StreamObserver<PongResponse> responseObserver) {
-            LOG.info("gRPC server received data from PingAsyncResponse service PingId={} PingName={}", request.getPingId(), request.getPingName());
-            PongResponse response01 = PongResponse.newBuilder().setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE).setPongId(GRPC_TEST_PONG_ID01).build();
-            PongResponse response02 = PongResponse.newBuilder().setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE).setPongId(GRPC_TEST_PONG_ID02).build();
+            LOG.info("gRPC server received data from PingAsyncResponse service PingId={} PingName={}", request.getPingId(),
+                    request.getPingName());
+            PongResponse response01 = PongResponse.newBuilder().setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(GRPC_TEST_PONG_ID01).build();
+            PongResponse response02 = PongResponse.newBuilder().setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(GRPC_TEST_PONG_ID02).build();
             responseObserver.onNext(response01);
             responseObserver.onNext(response02);
             responseObserver.onCompleted();

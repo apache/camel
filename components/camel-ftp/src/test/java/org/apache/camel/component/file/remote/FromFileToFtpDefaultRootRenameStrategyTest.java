@@ -43,7 +43,8 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
      * strategy
      */
     private String getFtpPollingUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&delete=true&binary=true&delay=1000&initialDelay=1500&readLock=rename";
+        return "ftp://admin@localhost:" + getPort()
+               + "?password=admin&delete=true&binary=true&delay=1000&initialDelay=1500&readLock=rename";
     }
 
     /*

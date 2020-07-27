@@ -23,8 +23,8 @@ public final class GoogleSheetsStreamConstants {
 
     private static final String PROPERTY_PREFIX = "CamelGoogleSheets";
 
-    public static final String SPREADSHEET_ID =  PROPERTY_PREFIX + "SpreadsheetId";
-    public static final String SPREADSHEET_URL =  PROPERTY_PREFIX + "SpreadsheetUrl";
+    public static final String SPREADSHEET_ID = PROPERTY_PREFIX + "SpreadsheetId";
+    public static final String SPREADSHEET_URL = PROPERTY_PREFIX + "SpreadsheetUrl";
     public static final String MAJOR_DIMENSION = PROPERTY_PREFIX + "MajorDimension";
     public static final String RANGE = PROPERTY_PREFIX + "Range";
     public static final String RANGE_INDEX = PROPERTY_PREFIX + "RangeIndex";

@@ -36,12 +36,11 @@ public final class Predicates {
         return predicate;
     }
 
-
     /**
      * Negates a predicate, useful for method references.
      * 
      * <pre>
-     *     Stream.of("A", "", "B")
+     * Stream.of("A", "", "B")
      *         .filter(Predicates.negate(String::isEmpty))
      *         .count();
      * </pre>

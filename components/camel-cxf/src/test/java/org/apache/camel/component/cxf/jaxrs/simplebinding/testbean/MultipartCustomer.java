@@ -27,22 +27,24 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 
 public class MultipartCustomer {
 
-    @POST @Path("/{id}")
+    @POST
+    @Path("/{id}")
     public Response multipartPostWithParametersAndPayload(
             @QueryParam("query") String abc, @PathParam("id") String id,
-            @Multipart(value = "part1", type = "image/jpeg") DataHandler dh1, 
-            @Multipart(value = "part2", type = "image/jpeg") DataHandler dh2, 
+            @Multipart(value = "part1", type = "image/jpeg") DataHandler dh1,
+            @Multipart(value = "part2", type = "image/jpeg") DataHandler dh2,
             @Multipart(value = "body", type = "text/xml") Customer request) {
         return null;
     }
-    
-    @POST @Path("/withoutParameters")
+
+    @POST
+    @Path("/withoutParameters")
     // Added the path due to change of CXF-6321
     public Response multipartPostWithoutParameters(
-            @Multipart(value = "part1", type = "image/jpeg") DataHandler dh1, 
-            @Multipart(value = "part2", type = "image/jpeg") DataHandler dh2, 
+            @Multipart(value = "part1", type = "image/jpeg") DataHandler dh1,
+            @Multipart(value = "part2", type = "image/jpeg") DataHandler dh2,
             @Multipart(value = "body", type = "text/xml") Customer request) {
         return null;
     }
-    
+
 }

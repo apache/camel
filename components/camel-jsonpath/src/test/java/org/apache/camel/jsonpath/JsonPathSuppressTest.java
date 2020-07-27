@@ -52,11 +52,11 @@ public class JsonPathSuppressTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when().jsonpath("person.middlename", true)
-                            .to("mock:middle")
+                        .to("mock:middle")
                         .otherwise()
-                            .to("mock:other");
+                        .to("mock:other");
             }
         };
     }

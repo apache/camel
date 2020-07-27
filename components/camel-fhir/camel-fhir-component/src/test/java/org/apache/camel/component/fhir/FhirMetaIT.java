@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirMeta} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirMeta} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirMetaIT extends AbstractFhirTestSupport {
 
@@ -70,11 +70,7 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
         Meta inMeta = new Meta();
         inMeta.addTag().setSystem("urn:system1").setCode("urn:code1");
         // add meta
-        meta = fhirClient.meta().
-                                add().
-                                onResource(this.patient.getIdElement()).
-                                meta(inMeta).
-                                execute();
+        meta = fhirClient.meta().add().onResource(this.patient.getIdElement()).meta(inMeta).execute();
         assertEquals(1, meta.getTag().size());
 
         //delete meta
@@ -149,23 +145,23 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for add
                 from("direct://ADD")
-                    .to("fhir://" + PATH_PREFIX + "/add");
+                        .to("fhir://" + PATH_PREFIX + "/add");
 
                 // test route for delete
                 from("direct://DELETE")
-                    .to("fhir://" + PATH_PREFIX + "/delete");
+                        .to("fhir://" + PATH_PREFIX + "/delete");
 
                 // test route for getFromResource
                 from("direct://GET_FROM_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/getFromResource");
+                        .to("fhir://" + PATH_PREFIX + "/getFromResource");
 
                 // test route for getFromServer
                 from("direct://GET_FROM_SERVER")
-                    .to("fhir://" + PATH_PREFIX + "/getFromServer?inBody=metaType");
+                        .to("fhir://" + PATH_PREFIX + "/getFromServer?inBody=metaType");
 
                 // test route for getFromType
                 from("direct://GET_FROM_TYPE")
-                    .to("fhir://" + PATH_PREFIX + "/getFromType");
+                        .to("fhir://" + PATH_PREFIX + "/getFromType");
 
             }
         };

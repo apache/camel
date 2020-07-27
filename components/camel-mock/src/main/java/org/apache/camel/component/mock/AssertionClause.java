@@ -111,7 +111,9 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
                 }
             }
 
-            PredicateAssertHelper.assertMatches(predicate, "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ", exchange);
+            PredicateAssertHelper.assertMatches(predicate,
+                    "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ",
+                    exchange);
         }
     }
 

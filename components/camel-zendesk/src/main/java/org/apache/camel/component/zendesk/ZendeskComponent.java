@@ -79,7 +79,8 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, ZendeskApiName apiName,
+    protected Endpoint createEndpoint(
+            String uri, String methodName, ZendeskApiName apiName,
             ZendeskConfiguration endpointConfiguration) {
         endpointConfiguration.setMethodName(methodName);
         return new ZendeskEndpoint(uri, this, apiName, methodName, endpointConfiguration);

@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String enabled;
     @XmlAttribute
     private String spoolDirectory;
@@ -48,11 +49,13 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     private String spoolRules;
     @XmlAttribute
     private String bufferSize;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String removeSpoolDirectoryWhenStopping;
     @XmlAttribute
     private String statisticsEnabled;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String anySpoolRules;
 
     public String getEnabled() {
@@ -75,8 +78,8 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     /**
      * Sets the spool (temporary) directory to use for overflow and spooling to disk.
      * <p/>
-     * If no spool directory has been explicit configured, then a temporary directory
-     * is created in the <tt>java.io.tmpdir</tt> directory.
+     * If no spool directory has been explicit configured, then a temporary directory is created in the
+     * <tt>java.io.tmpdir</tt> directory.
      */
     public void setSpoolDirectory(String spoolDirectory) {
         this.spoolDirectory = spoolDirectory;
@@ -102,8 +105,8 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     /**
      * Threshold in bytes when overflow to disk is activated.
      * <p/>
-     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb).
-     * Use <tt>-1</tt> to disable overflow to disk.
+     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb). Use
+     * <tt>-1</tt> to disable overflow to disk.
      */
     public void setSpoolThreshold(String spoolThreshold) {
         this.spoolThreshold = spoolThreshold;
@@ -125,8 +128,7 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets what the upper bounds should be when spoolUsedHeapMemoryThreshold
-     * is in use.
+     * Sets what the upper bounds should be when spoolUsedHeapMemoryThreshold is in use.
      */
     public void setSpoolUsedHeapMemoryLimit(String spoolUsedHeapMemoryLimit) {
         this.spoolUsedHeapMemoryLimit = spoolUsedHeapMemoryLimit;
@@ -137,8 +139,8 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     }
 
     /**
-     * Reference to one or more custom {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} to use.
-     * Multiple rules can be separated by comma.
+     * Reference to one or more custom {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} to use. Multiple
+     * rules can be separated by comma.
      */
     public void setSpoolRules(String spoolRules) {
         this.spoolRules = spoolRules;
@@ -186,10 +188,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules
-     * returns <tt>true</tt> then shouldSpoolCache(long) returns <tt>true</tt>.
-     * If this option is <tt>false</tt>, then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must
-     * return <tt>true</tt>.
+     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules returns
+     * <tt>true</tt> then shouldSpoolCache(long) returns <tt>true</tt>. If this option is <tt>false</tt>, then
+     * <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return <tt>true</tt>.
      * <p/>
      * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
      */

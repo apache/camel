@@ -36,7 +36,8 @@ public class RestServletBindingModeXmlTest extends ServletCamelRouterTestSupport
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/xml");
         WebResponse response = query(req, false);
 
@@ -57,7 +58,8 @@ public class RestServletBindingModeXmlTest extends ServletCamelRouterTestSupport
 
         // we bind to xml, but send in json, which is not possible
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
@@ -75,7 +77,7 @@ public class RestServletBindingModeXmlTest extends ServletCamelRouterTestSupport
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(UserJaxbPojo.class)
+                        .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

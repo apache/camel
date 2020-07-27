@@ -45,7 +45,8 @@ public class CamelContextModelErrorHandlerIssueTest {
         JAXBContext jaxbContext = new SpringModelJAXBContextFactory().newJAXBContext();
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        Object obj = unmarshaller.unmarshal(new File("src/test/resources/org/apache/camel/spring/issues/CamelContextModelErrorHandlerIssueTest.xml"));
+        Object obj = unmarshaller.unmarshal(
+                new File("src/test/resources/org/apache/camel/spring/issues/CamelContextModelErrorHandlerIssueTest.xml"));
         assertNotNull(obj);
 
         CamelContextFactoryBean context = (CamelContextFactoryBean) obj;

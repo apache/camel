@@ -39,15 +39,16 @@ public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
     public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.3.2";
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
     public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
-    
+
     public static GenericContainer elasticsearch = new GenericContainer<>(ELASTICSEARCH_IMAGE)
-        .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
-        .withEnv("discovery.type", "single-node")
-        .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT)
-        .waitingFor(new HttpWaitStrategy()
-                .forPort(ELASTICSEARCH_DEFAULT_PORT)
-                .forStatusCodeMatching(response -> response == HttpURLConnection.HTTP_OK || response == HttpURLConnection.HTTP_UNAUTHORIZED)
-                .withStartupTimeout(Duration.ofMinutes(2)));
+            .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
+            .withEnv("discovery.type", "single-node")
+            .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT)
+            .waitingFor(new HttpWaitStrategy()
+                    .forPort(ELASTICSEARCH_DEFAULT_PORT)
+                    .forStatusCodeMatching(response -> response == HttpURLConnection.HTTP_OK
+                            || response == HttpURLConnection.HTTP_UNAUTHORIZED)
+                    .withStartupTimeout(Duration.ofMinutes(2)));
 
     protected static String clusterName = "docker-cluster";
     protected static RestClient restClient;
@@ -63,7 +64,8 @@ public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-        HttpHost host = new HttpHost(elasticsearch.getContainerIpAddress(),  elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
+        HttpHost host
+                = new HttpHost(elasticsearch.getContainerIpAddress(), elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
         client = new RestHighLevelClient(RestClient.builder(host));
         restClient = client.getLowLevelClient();
     }
@@ -79,7 +81,8 @@ public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
-        elasticsearchComponent.setHostAddresses(elasticsearch.getContainerIpAddress() + ":" + elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
+        elasticsearchComponent.setHostAddresses(
+                elasticsearch.getContainerIpAddress() + ":" + elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
 
         CamelContext context = super.createCamelContext();
         context.addComponent("elasticsearch-rest", elasticsearchComponent);
@@ -88,10 +91,8 @@ public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
     }
 
     /**
-     * As we don't delete the {@code target/data} folder for <b>each</b> test
-     * below (otherwise they would run much slower), we need to make sure
-     * there's no side effect of the same used data through creating unique
-     * indexes.
+     * As we don't delete the {@code target/data} folder for <b>each</b> test below (otherwise they would run much
+     * slower), we need to make sure there's no side effect of the same used data through creating unique indexes.
      */
     Map<String, String> createIndexedData(String... additionalPrefixes) {
         String prefix = createPrefix();

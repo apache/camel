@@ -170,7 +170,8 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("foo", "Int");
         exchange.getIn().setHeader("bar", "e");
         exchange.getIn().setHeader("baz", "ger");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo}${header.bar}${header.baz})}", true, null);
+        SimpleExpressionParser parser
+                = new SimpleExpressionParser("${bodyAs(${header.foo}${header.bar}${header.baz})}", true, null);
         Expression exp = parser.parseExpression();
 
         Object obj = exp.evaluate(exchange, Object.class);
@@ -226,7 +227,8 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("------------THE MSG ID ${header.JMSMessageID}------------");
 
-        SimpleExpressionParser parser = new SimpleExpressionParser("------------THE MSG ID ${header.JMSMessageID}------------", true, null);
+        SimpleExpressionParser parser
+                = new SimpleExpressionParser("------------THE MSG ID ${header.JMSMessageID}------------", true, null);
         Expression exp = parser.parseExpression();
 
         assertEquals("------------THE MSG ID JMSMessageID-123------------", exp.evaluate(exchange, String.class));
@@ -237,7 +239,8 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("------------ THE MSG ID ${header.JMSMessageID} ------------");
 
-        SimpleExpressionParser parser = new SimpleExpressionParser("------------ THE MSG ID ${header.JMSMessageID} ------------", true, null);
+        SimpleExpressionParser parser
+                = new SimpleExpressionParser("------------ THE MSG ID ${header.JMSMessageID} ------------", true, null);
         Expression exp = parser.parseExpression();
 
         assertEquals("------------ THE MSG ID JMSMessageID-123 ------------", exp.evaluate(exchange, String.class));

@@ -23,8 +23,7 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Predicate to determine if the message should be sent or not to the endpoint,
- * when using interceptSentToEndpoint.
+ * Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.
  */
 @Metadata(label = "configuration")
 @AsPredicate
@@ -36,8 +35,7 @@ public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
     }
 
     /**
-     * Expression used as the predicate to evaluate whether the message should
-     * be sent or not to the endpoint
+     * Expression used as the predicate to evaluate whether the message should be sent or not to the endpoint
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

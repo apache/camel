@@ -60,8 +60,8 @@ public class MyBatisDeleteListTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis:batchDeleteAccountById?statementType=DeleteList")
-                    .to("mock:result");
+                        .to("mybatis:batchDeleteAccountById?statementType=DeleteList")
+                        .to("mock:result");
             }
         };
     }

@@ -62,7 +62,8 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service (SQS)", syntax = "aws2-sqs:queueNameOrArn", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service (SQS)",
+             syntax = "aws2-sqs:queueNameOrArn", category = { Category.CLOUD, Category.MESSAGING })
 public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Endpoint.class);
@@ -153,7 +154,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
                 String protocol = configuration.getProtocol();
 
-                queueUrl = protocol + "://" + getFullyQualifiedAWSHost() + "/" + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
+                queueUrl = protocol + "://" + getFullyQualifiedAWSHost() + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
+                           + configuration.getQueueName();
             } else if (configuration.getQueueOwnerAWSAccountId() != null) {
                 GetQueueUrlRequest.Builder getQueueUrlRequest = GetQueueUrlRequest.builder();
                 getQueueUrlRequest.queueName(configuration.getQueueName());
@@ -189,23 +191,27 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         Map<QueueAttributeName, String> attributes = new HashMap<QueueAttributeName, String>();
         if (getConfiguration().isFifoQueue()) {
             attributes.put(QueueAttributeName.FIFO_QUEUE, String.valueOf(true));
-            boolean useContentBasedDeduplication = getConfiguration().getMessageDeduplicationIdStrategy() instanceof NullMessageDeduplicationIdStrategy;
+            boolean useContentBasedDeduplication
+                    = getConfiguration().getMessageDeduplicationIdStrategy() instanceof NullMessageDeduplicationIdStrategy;
             attributes.put(QueueAttributeName.CONTENT_BASED_DEDUPLICATION, String.valueOf(useContentBasedDeduplication));
         }
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
-            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT, String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT,
+                    String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
         }
         if (getConfiguration().getMaximumMessageSize() != null) {
             attributes.put(QueueAttributeName.MAXIMUM_MESSAGE_SIZE, String.valueOf(getConfiguration().getMaximumMessageSize()));
         }
         if (getConfiguration().getMessageRetentionPeriod() != null) {
-            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD, String.valueOf(getConfiguration().getMessageRetentionPeriod()));
+            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD,
+                    String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
         if (getConfiguration().getPolicy() != null) {
             attributes.put(QueueAttributeName.POLICY, String.valueOf(getConfiguration().getPolicy()));
         }
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
-            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS, String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
+                    String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
         if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
             attributes.put(QueueAttributeName.DELAY_SECONDS, String.valueOf(getConfiguration().getDelaySeconds()));
@@ -218,7 +224,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 attributes.put(QueueAttributeName.KMS_MASTER_KEY_ID, getConfiguration().getKmsMasterKeyId());
             }
             if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
-                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS, String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS,
+                        String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
         }
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
@@ -234,19 +241,22 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         SetQueueAttributesRequest.Builder request = SetQueueAttributesRequest.builder().queueUrl(queueUrl);
         Map<QueueAttributeName, String> attributes = new HashMap<QueueAttributeName, String>();
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
-            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT, String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT,
+                    String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
         }
         if (getConfiguration().getMaximumMessageSize() != null) {
             attributes.put(QueueAttributeName.MAXIMUM_MESSAGE_SIZE, String.valueOf(getConfiguration().getMaximumMessageSize()));
         }
         if (getConfiguration().getMessageRetentionPeriod() != null) {
-            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD, String.valueOf(getConfiguration().getMessageRetentionPeriod()));
+            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD,
+                    String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
         if (getConfiguration().getPolicy() != null) {
             attributes.put(QueueAttributeName.POLICY, String.valueOf(getConfiguration().getPolicy()));
         }
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
-            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS, String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
+                    String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
         if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
             attributes.put(QueueAttributeName.DELAY_SECONDS, String.valueOf(getConfiguration().getDelaySeconds()));
@@ -259,7 +269,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 attributes.put(QueueAttributeName.KMS_MASTER_KEY_ID, getConfiguration().getKmsMasterKeyId());
             }
             if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
-                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS, String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS,
+                        String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
         }
         if (!attributes.isEmpty()) {
@@ -330,8 +341,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * Provide the possibility to override this method for an mock
-     * implementation
+     * Provide the possibility to override this method for an mock implementation
      *
      * @return AmazonSQSClient
      */
@@ -343,7 +353,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -351,7 +362,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -369,8 +381,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }
@@ -389,8 +400,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Is default unlimited, but use 0 or negative number to disable it as
-     * unlimited.
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;

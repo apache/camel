@@ -23,12 +23,13 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringMarshalListTest extends MarshalListTest {
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         setUseRouteBuilder(false);
 
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/xstream/SpringMarshalListTest.xml");
+        final AbstractXmlApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/xstream/SpringMarshalListTest.xml");
         setCamelContextService(new Service() {
             public void start() {
                 applicationContext.start();

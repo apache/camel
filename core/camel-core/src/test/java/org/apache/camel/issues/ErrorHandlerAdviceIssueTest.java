@@ -34,7 +34,8 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         RouteReifier.adviceWith(foo, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new IllegalAccessException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalAccessException("Forced"));
             }
         });
 
@@ -64,7 +65,8 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("direct:error").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:error").routeId("error").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("mock:error").to("file:error");
+                from("direct:error").routeId("error").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("mock:error")
+                        .to("file:error");
 
                 from("timer://someTimer?delay=15000&fixedRate=true&period=5000").routeId("timer").to("log:level=INFO");
 

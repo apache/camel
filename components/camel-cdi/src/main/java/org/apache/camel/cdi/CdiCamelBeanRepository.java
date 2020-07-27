@@ -73,8 +73,8 @@ final class CdiCamelBeanRepository implements BeanRepository {
         notNull(type, "type");
         logger.trace("Looking up named beans of type [{}]", type);
         return manager.getBeans(type, ANY).stream()
-            .filter(bean -> bean.getName() != null)
-            .collect(toMap(Bean::getName, bean -> getReference(manager, type, bean)));
+                .filter(bean -> bean.getName() != null)
+                .collect(toMap(Bean::getName, bean -> getReference(manager, type, bean)));
     }
 
     @Override

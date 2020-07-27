@@ -40,7 +40,8 @@ public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
     public void testCustomThreadPoolFactory() throws Exception {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
 
-        MyCustomThreadPoolFactory factory = assertIsInstanceOf(MyCustomThreadPoolFactory.class, context.getExecutorServiceManager().getThreadPoolFactory());
+        MyCustomThreadPoolFactory factory = assertIsInstanceOf(MyCustomThreadPoolFactory.class,
+                context.getExecutorServiceManager().getThreadPoolFactory());
         assertTrue(factory.isInvoked(), "Should use custom thread pool factory");
     }
 
@@ -55,16 +56,18 @@ public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
         }
 
         @Override
-        public ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, 
-                                             boolean allowCoreThreadTimeOut, RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory) throws IllegalArgumentException {
+        public ExecutorService newThreadPool(
+                int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                boolean allowCoreThreadTimeOut, RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+                throws IllegalArgumentException {
             invoked = true;
-            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut, rejectedExecutionHandler, threadFactory);
+            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
+                    rejectedExecutionHandler, threadFactory);
         }
 
         public boolean isInvoked() {
             return invoked;
         }
     }
-
 
 }

@@ -53,7 +53,7 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         CombinedServiceCallServiceDiscoveryConfiguration multiConf = new CombinedServiceCallServiceDiscoveryConfiguration();
         multiConf.setServiceDiscoveryConfigurations(Arrays.asList(staticConf1, staticConf2));
 
-        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery)multiConf.newInstance(context);
+        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
         assertEquals(2, discovery.getDelegates().size());
         assertEquals(3, discovery.getServices("discovery1").size());
         assertEquals(1, discovery.getServices("discovery2").size());
@@ -65,7 +65,7 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
-        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery)multiConf.newInstance(context);
+        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
         assertEquals(2, discovery.getDelegates().size());
         assertEquals(3, discovery.getServices("discovery1").size());
         assertEquals(1, discovery.getServices("discovery2").size());
@@ -80,7 +80,7 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         multiConf.staticServiceDiscovery().servers("{{svc-list-1}}");
         multiConf.staticServiceDiscovery().servers("{{svc-list-2}}");
 
-        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery)multiConf.newInstance(context);
+        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
         assertEquals(2, discovery.getDelegates().size());
         assertEquals(3, discovery.getServices("discovery1").size());
         assertEquals(1, discovery.getServices("discovery2").size());

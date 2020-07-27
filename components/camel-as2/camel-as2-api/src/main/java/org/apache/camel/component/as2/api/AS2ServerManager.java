@@ -29,7 +29,8 @@ import org.slf4j.LoggerFactory;
 /**
  * AS2 Server Manager
  *
- * <p>Receives EDI Messages over HTTP
+ * <p>
+ * Receives EDI Messages over HTTP
  *
  */
 public class AS2ServerManager {
@@ -39,20 +40,17 @@ public class AS2ServerManager {
     //
 
     /**
-     * Prefix for all AS2 HTTP Context Attributes used by the Http Server
-     * Manager.
+     * Prefix for all AS2 HTTP Context Attributes used by the Http Server Manager.
      */
     public static final String CAMEL_AS2_SERVER_PREFIX = "camel-as2.server";
 
     /**
-     * The HTTP Context Attribute containing the subject header sent in an AS2
-     * response.
+     * The HTTP Context Attribute containing the subject header sent in an AS2 response.
      */
     public static final String SUBJECT = CAMEL_AS2_SERVER_PREFIX + "subject";
 
     /**
-     * The HTTP Context Attribute containing the internet e-mail address of
-     * responding system
+     * The HTTP Context Attribute containing the internet e-mail address of responding system
      */
     public static final String FROM = CAMEL_AS2_SERVER_PREFIX + "from";
 
@@ -78,7 +76,9 @@ public class AS2ServerManager {
         as2ServerConnection.stopListening(requestUri);
     }
 
-    public void handleMDNResponse(HttpEntityEnclosingRequest request, HttpResponse response, HttpContext httpContext, String subject, String from) throws HttpException {
+    public void handleMDNResponse(
+            HttpEntityEnclosingRequest request, HttpResponse response, HttpContext httpContext, String subject, String from)
+            throws HttpException {
         // Add Context attributes for Response
         httpContext.setAttribute(SUBJECT, subject);
         httpContext.setAttribute(FROM, from);

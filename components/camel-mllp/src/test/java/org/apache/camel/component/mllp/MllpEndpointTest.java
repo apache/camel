@@ -36,8 +36,8 @@ public class MllpEndpointTest {
     }
 
     /**
-     * Assert that the maxConcurrentConsumers property overridden in the MllpConfiguration
-     * object is correctly set on the endpoint instance.
+     * Assert that the maxConcurrentConsumers property overridden in the MllpConfiguration object is correctly set on
+     * the endpoint instance.
      */
     @Test
     public void testCreateEndpointWithCustomMaxConcurrentConsumers() {

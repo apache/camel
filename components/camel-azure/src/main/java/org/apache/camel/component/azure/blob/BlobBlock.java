@@ -29,7 +29,7 @@ public class BlobBlock {
 
     public BlobBlock(InputStream blockStream) {
         this(Base64.encode(UUID.randomUUID().toString().getBytes()),
-            blockStream);
+             blockStream);
     }
 
     public BlobBlock(String blockId, InputStream blockStream) {

@@ -39,7 +39,7 @@ public class FtpXQueryTest extends CamelTestSupport {
     protected static int ftpPort;
     protected FtpServer ftpServer;
     private String ftp = "ftp:localhost:" + ftpPort + "/myapp?password=admin&username=admin";
-    
+
     @BeforeAll
     public static void initPort() throws Exception {
         ftpPort = AvailablePortFinder.getNextAvailable();
@@ -55,10 +55,12 @@ public class FtpXQueryTest extends CamelTestSupport {
         other.expectedMessageCount(1);
         other.message(0).body(String.class).contains("Bye World");
 
-        template.sendBodyAndHeader(ftp, "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
+        template.sendBodyAndHeader(ftp,
+                "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
                 Exchange.FILE_NAME, "claus.xml");
 
-        template.sendBodyAndHeader(ftp, "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
+        template.sendBodyAndHeader(ftp,
+                "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
                 Exchange.FILE_NAME, "janstey.xml");
 
         assertMockEndpointsSatisfied();
@@ -70,11 +72,11 @@ public class FtpXQueryTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(ftp)
-                    .choice()
+                        .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
-                            .to("mock:davsclaus")
+                        .to("mock:davsclaus")
                         .otherwise()
-                            .to("mock:other");
+                        .to("mock:other");
             }
         };
     }

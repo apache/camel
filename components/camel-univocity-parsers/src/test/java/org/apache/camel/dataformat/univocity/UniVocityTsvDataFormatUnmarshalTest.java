@@ -159,29 +159,25 @@ public final class UniVocityTsvDataFormatUnmarshalTest extends CamelTestSupport 
 
         // Reading TSV as Map
         tests.put("map", new UniVocityTsvDataFormat()
-                        .setAsMap(true)
-                        .setHeaderExtractionEnabled(true)
-        );
+                .setAsMap(true)
+                .setHeaderExtractionEnabled(true));
 
         // Reading TSV as Map with specific headers
         tests.put("mapWithHeaders", new UniVocityTsvDataFormat()
-                        .setAsMap(true)
-                        .setHeaders(new String[]{"A", "B", "C"})
-        );
+                .setAsMap(true)
+                .setHeaders(new String[] { "A", "B", "C" }));
 
         // Reading TSV using an iterator
         tests.put("lazy", new UniVocityTsvDataFormat()
-                        .setLazyLoad(true)
-        );
+                .setLazyLoad(true));
 
         // Reading TSV using advanced configuration
         tests.put("advanced", new UniVocityTsvDataFormat()
-                        .setNullValue("N/A")
-                        .setIgnoreLeadingWhitespaces(true)
-                        .setIgnoreTrailingWhitespaces(false)
-                        .setComment('!')
-                        .setSkipEmptyLines(true)
-        );
+                .setNullValue("N/A")
+                .setIgnoreLeadingWhitespaces(true)
+                .setIgnoreTrailingWhitespaces(false)
+                .setComment('!')
+                .setSkipEmptyLines(true));
 
         return new RouteBuilder() {
             @Override

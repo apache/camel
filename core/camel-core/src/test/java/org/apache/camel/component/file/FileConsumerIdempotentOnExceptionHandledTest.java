@@ -54,7 +54,8 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
                 onException(Exception.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/data/messages/input/?initialDelay=0&delay=10&idempotent=true").to("mock:input").throwException(new IllegalArgumentException("Forced"));
+                from("file:target/data/messages/input/?initialDelay=0&delay=10&idempotent=true").to("mock:input")
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

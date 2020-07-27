@@ -41,7 +41,8 @@ public abstract class DigitalOceanProducer extends DefaultProducer {
     }
 
     protected DigitalOceanOperations determineOperation(Exchange exchange) {
-        DigitalOceanOperations operation = exchange.getIn().getHeader(DigitalOceanHeaders.OPERATION, DigitalOceanOperations.class);
+        DigitalOceanOperations operation
+                = exchange.getIn().getHeader(DigitalOceanHeaders.OPERATION, DigitalOceanOperations.class);
         return ObjectHelper.isNotEmpty(operation) ? operation : configuration.getOperation();
     }
 

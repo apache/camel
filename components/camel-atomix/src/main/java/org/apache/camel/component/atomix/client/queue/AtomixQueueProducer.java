@@ -49,8 +49,7 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
         ObjectHelper.notNull(val, RESOURCE_VALUE);
 
         queue.add(val).thenAccept(
-            result -> processResult(message, callback, result)
-        );
+                result -> processResult(message, callback, result));
 
         return false;
     }
@@ -63,8 +62,7 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
         ObjectHelper.notNull(val, RESOURCE_VALUE);
 
         queue.offer(val).thenAccept(
-            result -> processResult(message, callback, result)
-        );
+                result -> processResult(message, callback, result));
 
         return false;
     }
@@ -74,8 +72,7 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
         final DistributedQueue<Object> queue = getResource(message);
 
         queue.peek().thenAccept(
-            result -> processResult(message, callback, result)
-        );
+                result -> processResult(message, callback, result));
 
         return false;
     }
@@ -85,8 +82,7 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
         final DistributedQueue<Object> queue = getResource(message);
 
         queue.poll().thenAccept(
-            result -> processResult(message, callback, result)
-        );
+                result -> processResult(message, callback, result));
 
         return false;
     }
@@ -96,8 +92,7 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
         final DistributedQueue<Object> queue = getResource(message);
 
         queue.clear().thenAccept(
-            result -> processResult(message, callback, result)
-        );
+                result -> processResult(message, callback, result));
 
         return false;
     }
@@ -105,19 +100,18 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
     @InvokeOnHeader("CONTAINS")
     boolean onContains(Message message, AsyncCallback callback) throws Exception {
         final DistributedQueue<Object> queue = getResource(message);
-        final ReadConsistency consistency = message.getHeader(RESOURCE_READ_CONSISTENCY,  configuration::getReadConsistency, ReadConsistency.class);
+        final ReadConsistency consistency
+                = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
         final Object value = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
 
         ObjectHelper.notNull(value, RESOURCE_VALUE);
 
         if (consistency != null) {
             queue.contains(value, consistency).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             queue.contains(value).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -126,16 +120,15 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
     @InvokeOnHeader("IS_EMPTY")
     boolean onIsEmpty(Message message, AsyncCallback callback) throws Exception {
         final DistributedQueue<Object> queue = getResource(message);
-        final ReadConsistency consistency = message.getHeader(RESOURCE_READ_CONSISTENCY,  configuration::getReadConsistency, ReadConsistency.class);
+        final ReadConsistency consistency
+                = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
 
         if (consistency != null) {
             queue.isEmpty(consistency).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             queue.isEmpty().thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -148,12 +141,10 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
 
         if (value == null) {
             queue.remove().thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             queue.remove(value).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -162,16 +153,15 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
     @InvokeOnHeader("SIZE")
     boolean onSize(Message message, AsyncCallback callback) throws Exception {
         final DistributedQueue<Object> queue = getResource(message);
-        final ReadConsistency consistency = message.getHeader(RESOURCE_READ_CONSISTENCY,  configuration::getReadConsistency, ReadConsistency.class);
+        final ReadConsistency consistency
+                = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
 
         if (consistency != null) {
             queue.size(consistency).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             queue.size().thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -194,11 +184,11 @@ public final class AtomixQueueProducer extends AbstractAtomixClientProducer<Atom
     @Override
     protected DistributedQueue<Object> createResource(String resourceName) {
         return getAtomixEndpoint()
-            .getAtomix()
-            .getQueue(
-                resourceName,
-                new DistributedQueue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
-                new DistributedQueue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
-            .join();
+                .getAtomix()
+                .getQueue(
+                        resourceName,
+                        new DistributedQueue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
+                        new DistributedQueue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
+                .join();
     }
 }

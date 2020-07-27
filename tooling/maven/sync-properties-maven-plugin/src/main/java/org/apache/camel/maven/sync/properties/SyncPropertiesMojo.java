@@ -102,7 +102,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
             // write lines
             FileOutputStream outputStream = new FileOutputStream(targetPom);
             byte[] strToBytes = out.getBytes();
-            outputStream.write(strToBytes);     
+            outputStream.write(strToBytes);
             outputStream.close();
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);

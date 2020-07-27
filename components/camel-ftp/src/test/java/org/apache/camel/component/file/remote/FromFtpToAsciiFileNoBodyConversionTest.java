@@ -25,8 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit testing a FTP ASCII transfer that Camel provides the needed conversion
- * to String from the input stream.
+ * Unit testing a FTP ASCII transfer that Camel provides the needed conversion to String from the input stream.
  */
 public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport {
 

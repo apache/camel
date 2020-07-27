@@ -104,11 +104,11 @@ public class ZendeskTicketIntegrationTest extends AbstractZendeskTestSupport {
         requestBodyAndHeaders("direct://CREATECOMMENT", null, headers);
         Iterable iterable = requestBody("direct://GETTICKETCOMMENTS", answer.getId());
         Iterator iterator = iterable.iterator();
-        Comment comment1 = (Comment)iterator.next();
+        Comment comment1 = (Comment) iterator.next();
         assertEquals(ticketDescription, comment1.getBody());
         assertNotNull(comment1.getId());
         assertNotNull(comment1.getCreatedAt());
-        Comment comment2 = (Comment)iterator.next();
+        Comment comment2 = (Comment) iterator.next();
         assertEquals(commentBody, comment2.getBody());
         assertNotNull(comment2.getId());
         assertNotNull(comment2.getCreatedAt());
@@ -136,25 +136,25 @@ public class ZendeskTicketIntegrationTest extends AbstractZendeskTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://GETTICKETS")
-                    .to("zendesk://getTickets");
+                        .to("zendesk://getTickets");
 
                 from("direct://CREATETICKET")
-                    .to("zendesk://createTicket?inBody=ticket");
+                        .to("zendesk://createTicket?inBody=ticket");
 
                 from("direct://UPDATETICKET")
-                    .to("zendesk://updateTicket?inBody=ticket");
+                        .to("zendesk://updateTicket?inBody=ticket");
 
                 from("direct://GETTICKET")
-                    .to("zendesk://getTicket?inBody=id");
+                        .to("zendesk://getTicket?inBody=id");
 
                 from("direct://CREATECOMMENT")
-                    .to("zendesk://createComment");
+                        .to("zendesk://createComment");
 
                 from("direct://GETTICKETCOMMENTS")
-                    .to("zendesk://getTicketComments?inBody=id");
+                        .to("zendesk://getTicketComments?inBody=id");
 
                 from("direct://DELETETICKET")
-                    .to("zendesk://deleteTicket?inBody=id");
+                        .to("zendesk://deleteTicket?inBody=id");
             }
         };
     }

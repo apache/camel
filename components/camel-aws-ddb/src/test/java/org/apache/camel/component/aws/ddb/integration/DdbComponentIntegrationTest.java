@@ -79,7 +79,6 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(DdbConstants.ITEM));
     }
 
-
     public void updateItem() {
         Map<String, AttributeValue> attributeMap = new HashMap<>();
         attributeMap.put(attributeName, new AttributeValue(randomId));
@@ -143,9 +142,9 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .to("aws-ddb://" + tableName + "?"
-                                + "region=" + region
-                                + "&accessKey=" + accessKey
-                                + "&secretKey=RAW(" + secretKey + ")");
+                            + "region=" + region
+                            + "&accessKey=" + accessKey
+                            + "&secretKey=RAW(" + secretKey + ")");
             }
         };
     }

@@ -47,9 +47,8 @@ public class JmsPollingConsumerTest {
     protected MockEndpoint result;
 
     /**
-     * Fails:
-     * Consumer is expected to read two messages from activemq:queue and concatenate their bodies.
-     * In this test, consumer bean is invoked from an activemq: route.
+     * Fails: Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this test,
+     * consumer bean is invoked from an activemq: route.
      */
     @Test
     @DirtiesContext
@@ -66,9 +65,8 @@ public class JmsPollingConsumerTest {
     }
 
     /**
-     * Succeeds:
-     * Consumer is expected to read two messages from activemq:queue and concatenate their bodies.
-     * In this test, consumer bean is invoked from a direct: route.
+     * Succeeds: Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this
+     * test, consumer bean is invoked from a direct: route.
      */
     @Test
     @DirtiesContext

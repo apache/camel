@@ -149,7 +149,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
     private void tryClose(Object obj) {
         if (obj instanceof Closeable) {
             try {
-                ((Closeable)obj).close();
+                ((Closeable) obj).close();
             } catch (IOException e) {
                 // Ignore
             }
@@ -260,9 +260,9 @@ public class JettyContentExchange9 implements JettyContentExchange {
                     try {
                         Object content = osb.build();
                         if (content instanceof byte[]) {
-                            onResponseComplete(result, (byte[])content);
+                            onResponseComplete(result, (byte[]) content);
                         } else {
-                            StreamCache cos = (StreamCache)content;
+                            StreamCache cos = (StreamCache) content;
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             cos.writeTo(baos);
                             onResponseComplete(result, baos.toByteArray());
@@ -304,7 +304,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
                 // This causes problems at byte-code level. Try recovering.
                 Method reflGetFieldNamesCollection = HttpFields.class.getMethod("getFieldNamesCollection");
                 Object result = reflGetFieldNamesCollection.invoke(fields);
-                return (Collection<String>)result;
+                return (Collection<String>) result;
             } catch (Exception reflectionException) {
                 // Suppress, throwing the original exception
                 throw e;

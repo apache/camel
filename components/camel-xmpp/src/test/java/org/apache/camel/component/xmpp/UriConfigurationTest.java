@@ -29,10 +29,10 @@ public class UriConfigurationTest {
 
     @Test
     public void testPrivateChatConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
+        Endpoint endpoint = context
+                .getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
-
 
         assertEquals("localhost", xmppEndpoint.getHost());
         assertEquals(123, xmppEndpoint.getPort());
@@ -44,10 +44,10 @@ public class UriConfigurationTest {
 
     @Test
     public void testGroupChatConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
+        Endpoint endpoint
+                = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
-
 
         assertEquals("im.google.com", xmppEndpoint.getHost());
         assertEquals(123, xmppEndpoint.getPort());
@@ -68,7 +68,7 @@ public class UriConfigurationTest {
 
         assertEquals("Camel", xmppEndpoint.getResource());
     }
-    
+
     @Test
     public void testPubSubConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123?password=secret&pubsub=true");
@@ -82,5 +82,5 @@ public class UriConfigurationTest {
         assertEquals(true, xmppEndpoint.isPubsub());
         assertEquals(true, xmppEndpoint.isDoc());
     }
-    
+
 }

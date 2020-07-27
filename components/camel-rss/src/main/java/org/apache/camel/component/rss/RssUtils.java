@@ -51,7 +51,8 @@ public final class RssUtils {
         return createFeed(feedUri, username, password, Thread.currentThread().getContextClassLoader());
     }
 
-    public static SyndFeed createFeed(String feedUri, String username, String password, ClassLoader classLoader) throws Exception {
+    public static SyndFeed createFeed(String feedUri, String username, String password, ClassLoader classLoader)
+            throws Exception {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);

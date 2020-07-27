@@ -16,7 +16,6 @@
  */
 package org.apache.directory.server.core.integ5;
 
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -52,7 +51,6 @@ import org.apache.directory.server.ldap.replication.consumer.ReplicationConsumer
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 import org.apache.directory.server.protocol.shared.transport.Transport;
 import org.apache.directory.server.protocol.shared.transport.UdpTransport;
-
 
 /**
  * Annotation processor for creating LDAP and Kerberos servers.
@@ -94,15 +92,14 @@ public final class ServerAnnotationProcessor {
         }
     }
 
-
     /**
-     * Just gives an instance of {@link LdapServer} without starting it.
-     * For getting a running LdapServer instance see {@link #createLdapServer(CreateLdapServer, DirectoryService)}
+     * Just gives an instance of {@link LdapServer} without starting it. For getting a running LdapServer instance see
+     * {@link #createLdapServer(CreateLdapServer, DirectoryService)}
      *
-     * @param createLdapServer The LdapServer to create
-     * @param directoryService the directory service
-     * @return The created LdapServer
-     * @see #createLdapServer(CreateLdapServer, DirectoryService)
+     * @param  createLdapServer The LdapServer to create
+     * @param  directoryService the directory service
+     * @return                  The created LdapServer
+     * @see                     #createLdapServer(CreateLdapServer, DirectoryService)
      */
     public static LdapServer instantiateLdapServer(CreateLdapServer createLdapServer, DirectoryService directoryService) {
         if (createLdapServer != null) {
@@ -178,13 +175,12 @@ public final class ServerAnnotationProcessor {
         }
     }
 
-
     /**
-     * Returns an LdapServer instance and starts it before returning the instance, infering
-     * the configuration from the Stack trace
+     * Returns an LdapServer instance and starts it before returning the instance, infering the configuration from the
+     * Stack trace
      *
-     * @param directoryService the directory service
-     * @return a running LdapServer instance
+     * @param  directoryService       the directory service
+     * @return                        a running LdapServer instance
      * @throws ClassNotFoundException If the CreateLdapServer class cannot be loaded
      */
     public static LdapServer getLdapServer(DirectoryService directoryService) throws ClassNotFoundException {
@@ -199,7 +195,6 @@ public final class ServerAnnotationProcessor {
 
         return ldapServer;
     }
-
 
     /**
      * Create a replication consumer
@@ -228,12 +223,10 @@ public final class ServerAnnotationProcessor {
         return consumer;
     }
 
-
     /**
-     * creates an LdapServer and starts before returning the instance, infering
-     * the configuration from the Stack trace
+     * creates an LdapServer and starts before returning the instance, infering the configuration from the Stack trace
      *
-     * @return a running LdapServer instance
+     * @return                        a running LdapServer instance
      * @throws ClassNotFoundException If the CreateConsumer class cannot be loaded
      */
     public static ReplicationConsumer createConsumer() throws ClassNotFoundException {
@@ -249,13 +242,12 @@ public final class ServerAnnotationProcessor {
         return consumer;
     }
 
-
     /**
      * creates an LdapServer and starts before returning the instance
      *
-     * @param createLdapServer the annotation containing the custom configuration
-     * @param directoryService the directory service
-     * @return a running LdapServer instance
+     * @param  createLdapServer the annotation containing the custom configuration
+     * @param  directoryService the directory service
+     * @return                  a running LdapServer instance
      */
     private static LdapServer createLdapServer(CreateLdapServer createLdapServer, DirectoryService directoryService) {
         LdapServer ldapServer = instantiateLdapServer(createLdapServer, directoryService);
@@ -274,13 +266,12 @@ public final class ServerAnnotationProcessor {
         return ldapServer;
     }
 
-
     /**
      * Create a new instance of LdapServer
      *
-     * @param description      A description for the created LdapServer
-     * @param directoryService The associated DirectoryService
-     * @return An LdapServer instance
+     * @param  description      A description for the created LdapServer
+     * @param  directoryService The associated DirectoryService
+     * @return                  An LdapServer instance
      */
     public static LdapServer createLdapServer(Description description, DirectoryService directoryService) {
         CreateLdapServer createLdapServer = description.getAnnotation(CreateLdapServer.class);
@@ -288,7 +279,6 @@ public final class ServerAnnotationProcessor {
         // Ok, we have found a CreateLdapServer annotation. Process it now.
         return createLdapServer(createLdapServer, directoryService);
     }
-
 
     @SuppressWarnings("unchecked")
     private static Annotation getAnnotation(Class annotationClass) throws Exception {
@@ -321,12 +311,10 @@ public final class ServerAnnotationProcessor {
         return classCaller.getAnnotation(annotationClass);
     }
 
-
     public static KdcServer getKdcServer(DirectoryService directoryService, int startPort) throws Exception {
         CreateKdcServer createKdcServer = (CreateKdcServer) getAnnotation(CreateKdcServer.class);
         return createKdcServer(createKdcServer, directoryService);
     }
-
 
     private static KdcServer createKdcServer(CreateKdcServer createKdcServer, DirectoryService directoryService) {
         if (createKdcServer == null) {
@@ -397,7 +385,6 @@ public final class ServerAnnotationProcessor {
 
         return kdcServer;
     }
-
 
     private static List<Transport> createTransports(CreateTransport transportBuilder) {
         String protocol = transportBuilder.protocol();

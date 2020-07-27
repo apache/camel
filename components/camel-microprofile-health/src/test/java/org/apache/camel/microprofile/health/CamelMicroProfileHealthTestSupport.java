@@ -48,7 +48,9 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
         reporter = new SmallRyeHealthReporter();
     }
 
-    protected void assertHealthCheckOutput(String expectedName, HealthCheckResponse.State expectedState, JsonObject healthObject, Consumer<JsonObject> dataObjectAssertions) {
+    protected void assertHealthCheckOutput(
+            String expectedName, HealthCheckResponse.State expectedState, JsonObject healthObject,
+            Consumer<JsonObject> dataObjectAssertions) {
         assertEquals(expectedName, healthObject.getString("name"));
         assertEquals(expectedState.name(), healthObject.getString("status"));
         dataObjectAssertions.accept(healthObject.getJsonObject("data"));

@@ -61,5 +61,4 @@ public class RestOpenApiProducer extends DelegateAsyncProcessor implements Async
         return delegate.isSingleton();
     }
 
-
 }

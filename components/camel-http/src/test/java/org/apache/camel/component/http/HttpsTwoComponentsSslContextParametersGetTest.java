@@ -50,13 +50,9 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).create();
         localServer.start();
 
         super.setUp();
@@ -85,10 +81,12 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
                 port2 = AvailablePortFinder.getNextAvailable();
 
                 from("direct:foo")
-                        .to("https-foo://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
+                        .to("https-foo://127.0.0.1:" + localServer.getLocalPort()
+                            + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("https-bar://127.0.0.1:" + port2 + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
+                        .to("https-bar://127.0.0.1:" + port2
+                            + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });
 

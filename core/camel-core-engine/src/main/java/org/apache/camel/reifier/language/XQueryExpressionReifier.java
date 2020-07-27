@@ -48,7 +48,7 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
 
     protected void configureNamespaceAware(Object builder) {
         if (definition.getNamespaces() != null && builder instanceof NamespaceAware) {
-            NamespaceAware namespaceAware = (NamespaceAware)builder;
+            NamespaceAware namespaceAware = (NamespaceAware) builder;
             namespaceAware.setNamespaces(definition.getNamespaces());
         }
     }

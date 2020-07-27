@@ -41,7 +41,8 @@ class PathVisitor<T> {
         PUT
     }
 
-    PathVisitor(final String basePath, final CodeEmitter<T> emitter, final OperationFilter filter, final DestinationGenerator destinationGenerator) {
+    PathVisitor(final String basePath, final CodeEmitter<T> emitter, final OperationFilter filter,
+                final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
         this.filter = filter;
         this.destinationGenerator = destinationGenerator;
@@ -54,7 +55,8 @@ class PathVisitor<T> {
     }
 
     void visit(final OasPathItem definition) {
-        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, filter, definition.getPath(), destinationGenerator);
+        final OperationVisitor<T> restDslOperation
+                = new OperationVisitor<>(emitter, filter, definition.getPath(), destinationGenerator);
 
         operationMapFrom(definition).forEach(restDslOperation::visit);
     }

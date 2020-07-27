@@ -69,7 +69,8 @@ public class RemoveHeaderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(headerName).constant(expectedHeaderValue).to("mock:mid").removeHeader(headerName).to("mock:end");
+                from("direct:start").setHeader(headerName).constant(expectedHeaderValue).to("mock:mid").removeHeader(headerName)
+                        .to("mock:end");
             }
         };
     }

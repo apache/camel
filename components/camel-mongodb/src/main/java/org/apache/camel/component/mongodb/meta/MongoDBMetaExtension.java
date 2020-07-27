@@ -95,10 +95,10 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
                             .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
                             .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
                             .withPayload(root)
-                            .build()
-            );
+                            .build());
         } else {
-            LOGGER.warn("Cannot retrieve info for : {}.{} collection. Likely the collection has not been provided with a validator",
+            LOGGER.warn(
+                    "Cannot retrieve info for : {}.{} collection. Likely the collection has not been provided with a validator",
                     textParameters.get("database"),
                     textParameters.get("collection"));
             return Optional.empty();

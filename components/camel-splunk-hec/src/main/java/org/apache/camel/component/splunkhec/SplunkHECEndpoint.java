@@ -34,14 +34,17 @@ import org.apache.commons.validator.routines.DomainValidator;
  * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
-        syntax = "splunk-hec:splunkURL/token", category = {Category.LOG, Category.MONITORING})
+             syntax = "splunk-hec:splunkURL/token", category = { Category.LOG, Category.MONITORING })
 public class SplunkHECEndpoint extends DefaultEndpoint {
 
-    private static final Pattern URI_PARSER = Pattern.compile("splunk-hec\\:\\/?\\/?(.*?):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
+    private static final Pattern URI_PARSER
+            = Pattern.compile("splunk-hec\\:\\/?\\/?(.*?):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String splunkURL;
-    @UriPath(label = "security") @Metadata(required = true)
+    @UriPath(label = "security")
+    @Metadata(required = true)
     private String token;
     @UriParam
     private SplunkHECConfiguration configuration;

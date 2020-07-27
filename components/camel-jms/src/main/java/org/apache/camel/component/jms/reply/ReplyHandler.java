@@ -27,16 +27,16 @@ public interface ReplyHandler {
     /**
      * The reply message was received
      *
-     * @param correlationId  the correlation id
-     * @param reply  the JMS reply message
-     * @param session the JMS session
+     * @param correlationId the correlation id
+     * @param reply         the JMS reply message
+     * @param session       the JMS session
      */
     void onReply(String correlationId, Message reply, Session session);
 
     /**
      * The reply message was not received and a timeout triggered
      *
-     * @param correlationId  the correlation id
+     * @param correlationId the correlation id
      */
     void onTimeout(String correlationId);
 }

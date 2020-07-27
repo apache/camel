@@ -43,15 +43,15 @@ public class RestUndertowHttpContextPathMatchGetTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("{id}")
+                        .get("{id}")
                         .route()
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getMessage().setBody(id + ";Donald Duck");
                         })
-                    .endRest()
-                    .get("list")
+                        .endRest()
+                        .get("list")
                         .route()
                         .to("mock:input")
                         .process(exchange -> exchange.getMessage().setBody("123;Donald Duck\n456;John Doe"));

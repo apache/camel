@@ -57,11 +57,12 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
         assertTrue(files.length > 0, "Should be a file in " + TEST_DIR + " directory");
-        
+
         File resultFile = files[0];
-        Set<String> expectedZipFiles = new HashSet<>(Arrays.asList("another/hello.txt",
-                                                                         "other/greetings.txt",
-                                                                         "chiau.txt", "hi.txt", "hola.txt"));
+        Set<String> expectedZipFiles = new HashSet<>(
+                Arrays.asList("another/hello.txt",
+                        "other/greetings.txt",
+                        "chiau.txt", "hi.txt", "hola.txt"));
         ZipInputStream zin = new ZipInputStream(new FileInputStream(resultFile));
         try {
             int fileCount = 0;
@@ -73,7 +74,8 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
             }
 
             assertEquals(fileCount, AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES,
-                    String.format("Zip file should contains %d files, got %d files", AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount));
+                    String.format("Zip file should contains %d files, got %d files",
+                            AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount));
             assertEquals(0, expectedZipFiles.size(),
                     "Should have found all of the zip files in the file. Remaining: " + expectedZipFiles);
         } finally {
@@ -88,13 +90,13 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?delay=1000&noop=true&recursive=true")
-                    .aggregate(new ZipAggregationStrategy(true, true))
+                        .aggregate(new ZipAggregationStrategy(true, true))
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
-                    .to("file:" + TEST_DIR)
-                    .to("mock:aggregateToZipEntry")
-                    .log("Done processing zip file: ${header.CamelFileName}");
+                        .to("file:" + TEST_DIR)
+                        .to("mock:aggregateToZipEntry")
+                        .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
 

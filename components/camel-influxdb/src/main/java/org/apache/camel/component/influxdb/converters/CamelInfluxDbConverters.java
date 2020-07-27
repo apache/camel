@@ -45,5 +45,4 @@ public final class CamelInfluxDbConverters {
         return pointBuilder.build();
     }
 
-
 }

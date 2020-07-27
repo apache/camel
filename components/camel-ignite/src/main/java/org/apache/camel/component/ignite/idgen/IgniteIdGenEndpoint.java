@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name", category = {Category.COMPUTE}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name",
+             category = { Category.COMPUTE }, producerOnly = true)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);
@@ -56,7 +57,8 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private IgniteIdGenOperation operation;
 
-    public IgniteIdGenEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteIdGenComponent igniteComponent) throws Exception {
+    public IgniteIdGenEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
+                               IgniteIdGenComponent igniteComponent) throws Exception {
         super(endpointUri, igniteComponent);
         name = remaining;
 
@@ -120,9 +122,8 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * The operation to invoke on the Ignite ID Generator.
-     * Superseded by the IgniteConstants.IGNITE_IDGEN_OPERATION header in the IN message.
-     * Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET.
+     * The operation to invoke on the Ignite ID Generator. Superseded by the IgniteConstants.IGNITE_IDGEN_OPERATION
+     * header in the IN message. Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET.
      */
     public void setOperation(IgniteIdGenOperation operation) {
         this.operation = operation;

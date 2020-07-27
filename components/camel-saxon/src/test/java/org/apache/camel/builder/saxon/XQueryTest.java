@@ -32,7 +32,8 @@ public class XQueryTest {
     @Test
     public void testXQuery() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-        exchange.getIn().setBody("<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
+        exchange.getIn().setBody(
+                "<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
 
         Object result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, Object.class);
 
@@ -40,7 +41,7 @@ public class XQueryTest {
 
         Document doc = (Document) result;
         assertEquals("stella", doc.getDocumentElement().getLocalName(), "Root document element name");
-        
+
         result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, String.class);
         assertEquals("<stella/>", result, "Get a wrong result");
     }

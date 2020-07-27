@@ -54,7 +54,7 @@ public class SpringSagaTest extends ContextTestSupport {
 
         sendBody("direct:start", "fail");
 
-        compensationEndpoint .assertIsSatisfied();
+        compensationEndpoint.assertIsSatisfied();
         resultEndpoint.assertIsNotSatisfied();
     }
 

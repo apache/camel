@@ -39,22 +39,26 @@ public class GridFsProducerOperationsTest extends AbstractMongoDbTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:create").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
-                from("direct:remove").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket());
-                from("direct:findOne").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=findOne&bucket=" + getBucket());
-                from("direct:listAll").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=listAll&bucket=" + getBucket());
+                from("direct:create")
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
+                from("direct:remove")
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket());
+                from("direct:findOne")
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=findOne&bucket=" + getBucket());
+                from("direct:listAll")
+                        .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=listAll&bucket=" + getBucket());
                 from("direct:count")
                         .setHeader(GridFsEndpoint.GRIDFS_OPERATION, constant("count"))
                         .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket());
             }
         };
     }
-    
+
     @Test
     public void testOperations() throws Exception {
         Map<String, Object> headers = new HashMap<>();
         assertFalse(gridFSBucket.find(eq(FILE_NAME)).cursor().hasNext());
-        
+
         headers.put(Exchange.FILE_NAME, FILE_NAME);
         headers.put(Exchange.CONTENT_TYPE, "text/plain");
         template.requestBodyAndHeaders("direct:create", FILE_DATA, headers);
@@ -69,15 +73,15 @@ public class GridFsProducerOperationsTest extends AbstractMongoDbTest {
         byte b[] = new byte[2048];
         int i = ins.read(b);
         assertEquals(FILE_DATA, new String(b, 0, i, StandardCharsets.UTF_8));
-        
+
         headers.put(Exchange.FILE_NAME, "2-" + FILE_NAME);
         headers.put(GridFsEndpoint.GRIDFS_CHUNKSIZE, 10);
         headers.put(GridFsEndpoint.GRIDFS_METADATA, "{'foo': 'bar'}");
-        
+
         template.requestBodyAndHeaders("direct:create", FILE_DATA + "data2", headers);
         assertEquals(1, template.requestBodyAndHeaders("direct:count", null, headers, Long.class).longValue());
         assertEquals(2, template.requestBody("direct:count", null, Long.class).longValue());
-        
+
         String s = template.requestBody("direct:listAll", null, String.class);
         assertTrue(s.contains("2-" + FILE_NAME));
         template.requestBodyAndHeaders("direct:remove", null, headers);
@@ -91,19 +95,23 @@ public class GridFsProducerOperationsTest extends AbstractMongoDbTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.FILE_NAME, FILE_NAME);
 
-        Exchange result = template.request("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket(), new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setBody(FILE_DATA);
-                exchange.getMessage().setHeaders(headers);
-            }
-        });
+        Exchange result = template.request(
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket(), new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setBody(FILE_DATA);
+                        exchange.getMessage().setHeaders(headers);
+                    }
+                });
         ObjectId objectId = result.getMessage().getHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, ObjectId.class);
         assertNotNull(objectId);
 
-        template.requestBodyAndHeader("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket(), null, GridFsEndpoint.GRIDFS_OBJECT_ID, objectId);
+        template.requestBodyAndHeader("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket(),
+                null, GridFsEndpoint.GRIDFS_OBJECT_ID, objectId);
 
-        Integer count = template.requestBodyAndHeaders("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=" + getBucket(), null, headers, Integer.class);
+        Integer count = template.requestBodyAndHeaders(
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=" + getBucket(), null, headers,
+                Integer.class);
         assertEquals(0, count);
     }
 }

@@ -70,7 +70,7 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from(serverUri).routeId("foo")
-                    .transform(body().prepend("Bye "));
+                        .transform(body().prepend("Bye "));
             }
         };
     }

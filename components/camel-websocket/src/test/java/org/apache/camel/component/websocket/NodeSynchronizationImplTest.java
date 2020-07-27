@@ -57,7 +57,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testAddSocketMemoryAndGlobal() {
@@ -71,7 +73,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testAddSocketMemoryOnly() {
@@ -82,7 +86,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testAddNullValue() {
@@ -92,7 +98,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testRemoveDefaultWebsocket() {
@@ -116,7 +124,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testRemoveDefaultWebsocketKeyNotSet() {
@@ -139,7 +149,9 @@ public class NodeSynchronizationImplTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.NodeSynchronization#removeSocket(org.apache.camel.component.websocket.DefaultWebsocket)}
+     * .
      */
     @Test
     public void testRemoveNotExisting() {

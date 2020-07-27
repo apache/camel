@@ -28,7 +28,8 @@ public class XQueryComponentConfigurationTest extends CamelSpringTestSupport {
     @Test
     public void testConfiguration() throws Exception {
         XQueryComponent component = context.getComponent("xquery", XQueryComponent.class);
-        XQueryEndpoint endpoint = context.getEndpoint("xquery:org/apache/camel/component/xquery/transform.xquery", XQueryEndpoint.class);
+        XQueryEndpoint endpoint
+                = context.getEndpoint("xquery:org/apache/camel/component/xquery/transform.xquery", XQueryEndpoint.class);
 
         assertNotNull(component.getConfiguration());
         assertNotNull(component.getConfigurationProperties());

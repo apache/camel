@@ -29,30 +29,30 @@ import org.apache.camel.spi.annotations.Dataformat;
  * This class is the data format that uses the CSV uniVocity parser.
  */
 @Dataformat("univocity-csv")
-public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvFormat, CsvWriterSettings, CsvWriter, CsvParserSettings, CsvParser, UniVocityCsvDataFormat> {
+public class UniVocityCsvDataFormat
+        extends
+        AbstractUniVocityDataFormat<CsvFormat, CsvWriterSettings, CsvWriter, CsvParserSettings, CsvParser, UniVocityCsvDataFormat> {
     protected Boolean quoteAllFields;
     protected Character quote;
     protected Character quoteEscape;
     protected Character delimiter;
 
     /**
-     * Gets whether or not all fields must be quoted.
-     * If {@code null} then the default settings value is used.
+     * Gets whether or not all fields must be quoted. If {@code null} then the default settings value is used.
      *
      * @return whether or not all fields must be quoted
-     * @see com.univocity.parsers.csv.CsvWriterSettings#getQuoteAllFields()
+     * @see    com.univocity.parsers.csv.CsvWriterSettings#getQuoteAllFields()
      */
     public Boolean getQuoteAllFields() {
         return quoteAllFields;
     }
 
     /**
-     * Gets whether or not all fields must be quoted.
-     * If {@code null} then the default settings value is used.
+     * Gets whether or not all fields must be quoted. If {@code null} then the default settings value is used.
      *
-     * @param quoteAllFields whether or not all fields must be quoted
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.csv.CsvWriterSettings#setQuoteAllFields(boolean)
+     * @param  quoteAllFields whether or not all fields must be quoted
+     * @return                current data format instance, fluent API
+     * @see                   com.univocity.parsers.csv.CsvWriterSettings#setQuoteAllFields(boolean)
      */
     public UniVocityCsvDataFormat setQuoteAllFields(Boolean quoteAllFields) {
         this.quoteAllFields = quoteAllFields;
@@ -60,23 +60,21 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
     }
 
     /**
-     * Gets the quote symbol.
-     * If {@code null} then the default format value is used.
+     * Gets the quote symbol. If {@code null} then the default format value is used.
      *
      * @return the quote symbol
-     * @see com.univocity.parsers.csv.CsvFormat#getQuote()
+     * @see    com.univocity.parsers.csv.CsvFormat#getQuote()
      */
     public Character getQuote() {
         return quote;
     }
 
     /**
-     * Sets the quote symbol.
-     * If {@code null} then the default format value is used.
+     * Sets the quote symbol. If {@code null} then the default format value is used.
      *
-     * @param quote the quote symbol
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.csv.CsvFormat#setQuote(char)
+     * @param  quote the quote symbol
+     * @return       current data format instance, fluent API
+     * @see          com.univocity.parsers.csv.CsvFormat#setQuote(char)
      */
     public UniVocityCsvDataFormat setQuote(Character quote) {
         this.quote = quote;
@@ -84,23 +82,21 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
     }
 
     /**
-     * Gets the quote escape symbol.
-     * If {@code null} then the default format value is used.
+     * Gets the quote escape symbol. If {@code null} then the default format value is used.
      *
      * @return the quote escape symbol
-     * @see com.univocity.parsers.csv.CsvFormat#getQuoteEscape()
+     * @see    com.univocity.parsers.csv.CsvFormat#getQuoteEscape()
      */
     public Character getQuoteEscape() {
         return quoteEscape;
     }
 
     /**
-     * Sets the quote escape symbol.
-     * If {@code null} then the default format value is used.
+     * Sets the quote escape symbol. If {@code null} then the default format value is used.
      *
-     * @param quoteEscape the quote escape symbol
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.csv.CsvFormat#setQuoteEscape(char)
+     * @param  quoteEscape the quote escape symbol
+     * @return             current data format instance, fluent API
+     * @see                com.univocity.parsers.csv.CsvFormat#setQuoteEscape(char)
      */
     public UniVocityCsvDataFormat setQuoteEscape(Character quoteEscape) {
         this.quoteEscape = quoteEscape;
@@ -108,23 +104,21 @@ public class UniVocityCsvDataFormat extends AbstractUniVocityDataFormat<CsvForma
     }
 
     /**
-     * Gets the delimiter symbol.
-     * If {@code null} then the default format value is used.
+     * Gets the delimiter symbol. If {@code null} then the default format value is used.
      *
      * @return the delimiter symbol
-     * @see com.univocity.parsers.csv.CsvFormat#getDelimiter()
+     * @see    com.univocity.parsers.csv.CsvFormat#getDelimiter()
      */
     public Character getDelimiter() {
         return delimiter;
     }
 
     /**
-     * Sets the delimiter symbol.
-     * If {@code null} then the default format value is used.
+     * Sets the delimiter symbol. If {@code null} then the default format value is used.
      *
-     * @param delimiter the delimiter symbol
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.csv.CsvFormat#setDelimiter(char)
+     * @param  delimiter the delimiter symbol
+     * @return           current data format instance, fluent API
+     * @see              com.univocity.parsers.csv.CsvFormat#setDelimiter(char)
      */
     public UniVocityCsvDataFormat setDelimiter(Character delimiter) {
         this.delimiter = delimiter;

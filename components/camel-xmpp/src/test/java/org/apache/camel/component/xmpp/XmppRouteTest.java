@@ -59,7 +59,7 @@ public class XmppRouteTest {
         Object body = assertReceivedValidExchange();
         assertEquals(expectedBody, body, "body");
     }
-    
+
     protected void sendExchange(final Object expectedBody) {
         client.send(endpoint, new Processor() {
             public void process(Exchange exchange) {
@@ -75,7 +75,7 @@ public class XmppRouteTest {
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         assertNotNull(receivedExchange);
-        XmppMessage receivedMessage = (XmppMessage)receivedExchange.getIn();
+        XmppMessage receivedMessage = (XmppMessage) receivedExchange.getIn();
 
         assertEquals(123, receivedMessage.getHeader("cheese"), "cheese header");
         Object body = receivedMessage.getBody();

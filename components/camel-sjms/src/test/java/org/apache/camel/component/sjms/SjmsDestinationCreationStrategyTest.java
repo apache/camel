@@ -55,7 +55,8 @@ public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms:queue:inout?prefillPool=false&exchangePattern=InOut").process(exchange -> exchange.getMessage().setBody("response"));
+                from("sjms:queue:inout?prefillPool=false&exchangePattern=InOut")
+                        .process(exchange -> exchange.getMessage().setBody("response"));
             }
         };
     }
@@ -67,7 +68,8 @@ public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
         assertTrue(createDestinationCalled);
 
         assertFalse(createTemporaryDestination);
-        String response = (String)template.sendBody("sjms:queue:inout?prefillPool=false&exchangePattern=InOut", ExchangePattern.InOut, "hello world 2");
+        String response = (String) template.sendBody("sjms:queue:inout?prefillPool=false&exchangePattern=InOut",
+                ExchangePattern.InOut, "hello world 2");
         assertTrue(createTemporaryDestination);
         assertEquals("response", response);
     }

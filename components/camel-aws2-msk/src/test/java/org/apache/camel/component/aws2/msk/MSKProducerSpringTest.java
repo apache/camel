@@ -50,11 +50,11 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterInfoList().size());
         assertEquals("test-kafka", resultGet.clusterInfoList().get(0).clusterName());
     }
-    
+
     @Test
     public void mskListKeysPojoTest() throws Exception {
 
@@ -68,7 +68,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterInfoList().size());
         assertEquals("test-kafka", resultGet.clusterInfoList().get(0).clusterName());
     }
@@ -90,7 +90,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateClusterResponse resultGet = (CreateClusterResponse)exchange.getIn().getBody();
+        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterName());
         assertEquals(ClusterState.CREATING.name(), resultGet.state().toString());
     }
@@ -108,7 +108,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteClusterResponse resultGet = (DeleteClusterResponse)exchange.getIn().getBody();
+        DeleteClusterResponse resultGet = (DeleteClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.state().toString());
     }
@@ -126,7 +126,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DescribeClusterResponse resultGet = (DescribeClusterResponse)exchange.getIn().getBody();
+        DescribeClusterResponse resultGet = (DescribeClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterInfo().clusterArn());
         assertEquals(ClusterState.ACTIVE.name(), resultGet.clusterInfo().state().toString());
     }

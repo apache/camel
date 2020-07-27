@@ -41,14 +41,10 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/test/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/test/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -66,8 +62,10 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
     @Test
     public void httpDisableStreamCache() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test/?disableStreamCache=true", exchange1 -> {
-        });
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                             + localServer.getLocalPort() + "/test/?disableStreamCache=true",
+                exchange1 -> {
+                });
 
         InputStream is = assertIsInstanceOf(InputStream.class, exchange.getMessage().getBody());
         assertNotNull(is);

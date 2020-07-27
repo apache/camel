@@ -92,7 +92,7 @@ public class Main {
         @Override
         public String getInformation() {
             return "  " + getAbbreviation() + " or " + getFullName()
-                    + " <" + parameterName + "> = " + getDescription();
+                   + " <" + parameterName + "> = " + getDescription();
         }
 
         protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);

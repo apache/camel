@@ -70,7 +70,7 @@ public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat,
             IOHelper.copy(is, zipOutput);
         } finally {
             IOHelper.close(is, zipOutput);
-            
+
             /*
             * As we create the Deflater our self and do not use the stream default
             * (see {@link java.util.zip.DeflaterOutputStream#usesDefaultDeflater})

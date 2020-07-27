@@ -54,11 +54,14 @@ public class DefaultBindableServiceFactory implements BindableServiceFactory {
                 return null;
             }
         };
-        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(endpoint.getServicePackage(), endpoint.getServiceName(), endpoint.getCamelContext()));
+        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(endpoint.getServicePackage(), endpoint.getServiceName(),
+                endpoint.getCamelContext()));
         try {
             return (BindableService) serviceProxy.create(new Class<?>[0], new Object[0], methodHandler);
-        } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException("Unable to create bindable proxy service for " + endpoint.getConfiguration().getService());
+        } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException
+                 | InvocationTargetException e) {
+            throw new IllegalArgumentException(
+                    "Unable to create bindable proxy service for " + endpoint.getConfiguration().getService());
         }
     }
 }

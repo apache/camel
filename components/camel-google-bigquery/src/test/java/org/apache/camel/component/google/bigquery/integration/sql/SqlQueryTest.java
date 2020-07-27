@@ -38,7 +38,8 @@ public class SqlQueryTest extends BigQueryTestSupport {
     @EndpointInject("direct:in")
     private Endpoint directIn;
 
-    @EndpointInject("google-bigquery-sql:{{project.id}}: insert into {{bigquery.datasetId}}." + TABLE_ID + "(col1, col2) values (@col1, @col2)")
+    @EndpointInject("google-bigquery-sql:{{project.id}}: insert into {{bigquery.datasetId}}." + TABLE_ID
+                    + "(col1, col2) values (@col1, @col2)")
     private Endpoint bigqueryEndpoint;
 
     @EndpointInject("mock:sendResult")

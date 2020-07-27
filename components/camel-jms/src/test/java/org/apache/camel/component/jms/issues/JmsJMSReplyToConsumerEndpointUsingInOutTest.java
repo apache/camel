@@ -45,8 +45,8 @@ public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSuppor
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:hello?replyTo=queue:namedReplyQueue")
-                    .to("log:hello")
-                    .transform(constant("My name is Camel"));
+                        .to("log:hello")
+                        .transform(constant("My name is Camel"));
             }
         };
     }

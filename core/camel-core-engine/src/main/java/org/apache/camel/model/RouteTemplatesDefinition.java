@@ -34,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "routeTemplates")
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition> implements RouteTemplateContainer {
+public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
+        implements RouteTemplateContainer {
     @XmlElementRef
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
     @XmlTransient

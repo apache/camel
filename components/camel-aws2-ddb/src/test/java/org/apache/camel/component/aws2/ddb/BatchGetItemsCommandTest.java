@@ -61,10 +61,12 @@ public class BatchGetItemsCommandTest {
 
         assertEquals(keysAndAttributesMap, ddbClient.batchGetItemRequest.requestItems());
 
-        List<Map<String, AttributeValue>> batchResponse = (List<Map<String, AttributeValue>>)exchange.getIn().getHeader(Ddb2Constants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
+        List<Map<String, AttributeValue>> batchResponse = (List<Map<String, AttributeValue>>) exchange.getIn()
+                .getHeader(Ddb2Constants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
         AttributeValue value = batchResponse.get(0).get("attrName");
 
-        KeysAndAttributes unProcessedAttributes = (KeysAndAttributes)exchange.getIn().getHeader(Ddb2Constants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
+        KeysAndAttributes unProcessedAttributes
+                = (KeysAndAttributes) exchange.getIn().getHeader(Ddb2Constants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
         Map<String, AttributeValue> next = unProcessedAttributes.keys().iterator().next();
 
         assertEquals(AttributeValue.builder().s("attrValue").build(), value);

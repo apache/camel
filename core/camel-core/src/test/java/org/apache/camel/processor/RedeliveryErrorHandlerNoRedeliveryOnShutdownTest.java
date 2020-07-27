@@ -56,7 +56,8 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
                 // with 1 second between.
                 // however if we are stopping then do not allow any redeliver
                 // attempts.
-                errorHandler(defaultErrorHandler().allowRedeliveryWhileStopping(false).maximumRedeliveries(20).redeliveryDelay(1000).retryAttemptedLogLevel(LoggingLevel.INFO));
+                errorHandler(defaultErrorHandler().allowRedeliveryWhileStopping(false).maximumRedeliveries(20)
+                        .redeliveryDelay(1000).retryAttemptedLogLevel(LoggingLevel.INFO));
 
                 from("seda:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
                 // END SNIPPET: e1

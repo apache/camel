@@ -16,11 +16,9 @@
  */
 package org.apache.camel.openapi;
 
-
 public class DayResponse {
 
     private String day;
-
 
     public String getDay() {
         return day;

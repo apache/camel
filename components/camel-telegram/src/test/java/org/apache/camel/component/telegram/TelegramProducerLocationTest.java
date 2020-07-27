@@ -86,13 +86,13 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=" + chatId);
-                }
-            }};
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=" + chatId);
+                    }
+                } };
     }
 
     @Override

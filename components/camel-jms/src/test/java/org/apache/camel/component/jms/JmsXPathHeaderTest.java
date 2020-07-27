@@ -76,11 +76,11 @@ public class JmsXPathHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:in")
-                    .choice()
+                        .choice()
                         .when().xpath("$foo = 'true'")
-                            .to("activemq:queue:true")
+                        .to("activemq:queue:true")
                         .otherwise()
-                            .to("activemq:queue:other")
+                        .to("activemq:queue:other")
                         .end();
 
                 from("activemq:queue:true").to("mock:true");

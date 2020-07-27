@@ -31,7 +31,8 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
 
     private final String ediMessage;
 
-    protected ApplicationEDIEntity(String ediMessage, ContentType contentType, String contentTransferEncoding, boolean isMainBody) {
+    protected ApplicationEDIEntity(String ediMessage, ContentType contentType, String contentTransferEncoding,
+                                   boolean isMainBody) {
         this.ediMessage = Args.notNull(ediMessage, "EDI Message");
         setContentType(Args.notNull(contentType, "Content Type").toString());
         setContentTransferEncoding(contentTransferEncoding);
@@ -42,12 +43,11 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
         return ediMessage;
     }
 
-
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
         try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII);
-            OutputStream transferEncodedStream = EntityUtils.encode(canonicalOutstream, getContentTransferEncodingValue())) {
+             OutputStream transferEncodedStream = EntityUtils.encode(canonicalOutstream, getContentTransferEncodingValue())) {
 
             // Write out mime part headers if this is not the main body of message.
             if (!isMainBody()) {

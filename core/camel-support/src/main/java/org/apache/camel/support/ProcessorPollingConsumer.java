@@ -26,9 +26,8 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A simple implementation of {@link org.apache.camel.PollingConsumer} which just uses
- * a {@link Processor}. This implementation does not support timeout based
- * receive methods such as {@link #receive(long)}
+ * A simple implementation of {@link org.apache.camel.PollingConsumer} which just uses a {@link Processor}. This
+ * implementation does not support timeout based receive methods such as {@link #receive(long)}
  */
 public class ProcessorPollingConsumer extends PollingConsumerSupport implements IsSingleton {
     private final Processor processor;
@@ -83,5 +82,5 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport implements 
     public boolean isSingleton() {
         return true;
     }
-    
+
 }

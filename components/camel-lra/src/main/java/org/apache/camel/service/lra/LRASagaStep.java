@@ -74,10 +74,10 @@ public final class LRASagaStep {
     @Override
     public String toString() {
         return "LRASagaStep{"
-                + "compensation=" + compensation
-                + ", completion=" + completion
-                + ", options=" + options
-                + ", timeoutInMilliseconds=" + timeoutInMilliseconds
-                + '}';
+               + "compensation=" + compensation
+               + ", completion=" + completion
+               + ", options=" + options
+               + ", timeoutInMilliseconds=" + timeoutInMilliseconds
+               + '}';
     }
 }

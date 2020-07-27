@@ -60,8 +60,8 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         Map<String, Object> headers = new HashMap<>();
-        headers.put("names", new String[]{"Camel", "AMQ"});
-        headers.put("licenses", new String[]{"ASF", "XXX", "YYY"});
+        headers.put("names", new String[] { "Camel", "AMQ" });
+        headers.put("licenses", new String[] { "ASF", "XXX", "YYY" });
         template.requestBodyAndHeaders("direct:query", "Hi there!", headers);
 
         assertMockEndpointsSatisfied();
@@ -166,9 +166,9 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql:classpath:sql/selectProjectsInMulti.sql")
-                    .to("log:query")
-                    .to("mock:query");
+                        .to("sql:classpath:sql/selectProjectsInMulti.sql")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

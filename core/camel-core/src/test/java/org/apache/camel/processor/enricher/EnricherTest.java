@@ -72,7 +72,7 @@ public class EnricherTest extends ContextTestSupport {
 
     @Test
     public void testEnrichInOut() throws InterruptedException {
-        String result = (String)template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
+        String result = (String) template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
@@ -115,8 +115,8 @@ public class EnricherTest extends ContextTestSupport {
                 from("direct:enricher-test-3").enrich("direct:enricher-fault-resource", aggregationStrategy).to("mock:mock");
 
                 from("direct:enricher-test-4").errorHandler(noErrorHandler()) // avoid
-                                                                              // re-deliveries
-                    .enrich("direct:enricher-error-resource", aggregationStrategy).to("mock:mock");
+                        // re-deliveries
+                        .enrich("direct:enricher-error-resource", aggregationStrategy).to("mock:mock");
 
                 // -------------------------------------------------------------
                 // InOut routes
@@ -127,8 +127,8 @@ public class EnricherTest extends ContextTestSupport {
                 from("direct:enricher-test-7").enrich("direct:enricher-fault-resource", aggregationStrategy);
 
                 from("direct:enricher-test-8").errorHandler(noErrorHandler()) // avoid
-                                                                              // re-deliveries
-                    .enrich("direct:enricher-error-resource", aggregationStrategy);
+                        // re-deliveries
+                        .enrich("direct:enricher-error-resource", aggregationStrategy);
 
                 // -------------------------------------------------------------
                 // Enricher resources

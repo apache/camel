@@ -147,7 +147,6 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
-
     @Override
     public Object receiveBodyNoWait(Endpoint endpoint) {
         return receiveBodyNoWait(endpoint.getEndpointUri());
@@ -227,7 +226,8 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
         } catch (Throwable e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
-                    + ". This exception will be ignored.", e);
+                     + ". This exception will be ignored.",
+                    e);
         }
     }
 
@@ -238,11 +238,11 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     /**
      * Extracts the body from the given result.
      * <p/>
-     * If the exchange pattern is provided it will try to honor it and retrieve the body
-     * from either IN or OUT according to the pattern.
+     * If the exchange pattern is provided it will try to honor it and retrieve the body from either IN or OUT according
+     * to the pattern.
      *
-     * @param result   the result
-     * @return  the result, can be <tt>null</tt>.
+     * @param  result the result
+     * @return        the result, can be <tt>null</tt>.
      */
     protected Object extractResultBody(Exchange result) {
         Object answer = null;

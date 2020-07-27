@@ -66,7 +66,7 @@ public class BindySimpleCsvMarshallTrimClipTest {
         @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-                org.apache.camel.dataformat.bindy.model.simple.oneclassandtrimandclip.Customer.class);
+                    org.apache.camel.dataformat.bindy.model.simple.oneclassandtrimandclip.Customer.class);
 
             from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
         }

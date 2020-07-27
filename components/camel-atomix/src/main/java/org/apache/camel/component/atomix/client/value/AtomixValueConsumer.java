@@ -49,13 +49,12 @@ public final class AtomixValueConsumer extends AbstractAtomixClientConsumer<Atom
         super.doStart();
 
         this.value = getAtomixEndpoint()
-            .getAtomix()
-            .getValue(
-                resourceName,
-                new DistributedValue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
-                new DistributedValue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
-            .join();
-
+                .getAtomix()
+                .getValue(
+                        resourceName,
+                        new DistributedValue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
+                        new DistributedValue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
+                .join();
 
         LOG.debug("Subscribe to events for value: {}", resourceName);
         this.listeners.add(this.value.onChange(this::onEvent).join());

@@ -95,7 +95,8 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced")).to("mock:b");
+                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced"))
+                        .to("mock:b");
 
             }
         };

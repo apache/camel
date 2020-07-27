@@ -26,8 +26,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 /**
- * The <a href="http://camel.apache.org/msv.html">MSV Component</a> uses the
- * <a href="https://msv.dev.java.net/">MSV library</a> to perform XML validation using pluggable XML schema languages.
+ * The <a href="http://camel.apache.org/msv.html">MSV Component</a> uses the <a href="https://msv.dev.java.net/">MSV
+ * library</a> to perform XML validation using pluggable XML schema languages.
  *
  */
 @Component("msv")

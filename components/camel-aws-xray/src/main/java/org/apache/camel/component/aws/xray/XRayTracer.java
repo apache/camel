@@ -57,19 +57,18 @@ import org.slf4j.LoggerFactory;
 /**
  * To use AWS XRay with Camel setup this {@link XRayTracer} in your Camel application.
  * <p/>
- * This class uses a {@link org.apache.camel.spi.RoutePolicy} as well as a {@link
- * org.apache.camel.spi.EventNotifier} internally to manage the creation and termination of AWS XRay
- * {@link Segment Segments} and {@link Subsegment Subsegments} once an exchange was created,
- * forwarded or closed in order to allow monitoring the lifetime metrics of the exchange.
+ * This class uses a {@link org.apache.camel.spi.RoutePolicy} as well as a {@link org.apache.camel.spi.EventNotifier}
+ * internally to manage the creation and termination of AWS XRay {@link Segment Segments} and {@link Subsegment
+ * Subsegments} once an exchange was created, forwarded or closed in order to allow monitoring the lifetime metrics of
+ * the exchange.
  * <p/>
- * A {@link InterceptStrategy} is used in order to track invocations and durations of EIP patterns
- * used in processed routes. If no strategy is passed while configuration via {@link
- * #setTracingStrategy(InterceptStrategy)}, a {@link NoopTracingStrategy} will be used by default
- * which will not monitor any invocations at all.
+ * A {@link InterceptStrategy} is used in order to track invocations and durations of EIP patterns used in processed
+ * routes. If no strategy is passed while configuration via {@link #setTracingStrategy(InterceptStrategy)}, a
+ * {@link NoopTracingStrategy} will be used by default which will not monitor any invocations at all.
  * <p/>
- * By default every invoked route will be tracked by AWS XRay. If certain routes shell not be
- * tracked {@link #addExcludePattern(String)} and {@link #setExcludePatterns(Set)} can be used to
- * provide the <em>routeId</em> of the routes to exclude from monitoring.
+ * By default every invoked route will be tracked by AWS XRay. If certain routes shell not be tracked
+ * {@link #addExcludePattern(String)} and {@link #setExcludePatterns(Set)} can be used to provide the <em>routeId</em>
+ * of the routes to exclude from monitoring.
  */
 public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
 
@@ -169,8 +168,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     /**
-     * Returns the currently used tracing strategy which is responsible for tracking invoked EIP or
-     * beans.
+     * Returns the currently used tracing strategy which is responsible for tracking invoked EIP or beans.
      *
      * @return The currently used tracing strategy
      */
@@ -188,8 +186,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     /**
-     * Returns the set of currently excluded routes. Any route ID specified in the returned set will
-     * not be monitored by this AWS XRay tracer implementation.
+     * Returns the set of currently excluded routes. Any route ID specified in the returned set will not be monitored by
+     * this AWS XRay tracer implementation.
      *
      * @return The IDs of the currently excluded routes for which no tracking will be performed
      */
@@ -198,9 +196,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     /**
-     * Excludes all of the routes matching any of the contained routeIds within the given argument
-     * from tracking by this tracer implementation. Excluded routes will not appear within the AWS
-     * XRay monitoring.
+     * Excludes all of the routes matching any of the contained routeIds within the given argument from tracking by this
+     * tracer implementation. Excluded routes will not appear within the AWS XRay monitoring.
      *
      * @param excludePatterns A set of routeIds which should not be tracked by this tracer
      */
@@ -247,21 +244,20 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     /**
-     * Custom camel event handler that will create a new {@link Subsegment XRay subsegment} in case
-     * the current exchange is forwarded via <code>.to(someEndpoint)</code> to some endpoint and
-     * accordingly closes the subsegment if the execution returns.
+     * Custom camel event handler that will create a new {@link Subsegment XRay subsegment} in case the current exchange
+     * is forwarded via <code>.to(someEndpoint)</code> to some endpoint and accordingly closes the subsegment if the
+     * execution returns.
      * <p/>
-     * Note that AWS XRay is designed to manage {@link Segment segments} and {@link Subsegment
-     * subsegments} within a {@link ThreadLocal} context. Forwarding the exchange to a <em>SEDA</em>
-     * endpoint will thus copy over the exchange to a new thread, though any available segment
-     * information collected by AWS XRay will not be available within that new thread!
+     * Note that AWS XRay is designed to manage {@link Segment segments} and {@link Subsegment subsegments} within a
+     * {@link ThreadLocal} context. Forwarding the exchange to a <em>SEDA</em> endpoint will thus copy over the exchange
+     * to a new thread, though any available segment information collected by AWS XRay will not be available within that
+     * new thread!
      * <p/>
-     * As  {@link ExchangeSendingEvent} and {@link ExchangeSentEvent} both are executed within the
-     * invoking thread (in contrast to {@link org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent
-     * ExchangeCreatedEvent} and {@link org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent
-     * ExchangeCompletedEvent} which both run in the context of the spawned thread), adding further
-     * subsegments by this {@link org.apache.camel.spi.EventNotifier EventNotifier} implementation
-     * should be safe.
+     * As {@link ExchangeSendingEvent} and {@link ExchangeSentEvent} both are executed within the invoking thread (in
+     * contrast to {@link org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent ExchangeCreatedEvent} and
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent ExchangeCompletedEvent} which both run in the
+     * context of the spawned thread), adding further subsegments by this {@link org.apache.camel.spi.EventNotifier
+     * EventNotifier} implementation should be safe.
      */
     private final class XRayEventNotifier extends EventNotifierSupport {
 
@@ -302,7 +298,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment);
                     } catch (AlreadyEmittedException aeEx) {
                         LOG.warn("Ignoring starting of subsegment " + name + " as its parent segment"
-                                + " was already emitted to AWS.");
+                                 + " was already emitted to AWS.");
                     }
                 } else {
                     LOG.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
@@ -331,7 +327,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment.getParent());
                     } catch (AlreadyEmittedException aeEx) {
                         LOG.warn("Ignoring close of subsegment " + entity.getName()
-                                + " as its parent segment was already emitted to AWS");
+                                 + " as its parent segment was already emitted to AWS");
                     }
                 }
             } else {
@@ -353,19 +349,17 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     /**
-     * A custom {@link org.apache.camel.spi.RoutePolicy RoutePolicy} implementation that will create
-     * a new AWS XRay {@link Segment} once a new exchange is being created and the current thread
-     * does not know of an active segment yet. In case the exchange was forwarded within the same
-     * thread (i.e. by forwarding to a direct endpoint via <code>.to("direct:...)</code>) and a
-     * previous exchange already created a {@link Segment} this policy will add a new {@link
-     * Subsegment} for the created exchange to the trace.
+     * A custom {@link org.apache.camel.spi.RoutePolicy RoutePolicy} implementation that will create a new AWS XRay
+     * {@link Segment} once a new exchange is being created and the current thread does not know of an active segment
+     * yet. In case the exchange was forwarded within the same thread (i.e. by forwarding to a direct endpoint via
+     * <code>.to("direct:...)</code>) and a previous exchange already created a {@link Segment} this policy will add a
+     * new {@link Subsegment} for the created exchange to the trace.
      * <p/>
-     * This policy will also manage the termination of created {@link Segment Segments} and {@link
-     * Subsegment Subsegments}.
+     * This policy will also manage the termination of created {@link Segment Segments} and {@link Subsegment
+     * Subsegments}.
      * <p/>
-     * As AWS XRay is designed to manage {@link Segment Segments} in a {@link ThreadLocal} context
-     * this policy will create a new segment for each forward to a new thread i.e. by sending the
-     * exchange to a <em>SEDA</em> endpoint.
+     * As AWS XRay is designed to manage {@link Segment Segments} in a {@link ThreadLocal} context this policy will
+     * create a new segment for each forward to a new thread i.e. by sending the exchange to a <em>SEDA</em> endpoint.
      */
     private final class XRayRoutePolicy extends RoutePolicySupport {
 
@@ -422,7 +416,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     exchange.setProperty(CURRENT_SEGMENT, subsegment);
                 } catch (AlreadyEmittedException aeEx) {
                     LOG.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
-                            + segmentName + " was already emitted before.");
+                             + segmentName + " was already emitted before.");
                 }
             }
         }
@@ -469,8 +463,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
      * Removes invalid characters from AWS XRay (sub-)segment names and replaces the invalid characters with an
      * underscore character.
      *
-     * @param name The name to assign to an AWS XRay (sub-)segment
-     * @return The sanitized name of the (sub-)segment
+     * @param  name The name to assign to an AWS XRay (sub-)segment
+     * @return      The sanitized name of the (sub-)segment
      */
     public static String sanitizeName(String name) {
         // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @

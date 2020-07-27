@@ -26,8 +26,8 @@ import org.slf4j.MarkerFactory;
 /**
  * A logger which logs to a slf4j {@link Logger}.
  * <p/>
- * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
- * which has a <tt>Logger</tt> class.
+ * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits which has a <tt>Logger</tt>
+ * class.
  */
 public class CamelLogger {
     private Logger log;

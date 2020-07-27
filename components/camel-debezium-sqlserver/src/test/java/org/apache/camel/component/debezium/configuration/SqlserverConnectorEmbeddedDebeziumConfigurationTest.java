@@ -31,7 +31,8 @@ public class SqlserverConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testIfCreatesConfig() {
-        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                = new SqlServerConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_user");
         configuration.setMaxQueueSize(1212);
@@ -48,7 +49,8 @@ public class SqlserverConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testIfValidatesConfigurationCorrectly() {
-        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                = new SqlServerConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
@@ -66,7 +68,8 @@ public class SqlserverConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testValidateConfigurationsForAllRequiredFields() {
-        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                = new SqlServerConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseHostname("localhost");

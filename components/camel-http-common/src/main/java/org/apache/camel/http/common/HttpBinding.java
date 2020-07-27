@@ -26,8 +26,8 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
- * A pluggable strategy for configuring the http binding so reading request and writing response
- * can be customized using the Java Servlet API.
+ * A pluggable strategy for configuring the http binding so reading request and writing response can be customized using
+ * the Java Servlet API.
  * <p/>
  * This is also used by the <tt>camel-jetty</tt> component in the <tt>JettyHttpConsumer</tt> class.
  */
@@ -36,17 +36,18 @@ public interface HttpBinding {
     /**
      * Strategy to read the given request and bindings it to the given message.
      *
-     * @param request  the request
-     * @param message  the message to populate with data from request
+     * @param request the request
+     * @param message the message to populate with data from request
      */
     void readRequest(HttpServletRequest request, HttpMessage message);
 
     /**
      * Parses the body from a {@link org.apache.camel.http.common.HttpMessage}
      *
-     * @param httpMessage the http message
-     * @return the parsed body returned as either a {@link java.io.InputStream} or a {@link java.io.Reader}
-     * depending on the {@link #setUseReaderForPayload(boolean)} property.
+     * @param  httpMessage         the http message
+     * @return                     the parsed body returned as either a {@link java.io.InputStream} or a
+     *                             {@link java.io.Reader} depending on the {@link #setUseReaderForPayload(boolean)}
+     *                             property.
      * @throws java.io.IOException can be thrown
      */
     Object parseBody(HttpMessage httpMessage) throws IOException;
@@ -56,13 +57,13 @@ public interface HttpBinding {
      * <p/>
      * Default implementation will delegate to the following methods depending on the status of the exchange
      * <ul>
-     *   <li>doWriteResponse - processing returns a OUT message </li>
-     *   <li>doWriteFaultResponse - processing returns a fault message</li>
-     *   <li>doWriteResponse - processing returns an exception and status code 500</li>
+     * <li>doWriteResponse - processing returns a OUT message</li>
+     * <li>doWriteFaultResponse - processing returns a fault message</li>
+     * <li>doWriteResponse - processing returns an exception and status code 500</li>
      * </ul>
      *
-     * @param exchange the exchange
-     * @param response the http response
+     * @param  exchange            the exchange
+     * @param  response            the http response
      * @throws java.io.IOException can be thrown from http response
      */
     void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException;
@@ -70,8 +71,8 @@ public interface HttpBinding {
     /**
      * Strategy method that writes the response to the http response stream when an exception occurred
      *
-     * @param exception  the exception occurred
-     * @param response   the http response
+     * @param  exception           the exception occurred
+     * @param  response            the http response
      * @throws java.io.IOException can be thrown from http response
      */
     void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException;
@@ -79,9 +80,9 @@ public interface HttpBinding {
     /**
      * Strategy method that writes the response to the http response stream for a fault message
      *
-     * @param message  the fault message
-     * @param response the http response
-     * @param exchange the exchange to provide context for header filtering
+     * @param  message             the fault message
+     * @param  response            the http response
+     * @param  exchange            the exchange to provide context for header filtering
      * @throws java.io.IOException can be thrown from http response
      */
     void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException;
@@ -89,9 +90,9 @@ public interface HttpBinding {
     /**
      * Strategy method that writes the response to the http response stream for an OUT message
      *
-     * @param message  the OUT message
-     * @param response the http response
-     * @param exchange the exchange to provide context for header filtering
+     * @param  message             the OUT message
+     * @param  response            the http response
+     * @param  exchange            the exchange to provide context for header filtering
      * @throws java.io.IOException can be thrown from http response
      */
     void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException;
@@ -99,14 +100,15 @@ public interface HttpBinding {
     /**
      * Should reader by used instead of input stream.
      *
-     * @see #setUseReaderForPayload(boolean) for more details
+     * @see    #setUseReaderForPayload(boolean) for more details
      * @return <tt>true</tt> if reader should be used
      */
     boolean isUseReaderForPayload();
 
     /**
-     * Should the {@link javax.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages in the Camel
-     * {@link org.apache.camel.Message#getBody()} or not. If false then the {@link javax.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
+     * Should the {@link javax.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages
+     * in the Camel {@link org.apache.camel.Message#getBody()} or not. If false then the
+     * {@link javax.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
      * <p/>
      * Is default <tt>false</tt>.
      *
@@ -117,24 +119,25 @@ public interface HttpBinding {
     /**
      * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
      * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
-     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
-     * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is, instead of
+     * the HttpOperationFailedException. The caused exception is required to be serialized.
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      */
     boolean isTransferException();
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
+     * exception's stack trace.
      */
     boolean isMuteException();
 
     /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      */
     boolean isAllowJavaSerializedObject();
 
@@ -143,12 +146,12 @@ public interface HttpBinding {
      * This can be turned on in case HTTP clients do not send streamed data.
      */
     boolean isEagerCheckContentAvailable();
-    
+
     /**
      * Whether to allow Exchange Body HTTP mapping
      */
     boolean isMapHttpMessageBody();
-    
+
     /**
      * Whether to allow Exchange Headers HTTP mapping
      */
@@ -168,24 +171,25 @@ public interface HttpBinding {
     /**
      * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
      * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
-     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
-     * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is, instead of
+     * the HttpOperationFailedException. The caused exception is required to be serialized.
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      */
     void setTransferException(boolean transferException);
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
+     * exception's stack trace.
      */
     void setMuteException(boolean muteException);
 
     /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      *
      * @param allowJavaSerializedObject <tt>true</tt> to allow serializing java objects
      */
@@ -206,14 +210,14 @@ public interface HttpBinding {
      * @param headerFilterStrategy the custom strategy
      */
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
-    
+
     /**
      * Whether to allow Exchange Body HTTP mapping
      * <p/>
      * This is by default turned on. If you disable this then be aware that the Exchange body won't be mapped to HTTP
      */
     void setMapHttpMessageBody(boolean mapHttpMessageBody);
-    
+
     /**
      * Whether to allow Exchange Headers HTTP mapping
      * <p/>
@@ -224,7 +228,8 @@ public interface HttpBinding {
     /**
      * Whether to allow Exchange Form URL Encoded Body HTTP mapping
      * <p/>
-     * This is by default turned on. If you disable this then be aware that the Exchange Form URL Encoded Body won't be mapped to HTTP
+     * This is by default turned on. If you disable this then be aware that the Exchange Form URL Encoded Body won't be
+     * mapped to HTTP
      */
     void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody);
 

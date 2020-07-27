@@ -27,8 +27,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the common parts of all uniVocity
- * {@link org.apache.camel.spi.DataFormat} parsers.
+ * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
  */
 @Metadata(label = "dataformat,transformation,csv", title = "uniVocity")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -138,9 +137,8 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether or not the headers are disabled. When defined, this option
-     * explicitly sets the headers as null which indicates that there is no
-     * header.
+     * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which
+     * indicates that there is no header.
      * <p/>
      * The default value is false
      */
@@ -164,8 +162,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether or not the header must be read in the first line of the test
-     * document
+     * Whether or not the header must be read in the first line of the test document
      * <p/>
      * The default value is false
      */
@@ -239,8 +236,8 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the unmarshalling should produce an iterator that reads the lines
-     * on the fly or if all the lines must be read at one.
+     * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be
+     * read at one.
      * <p/>
      * The default value is false
      */
@@ -253,9 +250,8 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the unmarshalling should produce maps for the lines values
-     * instead of lists. It requires to have header (either defined or
-     * collected).
+     * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header
+     * (either defined or collected).
      * <p/>
      * The default value is false
      */

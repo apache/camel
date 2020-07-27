@@ -26,6 +26,10 @@ import org.apache.camel.spi.Metadata;
 @XmlEnum
 public enum CollectionFormat {
 
-    csv, ssv, tsv, pipes, multi
+    csv,
+    ssv,
+    tsv,
+    pipes,
+    multi
 
 }

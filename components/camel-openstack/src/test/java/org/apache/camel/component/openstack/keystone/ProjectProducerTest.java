@@ -88,7 +88,6 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
         msg.setHeader(KeystoneConstants.DOMAIN_ID, dummyProject.getDomainId());
         msg.setHeader(KeystoneConstants.PARENT_ID, dummyProject.getParentId());
 
-
         producer.process(exchange);
 
         verify(projectService).create(projectCaptor.capture());

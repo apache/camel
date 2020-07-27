@@ -31,8 +31,8 @@ import static org.apache.camel.dataformat.csv.TestUtils.LS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of
- * the <tt>autogenColumns</tt>, <tt>configRef</tt> and <tt>strategyRef</tt> options.
+ * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of the
+ * <tt>autogenColumns</tt>, <tt>configRef</tt> and <tt>strategyRef</tt> options.
  */
 public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
 
@@ -91,6 +91,7 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvMarshalAutogenColumnsSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvMarshalAutogenColumnsSpringTest-context.xml");
     }
 }

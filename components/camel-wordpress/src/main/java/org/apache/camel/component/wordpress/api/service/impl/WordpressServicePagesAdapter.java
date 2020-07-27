@@ -33,11 +33,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using {@link JAXRSClientFactory} to make the API calls.
+ * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using
+ * {@link JAXRSClientFactory} to make the API calls.
  * 
  * @since 0.0.1
  */
-public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAdapter<PagesSPI, Page, PageSearchCriteria> implements WordpressServicePages {
+public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAdapter<PagesSPI, Page, PageSearchCriteria>
+        implements WordpressServicePages {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServicePagesAdapter.class);
 
@@ -55,8 +57,10 @@ public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAd
     public List<Page> list(PageSearchCriteria c) {
         LOGGER.debug("Calling list pages: searchCriteria {}", c);
         checkNotNull(c, "Please provide a search criteria");
-        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(), c.getAuthor(), c.getAuthorExclude(), c.getBefore(), c.getExclude(),
-                             c.getInclude(), c.getMenuOrder(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(), c.getParentExclude(), c.getSlug(), c.getStatus(), c.getFilter());
+        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(),
+                c.getAuthor(), c.getAuthorExclude(), c.getBefore(), c.getExclude(),
+                c.getInclude(), c.getMenuOrder(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(),
+                c.getParentExclude(), c.getSlug(), c.getStatus(), c.getFilter());
     }
     // @formatter:on
 

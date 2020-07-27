@@ -40,16 +40,14 @@ import org.slf4j.LoggerFactory;
 /**
  * PollingConsumer to read Beanstalk jobs.
  * <p/>
- * The consumer may delete the job immediately or based on successful {@link Exchange}
- * completion. The behavior is configurable by <code>consumer.awaitJob</code>
- * flag (by default <code>true</code>)
+ * The consumer may delete the job immediately or based on successful {@link Exchange} completion. The behavior is
+ * configurable by <code>consumer.awaitJob</code> flag (by default <code>true</code>)
  * <p/>
- * This consumer will add a {@link Synchronization} object to every {@link Exchange}
- * object it creates in order to react on successful exchange completion or failure.
+ * This consumer will add a {@link Synchronization} object to every {@link Exchange} object it creates in order to react
+ * on successful exchange completion or failure.
  * <p/>
- * In the case of successful completion, Beanstalk's <code>delete</code> method is
- * called upon the job. In the case of failure the default reaction is to call
- * <code>bury</code>.
+ * In the case of successful completion, Beanstalk's <code>delete</code> method is called upon the job. In the case of
+ * failure the default reaction is to call <code>bury</code>.
  * <p/>
  * The reaction on failures is configurable: possible variants are "bury", "release" or "delete"
  */
@@ -57,8 +55,9 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(BeanstalkConsumer.class);
 
-    private static final String[] STATS_KEY_STR = new String[]{"tube", "state"};
-    private static final String[] STATS_KEY_INT = new String[]{"age", "time-left", "timeouts", "releases", "buries", "kicks"};
+    private static final String[] STATS_KEY_STR = new String[] { "tube", "state" };
+    private static final String[] STATS_KEY_INT
+            = new String[] { "age", "time-left", "timeouts", "releases", "buries", "kicks" };
 
     private BeanstalkCommand onFailure;
     private boolean useBlockIO;
@@ -181,7 +180,8 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "Beanstalk-Consumer");
+        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                "Beanstalk-Consumer");
         executor.execute(initTask);
         sync = new Sync();
         super.doStart();
@@ -234,7 +234,9 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             try {
                 executor.submit(new RunCommand(failureCommand, exchange)).get();
             } catch (Exception e) {
-                LOG.error(String.format("%s could not run failure of exchange %s", failureCommand.getClass().getName(), exchange), e);
+                LOG.error(
+                        String.format("%s could not run failure of exchange %s", failureCommand.getClass().getName(), exchange),
+                        e);
             }
         }
 
@@ -253,12 +255,14 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                     try {
                         command.act(client, exchange);
                     } catch (BeanstalkException e) {
-                        LOG.warn(String.format("Post-processing %s of exchange %s failed, retrying.", command.getClass().getName(), exchange), e);
+                        LOG.warn(String.format("Post-processing %s of exchange %s failed, retrying.",
+                                command.getClass().getName(), exchange), e);
                         resetClient();
                         command.act(client, exchange);
                     }
                 } catch (final Exception e) {
-                    LOG.error(String.format("%s could not post-process exchange %s", command.getClass().getName(), exchange), e);
+                    LOG.error(String.format("%s could not post-process exchange %s", command.getClass().getName(), exchange),
+                            e);
                     exchange.setException(e);
                 }
             }

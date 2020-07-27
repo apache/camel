@@ -31,14 +31,14 @@ public class LambdaComponent extends DefaultComponent {
 
     @Metadata
     private LambdaConfiguration configuration = new LambdaConfiguration();
-    
+
     public LambdaComponent() {
         this(null);
     }
 
     public LambdaComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new LambdaComponentVerifierExtension());
     }
 
@@ -51,13 +51,14 @@ public class LambdaComponent extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAwsLambdaClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAwsLambdaClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or awsLambdaClient must be specified");
         }
 
         return endpoint;
     }
-    
+
     public LambdaConfiguration getConfiguration() {
         return configuration;
     }

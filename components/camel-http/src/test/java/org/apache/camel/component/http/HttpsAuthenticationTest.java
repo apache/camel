@@ -54,13 +54,12 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), user, password)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/",
+                        new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), user, password))
+                .create();
         localServer.start();
 
         super.setUp();
@@ -80,8 +79,9 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     public void httpsGetWithAuthentication() throws Exception {
 
         Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
-            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters", exchange1 -> {
-            });
+                                             + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters",
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }

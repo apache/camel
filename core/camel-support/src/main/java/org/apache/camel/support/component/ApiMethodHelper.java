@@ -57,8 +57,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Create a helper to work with a {@link ApiMethod}, using optional method aliases.
-     * @param apiMethodEnum {@link ApiMethod} enumeration class
-     * @param aliases Aliases mapped to actual method names
+     * 
+     * @param apiMethodEnum     {@link ApiMethod} enumeration class
+     * @param aliases           Aliases mapped to actual method names
      * @param nullableArguments names of arguments that default to null value
      */
     public ApiMethodHelper(Class<T> apiMethodEnum, Map<String, String> aliases, List<String> nullableArguments) {
@@ -148,9 +149,10 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 // also collect argument names for all methods, and detect clashes here
                 final Class<?> previousType = tmpValidArguments.get(argName);
                 if (previousType != null && previousType != argType) {
-                    throw new IllegalArgumentException(String.format(
-                            "Argument %s has ambiguous types (%s, %s) across methods!",
-                            name, previousType, argType));
+                    throw new IllegalArgumentException(
+                            String.format(
+                                    "Argument %s has ambiguous types (%s, %s) across methods!",
+                                    name, previousType, argType));
                 } else if (previousType == null) {
                     tmpValidArguments.put(argName, argType);
                 }
@@ -214,23 +216,27 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     }
 
     /**
-     * Gets methods that match the given name and arguments.<p/>
+     * Gets methods that match the given name and arguments.
+     * <p/>
      * Note that the args list is a required subset of arguments for returned methods.
      *
-     * @param name case sensitive method name or alias to lookup
-     * @return non-null unmodifiable list of methods that take all of the given arguments, empty if there is no match
+     * @param  name case sensitive method name or alias to lookup
+     * @return      non-null unmodifiable list of methods that take all of the given arguments, empty if there is no
+     *              match
      */
     public List<ApiMethod> getCandidateMethods(String name) {
         return getCandidateMethods(name, Collections.emptyList());
     }
 
     /**
-     * Gets methods that match the given name and arguments.<p/>
+     * Gets methods that match the given name and arguments.
+     * <p/>
      * Note that the args list is a required subset of arguments for returned methods.
      *
-     * @param name case sensitive method name or alias to lookup
-     * @param argNames unordered required argument names
-     * @return non-null unmodifiable list of methods that take all of the given arguments, empty if there is no match
+     * @param  name     case sensitive method name or alias to lookup
+     * @param  argNames unordered required argument names
+     * @return          non-null unmodifiable list of methods that take all of the given arguments, empty if there is no
+     *                  match
      */
     public List<ApiMethod> getCandidateMethods(String name, Collection<String> argNames) {
         List<T> methods = methodMap.get(name);
@@ -263,10 +269,12 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     /**
      * Filters a list of methods to those that take the given set of arguments.
      *
-     * @param methods list of methods to filter
-     * @param matchType whether the arguments are an exact match, a subset or a super set of method args
-     * @return methods with arguments that satisfy the match type.<p/>
-     * For SUPER_SET match, if methods with exact match are found, methods that take a subset are ignored
+     * @param  methods   list of methods to filter
+     * @param  matchType whether the arguments are an exact match, a subset or a super set of method args
+     * @return           methods with arguments that satisfy the match type.
+     *                   <p/>
+     *                   For SUPER_SET match, if methods with exact match are found, methods that take a subset are
+     *                   ignored
      */
     public List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType) {
         return filterMethods(methods, matchType, Collections.emptyList());
@@ -275,11 +283,13 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     /**
      * Filters a list of methods to those that take the given set of arguments.
      *
-     * @param methods list of methods to filter
-     * @param matchType whether the arguments are an exact match, a subset or a super set of method args
-     * @param argNames argument names to filter the list
-     * @return methods with arguments that satisfy the match type.<p/>
-     * For SUPER_SET match, if methods with exact match are found, methods that take a subset are ignored
+     * @param  methods   list of methods to filter
+     * @param  matchType whether the arguments are an exact match, a subset or a super set of method args
+     * @param  argNames  argument names to filter the list
+     * @return           methods with arguments that satisfy the match type.
+     *                   <p/>
+     *                   For SUPER_SET match, if methods with exact match are found, methods that take a subset are
+     *                   ignored
      */
     public List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType, Collection<String> argNames) {
         // original arguments
@@ -342,8 +352,8 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
         List<ApiMethod> methodList = result.isEmpty()
                 ? extraArgs == null
-                ? nullArgs
-                : extraArgs
+                        ? nullArgs
+                        : extraArgs
                 : result;
 
         // preference order is exact match, matches with extra args, matches with null args
@@ -352,8 +362,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Gets argument types and names for all overloaded methods and aliases with the given name.
-     * @param name method name, either an exact name or an alias, exact matches are checked first
-     * @return list of arguments of the form Class type1, String name1, Class type2, String name2,...
+     * 
+     * @param  name method name, either an exact name or an alias, exact matches are checked first
+     * @return      list of arguments of the form Class type1, String name1, Class type2, String name2,...
      */
     public List<Object> getArguments(final String name) throws IllegalArgumentException {
         List<Object> arguments = argumentsMap.get(name);
@@ -373,9 +384,10 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Get missing properties.
-     * @param methodName method name
-     * @param argNames available arguments
-     * @return Set of missing argument names
+     * 
+     * @param  methodName method name
+     * @param  argNames   available arguments
+     * @return            Set of missing argument names
      */
     public Set<String> getMissingProperties(String methodName, Set<String> argNames) {
         final List<Object> argsWithTypes = getArguments(methodName);
@@ -393,6 +405,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Returns alias map.
+     * 
      * @return alias names mapped to method names.
      */
     public Map<String, Set<String>> getAliases() {
@@ -401,6 +414,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Returns argument types and names used by all methods.
+     * 
      * @return map with argument names as keys, and types as values
      */
     public Map<String, Class<?>> allArguments() {
@@ -409,6 +423,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Returns argument names that can be set to null if not specified.
+     * 
      * @return list of argument names
      */
     public List<String> getNullableArguments() {
@@ -417,8 +432,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Get the type for the given argument name.
-     * @param argName argument name
-     * @return argument type
+     * 
+     * @param  argName argument name
+     * @return         argument type
      */
     public Class<?> getType(String argName) throws IllegalArgumentException {
         final Class<?> type = validArguments.get(argName);
@@ -435,19 +451,19 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         Comparable<ApiMethod> highest = null;
         for (ApiMethod method : filteredMethods) {
             if (highest == null || highest.compareTo(method) <= 0) {
-                highest = (Comparable<ApiMethod>)method;
+                highest = (Comparable<ApiMethod>) method;
             }
         }
-        return (ApiMethod)highest;
+        return (ApiMethod) highest;
     }
 
     /**
      * Invokes given method with argument values from given properties.
      *
-     * @param proxy Proxy object for invoke
-     * @param method method to invoke
-     * @param properties Map of arguments
-     * @return result of method invocation
+     * @param  proxy                                  Proxy object for invoke
+     * @param  method                                 method to invoke
+     * @param  properties                             Map of arguments
+     * @return                                        result of method invocation
      * @throws org.apache.camel.RuntimeCamelException on errors
      */
     public static Object invokeMethod(Object proxy, ApiMethod method, Map<String, Object> properties)
@@ -516,7 +532,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     }
 
     public enum MatchType {
-        EXACT, SUBSET, SUPER_SET
+        EXACT,
+        SUBSET,
+        SUPER_SET
     }
 
 }

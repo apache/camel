@@ -47,17 +47,17 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
-    
+
     private static Calculator.Client thriftClient;
-    
+
     private TProtocol protocol;
     private TTransport transport;
-    
+
     @BeforeEach
     public void startThriftZlibClient() throws IOException, TTransportException {
         if (transport == null) {
             LOG.info("Connecting to the Thrift server with zlib compression on port: {}", THRIFT_TEST_PORT);
-            
+
             transport = new TSocket("localhost", THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT);
             protocol = new TBinaryProtocol(new TZlibTransport(transport));
             thriftClient = new Calculator.Client(protocol);
@@ -74,29 +74,29 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
             LOG.info("Connection to the Thrift server closed");
         }
     }
-    
+
     @Test
     public void testCalculateMethodInvocation() throws Exception {
         LOG.info("Test Calculate method invocation");
-        
+
         Work work = new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY);
-        
+
         int calculateResult = thriftClient.calculate(1, work);
-        
+
         MockEndpoint mockEndpoint = getMockEndpoint("mock:thrift-secure-service");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.expectedHeaderValuesReceivedInAnyOrder(ThriftConstants.THRIFT_METHOD_NAME_HEADER, "calculate");
         mockEndpoint.assertIsSatisfied();
-        
+
         assertEquals(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2, calculateResult);
     }
-    
+
     @Test
     public void testEchoMethodInvocation() throws Exception {
         LOG.info("Test Echo method invocation");
-        
+
         Work echoResult = thriftClient.echo(new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY));
-        
+
         MockEndpoint mockEndpoint = getMockEndpoint("mock:thrift-secure-service");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.expectedHeaderValuesReceivedInAnyOrder(ThriftConstants.THRIFT_METHOD_NAME_HEADER, "echo");
@@ -107,21 +107,24 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
         assertEquals(THRIFT_TEST_NUM1, echoResult.num1);
         assertEquals(Operation.MULTIPLY, echoResult.op);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                
-                from("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?compressionType=ZLIB&synchronous=true")
-                    .to("mock:thrift-secure-service").choice()
-                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate")).setBody(simple(new Integer(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
-                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo")).setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
+
+                from("thrift://localhost:" + THRIFT_TEST_PORT
+                     + "/org.apache.camel.component.thrift.generated.Calculator?compressionType=ZLIB&synchronous=true")
+                             .to("mock:thrift-secure-service").choice()
+                             .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
+                             .setBody(simple(new Integer(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
+                             .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo"))
+                             .setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
             }
         };
     }
-    
+
     public class CalculatorMessageBuilder {
         public Work echo(Work work) {
             return work.deepCopy();

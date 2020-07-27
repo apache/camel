@@ -51,7 +51,6 @@ public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
         assertEquals(client, testEndpoint.getMongoConnection());
     }
 
-
     @Test
     public void checkConnectionBothExisting() {
         MongoClient client1 = container.createClient();

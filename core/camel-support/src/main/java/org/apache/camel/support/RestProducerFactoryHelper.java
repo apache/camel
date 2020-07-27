@@ -27,12 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper for creating configured {@link Component}s used by the
- * {@link RestProducerFactory} contract.
+ * Helper for creating configured {@link Component}s used by the {@link RestProducerFactory} contract.
  *
- * When {@link RestProducerFactory} contract is used it could instantiate, start
- * and register the underlying component. During this process we have no way of
- * configuring component properties, most notably the SSL properties.
+ * When {@link RestProducerFactory} contract is used it could instantiate, start and register the underlying component.
+ * During this process we have no way of configuring component properties, most notably the SSL properties.
  */
 public final class RestProducerFactoryHelper {
 
@@ -42,15 +40,19 @@ public final class RestProducerFactoryHelper {
         // helper class
     }
 
-    public static void setupComponentFor(final String url, final CamelContext camelContext,
-        final Map<String, Object> componentProperties) throws Exception {
+    public static void setupComponentFor(
+            final String url, final CamelContext camelContext,
+            final Map<String, Object> componentProperties)
+            throws Exception {
         final String scheme = StringHelper.before(url, ":");
 
         setupComponent(scheme, camelContext, componentProperties);
     }
 
-    public static Component setupComponent(final String componentName, final CamelContext camelContext,
-                                           final Map<String, Object> componentProperties) throws Exception {
+    public static Component setupComponent(
+            final String componentName, final CamelContext camelContext,
+            final Map<String, Object> componentProperties)
+            throws Exception {
         if (componentName == null) {
             return null;
         }
@@ -63,10 +65,10 @@ public final class RestProducerFactoryHelper {
         if (existing != null) {
             if (!componentProperties.isEmpty()) {
                 LOG.warn(
-                    "Found existing `{}` component already present in the Camel context. Not setting component"
-                        + " properties on the existing component. You can either prevent the component creation or"
-                        + " set the given properties on the component. Component properties given: {}",
-                    componentName, componentProperties);
+                        "Found existing `{}` component already present in the Camel context. Not setting component"
+                         + " properties on the existing component. You can either prevent the component creation or"
+                         + " set the given properties on the component. Component properties given: {}",
+                        componentName, componentProperties);
             }
 
             return existing;

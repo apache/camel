@@ -33,7 +33,8 @@ public class CollectionHelperTest {
 
     @Test
     public void testCollectionAsCommaDelimitedString() {
-        assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(Arrays.asList("Claus", "Willem", "Jonathan")));
+        assertEquals("Claus,Willem,Jonathan",
+                CollectionHelper.collectionAsCommaDelimitedString(Arrays.asList("Claus", "Willem", "Jonathan")));
 
         assertEquals("", CollectionHelper.collectionAsCommaDelimitedString(null));
 
@@ -48,7 +49,7 @@ public class CollectionHelperTest {
 
         assertEquals(2, CollectionHelper.size(map).intValue());
 
-        String[] array = new String[]{"Claus", "Willem"};
+        String[] array = new String[] { "Claus", "Willem" };
         assertEquals(2, CollectionHelper.size(array).intValue());
     }
 

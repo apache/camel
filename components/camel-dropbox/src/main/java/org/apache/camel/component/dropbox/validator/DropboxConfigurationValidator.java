@@ -26,7 +26,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class DropboxConfigurationValidator {
 
-    private DropboxConfigurationValidator() { }
+    private DropboxConfigurationValidator() {
+    }
 
     public static void validateCommonProperties(DropboxConfiguration configuration) throws DropboxException {
         if (configuration.getAccessToken() == null || configuration.getAccessToken().equals("")) {
@@ -41,7 +42,8 @@ public final class DropboxConfigurationValidator {
         validateRemotePath(remotePath);
     }
 
-    public static void validatePutOp(String localPath, String remotePath, DropboxUploadMode uploadMode) throws DropboxException {
+    public static void validatePutOp(String localPath, String remotePath, DropboxUploadMode uploadMode)
+            throws DropboxException {
         validateLocalPath(localPath);
         //remote path is optional
         if (remotePath != null) {

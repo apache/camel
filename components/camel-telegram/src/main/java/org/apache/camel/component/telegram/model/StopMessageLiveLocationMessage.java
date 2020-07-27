@@ -65,4 +65,3 @@ public class StopMessageLiveLocationMessage extends OutgoingMessage {
         return sb.toString();
     }
 }
-

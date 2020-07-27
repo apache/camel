@@ -56,9 +56,9 @@ import org.apache.camel.util.ObjectHelper;
 public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     private static final String[] RESERVED_PROPERTIES = new String[] {
-    Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
-    Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
-    Route.REST_PROPERTY};
+            Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
+            Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
+            Route.REST_PROPERTY };
 
     public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
         super(camelContext, (RouteDefinition) definition);
@@ -67,36 +67,31 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     /**
      * Advices this route with the route builder.
      * <p/>
-     * <b>Important:</b> It is recommended to only advice a given route once
-     * (you can of course advice multiple routes). If you do it multiple times,
-     * then it may not work as expected, especially when any kind of error
-     * handling is involved. The Camel team plan for Camel 3.0 to support this
-     * as internal refactorings in the routing engine is needed to support this
-     * properly.
+     * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
+     * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
+     * involved. The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is
+     * needed to support this properly.
      * <p/>
-     * You can use a regular {@link RouteBuilder} but the specialized
-     * {@link AdviceWithRouteBuilder} has additional features when using the
-     * <a href="http://camel.apache.org/advicewith.html">advice with</a>
-     * feature. We therefore suggest you to use the
-     * {@link AdviceWithRouteBuilder}.
+     * You can use a regular {@link RouteBuilder} but the specialized {@link AdviceWithRouteBuilder} has additional
+     * features when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature. We therefore
+     * suggest you to use the {@link AdviceWithRouteBuilder}.
      * <p/>
-     * The advice process will add the interceptors, on exceptions, on
-     * completions etc. configured from the route builder to this route.
+     * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
+     * builder to this route.
      * <p/>
-     * This is mostly used for testing purpose to add interceptors and the likes
-     * to an existing route.
+     * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
      * <p/>
-     * Will stop and remove the old route from camel context and add and start
-     * this new advised route.
+     * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param definition the model definition
-     * @param camelContext the camel context
-     * @param builder the route builder
-     * @return a new route which is this route merged with the route builder
-     * @throws Exception can be thrown from the route builder
-     * @see AdviceWithRouteBuilder
+     * @param  definition   the model definition
+     * @param  camelContext the camel context
+     * @param  builder      the route builder
+     * @return              a new route which is this route merged with the route builder
+     * @throws Exception    can be thrown from the route builder
+     * @see                 AdviceWithRouteBuilder
      */
-    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
+    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder)
+            throws Exception {
         ObjectHelper.notNull(definition, "RouteDefinition");
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
@@ -127,33 +122,27 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     /**
      * Advices this route with the route builder.
      * <p/>
-     * <b>Important:</b> It is recommended to only advice a given route once
-     * (you can of course advice multiple routes). If you do it multiple times,
-     * then it may not work as expected, especially when any kind of error
-     * handling is involved. The Camel team plan for Camel 3.0 to support this
-     * as internal refactorings in the routing engine is needed to support this
-     * properly.
+     * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
+     * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
+     * involved. The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is
+     * needed to support this properly.
      * <p/>
      * You can use a regular {@link RouteBuilder} but the specialized
-     * {@link org.apache.camel.builder.AdviceWithRouteBuilder} has additional
-     * features when using the
-     * <a href="http://camel.apache.org/advicewith.html">advice with</a>
-     * feature. We therefore suggest you to use the
+     * {@link org.apache.camel.builder.AdviceWithRouteBuilder} has additional features when using the
+     * <a href="http://camel.apache.org/advicewith.html">advice with</a> feature. We therefore suggest you to use the
      * {@link org.apache.camel.builder.AdviceWithRouteBuilder}.
      * <p/>
-     * The advice process will add the interceptors, on exceptions, on
-     * completions etc. configured from the route builder to this route.
+     * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
+     * builder to this route.
      * <p/>
-     * This is mostly used for testing purpose to add interceptors and the likes
-     * to an existing route.
+     * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
      * <p/>
-     * Will stop and remove the old route from camel context and add and start
-     * this new advised route.
+     * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param builder the route builder
-     * @return a new route which is this route merged with the route builder
+     * @param  builder   the route builder
+     * @return           a new route which is this route merged with the route builder
      * @throws Exception can be thrown from the route builder
-     * @see AdviceWithRouteBuilder
+     * @see              AdviceWithRouteBuilder
      */
     @SuppressWarnings("deprecation")
     public RouteDefinition adviceWith(RouteBuilder builder) throws Exception {
@@ -166,7 +155,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
         if (builder instanceof AdviceWithRouteBuilder) {
-            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
+            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder) builder;
             arb.setOriginalRoute(definition);
         }
 
@@ -176,7 +165,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // was logging enabled or disabled
         boolean logRoutesAsXml = true;
         if (builder instanceof AdviceWithRouteBuilder) {
-            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
+            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder) builder;
             logRoutesAsXml = arb.isLogRouteAsXml();
         }
 
@@ -184,7 +173,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // we can only advice with a route builder without any routes
         if (!builder.getRouteCollection().getRoutes().isEmpty()) {
-            throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes. Remove all routes from the route builder.");
+            throw new IllegalArgumentException(
+                    "You can only advice from a RouteBuilder which has no existing routes. Remove all routes from the route builder.");
         }
         // we can not advice with error handlers (if you added a new error
         // handler in the route builder)
@@ -193,8 +183,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // context scoped error handler, in case no error handlers was
         // configured
         if (builder.getRouteCollection().getErrorHandlerFactory() != null
-            && ecc.getErrorHandlerFactory() != builder.getRouteCollection().getErrorHandlerFactory()) {
-            throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
+                && ecc.getErrorHandlerFactory() != builder.getRouteCollection().getErrorHandlerFactory()) {
+            throw new IllegalArgumentException(
+                    "You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 
         String beforeAsXml = null;
@@ -380,7 +371,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // validate route has output processors
         if (!hasOutputs(definition.getOutputs(), true)) {
             String at = definition.getInput().toString();
-            Exception cause = new IllegalArgumentException("Route " + definition.getId() + " has no output processors."
+            Exception cause = new IllegalArgumentException(
+                    "Route " + definition.getId() + " has no output processors."
                                                            + " You need to add outputs to the route such as to(\"log:foo\").");
             throw new FailedToCreateRouteException(definition.getId(), definition.toString(), at, cause);
         }
@@ -430,7 +422,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // wrap in route inflight processor to track number of inflight exchanges for the route
-        internal.addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(camelContext.getInflightRepository(), route.getRouteId()));
+        internal.addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(
+                camelContext.getInflightRepository(), route.getRouteId()));
 
         // wrap in JMX instrumentation processor that is used for performance stats
         ManagementInterceptStrategy managementInterceptStrategy = route.getManagementInterceptStrategy();
@@ -444,7 +437,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // add advices
         if (definition.getRestBindingDefinition() != null) {
             try {
-                internal.addAdvice(new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
+                internal.addAdvice(
+                        new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -481,7 +475,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (task != null) {
             task.setRoute(route);
         }
-        CamelInternalProcessor.RouteLifecycleAdvice task2 = internal.getAdvice(CamelInternalProcessor.RouteLifecycleAdvice.class);
+        CamelInternalProcessor.RouteLifecycleAdvice task2
+                = internal.getAdvice(CamelInternalProcessor.RouteLifecycleAdvice.class);
         if (task2 != null) {
             task2.setRoute(route);
         }
@@ -519,7 +514,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                     final String val = parseString(prop.getValue());
                     for (String property : RESERVED_PROPERTIES) {
                         if (property.equalsIgnoreCase(key)) {
-                            throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
+                            throw new IllegalArgumentException(
+                                    "Cannot set route property " + property + " as it is a reserved property");
                         }
                     }
                     routeProperties.put(key, val);

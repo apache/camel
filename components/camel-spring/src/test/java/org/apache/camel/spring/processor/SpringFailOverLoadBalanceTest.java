@@ -22,7 +22,7 @@ import org.apache.camel.processor.FailOverLoadBalanceTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringFailOverLoadBalanceTest extends FailOverLoadBalanceTest {
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/failOverLoadBalance.xml");

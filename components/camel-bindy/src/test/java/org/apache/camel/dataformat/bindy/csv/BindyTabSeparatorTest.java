@@ -40,7 +40,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         PurchaseOrder order = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
-        
+
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());
@@ -75,14 +75,14 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:unmarshal",
                 "123\tCamel in Action\t2\t\t\n456\tCamel in Action\t1\t\t\t\n"
-                        + "456\tCamel in Action\t2\t\t\n456\tCamel in Action\t1\t\t\t\n", Exchange.CONTENT_ENCODING, "iso8859-1");
+                                                       + "456\tCamel in Action\t2\t\t\n456\tCamel in Action\t1\t\t\t\n",
+                Exchange.CONTENT_ENCODING, "iso8859-1");
 
         assertMockEndpointsSatisfied();
 
-              
-        List<PurchaseOrder> orders = (List<PurchaseOrder>)mock.getReceivedExchanges().get(0).getIn().getBody();
+        List<PurchaseOrder> orders = (List<PurchaseOrder>) mock.getReceivedExchanges().get(0).getIn().getBody();
         PurchaseOrder order = orders.get(0);
-        
+
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());
@@ -114,7 +114,8 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyCsvDataFormat bindy = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder.class);
+                BindyCsvDataFormat bindy
+                        = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder.class);
 
                 from("direct:marshal")
                         .marshal(bindy)

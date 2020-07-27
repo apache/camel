@@ -81,7 +81,8 @@ public class ConvertBodyTest extends ContextTestSupport {
         // etc
         getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
 
-        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8").withBody("Hello World").build();
+        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8")
+                .withBody("Hello World").build();
 
         template.send("direct:foo", srcExchange);
 

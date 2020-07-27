@@ -44,7 +44,8 @@ final class FrameworkMethodCdiInjection extends Statement {
         Object[] parameters = new Object[types.length];
         for (int i = 0; i < types.length; i++) {
             // TODO: use a proper CreationalContext...
-            parameters[i] = manager.getInjectableReference(new FrameworkMethodInjectionPoint(method.getMethod(), i, manager), manager.createCreationalContext(null));
+            parameters[i] = manager.getInjectableReference(new FrameworkMethodInjectionPoint(method.getMethod(), i, manager),
+                    manager.createCreationalContext(null));
         }
 
         method.invokeExplosively(test, parameters);

@@ -27,10 +27,13 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Service Accounts.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account", syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true, category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account",
+             syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true,
+             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component, KubernetesConfiguration config) {
+    public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component,
+                                             KubernetesConfiguration config) {
         super(uri, component, config);
     }
 

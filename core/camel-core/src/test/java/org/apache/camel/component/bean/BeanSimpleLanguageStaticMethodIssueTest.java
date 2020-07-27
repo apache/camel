@@ -39,9 +39,9 @@ public class BeanSimpleLanguageStaticMethodIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setProperty("foo").method(System.class, "currentTimeMillis")
-                    .setProperty("bar").simple("${bean:type:java.lang.System?method=currentTimeMillis}")
-                    .to("mock:result");
+                        .setProperty("foo").method(System.class, "currentTimeMillis")
+                        .setProperty("bar").simple("${bean:type:java.lang.System?method=currentTimeMillis}")
+                        .to("mock:result");
             }
         };
     }

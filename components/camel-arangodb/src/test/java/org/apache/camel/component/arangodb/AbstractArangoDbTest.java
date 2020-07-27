@@ -26,7 +26,6 @@ import org.junit.jupiter.api.BeforeAll;
 
 public class AbstractArangoDbTest extends CamelTestSupport {
 
-
     protected static final String DATABASE_NAME = "dbTest";
     protected static final String COLLECTION_NAME = "camelTest";
     protected static ArangoDbContainer container;

@@ -60,7 +60,7 @@ public class IsMockEndpointsFileTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/input")
-                    .choice()
+                        .choice()
                         .when(bodyAs(String.class).contains("Camel")).to("file:target/messages/camel")
                         .otherwise().to("file:target/messages/others");
             }

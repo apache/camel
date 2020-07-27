@@ -26,7 +26,7 @@ public final class ResteasyConstants {
     public static final String RESTEASY_USERNAME = "CamelResteasyLogin";
     public static final String RESTEASY_PASSWORD = "CamelResteasyPassword";
     public static final String RESTEASY_CONTEXT_PATH = "CamelResteasyContextPath";
-    public static final String RESTEASY_RESPONSE =  "CamelResteasyResponse";
+    public static final String RESTEASY_RESPONSE = "CamelResteasyResponse";
     public static final String RESTEASY_HTTP_METHOD = "CamelResteasyHttpMethod";
     public static final String RESTEASY_HTTP_REQUEST = "CamelResteasyHttpRequest";
     public static final String RESTEASY_PROXY_PRODUCER_EXCEPTION = "CamelResteasyProxyProducerException";

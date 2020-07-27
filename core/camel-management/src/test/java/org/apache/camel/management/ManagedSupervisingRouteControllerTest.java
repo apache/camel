@@ -64,7 +64,8 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routecontrollers,name=DefaultSupervisingRouteController");
+        ObjectName on = ObjectName
+                .getInstance("org.apache.camel:context=camel-1,type=routecontrollers,name=DefaultSupervisingRouteController");
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
@@ -90,7 +91,8 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
             assertEquals(2, exhausted.intValue());
         });
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "routeStatus", new Object[]{true, true, true}, new String[]{"boolean", "boolean", "boolean"});
+        TabularData data = (TabularData) mbeanServer.invoke(on, "routeStatus", new Object[] { true, true, true },
+                new String[] { "boolean", "boolean", "boolean" });
         assertNotNull(data);
         assertEquals(3, data.size());
     }

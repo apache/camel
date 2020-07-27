@@ -58,7 +58,8 @@ public class IAM2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getIamClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getIamClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon IAM client or accessKey and secretKey must be specified");
         }
 

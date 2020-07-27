@@ -109,8 +109,9 @@ public class AbstractEndpointBuilder {
         return answer;
     }
 
-    private static void computeProperties(Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry,
-                                          Map<String, Object> params, Map<String, Object> properties) {
+    private static void computeProperties(
+            Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry,
+            Map<String, Object> params, Map<String, Object> properties) {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();

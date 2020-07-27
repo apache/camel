@@ -28,7 +28,8 @@ public class SpringAdviceWithTwoRoutesOnExceptionTest extends AdviceWithTwoRoute
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/interceptor/SpringAdviceWithTwoRoutesOnExceptionTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/interceptor/SpringAdviceWithTwoRoutesOnExceptionTest.xml");
     }
 
 }

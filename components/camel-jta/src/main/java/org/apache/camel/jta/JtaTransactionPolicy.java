@@ -30,11 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Sets a proper error handler. This class is based on
- * {@link org.apache.camel.spring.spi.SpringTransactionPolicy}.
+ * Sets a proper error handler. This class is based on {@link org.apache.camel.spring.spi.SpringTransactionPolicy}.
  * <p>
- * This class requires the resource {@link TransactionManager} to be available
- * through JNDI url &quot;java:/TransactionManager&quot;
+ * This class requires the resource {@link TransactionManager} to be available through JNDI url
+ * &quot;java:/TransactionManager&quot;
  */
 public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
@@ -88,9 +87,10 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         JtaTransactionErrorHandlerBuilder txBuilder;
         if ((builder != null) && builder.supportTransacted()) {
             if (!(builder instanceof JtaTransactionErrorHandlerBuilder)) {
-                throw new RuntimeCamelException("The given transactional error handler builder '" + builder
-                        + "' is not of type '" + JtaTransactionErrorHandlerBuilder.class.getName()
-                        + "' which is required in this environment!");
+                throw new RuntimeCamelException(
+                        "The given transactional error handler builder '" + builder
+                                                + "' is not of type '" + JtaTransactionErrorHandlerBuilder.class.getName()
+                                                + "' which is required in this environment!");
             }
             LOG.debug("The ErrorHandlerBuilder configured is a JtaTransactionErrorHandlerBuilder: {}", builder);
             txBuilder = (JtaTransactionErrorHandlerBuilder) builder.cloneBuilder();
@@ -116,8 +116,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         return answer;
     }
 
-    protected JtaTransactionErrorHandler createTransactionErrorHandler(Route route, Processor processor,
-                                                                       ErrorHandlerBuilder builder) {
+    protected JtaTransactionErrorHandler createTransactionErrorHandler(
+            Route route, Processor processor,
+            ErrorHandlerBuilder builder) {
         JtaTransactionErrorHandler answer;
         try {
             answer = (JtaTransactionErrorHandler) ErrorHandlerReifier.reifier(route, builder).createErrorHandler(processor);

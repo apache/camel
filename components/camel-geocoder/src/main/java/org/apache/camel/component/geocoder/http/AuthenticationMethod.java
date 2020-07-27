@@ -21,5 +21,6 @@ package org.apache.camel.component.geocoder.http;
  */
 public enum AuthenticationMethod {
 
-    Basic, Digest
+    Basic,
+    Digest
 }

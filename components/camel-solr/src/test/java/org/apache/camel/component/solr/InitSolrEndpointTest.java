@@ -40,21 +40,22 @@ public class InitSolrEndpointTest extends SolrTestSupport {
         SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl, SolrEndpoint.class);
         assertNotNull(solrEndpoint);
         assertEquals(SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getStreamingQueueSize(), "queue size incorrect");
-        assertEquals(SolrConstants.DEFAULT_STREAMING_THREAD_COUNT, solrEndpoint.getStreamingThreadCount(), "thread count incorrect");
+        assertEquals(SolrConstants.DEFAULT_STREAMING_THREAD_COUNT, solrEndpoint.getStreamingThreadCount(),
+                "thread count incorrect");
     }
 
     @Test
     public void wrongURLFormatFailsEndpointCreation() throws Exception {
         assertThrows(ResolveEndpointFailedException.class,
-            () -> context.getEndpoint("solr://localhost:x99/solr"));
+                () -> context.getEndpoint("solr://localhost:x99/solr"));
     }
 
     private String getFullOptions() {
         return "?streamingQueueSize=5&streamingThreadCount=1"
-                + "&maxRetries=1&soTimeout=100&connectionTimeout=100"
-                + "&defaultMaxConnectionsPerHost=100&maxTotalConnections=100"
-                + "&followRedirects=false&allowCompression=true"
-                + "&requestHandler=/update"
-                + "&username=solr&password=SolrRocks";
+               + "&maxRetries=1&soTimeout=100&connectionTimeout=100"
+               + "&defaultMaxConnectionsPerHost=100&maxTotalConnections=100"
+               + "&followRedirects=false&allowCompression=true"
+               + "&requestHandler=/update"
+               + "&username=solr&password=SolrRocks";
     }
 }

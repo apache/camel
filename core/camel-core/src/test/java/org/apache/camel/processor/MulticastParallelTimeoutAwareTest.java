@@ -54,9 +54,10 @@ public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast(new MyAggregationStrategy()).parallelProcessing().timeout(1000).to("direct:a", "direct:b", "direct:c")
-                    // use end to indicate end of multicast route
-                    .end().to("mock:result");
+                from("direct:start").multicast(new MyAggregationStrategy()).parallelProcessing().timeout(1000)
+                        .to("direct:a", "direct:b", "direct:c")
+                        // use end to indicate end of multicast route
+                        .end().to("mock:result");
 
                 from("direct:a").delay(2000).setBody(constant("A"));
 

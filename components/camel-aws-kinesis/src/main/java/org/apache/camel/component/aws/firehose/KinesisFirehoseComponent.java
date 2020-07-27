@@ -29,34 +29,36 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-kinesis-firehose")
 public class KinesisFirehoseComponent extends DefaultComponent {
 
-    @Metadata 
+    @Metadata
     private KinesisFirehoseConfiguration configuration = new KinesisFirehoseConfiguration();
-    
+
     public KinesisFirehoseComponent() {
         this(null);
     }
 
     public KinesisFirehoseComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new KinesisFirehoseComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisFirehoseConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KinesisFirehoseConfiguration();
+        KinesisFirehoseConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new KinesisFirehoseConfiguration();
         configuration.setStreamName(remaining);
         KinesisFirehoseEndpoint endpoint = new KinesisFirehoseEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonKinesisFirehoseClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonKinesisFirehoseClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
         }
         return endpoint;
     }
-    
+
     public KinesisFirehoseConfiguration getConfiguration() {
         return configuration;
     }
@@ -67,7 +69,7 @@ public class KinesisFirehoseComponent extends DefaultComponent {
     public void setConfiguration(KinesisFirehoseConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     private void checkAndSetRegistryClient(KinesisFirehoseConfiguration configuration) {
         Set<AmazonKinesisFirehose> clients = getCamelContext().getRegistry().findByType(AmazonKinesisFirehose.class);
         if (clients.size() == 1) {

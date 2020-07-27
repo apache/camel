@@ -74,9 +74,8 @@ public class RedisStringIdempotentRepositoryTest {
         idempotentRepository.contains(KEY);
         verify(valueOperations).get(idempotentRepository.createRedisKey(KEY));
         idempotentRepositoryNoExpiry.contains(KEY);
-        verify(valueOperations).get(idempotentRepositoryNoExpiry.createRedisKey(KEY));       
+        verify(valueOperations).get(idempotentRepositoryNoExpiry.createRedisKey(KEY));
     }
-
 
     @Test
     public void shouldReturnProcessorName() {

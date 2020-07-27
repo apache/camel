@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class TwoServiceWithExcludeTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
     };
 
     public TwoServiceWithExcludeTest() {
@@ -52,13 +52,13 @@ public class TwoServiceWithExcludeTest extends CamelOpenTracingTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:ServiceA")
-                    .log("ServiceA has been called")
-                    .delay(simple("${random(1000,2000)}"))
-                    .to("direct:ServiceB");
+                        .log("ServiceA has been called")
+                        .delay(simple("${random(1000,2000)}"))
+                        .to("direct:ServiceB");
 
                 from("direct:ServiceB")
-                    .log("ServiceB has been called")
-                    .delay(simple("${random(0,500)}"));
+                        .log("ServiceB has been called")
+                        .delay(simple("${random(0,500)}"));
             }
         };
     }

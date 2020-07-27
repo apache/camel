@@ -57,7 +57,8 @@ public class HipchatXmlDefinedComponentProducerTest extends CamelTestSupport {
         // This test is all about ensuring the endpoint is configured correctly when using the XML DSL so this
         try (InputStream routes = getClass().getResourceAsStream("HipchatXmlDefinedComponentProducerTest-route.xml")) {
             ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-            RoutesDefinition routesDefinition = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, routes);
+            RoutesDefinition routesDefinition
+                    = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, routes);
             context.getExtension(Model.class).addRouteDefinition(routesDefinition.getRoutes().get(0));
         }
 

@@ -28,9 +28,8 @@ public class TransactionInterceptSendToEndpointTest extends CamelSpringTestSuppo
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/TransactionInterceptSendToEndpointTest.xml");
+                "/org/apache/camel/component/jms/tx/TransactionInterceptSendToEndpointTest.xml");
     }
-
 
     @Test
     public void testIntercepted() throws Exception {

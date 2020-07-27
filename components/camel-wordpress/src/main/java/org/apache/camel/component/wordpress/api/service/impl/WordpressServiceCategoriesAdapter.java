@@ -26,7 +26,9 @@ import org.apache.camel.component.wordpress.api.service.spi.CategoriesSPI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class WordpressServiceCategoriesAdapter extends AbstractWordpressCrudServiceAdapter<CategoriesSPI, Category, CategorySearchCriteria> implements WordpressServiceCategories {
+public class WordpressServiceCategoriesAdapter
+        extends AbstractWordpressCrudServiceAdapter<CategoriesSPI, Category, CategorySearchCriteria>
+        implements WordpressServiceCategories {
 
     public WordpressServiceCategoriesAdapter(String wordpressUrl, String apiVersion) {
         super(wordpressUrl, apiVersion);
@@ -41,8 +43,10 @@ public class WordpressServiceCategoriesAdapter extends AbstractWordpressCrudServ
     @Override
     public List<Category> list(CategorySearchCriteria criteria) {
         checkNotNull(criteria, "The search criteria must be defined");
-        return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(), criteria.getSearch(), criteria.getExclude(), criteria.getInclude(),
-                             criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getParent(), criteria.getPostId(), criteria.getSlug());
+        return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(),
+                criteria.getSearch(), criteria.getExclude(), criteria.getInclude(),
+                criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getParent(), criteria.getPostId(),
+                criteria.getSlug());
     }
     // @formatter:on
 

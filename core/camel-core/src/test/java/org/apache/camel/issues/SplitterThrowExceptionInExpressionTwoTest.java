@@ -43,8 +43,10 @@ public class SplitterThrowExceptionInExpressionTwoTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").errorHandler(deadLetterChannel("mock:error").disableRedelivery()).multicast().stopOnException().streaming().to("mock:cast1")
-                    .split(new MyExpression()).stopOnException().streaming().to("mock:cast2").end().to("mock:cast3").end().to("mock:result");
+                from("direct:start").errorHandler(deadLetterChannel("mock:error").disableRedelivery()).multicast()
+                        .stopOnException().streaming().to("mock:cast1")
+                        .split(new MyExpression()).stopOnException().streaming().to("mock:cast2").end().to("mock:cast3").end()
+                        .to("mock:result");
             }
         };
     }

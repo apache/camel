@@ -69,7 +69,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        InactiveDevice inactiveDevice = (InactiveDevice)mock.getExchanges().get(0).getIn().getBody();
+        InactiveDevice inactiveDevice = (InactiveDevice) mock.getExchanges().get(0).getIn().getBody();
         assertNotNull(inactiveDevice);
         assertNotNull(inactiveDevice.getDate());
         assertNotNull(inactiveDevice.getDeviceToken());

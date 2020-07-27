@@ -43,11 +43,12 @@ import org.apache.camel.util.ObjectHelper;
  * An XML parser that uses SAX to include line and column number for each XML element in the parsed Document.
  * <p>
  * The line number and column number can be obtained from a Node/Element using
+ * 
  * <pre>
- *   String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
- *   String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
- *   String columnNumber = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
- *   String columnNumberEnd = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER_END);
+ * String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
+ * String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
+ * String columnNumber = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
+ * String columnNumberEnd = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER_END);
  * </pre>
  */
 public final class XmlLineNumberParser {
@@ -72,8 +73,8 @@ public final class XmlLineNumberParser {
     /**
      * Parses the XML.
      *
-     * @param is the XML content as an input stream
-     * @return the DOM model
+     * @param  is        the XML content as an input stream
+     * @return           the DOM model
      * @throws Exception is thrown if error parsing
      */
     public static Document parseXml(final InputStream is) throws Exception {
@@ -83,10 +84,10 @@ public final class XmlLineNumberParser {
     /**
      * Parses the XML.
      *
-     * @param is             the XML content as an input stream
-     * @param xmlTransformer the XML transformer
-     * @return the DOM model
-     * @throws Exception is thrown if error parsing
+     * @param  is             the XML content as an input stream
+     * @param  xmlTransformer the XML transformer
+     * @return                the DOM model
+     * @throws Exception      is thrown if error parsing
      */
     public static Document parseXml(final InputStream is, final XmlTextTransformer xmlTransformer) throws Exception {
         return parseXml(is, xmlTransformer, null, null);
@@ -95,15 +96,19 @@ public final class XmlLineNumberParser {
     /**
      * Parses the XML.
      *
-     * @param is              the XML content as an input stream
-     * @param xmlTransformer  the XML transformer
-     * @param rootNames       one or more root names that is used as baseline for beginning the parsing, for example camelContext to start parsing
-     *                        when Camel is discovered. Multiple names can be defined separated by comma
-     * @param forceNamespace  an optional namespaces to force assign to each node. This may be needed for JAXB unmarshalling from XML -> POJO.
-     * @return the DOM model
-     * @throws Exception is thrown if error parsing
+     * @param  is             the XML content as an input stream
+     * @param  xmlTransformer the XML transformer
+     * @param  rootNames      one or more root names that is used as baseline for beginning the parsing, for example
+     *                        camelContext to start parsing when Camel is discovered. Multiple names can be defined
+     *                        separated by comma
+     * @param  forceNamespace an optional namespaces to force assign to each node. This may be needed for JAXB
+     *                        unmarshalling from XML -> POJO.
+     * @return                the DOM model
+     * @throws Exception      is thrown if error parsing
      */
-    public static Document parseXml(final InputStream is, XmlTextTransformer xmlTransformer, String rootNames, final String forceNamespace) throws Exception {
+    public static Document parseXml(
+            final InputStream is, XmlTextTransformer xmlTransformer, String rootNames, final String forceNamespace)
+            throws Exception {
         ObjectHelper.notNull(is, "is");
 
         final XmlTextTransformer transformer = xmlTransformer == null ? new NoopTransformer() : xmlTransformer;
@@ -150,7 +155,8 @@ public final class XmlLineNumberParser {
             }
 
             @Override
-            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+                    throws SAXException {
                 addTextIfNeeded();
 
                 if (rootNames != null && !found) {
@@ -168,7 +174,8 @@ public final class XmlLineNumberParser {
                     }
 
                     for (int i = 0; i < attributes.getLength(); i++) {
-                        el.setAttribute(transformer.transform(attributes.getQName(i)), transformer.transform(attributes.getValue(i)));
+                        el.setAttribute(transformer.transform(attributes.getQName(i)),
+                                transformer.transform(attributes.getValue(i)));
                     }
 
                     el.setUserData(LINE_NUMBER, String.valueOf(this.locator.getLineNumber()), null);

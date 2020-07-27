@@ -61,22 +61,28 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
         }
 
         @Override
-        public boolean begin(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public boolean begin(
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             return true;
         }
 
         @Override
-        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             // noop
         }
 
         @Override
-        public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             invoked++;
         }
 
         @Override
-        public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void rollback(
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             // noop
         }
 

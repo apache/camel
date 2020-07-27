@@ -63,12 +63,17 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest" + "&autoAck=true&queue=q4&routingKey="
-                    + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS + "&allowMessageBodySerialization=true")
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE
+                    + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+                    + "&autoAck=true&queue=q4&routingKey="
+                    + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS
+                    + "&allowMessageBodySerialization=true")
     private Endpoint rabbitMQEndpoint;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-                    + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY + "&transferException=true&requestTimeout="
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK
+                    + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
+                    + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
+                    + "&transferException=true&requestTimeout="
                     + TIMEOUT_MS + "&args=#args" + "&allowMessageBodySerialization=true")
     private Endpoint noAutoAckEndpoint;
 
@@ -93,7 +98,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
             @Override
             public void configure() throws Exception {
 
-                from("direct:rabbitMQ").id("producingRoute").setHeader("routeHeader", simple("routeHeader")).inOut(rabbitMQEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").setHeader("routeHeader", simple("routeHeader"))
+                        .inOut(rabbitMQEndpoint);
 
                 from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -101,7 +107,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
                             TestSerializableObject foo = exchange.getIn().getBody(TestSerializableObject.class);
                             foo.setDescription("foobar");
                         } else if (exchange.getIn().getBody(TestPartiallySerializableObject.class) != null) {
-                            TestPartiallySerializableObject foo = exchange.getIn().getBody(TestPartiallySerializableObject.class);
+                            TestPartiallySerializableObject foo
+                                    = exchange.getIn().getBody(TestPartiallySerializableObject.class);
                             foo.setNonSerializableObject(new TestNonSerializableObject());
                             foo.setDescription("foobar");
                         } else if (exchange.getIn().getBody(String.class) != null) {
@@ -124,22 +131,26 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
                     }
                 });
 
-                from("direct:rabbitMQNoAutoAck").id("producingRouteNoAutoAck").setHeader("routeHeader", simple("routeHeader")).inOut(noAutoAckEndpoint);
+                from("direct:rabbitMQNoAutoAck").id("producingRouteNoAutoAck").setHeader("routeHeader", simple("routeHeader"))
+                        .inOut(noAutoAckEndpoint);
 
-                from(noAutoAckEndpoint).id("consumingRouteNoAutoAck").to(resultEndpoint).throwException(new IllegalStateException("test exception"));
+                from(noAutoAckEndpoint).id("consumingRouteNoAutoAck").to(resultEndpoint)
+                        .throwException(new IllegalStateException("test exception"));
             }
         };
     }
 
     @Test
     public void inOutRaceConditionTest1() throws InterruptedException, IOException {
-        String reply = template.requestBodyAndHeader("direct:rabbitMQ", "test1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
+        String reply = template.requestBodyAndHeader("direct:rabbitMQ", "test1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
+                String.class);
         assertEquals("test1 response", reply);
     }
 
     @Test
     public void inOutRaceConditionTest2() throws InterruptedException, IOException {
-        String reply = template.requestBodyAndHeader("direct:rabbitMQ", "test2", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
+        String reply = template.requestBodyAndHeader("direct:rabbitMQ", "test2", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
+                String.class);
         assertEquals("test2 response", reply);
     }
 
@@ -187,7 +198,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         TestSerializableObject foo = new TestSerializableObject();
         foo.setName("foobar");
 
-        TestSerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestSerializableObject.class);
+        TestSerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME,
+                EXCHANGE, TestSerializableObject.class);
         assertEquals("foobar", reply.getName());
         assertEquals("foobar", reply.getDescription());
     }
@@ -198,12 +210,14 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         foo.setName("foobar");
 
         try {
-            template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestPartiallySerializableObject.class);
+            template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
+                    TestPartiallySerializableObject.class);
         } catch (CamelExecutionException e) {
             // expected
         }
         // Make sure we didn't crash the one Consumer thread
-        String reply2 = template.requestBodyAndHeader("direct:rabbitMQ", "partiallySerializeTest1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
+        String reply2 = template.requestBodyAndHeader("direct:rabbitMQ", "partiallySerializeTest1",
+                RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
         assertEquals("partiallySerializeTest1 response", reply2);
     }
 
@@ -220,7 +234,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
         TestSerializableObject newFoo = null;
         try (InputStream b = new ByteArrayInputStream(body); ObjectInputStream o = new ObjectInputStream(b);) {
-            newFoo = (TestSerializableObject)o.readObject();
+            newFoo = (TestSerializableObject) o.readObject();
         } catch (IOException | ClassNotFoundException e) {
         }
         assertEquals(foo.getName(), newFoo.getName());
@@ -229,7 +243,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     @Test
     public void inOutExceptionTest() {
         try {
-            template.requestBodyAndHeader("direct:rabbitMQ", "Exception", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
+            template.requestBodyAndHeader("direct:rabbitMQ", "Exception", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
+                    String.class);
             fail("This should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertEquals(e.getCause().getClass(), IllegalArgumentException.class);
@@ -241,7 +256,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     @Test
     public void inOutTimeOutTest() throws InterruptedException {
         try {
-            template.requestBodyAndHeader("direct:rabbitMQ", "TimeOut", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
+            template.requestBodyAndHeader("direct:rabbitMQ", "TimeOut", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
+                    String.class);
             fail("This should have thrown a timeOut exception");
         } catch (CamelExecutionException e) {
             // expected
@@ -278,7 +294,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         resultEndpoint.expectedMessageCount(0);
 
         context.stop(); // On restarting the camel context, if the message was
-                        // not acknowledged the message would be reprocessed
+                       // not acknowledged the message would be reprocessed
         context.start();
 
         resultEndpoint.assertIsSatisfied();

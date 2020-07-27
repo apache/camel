@@ -152,7 +152,6 @@ public class MainPropertyPlaceholderWithEnvTest {
         }
     }
 
-
     @Test
     public void testAll() {
         envVariable(ENV_INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
@@ -217,11 +216,15 @@ public class MainPropertyPlaceholderWithEnvTest {
         try {
             return getFieldValue(classOfMap, System.getenv(), "m");
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("System Rules cannot access the field"
-                    + " 'm' of the map System.getenv().", e);
+            throw new RuntimeException(
+                    "System Rules cannot access the field"
+                                       + " 'm' of the map System.getenv().",
+                    e);
         } catch (NoSuchFieldException e) {
-            throw new RuntimeException("System Rules expects System.getenv() to"
-                    + " have a field 'm' but it has not.", e);
+            throw new RuntimeException(
+                    "System Rules expects System.getenv() to"
+                                       + " have a field 'm' but it has not.",
+                    e);
         }
     }
 
@@ -236,13 +239,17 @@ public class MainPropertyPlaceholderWithEnvTest {
             return getFieldValue(
                     processEnvironment, null, "theCaseInsensitiveEnvironment");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("System Rules expects the existence of"
-                    + " the class java.lang.ProcessEnvironment but it does not"
-                    + " exist.", e);
+            throw new RuntimeException(
+                    "System Rules expects the existence of"
+                                       + " the class java.lang.ProcessEnvironment but it does not"
+                                       + " exist.",
+                    e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("System Rules cannot access the static"
-                    + " field 'theCaseInsensitiveEnvironment' of the class"
-                    + " java.lang.ProcessEnvironment.", e);
+            throw new RuntimeException(
+                    "System Rules cannot access the static"
+                                       + " field 'theCaseInsensitiveEnvironment' of the class"
+                                       + " java.lang.ProcessEnvironment.",
+                    e);
         } catch (NoSuchFieldException e) {
             //this field is only available for Windows so return a unused map
             return THE_CASE_INSENSITIVE_ENVIRONMENT;
@@ -252,8 +259,8 @@ public class MainPropertyPlaceholderWithEnvTest {
     private static Map<String, String> getFieldValue(
             Class<?> klass,
             Object object,
-            String name
-    ) throws NoSuchFieldException, IllegalAccessException {
+            String name)
+            throws NoSuchFieldException, IllegalAccessException {
         Field field = klass.getDeclaredField(name);
         field.setAccessible(true);
         return (Map<String, String>) field.get(object);

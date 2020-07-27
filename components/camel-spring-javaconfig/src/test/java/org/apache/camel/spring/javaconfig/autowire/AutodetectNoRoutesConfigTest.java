@@ -26,7 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @CamelSpringTest
 @ContextConfiguration(classes = NoRoutesConfig.class)
 public class AutodetectNoRoutesConfigTest {

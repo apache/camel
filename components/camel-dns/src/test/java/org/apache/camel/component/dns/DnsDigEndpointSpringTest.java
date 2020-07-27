@@ -39,9 +39,10 @@ import org.xbill.DNS.Section;
 public class DnsDigEndpointSpringTest extends CamelSpringTestSupport {
 
     private static final String RESPONSE_MONKEY = "\"A monkey is a nonhuman "
-        + "primate mammal with the exception usually of the lemurs and tarsiers. More specifically, the term monkey refers to a subset "
-        + "of monkeys: any of the smaller longer-tailed catarrhine or " + "platyrrhine primates as contrasted with the apes.\" "
-        + "\" http://en.wikipedia.org/wiki/Monkey\"";
+                                                  + "primate mammal with the exception usually of the lemurs and tarsiers. More specifically, the term monkey refers to a subset "
+                                                  + "of monkeys: any of the smaller longer-tailed catarrhine or "
+                                                  + "platyrrhine primates as contrasted with the apes.\" "
+                                                  + "\" http://en.wikipedia.org/wiki/Monkey\"";
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;

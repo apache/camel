@@ -52,13 +52,14 @@ public class FaultToleranceManagementTest extends CamelTestSupport {
         String name = context.getManagementName();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
+        ObjectName on
+                = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
 
         // should be on start
-        String routeId = (String)mbeanServer.getAttribute(on, "RouteId");
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("start", routeId);
 
-        Long num = (Long)mbeanServer.getAttribute(on, "Delay");
+        Long num = (Long) mbeanServer.getAttribute(on, "Delay");
         assertEquals("5000", num.toString());
     }
 
@@ -67,8 +68,9 @@ public class FaultToleranceManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("start").circuitBreaker().id("myFaultTolerance").to("direct:foo").onFallback().transform().constant("Fallback message").end()
-                    .to("mock:result");
+                from("direct:start").routeId("start").circuitBreaker().id("myFaultTolerance").to("direct:foo").onFallback()
+                        .transform().constant("Fallback message").end()
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

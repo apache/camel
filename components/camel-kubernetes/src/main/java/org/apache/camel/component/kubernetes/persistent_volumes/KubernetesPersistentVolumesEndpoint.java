@@ -27,11 +27,13 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes", title = "Kubernetes Persistent Volume", syntax = "kubernetes-persistent-volumes:masterUrl",
-             producerOnly = true, category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes", title = "Kubernetes Persistent Volume",
+             syntax = "kubernetes-persistent-volumes:masterUrl",
+             producerOnly = true, category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesPersistentVolumesEndpoint(String uri, KubernetesPersistentVolumesComponent component, KubernetesConfiguration config) {
+    public KubernetesPersistentVolumesEndpoint(String uri, KubernetesPersistentVolumesComponent component,
+                                               KubernetesConfiguration config) {
         super(uri, component, config);
     }
 

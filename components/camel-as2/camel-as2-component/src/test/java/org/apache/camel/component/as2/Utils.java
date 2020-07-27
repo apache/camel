@@ -41,7 +41,7 @@ public final class Utils {
     //
     // certificate serial number seed.
     //
-    static int  serialNo = 1;
+    static int serialNo = 1;
 
     private Utils() {
     }
@@ -68,7 +68,8 @@ public final class Utils {
         PrivateKey issPriv = issKP.getPrivate();
         PublicKey issPub = issKP.getPublic();
 
-        X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(new X500Name(issDN),
+        X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(
+                new X500Name(issDN),
                 BigInteger.valueOf(serialNo++), new Date(System.currentTimeMillis()),
                 new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)), new X500Name(subDN), subPub);
 

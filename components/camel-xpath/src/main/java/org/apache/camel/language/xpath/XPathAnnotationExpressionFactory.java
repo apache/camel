@@ -31,15 +31,17 @@ import org.apache.camel.util.ObjectHelper;
 public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+    public Expression createExpression(
+            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType) {
         String xpath = getExpressionFromAnnotation(annotation);
-        
+
         Class<?> resultType = getResultType(annotation);
         if (resultType.equals(Object.class)) {
             resultType = expressionReturnType;
         }
-        
-        XPathBuilder builder = XPathBuilder.xpath(xpath, resultType);        
+
+        XPathBuilder builder = XPathBuilder.xpath(xpath, resultType);
         NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
         if (namespaces != null) {
             for (NamespacePrefix namespacePrefix : namespaces) {
@@ -52,31 +54,29 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         if (ObjectHelper.isNotEmpty(headerName)) {
             builder.setHeaderName(headerName);
         }
-        
+
         return builder;
     }
 
     protected Class<?> getResultType(Annotation annotation) {
         return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
     }
-    
+
     protected NamespacePrefix[] getExpressionNameSpacePrefix(Annotation annotation) {
         return (NamespacePrefix[]) getAnnotationObjectValue(annotation, "namespaces");
     }
-    
+
     /**
-     * Extracts the value of the header method in the Annotation. For backwards
-     * compatibility this method will return null if the annotation's method is
-     * not found.
+     * Extracts the value of the header method in the Annotation. For backwards compatibility this method will return
+     * null if the annotation's method is not found.
      * 
-     * @return If the annotation has the method 'header' then the name of the
-     *         header we want to apply the XPath expression to. Otherwise null
-     *         will be returned
+     * @return If the annotation has the method 'header' then the name of the header we want to apply the XPath
+     *         expression to. Otherwise null will be returned
      */
     protected String getHeaderName(Annotation annotation) {
         String headerValue = null;
         try {
-            headerValue = (String)getAnnotationObjectValue(annotation, "headerName");
+            headerValue = (String) getAnnotationObjectValue(annotation, "headerName");
         } catch (Exception e) {
             // Do Nothing
         }

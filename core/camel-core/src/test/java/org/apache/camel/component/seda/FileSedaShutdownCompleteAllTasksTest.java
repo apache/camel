@@ -56,8 +56,8 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(url).routeId("route1")
-                    // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").to("seda:foo");
+                        // let it complete all tasks during shutdown
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("log:bar").to("mock:bar").process(new Processor() {
                     boolean first = true;

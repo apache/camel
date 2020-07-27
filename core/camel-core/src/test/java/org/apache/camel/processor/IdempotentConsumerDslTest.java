@@ -49,7 +49,8 @@ public class IdempotentConsumerDslTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").idempotentConsumer().message(m -> m.getHeader("messageId")).messageIdRepository(() -> createRepo()).to("mock:result");
+                from("direct:start").idempotentConsumer().message(m -> m.getHeader("messageId"))
+                        .messageIdRepository(() -> createRepo()).to("mock:result");
             }
         };
     }

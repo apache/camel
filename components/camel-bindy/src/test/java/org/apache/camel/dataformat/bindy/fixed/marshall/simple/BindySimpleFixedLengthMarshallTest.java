@@ -42,7 +42,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 @CamelSpringTest
 public class BindySimpleFixedLengthMarshallTest {
-    
+
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
@@ -150,7 +150,6 @@ public class BindySimpleFixedLengthMarshallTest {
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
 
-
         public int getOrderNr() {
             return orderNr;
         }
@@ -241,11 +240,12 @@ public class BindySimpleFixedLengthMarshallTest {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }
-
 
 }

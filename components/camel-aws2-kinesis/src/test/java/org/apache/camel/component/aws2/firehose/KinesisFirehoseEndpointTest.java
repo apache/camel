@@ -47,8 +47,8 @@ public class KinesisFirehoseEndpointTest {
 
     @Test
     public void allEndpointParams() throws Exception {
-        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint)camelContext
-            .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?amazonKinesisFirehoseClient=#firehoseClient");
+        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext
+                .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?amazonKinesisFirehoseClient=#firehoseClient");
         endpoint.start();
 
         assertThat(endpoint.getClient(), is(amazonKinesisFirehoseClient));
@@ -57,8 +57,8 @@ public class KinesisFirehoseEndpointTest {
 
     @Test
     public void allClientCreationParams() throws Exception {
-        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint)camelContext
-            .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?accessKey=xxx&secretKey=yyy&region=us-east-1");
+        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext
+                .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?accessKey=xxx&secretKey=yyy&region=us-east-1");
 
         assertThat(endpoint.getConfiguration().getRegion(), is(Region.US_EAST_1.id()));
         assertThat(endpoint.getConfiguration().getAccessKey(), is("xxx"));

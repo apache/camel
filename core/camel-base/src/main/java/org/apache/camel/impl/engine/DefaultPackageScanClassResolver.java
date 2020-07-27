@@ -51,7 +51,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
-public class DefaultPackageScanClassResolver extends BasePackageScanResolver implements PackageScanClassResolver, NonManagedService {
+public class DefaultPackageScanClassResolver extends BasePackageScanResolver
+        implements PackageScanClassResolver, NonManagedService {
 
     private volatile Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
@@ -162,8 +163,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
 
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
-            log.trace("Searching for: {} in package: {} using classloader: {}", 
-                    new Object[]{test, packageName, loader.getClass().getName()});
+            log.trace("Searching for: {} in package: {} using classloader: {}",
+                    new Object[] { test, packageName, loader.getClass().getName() });
         }
 
         Enumeration<URL> urls;
@@ -182,7 +183,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
             try {
                 url = urls.nextElement();
                 log.trace("URL from classloader: {}", url);
-                
+
                 url = customResourceLocator(url);
 
                 String urlPath = url.getFile();
@@ -278,17 +279,15 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
     }
 
     /**
-     * Finds matches in a physical directory on a filesystem. Examines all files
-     * within a directory - if the File object is not a directory, and ends with
-     * <i>.class</i> the file is loaded and tested to see if it is acceptable
-     * according to the Test. Operates recursively to find classes within a
-     * folder structure matching the package structure.
+     * Finds matches in a physical directory on a filesystem. Examines all files within a directory - if the File object
+     * is not a directory, and ends with <i>.class</i> the file is loaded and tested to see if it is acceptable
+     * according to the Test. Operates recursively to find classes within a folder structure matching the package
+     * structure.
      *
      * @param test     a Test used to filter the classes that are discovered
-     * @param parent   the package name up to this directory in the package
-     *                 hierarchy. E.g. if /classes is in the classpath and we wish to
-     *                 examine files in /classes/org/apache then the values of
-     *                 <i>parent</i> would be <i>org/apache</i>
+     * @param parent   the package name up to this directory in the package hierarchy. E.g. if /classes is in the
+     *                 classpath and we wish to examine files in /classes/org/apache then the values of <i>parent</i>
+     *                 would be <i>org/apache</i>
      * @param location a File object representing a directory
      */
     private void loadImplementationsInDirectory(PackageScanFilter test, String parent, File location, Set<Class<?>> classes) {
@@ -313,20 +312,19 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
     }
 
     /**
-     * Finds matching classes within a jar files that contains a folder
-     * structure matching the package structure. If the File is not a JarFile or
-     * does not exist a warning will be logged, but no error will be raised.
+     * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the
+     * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.
      *
-     * @param test    a Test used to filter the classes that are discovered
-     * @param parent  the parent package under which classes must be in order to
-     *                be considered
-     * @param stream  the inputstream of the jar file to be examined for classes
-     * @param urlPath the url of the jar file to be examined for classes
-     * @param classes to add found and matching classes
+     * @param test     a Test used to filter the classes that are discovered
+     * @param parent   the parent package under which classes must be in order to be considered
+     * @param stream   the inputstream of the jar file to be examined for classes
+     * @param urlPath  the url of the jar file to be examined for classes
+     * @param classes  to add found and matching classes
      * @param jarCache cache for JARs to speedup loading
      */
-    private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream,
-                                          String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
+    private void loadImplementationsInJar(
+            PackageScanFilter test, String parent, InputStream stream,
+            String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
         ObjectHelper.notNull(classes, "classes");
 
         List<String> entries = jarCache != null ? jarCache.get(urlPath) : null;
@@ -346,9 +344,9 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
     /**
      * Loads all the class entries from the JAR.
      *
-     * @param stream  the inputstream of the jar file to be examined for classes
-     * @param urlPath the url of the jar file to be examined for classes
-     * @return all the .class entries from the JAR
+     * @param  stream  the inputstream of the jar file to be examined for classes
+     * @param  urlPath the url of the jar file to be examined for classes
+     * @return         all the .class entries from the JAR
      */
     protected List<String> doLoadJarClassEntries(InputStream stream, String urlPath) {
         List<String> entries = new ArrayList<>();
@@ -384,7 +382,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
      * @param entries the .class entries from the JAR
      * @param classes to add found and matching classes
      */
-    private void doLoadImplementationsInJar(PackageScanFilter test, String parent, List<String> entries, Set<Class<?>> classes) {
+    private void doLoadImplementationsInJar(
+            PackageScanFilter test, String parent, List<String> entries, Set<Class<?>> classes) {
         for (String entry : entries) {
             if (entry.startsWith(parent)) {
                 addIfMatching(test, entry, classes);
@@ -393,13 +392,12 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
     }
 
     /**
-     * Add the class designated by the fully qualified class name provided to
-     * the set of resolved classes if and only if it is approved by the Test
-     * supplied.
+     * Add the class designated by the fully qualified class name provided to the set of resolved classes if and only if
+     * it is approved by the Test supplied.
      *
      * @param test the test used to determine if the class matches
      * @param fqn  the fully qualified name of a class
-     */    
+     */
     protected void addIfMatching(PackageScanFilter test, String fqn, Set<Class<?>> classes) {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
@@ -407,7 +405,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
             boolean found = false;
             for (ClassLoader classLoader : set) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test, classLoader);
+                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test,
+                            classLoader);
                 }
                 try {
                     Class<?> type = classLoader.loadClass(externalName);
@@ -421,12 +420,14 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
                 } catch (ClassNotFoundException e) {
                     if (log.isTraceEnabled()) {
                         log.trace("Cannot find class '" + fqn + "' in classloader: " + classLoader
-                                + ". Reason: " + e.getMessage(), e);
+                                  + ". Reason: " + e.getMessage(),
+                                e);
                     }
                 } catch (NoClassDefFoundError e) {
                     if (log.isTraceEnabled()) {
                         log.trace("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
-                            + ". Reason: " + e.getMessage(), e);
+                                  + ". Reason: " + e.getMessage(),
+                                e);
                     }
                 }
             }
@@ -436,7 +437,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Cannot examine class '" + fqn + "' due to a " + e.getClass().getName()
-                    + " with message: " + e.getMessage(), e);
+                         + " with message: " + e.getMessage(),
+                        e);
             }
         }
     }

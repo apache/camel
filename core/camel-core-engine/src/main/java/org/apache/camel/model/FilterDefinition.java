@@ -61,9 +61,8 @@ public class FilterDefinition extends OutputExpressionNode {
     }
 
     /**
-     * Expression to determine if the message should be filtered or not. If the
-     * expression returns an empty value or <tt>false</tt> then the message is
-     * filtered (dropped), otherwise the message is continued being routed.
+     * Expression to determine if the message should be filtered or not. If the expression returns an empty value or
+     * <tt>false</tt> then the message is filtered (dropped), otherwise the message is continued being routed.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

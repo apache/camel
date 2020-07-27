@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * Poll RSS feeds.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "rss", extendsScheme = "atom", title = "RSS",
-        syntax = "rss:feedUri", consumerOnly = true, category = {Category.RSS}, lenientProperties = true)
+             syntax = "rss:feedUri", consumerOnly = true, category = { Category.RSS }, lenientProperties = true)
 public class RssEndpoint extends FeedEndpoint {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 
@@ -64,8 +64,8 @@ public class RssEndpoint extends FeedEndpoint {
         Exchange exchange = createExchangeWithFeedHeader(feed, RssConstants.RSS_FEED);
         SyndFeed newFeed;
         try {
-            newFeed = (SyndFeed)((SyndFeed) feed).clone();
-            newFeed.setEntries(Arrays.asList((SyndEntry)entry));
+            newFeed = (SyndFeed) ((SyndFeed) feed).clone();
+            newFeed.setEntries(Arrays.asList((SyndEntry) entry));
         } catch (CloneNotSupportedException e) {
             LOG.debug("Could not create a new feed. This exception will be ignored.", e);
             newFeed = null;
@@ -75,8 +75,10 @@ public class RssEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor,
-                                                             boolean filter, Date lastUpdate, boolean throttleEntries) throws Exception {
+    protected FeedPollingConsumer createEntryPollingConsumer(
+            FeedEndpoint feedEndpoint, Processor processor,
+            boolean filter, Date lastUpdate, boolean throttleEntries)
+            throws Exception {
         RssEntryPollingConsumer answer = new RssEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
         configureConsumer(answer);
         return answer;

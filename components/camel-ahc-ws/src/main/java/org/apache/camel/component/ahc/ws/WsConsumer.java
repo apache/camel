@@ -58,7 +58,7 @@ public class WsConsumer extends DefaultConsumer {
     public void sendMessage(byte[] message) {
         sendMessageInternal(message);
     }
-    
+
     public void sendMessage(InputStream message) {
         sendMessageInternal(message);
     }
@@ -66,7 +66,7 @@ public class WsConsumer extends DefaultConsumer {
     public void sendMessage(Reader message) {
         sendMessageInternal(message);
     }
-    
+
     private void sendMessageInternal(Object message) {
         final Exchange exchange = getEndpoint().createExchange();
 

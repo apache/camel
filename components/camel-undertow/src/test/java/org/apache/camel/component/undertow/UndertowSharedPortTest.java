@@ -44,7 +44,8 @@ public class UndertowSharedPortTest extends BaseUndertowTest {
         mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
         LOG.debug("Number of exchanges in mock:myapp " + mockEndpoint.getExchanges().size());
 
-        String response = template.requestBody("undertow:http://localhost:{{port}}/" + pathSuffix, "Hello Camel!", String.class);
+        String response
+                = template.requestBody("undertow:http://localhost:{{port}}/" + pathSuffix, "Hello Camel!", String.class);
         assertNotNull(response);
         assertEquals("Bye Camel! " + pathSuffix, response);
 
@@ -60,12 +61,12 @@ public class UndertowSharedPortTest extends BaseUndertowTest {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/first")
-                    .transform().constant("Bye Camel! first")
-                    .to("mock:first");
+                        .transform().constant("Bye Camel! first")
+                        .to("mock:first");
 
                 from("undertow:http://localhost:{{port}}/second")
-                    .transform().constant("Bye Camel! second")
-                    .to("mock:second");
+                        .transform().constant("Bye Camel! second")
+                        .to("mock:second");
             }
         };
     }

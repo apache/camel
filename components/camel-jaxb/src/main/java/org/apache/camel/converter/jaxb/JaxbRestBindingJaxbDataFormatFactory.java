@@ -35,11 +35,14 @@ import org.apache.camel.util.StringHelper;
 @JdkService(RestBindingJaxbDataFormatFactory.FACTORY)
 public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbDataFormatFactory {
     @Override
-    public void setupJaxb(CamelContext camelContext, RestConfiguration config,
-                          String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
-                          DataFormat jaxb, DataFormat outJaxb) throws Exception {
+    public void setupJaxb(
+            CamelContext camelContext, RestConfiguration config,
+            String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
+            DataFormat jaxb, DataFormat outJaxb)
+            throws Exception {
         // lookup configurer
-        PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
+        PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                .resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
         if (configurer == null) {
             throw new IllegalStateException("Cannot find configurer for dataformat: jaxb");
         }
@@ -95,7 +98,8 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
         outBuilder.bind();
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder)
+            throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties
@@ -125,7 +129,8 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
     }
 
     private boolean isKeyKnownPrefix(String key) {
-        return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.") || key.startsWith("xml.out.");
+        return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.")
+                || key.startsWith("xml.out.");
     }
 
 }

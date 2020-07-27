@@ -25,13 +25,13 @@ import org.junit.jupiter.api.Test;
 public class ABCRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(2).addLogMessage("routing at b"),
-        new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
-        new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(2).addLogMessage("routing at b"),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public ABCRouteTest() {
@@ -53,19 +53,19 @@ public class ABCRouteTest extends CamelOpenTracingTestSupport {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .to("seda:b")
-                    .delay(2000)
-                    .to("seda:c")
-                    .log("End of routing");
+                        .log("routing at ${routeId}")
+                        .to("seda:b")
+                        .delay(2000)
+                        .to("seda:c")
+                        .log("End of routing");
 
                 from("seda:b").routeId("b")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
-                    .to("log:test")
-                    .delay(simple("${random(0,100)}"));
+                        .to("log:test")
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

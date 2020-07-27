@@ -126,13 +126,13 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
     @SuppressWarnings("unchecked")
     private HealthCheck resolveHealthCheckById(String id) {
-        HealthCheck answer =
-                checks.stream().filter(h -> h.getId().equals(id)).findFirst()
-                        .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
+        HealthCheck answer = checks.stream().filter(h -> h.getId().equals(id)).findFirst()
+                .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
         if (answer == null) {
             // discover via classpath (try first via -health-check and then id as-is)
             FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
-            Class<? extends HealthCheck> clazz = (Class<? extends HealthCheck>) ff.findOptionalClass(id + "-health-check").orElse(null);
+            Class<? extends HealthCheck> clazz
+                    = (Class<? extends HealthCheck>) ff.findOptionalClass(id + "-health-check").orElse(null);
             if (clazz == null) {
                 clazz = (Class<? extends HealthCheck>) ff.findOptionalClass(id).orElse(null);
             }
@@ -146,13 +146,13 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
     @SuppressWarnings("unchecked")
     private HealthCheckRepository resolveHealthCheckRepositoryById(String id) {
-        HealthCheckRepository answer =
-                repositories.stream().filter(h -> h.getId().equals(id)).findFirst()
-                        .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
+        HealthCheckRepository answer = repositories.stream().filter(h -> h.getId().equals(id)).findFirst()
+                .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
         if (answer == null) {
             // discover via classpath (try first via -health-check-repository and then id as-is)
             FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
-            Class<? extends HealthCheckRepository> clazz = (Class<? extends HealthCheckRepository>) ff.findOptionalClass(id + "-health-check-repository").orElse(null);
+            Class<? extends HealthCheckRepository> clazz = (Class<? extends HealthCheckRepository>) ff
+                    .findOptionalClass(id + "-health-check-repository").orElse(null);
             if (clazz == null) {
                 clazz = (Class<? extends HealthCheckRepository>) ff.findOptionalClass(id).orElse(null);
             }
@@ -238,7 +238,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     public Optional<HealthCheckRepository> getRepository(String id) {
         return repositories.stream()
                 // try also shorthand naming
-                .filter(r -> ObjectHelper.equal(r.getId(), id) || ObjectHelper.equal(r.getId().replace("-health-check-repository", ""), id))
+                .filter(r -> ObjectHelper.equal(r.getId(), id)
+                        || ObjectHelper.equal(r.getId().replace("-health-check-repository", ""), id))
                 .findFirst();
     }
 
@@ -247,8 +248,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         if (enabled) {
             return Stream.concat(
                     checks.stream(),
-                    repositories.stream().flatMap(HealthCheckRepository::stream)
-            ).distinct();
+                    repositories.stream().flatMap(HealthCheckRepository::stream)).distinct();
         } else {
             return Stream.empty();
         }

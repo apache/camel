@@ -19,13 +19,13 @@ package org.apache.camel.impl.event;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 
-public class ExchangeFailedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeFailedEvent  {
+public class ExchangeFailedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeFailedEvent {
     private static final long serialVersionUID = -8484326904627268101L;
 
     public ExchangeFailedEvent(Exchange source) {
         super(source);
     }
-    
+
     @Override
     public Throwable getCause() {
         return getExchange().getException();

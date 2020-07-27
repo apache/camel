@@ -44,7 +44,8 @@ public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // async and continuation is not compatible!
-                from("jetty:http://localhost:{{port}}/myapp/myservice?async=true&useContinuation=false").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice?async=true&useContinuation=false")
+                        .process(new MyBookService());
             }
         };
     }

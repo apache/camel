@@ -27,12 +27,10 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 
 /**
- * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to
- * build a {@link org.apache.camel.spi.Transformer} and register into
- * {@link org.apache.camel.CamelContext}. It requires 'scheme' or a pair of
- * 'from' and 'to' to be specified by scheme(), from() and to() method. And then
- * you can choose a type of transformer by withUri(), withDataFormat(),
- * withJava() or withBean() method.
+ * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build a
+ * {@link org.apache.camel.spi.Transformer} and register into {@link org.apache.camel.CamelContext}. It requires
+ * 'scheme' or a pair of 'from' and 'to' to be specified by scheme(), from() and to() method. And then you can choose a
+ * type of transformer by withUri(), withDataFormat(), withJava() or withBean() method.
  */
 public class TransformerBuilder {
 
@@ -45,10 +43,9 @@ public class TransformerBuilder {
     private String beanRef;
 
     /**
-     * Set the scheme name supported by the transformer. If you specify 'csv',
-     * the transformer will be picked up for all of 'csv' from/to Java
-     * transformation. Note that the scheme matching is performed only when no
-     * exactly matched transformer exists.
+     * Set the scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all
+     * of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched
+     * transformer exists.
      *
      * @param scheme scheme name
      */
@@ -58,9 +55,8 @@ public class TransformerBuilder {
     }
 
     /**
-     * Set the 'from' data type name. If you specify 'xml:XYZ', the transformer
-     * will be picked up if source type is 'xml:XYZ'. If you specify just 'xml',
-     * the transformer matches with all of 'xml' source type like 'xml:ABC' or
+     * Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is
+     * 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or
      * 'xml:DEF'.
      *
      * @param from 'from' data type name
@@ -81,9 +77,8 @@ public class TransformerBuilder {
     }
 
     /**
-     * Set the 'to' data type name. If you specify 'json:XYZ', the transformer
-     * will be picked up if destination type is 'json:XYZ'. If you specify just
-     * 'json', the transformer matches with all of 'json' destination type like
+     * Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is
+     * 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like
      * 'json:ABC' or 'json:DEF'.
      *
      * @param to 'to' data type
@@ -115,8 +110,7 @@ public class TransformerBuilder {
     }
 
     /**
-     * Set the {@code DataFormatDefinition} to be used for the
-     * {@code DataFormat} {@code Transformer}.
+     * Set the {@code DataFormatDefinition} to be used for the {@code DataFormat} {@code Transformer}.
      */
     public TransformerBuilder withDataFormat(DataFormatDefinition dataFormatDefinition) {
         resetType();
@@ -125,8 +119,7 @@ public class TransformerBuilder {
     }
 
     /**
-     * Set the Java {@code Class} represents a custom {@code Transformer}
-     * implementation class.
+     * Set the Java {@code Class} represents a custom {@code Transformer} implementation class.
      */
     public TransformerBuilder withJava(Class<? extends Transformer> clazz) {
         resetType();
@@ -151,8 +144,8 @@ public class TransformerBuilder {
     }
 
     /**
-     * Configure a Transformer according to the configurations built on this
-     * builder and register it into given {@code CamelContext}.
+     * Configure a Transformer according to the configurations built on this builder and register it into given
+     * {@code CamelContext}.
      * 
      * @param camelContext {@code CamelContext}
      */

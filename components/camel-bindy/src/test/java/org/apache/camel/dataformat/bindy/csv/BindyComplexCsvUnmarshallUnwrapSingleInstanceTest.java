@@ -63,8 +63,8 @@ public class BindyComplexCsvUnmarshallUnwrapSingleInstanceTest {
         @Override
         public void configure() {
             from("direct:start")
-                .unmarshal().bindy(BindyType.Csv, TYPE, false)
-                .to("mock:result");
+                    .unmarshal().bindy(BindyType.Csv, TYPE, false)
+                    .to("mock:result");
         }
     }
 }

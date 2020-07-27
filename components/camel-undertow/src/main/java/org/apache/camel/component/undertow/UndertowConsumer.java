@@ -102,7 +102,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
              * note that the new CamelWebSocketHandler() we pass to registerEndpoint() does not necessarily have to be
              * the same instance that is returned from there
              */
-            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(this,
+                    endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
             this.webSocketHandler.setConsumer(this);
         } else {
             // allow for HTTP 1.1 continue
@@ -114,7 +115,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                 } else {
                     accessLogReceiver = new JBossLoggingAccessLogReceiver();
                 }
-                httpHandler = new AccessLogHandler(httpHandler,
+                httpHandler = new AccessLogHandler(
+                        httpHandler,
                         accessLogReceiver,
                         "common",
                         AccessLogHandler.class.getClassLoader());
@@ -122,9 +124,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             if (endpoint.getHandlers() != null) {
                 httpHandler = this.wrapHandler(httpHandler, endpoint);
             }
-            endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
-                    // wrap with EagerFormParsingHandler to enable undertow form parsers
-                    httpHandler));
+            endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(),
+                    Handlers.httpContinueRead(
+                            // wrap with EagerFormParsingHandler to enable undertow form parsers
+                            httpHandler));
         }
     }
 
@@ -236,7 +239,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         }
     }
 
-    private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
+    private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange)
+            throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
 
         if (body == null) {
@@ -260,7 +264,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }
-    
+
     /**
      * Create an {@link Exchange} from the associated {@link UndertowEndpoint} and set the {@code in} {@link Message}'s
      * body to the given {@code message} and {@link UndertowConstants#CONNECTION_KEY} header to the given
@@ -300,7 +304,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
      * @param channel           the {@link WebSocketChannel} through which the {@code message} was received
      * @param eventType         the type of the event
      */
-    public void sendEventNotification(String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
+    public void sendEventNotification(
+            String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
         final Exchange exchange = getEndpoint().createExchange();
 
         final Message in = exchange.getIn();
@@ -326,7 +331,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
         return getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getMessage());
     }
-    
+
     private HttpHandler wrapHandler(HttpHandler handler, UndertowEndpoint endpoint) {
         HttpHandler nextHandler = handler;
         String[] handlders = endpoint.getHandlers().split(",");
@@ -334,7 +339,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             if (EndpointHelper.isReferenceParameter(obj)) {
                 obj = obj.substring(1);
             }
-            CamelUndertowHttpHandler h = CamelContextHelper.mandatoryLookup(endpoint.getCamelContext(), obj, CamelUndertowHttpHandler.class);
+            CamelUndertowHttpHandler h
+                    = CamelContextHelper.mandatoryLookup(endpoint.getCamelContext(), obj, CamelUndertowHttpHandler.class);
             h.setNext(nextHandler);
             nextHandler = h;
         }

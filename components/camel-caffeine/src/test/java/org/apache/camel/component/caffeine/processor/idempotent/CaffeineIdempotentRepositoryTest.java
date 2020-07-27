@@ -130,12 +130,12 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct://in")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock://out");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock://out");
             }
         };
     }
-    
+
     protected static String generateRandomString() {
         return UUID.randomUUID().toString();
     }

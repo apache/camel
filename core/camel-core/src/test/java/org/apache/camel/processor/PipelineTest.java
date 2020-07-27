@@ -30,9 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PipelineTest extends ContextTestSupport {
 
     /**
-     * Simple processor the copies the in to the out and increments a counter.
-     * Used to verify that the pipeline actually takes the output of one stage
-     * of the pipe and feeds it in as input into the next stage.
+     * Simple processor the copies the in to the out and increments a counter. Used to verify that the pipeline actually
+     * takes the output of one stage of the pipe and feeds it in as input into the next stage.
      */
     private static final class InToOut implements Processor {
         @Override

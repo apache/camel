@@ -94,7 +94,8 @@ public class CMISSessionFacade {
 
     private int pollTree(CMISConsumer cmisConsumer) throws Exception {
         Folder rootFolder = session.getRootFolder();
-        RecursiveTreeWalker treeWalker = new RecursiveTreeWalker(cmisConsumer, readContent, readCount,
+        RecursiveTreeWalker treeWalker = new RecursiveTreeWalker(
+                cmisConsumer, readContent, readCount,
                 pageSize);
         return treeWalker.processFolderRecursively(rootFolder);
     }
@@ -131,8 +132,9 @@ public class CMISSessionFacade {
     }
 
     //some duplication
-    public List<Map<String, Object>> retrieveResult(Boolean retrieveContent, Integer readSize,
-                                                    ItemIterable<QueryResult> itemIterable) {
+    public List<Map<String, Object>> retrieveResult(
+            Boolean retrieveContent, Integer readSize,
+            ItemIterable<QueryResult> itemIterable) {
         List<Map<String, Object>> result = new ArrayList<>();
         boolean queryForContent = retrieveContent != null ? retrieveContent : readContent;
         int documentsToRead = readSize != null ? readSize : readCount;
@@ -219,8 +221,10 @@ public class CMISSessionFacade {
     }
 
     public ContentStream createContentStream(String fileName, byte[] buf, String mimeType) throws Exception {
-        return buf != null ? session.getObjectFactory()
-                .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf)) : null;
+        return buf != null
+                ? session.getObjectFactory()
+                        .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf))
+                : null;
     }
 
     public String getCMISTypeFor(String customOrCMISType) {
@@ -296,8 +300,8 @@ public class CMISSessionFacade {
     }
 
     /**
-     * The cmis query to execute against the repository.
-     * If not specified, the consumer will retrieve every node from the content repository by iterating the content tree recursively
+     * The cmis query to execute against the repository. If not specified, the consumer will retrieve every node from
+     * the content repository by iterating the content tree recursively
      */
     public void setQuery(String query) {
         this.query = query;

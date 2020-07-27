@@ -48,18 +48,16 @@ public class JGroupsClusterTest {
 
         @Override
         public void configure() throws Exception {
-            from(jgroupsEndpoint).
-                    filter(dropNonCoordinatorViews()).
-                    process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String camelContextName = exchange.getContext().getName();
-                            if (!camelContextName.equals(master)) {
-                                master = camelContextName;
-                                nominationCount++;
-                            }
-                        }
-                    });
+            from(jgroupsEndpoint).filter(dropNonCoordinatorViews()).process(new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    String camelContextName = exchange.getContext().getName();
+                    if (!camelContextName.equals(master)) {
+                        master = camelContextName;
+                        nominationCount++;
+                    }
+                }
+            });
         }
     }
 

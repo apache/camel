@@ -103,8 +103,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method for comparing byte arrays for equality while handling
-     * nulls
+     * A helper method for comparing byte arrays for equality while handling nulls
      */
     public static boolean equalByteArray(byte[] a, byte[] b) {
         return Arrays.equals(a, b);
@@ -142,9 +141,9 @@ public final class ObjectHelper {
     /**
      * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
-     * @param value  the value to test
-     * @param name   the key that resolved the value
-     * @return the passed {@code value} as is
+     * @param  value                    the value to test
+     * @param  name                     the key that resolved the value
+     * @return                          the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
     public static <T> T notNull(T value, String name) {
@@ -158,10 +157,11 @@ public final class ObjectHelper {
     /**
      * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
-     * @param value  the value to test
-     * @param on     additional description to indicate where this problem occurred (appended as toString())
-     * @param name   the key that resolved the value
-     * @return the passed {@code value} as is
+     * @param  value                    the value to test
+     * @param  on                       additional description to indicate where this problem occurred (appended as
+     *                                  toString())
+     * @param  name                     the key that resolved the value
+     * @return                          the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
     public static <T> T notNull(T value, String name, Object on) {
@@ -177,8 +177,8 @@ public final class ObjectHelper {
     /**
      * Tests whether the value is <tt>null</tt> or an empty string.
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @return true if empty
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if empty
      */
     public static boolean isEmpty(Object value) {
         return !isNotEmpty(value);
@@ -187,8 +187,8 @@ public final class ObjectHelper {
     /**
      * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection/map.
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @return true if <b>not</b> empty
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
@@ -204,12 +204,11 @@ public final class ObjectHelper {
         }
     }
 
-
     /**
      * Returns the first non null object <tt>null</tt>.
      *
-     * @param values the values
-     * @return an Optional
+     * @param  values the values
+     * @return        an Optional
      */
     public static Optional<Object> firstNotNull(Object... values) {
         for (Object value : values) {
@@ -222,10 +221,10 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is  <tt>null</tt>, an empty string, an empty collection or a map
+     * Tests whether the value is <tt>null</tt>, an empty string, an empty collection or a map
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @param supplier  the supplier, the supplier to be used to get a value if value is null
+     * @param value    the value, if its a String it will be tested for text length as well
+     * @param supplier the supplier, the supplier to be used to get a value if value is null
      */
     public static <T> T supplyIfEmpty(T value, Supplier<T> supplier) {
         org.apache.camel.util.ObjectHelper.notNull(supplier, "Supplier");
@@ -239,8 +238,8 @@ public final class ObjectHelper {
     /**
      * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @param consumer  the consumer, the operation to be executed against value if not empty
+     * @param value    the value, if its a String it will be tested for text length as well
+     * @param consumer the consumer, the operation to be executed against value if not empty
      */
     public static <T> void ifNotEmpty(T value, Consumer<T> consumer) {
         if (isNotEmpty(value)) {
@@ -249,12 +248,10 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns the predicate matching boolean on a {@link List} result set where
-     * if the first element is a boolean its value is used otherwise this method
-     * returns true if the collection is not empty
+     * Returns the predicate matching boolean on a {@link List} result set where if the first element is a boolean its
+     * value is used otherwise this method returns true if the collection is not empty
      *
-     * @return <tt>true</tt> if the first element is a boolean and its value
-     *         is true or if the list is non empty
+     * @return <tt>true</tt> if the first element is a boolean and its value is true or if the list is non empty
      */
     public static boolean matches(List<?> list) {
         if (!list.isEmpty()) {
@@ -272,33 +269,33 @@ public final class ObjectHelper {
     /**
      * A helper method to access a system property, catching any security exceptions
      *
-     * @param name         the name of the system property required
-     * @param defaultValue the default value to use if the property is not
-     *                     available or a security exception prevents access
-     * @return the system property value or the default value if the property is
-     *         not available or security does not allow its access
+     * @param  name         the name of the system property required
+     * @param  defaultValue the default value to use if the property is not available or a security exception prevents
+     *                      access
+     * @return              the system property value or the default value if the property is not available or security
+     *                      does not allow its access
      */
     public static String getSystemProperty(String name, String defaultValue) {
         try {
             return System.getProperty(name, defaultValue);
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Caught security exception accessing system property: " + name + ". Will use default value: " + defaultValue, e);
+                LOG.debug("Caught security exception accessing system property: " + name + ". Will use default value: "
+                          + defaultValue,
+                        e);
             }
             return defaultValue;
         }
     }
 
     /**
-     * A helper method to access a boolean system property, catching any
-     * security exceptions
+     * A helper method to access a boolean system property, catching any security exceptions
      *
-     * @param name         the name of the system property required
-     * @param defaultValue the default value to use if the property is not
-     *                     available or a security exception prevents access
-     * @return the boolean representation of the system property value or the
-     *         default value if the property is not available or security does
-     *         not allow its access
+     * @param  name         the name of the system property required
+     * @param  defaultValue the default value to use if the property is not available or a security exception prevents
+     *                      access
+     * @return              the boolean representation of the system property value or the default value if the property
+     *                      is not available or security does not allow its access
      */
     public static boolean getSystemProperty(String name, Boolean defaultValue) {
         String result = getSystemProperty(name, defaultValue.toString());
@@ -306,8 +303,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns the type name of the given type or null if the type variable is
-     * null
+     * Returns the type name of the given type or null if the type variable is null
      */
     public static String name(Class<?> type) {
         return type != null ? type.getName() : null;
@@ -332,36 +328,34 @@ public final class ObjectHelper {
     }
 
     /**
-     * Attempts to load the given class name using the thread context class
-     * loader or the class loader used to load this class
+     * Attempts to load the given class name using the thread context class loader or the class loader used to load this
+     * class
      *
-     * @param name the name of the class to load
-     * @return the class or <tt>null</tt> if it could not be loaded
+     * @param  name the name of the class to load
+     * @return      the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadClass(String name) {
         return loadClass(name, ObjectHelper.class.getClassLoader());
     }
 
     /**
-     * Attempts to load the given class name using the thread context class
-     * loader or the given class loader
+     * Attempts to load the given class name using the thread context class loader or the given class loader
      *
-     * @param name the name of the class to load
-     * @param loader the class loader to use after the thread context class loader
-     * @return the class or <tt>null</tt> if it could not be loaded
+     * @param  name   the name of the class to load
+     * @param  loader the class loader to use after the thread context class loader
+     * @return        the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
         return loadClass(name, loader, false);
     }
 
     /**
-     * Attempts to load the given class name using the thread context class
-     * loader or the given class loader
+     * Attempts to load the given class name using the thread context class loader or the given class loader
      *
-     * @param name the name of the class to load
-     * @param loader the class loader to use after the thread context class loader
-     * @param needToWarn when <tt>true</tt> logs a warning when a class with the given name could not be loaded
-     * @return the class or <tt>null</tt> if it could not be loaded
+     * @param  name       the name of the class to load
+     * @param  loader     the class loader to use after the thread context class loader
+     * @param  needToWarn when <tt>true</tt> logs a warning when a class with the given name could not be loaded
+     * @return            the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader, boolean needToWarn) {
         // must clean the name so its pure java name, eg removing \n or whatever people can do in the Spring XML
@@ -396,12 +390,11 @@ public final class ObjectHelper {
         return clazz;
     }
 
-
     /**
      * Load a simple type
      *
-     * @param name the name of the class to load
-     * @return the class or <tt>null</tt> if it could not be loaded
+     * @param  name the name of the class to load
+     * @return      the class or <tt>null</tt> if it could not be loaded
      */
     //CHECKSTYLE:OFF
     public static Class<?> loadSimpleType(String name) {
@@ -455,12 +448,12 @@ public final class ObjectHelper {
     //CHECKSTYLE:ON
 
     /**
-     * Loads the given class with the provided classloader (may be null).
-     * Will ignore any class not found and return null.
+     * Loads the given class with the provided classloader (may be null). Will ignore any class not found and return
+     * null.
      *
-     * @param name    the name of the class to load
-     * @param loader  a provided loader (may be null)
-     * @return the class, or null if it could not be loaded
+     * @param  name   the name of the class to load
+     * @param  loader a provided loader (may be null)
+     * @return        the class, or null if it could not be loaded
      */
     private static Class<?> doLoadClass(String name, ClassLoader loader) {
         StringHelper.notEmpty(name, "name");
@@ -481,24 +474,23 @@ public final class ObjectHelper {
     }
 
     /**
-     * Attempts to load the given resource as a stream using the thread context
-     * class loader or the class loader used to load this class
+     * Attempts to load the given resource as a stream using the thread context class loader or the class loader used to
+     * load this class
      *
-     * @param name the name of the resource to load
-     * @return the stream or null if it could not be loaded
+     * @param  name the name of the resource to load
+     * @return      the stream or null if it could not be loaded
      */
     public static InputStream loadResourceAsStream(String name) {
         return loadResourceAsStream(name, null);
     }
 
     /**
-     * Attempts to load the given resource as a stream using 
-     * first the given class loader, then the thread context
-     * class loader and finally the class loader used to load this class
+     * Attempts to load the given resource as a stream using first the given class loader, then the thread context class
+     * loader and finally the class loader used to load this class
      *
-     * @param name the name of the resource to load
-     * @param loader optional classloader to attempt first
-     * @return the stream or null if it could not be loaded
+     * @param  name   the name of the resource to load
+     * @param  loader optional classloader to attempt first
+     * @return        the stream or null if it could not be loaded
      */
     public static InputStream loadResourceAsStream(String name, ClassLoader loader) {
         try {
@@ -510,23 +502,23 @@ public final class ObjectHelper {
     }
 
     /**
-     * Attempts to load the given resource as a stream using the thread context
-     * class loader or the class loader used to load this class
+     * Attempts to load the given resource as a stream using the thread context class loader or the class loader used to
+     * load this class
      *
-     * @param name the name of the resource to load
-     * @return the stream or null if it could not be loaded
+     * @param  name the name of the resource to load
+     * @return      the stream or null if it could not be loaded
      */
     public static URL loadResourceAsURL(String name) {
         return loadResourceAsURL(name, null);
     }
 
     /**
-     * Attempts to load the given resource as a stream using the thread context
-     * class loader or the class loader used to load this class
+     * Attempts to load the given resource as a stream using the thread context class loader or the class loader used to
+     * load this class
      *
-     * @param name the name of the resource to load
-     * @param loader optional classloader to attempt first
-     * @return the stream or null if it could not be loaded
+     * @param  name   the name of the resource to load
+     * @param  loader optional classloader to attempt first
+     * @return        the stream or null if it could not be loaded
      */
     public static URL loadResourceAsURL(String name, ClassLoader loader) {
 
@@ -579,23 +571,23 @@ public final class ObjectHelper {
     }
 
     /**
-     * Attempts to load the given resources from the given package name using the thread context
-     * class loader or the class loader used to load this class
+     * Attempts to load the given resources from the given package name using the thread context class loader or the
+     * class loader used to load this class
      *
-     * @param uri the name of the package to load its resources
-     * @return the URLs for the resources or null if it could not be loaded
+     * @param  uri the name of the package to load its resources
+     * @return     the URLs for the resources or null if it could not be loaded
      */
     public static Enumeration<URL> loadResourcesAsURL(String uri) {
         return loadResourcesAsURL(uri, null);
     }
 
     /**
-     * Attempts to load the given resources from the given package name using the thread context
-     * class loader or the class loader used to load this class
+     * Attempts to load the given resources from the given package name using the thread context class loader or the
+     * class loader used to load this class
      *
-     * @param uri the name of the package to load its resources
-     * @param loader optional classloader to attempt first
-     * @return the URLs for the resources or null if it could not be loaded
+     * @param  uri    the name of the package to load its resources
+     * @param  loader optional classloader to attempt first
+     * @return        the URLs for the resources or null if it could not be loaded
      */
     public static Enumeration<URL> loadResourcesAsURL(String uri, ClassLoader loader) {
 
@@ -655,12 +647,11 @@ public final class ObjectHelper {
     }
 
     /**
-     * Helper operation used to remove relative path notation from 
-     * resources.  Most critical for resources on the Classpath
-     * as resource loaders will not resolve the relative paths correctly.
+     * Helper operation used to remove relative path notation from resources. Most critical for resources on the
+     * Classpath as resource loaders will not resolve the relative paths correctly.
      *
-     * @param name the name of the resource to load
-     * @return the modified or unmodified string if there were no changes
+     * @param  name the name of the resource to load
+     * @return      the modified or unmodified string if there were no changes
      */
     private static String resolveUriPath(String name) {
         // compact the path and use / as separator as that's used for loading resources on the classpath
@@ -672,9 +663,9 @@ public final class ObjectHelper {
      * <p/>
      * Tests whether they have the same name, return type, and parameter list.
      *
-     * @param source  the source method
-     * @param target  the target method
-     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     * @param  source the source method
+     * @param  target the target method
+     * @return        <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target) {
         return isOverridingMethod(source, target, true);
@@ -685,28 +676,27 @@ public final class ObjectHelper {
      * <p/>
      * Tests whether they have the same name, return type, and parameter list.
      *
-     * @param source  the source method
-     * @param target  the target method
-     * @param exact   <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types should be assignable
-     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     * @param  source the source method
+     * @param  target the target method
+     * @param  exact  <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types should be
+     *                assignable
+     * @return        <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
         return isOverridingMethod(target.getDeclaringClass(), source, target, exact);
     }
 
     /**
-     * Tests whether the target method overrides the source method from the
-     * inheriting class.
+     * Tests whether the target method overrides the source method from the inheriting class.
      * <p/>
      * Tests whether they have the same name, return type, and parameter list.
      *
-     * @param inheritingClass the class inheriting the target method overriding
-     *            the source method
-     * @param source the source method
-     * @param target the target method
-     * @param exact <tt>true</tt> if the override must be exact same types,
-     *            <tt>false</tt> if the types should be assignable
-     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     * @param  inheritingClass the class inheriting the target method overriding the source method
+     * @param  source          the source method
+     * @param  target          the target method
+     * @param  exact           <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types
+     *                         should be assignable
+     * @return                 <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Class<?> inheritingClass, Method source, Method target, boolean exact) {
 
@@ -714,7 +704,8 @@ public final class ObjectHelper {
             return true;
         } else if (target.getDeclaringClass().isAssignableFrom(source.getDeclaringClass())) {
             return false;
-        } else if (!source.getDeclaringClass().isAssignableFrom(inheritingClass) || !target.getDeclaringClass().isAssignableFrom(inheritingClass)) {
+        } else if (!source.getDeclaringClass().isAssignableFrom(inheritingClass)
+                || !target.getDeclaringClass().isAssignableFrom(inheritingClass)) {
             return false;
         }
 
@@ -769,26 +760,28 @@ public final class ObjectHelper {
     /**
      * Returns a list of methods which are annotated with the given annotation
      *
-     * @param type the type to reflect on
-     * @param annotationType the annotation type
-     * @return a list of the methods found
+     * @param  type           the type to reflect on
+     * @param  annotationType the annotation type
+     * @return                a list of the methods found
      */
-    public static List<Method> findMethodsWithAnnotation(Class<?> type,
-                                                         Class<? extends Annotation> annotationType) {
+    public static List<Method> findMethodsWithAnnotation(
+            Class<?> type,
+            Class<? extends Annotation> annotationType) {
         return findMethodsWithAnnotation(type, annotationType, false);
     }
 
     /**
      * Returns a list of methods which are annotated with the given annotation
      *
-     * @param type the type to reflect on
-     * @param annotationType the annotation type
-     * @param checkMetaAnnotations check for meta annotations
-     * @return a list of the methods found
+     * @param  type                 the type to reflect on
+     * @param  annotationType       the annotation type
+     * @param  checkMetaAnnotations check for meta annotations
+     * @return                      a list of the methods found
      */
-    public static List<Method> findMethodsWithAnnotation(Class<?> type,
-                                                         Class<? extends Annotation> annotationType,
-                                                         boolean checkMetaAnnotations) {
+    public static List<Method> findMethodsWithAnnotation(
+            Class<?> type,
+            Class<? extends Annotation> annotationType,
+            boolean checkMetaAnnotations) {
         List<Method> answer = new ArrayList<>();
         do {
             Method[] methods = type.getDeclaredMethods();
@@ -805,13 +798,14 @@ public final class ObjectHelper {
     /**
      * Checks if a Class or Method are annotated with the given annotation
      *
-     * @param elem the Class or Method to reflect on
-     * @param annotationType the annotation type
-     * @param checkMetaAnnotations check for meta annotations
-     * @return true if annotations is present
+     * @param  elem                 the Class or Method to reflect on
+     * @param  annotationType       the annotation type
+     * @param  checkMetaAnnotations check for meta annotations
+     * @return                      true if annotations is present
      */
-    public static boolean hasAnnotation(AnnotatedElement elem, Class<? extends Annotation> annotationType,
-                                        boolean checkMetaAnnotations) {
+    public static boolean hasAnnotation(
+            AnnotatedElement elem, Class<? extends Annotation> annotationType,
+            boolean checkMetaAnnotations) {
         if (elem.isAnnotationPresent(annotationType)) {
             return true;
         }
@@ -830,8 +824,8 @@ public final class ObjectHelper {
     /**
      * Turns the given object arrays into a meaningful string
      *
-     * @param objects an array of objects or null
-     * @return a meaningful string
+     * @param  objects an array of objects or null
+     * @return         a meaningful string
      */
     public static String asString(Object[] objects) {
         if (objects == null) {
@@ -852,10 +846,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns true if a class is assignable from another class like the
-     * {@link Class#isAssignableFrom(Class)} method but which also includes
-     * coercion between primitive types to deal with Java 5 primitive type
-     * wrapping
+     * Returns true if a class is assignable from another class like the {@link Class#isAssignableFrom(Class)} method
+     * but which also includes coercion between primitive types to deal with Java 5 primitive type wrapping
      */
     public static boolean isAssignableFrom(Class<?> a, Class<?> b) {
         a = convertPrimitiveTypeToWrapperType(a);
@@ -866,8 +858,8 @@ public final class ObjectHelper {
     /**
      * Returns if the given {@code clazz} type is a Java primitive array type.
      *
-     * @param clazz the Java type to be checked
-     * @return {@code true} if the given type is a Java primitive array type
+     * @param  clazz the Java type to be checked
+     * @return       {@code true} if the given type is a Java primitive array type
      */
     public static boolean isPrimitiveArrayType(Class<?> clazz) {
         if (clazz != null && clazz.isArray()) {
@@ -881,8 +873,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Converts primitive types such as int to its wrapper type like
-     * {@link Integer}
+     * Converts primitive types such as int to its wrapper type like {@link Integer}
      */
     public static Class<?> convertPrimitiveTypeToWrapperType(Class<?> type) {
         Class<?> rc = type;
@@ -916,8 +907,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns the Java Bean property name of the given method, if it is a
-     * setter
+     * Returns the Java Bean property name of the given method, if it is a setter
      */
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
@@ -942,14 +932,13 @@ public final class ObjectHelper {
     /**
      * Gets the annotation from the given instance.
      *
-     * @param instance the instance
-     * @param type  the annotation
-     * @return the annotation, or <tt>null</tt> if the instance does not have the given annotation
+     * @param  instance the instance
+     * @param  type     the annotation
+     * @return          the annotation, or <tt>null</tt> if the instance does not have the given annotation
      */
     public static <A extends java.lang.annotation.Annotation> A getAnnotation(Object instance, Class<A> type) {
         return instance.getClass().getAnnotation(type);
     }
-
 
     /**
      * Converts the given value to the required type or throw a meaningful exception
@@ -967,8 +956,10 @@ public final class ObjectHelper {
         try {
             return toType.cast(value);
         } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Failed to convert: "
-                + value + " to type: " + toType.getName() + " due to: " + e, e);
+            throw new IllegalArgumentException(
+                    "Failed to convert: "
+                                               + value + " to type: " + toType.getName() + " due to: " + e,
+                    e);
         }
     }
 
@@ -993,8 +984,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * Evaluate the value as a predicate which attempts to convert the value to
-     * a boolean otherwise true is returned if the value is not null
+     * Evaluate the value as a predicate which attempts to convert the value to a boolean otherwise true is returned if
+     * the value is not null
      */
     public static boolean evaluateValuePredicate(Object value) {
         if (value instanceof Boolean) {
@@ -1020,12 +1011,12 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an Iterable to walk the exception from the bottom up
-     * (the last caused by going upwards to the root exception).
+     * Creates an Iterable to walk the exception from the bottom up (the last caused by going upwards to the root
+     * exception).
      *
-     * @see java.lang.Iterable
-     * @param exception  the exception
-     * @return the Iterable
+     * @see              java.lang.Iterable
+     * @param  exception the exception
+     * @return           the Iterable
      */
     public static Iterable<Throwable> createExceptionIterable(Throwable exception) {
         List<Throwable> throwables = new ArrayList<>();
@@ -1042,12 +1033,12 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an Iterator to walk the exception from the bottom up
-     * (the last caused by going upwards to the root exception).
+     * Creates an Iterator to walk the exception from the bottom up (the last caused by going upwards to the root
+     * exception).
      *
-     * @see Iterator
-     * @param exception  the exception
-     * @return the Iterator
+     * @see              Iterator
+     * @param  exception the exception
+     * @return           the Iterator
      */
     public static Iterator<Throwable> createExceptionIterator(Throwable exception) {
         return createExceptionIterable(exception).iterator();
@@ -1056,15 +1047,14 @@ public final class ObjectHelper {
     /**
      * Retrieves the given exception type from the exception.
      * <p/>
-     * Is used to get the caused exception that typically have been wrapped in some sort
-     * of Camel wrapper exception
+     * Is used to get the caused exception that typically have been wrapped in some sort of Camel wrapper exception
      * <p/>
-     * The strategy is to look in the exception hierarchy to find the first given cause that matches the type.
-     * Will start from the bottom (the real cause) and walk upwards.
+     * The strategy is to look in the exception hierarchy to find the first given cause that matches the type. Will
+     * start from the bottom (the real cause) and walk upwards.
      *
-     * @param type the exception type wanted to retrieve
-     * @param exception the caused exception
-     * @return the exception found (or <tt>null</tt> if not found in the exception hierarchy)
+     * @param  type      the exception type wanted to retrieve
+     * @param  exception the caused exception
+     * @return           the exception found (or <tt>null</tt> if not found in the exception hierarchy)
      */
     public static <T> T getException(Class<T> type, Throwable exception) {
         if (exception == null) {
@@ -1096,9 +1086,9 @@ public final class ObjectHelper {
     /**
      * Lookup the constant field on the given class with the given name
      *
-     * @param clazz  the class
-     * @param name   the name of the field to lookup
-     * @return the value of the constant field, or <tt>null</tt> if not found
+     * @param  clazz the class
+     * @param  name  the name of the field to lookup
+     * @return       the value of the constant field, or <tt>null</tt> if not found
      */
     public static String lookupConstantFieldValue(Class<?> clazz, String name) {
         if (clazz == null) {
@@ -1128,21 +1118,20 @@ public final class ObjectHelper {
     /**
      * Is the given value a numeric NaN type
      *
-     * @param value the value
-     * @return <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
+     * @param  value the value
+     * @return       <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
         return (value instanceof Number)
-            && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
+                && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
     }
 
     /**
-     * Wraps the caused exception in a {@link RuntimeException} if its not
-     * already such an exception.
+     * Wraps the caused exception in a {@link RuntimeException} if its not already such an exception.
      *
-     * @param e the caused exception
-     * @return the wrapper exception
-     * @deprecated Use {@link org.apache.camel.RuntimeCamelException#wrapRuntimeCamelException} instead
+     * @param      e the caused exception
+     * @return       the wrapper exception
+     * @deprecated   Use {@link org.apache.camel.RuntimeCamelException#wrapRuntimeCamelException} instead
      */
     @Deprecated
     public static RuntimeException wrapRuntimeCamelException(Throwable e) {
@@ -1168,11 +1157,11 @@ public final class ObjectHelper {
     /**
      * Turns the input array to a list of objects.
      * 
-     * @param objects an array of objects or null
-     * @return an object list
+     * @param  objects an array of objects or null
+     * @return         an object list
      */
     public static List<Object> asList(Object[] objects) {
         return objects != null ? Arrays.asList(objects) : Collections.emptyList();
     }
-    
+
 }

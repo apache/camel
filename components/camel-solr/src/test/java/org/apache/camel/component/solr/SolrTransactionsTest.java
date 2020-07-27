@@ -62,9 +62,10 @@ public class SolrTransactionsTest extends SolrComponentTestSupport {
             // Twisting expectations in this case as rollback is currently no
             // more supported in SolrCloud mode. See SOLR-4895
             Exception e = assertThrows(CamelExecutionException.class,
-                () -> doRollback());
+                    () -> doRollback());
             assertIsInstanceOf(HttpSolrClient.RemoteSolrException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().contains("Rollback is currently not supported in SolrCloud mode. (SOLR-4895)"));
+            assertTrue(
+                    e.getCause().getMessage().contains("Rollback is currently not supported in SolrCloud mode. (SOLR-4895)"));
         } else {
             doRollback();
         }

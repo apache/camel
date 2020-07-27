@@ -89,9 +89,10 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertEquals(3, set.size());
 
         // get the message history service using JMX
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsMessageHistoryService", context.getManagementName());
+        String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsMessageHistoryService",
+                context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
-        String json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 
@@ -109,7 +110,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 

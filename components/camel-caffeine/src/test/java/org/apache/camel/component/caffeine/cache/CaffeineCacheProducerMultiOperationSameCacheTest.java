@@ -44,7 +44,6 @@ public class CaffeineCacheProducerMultiOperationSameCacheTest extends CaffeineCa
         assertMockEndpointsSatisfied();
     }
 
-
     // ****************************
     // Route
     // ****************************
@@ -54,8 +53,10 @@ public class CaffeineCacheProducerMultiOperationSameCacheTest extends CaffeineCa
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start").toF("caffeine-cache://%s?cache=#cache&action=PUT&key=1", "test")
-                    .toF("caffeine-cache://%s?cache=#cache&key=1&action=GET", "test").to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true").log("Test! ${body}")
-                    .to("mock:result");
+                        .toF("caffeine-cache://%s?cache=#cache&key=1&action=GET", "test")
+                        .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
+                        .log("Test! ${body}")
+                        .to("mock:result");
             }
         };
     }

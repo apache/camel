@@ -25,7 +25,8 @@ import org.junit.jupiter.api.Test;
 public class FromFtpSimpleNoEndpointPathRelativeMoveToRelativeTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false" + "&move=.done&initialDelay=2500&delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false"
+               + "&move=.done&initialDelay=2500&delay=5000";
     }
 
     @Override

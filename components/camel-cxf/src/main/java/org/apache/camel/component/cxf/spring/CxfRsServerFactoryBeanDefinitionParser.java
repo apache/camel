@@ -26,23 +26,23 @@ import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
-public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefinitionParser  {
+public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
 
     public CxfRsServerFactoryBeanDefinitionParser() {
         setBeanClass(SpringJAXRSServerFactoryBean.class);
     }
-    
+
     @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         super.doParse(element, ctx, bean);
-        bean.addPropertyValue("beanId", resolveId(element, bean.getBeanDefinition(), ctx));            
+        bean.addPropertyValue("beanId", resolveId(element, bean.getBeanDefinition(), ctx));
     }
-    
+
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
-        if ("properties".equals(name) 
-            || "extensionMappings".equals(name)
-            || "languageMappings".equals(name)) {
+        if ("properties".equals(name)
+                || "extensionMappings".equals(name)
+                || "languageMappings".equals(name)) {
             Map<?, ?> map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, map);
         } else if ("executor".equals(name)) {
@@ -52,21 +52,20 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
-            || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)) {
+                || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)) {
             List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
-        } else if ("features".equals(name) || "schemaLocations".equals(name) 
-            || "providers".equals(name) || "serviceBeans".equals(name)
-            || "modelBeans".equals(name)) {
+        } else if ("features".equals(name) || "schemaLocations".equals(name)
+                || "providers".equals(name) || "serviceBeans".equals(name)
+                || "modelBeans".equals(name)) {
             List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("model".equals(name)) {
             List<UserResource> resources = ResourceUtils.getResourcesFromElement(el);
             bean.addPropertyValue("modelBeans", resources);
         } else {
-            setFirstChildAsProperty(el, ctx, bean, name);            
-        }        
+            setFirstChildAsProperty(el, ctx, bean, name);
+        }
     }
 
-   
 }

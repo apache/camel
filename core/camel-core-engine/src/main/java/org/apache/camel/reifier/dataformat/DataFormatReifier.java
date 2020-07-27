@@ -85,7 +85,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
     private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
-        Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
+        Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map
+                = new HashMap<>();
         map.put(Any23DataFormat.class, Any23DataFormatReifier::new);
         map.put(ASN1DataFormat.class, ASN1DataFormatReifier::new);
         map.put(AvroDataFormat.class, AvroDataFormatReifier::new);
@@ -139,8 +140,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<? extends DataFormatDefinition> dataFormatClass,
-                                       BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
+    public static void registerReifier(
+            Class<? extends DataFormatDefinition> dataFormatClass,
+            BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
         DATAFORMATS.put(dataFormatClass, creator);
     }
 
@@ -159,10 +161,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     /**
      * Factory method to create the data format
      *
-     * @param camelContext the camel context
-     * @param type the data format type
-     * @param ref reference to lookup for a data format
-     * @return the data format or null if not possible to create
+     * @param  camelContext the camel context
+     * @param  type         the data format type
+     * @param  ref          reference to lookup for a data format
+     * @return              the data format or null if not possible to create
      */
     public static DataFormat getDataFormat(CamelContext camelContext, DataFormatDefinition type, String ref) {
         if (type == null) {
@@ -192,8 +194,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         return reifier(camelContext, type).createDataFormat();
     }
 
-    public static DataFormatReifier<? extends DataFormatDefinition> reifier(CamelContext camelContext, DataFormatDefinition definition) {
-        BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier = DATAFORMATS.get(definition.getClass());
+    public static DataFormatReifier<? extends DataFormatDefinition> reifier(
+            CamelContext camelContext, DataFormatDefinition definition) {
+        BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier
+                = DATAFORMATS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(camelContext, definition);
         }
@@ -213,7 +217,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                 // configure the rest of the options
                 configureDataFormat(dataFormat);
             } else {
-                throw new IllegalArgumentException("Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
+                throw new IllegalArgumentException(
+                        "Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
                                                    + "' could not be created. "
                                                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
             }
@@ -264,12 +269,14 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (dataFormat instanceof PropertyConfigurerAware) {
             configurer = ((PropertyConfigurerAware) dataFormat).getPropertyConfigurer(dataFormat);
             if (LOG.isDebugEnabled() && configurer != null) {
-                LOG.debug("Discovered dataformat property configurer using the PropertyConfigurerAware: {} -> {}", name, configurer);
+                LOG.debug("Discovered dataformat property configurer using the PropertyConfigurerAware: {} -> {}", name,
+                        configurer);
             }
         }
         if (configurer == null) {
             String configurerName = name + "-dataformat-configurer";
-            configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configurerName, camelContext);
+            configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                    .resolvePropertyConfigurer(configurerName, camelContext);
         }
         return configurer;
     }

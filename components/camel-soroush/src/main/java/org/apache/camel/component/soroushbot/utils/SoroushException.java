@@ -28,7 +28,8 @@ public class SoroushException extends Exception {
     final Integer status;
     final String responseBody;
 
-    public SoroushException(SoroushMessage soroushMessage, SoroushResponse soroushResponse, Integer status, String responseBody) {
+    public SoroushException(SoroushMessage soroushMessage, SoroushResponse soroushResponse, Integer status,
+                            String responseBody) {
         super(responseBody);
         this.soroushMessage = soroushMessage;
         this.soroushResponse = soroushResponse;
@@ -39,12 +40,12 @@ public class SoroushException extends Exception {
     @Override
     public String getLocalizedMessage() {
         return "SoroushException{"
-                + "soroushMessage=" + soroushMessage
-                + "soroushResponse=" + soroushResponse
-                + ", status=" + status
-                + ", responseBody='" + responseBody + '\''
-                + ", message='" + getMessage() + '\''
-                + "} ";
+               + "soroushMessage=" + soroushMessage
+               + "soroushResponse=" + soroushResponse
+               + ", status=" + status
+               + ", responseBody='" + responseBody + '\''
+               + ", message='" + getMessage() + '\''
+               + "} ";
     }
 
 }

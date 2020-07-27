@@ -100,8 +100,8 @@ final class XmlCdiBeanFactory {
     Set<SyntheticBean<?>> beansFrom(URL url, AnnotatedType<?> annotatedType) throws JAXBException, IOException {
         try (InputStream xml = url.openStream()) {
             Object node = XmlCdiJaxbContexts.CAMEL_CDI.instance()
-                .createUnmarshaller()
-                .unmarshal(xml);
+                    .createUnmarshaller()
+                    .unmarshal(xml);
             if (node instanceof RoutesDefinition) {
                 RoutesDefinition routes = (RoutesDefinition) node;
                 return singleton(routesDefinitionBean(routes, url));
@@ -170,31 +170,33 @@ final class XmlCdiBeanFactory {
         }
 
         annotations.add(APPLICATION_SCOPED);
-        SyntheticAnnotated annotated = new SyntheticAnnotated(DefaultCamelContext.class,
-            manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(),
-            annotatedType.getJavaClass(),
-            annotations);
+        SyntheticAnnotated annotated = new SyntheticAnnotated(
+                DefaultCamelContext.class,
+                manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(),
+                annotatedType.getJavaClass(),
+                annotations);
 
-        return new SyntheticBean<>(manager, annotated, DefaultCamelContext.class,
-            environment.camelContextInjectionTarget(
-                new SyntheticInjectionTarget<>(() -> {
-                    DefaultCamelContext context = createCamelContextWithTCCL(DefaultCamelContext::new, annotated);
-                    factory.setContext(context);
-                    factory.setBeanManager(manager);
-                    return context;
-                }, context -> {
-                    try {
-                        factory.afterPropertiesSet();
-                    } catch (Exception cause) {
-                        throw new CreationException(cause);
-                    }
-                }),
-                annotated, manager, extension), bean ->
-                "imported Camel context with "
-                + (factory.isImplicitId() ? "implicit " : "")
-                + "id [" + factory.getId() + "] "
-                + "from resource [" + url + "] "
-                + "with qualifiers " + bean.getQualifiers());
+        return new SyntheticBean<>(
+                manager, annotated, DefaultCamelContext.class,
+                environment.camelContextInjectionTarget(
+                        new SyntheticInjectionTarget<>(() -> {
+                            DefaultCamelContext context = createCamelContextWithTCCL(DefaultCamelContext::new, annotated);
+                            factory.setContext(context);
+                            factory.setBeanManager(manager);
+                            return context;
+                        }, context -> {
+                            try {
+                                factory.afterPropertiesSet();
+                            } catch (Exception cause) {
+                                throw new CreationException(cause);
+                            }
+                        }),
+                        annotated, manager, extension),
+                bean -> "imported Camel context with "
+                        + (factory.isImplicitId() ? "implicit " : "")
+                        + "id [" + factory.getId() + "] "
+                        + "from resource [" + url + "] "
+                        + "with qualifiers " + bean.getQualifiers());
     }
 
     private Set<SyntheticBean<?>> camelContextBeans(CamelContextFactoryBean factory, Bean<?> context, URL url) {
@@ -203,45 +205,45 @@ final class XmlCdiBeanFactory {
         // TODO: WARN log if the definition doesn't have an id
         if (factory.getBeansFactory() != null) {
             factory.getBeansFactory().stream()
-                .filter(XmlCdiBeanFactory::hasId)
-                .map(bean -> camelContextBean(context, bean, url))
-                .forEach(beans::add);
+                    .filter(XmlCdiBeanFactory::hasId)
+                    .map(bean -> camelContextBean(context, bean, url))
+                    .forEach(beans::add);
         }
 
         // TODO: define in beans
         if (factory.getEndpoints() != null) {
             factory.getEndpoints().stream()
-                .filter(XmlCdiBeanFactory::hasId)
-                .map(endpoint -> camelContextBean(context, endpoint, url))
-                .forEach(beans::add);
+                    .filter(XmlCdiBeanFactory::hasId)
+                    .map(endpoint -> camelContextBean(context, endpoint, url))
+                    .forEach(beans::add);
         }
 
         if (factory.getErrorHandlers() != null) {
             factory.getErrorHandlers().stream()
-                .filter(XmlCdiBeanFactory::hasId)
-                .map(handler -> errorHandlerBean(handler, url))
-                .forEach(beans::add);
+                    .filter(XmlCdiBeanFactory::hasId)
+                    .map(handler -> errorHandlerBean(handler, url))
+                    .forEach(beans::add);
         }
 
         if (factory.getExports() != null) {
             factory.getExports().stream()
-                .map(export -> serviceExporterBean(context, export, url))
-                .forEach(beans::add);
+                    .map(export -> serviceExporterBean(context, export, url))
+                    .forEach(beans::add);
         }
 
         if (factory.getProxies() != null) {
             factory.getProxies().stream()
-                .filter(XmlCdiBeanFactory::hasId)
-                .map(proxy -> proxyFactoryBean(context, proxy, url))
-                .forEach(beans::add);
+                    .filter(XmlCdiBeanFactory::hasId)
+                    .map(proxy -> proxyFactoryBean(context, proxy, url))
+                    .forEach(beans::add);
         }
 
         // TODO: define in beans
         if (factory.getRedeliveryPolicies() != null) {
             factory.getRedeliveryPolicies().stream()
-                .filter(XmlCdiBeanFactory::hasId)
-                .map(policy -> camelContextBean(context, policy, url))
-                .forEach(beans::add);
+                    .filter(XmlCdiBeanFactory::hasId)
+                    .map(policy -> camelContextBean(context, policy, url))
+                    .forEach(beans::add);
         }
 
         return beans;
@@ -261,39 +263,42 @@ final class XmlCdiBeanFactory {
             annotations.add(APPLICATION_SCOPED);
         }
 
-        return new SyntheticBean<>(manager,
-            new SyntheticAnnotated(factory.getObjectType(),
-                manager.createAnnotatedType(factory.getObjectType()).getTypeClosure(),
-                annotations),
-            factory.getObjectType(),
-            new XmlFactoryBeanInjectionTarget<>(manager, factory, context), bean ->
-                "imported bean [" + factory.getId() + "] "
-                + "from resource [" + url + "] "
-                + "with qualifiers " + bean.getQualifiers());
+        return new SyntheticBean<>(
+                manager,
+                new SyntheticAnnotated(
+                        factory.getObjectType(),
+                        manager.createAnnotatedType(factory.getObjectType()).getTypeClosure(),
+                        annotations),
+                factory.getObjectType(),
+                new XmlFactoryBeanInjectionTarget<>(manager, factory, context),
+                bean -> "imported bean [" + factory.getId() + "] "
+                        + "from resource [" + url + "] "
+                        + "with qualifiers " + bean.getQualifiers());
     }
 
     private SyntheticBean<?> proxyFactoryBean(Bean<?> context, CamelProxyFactoryDefinition proxy, URL url) {
         if (isEmpty(proxy.getServiceUrl())) {
             throw new CreationException(
-                format("Missing serviceUrl attribute for imported bean [%s] from resource [%s]", proxy.getId(), url));
+                    format("Missing serviceUrl attribute for imported bean [%s] from resource [%s]", proxy.getId(), url));
         }
 
-        return new XmlProxyFactoryBean<>(manager,
-            new SyntheticAnnotated(proxy.getServiceInterface(),
-                manager.createAnnotatedType(proxy.getServiceInterface()).getTypeClosure(),
-                APPLICATION_SCOPED, ANY, NamedLiteral.of(proxy.getId())),
-            proxy.getServiceInterface(), bean ->
-                "imported bean [" + proxy.getId() + "] "
-                + "from resource [" + url + "] "
-                + "with qualifiers " + bean.getQualifiers(),
-            context, proxy);
+        return new XmlProxyFactoryBean<>(
+                manager,
+                new SyntheticAnnotated(
+                        proxy.getServiceInterface(),
+                        manager.createAnnotatedType(proxy.getServiceInterface()).getTypeClosure(),
+                        APPLICATION_SCOPED, ANY, NamedLiteral.of(proxy.getId())),
+                proxy.getServiceInterface(), bean -> "imported bean [" + proxy.getId() + "] "
+                                                     + "from resource [" + url + "] "
+                                                     + "with qualifiers " + bean.getQualifiers(),
+                context, proxy);
     }
 
     private SyntheticBean<?> serviceExporterBean(Bean<?> context, CamelServiceExporterDefinition exporter, URL url) {
         // TODO: replace with CreationException
         requireNonNull(exporter.getServiceRef(),
-            () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                "serviceRef", Objects.toString(exporter.getId(), "export"), url));
+                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                        "serviceRef", Objects.toString(exporter.getId(), "export"), url));
 
         Class<?> type;
         if (exporter.getServiceInterface() != null) {
@@ -304,8 +309,8 @@ final class XmlCdiBeanFactory {
                 type = bean.getBeanClass();
             } else {
                 requireNonNull(exporter.getServiceInterface(),
-                    () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                        "serviceInterface", Objects.toString(exporter.getId(), "export"), url));
+                        () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                                "serviceInterface", Objects.toString(exporter.getId(), "export"), url));
                 type = exporter.getServiceInterface();
             }
         }
@@ -316,81 +321,88 @@ final class XmlCdiBeanFactory {
         // beans whose bean class is an interface (for startup beans).
         types.add(Object.class);
 
-        return new XmlServiceExporterBean<>(manager,
-            new SyntheticAnnotated(type, types, APPLICATION_SCOPED, ANY, STARTUP,
-                hasId(exporter) ? NamedLiteral.of(exporter.getId()) : DEFAULT),
-            type, bean ->
-                "imported bean [" + Objects.toString(exporter.getId(), "export") + "] "
-                + "from resource [" + url + "] "
-                + "with qualifiers " + bean.getQualifiers(),
-            context, exporter);
+        return new XmlServiceExporterBean<>(
+                manager,
+                new SyntheticAnnotated(
+                        type, types, APPLICATION_SCOPED, ANY, STARTUP,
+                        hasId(exporter) ? NamedLiteral.of(exporter.getId()) : DEFAULT),
+                type, bean -> "imported bean [" + Objects.toString(exporter.getId(), "export") + "] "
+                              + "from resource [" + url + "] "
+                              + "with qualifiers " + bean.getQualifiers(),
+                context, exporter);
     }
 
     private SyntheticBean<?> restContextBean(RestContextDefinition definition, URL url) {
         requireNonNull(definition.getId(),
-            () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                "id", "restContext", url));
+                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                        "id", "restContext", url));
 
-        return new SyntheticBean<>(manager,
-            new SyntheticAnnotated(List.class,
-                Stream.of(List.class, new ListParameterizedType(RestDefinition.class))
-                    .collect(toSet()),
-                ANY, NamedLiteral.of(definition.getId())),
-            List.class,
-            new SyntheticInjectionTarget<>(definition::getRests), bean ->
-                "imported rest context with "
-                + "id [" + definition.getId() + "] "
-                + "from resource [" + url + "] "
-                + "with qualifiers " + bean.getQualifiers());
+        return new SyntheticBean<>(
+                manager,
+                new SyntheticAnnotated(
+                        List.class,
+                        Stream.of(List.class, new ListParameterizedType(RestDefinition.class))
+                                .collect(toSet()),
+                        ANY, NamedLiteral.of(definition.getId())),
+                List.class,
+                new SyntheticInjectionTarget<>(definition::getRests), bean -> "imported rest context with "
+                                                                              + "id [" + definition.getId() + "] "
+                                                                              + "from resource [" + url + "] "
+                                                                              + "with qualifiers " + bean.getQualifiers());
     }
 
     private SyntheticBean<?> routeTemplateContextBean(RouteTemplateContextDefinition definition, URL url) {
         requireNonNull(definition.getId(),
-            () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                    "id", "routeContext", url));
+                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                        "id", "routeContext", url));
 
-        return new SyntheticBean<>(manager,
-                new SyntheticAnnotated(List.class,
+        return new SyntheticBean<>(
+                manager,
+                new SyntheticAnnotated(
+                        List.class,
                         Stream.of(List.class, new ListParameterizedType(RouteTemplateDefinition.class))
                                 .collect(toSet()),
                         ANY, NamedLiteral.of(definition.getId())),
                 List.class,
-                new SyntheticInjectionTarget<>(definition::getRouteTemplates), bean ->
-                "imported route template context with "
-                        + "id [" + definition.getId() + "] "
-                        + "from resource [" + url + "] "
-                        + "with qualifiers " + bean.getQualifiers());
+                new SyntheticInjectionTarget<>(definition::getRouteTemplates), bean -> "imported route template context with "
+                                                                                       + "id [" + definition.getId() + "] "
+                                                                                       + "from resource [" + url + "] "
+                                                                                       + "with qualifiers "
+                                                                                       + bean.getQualifiers());
     }
 
     private SyntheticBean<?> routeContextBean(RouteContextDefinition definition, URL url) {
         requireNonNull(definition.getId(),
-            () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                "id", "routeContext", url));
+                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                        "id", "routeContext", url));
 
-        return new SyntheticBean<>(manager,
-            new SyntheticAnnotated(List.class,
-                Stream.of(List.class, new ListParameterizedType(RouteDefinition.class))
-                    .collect(toSet()),
-                ANY, NamedLiteral.of(definition.getId())),
-            List.class,
-            new SyntheticInjectionTarget<>(definition::getRoutes), bean ->
-                "imported route context with "
-                + "id [" + definition.getId() + "] "
-                + "from resource [" + url + "] "
-                + "with qualifiers " + bean.getQualifiers());
+        return new SyntheticBean<>(
+                manager,
+                new SyntheticAnnotated(
+                        List.class,
+                        Stream.of(List.class, new ListParameterizedType(RouteDefinition.class))
+                                .collect(toSet()),
+                        ANY, NamedLiteral.of(definition.getId())),
+                List.class,
+                new SyntheticInjectionTarget<>(definition::getRoutes), bean -> "imported route context with "
+                                                                               + "id [" + definition.getId() + "] "
+                                                                               + "from resource [" + url + "] "
+                                                                               + "with qualifiers " + bean.getQualifiers());
     }
 
     private SyntheticBean<?> routesDefinitionBean(RoutesDefinition definition, URL url) {
-        return new SyntheticBean<>(manager,
-            // TODO: should be @Named if the id is set
-            new SyntheticAnnotated(RoutesDefinition.class,
-                manager.createAnnotatedType(RoutesDefinition.class).getTypeClosure(),
-                ANY, DEFAULT),
-            RoutesDefinition.class,
-            new SyntheticInjectionTarget<>(() -> definition), bean ->
-                "imported routes definition "
-                + (hasId(definition) ? "[" + definition.getId() + "] " : "")
-                + "from resource [" + url + "]");
+        return new SyntheticBean<>(
+                manager,
+                // TODO: should be @Named if the id is set
+                new SyntheticAnnotated(
+                        RoutesDefinition.class,
+                        manager.createAnnotatedType(RoutesDefinition.class).getTypeClosure(),
+                        ANY, DEFAULT),
+                RoutesDefinition.class,
+                new SyntheticInjectionTarget<>(() -> definition), bean -> "imported routes definition "
+                                                                          + (hasId(definition)
+                                                                                  ? "[" + definition.getId() + "] " : "")
+                                                                          + "from resource [" + url + "]");
     }
 
     private SyntheticBean<?> errorHandlerBean(ErrorHandlerDefinition definition, URL url) {
@@ -398,86 +410,88 @@ final class XmlCdiBeanFactory {
 
         // Validate attributes according to type
         if (isNotEmpty(definition.getDeadLetterUri())
-            && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
+                && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
             throw attributeNotSupported("deadLetterUri", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getDeadLetterHandleNewException())
-            && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
+                && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
             throw attributeNotSupported("deadLetterHandleNewException", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getTransactionTemplateRef())
-            && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+                && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             throw attributeNotSupported("transactionTemplateRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getTransactionManagerRef())
-            && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+                && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             throw attributeNotSupported("transactionManagerRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getRollbackLoggingLevel())
-            && (!type.equals(ErrorHandlerType.TransactionErrorHandler))) {
+                && (!type.equals(ErrorHandlerType.TransactionErrorHandler))) {
             throw attributeNotSupported("rollbackLoggingLevel", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getUseOriginalMessage())
-            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+                && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("useOriginalMessage", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getUseOriginalBody())
-            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+                && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("useOriginalBody", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnRedeliveryRef())
-            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+                && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("onRedeliveryRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnExceptionOccurredRef())
-            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+                && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("onExceptionOccurredRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnPrepareFailureRef())
-            && (type.equals(ErrorHandlerType.TransactionErrorHandler)
-            || type.equals(ErrorHandlerType.NoErrorHandler))) {
+                && (type.equals(ErrorHandlerType.TransactionErrorHandler)
+                        || type.equals(ErrorHandlerType.NoErrorHandler))) {
             throw attributeNotSupported("onPrepareFailureRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getRetryWhileRef())
-            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+                && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("retryWhileRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnRedeliveryRef())
-            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+                && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("redeliveryPolicyRef", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getExecutorServiceRef())
-            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+                && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("executorServiceRef", type, definition.getId());
         }
 
-        return new XmlErrorHandlerFactoryBean(manager,
-            new SyntheticAnnotated(type.getTypeAsClass(),
-                manager.createAnnotatedType(type.getTypeAsClass()).getTypeClosure(),
-                ANY, NamedLiteral.of(definition.getId())),
-            type.getTypeAsClass(), bean -> "imported error handler with "
-                + "id [" + definition.getId() + "] "
-                + "from resource [" + url + "] "
-                + "with qualifiers " + bean.getQualifiers(),
-            definition);
+        return new XmlErrorHandlerFactoryBean(
+                manager,
+                new SyntheticAnnotated(
+                        type.getTypeAsClass(),
+                        manager.createAnnotatedType(type.getTypeAsClass()).getTypeClosure(),
+                        ANY, NamedLiteral.of(definition.getId())),
+                type.getTypeAsClass(), bean -> "imported error handler with "
+                                               + "id [" + definition.getId() + "] "
+                                               + "from resource [" + url + "] "
+                                               + "with qualifiers " + bean.getQualifiers(),
+                definition);
     }
 
     private static CreationException attributeNotSupported(String attribute, ErrorHandlerType type, String id) {
         return new CreationException(
-            format("Attribute [%s] is not supported by error handler type [%s], in error handler with id [%s]",
-                attribute, type, id));
+                format("Attribute [%s] is not supported by error handler type [%s], in error handler with id [%s]",
+                        attribute, type, id));
     }
 
     private static <T extends IdentifiedType> boolean hasId(T type) {

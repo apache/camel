@@ -38,8 +38,8 @@ public final class ProxyBuilder {
     /**
      * Send the proxied message to this endpoint
      *
-     * @param url uri of endpoint
-     * @return the builder
+     * @param  url uri of endpoint
+     * @return     the builder
      */
     public ProxyBuilder endpoint(String url) {
         this.endpoint = camelContext.getEndpoint(url);
@@ -49,8 +49,8 @@ public final class ProxyBuilder {
     /**
      * Send the proxied message to this endpoint
      *
-     * @param endpoint the endpoint
-     * @return the builder
+     * @param  endpoint the endpoint
+     * @return          the builder
      */
     public ProxyBuilder endpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -60,24 +60,24 @@ public final class ProxyBuilder {
     /**
      * Builds the proxy.
      *
-     * @param interfaceClass the service interface
-     * @return the proxied bean
-     * @throws Exception is thrown if error creating the proxy
+     * @param  interfaceClass the service interface
+     * @return                the proxied bean
+     * @throws Exception      is thrown if error creating the proxy
      */
     @SuppressWarnings("unchecked")
     public <T> T build(Class<T> interfaceClass) throws Exception {
         // this method is introduced to avoid compiler warnings about the
         // generic Class arrays in the case we've got only one single Class
         // to build a Proxy for
-        return build((Class<T>[])new Class[] {interfaceClass});
+        return build((Class<T>[]) new Class[] { interfaceClass });
     }
 
     /**
      * Builds the proxy.
      *
-     * @param interfaceClasses the service interface(s)
-     * @return the proxied bean
-     * @throws Exception is thrown if error creating the proxy
+     * @param  interfaceClasses the service interface(s)
+     * @return                  the proxied bean
+     * @throws Exception        is thrown if error creating the proxy
      */
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");

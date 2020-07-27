@@ -78,7 +78,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
         @RecipientList(strategyRef = "myStrategy", parallelProcessing = true, timeout = 1000)
         public String[] route(String body) {
-            return new String[] {"direct:a", "direct:b", "direct:c"};
+            return new String[] { "direct:a", "direct:b", "direct:c" };
         }
     }
 

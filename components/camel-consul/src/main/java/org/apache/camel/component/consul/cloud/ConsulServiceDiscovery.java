@@ -41,7 +41,8 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private final QueryOptions queryOptions;
 
     public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
-        this.client = Suppliers.memorize(() -> configuration.createConsulClient(getCamelContext()), e -> RuntimeCamelException.wrapRuntimeCamelException(e));
+        this.client = Suppliers.memorize(() -> configuration.createConsulClient(getCamelContext()),
+                e -> RuntimeCamelException.wrapRuntimeCamelException(e));
 
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
         ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
@@ -90,7 +91,11 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
         // and it is now taken ito account
         service.getServiceMeta().ifPresent(serviceMeta -> serviceMeta.forEach(meta::put));
 
-        return new DefaultServiceDefinition(serviceName, service.getServiceAddress(), service.getServicePort(), meta, new DefaultServiceHealth(serviceHealthList.stream()
-            .filter(h -> ObjectHelper.equal(h.getService().getId(), service.getServiceId())).allMatch(this::isHealthy)));
+        return new DefaultServiceDefinition(
+                serviceName, service.getServiceAddress(), service.getServicePort(), meta,
+                new DefaultServiceHealth(
+                        serviceHealthList.stream()
+                                .filter(h -> ObjectHelper.equal(h.getService().getId(), service.getServiceId()))
+                                .allMatch(this::isHealthy)));
     }
 }

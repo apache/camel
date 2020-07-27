@@ -38,7 +38,8 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "loadBalancerConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConfiguration implements ServiceLoadBalancerFactory {
+public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConfiguration
+        implements ServiceLoadBalancerFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
     @XmlTransient
@@ -68,9 +69,8 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
     /**
      * Adds a custom property to use.
      * <p/>
-     * These properties are specific to what service call implementation are in
-     * use. For example if using ribbon, then the client properties are define
-     * in com.netflix.client.config.CommonClientConfigKey.
+     * These properties are specific to what service call implementation are in use. For example if using ribbon, then
+     * the client properties are define in com.netflix.client.config.CommonClientConfigKey.
      */
     public ServiceCallServiceLoadBalancerConfiguration property(String key, String value) {
         return (ServiceCallServiceLoadBalancerConfiguration) super.property(key, value);
@@ -87,7 +87,8 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
         ServiceLoadBalancer answer;
 
         // First try to find the factory from the registry.
-        ServiceLoadBalancerFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceLoadBalancerFactory.class);
+        ServiceLoadBalancerFactory factory
+                = CamelContextHelper.lookup(camelContext, factoryKey, ServiceLoadBalancerFactory.class);
         if (factory != null) {
             // If a factory is found in the registry do not re-configure it as
             // it should be pre-configured.
@@ -97,30 +98,35 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
+                type = camelContext.adapt(ExtendedCamelContext.class)
+                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
 
             if (type != null) {
                 if (ServiceLoadBalancerFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceLoadBalancerFactory)camelContext.getInjector().newInstance(type, false);
+                    factory = (ServiceLoadBalancerFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new IllegalArgumentException("Resolving LoadBalancer: " + factoryKey + " detected type conflict: Not a LoadBalancerFactory implementation. Found: "
+                    throw new IllegalArgumentException(
+                            "Resolving LoadBalancer: " + factoryKey
+                                                       + " detected type conflict: Not a LoadBalancerFactory implementation. Found: "
                                                        + type.getName());
                 }
             }
 
             try {
                 Map<String, Object> parameters = new HashMap<>();
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null, false);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null,
+                        false);
 
                 parameters.replaceAll((k, v) -> {
                     if (v instanceof String) {
                         try {
-                            v = camelContext.resolvePropertyPlaceholders((String)v);
+                            v = camelContext.resolvePropertyPlaceholders((String) v);
                         } catch (Exception e) {
-                            throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
+                            throw new IllegalArgumentException(
+                                    String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                         }
                     }
 

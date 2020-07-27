@@ -25,7 +25,8 @@ public class SpringRouteWithConstantFieldFromExchangeFailTest extends RouteWithC
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/RouteWithConstantFieldFromExchangeFailTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/RouteWithConstantFieldFromExchangeFailTest.xml");
     }
 
 }

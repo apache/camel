@@ -24,28 +24,28 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 /**
  * A condition to define when a given {@link Exchange} matches when is being routed.
  * <p/>
- * Is used by the {@link org.apache.camel.spi.Debugger} to apply {@link Condition}s
- * to {@link org.apache.camel.spi.Breakpoint}s to define rules when the breakpoints should match.
+ * Is used by the {@link org.apache.camel.spi.Debugger} to apply {@link Condition}s to
+ * {@link org.apache.camel.spi.Breakpoint}s to define rules when the breakpoints should match.
  */
 public interface Condition {
 
     /**
      * Does the condition match
      *
-     * @param exchange the exchange
-     * @param processor  the {@link Processor}
-     * @param definition the present location in the route where the {@link Exchange} is located at
-     * @return <tt>true</tt> to match, <tt>false</tt> otherwise
+     * @param  exchange   the exchange
+     * @param  processor  the {@link Processor}
+     * @param  definition the present location in the route where the {@link Exchange} is located at
+     * @return            <tt>true</tt> to match, <tt>false</tt> otherwise
      */
     boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**
      * Does the condition match
      *
-     * @param exchange the exchange
-     * @param event    the event (instance of {@link ExchangeEvent}
-     * @return <tt>true</tt> to match, <tt>false</tt> otherwise
-     * @see ExchangeEvent
+     * @param  exchange the exchange
+     * @param  event    the event (instance of {@link ExchangeEvent}
+     * @return          <tt>true</tt> to match, <tt>false</tt> otherwise
+     * @see             ExchangeEvent
      */
     boolean matchEvent(Exchange exchange, ExchangeEvent event);
 

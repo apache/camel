@@ -24,18 +24,19 @@ import javax.management.modelmbean.ModelMBean;
 import org.apache.camel.StaticService;
 
 /**
- * An assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean} which can be used
- * to register the object in JMX.
+ * An assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean} which can be used to register the
+ * object in JMX.
  */
 public interface ManagementMBeanAssembler extends StaticService {
 
     /**
      * Assemble the {@link javax.management.modelmbean.ModelMBean}.
      *
-     * @param mBeanServer the mbean server
-     * @param obj         the object
-     * @param name        the object name to use in JMX
-     * @return the assembled {@link javax.management.modelmbean.ModelMBean}, or <tt>null</tt> if not possible to assemble an MBean
+     * @param  mBeanServer the mbean server
+     * @param  obj         the object
+     * @param  name        the object name to use in JMX
+     * @return             the assembled {@link javax.management.modelmbean.ModelMBean}, or <tt>null</tt> if not
+     *                     possible to assemble an MBean
      * @throws JMException is thrown if error assembling the mbean
      */
     ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException;

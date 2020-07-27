@@ -27,7 +27,8 @@ public class SpringServiceCallEnvironmentRouteTest extends CamelSpringTestSuppor
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/kubernetes/cloud/SpringServiceCallEnvironmentRouteTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/kubernetes/cloud/SpringServiceCallEnvironmentRouteTest.xml");
     }
 
     @Test

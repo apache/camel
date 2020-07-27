@@ -29,10 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JGroupsRaftComponentConfiguredTest extends CamelTestSupport {
 
     static final String CLUSTER_NAME = "JGroupsRaftComponentConfiguredTest";
-    static final String CONFIGURED_ENDPOINT_URI = String.format("my-config-jgroupsraft:%s?raftId=B&channelProperties=raftB.xml", CLUSTER_NAME);
+    static final String CONFIGURED_ENDPOINT_URI
+            = String.format("my-config-jgroupsraft:%s?raftId=B&channelProperties=raftB.xml", CLUSTER_NAME);
 
     static final String CLUSTER_NAME2 = "JGroupsraftComponentConfiguredTest2";
-    static final String CONFIGURED_ENDPOINT_URI2 = String.format("my-config-jgroupsraft2:%s?raftId=C&channelProperties=raftXXX.xml", CLUSTER_NAME2);
+    static final String CONFIGURED_ENDPOINT_URI2
+            = String.format("my-config-jgroupsraft2:%s?raftId=C&channelProperties=raftXXX.xml", CLUSTER_NAME2);
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

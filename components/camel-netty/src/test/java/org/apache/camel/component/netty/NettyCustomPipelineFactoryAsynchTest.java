@@ -51,7 +51,8 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&textline=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
+                        exchange.getOut().setBody(
+                                "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
                     }
                 });
             }
@@ -60,9 +61,12 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
 
     @Test
     public void testCustomClientInitializerFactory() throws Exception {
-        String response = (String)template.requestBody("netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true", "Forest Gump describing Vietnam...");
+        String response
+                = (String) template.requestBody("netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true",
+                        "Forest Gump describing Vietnam...");
 
-        assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);
+        assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'",
+                response);
         assertEquals(true, clientInvoked);
         assertEquals(true, serverInvoked);
     }
@@ -80,7 +84,8 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
 
             ChannelPipeline channelPipeline = ch.pipeline();
             clientInvoked = true;
-            channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
+            channelPipeline.addLast("decoder-DELIM",
+                    new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ClientChannelHandler(producer));
@@ -105,7 +110,8 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
             ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
-            channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
+            channelPipeline.addLast("decoder-DELIM",
+                    new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ServerChannelHandler(consumer));
         }

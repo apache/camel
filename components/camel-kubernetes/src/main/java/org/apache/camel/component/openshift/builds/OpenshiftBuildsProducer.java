@@ -48,7 +48,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -90,15 +90,17 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient()
-                    .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
+            NonNamespaceOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds
+                    = getEndpoint().getKubernetesClient()
+                            .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         } else {
-            FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch, Watcher<Build>> builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
-                    .inAnyNamespace();
+            FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch, Watcher<Build>> builds
+                    = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
+                            .inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
@@ -120,7 +122,8 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
             LOG.error("Get a specific Build require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Build require specify a namespace name");
         }
-        build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName).withName(buildName).get();
+        build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
+                .withName(buildName).get();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(build);

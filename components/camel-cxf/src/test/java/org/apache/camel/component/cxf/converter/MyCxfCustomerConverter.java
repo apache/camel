@@ -25,21 +25,21 @@ import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
 // This converter is used to show how to override the CxfPayload default toString converter
-@Converter 
+@Converter
 public final class MyCxfCustomerConverter {
-    
+
     private MyCxfCustomerConverter() {
         //Helper class
     }
-    
-    @Converter 
+
+    @Converter
     public static String cxfPayloadToString(final CxfPayload<?> payload) {
         XmlConverter converter = new XmlConverter();
         StringBuilder buf = new StringBuilder();
         for (Object element : payload.getBody()) {
             String elementString = "";
             try {
-                elementString = converter.toString((Element)element, null);
+                elementString = converter.toString((Element) element, null);
             } catch (TransformerException e) {
                 elementString = element.toString();
             }

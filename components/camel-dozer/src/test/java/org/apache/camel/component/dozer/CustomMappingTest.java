@@ -33,18 +33,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class CustomMappingTest {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
-    
+
     @Produce("direct:start")
     private ProducerTemplate startEndpoint;
-    
+
     @AfterEach
     public void tearDown() {
         resultEndpoint.reset();
     }
-    
+
     @Test
     void testCustomMapping() throws Exception {
         resultEndpoint.expectedMessageCount(1);

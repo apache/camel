@@ -51,9 +51,9 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
         final JsonSchema schema = schemaFor(parameters);
 
         final MetaData metaData = MetaDataBuilder.on(getCamelContext())//
-            .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")//
-            .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)//
-            .withPayload(schema).build();
+                .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")//
+                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)//
+                .withPayload(schema).build();
 
         return Optional.ofNullable(metaData);
     }
@@ -77,7 +77,7 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
 
     JsonSchema singleObjectSchema(final Map<String, Object> parameters) throws Exception {
         return SalesforceClientTemplate.invoke(getCamelContext(), parameters,
-        client -> fetchSingleObjectSchema(client, (String)parameters.get(SalesforceEndpointConfig.SOBJECT_NAME)));
+                client -> fetchSingleObjectSchema(client, (String) parameters.get(SalesforceEndpointConfig.SOBJECT_NAME)));
     }
 
     static JsonSchema fetch(final Consumer<ResponseCallback> restMethod, final SchemaMapper callback) {
@@ -103,11 +103,13 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
     }
 
     static JsonSchema fetchAllObjectsSchema(final RestClient client) {
-        return fetch(callback -> client.getGlobalObjects(Collections.emptyMap(), callback), SalesforceMetaDataExtension::mapAllObjectsSchema);
+        return fetch(callback -> client.getGlobalObjects(Collections.emptyMap(), callback),
+                SalesforceMetaDataExtension::mapAllObjectsSchema);
     }
 
     static JsonSchema fetchSingleObjectSchema(final RestClient client, final String objectName) {
-        return fetch(callback -> client.getDescription(objectName, Collections.emptyMap(), callback), SalesforceMetaDataExtension::mapSingleObjectSchema);
+        return fetch(callback -> client.getDescription(objectName, Collections.emptyMap(), callback),
+                SalesforceMetaDataExtension::mapSingleObjectSchema);
     }
 
     static JsonSchema mapAllObjectsSchema(final InputStream stream) throws IOException {

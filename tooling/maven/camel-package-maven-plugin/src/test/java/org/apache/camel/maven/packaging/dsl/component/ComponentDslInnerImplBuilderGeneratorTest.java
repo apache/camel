@@ -34,13 +34,15 @@ class ComponentDslInnerImplBuilderGeneratorTest {
 
     @Test
     public void testIfCreatesImplClassCorrectly() throws IOException {
-        final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
+        final String json = PackageHelper.loadText(new File(
+                Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
         final JavaClass javaClass = new JavaClass();
         javaClass.setName("TestClass");
 
-        final ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass, componentModel, "KafkaComponentBuilder");
+        final ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator
+                = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass, componentModel, "KafkaComponentBuilder");
 
         // test for naming
         assertEquals("KafkaComponentBuilderImpl", componentDslInnerImplBuilderGenerator.getGeneratedClassName());
@@ -52,7 +54,8 @@ class ComponentDslInnerImplBuilderGeneratorTest {
         assertTrue(code.contains("return new KafkaComponent();"));
 
         componentModel.getComponentOptions().forEach(componentOptionModel -> {
-            final String setterAsString = String.format("case \"%s\": ((%s) component).set%s((%s) value); return true;\n", componentOptionModel.getName(), componentModel.getShortJavaType(),
+            final String setterAsString = String.format("case \"%s\": ((%s) component).set%s((%s) value); return true;\n",
+                    componentOptionModel.getName(), componentModel.getShortJavaType(),
                     StringUtils.capitalize(componentOptionModel.getName()), componentOptionModel.getJavaType());
             assertTrue(code.contains(setterAsString));
         });

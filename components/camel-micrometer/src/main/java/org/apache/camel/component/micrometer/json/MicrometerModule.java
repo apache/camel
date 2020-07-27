@@ -76,7 +76,6 @@ public class MicrometerModule extends Module {
         return VERSION;
     }
 
-
     private static final class IdSerializer extends StdSerializer<Meter.Id> {
         private IdSerializer() {
             super(Meter.Id.class);
@@ -118,9 +117,11 @@ public class MicrometerModule extends Module {
             json.writeEndObject();
         }
 
-        protected abstract void serializeStatistics(T meter, JsonGenerator json, SerializerProvider provider) throws IOException;
+        protected abstract void serializeStatistics(T meter, JsonGenerator json, SerializerProvider provider)
+                throws IOException;
 
-        protected static void serializeSnapshot(JsonGenerator json, HistogramSnapshot snapshot, TimeUnit timeUnit) throws IOException {
+        protected static void serializeSnapshot(JsonGenerator json, HistogramSnapshot snapshot, TimeUnit timeUnit)
+                throws IOException {
             json.writeNumberField("count", snapshot.count());
             json.writeNumberField("max", snapshot.max(timeUnit));
             json.writeNumberField("mean", snapshot.mean(timeUnit));
@@ -149,7 +150,8 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(Counter counter, JsonGenerator json, SerializerProvider provider) throws IOException {
+        protected void serializeStatistics(Counter counter, JsonGenerator json, SerializerProvider provider)
+                throws IOException {
             json.writeNumberField("count", counter.count());
         }
     }
@@ -160,7 +162,8 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(FunctionCounter counter, JsonGenerator json, SerializerProvider provider) throws IOException {
+        protected void serializeStatistics(FunctionCounter counter, JsonGenerator json, SerializerProvider provider)
+                throws IOException {
             json.writeNumberField("count", counter.count());
         }
     }
@@ -175,7 +178,8 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(AbstractTimer timer, JsonGenerator json, SerializerProvider provider) throws IOException {
+        protected void serializeStatistics(AbstractTimer timer, JsonGenerator json, SerializerProvider provider)
+                throws IOException {
             serializeSnapshot(json, timer.takeSnapshot(), timeUnit);
         }
 
@@ -191,7 +195,8 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(FunctionTimer timer, JsonGenerator json, SerializerProvider provider) throws IOException {
+        protected void serializeStatistics(FunctionTimer timer, JsonGenerator json, SerializerProvider provider)
+                throws IOException {
             json.writeNumberField("count", timer.count());
             json.writeNumberField("mean", timer.mean(timeUnit));
             json.writeNumberField("total", timer.totalTime(timeUnit));
@@ -208,7 +213,8 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(LongTaskTimer timer, JsonGenerator json, SerializerProvider provider) throws IOException {
+        protected void serializeStatistics(LongTaskTimer timer, JsonGenerator json, SerializerProvider provider)
+                throws IOException {
             json.writeNumberField("activeTasks", timer.activeTasks());
             json.writeNumberField("duration", timer.duration(timeUnit));
         }
@@ -224,13 +230,14 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(AbstractDistributionSummary distributionSummary,
-                                           JsonGenerator json,
-                                           SerializerProvider provider) throws IOException {
+        protected void serializeStatistics(
+                AbstractDistributionSummary distributionSummary,
+                JsonGenerator json,
+                SerializerProvider provider)
+                throws IOException {
             serializeSnapshot(json, distributionSummary.takeSnapshot(), timeUnit);
         }
     }
-
 
     private static final class MeterRegistrySerializer extends StdSerializer<MeterRegistry> {
 
@@ -243,11 +250,12 @@ public class MicrometerModule extends Module {
             this.matchingTags = matchingTags;
         }
 
-
         @Override
-        public void serialize(MeterRegistry registry,
-                              JsonGenerator json,
-                              SerializerProvider provider) throws IOException {
+        public void serialize(
+                MeterRegistry registry,
+                JsonGenerator json,
+                SerializerProvider provider)
+                throws IOException {
 
             json.writeStartObject();
             json.writeStringField("version", VERSION.toString());
@@ -257,11 +265,14 @@ public class MicrometerModule extends Module {
             json.writeObjectField("timers", meters(registry, Timer.class, matchingNames, matchingTags));
             json.writeObjectField("functionTimers", meters(registry, FunctionTimer.class, matchingNames, matchingTags));
             json.writeObjectField("longTaskTimers", meters(registry, LongTaskTimer.class, matchingNames, matchingTags));
-            json.writeObjectField("distributionSummaries", meters(registry, DistributionSummary.class, matchingNames, matchingTags));
+            json.writeObjectField("distributionSummaries",
+                    meters(registry, DistributionSummary.class, matchingNames, matchingTags));
             json.writeEndObject();
         }
 
-        private Set<Meter> meters(MeterRegistry meterRegistry, Class<? extends Meter> clazz, Predicate<String> matchingNames, Iterable<Tag> matchingTags) {
+        private Set<Meter> meters(
+                MeterRegistry meterRegistry, Class<? extends Meter> clazz, Predicate<String> matchingNames,
+                Iterable<Tag> matchingTags) {
             if (meterRegistry instanceof CompositeMeterRegistry) {
                 return ((CompositeMeterRegistry) meterRegistry).getRegistries().stream()
                         .flatMap(reg -> meters(reg, clazz, matchingNames, matchingTags).stream())
@@ -276,20 +287,19 @@ public class MicrometerModule extends Module {
 
     }
 
-
     @Override
     public void setupModule(SetupContext setupContext) {
-        setupContext.addSerializers(new SimpleSerializers(Arrays.asList(
-                new IdSerializer(),
-                new TagSerializer(),
-                new GaugeSerializer(),
-                new CounterSerializer(),
-                new FunctionCounterSerializer(),
-                new TimerSerializer(timeUnit),
-                new FunctionTimerSerializer(timeUnit),
-                new LongTaskTimerSerializer(timeUnit),
-                new DistributionSummarySerializer(timeUnit),
-                new MeterRegistrySerializer(matchingNames, matchingTags)
-        )));
+        setupContext.addSerializers(new SimpleSerializers(
+                Arrays.asList(
+                        new IdSerializer(),
+                        new TagSerializer(),
+                        new GaugeSerializer(),
+                        new CounterSerializer(),
+                        new FunctionCounterSerializer(),
+                        new TimerSerializer(timeUnit),
+                        new FunctionTimerSerializer(timeUnit),
+                        new LongTaskTimerSerializer(timeUnit),
+                        new DistributionSummarySerializer(timeUnit),
+                        new MeterRegistrySerializer(matchingNames, matchingTags))));
     }
 }

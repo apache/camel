@@ -35,8 +35,10 @@ public final class SSLEngineFactory {
     public SSLEngineFactory() {
     }
 
-    public SSLContext createSSLContext(CamelContext camelContext, String keyStoreFormat, String securityProvider,
-                                       String keyStoreResource, String trustStoreResource, char[] passphrase) throws Exception {
+    public SSLContext createSSLContext(
+            CamelContext camelContext, String keyStoreFormat, String securityProvider,
+            String keyStoreResource, String trustStoreResource, char[] passphrase)
+            throws Exception {
         SSLContext answer;
         KeyStore ks = KeyStore.getInstance(keyStoreFormat);
 

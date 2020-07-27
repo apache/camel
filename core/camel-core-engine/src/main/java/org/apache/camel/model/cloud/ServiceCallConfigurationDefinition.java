@@ -69,28 +69,31 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private String expressionRef;
     @XmlTransient
     private Expression expression;
-    @XmlElements({@XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class) })
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
-    @XmlElements({@XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
-                  @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+            @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class) })
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
-    @XmlElements({@XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
-                  @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
+            @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) })
     private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
-    @XmlElements({@XmlElement(name = "expression", type = ServiceCallExpressionConfiguration.class)})
+    @XmlElements({ @XmlElement(name = "expression", type = ServiceCallExpressionConfiguration.class) })
     private ServiceCallExpressionConfiguration expressionConfiguration;
 
     public ServiceCallConfigurationDefinition() {
@@ -113,8 +116,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using
-     * the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to send to. The uri can be dynamic computed using the
+     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
      */
     public void setUri(String uri) {
         this.uri = uri;
@@ -292,13 +295,12 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Sets the default Camel component to use for calling the remote service.
      * <p/>
-     * By default the http component is used. You can configure this to use
-     * <tt>netty-http</tt>, <tt>jetty</tt>, <tt>undertow</tt> or some other
-     * components of choice. If the service is not HTTP protocol you can use
-     * other components such as <tt>mqtt</tt>, <tt>jms</tt>, <tt>amqp</tt> etc.
+     * By default the http component is used. You can configure this to use <tt>netty-http</tt>, <tt>jetty</tt>,
+     * <tt>undertow</tt> or some other components of choice. If the service is not HTTP protocol you can use other
+     * components such as <tt>mqtt</tt>, <tt>jms</tt>, <tt>amqp</tt> etc.
      * <p/>
-     * If the service call has been configured using an uri, then the component
-     * from the uri is used instead of this default component.
+     * If the service call has been configured using an uri, then the component from the uri is used instead of this
+     * default component.
      */
     public ServiceCallConfigurationDefinition component(String component) {
         setComponent(component);
@@ -409,8 +411,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a custom {@link Expression} to use through an expression builder
-     * clause.
+     * Sets a custom {@link Expression} to use through an expression builder clause.
      *
      * @return a expression builder clause to set the body
      */
@@ -424,7 +425,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Configures the ServiceDiscovery using the given configuration.
      */
-    public ServiceCallConfigurationDefinition serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public ServiceCallConfigurationDefinition serviceDiscoveryConfiguration(
+            ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         setServiceDiscoveryConfiguration(serviceDiscoveryConfiguration);
         return this;
     }
@@ -432,7 +434,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Configures the ServiceFilter using the given configuration.
      */
-    public ServiceCallConfigurationDefinition serviceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+    public ServiceCallConfigurationDefinition serviceFilterConfiguration(
+            ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
         setServiceFilterConfiguration(serviceFilterConfiguration);
         return this;
     }
@@ -440,7 +443,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Configures the LoadBalancer using the given configuration.
      */
-    public ServiceCallConfigurationDefinition loadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
+    public ServiceCallConfigurationDefinition loadBalancerConfiguration(
+            ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         setLoadBalancerConfiguration(loadBalancerConfiguration);
         return this;
     }
@@ -448,7 +452,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Configures the Expression using the given configuration.
      */
-    public ServiceCallConfigurationDefinition expressionConfiguration(ServiceCallExpressionConfiguration expressionConfiguration) {
+    public ServiceCallConfigurationDefinition expressionConfiguration(
+            ServiceCallExpressionConfiguration expressionConfiguration) {
         setExpressionConfiguration(expressionConfiguration);
         return this;
     }

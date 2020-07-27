@@ -38,17 +38,17 @@ public class InOutConsumerTempQueueTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("sjms:queue:start").to("sjms:queue:in.out.temp.queue?exchangePattern=InOut")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("sjms:queue:in.out.temp.queue?exchangePattern=InOut").to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = (String)exchange.getIn().getBody();
-                            if (body.contains("Camel")) {
-                                Thread.sleep(2000);
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = (String) exchange.getIn().getBody();
+                                if (body.contains("Camel")) {
+                                    Thread.sleep(2000);
+                                }
                             }
-                        }
-                    });
+                        });
             }
         };
     }

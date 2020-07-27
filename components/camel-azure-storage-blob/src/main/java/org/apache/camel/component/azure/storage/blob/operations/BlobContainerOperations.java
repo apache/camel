@@ -57,7 +57,8 @@ public class BlobContainerOperations {
 
     public BlobOperationResponse createContainer(final Exchange exchange) {
         if (exchange == null) {
-            final BlobExchangeHeaders blobExchangeHeaders = new BlobExchangeHeaders().httpHeaders(client.createContainer(null, null, null));
+            final BlobExchangeHeaders blobExchangeHeaders
+                    = new BlobExchangeHeaders().httpHeaders(client.createContainer(null, null, null));
             return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
         }
 
@@ -65,21 +66,24 @@ public class BlobContainerOperations {
         final PublicAccessType publicAccessType = configurationProxy.getPublicAccessType(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
-        final BlobExchangeHeaders blobExchangeHeaders = new BlobExchangeHeaders().httpHeaders(client.createContainer(metadata, publicAccessType, timeout));
+        final BlobExchangeHeaders blobExchangeHeaders
+                = new BlobExchangeHeaders().httpHeaders(client.createContainer(metadata, publicAccessType, timeout));
 
         return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
     }
 
     public BlobOperationResponse deleteContainer(final Exchange exchange) {
         if (exchange == null) {
-            final BlobExchangeHeaders blobExchangeHeaders = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(null, null));
+            final BlobExchangeHeaders blobExchangeHeaders
+                    = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(null, null));
             return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
         }
 
         final BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
-        final BlobExchangeHeaders blobExchangeHeaders = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(blobRequestConditions, timeout));
+        final BlobExchangeHeaders blobExchangeHeaders
+                = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(blobRequestConditions, timeout));
 
         return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
     }

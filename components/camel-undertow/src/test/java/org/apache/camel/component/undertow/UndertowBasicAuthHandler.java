@@ -54,12 +54,11 @@ public class UndertowBasicAuthHandler implements CamelUndertowHttpHandler {
         handler = new AuthenticationCallHandler(handler);
         handler = new AuthenticationConstraintHandler(handler);
         final List<AuthenticationMechanism> mechanisms
-            = Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("My Realm"));
+                = Collections.<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism("My Realm"));
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);
         this.securityHandler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
 
     }
-
 
     private void buildIdMgr() {
         final Map<String, char[]> users = new HashMap<>(1);
@@ -67,7 +66,7 @@ public class UndertowBasicAuthHandler implements CamelUndertowHttpHandler {
 
         identityManager = new MapIdentityManager(users);
     }
-    
+
     public void setNext(HttpHandler nextHandler) {
         this.next = nextHandler;
     }

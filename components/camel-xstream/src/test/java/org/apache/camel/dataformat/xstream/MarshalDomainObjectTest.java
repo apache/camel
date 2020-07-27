@@ -77,7 +77,7 @@ public class MarshalDomainObjectTest extends CamelTestSupport {
 
         // we get it back as byte array so type convert it to string
         Object result = template.requestBody("direct:marshal", order);
-        String body = context.getTypeConverter().convertTo(String.class, result);        
+        String body = context.getTypeConverter().convertTo(String.class, result);
         template.sendBody("direct:reverse", body);
 
         mock.assertIsSatisfied();

@@ -47,9 +47,11 @@ public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"file://target/data/files\"");
+        ObjectName name
+                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"file://target/data/files\"");
 
-        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[]{true}, new String[]{"java.lang.Boolean"});
+        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[] { true },
+                new String[] { "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
 

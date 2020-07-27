@@ -91,7 +91,7 @@ public class RefDataFormatTest extends ContextTestSupport {
         private String reverseBytes(byte[] data) {
             StringBuilder sb = new StringBuilder(data.length);
             for (int i = data.length - 1; i >= 0; i--) {
-                char ch = (char)data[i];
+                char ch = (char) data[i];
                 sb.append(ch);
             }
             return sb.toString();

@@ -68,17 +68,17 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a {@link org.apache.camel.impl.transformer.DataFormatTransformer}
- * which leverages {@link org.apache.camel.spi.DataFormat} to perform
- * transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be
- * specified.
+ * Represents a {@link org.apache.camel.impl.transformer.DataFormatTransformer} which leverages
+ * {@link org.apache.camel.spi.DataFormat} to perform transformation. One of the DataFormat 'ref' or DataFormat 'type'
+ * needs to be specified.
  */
 @Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormatTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatTransformerDefinition extends TransformerDefinition {
 
-    @XmlElements({@XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
+    @XmlElements({
+            @XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
             @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
             @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
             @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
@@ -118,7 +118,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
             @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(required = false, name = "zip", type = ZipDeflaterDataFormat.class),
-            @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class)})
+            @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
 
     @XmlAttribute

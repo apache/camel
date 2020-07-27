@@ -43,10 +43,9 @@ public final class AtomixRoutePolicyTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixRoutePolicyTest.class);
 
     private final List<Address> addresses = Arrays.asList(
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable())
-    );
+            new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
+            new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
+            new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()));
 
     private final Set<Address> results = new HashSet<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(addresses.size());
@@ -58,7 +57,7 @@ public final class AtomixRoutePolicyTest {
 
     @Test
     void test() throws Exception {
-        for (Address address: addresses) {
+        for (Address address : addresses) {
             scheduler.submit(() -> run(address));
         }
 
@@ -91,10 +90,10 @@ public final class AtomixRoutePolicyTest {
                 @Override
                 public void configure() throws Exception {
                     from("timer:atomix?delay=1000&period=1000")
-                        .routeId("route-" + address.port())
-                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                            .routeId("route-" + address.port())
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

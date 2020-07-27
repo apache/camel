@@ -108,7 +108,8 @@ public class RuntimeCamelCatalogTest {
         map.put("showExchangePattern", "false");
         map.put("style", "Tab");
 
-        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab", catalog.asEndpointUri("log", map, false));
+        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab",
+                catalog.asEndpointUri("log", map, false));
     }
 
     @Test

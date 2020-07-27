@@ -40,12 +40,12 @@ public class MongoDbContainer extends GenericContainer {
         withExposedPorts(MONGODB_PORT);
         withLogConsumer(new Slf4jLogConsumer(LOGGER));
         withCommand(
-            "--replSet", "replicationName",
-            "--oplogSize", "5000",
-            "--syncdelay", "0",
-            "--noauth",
-            "--noprealloc",
-            "--smallfiles");
+                "--replSet", "replicationName",
+                "--oplogSize", "5000",
+                "--syncdelay", "0",
+                "--noauth",
+                "--noprealloc",
+                "--smallfiles");
     }
 
     @Override
@@ -53,17 +53,17 @@ public class MongoDbContainer extends GenericContainer {
         super.start();
 
         Document d = MongoClients.create(getConnectionURI())
-            .getDatabase("admin")
-            .runCommand(new Document("replSetInitiate", new Document()));
+                .getDatabase("admin")
+                .runCommand(new Document("replSetInitiate", new Document()));
 
         LOGGER.info("replSetInitiate: {}", d);
         LOGGER.info("waiting to become master");
 
         try {
             execInContainer(
-                "/bin/bash",
-                "-c",
-                "until mongo --eval \"printjson(rs.isMaster())\" | grep ismaster | grep true > /dev/null 2>&1; do sleep 1; done");
+                    "/bin/bash",
+                    "-c",
+                    "until mongo --eval \"printjson(rs.isMaster())\" | grep ismaster | grep true > /dev/null 2>&1; do sleep 1; done");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

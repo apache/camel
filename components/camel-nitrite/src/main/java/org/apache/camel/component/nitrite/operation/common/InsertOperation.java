@@ -38,11 +38,10 @@ public class InsertOperation extends AbstractPayloadAwareOperation implements Co
     @Override
     protected void execute(Exchange exchange, NitriteEndpoint endpoint) throws Exception {
         Object payload = getPayload(exchange, endpoint);
-        Object[] payloadArray = (Object[])Array.newInstance(payload.getClass(), 1);
+        Object[] payloadArray = (Object[]) Array.newInstance(payload.getClass(), 1);
         payloadArray[0] = payload;
         exchange.getMessage().setHeader(
                 NitriteConstants.WRITE_RESULT,
-                endpoint.getNitriteCollection().insert(payloadArray)
-        );
+                endpoint.getNitriteCollection().insert(payloadArray));
     }
 }

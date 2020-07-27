@@ -140,6 +140,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertSame(exchange.getIn().getBody(), map.get("body"));
         assertNull(map.get("camelContext"));
     }
+
     @Test
     public void testPopulateVariableMap() throws Exception {
         exchange.setPattern(ExchangePattern.InOut);

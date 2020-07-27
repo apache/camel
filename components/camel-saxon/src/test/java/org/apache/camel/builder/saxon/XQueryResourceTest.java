@@ -40,8 +40,8 @@ public class XQueryResourceTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().xquery("resource:classpath:myxquery.txt", String.class)
-                    .to("mock:result");
+                        .transform().xquery("resource:classpath:myxquery.txt", String.class)
+                        .to("mock:result");
             }
         };
     }

@@ -26,7 +26,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SdbConfiguration {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String domainName;
     @UriParam
     private AmazonSimpleDB amazonSDBClient;
@@ -125,8 +126,7 @@ public class SdbConfiguration {
     public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
     }
-    
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -137,7 +137,7 @@ public class SdbConfiguration {
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -159,14 +159,14 @@ public class SdbConfiguration {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public String getRegion() {
         return region;
     }
 
     /**
-     * The region in which SDB client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which SDB client needs to work. When using this parameter, the configuration will expect the
+     * capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;

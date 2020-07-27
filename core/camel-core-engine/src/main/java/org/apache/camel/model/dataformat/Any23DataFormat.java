@@ -73,7 +73,8 @@ public class Any23DataFormat extends DataFormatDefinition {
         this.configurations = configurations;
     }
 
-    public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations, List<String> extractors) {
+    public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations,
+                           List<String> extractors) {
         this(baseuri, outputFormat, configurations);
         this.outputFormat = outputFormat.name();
         this.configurations = configurations;
@@ -85,8 +86,8 @@ public class Any23DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS,
-     * RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL.
+     * What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by
+     * default: RDF4JMODEL.
      */
     public void setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
@@ -109,9 +110,8 @@ public class Any23DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Configurations for Apache Any23 as key-value pairs in order to customize
-     * the extraction process. The list of supported parameters can be found
-     * <a href=
+     * Configurations for Apache Any23 as key-value pairs in order to customize the extraction process. The list of
+     * supported parameters can be found <a href=
      * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
      * If not provided, a default configuration is used.
      */
@@ -120,9 +120,8 @@ public class Any23DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Configurations for Apache Any23 as key-value pairs in order to customize
-     * the extraction process. The list of supported parameters can be found
-     * <a href=
+     * Configurations for Apache Any23 as key-value pairs in order to customize the extraction process. The list of
+     * supported parameters can be found <a href=
      * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
      * If not provided, a default configuration is used.
      */
@@ -136,10 +135,9 @@ public class Any23DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * List of Any23 extractors to be used in the unmarshal operation. A list of
-     * the available extractors can be found here
-     * <a href="https://any23.apache.org/getting-started.html">here</a>. If not
-     * provided, all the available extractors are used.
+     * List of Any23 extractors to be used in the unmarshal operation. A list of the available extractors can be found
+     * here <a href="https://any23.apache.org/getting-started.html">here</a>. If not provided, all the available
+     * extractors are used.
      */
     public void setExtractors(List<String> extractors) {
         this.extractors = extractors;
@@ -150,8 +148,7 @@ public class Any23DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * The URI to use as base for building RDF entities if only relative paths
-     * are provided.
+     * The URI to use as base for building RDF entities if only relative paths are provided.
      */
     public void setBaseURI(String baseURI) {
         this.baseURI = baseURI;

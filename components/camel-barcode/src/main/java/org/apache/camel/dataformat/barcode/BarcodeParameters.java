@@ -22,42 +22,42 @@ import com.google.zxing.BarcodeFormat;
  * All configuration parameters for the code component.
  */
 public class BarcodeParameters {
-    
+
     /**
      * Default image type: PNG
      */
     public static final BarcodeImageType IMAGE_TYPE = BarcodeImageType.PNG;
-    
+
     /**
      * Default width: 100px
      */
     public static final int WIDTH = 100;
-    
+
     /**
      * Default height: 100px
      */
     public static final int HEIGHT = 100;
-    
+
     /**
      * Default barcode format: QR-CODE
      */
     public static final BarcodeFormat FORMAT = BarcodeFormat.QR_CODE;
-    
+
     /**
-     * The Image Type. 
+     * The Image Type.
      */
     private BarcodeImageType type = IMAGE_TYPE;
-    
+
     /**
      * The width of the image.
      */
     private Integer width = WIDTH;
-    
+
     /**
      * The height of the image.
      */
     private Integer height = HEIGHT;
-    
+
     /**
      * The barcode format (e.g. QR-Code, DataMatrix,...).
      */
@@ -67,25 +67,26 @@ public class BarcodeParameters {
      * Default Constructor (creates a bean with default parameters).
      * 
      * <ul>
-     *  <li>image type: PNG</li>
-     *  <li>image width: 100px</li>
-     *  <li>image heigth: 100px</li>
-     *  <li>format: QR-Code</li>
+     * <li>image type: PNG</li>
+     * <li>image width: 100px</li>
+     * <li>image heigth: 100px</li>
+     * <li>format: QR-Code</li>
      * </ul>
      */
     public BarcodeParameters() {
-        
+
     }
-    
+
     /**
      * Constructor with parameters.
+     * 
      * @param type
      * @param width
      * @param height
      * @param format
      */
-    public BarcodeParameters(final BarcodeImageType type, final int width, 
-            final int height, final BarcodeFormat format) {
+    public BarcodeParameters(final BarcodeImageType type, final int width,
+                             final int height, final BarcodeFormat format) {
         this.height = height;
         this.width = width;
         this.type = type;
@@ -115,7 +116,7 @@ public class BarcodeParameters {
     public void setHeight(Integer height) {
         this.height = height;
     }
-   
+
     public BarcodeFormat getFormat() {
         return format;
     }

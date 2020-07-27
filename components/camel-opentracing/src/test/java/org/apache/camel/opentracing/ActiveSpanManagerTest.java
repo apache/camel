@@ -41,7 +41,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
         Span span = tracer.buildSpan("test").start();
         ActiveSpanManager.activate(exchange, span);
         assertEquals(span, ActiveSpanManager.getSpan(exchange));
-        
+
         ActiveSpanManager.deactivate(exchange);
         assertNull(ActiveSpanManager.getSpan(exchange));
     }
@@ -55,9 +55,9 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
         ActiveSpanManager.activate(exchange, child);
 
         assertEquals(child, ActiveSpanManager.getSpan(exchange));
-        
+
         ActiveSpanManager.deactivate(exchange);
-        assertEquals(parent, ActiveSpanManager.getSpan(exchange));        
+        assertEquals(parent, ActiveSpanManager.getSpan(exchange));
     }
 
     @Test

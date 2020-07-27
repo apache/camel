@@ -33,7 +33,8 @@ public final class CommonCreationStrategyImpl {
     private CommonCreationStrategyImpl() {
     }
 
-    public static ConsumerBuilder<byte[]> create(final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
+    public static ConsumerBuilder<byte[]> create(
+            final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
         ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer();
@@ -46,11 +47,13 @@ public final class CommonCreationStrategyImpl {
             builder.topic(pulsarEndpoint.getUri());
         }
         builder.subscriptionName(endpointConfiguration.getSubscriptionName())
-            .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name).ackTimeout(endpointConfiguration.getAckTimeoutMillis(), TimeUnit.MILLISECONDS)
-            .subscriptionInitialPosition(endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
-            .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
-            .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
-            .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer));
+                .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name)
+                .ackTimeout(endpointConfiguration.getAckTimeoutMillis(), TimeUnit.MILLISECONDS)
+                .subscriptionInitialPosition(
+                        endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
+                .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
+                .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
+                .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer));
 
         if (endpointConfiguration.getMaxRedeliverCount() != null) {
             DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()

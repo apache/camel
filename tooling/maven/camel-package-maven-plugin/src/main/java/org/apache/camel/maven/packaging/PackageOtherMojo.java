@@ -34,8 +34,8 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor
- * information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
+ * Camel.
  */
 @Mojo(name = "generate-others-list", threadSafe = true)
 public class PackageOtherMojo extends AbstractGeneratorMojo {
@@ -68,9 +68,8 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws MojoExecutionException execution of the main class or one of the
-     *             threads it generated failed.
-     * @throws MojoFailureException something bad happened...
+     * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -98,7 +97,8 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
         // can stop the build before the end and eclipse always needs to know
         // about that directory
         if (projectHelper != null) {
-            projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"), Collections.emptyList());
+            projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"),
+                    Collections.emptyList());
         }
 
         String name = project.getArtifactId();

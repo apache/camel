@@ -32,7 +32,8 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
         mock.expectedBodiesReceived("body");
         mock.expectedHeaderReceived("cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
-        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
+        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails",
+                "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
         mock.assertIsSatisfied();
     }
@@ -44,11 +45,11 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
                 from("direct:in").choice()
-                    .when().xquery("/c:number = 55", Integer.class, ns, "cheeseDetails")
+                        .when().xquery("/c:number = 55", Integer.class, ns, "cheeseDetails")
                         .to("mock:55")
-                    .otherwise()
+                        .otherwise()
                         .to("mock:other")
-                    .end();
+                        .end();
             }
         };
     }

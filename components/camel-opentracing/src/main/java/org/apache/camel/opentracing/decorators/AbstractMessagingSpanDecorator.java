@@ -49,12 +49,11 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
     }
 
     /**
-     * This method identifies the destination from the supplied exchange and/or
-     * endpoint.
+     * This method identifies the destination from the supplied exchange and/or endpoint.
      *
-     * @param exchange The exchange
-     * @param endpoint The endpoint
-     * @return The message bus destination
+     * @param  exchange The exchange
+     * @param  endpoint The endpoint
+     * @return          The message bus destination
      */
     protected String getDestination(Exchange exchange, Endpoint endpoint) {
         return stripSchemeAndOptions(endpoint);

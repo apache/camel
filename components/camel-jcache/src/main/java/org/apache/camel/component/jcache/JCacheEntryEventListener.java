@@ -23,10 +23,11 @@ import javax.cache.event.CacheEntryListenerException;
 import javax.cache.event.CacheEntryRemovedListener;
 import javax.cache.event.CacheEntryUpdatedListener;
 
-class JCacheEntryEventListener implements CacheEntryCreatedListener<Object, Object>,
-    CacheEntryUpdatedListener<Object, Object>,
-    CacheEntryRemovedListener<Object, Object>,
-    CacheEntryExpiredListener<Object, Object> {
+class JCacheEntryEventListener
+        implements CacheEntryCreatedListener<Object, Object>,
+        CacheEntryUpdatedListener<Object, Object>,
+        CacheEntryRemovedListener<Object, Object>,
+        CacheEntryExpiredListener<Object, Object> {
 
     @Override
     public void onCreated(Iterable<CacheEntryEvent<?, ?>> events) throws CacheEntryListenerException {

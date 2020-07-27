@@ -79,7 +79,7 @@ public class ManagedProcessTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .process("foo").id("mysend")
+                        .process("foo").id("mysend")
                         .to("mock:foo");
             }
         };

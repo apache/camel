@@ -64,13 +64,13 @@ public class SoroushServiceTest {
         receiverId = System.getenv("soroushBotReceiverId");
         assertTrue(authorizationToken != null && receiverId != null,
                 "you need to define `soroushBotAuthorizationToken` and "
-                + "`soroushBotReceiverId` environment variable in order to do integration test ");
+                                                                     + "`soroushBotReceiverId` environment variable in order to do integration test ");
         soroushService = SoroushService.get();
         soroushService.setAlternativeUrl(null);
     }
 
     /**
-     * try to connect to soroush. if any problem occurs  an exception will throw and this test will fail.
+     * try to connect to soroush. if any problem occurs an exception will throw and this test will fail.
      */
     @Test
     public void connectToGetMessageEndPoint() {
@@ -86,7 +86,8 @@ public class SoroushServiceTest {
     public void canNotReadMessageDueToWrongAuthorizationToken() {
         Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
         client.property(ClientProperties.CONNECT_TIMEOUT, 2000);
-        WebTarget target = client.target(soroushService.generateUrl("bad_string" + authorizationToken, SoroushAction.getMessage, null));
+        WebTarget target
+                = client.target(soroushService.generateUrl("bad_string" + authorizationToken, SoroushAction.getMessage, null));
         EventInput eventInput = target.request().get(EventInput.class);
         eventInput.setChunkType(MediaType.SERVER_SENT_EVENTS);
         assertFalse(eventInput.isClosed());
@@ -112,13 +113,15 @@ public class SoroushServiceTest {
         MultiPart multipart = new MultiPart();
         multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
         String fileData = "data";
-        multipart.bodyPart(new StreamDataBodyPart("file", new ByteArrayInputStream(fileData.getBytes()), null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+        multipart.bodyPart(new StreamDataBodyPart(
+                "file", new ByteArrayInputStream(fileData.getBytes()), null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(multipart, multipart.getMediaType()));
         UploadFileResponse uploadFileResponse = soroushService.assertSuccessful(response, UploadFileResponse.class, null);
         assertNotNull(uploadFileResponse.getFileUrl());
 
-        WebTarget downloadFileTarget = soroushService.createDownloadFileTarget(authorizationToken, uploadFileResponse.getFileUrl(), 2000);
+        WebTarget downloadFileTarget
+                = soroushService.createDownloadFileTarget(authorizationToken, uploadFileResponse.getFileUrl(), 2000);
         Response downloadResponse = downloadFileTarget.request().get();
         String remoteData = new String(IOUtils.readFully(downloadResponse.readEntity(InputStream.class), -1, false));
         assertEquals(fileData, remoteData, "file contents are identical");

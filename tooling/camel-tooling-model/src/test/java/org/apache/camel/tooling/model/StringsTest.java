@@ -29,10 +29,14 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class StringsTest {
 
     static Stream<Arguments> getClassShortNameTypeVarations() {
-        return Stream.of(arguments("String", "String"), arguments("String", "java.lang.String"), arguments("List", "List<String>"), arguments("List", "java.util.List<String>"),
-                arguments("List", "List<java.lang.String>"), arguments("List", "java.util.List.List<org.apache.camel.Exchange>"),
-                arguments("List", "java.util.List<Map<String,Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,Integer>>"),
-                arguments("List", "java.util.List<Map<String,java.lang.Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
+        return Stream.of(arguments("String", "String"), arguments("String", "java.lang.String"),
+                arguments("List", "List<String>"), arguments("List", "java.util.List<String>"),
+                arguments("List", "List<java.lang.String>"),
+                arguments("List", "java.util.List.List<org.apache.camel.Exchange>"),
+                arguments("List", "java.util.List<Map<String,Integer>>"),
+                arguments("List", "java.util.List<Map<java.lang.String,Integer>>"),
+                arguments("List", "java.util.List<Map<String,java.lang.Integer>>"),
+                arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
                 arguments("List", "java.util.List<java.util.Map<java.lang.String,java.lang.Integer>>"));
     }
 

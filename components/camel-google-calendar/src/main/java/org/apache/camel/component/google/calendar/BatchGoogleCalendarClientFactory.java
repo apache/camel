@@ -42,9 +42,10 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
     }
 
     @Override
-    public Calendar makeClient(String clientId, String clientSecret,
-                               Collection<String> scopes, String applicationName, String refreshToken,
-                               String accessToken, String emailAddress, String p12FileName, String user) {
+    public Calendar makeClient(
+            String clientId, String clientSecret,
+            Collection<String> scopes, String applicationName, String refreshToken,
+            String accessToken, String emailAddress, String p12FileName, String user) {
         boolean serviceAccount = false;
         // if emailAddress and p12FileName values are present, assume Google Service Account
         if (null != emailAddress && !"".equals(emailAddress) && null != p12FileName && !"".equals(p12FileName)) {
@@ -83,7 +84,8 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
                 .build();
     }
 
-    private Credential authorizeServiceAccount(String emailAddress, String p12FileName, Collection<String> scopes, String user) throws Exception {
+    private Credential authorizeServiceAccount(String emailAddress, String p12FileName, Collection<String> scopes, String user)
+            throws Exception {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         // set the service account user when provided
         GoogleCredential credential = new GoogleCredential.Builder()

@@ -77,8 +77,8 @@ public class SqlFunctionDataSourceTest extends CamelTestSupport {
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql-stored:SUBNUMBERS_FUNCTION(OUT INTEGER resultofsub, INTEGER ${header.num1},INTEGER ${header.num2})?function=true")
-                    .to("mock:query");
+                        .to("sql-stored:SUBNUMBERS_FUNCTION(OUT INTEGER resultofsub, INTEGER ${header.num1},INTEGER ${header.num2})?function=true")
+                        .to("mock:query");
             }
         };
     }

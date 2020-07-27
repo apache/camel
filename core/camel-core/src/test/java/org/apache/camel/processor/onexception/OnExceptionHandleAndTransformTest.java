@@ -97,7 +97,8 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
                 // OUT body and return a nice message
                 // using the simple language where we want insert the exception
                 // message
-                onException(MyFunctionalException.class).handled(true).transform().simple("Error reported: ${exception.message} - cannot process this message.");
+                onException(MyFunctionalException.class).handled(true).transform()
+                        .simple("Error reported: ${exception.message} - cannot process this message.");
                 // END SNIPPET: e3
 
                 from("direct:start").process(new Processor() {

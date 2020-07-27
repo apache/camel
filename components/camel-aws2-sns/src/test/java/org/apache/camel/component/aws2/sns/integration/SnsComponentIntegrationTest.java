@@ -60,8 +60,8 @@ public class SnsComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws2-sns://MyNewTopic?accessKey=xxx&secretKey=yyy&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,"
-                        + "%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message");
+                        .to("aws2-sns://MyNewTopic?accessKey=xxx&secretKey=yyy&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,"
+                            + "%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message");
             }
         };
     }

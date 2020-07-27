@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class KafkaIdempotentRepositoryNonEagerTest extends BaseEmbeddedKafkaTest {
     @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_IDEM", getBootstrapServers());
+    private KafkaIdempotentRepository kafkaIdempotentRepository
+            = new KafkaIdempotentRepository("TEST_IDEM", getBootstrapServers());
 
     @EndpointInject("mock:out")
     private MockEndpoint mockOut;
@@ -45,7 +46,8 @@ public class KafkaIdempotentRepositoryNonEagerTest extends BaseEmbeddedKafkaTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in").to("mock:before").idempotentConsumer(header("id")).messageIdRepositoryRef("kafkaIdempotentRepository").eager(false).to("mock:out").end();
+                from("direct:in").to("mock:before").idempotentConsumer(header("id"))
+                        .messageIdRepositoryRef("kafkaIdempotentRepository").eager(false).to("mock:out").end();
             }
         };
     }
@@ -80,13 +82,13 @@ public class KafkaIdempotentRepositoryNonEagerTest extends BaseEmbeddedKafkaTest
         }
 
         assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0}
-                                                                        // is
-                                                                        // not a
-                                                                        // duplicate
+                                                                       // is
+                                                                       // not a
+                                                                       // duplicate
 
         assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the
-                                                       // idempotency check
-                                                       // twice
+                                                      // idempotency check
+                                                      // twice
         assertEquals(10, mockBefore.getReceivedCounter());
     }
 

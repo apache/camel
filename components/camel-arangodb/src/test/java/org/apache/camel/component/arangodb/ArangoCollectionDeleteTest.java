@@ -55,7 +55,6 @@ public class ArangoCollectionDeleteTest extends AbstractArangoDbTest {
         };
     }
 
-
     @Test
     public void deleteOneDocument() {
         BaseDocument myObject = new BaseDocument();
@@ -99,6 +98,5 @@ public class ArangoCollectionDeleteTest extends AbstractArangoDbTest {
         assertNotNull(document);
         assertEquals(test3.getFoo(), document.getFoo());
     }
-
 
 }

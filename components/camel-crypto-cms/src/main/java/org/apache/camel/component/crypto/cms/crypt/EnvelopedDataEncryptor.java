@@ -81,20 +81,23 @@ public class EnvelopedDataEncryptor extends CryptoCmsMarshallerAbstract {
             for (RecipientInfo recipientInfo : conf.getRecipient()) {
                 // currently we only support key transport alternative, in
                 // future there maybe others
-                TransRecipientInfo keyTransrecipientInfo = (TransRecipientInfo)recipientInfo;
+                TransRecipientInfo keyTransrecipientInfo = (TransRecipientInfo) recipientInfo;
                 LOG.debug("Recipient info: {}", keyTransrecipientInfo);
                 X509Certificate encryptCert = keyTransrecipientInfo.getCertificate(exchange);
                 LOG.debug("Encryption certificate for recipient with '{}' : {}", keyTransrecipientInfo, encryptCert);
 
-                AlgorithmIdentifier keyEncryptionAlgorithm = determineKeyEncryptionAlgorithmIdentifier(keyTransrecipientInfo.getKeyEncryptionAlgorithm(exchange),
-                                                                                                       keyTransrecipientInfo);
-                JceKeyTransRecipientInfoGenerator keyTransRecipeintInfoGen = new JceKeyTransRecipientInfoGenerator(encryptCert, keyEncryptionAlgorithm);
+                AlgorithmIdentifier keyEncryptionAlgorithm
+                        = determineKeyEncryptionAlgorithmIdentifier(keyTransrecipientInfo.getKeyEncryptionAlgorithm(exchange),
+                                keyTransrecipientInfo);
+                JceKeyTransRecipientInfoGenerator keyTransRecipeintInfoGen
+                        = new JceKeyTransRecipientInfoGenerator(encryptCert, keyEncryptionAlgorithm);
 
                 keyTransRecipeintInfoGen.setProvider(BouncyCastleProvider.PROVIDER_NAME);
                 gen.addRecipientInfoGenerator(keyTransRecipeintInfoGen);
             }
 
-            OutputEncryptor encryptor = new JceCMSContentEncryptorBuilder(conf.getAlgorithmID()).setProvider(BouncyCastleProvider.PROVIDER_NAME).build();
+            OutputEncryptor encryptor = new JceCMSContentEncryptorBuilder(conf.getAlgorithmID())
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME).build();
 
             encryptingStream = gen.open(os, encryptor);
 
@@ -109,7 +112,9 @@ public class EnvelopedDataEncryptor extends CryptoCmsMarshallerAbstract {
 
     }
 
-    private AlgorithmIdentifier determineKeyEncryptionAlgorithmIdentifier(String keyEncryptionAlgorithm, TransRecipientInfo keyTransRecipient) throws CryptoCmsException {
+    private AlgorithmIdentifier determineKeyEncryptionAlgorithmIdentifier(
+            String keyEncryptionAlgorithm, TransRecipientInfo keyTransRecipient)
+            throws CryptoCmsException {
 
         if (keyEncryptionAlgorithm == null) {
             throw new CryptoCmsException("Key encryption algorithm  of recipient info '" + keyTransRecipient + "' is missing");
@@ -117,6 +122,8 @@ public class EnvelopedDataEncryptor extends CryptoCmsMarshallerAbstract {
         if ("RSA".equals(keyEncryptionAlgorithm)) {
             return new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
         }
-        throw new CryptoCmsException("Key encryption algorithm '" + keyEncryptionAlgorithm + "' of recipient info '" + keyTransRecipient + "' is not supported");
+        throw new CryptoCmsException(
+                "Key encryption algorithm '" + keyEncryptionAlgorithm + "' of recipient info '" + keyTransRecipient
+                                     + "' is not supported");
     }
 }

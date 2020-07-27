@@ -71,6 +71,7 @@ public final class CassandraUnitUtils {
     }
 
     public static CqlSession cassandraSession() {
-        return CqlSession.builder().addContactPoint(new InetSocketAddress(HOST, 9042)).withKeyspace(KEYSPACE).withLocalDatacenter("datacenter1").build();
+        return CqlSession.builder().addContactPoint(new InetSocketAddress(HOST, 9042)).withKeyspace(KEYSPACE)
+                .withLocalDatacenter("datacenter1").build();
     }
 }

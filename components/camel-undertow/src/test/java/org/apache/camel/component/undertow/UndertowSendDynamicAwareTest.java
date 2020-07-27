@@ -34,7 +34,8 @@ public class UndertowSendDynamicAwareTest extends BaseUndertowTest {
         assertEquals("Drinking wine", out);
 
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap().containsKey("undertow://http://localhost:" + getPort() + "?throwExceptionOnFailure=false");
+        boolean found = context.getEndpointMap()
+                .containsKey("undertow://http://localhost:" + getPort() + "?throwExceptionOnFailure=false");
         assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 2xundertow
@@ -47,14 +48,14 @@ public class UndertowSendDynamicAwareTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("direct:moes")
-                    .toD("undertow:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("undertow:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
-                    .toD("undertow:http://localhost:{{port}}/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("undertow:http://localhost:{{port}}/joes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 // TODO: Fix the double header
                 from("undertow:http://localhost:{{port}}/?matchOnUriPrefix=true")
-                    .transform().simple("Drinking ${header.drink[0]}");
+                        .transform().simple("Drinking ${header.drink[0]}");
             }
         };
     }

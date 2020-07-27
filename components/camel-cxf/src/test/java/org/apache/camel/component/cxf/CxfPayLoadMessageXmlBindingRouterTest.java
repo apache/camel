@@ -45,35 +45,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
-    
-    protected static final String ROUTER_ADDRESS = "http://localhost:" 
-        + CXFTestSupport.getPort1() + "/CxfPayLoadMessageXmlBindingRouterTest/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" 
-        + CXFTestSupport.getPort2() + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
-       
+
+    protected static final String ROUTER_ADDRESS = "http://localhost:"
+                                                   + CXFTestSupport.getPort1()
+                                                   + "/CxfPayLoadMessageXmlBindingRouterTest/router";
+    protected static final String SERVICE_ADDRESS = "http://localhost:"
+                                                    + CXFTestSupport.getPort2()
+                                                    + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
+
     protected AbstractXmlApplicationContext applicationContext;
-        
+
     protected static String getBindingId() {
         return "http://cxf.apache.org/bindings/xformat";
     }
-    
+
     @BeforeAll
-    public static void startService() {       
+    public static void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
-    
+
         svrBean.setAddress(SERVICE_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
         svrBean.setBindingId(getBindingId());
-    
+
         Server server = svrBean.create();
         server.start();
     }
-    
+
     @Override
     @BeforeEach
-    public void setUp() throws Exception {       
+    public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
         assertNotNull(applicationContext, "Should have created a valid spring context");
@@ -82,56 +84,56 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        
+
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
-
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/XmlBindingRouterContext.xml");
     }
-    
+
     protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
         clientBean.setServiceClass(HelloService.class);
         clientBean.setBindingId(getBindingId());
-        
+
         HelloService client = (HelloService) proxyFactory.create();
         return client;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {                
+            public void configure() {
                 from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> elements = payload.getBodySources();
                         assertNotNull(elements, "We should get the elements here");
                         assertEquals(elements.size(), 1, "Get the wrong elements size");
-                        
+
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/", "Get the wrong namespace URI");
+                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/",
+                                "Get the wrong namespace URI");
                     }
-                    
+
                 })
-                .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
-                
+                        .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
+
             }
         };
     }
-    
+
     @Test
-    public void testInvokingServiceFromCXFClient() throws Exception {        
+    public void testInvokingServiceFromCXFClient() throws Exception {
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
         assertEquals("echo hello world", result, "we should get the right answer from router");

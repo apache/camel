@@ -77,7 +77,7 @@ public class CouchDbProducer extends DefaultProducer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Document retrieved [_id={}]", docId);
                 }
-                
+
                 exchange.getIn().setBody(response);
             }
         }
@@ -112,7 +112,7 @@ public class CouchDbProducer extends DefaultProducer {
         }
         return save;
     }
-    
+
     private Response deleteJsonElement(JsonElement json) {
         Response delete;
         if (json instanceof JsonObject) {
@@ -123,10 +123,10 @@ public class CouchDbProducer extends DefaultProducer {
         }
         return delete;
     }
-    
+
     private Object getElement(String id) {
         Object response;
         response = couchClient.get(id);
         return response;
-    }   
+    }
 }

@@ -81,7 +81,8 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     }
 
     /**
-     * To configure additional endpoint options using a XML style which is similar as configuring Spring or Blueprint beans.
+     * To configure additional endpoint options using a XML style which is similar as configuring Spring or Blueprint
+     * beans.
      */
     public void setProperties(List<PropertyDefinition> properties) {
         this.properties = properties;

@@ -99,7 +99,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
         return false;
     }
 
-
     private void doPublish(Exchange exchange, AsyncCallback callback) {
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
@@ -259,6 +258,12 @@ public class PubNubProducer extends DefaultAsyncProducer {
     }
 
     private enum Operation {
-        HERENOW, WHERENOW, GETSTATE, SETSTATE, GETHISTORY, PUBLISH, FIRE;
+        HERENOW,
+        WHERENOW,
+        GETSTATE,
+        SETSTATE,
+        GETHISTORY,
+        PUBLISH,
+        FIRE;
     }
 }

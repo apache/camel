@@ -141,7 +141,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         } else {
             // only if route match
             values = inflight.values().stream()
-                .filter(e -> fromRouteId.equals(e.getFromRouteId()));
+                    .filter(e -> fromRouteId.equals(e.getFromRouteId()));
         }
 
         if (sortByLongestDuration) {
@@ -179,7 +179,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         } else {
             // only if route match
             values = inflight.values().stream()
-                .filter(e -> fromRouteId.equals(e.getFromRouteId()));
+                    .filter(e -> fromRouteId.equals(e.getFromRouteId()));
         }
 
         // sort by duration and grab the first

@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class GetItemCommandTest {
     private GetItemCommand command;
     private AmazonDDBClientMock ddbClient;

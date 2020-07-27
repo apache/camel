@@ -48,7 +48,7 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
         // use route to get the total time
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
-        
+
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(5);
 
@@ -60,11 +60,11 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
         template.sendBody("direct:start", "E");
 
         assertMockEndpointsSatisfied();
-        
+
         // should be 5 on the route
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
-        
+
         String first = (String) mbeanServer.getAttribute(on, "FirstExchangeCompletedExchangeId");
         assertEquals(result.getReceivedExchanges().get(0).getExchangeId(), first);
 
@@ -93,9 +93,9 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:foo").id("foo")
-                    .to("log:bar").id("bar")
-                    .to("mock:result").id("mock");
+                        .to("log:foo").id("foo")
+                        .to("log:bar").id("bar")
+                        .to("mock:result").id("mock");
             }
         };
     }

@@ -75,7 +75,6 @@ public class MllpSocketBuffer {
         availableByteCount += 1;
     }
 
-
     public void write(byte[] b) {
         if (b != null && b.length > 0) {
             this.write(b, 0, b.length);
@@ -86,29 +85,31 @@ public class MllpSocketBuffer {
         if (sourceBytes != null && sourceBytes.length > 0) {
             if (offset < 0) {
                 throw new IndexOutOfBoundsException(
-                    String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is less than zero",
-                        sourceBytes.length, offset, writeCount));
+                        String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is less than zero",
+                                sourceBytes.length, offset, writeCount));
             }
             if (offset > sourceBytes.length) {
                 throw new IndexOutOfBoundsException(
-                    String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is greater than write count",
-                        sourceBytes.length, offset, writeCount));
+                        String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is greater than write count",
+                                sourceBytes.length, offset, writeCount));
             }
 
             if (writeCount < 0) {
                 throw new IndexOutOfBoundsException(
-                    String.format("write(byte[%d], offset[%d], writeCount[%d]) - write count is less than zero",
-                        sourceBytes.length, offset, writeCount));
+                        String.format("write(byte[%d], offset[%d], writeCount[%d]) - write count is less than zero",
+                                sourceBytes.length, offset, writeCount));
             }
             if (writeCount > sourceBytes.length) {
                 throw new IndexOutOfBoundsException(
-                    String.format("write(byte[%d], offset[%d], writeCount[%d]) - write count is greater than length of the source byte[]",
-                        sourceBytes.length, offset, writeCount));
+                        String.format(
+                                "write(byte[%d], offset[%d], writeCount[%d]) - write count is greater than length of the source byte[]",
+                                sourceBytes.length, offset, writeCount));
             }
             if ((offset + writeCount) - sourceBytes.length > 0) {
                 throw new IndexOutOfBoundsException(
-                    String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset plus write count <%d> is greater than length of the source byte[]",
-                        sourceBytes.length, offset, writeCount, offset + writeCount));
+                        String.format(
+                                "write(byte[%d], offset[%d], writeCount[%d]) - offset plus write count <%d> is greater than length of the source byte[]",
+                                sourceBytes.length, offset, writeCount, offset + writeCount));
             }
 
             ensureCapacity(writeCount);
@@ -170,7 +171,8 @@ public class MllpSocketBuffer {
         readFrom(socket, endpoint.getConfiguration().getReceiveTimeout(), endpoint.getConfiguration().getReadTimeout());
     }
 
-    public synchronized void readFrom(Socket socket, int receiveTimeout, int readTimeout) throws MllpSocketException, SocketTimeoutException {
+    public synchronized void readFrom(Socket socket, int receiveTimeout, int readTimeout)
+            throws MllpSocketException, SocketTimeoutException {
         if (socket != null && socket.isConnected() && !socket.isClosed()) {
             log.trace("readFrom({}, {}, {}) - entering", socket, receiveTimeout, readTimeout);
             ensureCapacity(MIN_BUFFER_SIZE);
@@ -193,13 +195,15 @@ public class MllpSocketBuffer {
             } catch (SocketTimeoutException timeoutEx) {
                 throw timeoutEx;
             } catch (IOException ioEx) {
-                final String exceptionMessage = String.format("readFrom(%s, %d, %d) - IOException encountered", socket, receiveTimeout, readTimeout);
+                final String exceptionMessage
+                        = String.format("readFrom(%s, %d, %d) - IOException encountered", socket, receiveTimeout, readTimeout);
                 resetSocket(socket, exceptionMessage);
                 throw new MllpSocketException(exceptionMessage, ioEx);
             } finally {
                 if (size() > 0 && !hasCompleteEnvelope()) {
                     if (!hasEndOfData() && hasEndOfBlock() && endOfBlockIndex < size() - 1) {
-                        log.warn("readFrom({}, {}, {}) - exiting with partial payload {}", socket, receiveTimeout, readTimeout, Hl7Util.convertToPrintFriendlyString(buffer, 0, size() - 1));
+                        log.warn("readFrom({}, {}, {}) - exiting with partial payload {}", socket, receiveTimeout, readTimeout,
+                                Hl7Util.convertToPrintFriendlyString(buffer, 0, size() - 1));
                     }
                 }
             }
@@ -219,7 +223,7 @@ public class MllpSocketBuffer {
                     OutputStream socketOutputStream = socket.getOutputStream();
                     if (hasStartOfBlock()) {
                         if (hasEndOfData()) {
-                            socketOutputStream.write(buffer, startOfBlockIndex, endOfBlockIndex - startOfBlockIndex  + 2);
+                            socketOutputStream.write(buffer, startOfBlockIndex, endOfBlockIndex - startOfBlockIndex + 2);
                         } else if (hasEndOfBlock()) {
                             socketOutputStream.write(buffer, startOfBlockIndex, endOfBlockIndex - startOfBlockIndex + 1);
                             socketOutputStream.write(MllpProtocolConstants.END_OF_DATA);
@@ -283,10 +287,12 @@ public class MllpSocketBuffer {
                 if (Charset.isSupported(charsetName)) {
                     return toString(Charset.forName(charsetName));
                 }
-                log.warn("toString(charsetName[{}]) - unsupported character set name - using the MLLP default character set {}", charsetName, MllpComponent.getDefaultCharset());
+                log.warn("toString(charsetName[{}]) - unsupported character set name - using the MLLP default character set {}",
+                        charsetName, MllpComponent.getDefaultCharset());
             } catch (Exception charsetEx) {
-                log.warn("toString(charsetName[{}]) - ignoring exception encountered determining character set - using the MLLP default character set {}",
-                    charsetName, MllpComponent.getDefaultCharset(), charsetEx);
+                log.warn(
+                        "toString(charsetName[{}]) - ignoring exception encountered determining character set - using the MLLP default character set {}",
+                        charsetName, MllpComponent.getDefaultCharset(), charsetEx);
             }
 
             return toString(MllpComponent.getDefaultCharset());
@@ -312,8 +318,8 @@ public class MllpSocketBuffer {
     }
 
     /**
-     * Convert the entire contents of the buffer (including enveloping characters) to a print-friendly
-     * String representation.
+     * Convert the entire contents of the buffer (including enveloping characters) to a print-friendly String
+     * representation.
      *
      * @return print-friendly String
      */
@@ -351,10 +357,13 @@ public class MllpSocketBuffer {
                 if (Charset.isSupported(charsetName)) {
                     return toHl7String(Charset.forName(charsetName));
                 }
-                log.warn("toHl7String(charsetName[{}]) - unsupported character set name - using the MLLP default character set {}", charsetName, MllpComponent.getDefaultCharset());
+                log.warn(
+                        "toHl7String(charsetName[{}]) - unsupported character set name - using the MLLP default character set {}",
+                        charsetName, MllpComponent.getDefaultCharset());
             } catch (Exception charsetEx) {
-                log.warn("toHl7String(charsetName[{}]) - ignoring exception encountered determining character set for name - using the MLLP default character set {}",
-                    charsetName, MllpComponent.getDefaultCharset(), charsetEx);
+                log.warn(
+                        "toHl7String(charsetName[{}]) - ignoring exception encountered determining character set for name - using the MLLP default character set {}",
+                        charsetName, MllpComponent.getDefaultCharset(), charsetEx);
             }
         }
 
@@ -384,8 +393,8 @@ public class MllpSocketBuffer {
     }
 
     /**
-     * Convert the enveloped contents of the buffer (excluding enveloping characters) to a print-friendly
-     * String representation.
+     * Convert the enveloped contents of the buffer (excluding enveloping characters) to a print-friendly String
+     * representation.
      *
      * @return print-friendly String
      */
@@ -447,13 +456,9 @@ public class MllpSocketBuffer {
         return answer;
     }
 
-
-
-
     public synchronized int getStartOfBlockIndex() {
         return startOfBlockIndex;
     }
-
 
     public synchronized int getEndOfBlockIndex() {
         return endOfBlockIndex;
@@ -475,7 +480,6 @@ public class MllpSocketBuffer {
         return (startOfBlockIndex >= 0) ? true : false;
     }
 
-
     public synchronized boolean hasEndOfBlock() {
         return (endOfBlockIndex >= 0) ? true : false;
     }
@@ -483,7 +487,8 @@ public class MllpSocketBuffer {
     public synchronized boolean hasEndOfData() {
         if (hasEndOfBlock()) {
             int potentialEndOfDataIndex = endOfBlockIndex + 1;
-            if ((potentialEndOfDataIndex < availableByteCount) && (buffer[potentialEndOfDataIndex] == MllpProtocolConstants.END_OF_DATA)) {
+            if ((potentialEndOfDataIndex < availableByteCount)
+                    && (buffer[potentialEndOfDataIndex] == MllpProtocolConstants.END_OF_DATA)) {
                 return true;
             }
         }
@@ -584,12 +589,16 @@ public class MllpSocketBuffer {
 
             if (buffer.length >= MAX_BUFFER_SIZE) {
                 final String exceptionMessageFormat = "Cannot increase the buffer size from <%d> to <%d>"
-                    + " in order to increase the available capacity from <%d> to <%d> because the buffer is already the maximum size <%d>";
-                throw new IllegalStateException(String.format(exceptionMessageFormat, buffer.length, requiredBufferSize, currentAvailableCapacity, requiredAvailableCapacity, MAX_BUFFER_SIZE));
+                                                      + " in order to increase the available capacity from <%d> to <%d> because the buffer is already the maximum size <%d>";
+                throw new IllegalStateException(
+                        String.format(exceptionMessageFormat, buffer.length, requiredBufferSize, currentAvailableCapacity,
+                                requiredAvailableCapacity, MAX_BUFFER_SIZE));
             } else if (requiredBufferSize > MAX_BUFFER_SIZE) {
                 final String exceptionMessageFormat = "Cannot increase the buffer size <%d>"
-                    + " in order to increase the available capacity from <%d> to <%d> because the required buffer size <%d> exceeds the maximum buffer size <%d>";
-                throw new IllegalStateException(String.format(exceptionMessageFormat, buffer.length, currentAvailableCapacity, requiredAvailableCapacity, requiredBufferSize, MAX_BUFFER_SIZE));
+                                                      + " in order to increase the available capacity from <%d> to <%d> because the required buffer size <%d> exceeds the maximum buffer size <%d>";
+                throw new IllegalStateException(
+                        String.format(exceptionMessageFormat, buffer.length, currentAvailableCapacity,
+                                requiredAvailableCapacity, requiredBufferSize, MAX_BUFFER_SIZE));
             }
             int newBufferSize = Math.min(buffer.length + Math.max(MIN_BUFFER_SIZE, requiredAvailableCapacity), MAX_BUFFER_SIZE);
 
@@ -607,13 +616,15 @@ public class MllpSocketBuffer {
         }
     }
 
-    void readSocketInputStream(InputStream socketInputStream, Socket socket) throws MllpSocketException, SocketTimeoutException {
+    void readSocketInputStream(InputStream socketInputStream, Socket socket)
+            throws MllpSocketException, SocketTimeoutException {
         log.trace("readSocketInputStream(socketInputStream, {}) - entering with initial buffer size = {}", socket, size());
         try {
             int readCount = socketInputStream.read(buffer, availableByteCount, buffer.length - availableByteCount);
             if (readCount == MllpProtocolConstants.END_OF_STREAM) {
-                final String exceptionMessage = String.format("readSocketInputStream(socketInputStream, %s) - END_OF_STREAM returned from SocketInputStream.read(byte[%d], %d, %d)",
-                    socket, buffer.length, availableByteCount, buffer.length - availableByteCount);
+                final String exceptionMessage = String.format(
+                        "readSocketInputStream(socketInputStream, %s) - END_OF_STREAM returned from SocketInputStream.read(byte[%d], %d, %d)",
+                        socket, buffer.length, availableByteCount, buffer.length - availableByteCount);
                 resetSocket(socket);
                 throw new MllpSocketException(exceptionMessage);
             }
@@ -624,16 +635,20 @@ public class MllpSocketBuffer {
                 availableByteCount += readCount;
 
                 if (hasStartOfBlock()) {
-                    log.trace("readSocketInputStream(socketInputStream, {}) - read {} bytes for a total of {} bytes", socket, readCount, availableByteCount);
+                    log.trace("readSocketInputStream(socketInputStream, {}) - read {} bytes for a total of {} bytes", socket,
+                            readCount, availableByteCount);
                 } else {
-                    log.warn("readSocketInputStream(socketInputStream, {}) - ignoring {} bytes received before START_OF_BLOCK: {}", socket, size(), toPrintFriendlyStringAndReset());
+                    log.warn(
+                            "readSocketInputStream(socketInputStream, {}) - ignoring {} bytes received before START_OF_BLOCK: {}",
+                            socket, size(), toPrintFriendlyStringAndReset());
                 }
             }
         } catch (SocketTimeoutException timeoutEx) {
             throw timeoutEx;
         } catch (IOException ioEx) {
-            final String exceptionMessage = String.format("readSocketInputStream(socketInputStream, %s) - IOException thrown from SocketInputStream.read(byte[%d], %d, %d) from %s",
-                socket, buffer.length, availableByteCount, buffer.length - availableByteCount, socket);
+            final String exceptionMessage = String.format(
+                    "readSocketInputStream(socketInputStream, %s) - IOException thrown from SocketInputStream.read(byte[%d], %d, %d) from %s",
+                    socket, buffer.length, availableByteCount, buffer.length - availableByteCount, socket);
             resetSocket(socket);
             throw new MllpSocketException(exceptionMessage, ioEx);
         } finally {
@@ -671,7 +686,9 @@ public class MllpSocketBuffer {
                 try {
                     socket.shutdownInput();
                 } catch (IOException ignoredEx) {
-                    log.trace("doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.shutdownInput()", socket, logMessage, reset, ignoredEx);
+                    log.trace(
+                            "doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.shutdownInput()",
+                            socket, logMessage, reset, ignoredEx);
                 }
             }
 
@@ -679,7 +696,9 @@ public class MllpSocketBuffer {
                 try {
                     socket.shutdownOutput();
                 } catch (IOException ignoredEx) {
-                    log.trace("doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.shutdownOutput()", socket, logMessage, reset, ignoredEx);
+                    log.trace(
+                            "doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.shutdownOutput()",
+                            socket, logMessage, reset, ignoredEx);
                 }
             }
 
@@ -689,7 +708,9 @@ public class MllpSocketBuffer {
                 try {
                     socket.setSoLinger(on, linger);
                 } catch (IOException ignoredEx) {
-                    log.trace("doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.setSoLinger({}, {})", socket, logMessage, reset, on, linger, ignoredEx);
+                    log.trace(
+                            "doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.setSoLinger({}, {})",
+                            socket, logMessage, reset, on, linger, ignoredEx);
                 }
             }
 
@@ -697,7 +718,8 @@ public class MllpSocketBuffer {
                 socket.close();
             } catch (IOException ignoredEx) {
                 // TODO: Maybe log this
-                log.trace("doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.close()", socket, logMessage, reset, ignoredEx);
+                log.trace("doSocketClose(socket[{}], logMessage[{}], reset[{}] - ignoring exception raised by Socket.close()",
+                        socket, logMessage, reset, ignoredEx);
             }
         }
     }

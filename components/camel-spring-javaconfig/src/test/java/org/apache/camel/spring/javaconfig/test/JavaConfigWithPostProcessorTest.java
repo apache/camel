@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = MyConfig.class)
 @Component
 public class JavaConfigWithPostProcessorTest implements Cheese {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaConfigWithPostProcessorTest.class);
 
     private boolean doCheeseCalled;

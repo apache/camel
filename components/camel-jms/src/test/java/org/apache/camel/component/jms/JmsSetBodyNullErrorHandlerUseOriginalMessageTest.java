@@ -58,13 +58,13 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestS
                 errorHandler(deadLetterChannel("activemq:queue:dead").useOriginalMessage());
 
                 from("activemq:queue:foo")
-                    .to("mock:foo")
-                    .process(exchange -> {
-                        // an end user may set the message body explicit to null
-                        exchange.getIn().setBody(null);
-                    })
-                    .to("mock:bar")
-                    .throwException(new IllegalArgumentException("Forced"));
+                        .to("mock:foo")
+                        .process(exchange -> {
+                            // an end user may set the message body explicit to null
+                            exchange.getIn().setBody(null);
+                        })
+                        .to("mock:bar")
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

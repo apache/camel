@@ -17,5 +17,6 @@
 package org.apache.camel.component.snmp;
 
 public enum SnmpAuthProtocolType {
-    MD5, SHA1
+    MD5,
+    SHA1
 }

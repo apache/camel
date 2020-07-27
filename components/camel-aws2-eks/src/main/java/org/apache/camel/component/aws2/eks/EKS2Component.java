@@ -58,7 +58,8 @@ public class EKS2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getEksClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getEksClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
         }
 

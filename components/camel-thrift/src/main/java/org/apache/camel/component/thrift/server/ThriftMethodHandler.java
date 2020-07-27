@@ -43,13 +43,13 @@ public class ThriftMethodHandler implements MethodHandler {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
         if (proceed == null) {
             // Detects async methods invocation as a last argument is instance of
             // {org.apache.thrift.async.AsyncMethodCallback}
             if (args.length > 0 && args[args.length - 1] instanceof AsyncMethodCallback) {
-                AsyncMethodCallback callback = (AsyncMethodCallback)args[args.length - 1];
+                AsyncMethodCallback callback = (AsyncMethodCallback) args[args.length - 1];
                 Exchange exchange = endpoint.createExchange();
                 if (args.length >= 2) {
                     exchange.getIn().setBody(Arrays.asList(Arrays.copyOfRange(args, 0, args.length - 1)));

@@ -42,7 +42,8 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
 
     @Override
     public AsyncProcessor createRecipientList(CamelContext camelContext, RecipientList annotation) {
-        org.apache.camel.processor.RecipientList recipientList = new org.apache.camel.processor.RecipientList(camelContext, annotation.delimiter());
+        org.apache.camel.processor.RecipientList recipientList
+                = new org.apache.camel.processor.RecipientList(camelContext, annotation.delimiter());
         recipientList.setStopOnException(annotation.stopOnException());
         recipientList.setStopOnAggregateException(annotation.stopOnAggregateException());
         recipientList.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
@@ -54,7 +55,8 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
         recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
         if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
-            ExecutorService executor = camelContext.getExecutorServiceManager().newThreadPool(this, "@RecipientList", annotation.executorServiceRef());
+            ExecutorService executor = camelContext.getExecutorServiceManager().newThreadPool(this, "@RecipientList",
+                    annotation.executorServiceRef());
             recipientList.setExecutorService(executor);
         }
 
@@ -65,7 +67,8 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
         }
 
         if (ObjectHelper.isNotEmpty(annotation.strategyRef())) {
-            AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, annotation.strategyRef(), AggregationStrategy.class);
+            AggregationStrategy strategy
+                    = CamelContextHelper.mandatoryLookup(camelContext, annotation.strategyRef(), AggregationStrategy.class);
             recipientList.setAggregationStrategy(strategy);
         }
 

@@ -58,7 +58,8 @@ public class ApnsProducerWithoutTokensHeaderTest extends CamelTestSupport {
         String message = "Hello World";
         String messagePayload = APNS.newPayload().alertBody(message).build();
 
-        EnhancedApnsNotification apnsNotification = new EnhancedApnsNotification(1, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
+        EnhancedApnsNotification apnsNotification
+                = new EnhancedApnsNotification(1, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
         server.stopAt(apnsNotification.length());
 
         template.sendBody("direct:test", message);

@@ -37,8 +37,8 @@ public class MainTest {
             @Override
             public void configure() throws Exception {
                 from("file://src/test/data?initialDelay=0&delay=10&noop=true")
-                    .process(new MyProcessor())
-                    .to("mock:results");
+                        .process(new MyProcessor())
+                        .to("mock:results");
             }
         });
         main.start();

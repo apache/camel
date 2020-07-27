@@ -38,8 +38,9 @@ import software.amazon.awssdk.services.athena.AthenaClientBuilder;
 /**
  * Access AWS Athena service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.4.0", scheme = "aws2-athena", title = "AWS 2 Athena", syntax = "aws2-athena:label", producerOnly = true, category = {
-    Category.CLOUD, Category.DATABASE})
+@UriEndpoint(firstVersion = "3.4.0", scheme = "aws2-athena", title = "AWS 2 Athena", syntax = "aws2-athena:label",
+             producerOnly = true, category = {
+                     Category.CLOUD, Category.DATABASE })
 public class Athena2Endpoint extends DefaultEndpoint {
 
     private AthenaClient athenaClient;
@@ -66,8 +67,9 @@ public class Athena2Endpoint extends DefaultEndpoint {
     public void doInit() throws Exception {
         super.doInit();
 
-        athenaClient = configuration.getAmazonAthenaClient() != null ? configuration.getAmazonAthenaClient()
-            : createAthenaClient();
+        athenaClient = configuration.getAmazonAthenaClient() != null
+                ? configuration.getAmazonAthenaClient()
+                : createAthenaClient();
     }
 
     @Override
@@ -104,7 +106,8 @@ public class Athena2Endpoint extends DefaultEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -112,7 +115,8 @@ public class Athena2Endpoint extends DefaultEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }

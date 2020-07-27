@@ -37,11 +37,10 @@ public class EditMessageReplyMarkupMessage extends OutgoingMessage {
     /**
      * Builds {@link EditMessageReplyMarkupMessage} instance.
      *
-     * @param chatId               Unique identifier for the target chat or username of the target channel.
-     * @param messageId            Identifier of the message to edit. Required if inline_message_id is not specified.
-     * @param inlineMessageId      Required if chat_id and message_id are not specified.
-     *                             Identifier of the inline message.
-     * @param replyMarkup          An inline keyboard that appears right next to the message it belongs to.
+     * @param chatId          Unique identifier for the target chat or username of the target channel.
+     * @param messageId       Identifier of the message to edit. Required if inline_message_id is not specified.
+     * @param inlineMessageId Required if chat_id and message_id are not specified. Identifier of the inline message.
+     * @param replyMarkup     An inline keyboard that appears right next to the message it belongs to.
      */
     public EditMessageReplyMarkupMessage(String chatId, Integer messageId, String inlineMessageId,
                                          InlineKeyboardMarkup replyMarkup) {
@@ -101,15 +100,13 @@ public class EditMessageReplyMarkupMessage extends OutgoingMessage {
         }
     }
 
-
     @Override
     public String toString() {
         return "EditMessageReplyMarkupMessage{"
-            + "messageId=" + messageId
-            + ", inlineMessageId='" + inlineMessageId + '\''
-            + ", replyMarkup=" + replyMarkup
-            + ", chatId='" + chatId + '\''
-            + '}';
+               + "messageId=" + messageId
+               + ", inlineMessageId='" + inlineMessageId + '\''
+               + ", replyMarkup=" + replyMarkup
+               + ", chatId='" + chatId + '\''
+               + '}';
     }
 }
-

@@ -72,22 +72,23 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
         String name = context.getManagementName();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
+        ObjectName on
+                = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
 
         // should be on start
-        String routeId = (String)mbeanServer.getAttribute(on, "RouteId");
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("start", routeId);
 
-        Long num = (Long)mbeanServer.getAttribute(on, "Delay");
+        Long num = (Long) mbeanServer.getAttribute(on, "Delay");
         assertEquals("2000", num.toString());
 
-        Boolean bool = (Boolean)mbeanServer.getAttribute(on, "TimeoutEnabled");
+        Boolean bool = (Boolean) mbeanServer.getAttribute(on, "TimeoutEnabled");
         assertEquals(true, bool.booleanValue());
 
-        num = (Long)mbeanServer.getAttribute(on, "TimeoutDuration");
+        num = (Long) mbeanServer.getAttribute(on, "TimeoutDuration");
         assertEquals("5000", num.toString());
 
-        Float fl = (Float)mbeanServer.getAttribute(on, "FailureRate");
+        Float fl = (Float) mbeanServer.getAttribute(on, "FailureRate");
         assertEquals("0.25", fl.toString());
     }
 
@@ -97,8 +98,9 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("start")
-                        .circuitBreaker().id("myFaultTolerance").configuration("myConfig").faultToleranceConfiguration().delay(2000).timeoutEnabled(true).timeoutDuration(5000).end()
-                            .to("direct:foo").to("log:foo")
+                        .circuitBreaker().id("myFaultTolerance").configuration("myConfig").faultToleranceConfiguration()
+                        .delay(2000).timeoutEnabled(true).timeoutDuration(5000).end()
+                        .to("direct:foo").to("log:foo")
                         .onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");

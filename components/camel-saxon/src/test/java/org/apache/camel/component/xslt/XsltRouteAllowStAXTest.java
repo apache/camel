@@ -84,7 +84,8 @@ public class XsltRouteAllowStAXTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("xslt-saxon:org/apache/camel/component/xslt/transform.xsl?allowStAX=true").multicast().bean("testBean").to("mock:result");
+                from("direct:start").to("xslt-saxon:org/apache/camel/component/xslt/transform.xsl?allowStAX=true").multicast()
+                        .bean("testBean").to("mock:result");
             }
         };
     }

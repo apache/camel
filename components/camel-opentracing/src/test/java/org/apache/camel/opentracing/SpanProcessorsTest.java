@@ -46,10 +46,10 @@ public class SpanProcessorsTest extends CamelOpenTracingTestSupport {
     @Test
     public void testRoute() throws Exception {
         Exchange result = template.request("direct:start",
-            exchange -> {
-                exchange.getIn().setBody("Hello");
-                exchange.getIn().setHeader("request-header", simple("request-header-value"));
-            });
+                exchange -> {
+                    exchange.getIn().setBody("Hello");
+                    exchange.getIn().setHeader("request-header", simple("request-header-value"));
+                });
 
         verify();
         assertEquals(result.getMessage().getHeader("baggage-header", String.class), "request-header-value");

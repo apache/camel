@@ -36,11 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FhirXmlDataFormatTest extends CamelTestSupport {
 
-    private static final String PATIENT =
-            "<Patient xmlns=\"http://hl7.org/fhir\">"
-                    + "<name><family value=\"Holmes\"/><given value=\"Sherlock\"/></name>"
-                    + "<address><line value=\"221b Baker St, Marylebone, London NW1 6XE, UK\"/></address>"
-                    + "</Patient>";
+    private static final String PATIENT = "<Patient xmlns=\"http://hl7.org/fhir\">"
+                                          + "<name><family value=\"Holmes\"/><given value=\"Sherlock\"/></name>"
+                                          + "<address><line value=\"221b Baker St, Marylebone, London NW1 6XE, UK\"/></address>"
+                                          + "</Patient>";
     private MockEndpoint mockEndpoint;
 
     @Override
@@ -49,7 +48,7 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
-    
+
     @Test
     public void unmarshal() throws Exception {
         mockEndpoint.expectedMessageCount(1);
@@ -74,13 +73,15 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-        final IBaseResource iBaseResource = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
+        final IBaseResource iBaseResource
+                = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
         assertTrue(patient.equalsDeep((Base) iBaseResource), "Patients should be equal!");
     }
 
     private Patient getPatient() {
         Patient patient = new Patient();
-        patient.addName(new HumanName().addGiven("Sherlock").setFamily("Holmes")).addAddress(new Address().addLine("221b Baker St, Marylebone, London NW1 6XE, UK"));
+        patient.addName(new HumanName().addGiven("Sherlock").setFamily("Holmes"))
+                .addAddress(new Address().addLine("221b Baker St, Marylebone, London NW1 6XE, UK"));
         return patient;
     }
 
@@ -89,12 +90,12 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:marshal")
-                    .marshal().fhirXml()
-                    .to("mock:result");
+                        .marshal().fhirXml()
+                        .to("mock:result");
 
                 from("direct:unmarshal")
-                    .unmarshal().fhirXml()
-                    .to("mock:result");
+                        .unmarshal().fhirXml()
+                        .to("mock:result");
             }
         };
     }

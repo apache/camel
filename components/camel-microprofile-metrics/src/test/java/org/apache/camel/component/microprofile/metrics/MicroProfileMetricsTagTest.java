@@ -100,11 +100,11 @@ public class MicroProfileMetricsTagTest extends MicroProfileMetricsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:tags")
-                    .to("microprofile-metrics:counter:test-counter?tags=foo=bar,cheese=wine");
+                        .to("microprofile-metrics:counter:test-counter?tags=foo=bar,cheese=wine");
 
                 from("direct:tagsFromHeader")
-                    .setHeader(HEADER_METRIC_TAGS, constant("a=b,c=d"))
-                    .to("microprofile-metrics:counter:test-counter-header");
+                        .setHeader(HEADER_METRIC_TAGS, constant("a=b,c=d"))
+                        .to("microprofile-metrics:counter:test-counter-header");
             }
         };
     }

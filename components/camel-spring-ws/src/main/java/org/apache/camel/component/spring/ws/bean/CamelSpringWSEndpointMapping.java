@@ -28,7 +28,7 @@ public interface CamelSpringWSEndpointMapping extends EndpointMapping {
     /**
      * Used by Camel Spring Web Services endpoint to register consumers
      * 
-     * @param key unique consumer key
+     * @param key      unique consumer key
      * @param endpoint consumer
      */
     void addConsumer(EndpointMappingKey key, MessageEndpoint endpoint);

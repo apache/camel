@@ -35,8 +35,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;
 
-    public static final String XML_DATA = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
-    public static final String XML_DATA_INVALID = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
+    public static final String XML_DATA
+            = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
+    public static final String XML_DATA_INVALID
+            = " <!DOCTYPE foo [ "
+              + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
 
     @Override
     @BeforeEach
@@ -65,7 +68,7 @@ public class XPathFeatureTest extends ContextTestSupport {
 
     @Test
     public void testXPathResult() throws Exception {
-        String result = (String)xpath("/").stringResult().evaluate(createExchange(XML_DATA));
+        String result = (String) xpath("/").stringResult().evaluate(createExchange(XML_DATA));
         assertEquals("  ", result, "Get a wrong result");
     }
 
@@ -78,7 +81,8 @@ public class XPathFeatureTest extends ContextTestSupport {
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
             boolean b = ex.getCause() instanceof FileNotFoundException;
-            assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class);
+            assertTrue(b,
+                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class);
         } finally {
             System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities");
         }
@@ -92,7 +96,8 @@ public class XPathFeatureTest extends ContextTestSupport {
             fail("Expect an Exception here");
         } catch (RuntimeCamelException ex) {
             boolean b = ex.getCause() instanceof NoTypeConversionAvailableException;
-            assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + NoTypeConversionAvailableException.class);
+            assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
+                          + NoTypeConversionAvailableException.class);
         }
     }
 
@@ -103,7 +108,8 @@ public class XPathFeatureTest extends ContextTestSupport {
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
             boolean b = ex.getCause() instanceof SAXParseException;
-            assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + SAXParseException.class);
+            assertTrue(b,
+                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + SAXParseException.class);
         }
     }
 

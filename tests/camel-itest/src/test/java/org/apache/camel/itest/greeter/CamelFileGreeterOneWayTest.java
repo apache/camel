@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
-    
+
     private static Endpoint endpoint;
     private static GreeterImpl greeterImpl;
     private static int port = AvailablePortFinder.getNextAvailable();
@@ -77,13 +77,13 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
         // Sleep a while and wait for the message whole processing
         Thread.sleep(4000);
         template.stop();
-        
+
         // make sure the greeter is called
         assertEquals(1, greeterImpl.getOneWayCounter(), "The oneway operation of greeter should be called");
 
         File file = new File("target/messages/input/hello.txt");
         assertFalse(file.exists(), "File " + file + " should be deleted");
-    }    
+    }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

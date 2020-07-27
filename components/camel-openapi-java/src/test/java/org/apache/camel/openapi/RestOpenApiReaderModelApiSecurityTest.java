@@ -50,22 +50,29 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 rest("/user").tag("dude").description("User rest service")
-                    // setup security definitions
-                    .securityDefinitions().oauth2("petstore_auth").authorizationUrl("http://petstore.swagger.io/oauth/dialog").end().apiKey("api_key").withHeader("myHeader").end()
-                    .end().consumes("application/json").produces("application/json")
+                        // setup security definitions
+                        .securityDefinitions().oauth2("petstore_auth")
+                        .authorizationUrl("http://petstore.swagger.io/oauth/dialog").end().apiKey("api_key")
+                        .withHeader("myHeader").end()
+                        .end().consumes("application/json").produces("application/json")
 
-                    .get("/{id}/{date}").description("Find user by id and date").outType(User.class).responseMessage().message("The user returned").endResponseMessage()
-                    // setup security for this rest verb
-                    .security("api_key").param().name("id").type(RestParamType.path).description("The id of the user to get").endParam().param().name("date")
-                    .type(RestParamType.path).description("The date").dataFormat("date").endParam().to("bean:userService?method=getUser(${header.id})")
+                        .get("/{id}/{date}").description("Find user by id and date").outType(User.class).responseMessage()
+                        .message("The user returned").endResponseMessage()
+                        // setup security for this rest verb
+                        .security("api_key").param().name("id").type(RestParamType.path)
+                        .description("The id of the user to get").endParam().param().name("date")
+                        .type(RestParamType.path).description("The date").dataFormat("date").endParam()
+                        .to("bean:userService?method=getUser(${header.id})")
 
-                    .put().description("Updates or create a user").type(User.class)
-                    // setup security for this rest verb
-                    .security("petstore_auth", "write:pets,read:pets").param().name("body").type(RestParamType.body).description("The user to update or create").endParam()
-                    .to("bean:userService?method=updateUser")
+                        .put().description("Updates or create a user").type(User.class)
+                        // setup security for this rest verb
+                        .security("petstore_auth", "write:pets,read:pets").param().name("body").type(RestParamType.body)
+                        .description("The user to update or create").endParam()
+                        .to("bean:userService?method=updateUser")
 
-                    .get("/findAll").description("Find all users").outType(User[].class).responseMessage().message("All the found users").endResponseMessage()
-                    .to("bean:userService?method=listUsers");
+                        .get("/findAll").description("Find all users").outType(User[].class).responseMessage()
+                        .message("All the found users").endResponseMessage()
+                        .to("bean:userService?method=listUsers");
             }
         };
     }
@@ -74,7 +81,7 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -82,7 +89,8 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -117,14 +125,15 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -132,7 +141,7 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("securitySchemes"));

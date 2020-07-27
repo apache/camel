@@ -27,7 +27,8 @@ public interface NamedNode {
     String getId();
 
     /**
-     * Returns a short name for this node which can be useful for ID generation or referring to related resources like images
+     * Returns a short name for this node which can be useful for ID generation or referring to related resources like
+     * images
      *
      * @return defaults to "node" but derived nodes should overload this to provide a unique name
      */

@@ -68,7 +68,8 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3&groupStrategy=#myGroupStrategy").to("mock:result");
+                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3&groupStrategy=#myGroupStrategy")
+                        .to("mock:result");
             }
         };
     }

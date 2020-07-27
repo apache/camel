@@ -26,7 +26,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest extends TcpServerConsumerAcknowledgementTestSupport {
+public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest
+        extends TcpServerConsumerAcknowledgementTestSupport {
     @Override
     protected boolean isBridgeErrorHandler() {
         return true;
@@ -69,7 +70,8 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest 
 
         Exchange failureExchange = failure.getExchanges().get(0);
         Object failureException = failureExchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION);
-        assertNotNull(failureException, "OnFailureOnly exchange should have a " + MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION + " property");
+        assertNotNull(failureException,
+                "OnFailureOnly exchange should have a " + MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION + " property");
         assertIsInstanceOf(Exception.class, failureException);
     }
 
@@ -83,10 +85,13 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest 
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
+        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
+        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
 
-        assertNotNull(ackGenerationEx.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should have the exception in the exchange property");
+        assertNotNull(ackGenerationEx.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should have the exception in the exchange property");
     }
 
     @Test
@@ -98,10 +103,11 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest 
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
+        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
+        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
     }
-
 
     @Test
     public void testMessageWithEmbeddedNewlines() throws Exception {
@@ -112,8 +118,9 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest 
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
+        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
+        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
     }
 }
-

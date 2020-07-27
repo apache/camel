@@ -26,8 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
 
 /**
- * This enumerates the defined charsets for HL7 as defined in Table 0211,
- * mapping them to the Java charset names and back
+ * This enumerates the defined charsets for HL7 as defined in Table 0211, mapping them to the Java charset names and
+ * back
  */
 public enum HL7Charset {
 
@@ -72,8 +72,8 @@ public enum HL7Charset {
     /**
      * Returns the HL7Charset that matches the parameter
      *
-     * @param s charset string
-     * @return HL7Charset enum
+     * @param  s charset string
+     * @return   HL7Charset enum
      */
     public static HL7Charset getHL7Charset(String s) {
         if (s != null && s.length() > 0) {
@@ -87,30 +87,32 @@ public enum HL7Charset {
     }
 
     /**
-     * Returns the charset to be used for marshalling HL7 messages. If MSH-18 is empty,
-     * the charset configured in Camel's charset properties/headers is returned.
+     * Returns the charset to be used for marshalling HL7 messages. If MSH-18 is empty, the charset configured in
+     * Camel's charset properties/headers is returned.
      *
-     * @param message HL7 message
-     * @param exchange Exchange
-     * @return Java charset name
+     * @param  message  HL7 message
+     * @param  exchange Exchange
+     * @return          Java charset name
      */
     public static String getCharsetName(Message message, Exchange exchange) throws HL7Exception {
         String defaultCharsetName = ExchangeHelper.getCharsetName(exchange);
-        String msh18 = ((Segment)message.get("MSH")).getField(18, 0).toString();
+        String msh18 = ((Segment) message.get("MSH")).getField(18, 0).toString();
         return getCharsetName(msh18, defaultCharsetName);
     }
 
     /**
-     * Returns the charset to be used for unmarshalling HL7 messages. If MSH-18 is empty,
-     * the temporary charset name is returned.
+     * Returns the charset to be used for unmarshalling HL7 messages. If MSH-18 is empty, the temporary charset name is
+     * returned.
      *
-     * @param bytes HL7 message as byte array
-     * @param guessedCharsetName the temporary charset guessed to be able to read MSH-18
-     * @return Java charset name
+     * @param  bytes              HL7 message as byte array
+     * @param  guessedCharsetName the temporary charset guessed to be able to read MSH-18
+     * @return                    Java charset name
      *
-     * @see org.apache.camel.component.hl7.HL7DataFormat#guessCharsetName(byte[], org.apache.camel.Exchange)
+     * @see                       org.apache.camel.component.hl7.HL7DataFormat#guessCharsetName(byte[],
+     *                            org.apache.camel.Exchange)
      */
-    public static String getCharsetName(byte[] bytes, String guessedCharsetName) throws UnsupportedEncodingException, HL7Exception {
+    public static String getCharsetName(byte[] bytes, String guessedCharsetName)
+            throws UnsupportedEncodingException, HL7Exception {
         String tmp = new String(bytes, guessedCharsetName);
         String msh18 = PreParser.getFields(tmp, "MSH-18")[0];
         return getCharsetName(msh18, guessedCharsetName);

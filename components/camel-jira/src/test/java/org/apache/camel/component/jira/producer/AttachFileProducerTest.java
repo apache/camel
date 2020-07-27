@@ -99,7 +99,8 @@ public class AttachFileProducerTest extends CamelTestSupport {
             Files.copy(attachedFileTmp.toPath(), attachedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             attachedFile.deleteOnExit();
             Collection<Attachment> attachments = new ArrayList<>();
-            attachments.add(new Attachment(issue.getAttachmentsUri(), attachedFile.getName(), null, null,
+            attachments.add(new Attachment(
+                    issue.getAttachmentsUri(), attachedFile.getName(), null, null,
                     new Long(attachedFile.length()).intValue(), null, null, null));
             // re-create the issue with the attachment sent by the route
             issue = createIssueWithAttachment(issue.getId(), issue.getSummary(), issue.getKey(), issue.getIssueType(),

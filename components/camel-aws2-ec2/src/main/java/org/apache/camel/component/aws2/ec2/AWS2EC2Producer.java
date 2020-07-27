@@ -57,8 +57,7 @@ import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
 /**
- * A Producer which sends messages to the Amazon EC2 Service
- * <a href="http://aws.amazon.com/ec2/">AWS EC2</a>
+ * A Producer which sends messages to the Amazon EC2 Service <a href="http://aws.amazon.com/ec2/">AWS EC2</a>
  */
 public class AWS2EC2Producer extends DefaultProducer {
 
@@ -133,10 +132,10 @@ public class AWS2EC2Producer extends DefaultProducer {
 
     @Override
     public AWS2EC2Endpoint getEndpoint() {
-        return (AWS2EC2Endpoint)super.getEndpoint();
+        return (AWS2EC2Endpoint) super.getEndpoint();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void createAndRunInstance(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         String ami;
         InstanceType instanceType;
@@ -145,7 +144,7 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof RunInstancesRequest) {
                 RunInstancesResponse result;
                 try {
-                    result = ec2Client.runInstances((RunInstancesRequest)payload);
+                    result = ec2Client.runInstances((RunInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Run Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -195,7 +194,8 @@ public class AWS2EC2Producer extends DefaultProducer {
                 builder.ebsOptimized(ebsOptimized);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS))) {
-                Collection securityGroups = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
+                Collection securityGroups
+                        = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
                 builder.securityGroups(securityGroups);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_KEY_PAIR))) {
@@ -235,12 +235,12 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof StartInstancesRequest) {
                 StartInstancesResponse result;
                 try {
-                    result = ec2Client.startInstances((StartInstancesRequest)payload);
+                    result = ec2Client.startInstances((StartInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
-                LOG.trace("Starting instances with Ids [{}] ", ((StartInstancesRequest)payload).instanceIds());
+                LOG.trace("Starting instances with Ids [{}] ", ((StartInstancesRequest) payload).instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -273,12 +273,12 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof StopInstancesRequest) {
                 StopInstancesResponse result;
                 try {
-                    result = ec2Client.stopInstances((StopInstancesRequest)payload);
+                    result = ec2Client.stopInstances((StopInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Stop Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
-                LOG.trace("Stopping instances with Ids [{}] ", ((StopInstancesRequest)payload).instanceIds());
+                LOG.trace("Stopping instances with Ids [{}] ", ((StopInstancesRequest) payload).instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -311,12 +311,12 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof TerminateInstancesRequest) {
                 TerminateInstancesResponse result;
                 try {
-                    result = ec2Client.terminateInstances((TerminateInstancesRequest)payload);
+                    result = ec2Client.terminateInstances((TerminateInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Terminate Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
-                LOG.trace("Terminating instances with Ids [{}] ", ((TerminateInstancesRequest)payload).instanceIds());
+                LOG.trace("Terminating instances with Ids [{}] ", ((TerminateInstancesRequest) payload).instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -349,7 +349,7 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof DescribeInstancesRequest) {
                 DescribeInstancesResponse result;
                 try {
-                    result = ec2Client.describeInstances((DescribeInstancesRequest)payload);
+                    result = ec2Client.describeInstances((DescribeInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -383,9 +383,10 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof DescribeInstanceStatusRequest) {
                 DescribeInstanceStatusResponse result;
                 try {
-                    result = ec2Client.describeInstanceStatus((DescribeInstanceStatusRequest)payload);
+                    result = ec2Client.describeInstanceStatus((DescribeInstanceStatusRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Instances Status command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Instances Status command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -416,8 +417,8 @@ public class AWS2EC2Producer extends DefaultProducer {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof RebootInstancesRequest) {
                 try {
-                    LOG.trace("Rebooting instances with Ids [{}] ", ((RebootInstancesRequest)payload).instanceIds());
-                    ec2Client.rebootInstances((RebootInstancesRequest)payload);
+                    LOG.trace("Rebooting instances with Ids [{}] ", ((RebootInstancesRequest) payload).instanceIds());
+                    ec2Client.rebootInstances((RebootInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -449,12 +450,12 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof MonitorInstancesRequest) {
                 MonitorInstancesResponse result;
                 try {
-                    result = ec2Client.monitorInstances((MonitorInstancesRequest)payload);
+                    result = ec2Client.monitorInstances((MonitorInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Monitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
-                LOG.trace("Start Monitoring instances with Ids [{}] ", ((MonitorInstancesRequest)payload).instanceIds());
+                LOG.trace("Start Monitoring instances with Ids [{}] ", ((MonitorInstancesRequest) payload).instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -487,12 +488,12 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof UnmonitorInstancesRequest) {
                 UnmonitorInstancesResponse result;
                 try {
-                    result = ec2Client.unmonitorInstances((UnmonitorInstancesRequest)payload);
+                    result = ec2Client.unmonitorInstances((UnmonitorInstancesRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Unmonitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
-                LOG.trace("Stop Monitoring instances with Ids [{}] ", ((UnmonitorInstancesRequest)payload).instanceIds());
+                LOG.trace("Stop Monitoring instances with Ids [{}] ", ((UnmonitorInstancesRequest) payload).instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -525,12 +526,12 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof CreateTagsRequest) {
                 CreateTagsResponse result;
                 try {
-                    result = ec2Client.createTags((CreateTagsRequest)payload);
+                    result = ec2Client.createTags((CreateTagsRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create tags command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
-                LOG.trace("Created tags [{}] ", ((CreateTagsRequest)payload).tags());
+                LOG.trace("Created tags [{}] ", ((CreateTagsRequest) payload).tags());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -556,7 +557,8 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Create tags command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+            LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
+                    Arrays.toString(instanceIds.toArray()));
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -570,12 +572,12 @@ public class AWS2EC2Producer extends DefaultProducer {
             if (payload instanceof DeleteTagsRequest) {
                 DeleteTagsResponse result;
                 try {
-                    result = ec2Client.deleteTags((DeleteTagsRequest)payload);
+                    result = ec2Client.deleteTags((DeleteTagsRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete tags command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
-                LOG.trace("Delete tags [{}]  ", ((DeleteTagsRequest)payload).tags());
+                LOG.trace("Delete tags [{}]  ", ((DeleteTagsRequest) payload).tags());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -601,7 +603,8 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Delete tags command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+            LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
+                    Arrays.toString(instanceIds.toArray()));
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }

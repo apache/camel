@@ -43,16 +43,16 @@ public class NettyHttpAccessHttpRequestTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // we can get the original http request
-                            HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
-                            assertNotNull(request);
-                        }
-                    })
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // we can get the original http request
+                                HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
+                                assertNotNull(request);
+                            }
+                        })
+                        .transform().constant("Bye World");
             }
         };
     }

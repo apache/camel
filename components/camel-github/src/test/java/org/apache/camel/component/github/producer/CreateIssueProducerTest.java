@@ -46,7 +46,6 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
                         .to("github://createissue?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
-
         };
     }
 
@@ -68,7 +67,6 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
         assertEquals("There's an error", issue.getBody());
     }
 
-
     public class MockIssueCreateProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -77,6 +75,5 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_ISSUE_TITLE, "Error");
         }
     }
-
 
 }

@@ -45,10 +45,10 @@ public class UndertowError500Test extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}/foo")
-                    .to("mock:input")
+                        .to("mock:input")
                         // trigger failure by setting error code to 500
-                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
-                    .setBody().constant("Camel cannot do this");
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
+                        .setBody().constant("Camel cannot do this");
             }
         };
     }

@@ -38,8 +38,7 @@ import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eks.model.VpcConfigRequest;
 
 /**
- * A Producer which sends messages to the Amazon EKS Service
- * <a href="http://aws.amazon.com/eks/">AWS EKS</a>
+ * A Producer which sends messages to the Amazon EKS Service <a href="http://aws.amazon.com/eks/">AWS EKS</a>
  */
 public class EKS2Producer extends DefaultProducer {
 
@@ -92,7 +91,7 @@ public class EKS2Producer extends DefaultProducer {
 
     @Override
     public EKS2Endpoint getEndpoint() {
-        return (EKS2Endpoint)super.getEndpoint();
+        return (EKS2Endpoint) super.getEndpoint();
     }
 
     private void listClusters(EksClient eksClient, Exchange exchange) throws InvalidPayloadException {
@@ -101,7 +100,7 @@ public class EKS2Producer extends DefaultProducer {
             if (payload instanceof ListClustersRequest) {
                 ListClustersResponse result;
                 try {
-                    result = eksClient.listClusters((ListClustersRequest)payload);
+                    result = eksClient.listClusters((ListClustersRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -133,7 +132,7 @@ public class EKS2Producer extends DefaultProducer {
             if (payload instanceof CreateClusterRequest) {
                 CreateClusterResponse result;
                 try {
-                    result = eksClient.createCluster((CreateClusterRequest)payload);
+                    result = eksClient.createCluster((CreateClusterRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -173,7 +172,7 @@ public class EKS2Producer extends DefaultProducer {
             if (payload instanceof DescribeClusterRequest) {
                 DescribeClusterResponse result;
                 try {
-                    result = eksClient.describeCluster((DescribeClusterRequest)payload);
+                    result = eksClient.describeCluster((DescribeClusterRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -207,7 +206,7 @@ public class EKS2Producer extends DefaultProducer {
             if (payload instanceof DeleteClusterRequest) {
                 DeleteClusterResponse result;
                 try {
-                    result = eksClient.deleteCluster((DeleteClusterRequest)payload);
+                    result = eksClient.deleteCluster((DeleteClusterRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

@@ -68,7 +68,7 @@ public class ManagedConvertBodyTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .convertBodyTo(byte[].class).id("mysend")
+                        .convertBodyTo(byte[].class).id("mysend")
                         .to("mock:foo");
             }
         };

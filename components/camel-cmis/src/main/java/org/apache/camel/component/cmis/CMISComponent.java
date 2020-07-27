@@ -36,7 +36,8 @@ public class CMISComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         CMISEndpoint endpoint = new CMISEndpoint(uri, this, remaining);
 
         // create a copy of parameters which we need to store on the endpoint which are in use from the session factory

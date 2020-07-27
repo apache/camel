@@ -70,7 +70,8 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
                             public void onError(Throwable t) {
                                 t.printStackTrace();
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -91,7 +92,7 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
             public void configure() {
 
                 final int port = getPort();
-                from("undertow:ws://localhost:" + port  + "/bar")
+                from("undertow:ws://localhost:" + port + "/bar")
                         .log(">>> Message received from BAR WebSocket Client : ${body}")
                         .transform().simple("The bar has ${body}")
                         .to("undertow:ws://localhost:" + port + "/bar");

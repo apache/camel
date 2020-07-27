@@ -31,13 +31,14 @@ import org.slf4j.LoggerFactory;
 public class DrivePermissionsIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DrivePermissionsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DrivePermissionsApiMethod.class).getName();
-    
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DrivePermissionsApiMethod.class).getName();
+
     @Test
     public void testList() throws Exception {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
-        
+
         // using String message body for single parameter "fileId"
         final com.google.api.services.drive.model.PermissionList result = requestBody("direct://LIST", fileId);
 
@@ -54,35 +55,35 @@ public class DrivePermissionsIntegrationTest extends AbstractGoogleDriveTestSupp
             public void configure() {
                 // test route for delete
                 from("direct://DELETE")
-                    .to("google-drive://" + PATH_PREFIX + "/delete");
+                        .to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get");
+                        .to("google-drive://" + PATH_PREFIX + "/get");
 
                 // test route for getIdForEmail
                 from("direct://GETIDFOREMAIL")
-                    .to("google-drive://" + PATH_PREFIX + "/getIdForEmail?inBody=email");
+                        .to("google-drive://" + PATH_PREFIX + "/getIdForEmail?inBody=email");
 
                 // test route for insert
                 from("direct://INSERT")
-                    .to("google-drive://" + PATH_PREFIX + "/insert");
+                        .to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
                 from("direct://LIST")
-                    .to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
+                        .to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
 
                 // test route for patch
                 from("direct://PATCH")
-                    .to("google-drive://" + PATH_PREFIX + "/patch");
+                        .to("google-drive://" + PATH_PREFIX + "/patch");
 
                 // test route for update
                 from("direct://UPDATE")
-                    .to("google-drive://" + PATH_PREFIX + "/update");
-                
+                        .to("google-drive://" + PATH_PREFIX + "/update");
+
                 // just used to upload file for test
                 from("direct://INSERT_1")
-                    .to("google-drive://drive-files/insert");
+                        .to("google-drive://drive-files/insert");
 
             }
         };

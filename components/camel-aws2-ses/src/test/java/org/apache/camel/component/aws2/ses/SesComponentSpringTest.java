@@ -97,7 +97,8 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
                 exchange.getIn().setHeader(Ses2Constants.TO, Arrays.asList("anotherTo1@example.com", "anotherTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.RETURN_PATH, "anotherBounce@example.com");
-                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES, Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
+                        Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
             }
         });

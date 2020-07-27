@@ -30,11 +30,11 @@ import org.junit.jupiter.api.Test;
 public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("active-span server").setOperation("using-active-span")
-            .setParentId(1),
-        new SpanTestData().setLabel("process server").setOperation("direct-processor")
-            .setParentId(2),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("active-span server").setOperation("using-active-span")
+                    .setParentId(1),
+            new SpanTestData().setLabel("process server").setOperation("direct-processor")
+                    .setParentId(2),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public EIPTracingActiveSpanTest() {

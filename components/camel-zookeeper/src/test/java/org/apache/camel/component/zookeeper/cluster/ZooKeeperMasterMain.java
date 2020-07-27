@@ -59,8 +59,8 @@ public final class ZooKeeperMasterMain {
                 final int period = 1 + ThreadLocalRandom.current().nextInt(5);
 
                 fromF("master:zk:timer:master?delay=%ds&period=%ds", delay, period)
-                    .routeId("route-" + nodeId)
-                    .log("Node " + nodeId + " timer");
+                        .routeId("route-" + nodeId)
+                        .log("Node " + nodeId + " timer");
             }
         });
 

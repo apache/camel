@@ -26,7 +26,8 @@ public final class SupportLevelHelper {
 
     public static SupportLevel defaultSupportLevel(String firstVersion, String currentVersion) {
         if (firstVersion == null || firstVersion.isEmpty()) {
-            throw new IllegalArgumentException("FirstVersion is not specified. This can be done in @UriEndpoint or in pom.xml file.");
+            throw new IllegalArgumentException(
+                    "FirstVersion is not specified. This can be done in @UriEndpoint or in pom.xml file.");
         }
 
         boolean justNew = CamelVersionHelper.isGE(currentVersion, firstVersion);

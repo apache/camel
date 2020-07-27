@@ -84,7 +84,8 @@ public interface StreamCachingStrategy extends StaticService {
      * Used for selecting if the memory limit is <tt>committed</tt> or <tt>maximum</tt> heap memory setting.
      */
     enum SpoolUsedHeapMemoryLimit {
-        Committed, Max
+        Committed,
+        Max
     }
 
     /**
@@ -93,13 +94,12 @@ public interface StreamCachingStrategy extends StaticService {
     interface SpoolRule {
 
         /**
-         * Determines if the stream should be spooled or not. For example if the stream length is
-         * over a threshold.
+         * Determines if the stream should be spooled or not. For example if the stream length is over a threshold.
          * <p/>
          * This allows implementations to use custom strategies to determine if spooling is needed or not.
          *
-         * @param length the length of the stream
-         * @return <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
+         * @param  length the length of the stream
+         * @return        <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
          */
         boolean shouldSpoolCache(long length);
 
@@ -117,8 +117,8 @@ public interface StreamCachingStrategy extends StaticService {
     /**
      * Sets the spool (temporary) directory to use for overflow and spooling to disk.
      * <p/>
-     * If no spool directory has been explicit configured, then a temporary directory
-     * is created in the <tt>java.io.tmpdir</tt> directory.
+     * If no spool directory has been explicit configured, then a temporary directory is created in the
+     * <tt>java.io.tmpdir</tt> directory.
      */
     void setSpoolDirectory(File path);
 
@@ -129,8 +129,8 @@ public interface StreamCachingStrategy extends StaticService {
     /**
      * Threshold in bytes when overflow to disk is activated.
      * <p/>
-     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb).
-     * Use <tt>-1</tt> to disable overflow to disk.
+     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb). Use
+     * <tt>-1</tt> to disable overflow to disk.
      */
     void setSpoolThreshold(long threshold);
 
@@ -146,8 +146,7 @@ public interface StreamCachingStrategy extends StaticService {
     int getSpoolUsedHeapMemoryThreshold();
 
     /**
-     * Sets what the upper bounds should be when {@link #setSpoolUsedHeapMemoryThreshold(int)}
-     * is in use.
+     * Sets what the upper bounds should be when {@link #setSpoolUsedHeapMemoryThreshold(int)} is in use.
      *
      * @param bounds the bounds
      */
@@ -183,10 +182,9 @@ public interface StreamCachingStrategy extends StaticService {
     boolean isRemoveSpoolDirectoryWhenStopping();
 
     /**
-     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules
-     * returns <tt>true</tt> then {@link #shouldSpoolCache(long)} returns <tt>true</tt>.
-     * If this option is <tt>false</tt>, then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must
-     * return <tt>true</tt>.
+     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules returns
+     * <tt>true</tt> then {@link #shouldSpoolCache(long)} returns <tt>true</tt>. If this option is <tt>false</tt>, then
+     * <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return <tt>true</tt>.
      * <p/>
      * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
      */
@@ -205,21 +203,21 @@ public interface StreamCachingStrategy extends StaticService {
     void addSpoolRule(SpoolRule rule);
 
     /**
-     * Determines if the stream should be spooled or not. For example if the stream length is
-     * over a threshold.
+     * Determines if the stream should be spooled or not. For example if the stream length is over a threshold.
      * <p/>
      * This allows implementations to use custom strategies to determine if spooling is needed or not.
      *
-     * @param length the length of the stream
-     * @return <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
+     * @param  length the length of the stream
+     * @return        <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
      */
     boolean shouldSpoolCache(long length);
 
     /**
      * Caches the body aas a {@link StreamCache}.
      *
-     * @param exchange the exchange
-     * @return the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache the body
+     * @param  exchange the exchange
+     * @return          the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
+     *                  the body
      */
     StreamCache cache(Exchange exchange);
 

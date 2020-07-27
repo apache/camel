@@ -19,11 +19,10 @@ package org.apache.camel;
 /**
  * A predicate which evaluates a binary expression.
  * <p/>
- * The predicate has a left and right hand side expressions which
- * is matched based on an operator.
+ * The predicate has a left and right hand side expressions which is matched based on an operator.
  * <p/>
- * This predicate offers the {@link #matchesReturningFailureMessage} method
- * which evaluates and returns a detailed failure message if the predicate did not match.
+ * This predicate offers the {@link #matchesReturningFailureMessage} method which evaluates and returns a detailed
+ * failure message if the predicate did not match.
  */
 public interface BinaryPredicate extends Predicate {
 
@@ -49,13 +48,12 @@ public interface BinaryPredicate extends Predicate {
     Expression getRight();
 
     /**
-     * Evaluates the predicate on the message exchange and returns <tt>null</tt> if this
-     * exchange matches the predicate. If it did <b>not</b> match, then a failure message
-     * is returned detailing the reason, which can be used by end users to understand
-     * the failure.
+     * Evaluates the predicate on the message exchange and returns <tt>null</tt> if this exchange matches the predicate.
+     * If it did <b>not</b> match, then a failure message is returned detailing the reason, which can be used by end
+     * users to understand the failure.
      *
-     * @param exchange the message exchange
-     * @return <tt>null</tt> if the predicate matches.
+     * @param  exchange the message exchange
+     * @return          <tt>null</tt> if the predicate matches.
      */
     String matchesReturningFailureMessage(Exchange exchange);
 

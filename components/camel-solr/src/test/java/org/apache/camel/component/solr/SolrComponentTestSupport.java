@@ -50,7 +50,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     }
 
     protected static Collection<Object[]> secureOrNot() {
-        return Arrays.asList(new Object[][] {{true}, {false}});
+        return Arrays.asList(new Object[][] { { true }, { false } });
     }
 
     SolrFixtures getSolrFixtures() {
@@ -101,20 +101,21 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to(solrRouteUri());
                 from("direct:splitThenCommit")
-                    .split(body())
+                        .split(body())
                         .to(solrRouteUri())
-                    .end()
-                    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
-                    .to(solrRouteUri());
+                        .end()
+                        .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
+                        .to(solrRouteUri());
             }
         };
     }
 
     @Parameters
     public static Collection<Object[]> serverTypes() {
-        Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},
-                                  {SolrFixtures.TestServerType.USE_HTTPS},
-                                  {SolrFixtures.TestServerType.USE_HTTP}};
+        Object[][] serverTypes = {
+                { SolrFixtures.TestServerType.USE_CLOUD },
+                { SolrFixtures.TestServerType.USE_HTTPS },
+                { SolrFixtures.TestServerType.USE_HTTP } };
         return Arrays.asList(serverTypes);
     }
 

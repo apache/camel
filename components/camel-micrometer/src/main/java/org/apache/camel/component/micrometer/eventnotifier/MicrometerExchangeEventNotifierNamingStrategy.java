@@ -35,7 +35,8 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_
 
 public interface MicrometerExchangeEventNotifierNamingStrategy {
 
-    Predicate<Meter.Id> EVENT_NOTIFIERS = id -> MicrometerEventNotifierService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+    Predicate<Meter.Id> EVENT_NOTIFIERS
+            = id -> MicrometerEventNotifierService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
     MicrometerExchangeEventNotifierNamingStrategy DEFAULT = (event, endpoint) -> DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME;
 
     String getName(Exchange exchange, Endpoint endpoint);
@@ -50,15 +51,13 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
                 SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
                 EVENT_TYPE_TAG, event.getClass().getSimpleName(),
                 ENDPOINT_NAME, endpoint.getEndpointUri(),
-                FAILED_TAG, Boolean.toString(event.getExchange().isFailed())
-        );
+                FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
     }
 
     default Tags getInflightExchangesTags(ExchangeEvent event, Endpoint endpoint) {
         return Tags.of(
-            CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-            SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
-            ROUTE_ID_TAG, event.getExchange().getFromRouteId()
-        );
+                CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
+                SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
+                ROUTE_ID_TAG, event.getExchange().getFromRouteId());
     }
 }

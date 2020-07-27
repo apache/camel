@@ -37,7 +37,8 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
     private static final String CAMEL_TEST_LABEL = "CamelTestLabel";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersLabelsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
 
     @Test
     public void testLabels() throws Exception {
@@ -49,7 +50,8 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
             Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelGoogleMail.userId", CURRENT_USERID);
-            Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show").setLabelListVisibility("labelShow");
+            Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show")
+                    .setLabelListVisibility("labelShow");
             // parameter type is com.google.api.services.gmail.model.Label
             headers.put("CamelGoogleMail.content", label);
 

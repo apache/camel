@@ -43,7 +43,6 @@ public class BindySimpleKeyValuePairUnicodeNextLineTest {
     @EndpointInject(URI_MOCK_RESULT)
     private MockEndpoint result;
 
-
     @Test
     public void testUnmarshallMessage() throws Exception {
         String sent = "8=FIX.4.1 37=1 38=1 40=\u0085butter";
@@ -61,9 +60,7 @@ public class BindySimpleKeyValuePairUnicodeNextLineTest {
         assertTrue(unicodeFixOrder.getQuantity().equals("1"));
     }
 
-
     public static class ContextConfig extends RouteBuilder {
-
 
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(UnicodeFixOrder.class);
 

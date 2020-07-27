@@ -30,7 +30,8 @@ public final class ShiroSecurityHelper {
     private ShiroSecurityHelper() {
     }
 
-    public static ByteSource encrypt(ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService) throws Exception {
+    public static ByteSource encrypt(ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService)
+            throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         ObjectOutput serialStream = new ObjectOutputStream(stream);
         try {

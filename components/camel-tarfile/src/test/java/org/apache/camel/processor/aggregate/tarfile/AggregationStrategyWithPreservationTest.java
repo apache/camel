@@ -64,9 +64,10 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         assertTrue(files.length > 0, "Should be a file in target/out directory");
 
         File resultFile = files[0];
-        Set<String> expectedTarFiles = new HashSet<>(Arrays.asList("another/hello.txt",
-                "other/greetings.txt",
-                "chiau.txt", "hi.txt", "hola.txt"));
+        Set<String> expectedTarFiles = new HashSet<>(
+                Arrays.asList("another/hello.txt",
+                        "other/greetings.txt",
+                        "chiau.txt", "hi.txt", "hola.txt"));
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(resultFile));
         try {
             int fileCount = 0;
@@ -79,7 +80,8 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                 }
                 fileCount++;
             }
-            assertEquals(fileCount, AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, "Tar file should contains " + AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES + " files");
+            assertEquals(fileCount, AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES,
+                    "Tar file should contains " + AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES + " files");
             assertEquals(0, expectedTarFiles.size(), "Should have found all of the tar files in the file.");
         } finally {
             IOHelper.close(tin);
@@ -97,7 +99,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
-                            .to("file:target/out")
+                        .to("file:target/out")
                         .to("mock:aggregateToTarEntry")
                         .log("Done processing tar file: ${header.CamelFileName}");
             }

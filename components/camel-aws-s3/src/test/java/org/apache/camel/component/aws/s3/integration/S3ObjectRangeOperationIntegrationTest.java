@@ -47,8 +47,10 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);
 
     @BindToRegistry("amazonS3Client")
-    AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("xxx", "yyy"))).withRegion(Regions.US_WEST_1)
-        .build();
+    AmazonS3 client = AmazonS3ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("xxx", "yyy")))
+            .withRegion(Regions.US_WEST_1)
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;

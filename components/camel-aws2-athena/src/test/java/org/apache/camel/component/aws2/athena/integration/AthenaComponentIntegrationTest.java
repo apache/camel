@@ -65,12 +65,12 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaGetQueryResultsAsStreamListTest() {
-        Exchange exchange =
-            template.send("direct:athenaGetQueryResultsAsStreamListTest", ExchangePattern.InOut, new Processor() {
-                @Override
-                public void process(Exchange exchange) {
-                }
-            });
+        Exchange exchange
+                = template.send("direct:athenaGetQueryResultsAsStreamListTest", ExchangePattern.InOut, new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                    }
+                });
 
         assertValidQueryExecutionIdHeader(exchange);
 
@@ -97,12 +97,12 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaGetQueryResultsAsSelectListTest() {
-        Exchange exchange =
-            template.send("direct:athenaGetQueryResultsAsSelectListTest", ExchangePattern.InOut, new Processor() {
-                @Override
-                public void process(Exchange exchange) {
-                }
-            });
+        Exchange exchange
+                = template.send("direct:athenaGetQueryResultsAsSelectListTest", ExchangePattern.InOut, new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                    }
+                });
 
         assertValidQueryExecutionIdHeader(exchange);
 
@@ -125,16 +125,17 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaGetQueryResultsAsS3PointerTest() {
-        Exchange exchange =
-            template.send("direct:athenaGetQueryResultsAsS3PointerTest", ExchangePattern.InOut, new Processor() {
-                @Override
-                public void process(Exchange exchange) {
-                }
-            });
+        Exchange exchange
+                = template.send("direct:athenaGetQueryResultsAsS3PointerTest", ExchangePattern.InOut, new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                    }
+                });
 
         assertValidQueryExecutionIdHeader(exchange);
         assertValidOutputLocationHeader(exchange);
-        assertEquals(QueryExecutionState.SUCCEEDED, exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+                exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         String response = exchange.getMessage().getBody(String.class);
         assertTrue(response.startsWith(s3Bucket));
@@ -142,12 +143,11 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaListQueryExecutionsTest() {
-        Exchange exchange =
-            template.send("direct:athenaListQueryExecutionsTest", ExchangePattern.InOut, new Processor() {
-                @Override
-                public void process(Exchange exchange) {
-                }
-            });
+        Exchange exchange = template.send("direct:athenaListQueryExecutionsTest", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
 
         ListQueryExecutionsResponse response = exchange.getMessage().getBody(ListQueryExecutionsResponse.class);
         assertFalse(response.queryExecutionIds().isEmpty());
@@ -155,12 +155,12 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaListQueryExecutionsSetsNextTokenTest() {
-        Exchange exchange =
-            template.send("direct:athenaListQueryExecutionsSetsNextTokenTest", ExchangePattern.InOut, new Processor() {
-                @Override
-                public void process(Exchange exchange) {
-                }
-            });
+        Exchange exchange
+                = template.send("direct:athenaListQueryExecutionsSetsNextTokenTest", ExchangePattern.InOut, new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                    }
+                });
 
         assertNotNull(exchange.getMessage().getHeader(Athena2Constants.NEXT_TOKEN));
 
@@ -170,8 +170,7 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaStartQueryExecutionIncludesTraceInQuery() {
-        Exchange exchange =
-            template
+        Exchange exchange = template
                 .send("direct:athenaStartQueryExecutionIncludesTraceInQuery", ExchangePattern.InOut, new Processor() {
                     @Override
                     public void process(Exchange exchange) {
@@ -179,14 +178,14 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
                 });
 
         GetQueryExecutionResponse response = exchange.getMessage().getBody(GetQueryExecutionResponse.class);
-        assertTrue(response.queryExecution().query().startsWith("-- {\"fromEndpointUri\": \"direct://athenaStartQueryExecutionIncludesTraceInQuery\", \"exchangeId\": "));
+        assertTrue(response.queryExecution().query().startsWith(
+                "-- {\"fromEndpointUri\": \"direct://athenaStartQueryExecutionIncludesTraceInQuery\", \"exchangeId\": "));
         assertTrue(response.queryExecution().query().endsWith("\nSELECT 1"));
     }
 
     @Test
     public void athenaStartQueryExecutionWaitForQueryCompletionTest() {
-        Exchange exchange =
-            template.send("direct:athenaStartQueryExecutionWaitForQueryCompletionTest", ExchangePattern.InOut,
+        Exchange exchange = template.send("direct:athenaStartQueryExecutionWaitForQueryCompletionTest", ExchangePattern.InOut,
                 new Processor() {
                     @Override
                     public void process(Exchange exchange) {
@@ -195,7 +194,8 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
         assertValidQueryExecutionIdHeader(exchange);
         assertValidOutputLocationHeader(exchange);
-        assertEquals(QueryExecutionState.SUCCEEDED, exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+                exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         assertTrue(exchange.getMessage().getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class) > 0);
         assertTrue(exchange.getMessage().getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Long.class) > 0);
@@ -206,13 +206,13 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaStartQueryExecutionByDefaultDoesNotWaitForCompletionTest() {
-        Exchange exchange =
-            template.send("direct:athenaStartQueryExecutionByDefaultDoesNotWaitForCompletionTest", ExchangePattern.InOut,
-                new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                    }
-                });
+        Exchange exchange
+                = template.send("direct:athenaStartQueryExecutionByDefaultDoesNotWaitForCompletionTest", ExchangePattern.InOut,
+                        new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                            }
+                        });
 
         assertValidQueryExecutionIdHeader(exchange);
         assertNull(exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE));
@@ -226,16 +226,17 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaStartQueryExecutionHandlesInvalidSqlTest() {
-        Exchange exchange =
-            template.send("direct:athenaStartQueryExecutionHandlesInvalidSqlTest", ExchangePattern.InOut, new Processor() {
-                @Override
-                public void process(Exchange exchange) {
-                }
-            });
+        Exchange exchange = template.send("direct:athenaStartQueryExecutionHandlesInvalidSqlTest", ExchangePattern.InOut,
+                new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                    }
+                });
 
         assertValidQueryExecutionIdHeader(exchange);
         assertValidOutputLocationHeader(exchange);
-        assertEquals(QueryExecutionState.FAILED, exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.FAILED,
+                exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         assertEquals(3, exchange.getMessage().getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
         assertTrue(exchange.getMessage().getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Long.class) > 0);
@@ -247,8 +248,7 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaStartQueryExecutionHandlesMalformedSqlTest() {
-        Exchange exchange =
-            template.send("direct:athenaStartQueryExecutionHandlesMalformedSqlTest", ExchangePattern.InOut,
+        Exchange exchange = template.send("direct:athenaStartQueryExecutionHandlesMalformedSqlTest", ExchangePattern.InOut,
                 new Processor() {
                     @Override
                     public void process(Exchange exchange) {
@@ -263,25 +263,24 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaStartQueryExecutionTest() {
-        Exchange exchange =
-            template.send("direct:athenaStartQueryExecutionTest", ExchangePattern.InOut, new Processor() {
-                @Override
-                public void process(Exchange exchange) {
-                }
-            });
+        Exchange exchange = template.send("direct:athenaStartQueryExecutionTest", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
 
         assertValidQueryExecutionIdHeader(exchange);
     }
 
     @Test
     public void athenaStartQueryExecutionAndGetQueryExecutionUsingHeaders() {
-        Exchange exchange =
-            template.send("direct:athenaStartQueryExecutionAndGetQueryExecutionUsingHeaders", ExchangePattern.InOut,
-                new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                    }
-                });
+        Exchange exchange
+                = template.send("direct:athenaStartQueryExecutionAndGetQueryExecutionUsingHeaders", ExchangePattern.InOut,
+                        new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                            }
+                        });
 
         assertValidQueryExecutionIdHeader(exchange);
         assertValidOutputLocationHeader(exchange);
@@ -289,24 +288,26 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void athenaStartQueryExecutionAndGetQueryResultsByWaitingWithALoop() {
-        Exchange exchange =
-            template.send("direct:athenaStartQueryExecutionAndGetQueryResultsByWaitingWithALoop", ExchangePattern.InOut,
-                new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                    }
-                });
+        Exchange exchange
+                = template.send("direct:athenaStartQueryExecutionAndGetQueryResultsByWaitingWithALoop", ExchangePattern.InOut,
+                        new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                            }
+                        });
 
         assertValidQueryExecutionIdHeader(exchange);
         assertValidOutputLocationHeader(exchange);
-        assertEquals(QueryExecutionState.SUCCEEDED, exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+                exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         String response = exchange.getMessage().getBody(String.class);
         assertTrue(response.startsWith(s3Bucket));
     }
 
     private void assertValidQueryExecutionIdHeader(Exchange exchange) {
-        UUID queryExecutionId = UUID.fromString(exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        UUID queryExecutionId
+                = UUID.fromString(exchange.getMessage().getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
         assertNotNull(queryExecutionId);
     }
 
@@ -323,85 +324,92 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
                 String awsCreds = "&accessKey=xxx&secretKey=yyy&region=eu-west-1";
 
                 from("direct:athenaGetQueryExecutionTest")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
 
                 from("direct:athenaGetQueryResultsAsStreamListTest")
-                    .setBody(constant(
-                        "SELECT * FROM ("
-                            + "    VALUES"
-                            + "        (1, 'a'),"
-                            + "        (2, 'b')"
-                            + ") AS t (id, name)"))
-                    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList&" + awsCreds);
+                        .setBody(constant(
+                                "SELECT * FROM ("
+                                          + "    VALUES"
+                                          + "        (1, 'a'),"
+                                          + "        (2, 'b')"
+                                          + ") AS t (id, name)"))
+                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                            + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList&" + awsCreds);
 
                 from("direct:athenaGetQueryResultsAsSelectListTest")
-                    .setBody(constant(
-                        "SELECT * FROM ("
-                            + "    VALUES"
-                            + "        (1, 'a'),"
-                            + "        (2, 'b')"
-                            + ") AS t (id, name)"))
-                    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .to("aws2-athena://label?operation=getQueryResults&outputType=SelectList&" + awsCreds);
+                        .setBody(constant(
+                                "SELECT * FROM ("
+                                          + "    VALUES"
+                                          + "        (1, 'a'),"
+                                          + "        (2, 'b')"
+                                          + ") AS t (id, name)"))
+                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                            + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=getQueryResults&outputType=SelectList&" + awsCreds);
 
                 from("direct:athenaGetQueryResultsAsS3PointerTest")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                            + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer&" + awsCreds);
 
                 from("direct:athenaListQueryExecutionsTest")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .to("aws2-athena://label?operation=listQueryExecutions&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=listQueryExecutions&" + awsCreds);
 
                 from("direct:athenaListQueryExecutionsSetsNextTokenTest")
-                    .loop(2)
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .end()
-                    .to("aws2-athena://label?operation=listQueryExecutions&maxResults=1&" + awsCreds);
+                        .loop(2)
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .end()
+                        .to("aws2-athena://label?operation=listQueryExecutions&maxResults=1&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionIncludesTraceInQuery")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&includeTrace=true&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&includeTrace=true&outputLocation=" + s3Bucket
+                            + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionWaitForQueryCompletionTest")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket + "&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=" + s3Bucket
+                            + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionByDefaultDoesNotWaitForCompletionTest")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionHandlesInvalidSqlTest")
-                    .setBody(constant("SELECT INVALID SQL")) // parses, but query fails to complete
-                    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&maxAttempts=3&retry=always&outputLocation=" + s3Bucket + "&" + awsCreds);
+                        .setBody(constant("SELECT INVALID SQL")) // parses, but query fails to complete
+                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&maxAttempts=3&retry=always&outputLocation="
+                            + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionHandlesMalformedSqlTest")
-                    .setBody(constant("MALFORMED SQL")) // unparseable by athena
-                    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&maxAttempts=3&outputLocation=" + s3Bucket + "&" + awsCreds);
+                        .setBody(constant("MALFORMED SQL")) // unparseable by athena
+                        .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&maxAttempts=3&outputLocation="
+                            + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionTest")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionAndGetQueryExecutionUsingHeaders")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds);
 
                 from("direct:athenaStartQueryExecutionAndGetQueryResultsByWaitingWithALoop")
-                    .setBody(constant("SELECT 1"))
-                    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
-                    .loopDoWhile(simple("${header." + Athena2Constants.QUERY_EXECUTION_STATE + "} != 'SUCCEEDED'"))
-                    .delay(1_000)
-                    .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds)
-                    .end()
-                    .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer&" + awsCreds);
+                        .setBody(constant("SELECT 1"))
+                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                        .loopDoWhile(simple("${header." + Athena2Constants.QUERY_EXECUTION_STATE + "} != 'SUCCEEDED'"))
+                        .delay(1_000)
+                        .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds)
+                        .end()
+                        .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer&" + awsCreds);
             }
         };
     }

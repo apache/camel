@@ -44,7 +44,9 @@ public class ProduceMessagesSimpleTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 // need couchbase installed on localhost
-                from("direct:start").setHeader(CouchbaseConstants.HEADER_ID, constant("blabla:120771")).to("couchbase:http://192.168.1.102/test?additionalHosts=localhost&username=root&password=123456").to("mock:result");
+                from("direct:start").setHeader(CouchbaseConstants.HEADER_ID, constant("blabla:120771"))
+                        .to("couchbase:http://192.168.1.102/test?additionalHosts=localhost&username=root&password=123456")
+                        .to("mock:result");
 
             }
         };

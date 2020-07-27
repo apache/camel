@@ -24,10 +24,10 @@ public interface PropertiesParser {
     /**
      * Parses the string and replaces the property placeholders with values from the given properties.
      *
-     * @param text        the text to be parsed
-     * @param properties  the properties resolved which values should be looked up
-     * @param fallback    whether to support using fallback values if a property cannot be found
-     * @return the parsed text with replaced placeholders
+     * @param  text                     the text to be parsed
+     * @param  properties               the properties resolved which values should be looked up
+     * @param  fallback                 whether to support using fallback values if a property cannot be found
+     * @return                          the parsed text with replaced placeholders
      * @throws IllegalArgumentException if uri syntax is not valid or a property is not found
      */
     String parseUri(String text, PropertiesLookup properties, boolean fallback) throws IllegalArgumentException;
@@ -37,10 +37,10 @@ public interface PropertiesParser {
      * <p/>
      * This strategy method allows you to hook into the parsing and do custom lookup and return the actual value to use.
      *
-     * @param key        the key
-     * @param value      the value
-     * @param properties the properties resolved which values should be looked up
-     * @return the value to use
+     * @param  key        the key
+     * @param  value      the value
+     * @param  properties the properties resolved which values should be looked up
+     * @return            the value to use
      */
     String parseProperty(String key, String value, PropertiesLookup properties);
 }

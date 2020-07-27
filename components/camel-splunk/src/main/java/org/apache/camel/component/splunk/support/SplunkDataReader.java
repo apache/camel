@@ -108,10 +108,10 @@ public class SplunkDataReader {
     /**
      * Get the earliestTime of range search.
      *
-     * @param startTime the time where search start
-     * @param realtime if this is realtime search
-     * @return The time of last successful read if not realtime; Time difference
-     *         between last successful read and start time;
+     * @param  startTime the time where search start
+     * @param  realtime  if this is realtime search
+     * @return           The time of last successful read if not realtime; Time difference between last successful read
+     *                   and start time;
      */
     private String calculateEarliestTime(Calendar startTime, boolean realtime) {
         String result;

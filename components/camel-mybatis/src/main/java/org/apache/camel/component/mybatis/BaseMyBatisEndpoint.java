@@ -55,9 +55,9 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
     /**
      * The executor type to be used while executing statements.
      * <ul>
-     *     <li>simple - executor does nothing special.</li>
-     *     <li>reuse - executor reuses prepared statements.</li>
-     *     <li>batch - executor reuses statements and batches updates.</li>
+     * <li>simple - executor does nothing special.</li>
+     * <li>reuse - executor reuses prepared statements.</li>
+     * <li>batch - executor reuses statements and batches updates.</li>
      * </ul>
      */
     public void setExecutorType(ExecutorType executorType) {
@@ -73,10 +73,9 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * User the header value for input parameters instead of the message body.
-     * By default, inputHeader == null and the input parameters are taken from the message body.
-     * If outputHeader is set, the value is used and query parameters will be taken from the
-     * header instead of the body.
+     * User the header value for input parameters instead of the message body. By default, inputHeader == null and the
+     * input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters
+     * will be taken from the header instead of the body.
      */
     public void setInputHeader(String inputHeader) {
         this.inputHeader = inputHeader;
@@ -87,13 +86,11 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Store the query result in a header instead of the message body.
-     * By default, outputHeader == null and the query result is stored in the message body,
-     * any existing content in the message body is discarded.
-     * If outputHeader is set, the value is used as the name of the header to store the
-     * query result and the original message body is preserved. Setting outputHeader will
-     * also omit populating the default CamelMyBatisResult header since it would be the same
-     * as outputHeader all the time.
+     * Store the query result in a header instead of the message body. By default, outputHeader == null and the query
+     * result is stored in the message body, any existing content in the message body is discarded. If outputHeader is
+     * set, the value is used as the name of the header to store the query result and the original message body is
+     * preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be
+     * the same as outputHeader all the time.
      */
     public void setOutputHeader(String outputHeader) {
         this.outputHeader = outputHeader;

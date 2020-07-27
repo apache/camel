@@ -63,15 +63,16 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     private Route route;
 
     public VertxPlatformHttpConsumer(
-            PlatformHttpEndpoint endpoint,
-            Processor processor,
-            List<Handler<RoutingContext>> handlers,
-            UploadAttacher uploadAttacher) {
+                                     PlatformHttpEndpoint endpoint,
+                                     Processor processor,
+                                     List<Handler<RoutingContext>> handlers,
+                                     UploadAttacher uploadAttacher) {
         super(endpoint, processor);
 
         this.handlers = handlers;
         this.uploadAttacher = uploadAttacher;
-        this.fileNameExtWhitelist = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
+        this.fileNameExtWhitelist
+                = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
     }
 
     @Override
@@ -101,28 +102,29 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         }
 
         newRoute.handler(router.bodyHandler());
-        for (Handler<RoutingContext> handler: handlers) {
+        for (Handler<RoutingContext> handler : handlers) {
             newRoute.handler(handler);
         }
 
         newRoute.handler(
-            ctx -> {
-                Exchange exchg = null;
-                try {
-                    final Exchange exchange = exchg = toExchange(ctx);
-                    createUoW(exchange);
-                    getAsyncProcessor().process(
-                        exchange,
-                        doneSync -> writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy()));
-                } catch (Exception e) {
-                    ctx.fail(e);
-                    getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg, e);
-                } finally {
-                    if (exchg != null) {
-                        doneUoW(exchg);
+                ctx -> {
+                    Exchange exchg = null;
+                    try {
+                        final Exchange exchange = exchg = toExchange(ctx);
+                        createUoW(exchange);
+                        getAsyncProcessor().process(
+                                exchange,
+                                doneSync -> writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy()));
+                    } catch (Exception e) {
+                        ctx.fail(e);
+                        getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(),
+                                exchg, e);
+                    } finally {
+                        if (exchg != null) {
+                            doneUoW(exchg);
+                        }
                     }
-                }
-            });
+                });
 
         this.route = newRoute;
     }
@@ -187,7 +189,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             final Map<String, Object> body = new HashMap<>();
             for (String key : formData.names()) {
                 for (String value : formData.getAll(key)) {
-                    if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
+                    if (headerFilterStrategy != null
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
                         appendHeader(result.getHeaders(), key, value);
                         appendHeader(body, key, value);
                     }
@@ -239,8 +242,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 uploadAttacher.attachUpload(localFile, fileName, message);
             } else {
                 LOGGER.debug(
-                    "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                    fileName, fileNameExtWhitelist);
+                        "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
+                        fileName, fileNameExtWhitelist);
             }
         }
     }

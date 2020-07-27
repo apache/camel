@@ -106,13 +106,15 @@ public class SagaPropagationTest extends ContextTestSupport {
 
                 from("direct:required").saga().process(addSagaIdToList()).to("direct:required2");
 
-                from("direct:required2").saga().propagation(SagaPropagation.REQUIRED).process(addSagaIdToList()).to("direct:required3");
+                from("direct:required2").saga().propagation(SagaPropagation.REQUIRED).process(addSagaIdToList())
+                        .to("direct:required3");
 
                 from("direct:required3").saga().process(addSagaIdToList());
 
                 // REQUIRES_NEW
 
-                from("direct:requiresNew").saga().propagation(SagaPropagation.REQUIRES_NEW).process(addSagaIdToList()).to("direct:requiresNew2").to("direct:requiresNew2");
+                from("direct:requiresNew").saga().propagation(SagaPropagation.REQUIRES_NEW).process(addSagaIdToList())
+                        .to("direct:requiresNew2").to("direct:requiresNew2");
 
                 from("direct:requiresNew2").saga().propagation(SagaPropagation.REQUIRES_NEW).process(addSagaIdToList());
 
@@ -121,7 +123,7 @@ public class SagaPropagationTest extends ContextTestSupport {
                 from("direct:notSupported").process(addSagaIdToList()).to("direct:notSupported2").to("direct:notSupported3");
 
                 from("direct:notSupported2").saga() // required
-                    .process(addSagaIdToList()).to("direct:notSupported3");
+                        .process(addSagaIdToList()).to("direct:notSupported3");
 
                 from("direct:notSupported3").saga().propagation(SagaPropagation.NOT_SUPPORTED).process(addSagaIdToList());
 
@@ -130,7 +132,7 @@ public class SagaPropagationTest extends ContextTestSupport {
                 from("direct:supports").to("direct:supports2").to("direct:supports3");
 
                 from("direct:supports2").saga() // required
-                    .to("direct:supports3");
+                        .to("direct:supports3");
 
                 from("direct:supports3").saga().propagation(SagaPropagation.SUPPORTS).process(addSagaIdToList());
 

@@ -57,44 +57,45 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketListener() {
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket, int code, String reason) {
+                            @Override
+                            public void onClose(WebSocket websocket, int code, String reason) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                t.printStackTrace();
+                            }
 
-                    @Override
-                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                        received.add(payload);
-                        log.info("received --> " + payload);
-                        latch.countDown();
-                    }
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                                received.add(payload);
+                                log.info("received --> " + payload);
+                                latch.countDown();
+                            }
 
-                    @Override
-                    public void onPingFrame(byte[] payload) {
+                            @Override
+                            public void onPingFrame(byte[] payload) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onPongFrame(byte[] payload) {
+                            @Override
+                            public void onPongFrame(byte[] payload) {
 
-                    }
-                }).build()).get();
+                            }
+                        }).build())
+                .get();
 
         websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -118,12 +119,12 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
                 // START SNIPPET: e1
                 // expose a echo websocket client, that sends back an echo
                 from("websocket://echo")
-                    .log(">>> Message received from WebSocket Client : ${body}")
-                    .transform().simple("${body}${body}")
-                    // send back to the client, by sending the message to the same endpoint
-                    // this is needed as by default messages is InOnly
-                    // and we will by default send back to the current client using the provided connection key
-                    .to("websocket://echo");
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .transform().simple("${body}${body}")
+                        // send back to the client, by sending the message to the same endpoint
+                        // this is needed as by default messages is InOnly
+                        // and we will by default send back to the current client using the provided connection key
+                        .to("websocket://echo");
                 // END SNIPPET: e1
             }
         };

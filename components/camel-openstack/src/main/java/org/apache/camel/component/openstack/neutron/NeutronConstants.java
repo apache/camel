@@ -55,6 +55,7 @@ public final class NeutronConstants extends OpenstackConstants {
     public static final String ATTACH_INTERFACE = "attachInterface";
     public static final String DETACH_INTERFACE = "detachInterface";
 
-    private NeutronConstants() { }
+    private NeutronConstants() {
+    }
 
 }

@@ -38,10 +38,11 @@ public class SMSMessage {
     /**
      * This is the message to be sent. 2 options:
      * <ul>
-     * <li>If the message is GSM 0038 encodeable the gateway will first check if a message is larger than 160 characters, if so, the message will be cut into multiple 153 characters parts limited by
-     * defaultMaxNumberOfParts set in the component uri.</li>
-     * <li>Otherwise, the gateway will check if a message is larger than 70 characters, if so, the message will be cut into multiple 67 characters parts to a maximum of defaultMaxNumberOfParts set in
-     * the component uri.</li>
+     * <li>If the message is GSM 0038 encodeable the gateway will first check if a message is larger than 160
+     * characters, if so, the message will be cut into multiple 153 characters parts limited by defaultMaxNumberOfParts
+     * set in the component uri.</li>
+     * <li>Otherwise, the gateway will check if a message is larger than 70 characters, if so, the message will be cut
+     * into multiple 67 characters parts to a maximum of defaultMaxNumberOfParts set in the component uri.</li>
      * </ul>
      *
      * @see <a href="https://en.wikipedia.org/wiki/GSM_03.38">E.164</a>
@@ -52,7 +53,8 @@ public class SMSMessage {
     /**
      * This is an optional dynamic sender name.
      * <p>
-     * 1 - 11 alphanumeric characters and + char. Not Empty Strings. This field has a maximum length of 11 characters. If it is not set the defaultFrom required to configure the component will be set.
+     * 1 - 11 alphanumeric characters and + char. Not Empty Strings. This field has a maximum length of 11 characters.
+     * If it is not set the defaultFrom required to configure the component will be set.
      */
     @Size(min = 1, max = 11)
     @Pattern(regexp = "^[A-Za-z0-9]+$")
@@ -61,7 +63,8 @@ public class SMSMessage {
     /**
      * Unique identifier for a message.
      * <p>
-     * 1 - 32 alphanumeric characters. Not Empty Strings. Will not work for demo accounts. This field corresponds to REFERENCE parameter in CM Api.
+     * 1 - 32 alphanumeric characters. Not Empty Strings. Will not work for demo accounts. This field corresponds to
+     * REFERENCE parameter in CM Api.
      */
     @Size(min = 1, max = 32)
     @Pattern(regexp = "^[A-Za-z0-9]+$")

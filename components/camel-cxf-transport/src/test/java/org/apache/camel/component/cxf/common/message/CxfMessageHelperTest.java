@@ -43,11 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfMessageHelperTest {
-    private static final String REQUEST_STRING =
-        "<testMethod xmlns=\"http://camel.apache.org/testService\"/>";
+    private static final String REQUEST_STRING = "<testMethod xmlns=\"http://camel.apache.org/testService\"/>";
     private DefaultCamelContext context = new DefaultCamelContext();
 
-    
     // setup the default context for testing
     @Test
     public void testGetCxfInMessage() throws Exception {
@@ -87,12 +85,12 @@ public class CxfMessageHelperTest {
         exchange.getIn().setHeader("soapAction", "urn:hello:world");
         message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         // test message
-        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
-        
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) message.get(Message.PROTOCOL_HEADERS));
+
         // verify there is no duplicate
         assertNotNull(headers, "The headers must be present");
         assertTrue(headers.size() == 1, "There must be one header entry");
-        
+
         // verify the soapaction can be retrieved in case-insensitive ways
         verifyHeader(headers, "soapaction", "urn:hello:world");
         verifyHeader(headers, "SoapAction", "urn:hello:world");

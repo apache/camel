@@ -59,7 +59,9 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
             });
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route route2 because of Multiple consumers for the same endpoint is not allowed: direct://start", e.getMessage());
+            assertEquals(
+                    "Failed to start route route2 because of Multiple consumers for the same endpoint is not allowed: direct://start",
+                    e.getMessage());
         }
     }
 

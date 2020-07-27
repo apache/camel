@@ -28,19 +28,19 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * The camel filter wrapper that processes only initially dispatched requests.
- * Re-dispatched requests are ignored.
+ * The camel filter wrapper that processes only initially dispatched requests. Re-dispatched requests are ignored.
  */
 public class CamelFilterWrapper implements Filter {
-    
+
     private Filter wrapped;
 
     public CamelFilterWrapper(Filter wrapped) {
         this.wrapped = wrapped;
     }
-    
+
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         if (request.getAttribute(CamelContinuationServlet.EXCHANGE_ATTRIBUTE_NAME) == null) {
             wrapped.doFilter(request, response, chain);
         } else {
@@ -64,7 +64,7 @@ public class CamelFilterWrapper implements Filter {
                 File file = Files.createTempFile("camel", "").toFile();
                 file.delete();
                 config.getServletContext().setAttribute("javax.servlet.context.tempdir",
-                                                        file.getParentFile());
+                        file.getParentFile());
             } catch (IOException e) {
                 //ignore
             }

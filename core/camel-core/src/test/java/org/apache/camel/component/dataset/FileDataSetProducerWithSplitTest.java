@@ -88,7 +88,8 @@ public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
     private File createFileDatasetWithSystemEndOfLine() throws IOException {
         Files.createDirectories(tempFolder);
         Path fileDataset = tempFolder.resolve("file-dataset-test.txt");
-        ByteArrayInputStream content = new ByteArrayInputStream(String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n").getBytes());
+        ByteArrayInputStream content = new ByteArrayInputStream(
+                String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n").getBytes());
         Files.copy(content, fileDataset, StandardCopyOption.REPLACE_EXISTING);
         return fileDataset.toFile();
     }

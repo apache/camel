@@ -55,8 +55,10 @@ public class SpringJmxDumpCBRRoutesAsXmlTest extends SpringTestSupport {
         assertTrue(xml.contains("myRoute"), xml);
         assertTrue(xml.contains("<when id=\"when1\">"));
         assertTrue(xml.contains("<otherwise id=\"otherwise1\">"));
-        assertTrue(xml.contains("<route customId=\"true\" id=\"myRoute\">") || xml.contains("<route id=\"myRoute\" customId=\"true\">"));
-        assertTrue(xml.contains("<choice customId=\"true\" id=\"myChoice\">") || xml.contains("<choice id=\"myChoice\" customId=\"true\">"));
+        assertTrue(xml.contains("<route customId=\"true\" id=\"myRoute\">")
+                || xml.contains("<route id=\"myRoute\" customId=\"true\">"));
+        assertTrue(xml.contains("<choice customId=\"true\" id=\"myChoice\">")
+                || xml.contains("<choice id=\"myChoice\" customId=\"true\">"));
     }
 
 }

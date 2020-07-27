@@ -165,7 +165,8 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
     }
 
     private IgniteQueueOperation queueOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION, endpoint.getOperation(), IgniteQueueOperation.class);
+        return exchange.getIn().getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION, endpoint.getOperation(),
+                IgniteQueueOperation.class);
     }
 
 }

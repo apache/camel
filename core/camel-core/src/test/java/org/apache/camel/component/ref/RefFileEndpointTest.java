@@ -44,7 +44,7 @@ public class RefFileEndpointTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        FileConsumer consumer = (FileConsumer)context.getRoute("foo").getConsumer();
+        FileConsumer consumer = (FileConsumer) context.getRoute("foo").getConsumer();
         assertEquals(3000, consumer.getDelay());
         assertEquals(250, consumer.getInitialDelay());
     }

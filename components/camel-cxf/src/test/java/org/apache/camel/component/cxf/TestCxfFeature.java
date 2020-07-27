@@ -31,15 +31,15 @@ public class TestCxfFeature extends AbstractFeature {
 
     @Override
     protected void initializeProvider(InterceptorProvider provider, Bus bus) {
-            
+
         if (provider instanceof Client) {
-            provider = ((Client)provider).getEndpoint();
+            provider = ((Client) provider).getEndpoint();
         }
-        
+
         provider.getOutInterceptors().add(new EndpointCheckInterceptor());
-                
+
     }
-    
+
     class EndpointCheckInterceptor extends AbstractPhaseInterceptor<Message> {
 
         EndpointCheckInterceptor() {
@@ -49,15 +49,14 @@ public class TestCxfFeature extends AbstractFeature {
         @Override
         public void handleMessage(Message message) throws Fault {
             Exchange ex = message.getExchange();
-            
+
             // This test verifies that the "to" endpoint is not the from endpoint.
             Endpoint endpoint = ex.get(Endpoint.class);
             if ("http://localhost:9003/CamelContext/RouterPort".equals(endpoint.getEndpointInfo().getAddress())) {
                 throw new Fault(new Exception("bad endpoint " + endpoint.getEndpointInfo().getAddress()));
             }
-            
+
         }
     }
-
 
 }

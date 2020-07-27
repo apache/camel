@@ -50,7 +50,8 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
         int poolSize = endpoint.getConcurrentConsumers();
         if (executor == null) {
-            executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
+            executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                    getEndpoint().getEndpointUri(), poolSize);
         }
 
         this.service.attachCamelConsumer(endpoint.getStream(), this);

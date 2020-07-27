@@ -52,7 +52,8 @@ public class QueueClientWrapper {
         return client.clearMessagesWithResponse(timeout, Context.NONE);
     }
 
-    public Response<SendMessageResult> sendMessage(String messageText, Duration visibilityTimeout, Duration timeToLive, Duration timeout) {
+    public Response<SendMessageResult> sendMessage(
+            String messageText, Duration visibilityTimeout, Duration timeToLive, Duration timeout) {
         return client.sendMessageWithResponse(messageText, visibilityTimeout, timeToLive, timeout, Context.NONE);
     }
 
@@ -61,14 +62,16 @@ public class QueueClientWrapper {
     }
 
     public List<QueueMessageItem> receiveMessages(Integer maxMessages, Duration visibilityTimeout, Duration timeout) {
-        return client.receiveMessages(maxMessages, visibilityTimeout, timeout, Context.NONE).stream().collect(Collectors.toList());
+        return client.receiveMessages(maxMessages, visibilityTimeout, timeout, Context.NONE).stream()
+                .collect(Collectors.toList());
     }
 
     public List<PeekedMessageItem> peekMessages(Integer maxMessages, Duration timeout) {
         return client.peekMessages(maxMessages, timeout, Context.NONE).stream().collect(Collectors.toList());
     }
 
-    public Response<UpdateMessageResult> updateMessage(String messageId, String popReceipt, String messageText, Duration visibilityTimeout, Duration timeout) {
+    public Response<UpdateMessageResult> updateMessage(
+            String messageId, String popReceipt, String messageText, Duration visibilityTimeout, Duration timeout) {
         return client.updateMessageWithResponse(messageId, popReceipt, messageText, visibilityTimeout, timeout, Context.NONE);
     }
 }

@@ -29,11 +29,13 @@ public class FileUtilTest {
         if (FileUtil.isWindows()) {
             assertEquals("foo\\bar", FileUtil.normalizePath("foo/bar"));
             assertEquals("foo\\bar\\baz", FileUtil.normalizePath("foo/bar\\baz"));
-            assertEquals("movefile\\sub\\sub2\\.done\\goodday.txt", FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
+            assertEquals("movefile\\sub\\sub2\\.done\\goodday.txt",
+                    FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
         } else {
             assertEquals("foo/bar", FileUtil.normalizePath("foo/bar"));
             assertEquals("foo/bar/baz", FileUtil.normalizePath("foo/bar\\baz"));
-            assertEquals("movefile/sub/sub2/.done/goodday.txt", FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
+            assertEquals("movefile/sub/sub2/.done/goodday.txt",
+                    FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
         }
     }
 

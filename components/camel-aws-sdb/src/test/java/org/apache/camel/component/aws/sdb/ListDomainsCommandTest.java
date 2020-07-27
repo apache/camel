@@ -33,7 +33,7 @@ public class ListDomainsCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
+
     @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
@@ -41,7 +41,7 @@ public class ListDomainsCommandTest {
         configuration.setDomainName("DOMAIN1");
         configuration.setMaxNumberOfDomains(new Integer(5));
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new ListDomainsCommand(sdbClient, configuration, exchange);
     }
 
@@ -49,12 +49,12 @@ public class ListDomainsCommandTest {
     @Test
     public void execute() {
         exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
-        
+
         command.execute();
-        
+
         assertEquals(new Integer(5), sdbClient.listDomainsRequest.getMaxNumberOfDomains());
         assertEquals("TOKEN1", sdbClient.listDomainsRequest.getNextToken());
-        
+
         List<String> domains = exchange.getIn().getHeader(SdbConstants.DOMAIN_NAMES, List.class);
         assertEquals("TOKEN2", exchange.getIn().getHeader(SdbConstants.NEXT_TOKEN));
         assertEquals(2, domains.size());

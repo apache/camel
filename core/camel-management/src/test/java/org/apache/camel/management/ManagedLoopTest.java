@@ -71,7 +71,7 @@ public class ManagedLoopTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loop(header("foo")).id("mysend")
+                        .loop(header("foo")).id("mysend")
                         .to("mock:foo");
             }
         };

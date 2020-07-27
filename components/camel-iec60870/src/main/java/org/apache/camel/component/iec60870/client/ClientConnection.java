@@ -95,14 +95,15 @@ public class ClientConnection {
         final DataModule dataModule = new DataModule(this.dataHandler, this.options.getDataModuleOptions());
         final ModulesFactory factory = () -> Arrays.asList(dataModule, new DiscardAckModule());
         final CountDownLatch latch = new CountDownLatch(1);
-        this.client = new AutoConnectClient(this.host, this.port, this.options.getProtocolOptions(), factory, new StateListener() {
-            @Override
-            public void stateChanged(final State state, final Throwable e) {
-                if (state == State.CONNECTED) {
-                    latch.countDown();
-                }
-            }
-        });
+        this.client
+                = new AutoConnectClient(this.host, this.port, this.options.getProtocolOptions(), factory, new StateListener() {
+                    @Override
+                    public void stateChanged(final State state, final Throwable e) {
+                        if (state == State.CONNECTED) {
+                            latch.countDown();
+                        }
+                    }
+                });
         try {
             latch.await(this.options.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {

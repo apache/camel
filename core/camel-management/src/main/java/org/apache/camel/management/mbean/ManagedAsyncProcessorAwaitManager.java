@@ -77,9 +77,10 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
                 String nodeId = entry.getNodeId();
                 String duration = "" + entry.getWaitDuration();
 
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"id", "name", "exchangeId", "routeId", "nodeId", "duration"},
-                        new Object[]{id, name, exchangeId, routeId, nodeId, duration});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "id", "name", "exchangeId", "routeId", "nodeId", "duration" },
+                        new Object[] { id, name, exchangeId, routeId, nodeId, duration });
                 answer.put(data);
             }
             return answer;

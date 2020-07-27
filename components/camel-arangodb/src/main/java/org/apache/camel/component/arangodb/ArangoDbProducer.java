@@ -55,7 +55,6 @@ public class ArangoDbProducer extends DefaultProducer {
         bind(ArangoDbOperation.AQL_QUERY, aqlQuery());
     }
 
-
     public ArangoDbProducer(ArangoDbEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -193,7 +192,8 @@ public class ArangoDbProducer extends DefaultProducer {
                 }
 
                 // parameters to bind :: can be null if nothing to bind
-                Map<String, Object> bindParameters = (Map<String, Object>) exchange.getMessage().getHeader(AQL_QUERY_BIND_PARAMETERS);
+                Map<String, Object> bindParameters
+                        = (Map<String, Object>) exchange.getMessage().getHeader(AQL_QUERY_BIND_PARAMETERS);
 
                 // options :: can be null
                 AqlQueryOptions queryOptions = (AqlQueryOptions) exchange.getMessage().getHeader(AQL_QUERY_OPTIONS);
@@ -220,6 +220,5 @@ public class ArangoDbProducer extends DefaultProducer {
         // return collection
         return endpoint.getArango().db(database).collection(collection);
     }
-
 
 }

@@ -52,7 +52,7 @@ public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
         assertEquals("Hello", resultGet);
 
     }
-    
+
     @Test
     public void translateTextPojoTest() throws Exception {
 
@@ -60,8 +60,9 @@ public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:translatePojoText", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
-                    .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
+                exchange.getIn()
+                        .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                                .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
             }
         });
 
@@ -71,7 +72,7 @@ public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
         assertEquals("Hello", resultGet);
 
     }
-    
+
     @Test
     public void translateTextTestOptions() throws Exception {
 
@@ -92,6 +93,7 @@ public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/translate/Translate2ComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/translate/Translate2ComponentSpringTest-context.xml");
     }
 }

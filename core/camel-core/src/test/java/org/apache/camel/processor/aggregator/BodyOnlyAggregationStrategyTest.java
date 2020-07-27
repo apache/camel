@@ -67,8 +67,8 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
     }
 
     /**
-     * This aggregation strategy will only take the body from the called route and returns the old exchange.
-     * Only the property CamelErrorHandlerHandled is taken from the route to make sure the route stops on an exception.
+     * This aggregation strategy will only take the body from the called route and returns the old exchange. Only the
+     * property CamelErrorHandlerHandled is taken from the route to make sure the route stops on an exception.
      */
     public static class BodyOnlyAggregationStrategy implements AggregationStrategy {
 
@@ -77,8 +77,7 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
             oldExchange.getIn().setBody(newExchange.getIn().getBody());
 
             oldExchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(
-                    newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled()
-            );
+                    newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
             // deprecated usage:
             // if (newExchange.getProperties().get(Exchange.ERRORHANDLER_HANDLED) != null) {
             //    oldExchange.getProperties().put(Exchange.ERRORHANDLER_HANDLED, newExchange.getProperties().get(Exchange.ERRORHANDLER_HANDLED));

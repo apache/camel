@@ -47,8 +47,10 @@ public class Translate2ComponentVerifierExtension extends DefaultComponentVerifi
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
-            .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("accessKey", parameters))
+                .error(ResultErrorHelper.requiresOption("secretKey", parameters))
+                .error(ResultErrorHelper.requiresOption("region", parameters));
 
         // Validate using the catalog
 
@@ -68,19 +70,24 @@ public class Translate2ComponentVerifierExtension extends DefaultComponentVerifi
         try {
             Translate2Configuration configuration = setProperties(new Translate2Configuration(), parameters);
             if (!TranslateClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER,
-                                                                                            "The service is not supported in this region");
+                ResultErrorBuilder errorBuilder
+                        = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER,
+                                "The service is not supported in this region");
                 return builder.error(errorBuilder.build()).build();
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             TranslateClientBuilder clientBuilder = TranslateClient.builder();
-            TranslateClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
-            TranslateTextRequest req = TranslateTextRequest.builder().sourceLanguageCode("it").targetLanguageCode("en").text("ciao").build();
+            TranslateClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build();
+            TranslateTextRequest req
+                    = TranslateTextRequest.builder().sourceLanguageCode("it").targetLanguageCode("en").text("ciao").build();
             client.translateText(req);
         } catch (SdkClientException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("aws_translate_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("aws_translate_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

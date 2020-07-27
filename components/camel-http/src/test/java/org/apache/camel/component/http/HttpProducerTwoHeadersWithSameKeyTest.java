@@ -43,13 +43,10 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myapp", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myapp", (request, response, context) -> {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
@@ -60,8 +57,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                     response.addHeader("foo", "456");
                     response.setEntity(new StringEntity("OK", "ASCII"));
                     response.setStatusCode(HttpStatus.SC_OK);
-                }).
-                registerHandler("/myapp", (request, response, context) -> {
+                }).registerHandler("/myapp", (request, response, context) -> {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
@@ -90,7 +86,8 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
 
     @Test
     public void testTwoHeadersWithSameKeyHeader() throws Exception {
-        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
+        String endpointUri
+                = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
 
         Exchange out = template.request(endpointUri, exchange -> {
             exchange.getIn().setBody(null);

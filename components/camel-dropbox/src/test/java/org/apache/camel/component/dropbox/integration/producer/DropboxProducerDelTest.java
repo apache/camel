@@ -45,7 +45,6 @@ public class DropboxProducerDelTest extends DropboxTestSupport {
         test("direct:start2");
     }
 
-
     private void test(String endpointURI) throws InterruptedException {
         template.sendBody(endpointURI, null);
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -64,8 +63,8 @@ public class DropboxProducerDelTest extends DropboxTestSupport {
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE_NAME))
-                    .to("dropbox://del?accessToken={{accessToken}}")
-                    .to("mock:result");
+                        .to("dropbox://del?accessToken={{accessToken}}")
+                        .to("mock:result");
             }
         };
     }

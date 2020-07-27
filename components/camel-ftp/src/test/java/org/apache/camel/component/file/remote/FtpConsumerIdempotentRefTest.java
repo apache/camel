@@ -36,7 +36,8 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
     private MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
+        return "ftp://admin@localhost:" + getPort()
+               + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
     }
 
     @Test

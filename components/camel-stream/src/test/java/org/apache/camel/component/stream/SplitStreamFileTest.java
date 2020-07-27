@@ -45,7 +45,7 @@ public class SplitStreamFileTest extends CamelTestSupport {
     public void testCloseFileOnDone() throws Exception {
         template.sendBody("direct:start", "A,B,C,D");
         template.sendBody("direct:start", "A,B");
-        
+
         File file = new File("target/stream/splitFile.txt");
         String result = IOConverter
                 .toString(file, new DefaultExchange(context));

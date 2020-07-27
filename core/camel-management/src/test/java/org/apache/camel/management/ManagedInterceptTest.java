@@ -52,7 +52,7 @@ public class ManagedInterceptTest extends ManagementTestSupport {
 
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"log-foo\"");
         mbeanServer.isRegistered(name);
-        
+
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");
         assertEquals(1, total.intValue());
     }
@@ -65,7 +65,7 @@ public class ManagedInterceptTest extends ManagementTestSupport {
                 intercept().to("mock:intercept");
 
                 from("direct:start").routeId("foo")
-                    .to("log:foo").id("log-foo").to("mock:result");
+                        .to("log:foo").id("log-foo").to("mock:result");
             }
         };
     }

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSetHeaderWithConstantTest extends ContextTestSupport {
-    
+
     @Test
     public void testSetHeaderWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:b");

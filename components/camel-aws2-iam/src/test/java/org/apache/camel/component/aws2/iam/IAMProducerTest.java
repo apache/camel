@@ -64,7 +64,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListAccessKeysResponse resultGet = (ListAccessKeysResponse)exchange.getIn().getBody();
+        ListAccessKeysResponse resultGet = (ListAccessKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.accessKeyMetadata().size());
         assertEquals("1", resultGet.accessKeyMetadata().get(0).accessKeyId());
     }
@@ -83,10 +83,10 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateUserResponse resultGet = (CreateUserResponse)exchange.getIn().getBody();
+        CreateUserResponse resultGet = (CreateUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
-    
+
     @Test
     public void iamCreateUserPojoTest() throws Exception {
 
@@ -101,7 +101,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateUserResponse resultGet = (CreateUserResponse)exchange.getIn().getBody();
+        CreateUserResponse resultGet = (CreateUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
 
@@ -119,7 +119,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteUserResponse resultGet = (DeleteUserResponse)exchange.getIn().getBody();
+        DeleteUserResponse resultGet = (DeleteUserResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -136,7 +136,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListUsersResponse resultGet = (ListUsersResponse)exchange.getIn().getBody();
+        ListUsersResponse resultGet = (ListUsersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.users().size());
         assertEquals("test", resultGet.users().get(0).userName());
     }
@@ -155,7 +155,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse)exchange.getIn().getBody();
+        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.accessKey().accessKeyId());
         assertEquals("testSecret", resultGet.accessKey().secretAccessKey());
     }
@@ -175,7 +175,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse)exchange.getIn().getBody();
+        DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -193,7 +193,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GetUserResponse resultGet = (GetUserResponse)exchange.getIn().getBody();
+        GetUserResponse resultGet = (GetUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
 
@@ -212,7 +212,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse)exchange.getIn().getBody();
+        UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -231,7 +231,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateGroupResponse resultGet = (CreateGroupResponse)exchange.getIn().getBody();
+        CreateGroupResponse resultGet = (CreateGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals("Test", resultGet.group().groupName());
         assertEquals("/test", resultGet.group().path());
@@ -250,7 +250,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteGroupResponse resultGet = (DeleteGroupResponse)exchange.getIn().getBody();
+        DeleteGroupResponse resultGet = (DeleteGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -266,7 +266,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListGroupsResponse resultGet = (ListGroupsResponse)exchange.getIn().getBody();
+        ListGroupsResponse resultGet = (ListGroupsResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals(1, resultGet.groups().size());
         assertEquals("Test", resultGet.groups().get(0).groupName());
@@ -286,7 +286,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        AddUserToGroupResponse resultGet = (AddUserToGroupResponse)exchange.getIn().getBody();
+        AddUserToGroupResponse resultGet = (AddUserToGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -304,7 +304,7 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        RemoveUserFromGroupResponse resultGet = (RemoveUserFromGroupResponse)exchange.getIn().getBody();
+        RemoveUserFromGroupResponse resultGet = (RemoveUserFromGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -313,20 +313,33 @@ public class IAMProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:listKeys").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys").to("mock:result");
-                from("direct:createUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser").to("mock:result");
-                from("direct:createUserPojo").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser&pojoRequest=true").to("mock:result");
-                from("direct:deleteUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser").to("mock:result");
+                from("direct:listKeys").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys")
+                        .to("mock:result");
+                from("direct:createUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser")
+                        .to("mock:result");
+                from("direct:createUserPojo")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser&pojoRequest=true")
+                        .to("mock:result");
+                from("direct:deleteUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser")
+                        .to("mock:result");
                 from("direct:listUsers").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listUsers").to("mock:result");
                 from("direct:getUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getUser").to("mock:result");
-                from("direct:createAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createAccessKey").to("mock:result");
-                from("direct:deleteAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteAccessKey").to("mock:result");
-                from("direct:updateAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=updateAccessKey").to("mock:result");
-                from("direct:createGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createGroup").to("mock:result");
-                from("direct:deleteGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup").to("mock:result");
-                from("direct:listGroups").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listGroups").to("mock:result");
-                from("direct:addUserToGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=addUserToGroup").to("mock:result");
-                from("direct:removeUserFromGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=removeUserFromGroup").to("mock:result");
+                from("direct:createAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createAccessKey")
+                        .to("mock:result");
+                from("direct:deleteAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteAccessKey")
+                        .to("mock:result");
+                from("direct:updateAccessKey").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=updateAccessKey")
+                        .to("mock:result");
+                from("direct:createGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createGroup")
+                        .to("mock:result");
+                from("direct:deleteGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup")
+                        .to("mock:result");
+                from("direct:listGroups").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listGroups")
+                        .to("mock:result");
+                from("direct:addUserToGroup").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=addUserToGroup")
+                        .to("mock:result");
+                from("direct:removeUserFromGroup")
+                        .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=removeUserFromGroup").to("mock:result");
             }
         };
     }

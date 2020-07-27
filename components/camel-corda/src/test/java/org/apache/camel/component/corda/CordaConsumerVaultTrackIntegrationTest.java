@@ -39,8 +39,8 @@ public class CordaConsumerVaultTrackIntegrationTest extends CordaConsumerTestSup
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK
-                        + "&contractStateClass=#contractStateClass")
-                        .to("mock:result");
+                     + "&contractStateClass=#contractStateClass")
+                             .to("mock:result");
             }
         };
     }

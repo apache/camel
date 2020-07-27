@@ -79,41 +79,45 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
-    @Metadata(label = "advanced", description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
+    @Metadata(label = "advanced",
+              description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
     protected HttpClientConfigurer httpClientConfigurer;
     @Metadata(label = "advanced", description = "To use a custom and shared HttpClientConnectionManager to manage connections."
-        + " If this has been configured then this is always used for all endpoints created by this component.")
+                                                + " If this has been configured then this is always used for all endpoints created by this component.")
     protected HttpClientConnectionManager clientConnectionManager;
     @Metadata(label = "advanced", description = "To use a custom org.apache.http.protocol.HttpContext when executing requests.")
     protected HttpContext httpContext;
     @Metadata(label = "security", description = "To configure security using SSLContextParameters."
-        + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
-        + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+                                                + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
+                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
+    @Metadata(label = "security",
+              description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
     @Metadata(label = "producer", description = "To use a custom org.apache.http.client.CookieStore."
-        + " By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store."
-        + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
-        + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
+                                                + " By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store."
+                                                + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
+                                                + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
     protected CookieStore cookieStore;
 
     // timeout
-    @Metadata(label = "timeout", defaultValue = "-1", description = "The timeout in milliseconds used when requesting a connection"
-        + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
+    @Metadata(label = "timeout", defaultValue = "-1",
+              description = "The timeout in milliseconds used when requesting a connection"
+                            + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
+                            + " A timeout value of zero is interpreted as an infinite timeout."
+                            + " A negative value is interpreted as undefined (system default).")
     protected int connectionRequestTimeout = -1;
-    @Metadata(label = "timeout", defaultValue = "-1", description = "Determines the timeout in milliseconds until a connection is established."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
+    @Metadata(label = "timeout", defaultValue = "-1",
+              description = "Determines the timeout in milliseconds until a connection is established."
+                            + " A timeout value of zero is interpreted as an infinite timeout."
+                            + " A timeout value of zero is interpreted as an infinite timeout."
+                            + " A negative value is interpreted as undefined (system default).")
     protected int connectTimeout = -1;
     @Metadata(label = "timeout", defaultValue = "-1", description = "Defines the socket timeout in milliseconds,"
-        + " which is the timeout for waiting for data  or, put differently,"
-        + " a maximum period inactivity between two consecutive data packets)."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
+                                                                    + " which is the timeout for waiting for data  or, put differently,"
+                                                                    + " a maximum period inactivity between two consecutive data packets)."
+                                                                    + " A timeout value of zero is interpreted as an infinite timeout."
+                                                                    + " A negative value is interpreted as undefined (system default).")
     protected int socketTimeout = -1;
 
     // options to the default created http connection manager
@@ -122,7 +126,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     protected int connectionsPerRoute = 20;
     // It's MILLISECONDS, the default value is always keep alive
-    @Metadata(label = "advanced", description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
+    @Metadata(label = "advanced",
+              description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
     protected long connectionTimeToLive = -1;
     @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
     private boolean useGlobalSslContextParameters;
@@ -138,14 +143,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     /**
      * Creates the HttpClientConfigurer based on the given parameters
      *
-     * @param parameters the map of parameters
-     * @param secure whether the endpoint is secure (eg https)
-     * @return the configurer
-     * @throws Exception is thrown if error creating configurer
+     * @param  parameters the map of parameters
+     * @param  secure     whether the endpoint is secure (eg https)
+     * @return            the configurer
+     * @throws Exception  is thrown if error creating configurer
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) throws Exception {
         // prefer to use endpoint configured over component configured
-        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
+        HttpClientConfigurer configurer
+                = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         if (configurer == null) {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
@@ -165,18 +171,24 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             String authDomain = getParameter(parameters, "authDomain", String.class);
             String authHost = getParameter(parameters, "authHost", String.class);
 
-            return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(authUsername, authPassword, authDomain, authHost));
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new BasicAuthenticationHttpClientConfigurer(authUsername, authPassword, authDomain, authHost));
         } else if (this.httpConfiguration != null) {
             if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
-                return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(this.httpConfiguration.getAuthUsername(),
-                this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(), this.httpConfiguration.getAuthHost()));
+                return CompositeHttpConfigurer.combineConfigurers(configurer,
+                        new BasicAuthenticationHttpClientConfigurer(
+                                this.httpConfiguration.getAuthUsername(),
+                                this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(),
+                                this.httpConfiguration.getAuthHost()));
             }
         }
 
         return configurer;
     }
 
-    private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) throws Exception {
+    private HttpClientConfigurer configureHttpProxy(
+            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure)
+            throws Exception {
         String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class);
         if (proxyAuthScheme == null) {
             // fallback and use either http or https depending on secure
@@ -193,9 +205,13 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return CompositeHttpConfigurer.combineConfigurers(
-                    configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthNtHost));
+                        configurer,
+                        new ProxyHttpClientConfigurer(
+                                proxyAuthHost, proxyAuthPort, proxyAuthScheme, proxyAuthUsername, proxyAuthPassword,
+                                proxyAuthDomain, proxyAuthNtHost));
             } else {
-                return CompositeHttpConfigurer.combineConfigurers(configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme));
+                return CompositeHttpConfigurer.combineConfigurers(configurer,
+                        new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme));
             }
         }
 
@@ -226,7 +242,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
 
-        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
+        SSLContextParameters sslContextParameters
+                = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         if (sslContextParameters == null) {
             sslContextParameters = getSslContextParameters();
         }
@@ -236,7 +253,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
 
-        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        HeaderFilterStrategy headerFilterStrategy
+                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         boolean secure = HttpHelper.isSecureConnection(uri) || sslContextParameters != null;
 
@@ -251,7 +269,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (pos != -1) {
             String part = uri.substring(pos + 2);
             if (part.startsWith("http:") || part.startsWith("https:")) {
-                throw new ResolveEndpointFailedException(uri,
+                throw new ResolveEndpointFailedException(
+                        uri,
                         "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
             }
         }
@@ -263,7 +282,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // the endpoint uri should use the component name as scheme, so we need to re-create it once more
         String scheme = StringHelper.before(uri, "://");
         endpointUri = URISupport.createRemainingURI(
-                new URI(scheme,
+                new URI(
+                        scheme,
                         endpointUri.getUserInfo(),
                         endpointUri.getHost(),
                         endpointUri.getPort(),
@@ -292,14 +312,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
         // we can not change the port of an URI, we must create a new one with an explicit port value
         URI httpUri = URISupport.createRemainingURI(
-                new URI(uriHttpUriAddress.getScheme(),
+                new URI(
+                        uriHttpUriAddress.getScheme(),
                         uriHttpUriAddress.getUserInfo(),
                         uriHttpUriAddress.getHost(),
                         uriHttpUriAddress.getPort(),
                         uriHttpUriAddress.getPath(),
                         uriHttpUriAddress.getQuery(),
                         uriHttpUriAddress.getFragment()),
-                        parameters);
+                parameters);
 
         endpoint.setHttpUri(httpUri);
 
@@ -327,26 +348,32 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         return endpoint;
     }
 
-    protected HttpClientConnectionManager createConnectionManager(final Map<String, Object> parameters,
-            final SSLContextParameters sslContextParameters) throws GeneralSecurityException, IOException {
+    protected HttpClientConnectionManager createConnectionManager(
+            final Map<String, Object> parameters,
+            final SSLContextParameters sslContextParameters)
+            throws GeneralSecurityException, IOException {
         if (clientConnectionManager != null) {
             return clientConnectionManager;
         }
 
-        final HostnameVerifier resolvedHostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", HostnameVerifier.class);
+        final HostnameVerifier resolvedHostnameVerifier
+                = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", HostnameVerifier.class);
         final HostnameVerifier hostnameVerifier = Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
 
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
         final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
 
-        final Registry<ConnectionSocketFactory> connectionRegistry = createConnectionRegistry(hostnameVerifier, sslContextParameters);
+        final Registry<ConnectionSocketFactory> connectionRegistry
+                = createConnectionRegistry(hostnameVerifier, sslContextParameters);
 
         return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute);
     }
 
-    protected HttpClientBuilder createHttpClientBuilder(final String uri, final Map<String, Object> parameters,
-            final Map<String, Object> httpClientOptions) throws Exception {
+    protected HttpClientBuilder createHttpClientBuilder(
+            final String uri, final Map<String, Object> parameters,
+            final Map<String, Object> httpClientOptions)
+            throws Exception {
         // http client can be configured from URI options
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern
@@ -363,13 +390,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         return clientBuilder;
     }
 
-    protected Registry<ConnectionSocketFactory> createConnectionRegistry(HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
-        throws GeneralSecurityException, IOException {
+    protected Registry<ConnectionSocketFactory> createConnectionRegistry(
+            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
+            throws GeneralSecurityException, IOException {
         // create the default connection registry to use
-        RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.<ConnectionSocketFactory>create();
+        RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.<ConnectionSocketFactory> create();
         builder.register("http", PlainConnectionSocketFactory.getSocketFactory());
         if (sslContextParams != null) {
-            builder.register("https", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
+            builder.register("https",
+                    new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
         } else {
             builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
         }
@@ -380,10 +409,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         return createConnectionManager(registry, 0, 0);
     }
 
-    protected HttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute) {
+    protected HttpClientConnectionManager createConnectionManager(
+            Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute) {
         // setup the connection live time
-        PoolingHttpClientConnectionManager answer =
-            new PoolingHttpClientConnectionManager(registry, null, null, null, getConnectionTimeToLive(), TimeUnit.MILLISECONDS);
+        PoolingHttpClientConnectionManager answer = new PoolingHttpClientConnectionManager(
+                registry, null, null, null, getConnectionTimeToLive(), TimeUnit.MILLISECONDS);
         int localMaxTotalConnections = maxTotalConnections;
         if (localMaxTotalConnections == 0) {
             localMaxTotalConnections = getMaxTotalConnections();
@@ -408,11 +438,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         return false;
     }
 
-
     @Override
-    public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Producer createProducer(
+            CamelContext camelContext, String host,
+            String verb, String basePath, String uriTemplate, String queryParameters,
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
 
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
@@ -481,8 +512,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom and shared HttpClientConnectionManager to manage connections.
-     * If this has been configured then this is always used for all endpoints created by this component.
+     * To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then
+     * this is always used for all endpoints created by this component.
      */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
@@ -504,9 +535,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To configure security using SSLContextParameters.
-     * Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent.
-     * If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.
+     * To configure security using SSLContextParameters. Important: Only one instance of
+     * org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more
+     * different instances, you need to define a new HttpComponent per instance you need.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -574,10 +605,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom org.apache.http.client.CookieStore.
-     * By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store.
-     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
-     * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     * To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore
+     * is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to
+     * be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy).
      */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
@@ -588,12 +618,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * The timeout in milliseconds used when requesting a connection
-     * from the connection manager. A timeout value of zero is interpreted
-     * as an infinite timeout.
+     * The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of
+     * zero is interpreted as an infinite timeout.
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout.
-     * A negative value is interpreted as undefined (system default).
+     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
+     * (system default).
      * </p>
      * <p>
      * Default: -1
@@ -608,11 +637,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * Determines the timeout in milliseconds until a connection is established.
-     * A timeout value of zero is interpreted as an infinite timeout.
+     * Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted
+     * as an infinite timeout.
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout.
-     * A negative value is interpreted as undefined (system default).
+     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
+     * (system default).
      * </p>
      * <p>
      * Default: -1
@@ -627,12 +656,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * Defines the socket timeout (SO_TIMEOUT) in milliseconds,
-     * which is the timeout for waiting for data  or, put differently,
-     * a maximum period inactivity between two consecutive data packets).
+     * Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put
+     * differently, a maximum period inactivity between two consecutive data packets).
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout.
-     * A negative value is interpreted as undefined (system default).
+     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
+     * (system default).
      * </p>
      * <p>
      * Default: -1
@@ -660,6 +688,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
+                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

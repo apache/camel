@@ -44,7 +44,9 @@ public class DynamicRouterWithInterceptorTest extends ContextTestSupport {
         private static int doneCount;
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
             if (definition instanceof DynamicRouterDefinition<?>) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
 

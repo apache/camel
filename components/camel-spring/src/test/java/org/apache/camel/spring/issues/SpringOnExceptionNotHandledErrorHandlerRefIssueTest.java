@@ -28,7 +28,8 @@ public class SpringOnExceptionNotHandledErrorHandlerRefIssueTest extends OnExcep
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringOnExceptionNotHandledErrorHandlerRefIssueTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/issues/SpringOnExceptionNotHandledErrorHandlerRefIssueTest.xml");
     }
 
 }

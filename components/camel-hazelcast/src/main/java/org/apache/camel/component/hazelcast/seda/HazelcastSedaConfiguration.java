@@ -82,8 +82,8 @@ public class HazelcastSedaConfiguration {
     }
 
     /**
-     * The timeout used when consuming from the SEDA queue. When a timeout occurs, the consumer can check whether
-     * it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
+     * The timeout used when consuming from the SEDA queue. When a timeout occurs, the consumer can check whether it is
+     * allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
      */
     public void setPollTimeout(int pollTimeout) {
         this.pollTimeout = pollTimeout;
@@ -108,7 +108,8 @@ public class HazelcastSedaConfiguration {
     }
 
     /**
-     * If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they will be skipped.
+     * If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they
+     * will be skipped.
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
@@ -119,8 +120,8 @@ public class HazelcastSedaConfiguration {
     }
 
     /**
-     * If set to true then the consumer runs in transaction mode, where the messages in the seda queue will only be removed
-     * if the transaction commits, which happens when the processing is complete.
+     * If set to true then the consumer runs in transaction mode, where the messages in the seda queue will only be
+     * removed if the transaction commits, which happens when the processing is complete.
      */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;

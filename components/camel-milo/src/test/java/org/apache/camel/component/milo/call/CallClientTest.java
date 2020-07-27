@@ -57,8 +57,9 @@ public class CallClientTest extends AbstractMiloServerTest {
 
     private static final String MILO_CLIENT_BASE_C1 = "milo-client:opc.tcp://localhost:@@port@@";
 
-    private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + NodeIds.nodeValue(MockCamelNamespace.URI, MockCamelNamespace.FOLDER_ID)
-                                                        + "&method=" + nodeValue(MockCamelNamespace.URI, MockCamelNamespace.CALL_ID) + "&overrideHost=true";
+    private static final String MILO_CLIENT_ITEM_C1_1
+            = MILO_CLIENT_BASE_C1 + "?node=" + NodeIds.nodeValue(MockCamelNamespace.URI, MockCamelNamespace.FOLDER_ID)
+              + "&method=" + nodeValue(MockCamelNamespace.URI, MockCamelNamespace.CALL_ID) + "&overrideHost=true";
 
     private OpcUaServer server;
     private MockCamelNamespace namespace;
@@ -87,7 +88,8 @@ public class CallClientTest extends AbstractMiloServerTest {
         final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
 
         cfg.setCertificateManager(new DefaultCertificateManager());
-        cfg.setEndpoints(createEndpointConfigurations(Arrays.asList(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS), EnumSet.of(SecurityPolicy.None)));
+        cfg.setEndpoints(createEndpointConfigurations(Arrays.asList(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS),
+                EnumSet.of(SecurityPolicy.None)));
         cfg.setApplicationName(LocalizedText.english("Apache Camel Milo Server"));
         cfg.setApplicationUri("urn:mock:namespace");
         cfg.setProductUri("urn:org:apache:camel:milo");
@@ -101,7 +103,8 @@ public class CallClientTest extends AbstractMiloServerTest {
         this.server.startup().get();
     }
 
-    private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
+    private Set<EndpointConfiguration> createEndpointConfigurations(
+            List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
         Set<EndpointConfiguration> endpointConfigurations = new LinkedHashSet<>();
 
         String bindAddress = "0.0.0.0";
@@ -109,7 +112,7 @@ public class CallClientTest extends AbstractMiloServerTest {
         hostnames.add(HostnameUtil.getHostname());
         hostnames.addAll(HostnameUtil.getHostnames(bindAddress));
 
-        UserTokenPolicy[] tokenPolicies = new UserTokenPolicy[] {USER_TOKEN_POLICY_ANONYMOUS};
+        UserTokenPolicy[] tokenPolicies = new UserTokenPolicy[] { USER_TOKEN_POLICY_ANONYMOUS };
 
         for (String hostname : hostnames) {
             EndpointConfiguration.Builder builder = EndpointConfiguration.newBuilder()
@@ -117,7 +120,6 @@ public class CallClientTest extends AbstractMiloServerTest {
                     .setHostname(hostname)
                     .setCertificate(() -> null)
                     .addTokenPolicies(tokenPolicies);
-
 
             if (securityPolicies == null || securityPolicies.contains(SecurityPolicy.None)) {
                 EndpointConfiguration.Builder noSecurityBuilder = builder.copy()
@@ -164,7 +166,7 @@ public class CallClientTest extends AbstractMiloServerTest {
 
         // assert
         assertNotNull(this.callMethod);
-        assertArrayEquals(new Object[] {"out-foo", "out-bar"}, this.callMethod.getCalls().toArray());
+        assertArrayEquals(new Object[] { "out-foo", "out-bar" }, this.callMethod.getCalls().toArray());
     }
 
     private static void doCall(final ProducerTemplate producerTemplate, final Object input) {

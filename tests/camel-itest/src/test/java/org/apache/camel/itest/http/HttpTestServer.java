@@ -60,17 +60,14 @@ import org.apache.http.protocol.ResponseServer;
  * Copy of org.apache.http.localserver.LocalTestServer to use a specific port.
  */
 public class HttpTestServer {
-    
+
     public static final int PORT = AvailablePortFinder.getNextAvailable();
-    
+
     /**
-     * The local address to bind to.
-     * The host is an IP number rather than "localhost" to avoid surprises
-     * on hosts that map "localhost" to an IPv6 address or something else.
-     * The port is 0 to let the system pick one.
+     * The local address to bind to. The host is an IP number rather than "localhost" to avoid surprises on hosts that
+     * map "localhost" to an IPv6 address or something else. The port is 0 to let the system pick one.
      */
-    public static final InetSocketAddress TEST_SERVER_ADDR =
-        new InetSocketAddress("localhost", PORT);
+    public static final InetSocketAddress TEST_SERVER_ADDR = new InetSocketAddress("localhost", PORT);
 
     /** The request handler registry. */
     private final HttpRequestHandlerRegistry handlerRegistry;
@@ -91,7 +88,7 @@ public class HttpTestServer {
 
     /** The number of connections this accepted. */
     private final AtomicInteger acceptedConnections = new AtomicInteger(0);
-    
+
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
@@ -101,35 +98,30 @@ public class HttpTestServer {
     /**
      * Creates a new test server.
      *
-     * @param proc      the HTTP processors to be used by the server, or
-     *                  <code>null</code> to use a
-     *                  {@link #newProcessor default} processor
-     * @param reuseStrat the connection reuse strategy to be used by the
-     *                  server, or <code>null</code> to use
-     *                  {@link #newConnectionReuseStrategy() default}
-     *                  strategy.
-     * @param params    the parameters to be used by the server, or
-     *                  <code>null</code> to use
-     *                  {@link #newDefaultParams default} parameters
-     * @param sslcontext optional SSL context if the server is to leverage
-     *                   SSL/TLS transport security
+     * @param proc       the HTTP processors to be used by the server, or <code>null</code> to use a
+     *                   {@link #newProcessor default} processor
+     * @param reuseStrat the connection reuse strategy to be used by the server, or <code>null</code> to use
+     *                   {@link #newConnectionReuseStrategy() default} strategy.
+     * @param params     the parameters to be used by the server, or <code>null</code> to use {@link #newDefaultParams
+     *                   default} parameters
+     * @param sslcontext optional SSL context if the server is to leverage SSL/TLS transport security
      */
     public HttpTestServer(
-            final BasicHttpProcessor proc,
-            final ConnectionReuseStrategy reuseStrat,
-            final HttpResponseFactory responseFactory,
-            final HttpExpectationVerifier expectationVerifier,
-            final HttpParams params,
-            final SSLContext sslcontext) {
+                          final BasicHttpProcessor proc,
+                          final ConnectionReuseStrategy reuseStrat,
+                          final HttpResponseFactory responseFactory,
+                          final HttpExpectationVerifier expectationVerifier,
+                          final HttpParams params,
+                          final SSLContext sslcontext) {
         this.handlerRegistry = new HttpRequestHandlerRegistry();
         this.workers = Collections.synchronizedSet(new HashSet<Worker>());
         this.httpservice = new HttpService(
-            proc != null ? proc : newProcessor(),
-            reuseStrat != null ? reuseStrat : newConnectionReuseStrategy(),
-            responseFactory != null ? responseFactory : newHttpResponseFactory(),
-            handlerRegistry,
-            expectationVerifier,
-            params != null ? params : newDefaultParams());
+                proc != null ? proc : newProcessor(),
+                reuseStrat != null ? reuseStrat : newConnectionReuseStrategy(),
+                responseFactory != null ? responseFactory : newHttpResponseFactory(),
+                handlerRegistry,
+                expectationVerifier,
+                params != null ? params : newDefaultParams());
         this.sslcontext = sslcontext;
     }
 
@@ -145,46 +137,45 @@ public class HttpTestServer {
     /**
      * Creates a new test server.
      *
-     * @param proc      the HTTP processors to be used by the server, or
-     *                  <code>null</code> to use a
-     *                  {@link #newProcessor default} processor
-     * @param params    the parameters to be used by the server, or
-     *                  <code>null</code> to use
-     *                  {@link #newDefaultParams default} parameters
+     * @param proc   the HTTP processors to be used by the server, or <code>null</code> to use a {@link #newProcessor
+     *               default} processor
+     * @param params the parameters to be used by the server, or <code>null</code> to use {@link #newDefaultParams
+     *               default} parameters
      */
     public HttpTestServer(
-            BasicHttpProcessor proc,
-            HttpParams params) {
+                          BasicHttpProcessor proc,
+                          HttpParams params) {
         this(proc, null, null, null, params, null);
     }
 
     /**
      * Obtains an HTTP protocol processor with default interceptors.
      *
-     * @return  a protocol processor for server-side use
+     * @return a protocol processor for server-side use
      */
     protected HttpProcessor newProcessor() {
-        return new ImmutableHttpProcessor(new HttpResponseInterceptor[] {new ResponseDate(),
-                                                                         new ResponseServer(),
-                                                                         new ResponseContent(),
-                                                                         new ResponseConnControl()});
+        return new ImmutableHttpProcessor(
+                new HttpResponseInterceptor[] {
+                        new ResponseDate(),
+                        new ResponseServer(),
+                        new ResponseContent(),
+                        new ResponseConnControl() });
     }
-
 
     /**
      * Obtains a set of reasonable default parameters for a server.
      *
-     * @return  default parameters
+     * @return default parameters
      */
     protected HttpParams newDefaultParams() {
         HttpParams params = new SyncBasicHttpParams();
         params
-            .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)
-            .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024)
-            .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false)
-            .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
-            .setParameter(CoreProtocolPNames.ORIGIN_SERVER,
-                          "LocalTestServer/1.1");
+                .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 60000)
+                .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024)
+                .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false)
+                .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
+                .setParameter(CoreProtocolPNames.ORIGIN_SERVER,
+                        "LocalTestServer/1.1");
         return params;
     }
 
@@ -205,6 +196,7 @@ public class HttpTestServer {
 
     /**
      * {@link #register Registers} a set of default request handlers.
+     * 
      * <pre>
      * URI pattern      Handler
      * -----------      -------
@@ -217,27 +209,24 @@ public class HttpTestServer {
         handlerRegistry.register("/random/*", new RandomHandler());
     }
 
-
     /**
      * Registers a handler with the local registry.
      *
-     * @param pattern   the URL pattern to match
-     * @param handler   the handler to apply
+     * @param pattern the URL pattern to match
+     * @param handler the handler to apply
      */
     public void register(String pattern, HttpRequestHandler handler) {
         handlerRegistry.register(pattern, handler);
     }
 
-
     /**
      * Unregisters a handler from the local registry.
      *
-     * @param pattern   the URL pattern
+     * @param pattern the URL pattern
      */
     public void unregister(String pattern) {
         handlerRegistry.unregister(pattern);
     }
-
 
     /**
      * Starts this test server.
@@ -314,8 +303,7 @@ public class HttpTestServer {
     }
 
     /**
-     * The request listener.
-     * Accepts incoming connections and launches a service thread.
+     * The request listener. Accepts incoming connections and launches a service thread.
      */
     class ListenerThread extends Thread {
 

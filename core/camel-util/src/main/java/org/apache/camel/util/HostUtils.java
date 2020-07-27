@@ -84,7 +84,6 @@ public final class HostUtils {
         return allAddresses;
     }
 
-
     /**
      * Chooses one of the available {@link InetAddress} based on the specified preference.
      */

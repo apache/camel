@@ -25,7 +25,8 @@ public class SpringToDynamicLanguageSimpleAndXPathAndHeaderTest extends ToDynami
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringToDynamicLanguageSimpleAndXPathAndHeaderTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/SpringToDynamicLanguageSimpleAndXPathAndHeaderTest.xml");
     }
 
 }

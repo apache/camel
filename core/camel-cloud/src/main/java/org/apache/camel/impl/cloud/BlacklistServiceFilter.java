@@ -50,7 +50,8 @@ public class BlacklistServiceFilter implements ServiceFilter {
     /**
      * Set the servers to blacklist.
      *
-     * @param servers servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
+     * @param servers servers separated by comma in the format:
+     *                [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
     public void setServers(String servers) {
         this.services.clear();
@@ -66,7 +67,9 @@ public class BlacklistServiceFilter implements ServiceFilter {
 
     /**
      * Add a server to the known list of servers to blacklist.
-     * @param serverString servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
+     * 
+     * @param serverString servers separated by comma in the format:
+     *                     [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
     public void addServer(String serverString) {
         DefaultServiceDefinition.parse(serverString).forEach(this::addServer);
@@ -82,10 +85,8 @@ public class BlacklistServiceFilter implements ServiceFilter {
     @Override
     public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services.stream().filter(
-            s -> this.services.stream().noneMatch(b -> b.matches(s))
-        ).collect(
-            Collectors.toList()
-        );
+                s -> this.services.stream().noneMatch(b -> b.matches(s))).collect(
+                        Collectors.toList());
     }
 
     List<ServiceDefinition> getBlacklistedServices() {
@@ -98,7 +99,7 @@ public class BlacklistServiceFilter implements ServiceFilter {
 
     public static BlacklistServiceFilter forServices(Collection<ServiceDefinition> definitions) {
         BlacklistServiceFilter filter = new BlacklistServiceFilter();
-        for (ServiceDefinition definition: definitions) {
+        for (ServiceDefinition definition : definitions) {
             filter.addServer(definition);
         }
 
@@ -107,7 +108,7 @@ public class BlacklistServiceFilter implements ServiceFilter {
 
     public static BlacklistServiceFilter forServices(ServiceDefinition... definitions) {
         BlacklistServiceFilter filter = new BlacklistServiceFilter();
-        for (ServiceDefinition definition: definitions) {
+        for (ServiceDefinition definition : definitions) {
             filter.addServer(definition);
         }
 

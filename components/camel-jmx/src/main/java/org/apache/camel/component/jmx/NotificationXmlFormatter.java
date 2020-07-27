@@ -102,7 +102,8 @@ public class NotificationXmlFormatter extends ServiceSupport {
                 ((org.apache.camel.component.jmx.jaxb.RelationNotification) jaxb).withMBeansToUnregister(ont);
             }
         } else if (aNotification instanceof TimerNotification) {
-            jaxb = mObjectFactory.createTimerNotification().withNotificationId(((TimerNotification) aNotification).getNotificationID());
+            jaxb = mObjectFactory.createTimerNotification()
+                    .withNotificationId(((TimerNotification) aNotification).getNotificationID());
         } else {
             jaxb = mObjectFactory.createNotificationEventType();
             wrap = true;
@@ -164,8 +165,8 @@ public class NotificationXmlFormatter extends ServiceSupport {
     }
 
     /**
-      * Strategy to create JAXB context
-      */
+     * Strategy to create JAXB context
+     */
     protected JAXBContext createContext(String contextPath) throws JAXBException {
         ClassLoader cl = NotificationXmlFormatter.class.getClassLoader();
         try {

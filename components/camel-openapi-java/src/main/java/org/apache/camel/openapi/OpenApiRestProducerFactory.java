@@ -50,9 +50,11 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(OpenApiRestProducerFactory.class);
 
     @Override
-    public Producer createProducer(CamelContext camelContext, String host,
-                                   String verb, String basePath, String uriTemplate, String queryParameters,
-                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Producer createProducer(
+            CamelContext camelContext, String host,
+            String verb, String basePath, String uriTemplate, String queryParameters,
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
 
         String apiDoc = (String) parameters.get("apiDoc");
         // load json model
@@ -81,7 +83,8 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                     String token = key + "=";
                     boolean hasQuery = queryParameters.contains(token);
                     if (!hasQuery) {
-                        throw new IllegalArgumentException("OpenApi api-doc does not contain query parameter " + key + " for " + verb + ":" + path);
+                        throw new IllegalArgumentException(
+                                "OpenApi api-doc does not contain query parameter " + key + " for " + verb + ":" + path);
                     }
                 }
             }
@@ -100,13 +103,11 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
         try {
             final JsonNode node = mapper.readTree(is);
             LOG.debug("Loaded openApi api-doc:\n{}", node.toPrettyString());
-            return (OasDocument)Library.readDocument(node);
-
+            return (OasDocument) Library.readDocument(node);
 
         } finally {
             IOHelper.close(is);
         }
-
 
     }
 
@@ -142,10 +143,12 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
         return op;
     }
 
-    private Producer createHttpProducer(CamelContext camelContext, OasDocument openApi, OasOperation operation,
-                                        String host, String verb, String path, String queryParameters,
-                                        String consumes, String produces,
-                                        String componentName, Map<String, Object> parameters) throws Exception {
+    private Producer createHttpProducer(
+            CamelContext camelContext, OasDocument openApi, OasOperation operation,
+            String host, String verb, String path, String queryParameters,
+            String consumes, String produces,
+            String componentName, Map<String, Object> parameters)
+            throws Exception {
 
         LOG.debug("Using OpenApi operation: {} with {} {}", operation, verb, path);
 
@@ -158,11 +161,11 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 CollectionStringBuffer csb = new CollectionStringBuffer(",");
                 List<String> list = new ArrayList<String>();
                 if (operation instanceof Oas20Operation) {
-                    list = ((Oas20Operation)operation).produces;
+                    list = ((Oas20Operation) operation).produces;
                 } else if (operation instanceof Oas30Operation) {
-                    Oas30Operation oas30Operation = (Oas30Operation)operation;
+                    Oas30Operation oas30Operation = (Oas30Operation) operation;
                     for (OasResponse response : oas30Operation.responses.getResponses()) {
-                        Oas30Response oas30Response = (Oas30Response)response;
+                        Oas30Response oas30Response = (Oas30Response) response;
                         for (String ct : oas30Response.content.keySet()) {
                             list.add(ct);
                         }
@@ -171,7 +174,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 }
                 if (list == null || list.isEmpty()) {
                     if (openApi instanceof Oas20Document) {
-                        list = ((Oas20Document)openApi).produces;
+                        list = ((Oas20Document) openApi).produces;
                     }
                 }
                 if (list != null) {
@@ -185,11 +188,11 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 CollectionStringBuffer csb = new CollectionStringBuffer(",");
                 List<String> list = new ArrayList<String>();
                 if (operation instanceof Oas20Operation) {
-                    list = ((Oas20Operation)operation).consumes;
+                    list = ((Oas20Operation) operation).consumes;
                 } else if (operation instanceof Oas30Operation) {
-                    Oas30Operation oas30Operation = (Oas30Operation)operation;
+                    Oas30Operation oas30Operation = (Oas30Operation) operation;
                     if (oas30Operation.requestBody != null
-                        && oas30Operation.requestBody.content != null) {
+                            && oas30Operation.requestBody.content != null) {
                         for (String ct : oas30Operation.requestBody.content.keySet()) {
                             list.add(ct);
                         }
@@ -198,7 +201,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 }
                 if (list == null || list.isEmpty()) {
                     if (openApi instanceof Oas20Document) {
-                        list = ((Oas20Document)openApi).consumes;
+                        list = ((Oas20Document) openApi).consumes;
                     }
                 }
                 if (list != null) {
@@ -225,7 +228,8 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             }
 
             RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, null, componentName);
-            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
+            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces,
+                    config, parameters);
 
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");

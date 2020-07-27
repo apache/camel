@@ -45,7 +45,7 @@ public class RobotFrameworkComponent extends DefaultComponent {
     public void setConfiguration(RobotFrameworkCamelConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     public RobotFrameworkCamelConfiguration getConfiguration() {
         return configuration;
     }
@@ -57,8 +57,8 @@ public class RobotFrameworkComponent extends DefaultComponent {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         configuration.setAllowTemplateFromHeader(allowTemplateFromHeader);
@@ -69,10 +69,9 @@ public class RobotFrameworkComponent extends DefaultComponent {
     }
 
     /**
-     * Sets whether the context map should allow access to all details.
-     * By default only the message body and headers can be accessed.
-     * This option can be enabled for full access to the current Exchange and CamelContext.
-     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     * Sets whether the context map should allow access to all details. By default only the message body and headers can
+     * be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose
+     * a potential security risk as this opens access to the full power of CamelContext API.
      */
     public void setAllowContextMapAll(boolean allowContextMapAll) {
         configuration.setAllowContextMapAll(allowContextMapAll);

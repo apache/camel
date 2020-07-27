@@ -24,33 +24,24 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 public interface PGPPublicKeyAccessor {
 
     /**
-     * Returns the encryption keys for the given user ID parts. This method is
-     * used for encryption.
+     * Returns the encryption keys for the given user ID parts. This method is used for encryption.
      * 
-     * @param exchange
-     *            exchange, can be <code>null</code>
-     * @param useridParts
-     *            parts of User IDs, must not be <code>null</code>
-     * @return list of public keys, must not be <code>null</code>
+     * @param  exchange    exchange, can be <code>null</code>
+     * @param  useridParts parts of User IDs, must not be <code>null</code>
+     * @return             list of public keys, must not be <code>null</code>
      */
     List<PGPPublicKey> getEncryptionKeys(Exchange exchange, List<String> useridParts) throws Exception;
 
     /**
-     * Returns the public key with a certain key ID. This method is used for
-     * verifying the signature. The given User IDs are provided to filter the
-     * public key, further. If the User ID parts list is empty, then any public
-     * key can be returned which has the specified key ID. If the User ID parts
-     * list is not empty then the returned key must have a User ID which
-     * contains at least one User ID part.
+     * Returns the public key with a certain key ID. This method is used for verifying the signature. The given User IDs
+     * are provided to filter the public key, further. If the User ID parts list is empty, then any public key can be
+     * returned which has the specified key ID. If the User ID parts list is not empty then the returned key must have a
+     * User ID which contains at least one User ID part.
      * 
-     * @param exchange
-     *            exchange
-     * @param keyId
-     *            key ID
-     * @param useridParts
-     *            parts of User IDs, must not be <code>null</code>, but can be
-     *            empty
-     * @return public key or <code>null</code> if the key cannot be found
+     * @param  exchange    exchange
+     * @param  keyId       key ID
+     * @param  useridParts parts of User IDs, must not be <code>null</code>, but can be empty
+     * @return             public key or <code>null</code> if the key cannot be found
      */
     PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> useridParts) throws Exception;
 

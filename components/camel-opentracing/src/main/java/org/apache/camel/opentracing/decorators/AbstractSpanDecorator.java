@@ -52,12 +52,11 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     /**
-     * This method removes the scheme, any leading slash characters and options
-     * from the supplied URI. This is intended to extract a meaningful name from
-     * the URI that can be used in situations, such as the operation name.
+     * This method removes the scheme, any leading slash characters and options from the supplied URI. This is intended
+     * to extract a meaningful name from the URI that can be used in situations, such as the operation name.
      *
-     * @param endpoint The endpoint
-     * @return The stripped value from the URI
+     * @param  endpoint The endpoint
+     * @return          The stripped value from the URI
      */
     public static String stripSchemeAndOptions(Endpoint endpoint) {
         int start = endpoint.getEndpointUri().indexOf(':');

@@ -28,5 +28,5 @@ public class EchoPojoDirect {
     public String onEcho(String name) {
         return service.echo(name);
     }
-    
+
 }

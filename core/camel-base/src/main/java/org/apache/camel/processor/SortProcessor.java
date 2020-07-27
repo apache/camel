@@ -106,5 +106,3 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
         // noop
     }
 }
-
-

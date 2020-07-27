@@ -32,7 +32,8 @@ public class KuduComponentConfigurationTest extends CamelTestSupport {
         KuduOperations operation = KuduOperations.SCAN;
 
         KuduComponent component = new KuduComponent(this.context());
-        KuduEndpoint endpoint = (KuduEndpoint) component.createEndpoint("kudu:" + host + ":" + port + "/" + tableName + "?operation=" + operation);
+        KuduEndpoint endpoint = (KuduEndpoint) component
+                .createEndpoint("kudu:" + host + ":" + port + "/" + tableName + "?operation=" + operation);
 
         assertEquals(host, endpoint.getHost(), "Host was not correctly detected. ");
         assertEquals(port, endpoint.getPort(), "Port was not correctly detected. ");
@@ -40,11 +41,10 @@ public class KuduComponentConfigurationTest extends CamelTestSupport {
         assertEquals(operation, endpoint.getOperation(), "Operation was not correctly detected. ");
     }
 
-
     @Test
     public void wrongUrl() throws Exception {
         KuduComponent component = new KuduComponent(this.context());
         assertThrows(Exception.class,
-            () -> component.createEndpoint("wrong url"));
+                () -> component.createEndpoint("wrong url"));
     }
 }

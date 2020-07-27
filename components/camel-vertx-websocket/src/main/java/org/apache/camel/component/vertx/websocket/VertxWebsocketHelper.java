@@ -67,8 +67,8 @@ public final class VertxWebsocketHelper {
     }
 
     /**
-     * Extracts the port number from the endpoint URI path or returns the Vert.x default HTTP server
-     * port (0) if one was not provided
+     * Extracts the port number from the endpoint URI path or returns the Vert.x default HTTP server port (0) if one was
+     * not provided
      */
     public static int extractPortNumber(String remaining) {
         int index1 = remaining.indexOf(':');
@@ -90,8 +90,8 @@ public final class VertxWebsocketHelper {
     }
 
     /**
-     * Extracts the host name from the endpoint URI path or returns the Vert.x default HTTP server
-     * host (0.0.0.0) if one was not provided
+     * Extracts the host name from the endpoint URI path or returns the Vert.x default HTTP server host (0.0.0.0) if one
+     * was not provided
      */
     public static String extractHostName(String remaining) {
         int index = remaining.indexOf(':');
@@ -103,8 +103,8 @@ public final class VertxWebsocketHelper {
     }
 
     /**
-     * Extracts the WebSocket path from the endpoint URI path or returns the Vert.x default HTTP server
-     * path (/) if one was not provided
+     * Extracts the WebSocket path from the endpoint URI path or returns the Vert.x default HTTP server path (/) if one
+     * was not provided
      */
     public static String extractPath(String remaining) {
         int index = remaining.indexOf('/');

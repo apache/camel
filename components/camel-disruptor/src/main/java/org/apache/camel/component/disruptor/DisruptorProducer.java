@@ -193,7 +193,6 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         }
     }
 
-
     private Exchange prepareCopy(final Exchange exchange, final boolean handover) {
         // use a new copy of the exchange to route async
         final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover);

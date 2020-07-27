@@ -27,7 +27,7 @@ public class SpringSimpleWeirdIssueTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleWeirdIssueTest.xml");
     }
-    
+
     @Test
     public void testSimple() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

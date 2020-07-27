@@ -64,8 +64,8 @@ public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
     /**
      * Use this method to compute dynamic where we should route next.
      *
-     * @param body the message body
-     * @return endpoints to go, or <tt>null</tt> to indicate the end
+     * @param  body the message body
+     * @return      endpoints to go, or <tt>null</tt> to indicate the end
      */
     public String slip(String body) {
         bodies.add(body);

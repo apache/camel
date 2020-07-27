@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with MongoDB GridFS.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS", syntax = "mongodb-gridfs:connectionBean", category = {Category.DATABASE, Category.NOSQL})
+@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS",
+             syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.NOSQL })
 public class GridFsEndpoint extends DefaultEndpoint {
 
     public static final String GRIDFS_OPERATION = "gridfs.operation";
@@ -210,8 +211,8 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Additional query parameters (in JSON) that are used to configure the query used for finding
-     * files in the GridFsConsumer
+     * Additional query parameters (in JSON) that are used to configure the query used for finding files in the
+     * GridFsConsumer
      */
     public void setQuery(String query) {
         this.query = query;
@@ -240,7 +241,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the QueryStrategy that is used for polling for new files.  Default is Timestamp
+     * Sets the QueryStrategy that is used for polling for new files. Default is Timestamp
      */
     public void setQueryStrategy(String s) {
         queryStrategy = QueryStrategy.valueOf(s);
@@ -258,8 +259,8 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If the QueryType uses a persistent timestamp, this sets the name of the collection within
-     * the DB to store the timestamp.
+     * If the QueryType uses a persistent timestamp, this sets the name of the collection within the DB to store the
+     * timestamp.
      */
     public void setPersistentTSCollection(String s) {
         persistentTSCollection = s;
@@ -270,8 +271,8 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If the QueryType uses a persistent timestamp, this is the ID of the object in the collection
-     * to store the timestamp.
+     * If the QueryType uses a persistent timestamp, this is the ID of the object in the collection to store the
+     * timestamp.
      */
     public void setPersistentTSObject(String id) {
         persistentTSObject = id;
@@ -282,7 +283,8 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If the QueryType uses a FileAttribute, this sets the name of the attribute that is used. Default is "camel-processed".
+     * If the QueryType uses a FileAttribute, this sets the name of the attribute that is used. Default is
+     * "camel-processed".
      */
     public void setFileAttributeName(String f) {
         fileAttributeName = f;
@@ -293,22 +295,26 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones.
-     * Resolved from the fields of the WriteConcern class by calling the {@link WriteConcern#valueOf(String)} method.
+     * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones. Resolved from the fields of
+     * the WriteConcern class by calling the {@link WriteConcern#valueOf(String)} method.
      *
      * @param writeConcern the standard name of the WriteConcern
-     * @see <a href="http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible options</a>
+     * @see                <a href=
+     *                     "http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible
+     *                     options</a>
      */
     public void setWriteConcern(String writeConcern) {
         this.writeConcern = WriteConcern.valueOf(writeConcern);
     }
 
     /**
-     * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones.
-     * Resolved from the fields of the WriteConcern class by calling the {@link WriteConcern#valueOf(String)} method.
+     * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones. Resolved from the fields of
+     * the WriteConcern class by calling the {@link WriteConcern#valueOf(String)} method.
      *
      * @param writeConcern the standard name of the WriteConcern
-     * @see <a href="http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible options</a>
+     * @see                <a href=
+     *                     "http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible
+     *                     options</a>
      */
     public void setWriteConcern(WriteConcern writeConcern) {
         this.writeConcern = writeConcern;
@@ -319,11 +325,12 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection will be
-     * overridden by this setting.
+     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection
+     * will be overridden by this setting.
      * <p/>
-     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed {@code readPreference}
-     * value. Some examples for the possible values are {@code nearest}, {@code primary} or {@code secondary} etc.
+     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed
+     * {@code readPreference} value. Some examples for the possible values are {@code nearest}, {@code primary} or
+     * {@code secondary} etc.
      *
      * @param readPreference the name of the read preference to set
      */
@@ -332,11 +339,12 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection will be
-     * overridden by this setting.
+     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection
+     * will be overridden by this setting.
      * <p/>
-     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed {@code readPreference}
-     * value. Some examples for the possible values are {@code nearest}, {@code primary} or {@code secondary} etc.
+     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed
+     * {@code readPreference} value. Some examples for the possible values are {@code nearest}, {@code primary} or
+     * {@code secondary} etc.
      *
      * @param readPreference the name of the read preference to set
      */

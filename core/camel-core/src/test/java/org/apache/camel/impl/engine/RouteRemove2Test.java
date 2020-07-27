@@ -27,7 +27,7 @@ public class RouteRemove2Test extends ContextTestSupport {
 
     @Test
     public void testRemove() throws Exception {
-        DefaultCamelContext defaultContext = (DefaultCamelContext)context;
+        DefaultCamelContext defaultContext = (DefaultCamelContext) context;
         assertEquals(2, context.getRoutes().size(), "2 routes to start with");
         assertEquals(2, context.getRouteDefinitions().size(), "2 routes to start with");
         assertEquals(2, defaultContext.getRouteStartupOrder().size(), "2 routes to start with");

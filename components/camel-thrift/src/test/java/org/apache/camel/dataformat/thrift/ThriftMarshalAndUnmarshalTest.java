@@ -67,7 +67,7 @@ public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
 
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
         Work input = new Work();
-        
+
         input.num1 = WORK_TEST_NUM1;
         input.num2 = WORK_TEST_NUM2;
         input.op = WORK_TEST_OPERATION;
@@ -101,7 +101,8 @@ public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
                 from("direct:marshal").marshal().thrift();
-                from("direct:unmarshalA").unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work").to("mock:reverse");
+                from("direct:unmarshalA").unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work")
+                        .to("mock:reverse");
 
                 from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
             }

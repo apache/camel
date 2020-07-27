@@ -34,20 +34,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Modeled after the circuit breaker {@link ThrottlingInflightRoutePolicy}
- * this {@link RoutePolicy} will stop consuming from an endpoint based on the type of exceptions that are
- * thrown and the threshold setting.
+ * Modeled after the circuit breaker {@link ThrottlingInflightRoutePolicy} this {@link RoutePolicy} will stop consuming
+ * from an endpoint based on the type of exceptions that are thrown and the threshold setting.
  *
- * the scenario: if a route cannot process data from an endpoint due to problems with resources used by the route
- * (ie database down) then it will stop consuming new messages from the endpoint by stopping the consumer.
- * The implementation is comparable to the Circuit Breaker pattern. After a set amount of time, it will move
- * to a half open state and attempt to determine if the consumer can be started.
- * There are two ways to determine if a route can be closed after being opened
- * (1) start the consumer and check the failure threshold
- * (2) call the {@link ThrottlingExceptionHalfOpenHandler}
- * The second option allows a custom check to be performed without having to take on the possibility of
- * multiple messages from the endpoint. The idea is that a handler could run a simple test (ie select 1 from dual)
- * to determine if the processes that cause the route to be open are now available
+ * the scenario: if a route cannot process data from an endpoint due to problems with resources used by the route (ie
+ * database down) then it will stop consuming new messages from the endpoint by stopping the consumer. The
+ * implementation is comparable to the Circuit Breaker pattern. After a set amount of time, it will move to a half open
+ * state and attempt to determine if the consumer can be started. There are two ways to determine if a route can be
+ * closed after being opened (1) start the consumer and check the failure threshold (2) call the
+ * {@link ThrottlingExceptionHalfOpenHandler} The second option allows a custom check to be performed without having to
+ * take on the possibility of multiple messages from the endpoint. The idea is that a handler could run a simple test
+ * (ie select 1 from dual) to determine if the processes that cause the route to be open are now available
  */
 public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
@@ -79,11 +76,13 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private volatile long lastFailure;
     private volatile long openedAt;
 
-    public ThrottlingExceptionRoutePolicy(int threshold, long failureWindow, long halfOpenAfter, List<Class<?>> handledExceptions) {
+    public ThrottlingExceptionRoutePolicy(int threshold, long failureWindow, long halfOpenAfter,
+                                          List<Class<?>> handledExceptions) {
         this(threshold, failureWindow, halfOpenAfter, handledExceptions, false);
     }
 
-    public ThrottlingExceptionRoutePolicy(int threshold, long failureWindow, long halfOpenAfter, List<Class<?>> handledExceptions, boolean keepOpen) {
+    public ThrottlingExceptionRoutePolicy(int threshold, long failureWindow, long halfOpenAfter,
+                                          List<Class<?>> handledExceptions, boolean keepOpen) {
         this.throttledExceptions = handledExceptions;
         this.failureWindow = failureWindow;
         this.halfOpenAfter = halfOpenAfter;
@@ -135,9 +134,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     /**
-     * uses similar approach as circuit breaker
-     * if the exchange has an exception that we are watching
-     * then we count that as a failure otherwise we ignore it
+     * uses similar approach as circuit breaker if the exchange has an exception that we are watching then we count that
+     * as a failure otherwise we ignore it
      */
     private boolean hasFailed(Exchange exchange) {
         if (exchange == null) {
@@ -163,8 +161,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         }
 
         if (LOG.isDebugEnabled()) {
-            String exceptionName = exchange.getException() == null ? "none" : exchange.getException().getClass().getSimpleName();
-            LOG.debug("hasFailed ({}) with Throttled Exception: {} for exchangeId: {}", answer, exceptionName, exchange.getExchangeId());
+            String exceptionName
+                    = exchange.getException() == null ? "none" : exchange.getException().getClass().getSimpleName();
+            LOG.debug("hasFailed ({}) with Throttled Exception: {} for exchangeId: {}", answer, exceptionName,
+                    exchange.getExchangeId());
         }
         return answer;
     }
@@ -286,7 +286,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         int num = state.get();
         String routeState = stateAsString(num);
         if (failures.get() > 0) {
-            return String.format("State %s, failures %d, last failure %d ms ago", routeState, failures.get(), System.currentTimeMillis() - lastFailure);
+            return String.format("State %s, failures %d, last failure %d ms ago", routeState, failures.get(),
+                    System.currentTimeMillis() - lastFailure);
         } else {
             return String.format("State %s, failures %d", routeState, failures.get());
         }

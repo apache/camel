@@ -30,17 +30,19 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * A Delegate pattern which delegates synchronous processing to a nested {@link org.apache.camel.Processor} which can
- * be useful for implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
+ * A Delegate pattern which delegates synchronous processing to a nested {@link org.apache.camel.Processor} which can be
+ * useful for implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
  * <p/>
- * <b>Important:</b> This implementation <b>does</b> support the asynchronous routing engine, <b>only</b>.
- * if the logic in the {@link #process(org.apache.camel.Exchange)} does not invoke EIPs; as it forces using
- * synchronous processing during the {@link #process(org.apache.camel.Exchange)} method call.
- * If you are implementing a EIP pattern please use this as the delegate, for simple EIPs.
+ * <b>Important:</b> This implementation <b>does</b> support the asynchronous routing engine, <b>only</b>. if the logic
+ * in the {@link #process(org.apache.camel.Exchange)} does not invoke EIPs; as it forces using synchronous processing
+ * during the {@link #process(org.apache.camel.Exchange)} method call. If you are implementing a EIP pattern please use
+ * this as the delegate, for simple EIPs.
+ * 
  * @see DelegateAsyncProcessor
  * @see DelegateProcessor
  */
-public class DelegateSyncProcessor extends ServiceSupport implements org.apache.camel.DelegateProcessor, AsyncProcessor, Navigate<Processor> {
+public class DelegateSyncProcessor extends ServiceSupport
+        implements org.apache.camel.DelegateProcessor, AsyncProcessor, Navigate<Processor> {
     protected Processor processor;
 
     public DelegateSyncProcessor(Processor processor) {

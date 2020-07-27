@@ -46,7 +46,8 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfileMetricsEventNotifier<ExchangeEvent> {
 
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
-    private MicroProfileMetricsExchangeEventNotifierNamingStrategy namingStrategy = MicroProfileMetricsExchangeEventNotifierNamingStrategy.DEFAULT;
+    private MicroProfileMetricsExchangeEventNotifierNamingStrategy namingStrategy
+            = MicroProfileMetricsExchangeEventNotifierNamingStrategy.DEFAULT;
     private MicroProfileMetricsExchangeRecorder exchangeRecorder;
 
     public MicroProfileMetricsExchangeEventNotifier() {
@@ -84,9 +85,9 @@ public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfi
             Map<String, String> tags = metricID.getTags();
             if (tags.containsKey(CAMEL_CONTEXT_TAG) && tags.get(CAMEL_CONTEXT_TAG).equals(getCamelContext().getName())) {
                 return tags.containsKey(EVENT_TYPE_TAG)
-                       || metricName.contains(EXCHANGES_METRIC_PREFIX)
-                       || metricName.endsWith(EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME)
-                       || metricName.endsWith(EXCHANGES_FAILURES_HANDLED_METRIC_NAME);
+                        || metricName.contains(EXCHANGES_METRIC_PREFIX)
+                        || metricName.endsWith(EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME)
+                        || metricName.endsWith(EXCHANGES_FAILURES_HANDLED_METRIC_NAME);
             }
             return false;
         });

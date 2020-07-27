@@ -38,6 +38,7 @@ public class DozerProducer extends DefaultProducer {
 
     /**
      * Create a new producer for dozer endpoints.
+     * 
      * @param endpoint endpoint requiring a producer
      */
     public DozerProducer(DozerEndpoint endpoint) {
@@ -56,14 +57,14 @@ public class DozerProducer extends DefaultProducer {
                 throw exchange.getException();
             }
         }
-        
+
         // Load the target model class
         Class<?> targetModel = endpoint.getCamelContext().getClassResolver().resolveMandatoryClass(
                 endpoint.getConfiguration().getTargetModel());
-        
+
         // If an unmarshaller was used, the unmarshalled message is the OUT message.
         Message msg = exchange.getMessage();
-        
+
         // Convert to source model, if specified
         String sourceType = endpoint.getConfiguration().getSourceModel();
         if (sourceType != null) {
@@ -75,7 +76,7 @@ public class DozerProducer extends DefaultProducer {
             }
             msg.setBody(msg.getBody(sourceModel));
         }
-        
+
         // Perform mappings
         LOG.debug("Mapping to target model {}.", targetModel.getName());
         Object targetObject = endpoint.getMapper().map(msg.getBody(), targetModel);
@@ -91,7 +92,7 @@ public class DozerProducer extends DefaultProducer {
         }
         msg.setBody(targetObject);
         exchange.setIn(msg);
-        
+
         // Marshal the source content only if a marshaller is configured.
         String marshalId = endpoint.getConfiguration().getMarshalId();
         if (marshalId != null) {
@@ -102,7 +103,7 @@ public class DozerProducer extends DefaultProducer {
             }
         }
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -113,7 +114,7 @@ public class DozerProducer extends DefaultProducer {
             marshaller.stop();
         }
     }
-    
+
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
@@ -124,19 +125,20 @@ public class DozerProducer extends DefaultProducer {
             marshaller.shutdown();
         }
     }
-    
+
     /**
      * Find and configure an unmarshaller for the specified data format.
      */
     private synchronized UnmarshalProcessor resolveUnmarshaller(
-            Exchange exchange, String dataFormatId) throws Exception {
-        
+            Exchange exchange, String dataFormatId)
+            throws Exception {
+
         if (unmarshaller == null) {
             DataFormat dataFormat = exchange.getContext().resolveDataFormat(dataFormatId);
             if (dataFormat == null) {
                 throw new Exception("Unable to resolve data format for unmarshalling: " + dataFormatId);
             }
-            
+
             // Wrap the data format in a processor and start/configure it.  
             // Stop/shutdown is handled when the corresponding methods are 
             // called on this producer.
@@ -146,19 +148,20 @@ public class DozerProducer extends DefaultProducer {
         }
         return unmarshaller;
     }
-    
+
     /**
      * Find and configure an unmarshaller for the specified data format.
      */
     private synchronized MarshalProcessor resolveMarshaller(
-            Exchange exchange, String dataFormatId) throws Exception {
-        
+            Exchange exchange, String dataFormatId)
+            throws Exception {
+
         if (marshaller == null) {
             DataFormat dataFormat = exchange.getContext().resolveDataFormat(dataFormatId);
             if (dataFormat == null) {
                 throw new Exception("Unable to resolve data format for marshalling: " + dataFormatId);
             }
-            
+
             // Wrap the data format in a processor and start/configure it.  
             // Stop/shutdown is handled when the corresponding methods are 
             // called on this producer.
@@ -168,5 +171,5 @@ public class DozerProducer extends DefaultProducer {
         }
         return marshaller;
     }
-    
+
 }

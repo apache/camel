@@ -38,8 +38,8 @@ public class QuartzTwoCamelContextSameNameClashTest {
             @Override
             public void configure() throws Exception {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?")
-                    .log("Fired one")
-                    .to("mock:one");
+                        .log("Fired one")
+                        .to("mock:one");
             }
         });
         camel1.start();
@@ -50,8 +50,8 @@ public class QuartzTwoCamelContextSameNameClashTest {
             @Override
             public void configure() throws Exception {
                 from("quartz://myOtherGroup/myOtherTimerName?cron=0/1+*+*+*+*+?")
-                    .log("Fired two")
-                    .to("mock:two");
+                        .log("Fired two")
+                        .to("mock:two");
             }
         });
         camel2.start();

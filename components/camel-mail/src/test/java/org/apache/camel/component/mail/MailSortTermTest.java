@@ -36,16 +36,16 @@ import org.jvnet.mock_javamail.Mailbox;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This is a test that checks integration of the sort term in Camel. The actual
- * sorting logic is tested in the SortUtilTest.
+ * This is a test that checks integration of the sort term in Camel. The actual sorting logic is tested in the
+ * SortUtilTest.
  */
 public class MailSortTermTest extends CamelTestSupport {
 
     @BindToRegistry("sortAscendingDate")
-    private SortTerm[] termAscDate = new SortTerm[] {SortTerm.DATE};
+    private SortTerm[] termAscDate = new SortTerm[] { SortTerm.DATE };
 
     @BindToRegistry("sortDescendingDate")
-    private SortTerm[] termDescDate = new SortTerm[] {SortTerm.REVERSE, SortTerm.DATE};
+    private SortTerm[] termDescDate = new SortTerm[] { SortTerm.REVERSE, SortTerm.DATE };
 
     @BindToRegistry("searchTerm")
     private SearchTerm searchTerm = new SearchTermBuilder().subject("Camel").build();
@@ -113,7 +113,7 @@ public class MailSortTermTest extends CamelTestSupport {
                 context.setAutoStartup(false);
 
                 from("pop3://bill@localhost?password=secret&searchTerm=#searchTerm&sortTerm=#sortAscendingDate&initialDelay=100&delay=100")
-                    .to("mock:resultAscending");
+                        .to("mock:resultAscending");
             }
         };
     }

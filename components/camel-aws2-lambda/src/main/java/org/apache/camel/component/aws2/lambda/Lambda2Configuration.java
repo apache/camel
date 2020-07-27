@@ -86,10 +86,8 @@ public class Lambda2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which ECS client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which ECS client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -100,8 +98,7 @@ public class Lambda2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform. It can be listFunctions, getFunction,
-     * createFunction, deleteFunction or invokeFunction
+     * The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction
      */
     public void setOperation(Lambda2Operations operation) {
         this.operation = operation;
@@ -139,7 +136,7 @@ public class Lambda2Configuration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public boolean isPojoRequest() {
         return pojoRequest;
     }
@@ -150,7 +147,7 @@ public class Lambda2Configuration implements Cloneable {
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }
-    
+
     public boolean isTrustAllCertificates() {
         return trustAllCertificates;
     }
@@ -161,15 +158,14 @@ public class Lambda2Configuration implements Cloneable {
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
-    
+
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will
-     * look for a client instance in the registry automatically otherwise it
-     * will skip that checking.
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
      */
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
@@ -181,7 +177,7 @@ public class Lambda2Configuration implements Cloneable {
 
     public Lambda2Configuration copy() {
         try {
-            return (Lambda2Configuration)super.clone();
+            return (Lambda2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

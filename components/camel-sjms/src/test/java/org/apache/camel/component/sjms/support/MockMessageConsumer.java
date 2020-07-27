@@ -30,10 +30,13 @@ public class MockMessageConsumer extends ActiveMQMessageConsumer {
 
     private boolean isBadSession;
 
-    public MockMessageConsumer(ActiveMQSession session, ConsumerId consumerId, ActiveMQDestination dest, String name, String selector, int prefetch,
-                               int maximumPendingMessageCount, boolean noLocal, boolean browser, boolean dispatchAsync, MessageListener messageListener,
+    public MockMessageConsumer(ActiveMQSession session, ConsumerId consumerId, ActiveMQDestination dest, String name,
+                               String selector, int prefetch,
+                               int maximumPendingMessageCount, boolean noLocal, boolean browser, boolean dispatchAsync,
+                               MessageListener messageListener,
                                boolean isBadSession) throws JMSException {
-        super(session, consumerId, dest, name, selector, prefetch, maximumPendingMessageCount, noLocal, browser, dispatchAsync, messageListener);
+        super(session, consumerId, dest, name, selector, prefetch, maximumPendingMessageCount, noLocal, browser, dispatchAsync,
+              messageListener);
         this.isBadSession = isBadSession;
     }
 

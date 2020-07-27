@@ -25,10 +25,10 @@ public final class UnitUtils {
     }
 
     /**
-     * If having a size in bytes and wanting to print this in human friendly\
-     * format with xx kB, xx MB, xx GB instead of a large byte number.
+     * If having a size in bytes and wanting to print this in human friendly\ format with xx kB, xx MB, xx GB instead of
+     * a large byte number.
      *
-     * @param bytes  the value in bytes
+     * @param bytes the value in bytes
      */
     public static String printUnitFromBytes(long bytes) {
         // http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java

@@ -41,8 +41,8 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 @Component("resteasy")
 @Metadata(excludeProperties = "clientConnectionManager,connectionsPerRoute,connectionTimeToLive,"
-        + "httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
-        + "connectTimeout,socketTimeout,cookieStore")
+                              + "httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
+                              + "connectTimeout,socketTimeout,cookieStore")
 public class ResteasyComponent extends HttpComponent implements RestConsumerFactory {
 
     @Metadata(label = "advanced")
@@ -65,7 +65,8 @@ public class ResteasyComponent extends HttpComponent implements RestConsumerFact
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
-        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        HeaderFilterStrategy headerFilterStrategy
+                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         // restructure uri to be based on the parameters left as we don't want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
@@ -161,9 +162,11 @@ public class ResteasyComponent extends HttpComponent implements RestConsumerFact
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath,
+    public Consumer createConsumer(
+            CamelContext camelContext, Processor processor, String verb, String basePath,
             String uriTemplate, String consumes, String produces, RestConfiguration configuration,
-            Map<String, Object> parameters) throws Exception {
+            Map<String, Object> parameters)
+            throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {

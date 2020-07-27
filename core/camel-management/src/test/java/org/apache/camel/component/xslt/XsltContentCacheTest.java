@@ -34,15 +34,14 @@ import org.junit.jupiter.api.Test;
  */
 public class XsltContentCacheTest extends ContextTestSupport {
 
-    private static final String ORIGINAL_XSL =
-        "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
-            + "<xsl:template match=\"/\"><goodbye><xsl:value-of select=\"/hello\"/></goodbye></xsl:template>"
-            + "</xsl:stylesheet>";
+    private static final String ORIGINAL_XSL
+            = "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+              + "<xsl:template match=\"/\"><goodbye><xsl:value-of select=\"/hello\"/></goodbye></xsl:template>"
+              + "</xsl:stylesheet>";
 
-    private static final String NEW_XSL =
-        "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
-            + "<xsl:template match=\"/\"><goodnight><xsl:value-of select=\"/hello\"/></goodnight></xsl:template>"
-            + "</xsl:stylesheet>";
+    private static final String NEW_XSL = "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+                                          + "<xsl:template match=\"/\"><goodnight><xsl:value-of select=\"/hello\"/></goodnight></xsl:template>"
+                                          + "</xsl:stylesheet>";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -57,16 +56,19 @@ public class XsltContentCacheTest extends ContextTestSupport {
         context.start();
 
         // create file with original XSL transformation
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", ORIGINAL_XSL, Exchange.FILE_NAME, "hello.xsl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override",
+                ORIGINAL_XSL, Exchange.FILE_NAME, "hello.xsl");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:a")
-                        .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=false").to("mock:result");
+                        .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=false")
+                        .to("mock:result");
 
                 from("direct:b")
-                        .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=true").to("mock:result");
+                        .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=true")
+                        .to("mock:result");
 
                 from("direct:c")
                         .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string").to("mock:result");
@@ -88,7 +90,8 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now replace the file with a new XSL transformation
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL, Exchange.FILE_NAME, "hello.xsl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL,
+                Exchange.FILE_NAME, "hello.xsl");
 
         mock.reset();
         // we expect the new output as the cache is not enabled, so it's "goodnight" and not "goodbye"
@@ -107,7 +110,8 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now replace the file with a new XSL transformation
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL, Exchange.FILE_NAME, "hello.xsl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL,
+                Exchange.FILE_NAME, "hello.xsl");
 
         mock.reset();
         // we expect the original output as the cache is enabled, so it's "goodbye" and not "goodnight"
@@ -126,7 +130,8 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now replace the file with a new XSL transformation
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL, Exchange.FILE_NAME, "hello.xsl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL,
+                Exchange.FILE_NAME, "hello.xsl");
 
         mock.reset();
         // we expect the original output as the cache is enabled, so it's "goodbye" and not "goodnight"
@@ -135,7 +140,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
         template.sendBody("direct:c", "<hello>world!</hello>");
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testClearCachedStylesheetViaJmx() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -145,7 +150,8 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now replace the file with a new XSL transformation
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL, Exchange.FILE_NAME, "hello.xsl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL,
+                Exchange.FILE_NAME, "hello.xsl");
 
         mock.reset();
         // we expect the original output as the cache is enabled, so it's "goodbye" and not "goodnight"
@@ -153,16 +159,18 @@ public class XsltContentCacheTest extends ContextTestSupport {
 
         template.sendBody("direct:b", "<hello>world!</hello>");
         mock.assertIsSatisfied();
-        
+
         // clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
-        Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"xslt:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);        
+        Set<ObjectName> objNameSet = mbeanServer
+                .queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"xslt:*contentCache=true*\",*"), null);
+        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);
         mbeanServer.invoke(managedObjName, "clearCachedStylesheet", null, null);
-        
+
         // now replace the file with a new XSL transformation
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL, Exchange.FILE_NAME, "hello.xsl");
-        
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL,
+                Exchange.FILE_NAME, "hello.xsl");
+
         mock.reset();
         // we've cleared the cache so we expect "goodnight" and not "goodbye"
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodnight>world!</goodnight>");

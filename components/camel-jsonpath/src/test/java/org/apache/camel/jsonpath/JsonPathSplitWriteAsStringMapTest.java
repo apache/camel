@@ -34,10 +34,10 @@ public class JsonPathSplitWriteAsStringMapTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().jsonpathWriteAsString("$.content")
+                        .split().jsonpathWriteAsString("$.content")
                         .to("mock:line")
                         .to("log:line")
-                    .end();
+                        .end();
             }
         };
     }

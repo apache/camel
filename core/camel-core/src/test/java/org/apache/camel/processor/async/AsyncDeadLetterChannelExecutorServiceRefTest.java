@@ -42,7 +42,8 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
                 profile.setPoolSize(5);
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).executorServiceRef("myAsyncPool"));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false)
+                        .executorServiceRef("myAsyncPool"));
 
                 from("direct:in").threads(2).to("mock:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

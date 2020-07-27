@@ -30,8 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to verify that we can pool a BINARY file from the FTP Server and
- * store it on a local file path
+ * Unit test to verify that we can pool a BINARY file from the FTP Server and store it on a local file path
  */
 public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
 

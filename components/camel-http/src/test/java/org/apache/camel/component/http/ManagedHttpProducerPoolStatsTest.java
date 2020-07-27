@@ -44,13 +44,10 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myapp", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myapp", (request, response, context) -> {
                     response.setEntity(new StringEntity("OK", "ASCII"));
                     response.setStatusCode(HttpStatus.SC_OK);
                 }).create();
@@ -114,6 +111,5 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
-
 
 }

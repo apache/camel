@@ -27,8 +27,9 @@ public class ValidationWithHandlePipelineTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().process(validator).to("mock:valid").doCatch(ValidationException.class).doTry().process(validator).to("mock:valid")
-                    .doCatch(ValidationException.class).pipeline("log:a", "mock:invalid");
+                from("direct:start").doTry().process(validator).to("mock:valid").doCatch(ValidationException.class).doTry()
+                        .process(validator).to("mock:valid")
+                        .doCatch(ValidationException.class).pipeline("log:a", "mock:invalid");
             }
         };
     }

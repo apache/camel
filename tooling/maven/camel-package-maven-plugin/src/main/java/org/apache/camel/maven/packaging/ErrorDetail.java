@@ -34,7 +34,8 @@ public final class ErrorDetail {
     private final List<String> missingEndpointDocumentation = new ArrayList<>();
 
     public boolean hasErrors() {
-        return missingLabel || missingDescription || missingSyntax || missingUriPath || !missingComponentDocumentation.isEmpty() || !missingEndpointDocumentation.isEmpty();
+        return missingLabel || missingDescription || missingSyntax || missingUriPath || !missingComponentDocumentation.isEmpty()
+                || !missingEndpointDocumentation.isEmpty();
     }
 
     public String getKind() {

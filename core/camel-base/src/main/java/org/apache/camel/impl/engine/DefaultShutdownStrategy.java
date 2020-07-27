@@ -61,58 +61,54 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link org.apache.camel.spi.ShutdownStrategy} which uses graceful shutdown.
  * <p/>
- * Graceful shutdown ensures that any inflight and pending messages will be taken into account
- * and it will wait until these exchanges has been completed.
+ * Graceful shutdown ensures that any inflight and pending messages will be taken into account and it will wait until
+ * these exchanges has been completed.
  * <p/>
  * This strategy will perform graceful shutdown in two steps:
  * <ul>
- *     <li>Graceful - By suspending/stopping consumers, and let any in-flight exchanges complete</li>
- *     <li>Forced - After a given period of time, a timeout occurred and if there are still pending
- *     exchanges to complete, then a more aggressive forced strategy is performed.</li>
+ * <li>Graceful - By suspending/stopping consumers, and let any in-flight exchanges complete</li>
+ * <li>Forced - After a given period of time, a timeout occurred and if there are still pending exchanges to complete,
+ * then a more aggressive forced strategy is performed.</li>
  * </ul>
- * The idea by the <tt>graceful</tt> shutdown strategy, is to stop taking in more new messages,
- * and allow any existing inflight messages to complete. Then when there is no more inflight messages
- * then the routes can be fully shutdown. This mean that if there is inflight messages then we will have
- * to wait for these messages to complete. If they do not complete after a period of time, then a
- * timeout triggers. And then a more aggressive strategy takes over.
+ * The idea by the <tt>graceful</tt> shutdown strategy, is to stop taking in more new messages, and allow any existing
+ * inflight messages to complete. Then when there is no more inflight messages then the routes can be fully shutdown.
+ * This mean that if there is inflight messages then we will have to wait for these messages to complete. If they do not
+ * complete after a period of time, then a timeout triggers. And then a more aggressive strategy takes over.
  * <p/>
- * The idea by the <tt>forced</tt> shutdown strategy, is to stop continue processing messages.
- * And force routes and its services to shutdown now. There is a risk when shutting down now,
- * that some resources is not properly shutdown, which can cause side effects. The timeout value
- * is by default 45 seconds, but can be customized.
+ * The idea by the <tt>forced</tt> shutdown strategy, is to stop continue processing messages. And force routes and its
+ * services to shutdown now. There is a risk when shutting down now, that some resources is not properly shutdown, which
+ * can cause side effects. The timeout value is by default 45 seconds, but can be customized.
  * <p/>
- * As this strategy will politely wait until all exchanges has been completed it can potential wait
- * for a long time, and hence why a timeout value can be set. When the timeout triggers you can also
- * specify whether the remainder consumers should be shutdown now or ignore.
+ * As this strategy will politely wait until all exchanges has been completed it can potential wait for a long time, and
+ * hence why a timeout value can be set. When the timeout triggers you can also specify whether the remainder consumers
+ * should be shutdown now or ignore.
  * <p/>
- * Will by default use a timeout of 45 seconds by which it will shutdown now the remaining consumers.
- * This ensures that when shutting down Camel it at some point eventually will shutdown.
- * This behavior can of course be configured using the {@link #setTimeout(long)} and
- * {@link #setShutdownNowOnTimeout(boolean)} methods.
+ * Will by default use a timeout of 45 seconds by which it will shutdown now the remaining consumers. This ensures that
+ * when shutting down Camel it at some point eventually will shutdown. This behavior can of course be configured using
+ * the {@link #setTimeout(long)} and {@link #setShutdownNowOnTimeout(boolean)} methods.
  * <p/>
- * Routes will by default be shutdown in the reverse order of which they where started.
- * You can customize this using the {@link #setShutdownRoutesInReverseOrder(boolean)} method.
+ * Routes will by default be shutdown in the reverse order of which they where started. You can customize this using the
+ * {@link #setShutdownRoutesInReverseOrder(boolean)} method.
  * <p/>
- * After route consumers have been shutdown, then any {@link ShutdownPrepared} services on the routes
- * is being prepared for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} which
- * <tt>force=false</tt>.
+ * After route consumers have been shutdown, then any {@link ShutdownPrepared} services on the routes is being prepared
+ * for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} which <tt>force=false</tt>.
  * <p/>
- * Then if a timeout occurred and the strategy has been configured with shutdown-now on timeout, then
- * the strategy performs a more aggressive forced shutdown, by forcing all consumers to shutdown
- * and then invokes {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} with <tt>force=true</tt>
- * on the services. This allows the services to know they should force shutdown now.
+ * Then if a timeout occurred and the strategy has been configured with shutdown-now on timeout, then the strategy
+ * performs a more aggressive forced shutdown, by forcing all consumers to shutdown and then invokes
+ * {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} with <tt>force=true</tt> on the services. This allows the
+ * services to know they should force shutdown now.
  * <p/>
- * When timeout occurred and a forced shutdown is happening, then there may be threads/tasks which are
- * still inflight which may be rejected continued being routed. By default this can cause WARN and ERRORs
- * to be logged. The option {@link #setSuppressLoggingOnTimeout(boolean)} can be used to suppress these
- * logs, so they are logged at TRACE level instead.
+ * When timeout occurred and a forced shutdown is happening, then there may be threads/tasks which are still inflight
+ * which may be rejected continued being routed. By default this can cause WARN and ERRORs to be logged. The option
+ * {@link #setSuppressLoggingOnTimeout(boolean)} can be used to suppress these logs, so they are logged at TRACE level
+ * instead.
  * <p/>
- * Also when a timeout occurred then information about the inflight exchanges is logged, if {@link #isLogInflightExchangesOnTimeout()}
- * is enabled (is by default). This allows end users to known where these inflight exchanges currently are in the route(s),
- * and how long time they have been inflight.
+ * Also when a timeout occurred then information about the inflight exchanges is logged, if
+ * {@link #isLogInflightExchangesOnTimeout()} is enabled (is by default). This allows end users to known where these
+ * inflight exchanges currently are in the route(s), and how long time they have been inflight.
  * <p/>
- * This information can also be obtained from the {@link org.apache.camel.spi.InflightRepository}
- * at all time during runtime.
+ * This information can also be obtained from the {@link org.apache.camel.spi.InflightRepository} at all time during
+ * runtime.
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
 
@@ -154,23 +150,29 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     @Override
-    public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
+    public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit)
+            throws Exception {
         doShutdown(context, routes, timeout, timeUnit, false, false, false);
     }
 
     @Override
-    public boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
+    public boolean shutdown(
+            CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
+            throws Exception {
         List<RouteStartupOrder> routes = Collections.singletonList(route);
         return doShutdown(context, routes, timeout, timeUnit, false, abortAfterTimeout, false);
     }
 
     @Override
-    public void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
+    public void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit)
+            throws Exception {
         doShutdown(context, routes, timeout, timeUnit, true, false, false);
     }
 
-    protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
-                                 boolean suspendOnly, boolean abortAfterTimeout, boolean forceShutdown) throws Exception {
+    protected boolean doShutdown(
+            CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
+            boolean suspendOnly, boolean abortAfterTimeout, boolean forceShutdown)
+            throws Exception {
 
         // timeout must be a positive value
         if (timeout <= 0) {
@@ -193,15 +195,18 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         routesOrdered.sort(comparator);
 
         if (suspendOnly) {
-            LOG.info("Starting to graceful suspend {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
+            LOG.info("Starting to graceful suspend {} routes (timeout {} {})", routesOrdered.size(), timeout,
+                    timeUnit.toString().toLowerCase(Locale.ENGLISH));
         } else {
-            LOG.info("Starting to graceful shutdown {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
+            LOG.info("Starting to graceful shutdown {} routes (timeout {} {})", routesOrdered.size(), timeout,
+                    timeUnit.toString().toLowerCase(Locale.ENGLISH));
         }
 
         // use another thread to perform the shutdowns so we can support timeout
         timeoutOccurred.set(false);
         try {
-            currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly,
+            currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(
+                    context, routesOrdered, timeout, timeUnit, suspendOnly,
                     abortAfterTimeout, timeoutOccurred, isLogInflightExchangesOnTimeout()));
             currentShutdownTaskFuture.get(timeout, timeUnit);
         } catch (RejectedExecutionException e) {
@@ -225,7 +230,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // if set, stop processing and return false to indicate that the shutdown is aborting
             if (!forceShutdown && abortAfterTimeout) {
                 LOG.warn("Timeout occurred during graceful shutdown. Aborting the shutdown now."
-                        + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+                         + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                 // we attempt to force shutdown so lets log the current inflight exchanges which are affected
                 logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
@@ -234,7 +239,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             } else {
                 if (forceShutdown || shutdownNowOnTimeout) {
                     LOG.warn("Timeout occurred during graceful shutdown. Forcing the routes to be shutdown now."
-                            + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                     // we attempt to force shutdown so lets log the current inflight exchanges which are affected
                     logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
@@ -250,7 +255,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     }
                 } else {
                     LOG.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
-                            + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                     logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
                 }
@@ -365,8 +370,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // it has completed its current task
             ShutdownRunningTask current = order.getRoute().getShutdownRunningTask();
             if (current != ShutdownRunningTask.CompleteCurrentTaskOnly) {
-                LOG.debug("Changing shutdownRunningTask from {} to " +  ShutdownRunningTask.CompleteCurrentTaskOnly
-                    + " on route {} to shutdown faster", current, order.getRoute().getId());
+                LOG.debug("Changing shutdownRunningTask from {} to " + ShutdownRunningTask.CompleteCurrentTaskOnly
+                          + " on route {} to shutdown faster",
+                        current, order.getRoute().getId());
                 order.getRoute().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
             }
 
@@ -379,7 +385,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Shutdown all the consumers immediately.
      *
-     * @param routeId  the route id to suspend
+     * @param routeId   the route id to suspend
      * @param consumers the consumers to shutdown
      */
     protected void shutdownNow(String routeId, List<Consumer> consumers) {
@@ -462,14 +468,15 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     /**
-     * Prepares the services for shutdown, by invoking the {@link ShutdownPrepared#prepareShutdown(boolean, boolean)} method
-     * on the service if it implement this interface.
+     * Prepares the services for shutdown, by invoking the {@link ShutdownPrepared#prepareShutdown(boolean, boolean)}
+     * method on the service if it implement this interface.
      *
-     * @param service the service
-     * @param forced  whether to force shutdown
+     * @param service         the service
+     * @param forced          whether to force shutdown
      * @param includeChildren whether to prepare the child of the service as well
      */
-    private void prepareShutdown(Service service, boolean suspendOnly, boolean forced, boolean includeChildren, boolean suppressLogging) {
+    private void prepareShutdown(
+            Service service, boolean suspendOnly, boolean forced, boolean includeChildren, boolean suppressLogging) {
         Set<Service> list;
         if (includeChildren) {
             // include error handlers as we want to prepare them for shutdown as well
@@ -531,7 +538,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         private final boolean logInflightExchangesOnTimeout;
 
         ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
-                            boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred, boolean logInflightExchangesOnTimeout) {
+                     boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred,
+                     boolean logInflightExchangesOnTimeout) {
             this.context = context;
             this.routes = routes;
             this.suspendOnly = suspendOnly;
@@ -598,7 +606,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         // use basic endpoint uri to not log verbose details or potential sensitive data
                         String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                         uri = URISupport.sanitizeUri(uri);
-                        LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(), uri);
+                        LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(),
+                                uri);
                     } else if (shutdown) {
                         shutdownNow(order.getRoute().getId(), consumer);
                         // use basic endpoint uri to not log verbose details or potential sensitive data
@@ -609,7 +618,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         // we will stop it later, but for now it must run to be able to help all inflight messages
                         // be safely completed
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.debug("Route: " + order.getRoute().getId() + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
+                        LOG.debug("Route: " + order.getRoute().getId()
+                                  + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
                     }
                 }
             }
@@ -653,8 +663,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                             csb.append(row);
                         }
 
-                        String msg = "Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
-                                + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.";
+                        String msg = "Waiting as there are still " + size
+                                     + " inflight and pending exchanges to complete, timeout in "
+                                     + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds))
+                                     + " seconds.";
                         msg += " Inflights per route: [" + csb.toString() + "]";
 
                         LOG.info(msg);
@@ -722,8 +734,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Calculates the total number of inflight exchanges for the given route
      *
-     * @param order the route
-     * @return number of inflight exchanges
+     * @param  order the route
+     * @return       number of inflight exchanges
      */
     protected static int getPendingInflightExchanges(RouteStartupOrder order) {
         int inflight = 0;

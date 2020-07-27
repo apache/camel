@@ -37,7 +37,8 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
 
     @Test
     public void testWebhookCall() throws Exception {
-        WebhookConfiguration config = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        WebhookConfiguration config
+                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl();
 
         try (InputStream content = getClass().getClassLoader().getResourceAsStream("messages/webhook-call.json")) {

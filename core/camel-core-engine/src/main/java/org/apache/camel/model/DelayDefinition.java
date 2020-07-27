@@ -76,8 +76,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     /**
      * Sets the delay time in millis to delay
      *
-     * @param delay delay time in millis
-     * @return the builder
+     * @param  delay delay time in millis
+     * @return       the builder
      */
     public DelayDefinition delayTime(Long delay) {
         setExpression(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(delay)));
@@ -85,13 +85,12 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Whether or not the caller should run the task when it was rejected by the
-     * thread pool.
+     * Whether or not the caller should run the task when it was rejected by the thread pool.
      * <p/>
      * Is by default <tt>true</tt>
      *
-     * @param callerRunsWhenRejected whether or not the caller should run
-     * @return the builder
+     * @param  callerRunsWhenRejected whether or not the caller should run
+     * @return                        the builder
      */
     public DelayDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
         setCallerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
@@ -99,8 +98,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>not</b> block
-     * while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
      */
     public DelayDefinition asyncDelayed() {
         setAsyncDelayed(Boolean.toString(true));
@@ -108,8 +106,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>not</b> block
-     * while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
      */
     public DelayDefinition syncDelayed() {
         setAsyncDelayed(Boolean.toString(false));

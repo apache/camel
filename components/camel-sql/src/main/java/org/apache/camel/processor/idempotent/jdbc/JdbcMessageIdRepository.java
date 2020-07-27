@@ -37,7 +37,8 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
     private String tableName;
 
     private String tableExistsString = "SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0";
-    private String createString = "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), createdAt TIMESTAMP)";
+    private String createString
+            = "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), createdAt TIMESTAMP)";
     private String queryString = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
     private String insertString = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
     private String deleteString = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
@@ -76,7 +77,7 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        
+
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 try {
@@ -91,7 +92,8 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
                             log.info("table created with query '{}'", getCreateString());
                         } catch (DataAccessException dae) {
                             // we will fail if we cannot create it
-                            log.error("Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
+                            log.error(
+                                    "Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
                                     getCreateString(), e.getMessage());
                             throw dae;
                         }
@@ -102,7 +104,7 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
                 }
                 return Boolean.TRUE;
             }
-        });   
+        });
     }
 
     @Override
@@ -119,7 +121,7 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
     protected int delete(String key) {
         return jdbcTemplate.update(getDeleteString(), processorName, key);
     }
-    
+
     @Override
     protected int delete() {
         return jdbcTemplate.update(getClearString(), processorName);

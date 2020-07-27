@@ -26,17 +26,17 @@ public class MyJavaDslRouteBuilder extends RouteBuilder {
         System.setProperty("ENV", "src/test/resources/");
 
         from("direct:start").routeId("bar")
-            .log("I was here")
-            .setHeader("foo", constant("123"))
-            .choice()
+                .log("I was here")
+                .setHeader("foo", constant("123"))
+                .choice()
                 .when(header("foo"))
-                    .to("log:a")
-                    .toD("log:a2")
+                .to("log:a")
+                .toD("log:a2")
                 .when().header("bar")
-                    .toD("log:b")
+                .toD("log:b")
                 .otherwise()
-                    .log("none")
-            .end()
-            .to("mock:result");
+                .log("none")
+                .end()
+                .to("mock:result");
     }
 }

@@ -66,7 +66,8 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 /**
  * Generate an OSGi manifest for this project
  */
-@Mojo(name = "manifest", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "manifest", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true,
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ManifestPlugin extends BundlePlugin {
     /**
      * When true, generate the manifest by rebuilding the full bundle in memory
@@ -75,10 +76,9 @@ public class ManifestPlugin extends BundlePlugin {
     protected boolean rebuildBundle;
 
     /**
-     * When true, manifest generation on incremental builds is supported in IDEs
-     * like Eclipse. Please note that the underlying BND library does not
-     * support incremental build, which means always the whole manifest and SCR
-     * metadata is generated.
+     * When true, manifest generation on incremental builds is supported in IDEs like Eclipse. Please note that the
+     * underlying BND library does not support incremental build, which means always the whole manifest and SCR metadata
+     * is generated.
      */
     @Parameter(property = "supportIncrementalBuild")
     private boolean supportIncrementalBuild;
@@ -99,7 +99,8 @@ public class ManifestPlugin extends BundlePlugin {
         // activated
         // and when any java file was touched since last build
         if (buildContext.isIncremental() && !(supportIncrementalBuild && anyJavaSourceFileTouchedSinceLastBuild())) {
-            getLog().debug("Skipping manifest generation because no java source file was added, updated or removed since last build.");
+            getLog().debug(
+                    "Skipping manifest generation because no java source file was added, updated or removed since last build.");
             return;
         }
 
@@ -107,7 +108,8 @@ public class ManifestPlugin extends BundlePlugin {
         try {
             analyzer = getAnalyzer(project, instructions, classpath);
         } catch (FileNotFoundException e) {
-            throw new MojoExecutionException("Cannot find " + e.getMessage() + " (manifest goal must be run after compile phase)", e);
+            throw new MojoExecutionException(
+                    "Cannot find " + e.getMessage() + " (manifest goal must be run after compile phase)", e);
         } catch (IOException e) {
             throw new MojoExecutionException("Error trying to generate Manifest", e);
         } catch (MojoFailureException e) {
@@ -138,8 +140,7 @@ public class ManifestPlugin extends BundlePlugin {
     }
 
     /**
-     * Checks if any *.java file was added, updated or removed since last build
-     * in any source directory.
+     * Checks if any *.java file was added, updated or removed since last build in any source directory.
      */
     private boolean anyJavaSourceFileTouchedSinceLastBuild() {
         @SuppressWarnings("unchecked")
@@ -156,18 +157,20 @@ public class ManifestPlugin extends BundlePlugin {
     }
 
     private boolean containsJavaFile(Scanner scanner) {
-        String[] includes = new String[] {"**/*.java"};
+        String[] includes = new String[] { "**/*.java" };
         scanner.setIncludes(includes);
         scanner.scan();
         return scanner.getIncludedFiles().length > 0;
     }
 
-    public Manifest getManifest(MavenProject project, ClassPathItem[] classpath) throws IOException, MojoFailureException, MojoExecutionException, Exception {
+    public Manifest getManifest(MavenProject project, ClassPathItem[] classpath)
+            throws IOException, MojoFailureException, MojoExecutionException, Exception {
         return getManifest(project, new LinkedHashMap<String, String>(), classpath, buildContext);
     }
 
-    public Manifest getManifest(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath, BuildContext buildContext)
-        throws IOException, MojoFailureException, MojoExecutionException, Exception {
+    public Manifest getManifest(
+            MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath, BuildContext buildContext)
+            throws IOException, MojoFailureException, MojoExecutionException, Exception {
         Analyzer analyzer = getAnalyzer(project, instructions, classpath);
 
         Jar jar = analyzer.getJar();
@@ -183,7 +186,8 @@ public class ManifestPlugin extends BundlePlugin {
         return manifest;
     }
 
-    private static void exportScr(Analyzer analyzer, Jar jar, File scrLocation, BuildContext buildContext, Log log) throws Exception {
+    private static void exportScr(Analyzer analyzer, Jar jar, File scrLocation, BuildContext buildContext, Log log)
+            throws Exception {
         log.debug("Export SCR metadata to: " + scrLocation.getPath());
         scrLocation.mkdirs();
 
@@ -220,11 +224,13 @@ public class ManifestPlugin extends BundlePlugin {
         }
     }
 
-    protected Analyzer getAnalyzer(MavenProject project, ClassPathItem[] classpath) throws IOException, MojoExecutionException, Exception {
+    protected Analyzer getAnalyzer(MavenProject project, ClassPathItem[] classpath)
+            throws IOException, MojoExecutionException, Exception {
         return getAnalyzer(project, new LinkedHashMap<>(), classpath);
     }
 
-    protected Analyzer getAnalyzer(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath) throws IOException, MojoExecutionException, Exception {
+    protected Analyzer getAnalyzer(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath)
+            throws IOException, MojoExecutionException, Exception {
         if (rebuildBundle && supportedProjectTypes.contains(project.getArtifact().getType())) {
             return buildOSGiBundle(project, instructions, classpath);
         }
@@ -255,7 +261,7 @@ public class ManifestPlugin extends BundlePlugin {
         boolean isOutputDirectory = file.equals(getOutputDirectory());
 
         if (analyzer.getProperty(Analyzer.EXPORT_PACKAGE) == null && analyzer.getProperty(Analyzer.EXPORT_CONTENTS) == null
-            && analyzer.getProperty(Analyzer.PRIVATE_PACKAGE) == null && !isOutputDirectory) {
+                && analyzer.getProperty(Analyzer.PRIVATE_PACKAGE) == null && !isOutputDirectory) {
             String export = calculateExportsFromContents(analyzer.getJar());
             analyzer.setProperty(Analyzer.EXPORT_PACKAGE, export);
         }
@@ -324,8 +330,10 @@ public class ManifestPlugin extends BundlePlugin {
             String curdata = getIncrementalData();
             if (curdata.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
-                Set<String> stale = Stream.concat(Stream.of(new File(project.getBuild().getOutputDirectory())), project.getArtifacts().stream().map(Artifact::getFile))
-                    .flatMap(f -> newer(lastmod, f)).collect(Collectors.toSet());
+                Set<String> stale = Stream
+                        .concat(Stream.of(new File(project.getBuild().getOutputDirectory())),
+                                project.getArtifacts().stream().map(Artifact::getFile))
+                        .flatMap(f -> newer(lastmod, f)).collect(Collectors.toSet());
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating manifest.");
                     if (showStaleFiles) {
@@ -352,11 +360,13 @@ public class ManifestPlugin extends BundlePlugin {
     }
 
     private String getIncrementalData() {
-        return getInstructions().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining("\n", "", "\n"));
+        return getInstructions().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining("\n", "", "\n"));
     }
 
     private Path getIncrementalDataPath(MavenProject project) {
-        return Paths.get(project.getBuild().getDirectory(), "maven-bundle-plugin", "org.apache.felix_maven-bundle-plugin_manifest_xx");
+        return Paths.get(project.getBuild().getDirectory(), "maven-bundle-plugin",
+                "org.apache.felix_maven-bundle-plugin_manifest_xx");
     }
 
     private long lastmod(Path p) {
@@ -370,13 +380,15 @@ public class ManifestPlugin extends BundlePlugin {
     private Stream<String> newer(long lastmod, File file) {
         try {
             if (file.isDirectory()) {
-                return Files.walk(file.toPath()).filter(Files::isRegularFile).filter(p -> lastmod(p) > lastmod).map(Path::toString);
+                return Files.walk(file.toPath()).filter(Files::isRegularFile).filter(p -> lastmod(p) > lastmod)
+                        .map(Path::toString);
             } else if (file.isFile()) {
                 if (lastmod(file.toPath()) > lastmod) {
                     if (file.getName().endsWith(".jar")) {
                         try (ZipFile zf = new ZipFile(file)) {
-                            return zf.stream().filter(ze -> !ze.isDirectory()).filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList()).stream();
+                            return zf.stream().filter(ze -> !ze.isDirectory())
+                                    .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
+                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList()).stream();
                         }
                     } else {
                         return Stream.of(file.toString());
@@ -392,8 +404,10 @@ public class ManifestPlugin extends BundlePlugin {
         }
     }
 
-    public static void writeManifest(Analyzer analyzer, File outputFile, boolean niceManifest, boolean exportScr, File scrLocation, BuildContext buildContext, Log log)
-        throws Exception {
+    public static void writeManifest(
+            Analyzer analyzer, File outputFile, boolean niceManifest, boolean exportScr, File scrLocation,
+            BuildContext buildContext, Log log)
+            throws Exception {
         Properties properties = analyzer.getProperties();
         Jar jar = analyzer.getJar();
         Manifest manifest = jar.getManifest();
@@ -419,7 +433,9 @@ public class ManifestPlugin extends BundlePlugin {
         }
     }
 
-    public static void writeManifest(Manifest manifest, File outputFile, boolean niceManifest, BuildContext buildContext, Log log) throws IOException {
+    public static void writeManifest(
+            Manifest manifest, File outputFile, boolean niceManifest, BuildContext buildContext, Log log)
+            throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             ManifestWriter.outputManifest(manifest, baos, niceManifest);
@@ -438,12 +454,12 @@ public class ManifestPlugin extends BundlePlugin {
     }
 
     /**
-     * Update a file with the given binary content if neeed.
-     * The file won't be modified if the content is already the same.
+     * Update a file with the given binary content if neeed. The file won't be modified if the content is already the
+     * same.
      *
-     * @param path the path of the file to update
-     * @param newdata the new binary data, <code>null</code> to delete the file
-     * @return <code>true</code> if the file was modified, <code>false</code> otherwise
+     * @param  path        the path of the file to update
+     * @param  newdata     the new binary data, <code>null</code> to delete the file
+     * @return             <code>true</code> if the file was modified, <code>false</code> otherwise
      * @throws IOException if an exception occurs
      */
     public static boolean updateFile(Path path, byte[] newdata) throws IOException {

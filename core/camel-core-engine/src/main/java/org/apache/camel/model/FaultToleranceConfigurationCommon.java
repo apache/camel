@@ -73,9 +73,8 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance
-     * to lookup and use from the registry. When using this, then any other circuit breaker options
-     * are not in use.
+     * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use
+     * from the registry. When using this, then any other circuit breaker options are not in use.
      */
     public void setCircuitBreakerRef(String circuitBreakerRef) {
         this.circuitBreakerRef = circuitBreakerRef;
@@ -119,8 +118,8 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Configures the failure rate threshold in percentage.
-     * If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls.
+     * Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold
+     * the CircuitBreaker transitions to open and starts short-circuiting calls.
      * <p>
      * The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.
      */
@@ -133,8 +132,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Whether timeout is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether timeout is enabled or not on the circuit breaker. Default is false.
      */
     public void setTimeoutEnabled(String timeoutEnabled) {
         this.timeoutEnabled = timeoutEnabled;
@@ -145,8 +143,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Configures the thread execution timeout.
-     * Default value is 1 second.
+     * Configures the thread execution timeout. Default value is 1 second.
      */
     public void setTimeoutDuration(String timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
@@ -157,8 +154,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Configures the pool size of the thread pool when timeout is enabled.
-     * Default value is 10.
+     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
      */
     public void setTimeoutPoolSize(String timeoutPoolSize) {
         this.timeoutPoolSize = timeoutPoolSize;
@@ -180,8 +176,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Whether bulkhead is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether bulkhead is enabled or not on the circuit breaker. Default is false.
      */
     public void setBulkheadEnabled(String bulkheadEnabled) {
         this.bulkheadEnabled = bulkheadEnabled;

@@ -69,8 +69,8 @@ import static org.apache.camel.tooling.util.Strings.between;
  * Generate configurer classes from @Configuer annotated classes.
  */
 @Mojo(name = "generate-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-        requiresDependencyCollection = ResolutionScope.COMPILE,
-        requiresDependencyResolution = ResolutionScope.COMPILE)
+      requiresDependencyCollection = ResolutionScope.COMPILE,
+      requiresDependencyResolution = ResolutionScope.COMPILE)
 // must include runtime dependencies to generate configurer source
 public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
@@ -86,16 +86,15 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
     protected File resourcesOutputDir;
 
     /**
-     * Whether to discover configurer classes from classpath by scanning for @Configurer annotations.
-     * This requires using jandex-maven-plugin.
+     * Whether to discover configurer classes from classpath by scanning for @Configurer annotations. This requires
+     * using jandex-maven-plugin.
      */
     @Parameter(defaultValue = "true")
     protected boolean discoverClasses = true;
 
     /**
-     * To generate configurer for these classes.
-     * The syntax is either <tt>fqn</tt> or </tt>fqn=targetFqn</tt>.
-     * This allows to map source class to target class to generate the source code using a different classname.
+     * To generate configurer for these classes. The syntax is either <tt>fqn</tt> or </tt>fqn=targetFqn</tt>. This
+     * allows to map source class to target class to generate the source code using a different classname.
      */
     @Parameter
     protected List<String> classes;
@@ -198,10 +197,9 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * Add any relevant project dependencies to the classpath. Takes
-     * includeProjectDependencies into consideration.
+     * Add any relevant project dependencies to the classpath. Takes includeProjectDependencies into consideration.
      *
-     * @param path classpath of {@link java.net.URL} objects
+     * @param  path                   classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
     private void addRelevantProjectDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
@@ -222,7 +220,7 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
             while (iter.hasNext()) {
                 Artifact classPathElement = iter.next();
                 getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                        + " to classpath");
+                               + " to classpath");
                 File file = classPathElement.getFile();
                 if (file != null) {
                     path.add(file.toURI().toURL());
@@ -252,7 +250,7 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         List<Artifact> artifacts = new ArrayList<>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency)dependencies.next();
+            Dependency dependency = (Dependency) dependencies.next();
 
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
@@ -307,7 +305,8 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         Class clazz = projectClassLoader.loadClass(fqn);
         // find all public setters
         doWithMethods(clazz, m -> {
-            boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set") && Character.isUpperCase(m.getName().charAt(3));
+            boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set")
+                    && Character.isUpperCase(m.getName().charAt(3));
             setter &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             setter &= filterSetter(m);
             if (setter) {

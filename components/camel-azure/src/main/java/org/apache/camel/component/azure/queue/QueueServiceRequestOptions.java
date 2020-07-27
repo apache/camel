@@ -21,7 +21,7 @@ import org.apache.camel.component.azure.common.AbstractServiceRequestOptions;
 
 public class QueueServiceRequestOptions extends AbstractServiceRequestOptions {
     private QueueRequestOptions requestOpts;
-    
+
     public QueueRequestOptions getRequestOpts() {
         return requestOpts;
     }

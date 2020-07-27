@@ -71,7 +71,8 @@ public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
     private static class MyDestinationResolver implements DestinationResolver {
 
         @Override
-        public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
+        public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
+                throws JMSException {
             throw new DestinationResolutionException("Forced");
         }
     }

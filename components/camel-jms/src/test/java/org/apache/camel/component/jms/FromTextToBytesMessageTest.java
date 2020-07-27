@@ -91,17 +91,17 @@ public class FromTextToBytesMessageTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo?jmsMessageType=Text")
-                    .to("activemq:queue:bar?jmsMessageType=Bytes");
+                        .to("activemq:queue:bar?jmsMessageType=Bytes");
 
                 from("activemq:queue:header?jmsMessageType=Text")
-                    .setHeader("myHeader", constant("123"))
-                    .to("activemq:queue:bar?jmsMessageType=Bytes");
+                        .setHeader("myHeader", constant("123"))
+                        .to("activemq:queue:bar?jmsMessageType=Bytes");
 
                 from("activemq:queue:text?jmsMessageType=Text")
-                    .to("activemq:queue:bar?jmsMessageType=Text");
+                        .to("activemq:queue:bar?jmsMessageType=Text");
 
                 from("activemq:queue:bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

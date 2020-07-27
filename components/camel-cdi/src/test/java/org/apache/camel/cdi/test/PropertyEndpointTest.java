@@ -70,12 +70,12 @@ public class PropertyEndpointTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(CustomPropertiesCamelContext.class, PropertyEndpointRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(CustomPropertiesCamelContext.class, PropertyEndpointRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

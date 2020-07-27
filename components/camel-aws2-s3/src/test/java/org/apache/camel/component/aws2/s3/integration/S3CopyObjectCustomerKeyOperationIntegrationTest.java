@@ -55,14 +55,16 @@ import static software.amazon.awssdk.services.s3.model.ServerSideEncryption.AES2
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3CopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSupport {
-    
+
     String key = UUID.randomUUID().toString();
     byte[] secretKey = generateSecretKey();
     String b64Key = Base64.getEncoder().encodeToString(secretKey);
     String b64KeyMd5 = Md5Utils.md5AsBase64(secretKey);
 
     @BindToRegistry("amazonS3Client")
-    S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
+    S3Client client
+            = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+                    .region(Region.EU_WEST_1).build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -93,25 +95,24 @@ public class S3CopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSu
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.copyObject);
             }
         });
-        
+
         Exchange res = template.request("direct:getObject", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
                 GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .key("test1.txt")
-                    .bucket("mycamel1")
-                    .sseCustomerKey(b64Key)
-                    .sseCustomerAlgorithm(AES256.name())
-                    .sseCustomerKeyMD5(b64KeyMd5)
-                    .build();
+                        .key("test1.txt")
+                        .bucket("mycamel1")
+                        .sseCustomerKey(b64Key)
+                        .sseCustomerAlgorithm(AES256.name())
+                        .sseCustomerKeyMD5(b64KeyMd5)
+                        .build();
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
                 exchange.getIn().setBody(getObjectRequest);
             }
         });
-        
+
         ResponseInputStream<GetObjectResponse> s3 = res.getIn().getBody(ResponseInputStream.class);
-        
 
         assertEquals("Test", readInputStream(s3));
 
@@ -123,18 +124,20 @@ public class S3CopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false&useCustomerKey=true&customerKeyId=RAW(" + b64Key + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
+                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false&useCustomerKey=true&customerKeyId=RAW(" + b64Key
+                                     + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
                 String awsEndpoint1 = "aws2-s3://mycamel1?autoCreateBucket=false&pojoRequest=true";
-                from("direct:putObject").setHeader(AWS2S3Constants.KEY, constant("test.txt")).setBody(constant("Test")).to(awsEndpoint);
+                from("direct:putObject").setHeader(AWS2S3Constants.KEY, constant("test.txt")).setBody(constant("Test"))
+                        .to(awsEndpoint);
 
                 from("direct:copyObject").to(awsEndpoint);
-                
+
                 from("direct:getObject").to(awsEndpoint1).to("mock:result");
 
             }
         };
     }
-    
+
     protected static byte[] generateSecretKey() {
         KeyGenerator generator;
         try {
@@ -146,13 +149,14 @@ public class S3CopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSu
             return null;
         }
     }
-    
+
     private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
+        try (Reader reader
+                = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
             int c = 0;
             while ((c = reader.read()) != -1) {
-                textBuilder.append((char)c);
+                textBuilder.append((char) c);
             }
         }
         return textBuilder.toString();

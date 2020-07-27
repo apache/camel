@@ -61,7 +61,7 @@ public class DummyOrder implements Serializable {
             return false;
         }
 
-        DummyOrder that = (DummyOrder)o;
+        DummyOrder that = (DummyOrder) o;
 
         if (itemId != that.itemId) {
             return false;
@@ -79,8 +79,8 @@ public class DummyOrder implements Serializable {
     @Override
     public int hashCode() {
         int result;
-        result = (int)(orderId ^ (orderId >>> 32));
-        result = 31 * result + (int)(itemId ^ (itemId >>> 32));
+        result = (int) (orderId ^ (orderId >>> 32));
+        result = 31 * result + (int) (itemId ^ (itemId >>> 32));
         result = 31 * result + quantity;
         return result;
     }
@@ -88,12 +88,12 @@ public class DummyOrder implements Serializable {
     @Override
     public String toString() {
         return "DummyOrder{"
-            + "orderId="
-            + orderId
-            + ", itemId="
-            + itemId
-            + ", quantity="
-            + quantity
-            + '}';
+               + "orderId="
+               + orderId
+               + ", itemId="
+               + itemId
+               + ", quantity="
+               + quantity
+               + '}';
     }
 }

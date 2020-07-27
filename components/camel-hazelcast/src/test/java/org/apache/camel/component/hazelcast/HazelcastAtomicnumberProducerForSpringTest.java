@@ -100,7 +100,7 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
         template.sendBody("direct:destroy", null);
         verify(atomicNumber).destroy();
     }
-    
+
     @Test
     public void testCompareAndSet() {
         Map<String, Object> headersOk = new HashMap();
@@ -116,7 +116,7 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
         verify(atomicNumber).compareAndSet(1233L, 1235L);
         assertEquals(false, result);
     }
-    
+
     @Test
     public void testGetAndAdd() {
         when(atomicNumber.getAndAdd(12L)).thenReturn(13L);

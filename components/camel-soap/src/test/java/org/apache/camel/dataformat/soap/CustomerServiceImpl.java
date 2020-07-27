@@ -27,8 +27,8 @@ import com.example.customerservice.NoSuchCustomerException;
 import com.example.customerservice.SaveCustomer;
 
 /**
- * Simple implementation of CustomerService that supports returning a customer
- * or a NoSuchCustomerException depending on input
+ * Simple implementation of CustomerService that supports returning a customer or a NoSuchCustomerException depending on
+ * input
  */
 public class CustomerServiceImpl implements CustomerService {
     private Customer lastSavedCustomer;
@@ -42,9 +42,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /**
-     * If the request.name is "none" a NoSuchCustomerException is thrown in any
-     * other case a dummy customer is returned that has the same name as the
-     * request
+     * If the request.name is "none" a NoSuchCustomerException is thrown in any other case a dummy customer is returned
+     * that has the same name as the request
      */
     public GetCustomersByNameResponse getCustomersByName(GetCustomersByName request) throws NoSuchCustomerException {
         if ("none".equals(request.getName())) {
@@ -71,7 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
         response.getReturn().add(customer);
         return response;
     }
-    
+
     /**
      * This method is to test a call without input parameter
      */

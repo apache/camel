@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Producer endpoint that adds one of two types of comments on a GitHub pull request:
  * 
- * 1.) Response to an in-line comment made on a pull request commit review.  To use, include the
- *     "GitHubInResponseTo" header, identifying the comment ID (integer) that you're responding to.
- * 2.) General comment on the pull request issue itself.
+ * 1.) Response to an in-line comment made on a pull request commit review. To use, include the "GitHubInResponseTo"
+ * header, identifying the comment ID (integer) that you're responding to. 2.) General comment on the pull request issue
+ * itself.
  * 
  * Both endpoints require the "GitHubPullRequest" header, identifying the pull request number (integer).
  */
@@ -43,7 +43,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
 
     public PullRequestCommentProducer(GitHubEndpoint endpoint) throws Exception {
         super(endpoint);
-        
+
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
@@ -68,7 +68,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
         Integer pullRequestNumber = exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST, Integer.class);
         Integer inResponseTo = exchange.getIn().getHeader(GitHubConstants.GITHUB_INRESPONSETO, Integer.class);
         String text = exchange.getIn().getBody(String.class);
-        
+
         Comment response;
         if (inResponseTo != null && inResponseTo > 0) {
             response = pullRequestService.replyToComment(getRepository(), pullRequestNumber, inResponseTo, text);
@@ -76,7 +76,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
             // Otherwise, just comment on the pull request itself.
             response = issueService.createComment(getRepository(), pullRequestNumber, text);
         }
-        
+
         // support InOut
         if (exchange.getPattern().isOutCapable()) {
             // copy the header of in message to the out message

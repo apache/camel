@@ -26,7 +26,7 @@ public class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
 
     @Override
     public EtcdStatsEndpoint getEndpoint() {
-        return (EtcdStatsEndpoint)super.getEndpoint();
+        return (EtcdStatsEndpoint) super.getEndpoint();
     }
 
     @Override

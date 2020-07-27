@@ -48,28 +48,30 @@ public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090).addMeta("contextPath", "app1").build());
-                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090).addMeta("contextPath", "app2").build());
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090)
+                        .addMeta("contextPath", "app1").build());
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090)
+                        .addMeta("contextPath", "app2").build());
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
-                        .expression().simple("http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/${header.CamelServiceCallServiceMeta[contextPath]}")
+                        .expression()
+                        .simple("http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/${header.CamelServiceCallServiceMeta[contextPath]}")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
                         .end()
-                    .to("mock:result");
+                        .to("mock:result");
                 from("jetty:http://localhost:9090/app1")
-                    .to("mock:app1")
-                    .transform().constant("app1");
+                        .to("mock:app1")
+                        .transform().constant("app1");
                 from("jetty:http://localhost:9090/app2")
-                    .to("mock:app2")
-                    .transform().constant("app2");
+                        .to("mock:app2")
+                        .transform().constant("app2");
             }
         };
     }
 }
-

@@ -35,7 +35,7 @@ public class XmlConfigTestSupport extends TestSupport {
     protected void assertValidContext(CamelContext context) {
         assertNotNull(context, "No context found!");
 
-        List<RouteDefinition> routes = ((ModelCamelContext)context).getRouteDefinitions();
+        List<RouteDefinition> routes = ((ModelCamelContext) context).getRouteDefinitions();
         LOG.debug("Found routes: " + routes);
 
         assertEquals(1, routes.size(), "One Route should be found");

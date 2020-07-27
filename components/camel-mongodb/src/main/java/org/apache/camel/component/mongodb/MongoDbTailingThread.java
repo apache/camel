@@ -30,16 +30,16 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
     private static final String CAPPED_KEY = "capped";
     private MongoDbTailTrackingManager tailTracking;
 
-    MongoDbTailingThread(MongoDbEndpoint endpoint, MongoDbTailableCursorConsumer consumer, MongoDbTailTrackingManager tailTrack) {
+    MongoDbTailingThread(MongoDbEndpoint endpoint, MongoDbTailableCursorConsumer consumer,
+                         MongoDbTailTrackingManager tailTrack) {
         super(endpoint, consumer);
         this.tailTracking = tailTrack;
     }
 
     /**
-     * Initialise the tailing process, the cursor and if persistent tail tracking is enabled,
-     * recover the cursor from the persisted point.
-     * As part of the initialisation process,
-     * the component will validate that the collection we are targeting is 'capped'.
+     * Initialise the tailing process, the cursor and if persistent tail tracking is enabled, recover the cursor from
+     * the persisted point. As part of the initialisation process, the component will validate that the collection we
+     * are targeting is 'capped'.
      */
     @Override
     protected void init() {
@@ -50,7 +50,8 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
 
         if (!isCollectionCapped()) {
             throw new CamelMongoDbException(
-                    String.format("Tailable cursors are only compatible with capped collections, and collection %s is not capped",
+                    String.format(
+                            "Tailable cursors are only compatible with capped collections, and collection %s is not capped",
                             endpoint.getCollection()));
         }
         try {
@@ -94,7 +95,8 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
     @Override
     protected void regeneratingCursor() {
         if (log.isDebugEnabled()) {
-            log.debug("Regenerating cursor with lastVal: {}, waiting {} ms first", tailTracking.lastVal, cursorRegenerationDelay);
+            log.debug("Regenerating cursor with lastVal: {}, waiting {} ms first", tailTracking.lastVal,
+                    cursorRegenerationDelay);
         }
     }
 
@@ -125,7 +127,9 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
             // it is blocked
             // waiting for more data to arrive
             if (keepRunning) {
-                log.debug("Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
+                log.debug(
+                        "Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.",
+                        e);
             }
         } catch (IllegalStateException e) {
             // this is happening when the consumer is stopped or the mongo interrupted (ie, junit ending test)

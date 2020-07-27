@@ -30,7 +30,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Communicate with a remote Bonita BPM process engine.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true, category = {Category.PROCESS})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true,
+             category = { Category.PROCESS })
 public class BonitaEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -40,7 +41,7 @@ public class BonitaEndpoint extends DefaultEndpoint {
     }
 
     public BonitaEndpoint(String uri, BonitaComponent component,
-            BonitaConfiguration configuration) {
+                          BonitaConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

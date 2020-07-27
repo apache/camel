@@ -31,19 +31,20 @@ public final class AsyncProcessorHelper {
     }
 
     /**
-     * Calls the async version of the processor's process method and waits
-     * for it to complete before returning. This can be used by {@link AsyncProcessor}
-     * objects to implement their sync version of the process method.
+     * Calls the async version of the processor's process method and waits for it to complete before returning. This can
+     * be used by {@link AsyncProcessor} objects to implement their sync version of the process method.
      * <p/>
      * <b>Important:</b> This method is discouraged to be used, as its better to invoke the asynchronous
-     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever possible.
+     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever
+     * possible.
      *
-     * @param processor the processor
-     * @param exchange  the exchange
+     * @param  processor the processor
+     * @param  exchange  the exchange
      * @throws Exception can be thrown if waiting is interrupted
      */
     public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
-        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+        final AsyncProcessorAwaitManager awaitManager
+                = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         awaitManager.process(processor, exchange);
     }
 

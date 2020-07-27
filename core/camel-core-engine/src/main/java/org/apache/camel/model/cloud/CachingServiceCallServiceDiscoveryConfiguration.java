@@ -38,14 +38,15 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     private String timeout = Integer.toString(60);
     @XmlAttribute
     @Metadata(javaType = "java.util.concurrent.TimeUnit", defaultValue = "SECONDS",
-            enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String units = TimeUnit.SECONDS.name();
-    @XmlElements({@XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class) })
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
     public CachingServiceCallServiceDiscoveryConfiguration() {
@@ -130,7 +131,8 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     /**
      * Set the service-call configuration to use
      */
-    public CachingServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public CachingServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(
+            ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         setServiceDiscoveryConfiguration(serviceDiscoveryConfiguration);
         return this;
     }

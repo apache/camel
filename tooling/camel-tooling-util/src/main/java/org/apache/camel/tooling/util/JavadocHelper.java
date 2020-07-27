@@ -28,8 +28,8 @@ public final class JavadocHelper {
     /**
      * Sanitizes the javadoc to removed invalid characters so it can be used as json description
      *
-     * @param javadoc  the javadoc
-     * @return the text that is valid as json
+     * @param  javadoc the javadoc
+     * @return         the text that is valid as json
      */
     public static String sanitizeDescription(String javadoc, boolean summary) {
         if (isNullOrEmpty(javadoc)) {

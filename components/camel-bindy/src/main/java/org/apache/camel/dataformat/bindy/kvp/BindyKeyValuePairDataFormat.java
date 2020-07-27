@@ -47,8 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> (
- * {@link DataFormat}) using Bindy to marshal to and from CSV files
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) using Bindy to marshal to
+ * and from CSV files
  */
 @Dataformat("bindy-kvp")
 public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
@@ -107,7 +107,8 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         // Use a Stream to stream a file across
         try (Stream<String> lines = new BufferedReader(in).lines()) {
             // Retrieve the pair separator defined to split the record
-            org.apache.camel.util.ObjectHelper.notNull(factory.getPairSeparator(), "The pair separator property of the annotation @Message");
+            org.apache.camel.util.ObjectHelper.notNull(factory.getPairSeparator(),
+                    "The pair separator property of the annotation @Message");
             String separator = factory.getPairSeparator();
             AtomicInteger count = new AtomicInteger(0);
 
@@ -132,7 +133,9 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         }
     }
 
-    private void consumeFile(BindyKeyValuePairFactory factory, List<Map<String, Object>> models, Map<String, List<Object>> lists, String separator, AtomicInteger count, String line) {
+    private void consumeFile(
+            BindyKeyValuePairFactory factory, List<Map<String, Object>> models, Map<String, List<Object>> lists,
+            String separator, AtomicInteger count, String line) {
         try {
             // Trim the line coming in to remove any trailing whitespace
             String trimmedLine = line.trim();

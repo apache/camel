@@ -48,7 +48,8 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
         template.sendBody(new BrandNewType("wrapped message"));
 
         List<OutgoingTextMessage> msgs = Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .until(() -> getMockRoutes().getMock("sendMessage").getRecordedMessages(), rawMessages -> rawMessages.size() == 1)
+                .until(() -> getMockRoutes().getMock("sendMessage").getRecordedMessages(),
+                        rawMessages -> rawMessages.size() == 1)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
                 .collect(Collectors.toList());
@@ -61,14 +62,14 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("direct:message")
-                            .to("telegram:bots?authorizationToken=mock-token&chatId=1234");
-                }
-            }};
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("direct:message")
+                                .to("telegram:bots?authorizationToken=mock-token&chatId=1234");
+                    }
+                } };
     }
 
     @Override

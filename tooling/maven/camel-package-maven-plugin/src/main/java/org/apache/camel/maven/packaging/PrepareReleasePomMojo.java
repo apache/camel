@@ -35,8 +35,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
- * Prepares the apache-camel/pom.xml and common-bin to keep the Camel artifacts
- * up-to-date.
+ * Prepares the apache-camel/pom.xml and common-bin to keep the Camel artifacts up-to-date.
  */
 @Mojo(name = "prepare-release-pom", threadSafe = true)
 public class PrepareReleasePomMojo extends AbstractMojo {
@@ -74,16 +73,16 @@ public class PrepareReleasePomMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws MojoExecutionException execution of the main class or one of the
-     *             threads it generated failed.
-     * @throws MojoFailureException something bad happened...
+     * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         updatePomAndCommonBin(componentsDir, "org.apache.camel", "camel components");
     }
 
-    protected void updatePomAndCommonBin(File dir, String groupId, String token) throws MojoExecutionException, MojoFailureException {
+    protected void updatePomAndCommonBin(File dir, String groupId, String token)
+            throws MojoExecutionException, MojoFailureException {
         SortedSet<String> artifactIds = new TreeSet<>();
 
         try {
@@ -133,7 +132,8 @@ public class PrepareReleasePomMojo extends AbstractMojo {
         } else {
             getLog().debug("No changes to apache-camel/src/main/descriptors/common-bin.xml file");
         }
-        getLog().info("apache-camel/src/main/descriptors/common-bin.xml contains " + artifactIds.size() + " " + token + " dependencies");
+        getLog().info("apache-camel/src/main/descriptors/common-bin.xml contains " + artifactIds.size() + " " + token
+                      + " dependencies");
     }
 
     private void findComponentPoms(File parentDir, Set<File> components) {

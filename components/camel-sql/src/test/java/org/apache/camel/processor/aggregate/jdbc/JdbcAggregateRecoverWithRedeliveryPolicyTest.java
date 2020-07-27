@@ -27,13 +27,13 @@ import org.junit.jupiter.api.Test;
 public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAggregationTestSupport {
 
     private static AtomicInteger counter = new AtomicInteger(0);
-    
+
     @Override
     void configureJdbcAggregationRepository() {
         // enable recovery
         repo.setUseRecovery(true);
         // check faster
-        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS); 
+        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAg
                         // this is the output from the aggregator
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
-                                // simulate errors the first three times
+                        // simulate errors the first three times
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 int count = counter.incrementAndGet();

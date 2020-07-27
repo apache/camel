@@ -54,8 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon EC2 Service
- * <a href="http://aws.amazon.com/ec2/">AWS EC2</a>
+ * A Producer which sends messages to the Amazon EC2 Service <a href="http://aws.amazon.com/ec2/">AWS EC2</a>
  */
 public class EC2Producer extends DefaultProducer {
 
@@ -387,7 +386,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Create tags command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+        LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
+                Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
@@ -415,7 +415,8 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Delete tags command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+        LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
+                Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }

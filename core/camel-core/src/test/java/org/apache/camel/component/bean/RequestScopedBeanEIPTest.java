@@ -27,10 +27,10 @@ public class RequestScopedBeanEIPTest extends RequestScopedBeanComponentTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(MyRequestBean.class, BeanScope.Request)
-                    .to("mock:a")
-                    .bean(MyRequestBean.class, BeanScope.Request)
-                    .to("mock:b");
+                        .bean(MyRequestBean.class, BeanScope.Request)
+                        .to("mock:a")
+                        .bean(MyRequestBean.class, BeanScope.Request)
+                        .to("mock:b");
             }
         };
     }

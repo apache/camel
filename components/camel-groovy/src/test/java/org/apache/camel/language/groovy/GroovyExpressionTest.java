@@ -30,7 +30,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertInMessageHeader;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class GroovyExpressionTest  {
+public class GroovyExpressionTest {
     private static final Logger LOG = LoggerFactory.getLogger(GroovyExpressionTest.class);
 
     protected Exchange exchange;

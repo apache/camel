@@ -25,7 +25,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 public class CaffeineLoadCacheTestSupport extends CamelTestSupport {
 
     private Cache cache;
-    
+
     @BindToRegistry("cache")
     public Cache createCache() {
         CacheLoader cl = new CacheLoader<Integer, Integer>() {

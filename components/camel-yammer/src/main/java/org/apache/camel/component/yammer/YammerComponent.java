@@ -44,7 +44,7 @@ public class YammerComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         return endpoint;
     }
-    
+
     public YammerConfiguration getConfiguration() {
         return configuration;
     }

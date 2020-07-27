@@ -40,7 +40,8 @@ public class AtomComponent extends FeedComponent {
     }
 
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters)
+            throws Exception {
         AtomEndpoint atom = (AtomEndpoint) endpoint;
         if (atom.getFeedUri() != null) {
             // already set so do not change it

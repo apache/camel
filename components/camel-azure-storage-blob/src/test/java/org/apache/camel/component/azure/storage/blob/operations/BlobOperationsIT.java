@@ -89,7 +89,8 @@ class BlobOperationsIT extends CamelTestSupport {
 
         // create test blob
         final InputStream inputStream = new ByteArrayInputStream("awesome camel!".getBytes());
-        blobContainerClientWrapper.getBlobClientWrapper(randomBlobName).uploadBlockBlob(inputStream, BlobUtils.getInputStreamLength(inputStream), null, null, null, null,
+        blobContainerClientWrapper.getBlobClientWrapper(randomBlobName).uploadBlockBlob(inputStream,
+                BlobUtils.getInputStreamLength(inputStream), null, null, null, null,
                 null, null);
     }
 
@@ -102,7 +103,6 @@ class BlobOperationsIT extends CamelTestSupport {
     public void testGetBlob(@TempDir Path testDir) throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
-
 
         // first: test with exchange set but no outputstream set
         final Exchange exchange = new DefaultExchange(context);
@@ -134,7 +134,6 @@ class BlobOperationsIT extends CamelTestSupport {
     public void testDownloadToFile(@TempDir Path testDir) throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
-
 
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(BlobConstants.FILE_DIR, testDir.toString());
@@ -171,7 +170,8 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         // first: test as file provided
-        final File fileToUpload = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
+        final File fileToUpload
+                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(fileToUpload);
 
@@ -186,7 +186,8 @@ class BlobOperationsIT extends CamelTestSupport {
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
-        assertEquals("awesome camel to upload!", IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+        assertEquals("awesome camel to upload!",
+                IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
 
         blobClientWrapper.delete(null, null, null);
 
@@ -306,7 +307,6 @@ class BlobOperationsIT extends CamelTestSupport {
 
         assertEquals(data, dataResponse);
 
-
         blobClientWrapper.delete(null, null, null);
     }
 
@@ -342,7 +342,6 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
         final BlobInputStream inputStream = (BlobInputStream) getBlobResponse.getBody();
         assertEquals(512, IOUtils.toByteArray(inputStream).length);
-
 
         blobClientWrapper.delete(null, null, null);
     }

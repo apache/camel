@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.HL7DataFormat;
 public class HL7DataFormatReifier extends DataFormatReifier<HL7DataFormat> {
 
     public HL7DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (HL7DataFormat)definition);
+        super(camelContext, (HL7DataFormat) definition);
     }
 
     @Override

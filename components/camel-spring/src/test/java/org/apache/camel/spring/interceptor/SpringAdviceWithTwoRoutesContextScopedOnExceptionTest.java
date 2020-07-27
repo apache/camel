@@ -28,7 +28,8 @@ public class SpringAdviceWithTwoRoutesContextScopedOnExceptionTest extends Advic
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/interceptor/SpringAdviceWithTwoRoutesContextScopedOnExceptionTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/interceptor/SpringAdviceWithTwoRoutesContextScopedOnExceptionTest.xml");
     }
 
 }

@@ -45,7 +45,9 @@ public final class TwitterHelper {
         message.setHeader(TwitterConstants.TWITTER_USER_ROLE + index, role);
     }
 
-    public static Consumer createConsumer(Processor processor, AbstractTwitterEndpoint endpoint, AbstractTwitterConsumerHandler handler) throws Exception {
+    public static Consumer createConsumer(
+            Processor processor, AbstractTwitterEndpoint endpoint, AbstractTwitterConsumerHandler handler)
+            throws Exception {
         Consumer answer = new DefaultTwitterConsumer(endpoint, processor, handler);
         switch (endpoint.getEndpointType()) {
             case POLLING:

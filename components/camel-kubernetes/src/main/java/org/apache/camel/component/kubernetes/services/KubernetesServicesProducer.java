@@ -48,7 +48,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -158,7 +158,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific service require specify a service spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
-        Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata().withSpec(serviceSpec).build();
+        Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata()
+                .withSpec(serviceSpec).build();
         service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).create(serviceCreating);
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(service);
@@ -175,7 +176,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
             LOG.error("Delete a specific service require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific service require specify a namespace name");
         }
-        boolean serviceDeleted = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
+        boolean serviceDeleted
+                = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(serviceDeleted);
     }

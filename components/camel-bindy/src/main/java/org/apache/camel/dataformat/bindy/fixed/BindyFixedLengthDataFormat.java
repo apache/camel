@@ -42,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> (
- * {@link DataFormat}) using Bindy to marshal to and from Fixed Length
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) using Bindy to marshal to
+ * and from Fixed Length
  */
 @Dataformat("bindy-fixed")
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
@@ -263,7 +263,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     private String getNextNonEmptyLine(Scanner scanner, AtomicInteger count, boolean isEolSet) {
         String line = "";
-        while (org.apache.camel.util.ObjectHelper.isEmpty(line) && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
+        while (org.apache.camel.util.ObjectHelper.isEmpty(line)
+                && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
             count.incrementAndGet();
             if (!isEolSet) {
                 line = scanner.nextLine();
@@ -293,8 +294,10 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             }
             if ((myLine.length() < factory.recordLength()
                     && !factory.isIgnoreMissingChars()) || (myLine.length() > factory.recordLength())) {
-                throw new java.lang.IllegalArgumentException("Size of the record: " + myLine.length()
-                        + " is not equal to the value provided in the model: " + factory.recordLength());
+                throw new java.lang.IllegalArgumentException(
+                        "Size of the record: " + myLine.length()
+                                                             + " is not equal to the value provided in the model: "
+                                                             + factory.recordLength());
             }
         }
 

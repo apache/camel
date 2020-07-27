@@ -24,12 +24,12 @@ public enum ThriftExchangeProtocol {
      * Binary protocol
      */
     BINARY,
-    
+
     /**
      * Full JSON protocol
      */
     JSON,
-    
+
     /**
      * Simple JSON protocol
      */

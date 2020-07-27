@@ -28,8 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to verify unit of work with seda. That the UnitOfWork is able to
- * route using seda but keeping the same UoW.
+ * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda but keeping the same UoW.
  */
 public class SedaUnitOfWorkTest extends ContextTestSupport {
 

@@ -23,11 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents an injection point of a Camel Uri path value (the remaining part of a Camel URI without any query arguments)
+ * Represents an injection point of a Camel Uri path value (the remaining part of a Camel URI without any query
+ * arguments)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD })
+@Target({ ElementType.FIELD })
 public @interface UriPath {
 
     /**
@@ -49,7 +50,8 @@ public @interface UriPath {
     /**
      * The default value of the parameter.
      * <p/>
-     * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.
+     * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the
+     * Java field was assigned.
      */
     String defaultValue() default "";
 
@@ -70,8 +72,8 @@ public @interface UriPath {
     /**
      * Allows to define enums this options accepts.
      * <p/>
-     * If the type is already an enum, then this option should not be used; instead you can use
-     * this option when the type is a String that only accept certain values.
+     * If the type is already an enum, then this option should not be used; instead you can use this option when the
+     * type is a String that only accept certain values.
      * <p/>
      * Multiple values is separated by comma.
      */
@@ -82,7 +84,8 @@ public @interface UriPath {
      * <p/>
      * Multiple labels can be defined as a comma separated value.
      * <p/>
-     * The labels is intended for grouping the parameters, such as <tt>consumer</tt>, <tt>producer</tt>, <tt>common</tt>, <tt>security</tt>, etc.
+     * The labels is intended for grouping the parameters, such as <tt>consumer</tt>, <tt>producer</tt>,
+     * <tt>common</tt>, <tt>security</tt>, etc.
      */
     String label() default "";
 
@@ -94,7 +97,8 @@ public @interface UriPath {
     /**
      * To re-associate the preferred Java type of this parameter.
      * <p/>
-     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as
+     * from a String.
      */
     String javaType() default "";
 

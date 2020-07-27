@@ -53,7 +53,8 @@ public class MinaProducerConcurrentTest extends BaseMinaTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    return template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true", getPort()), index, String.class);
+                    return template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true", getPort()), index,
+                            String.class);
                 }
             });
             responses.put(index, out);

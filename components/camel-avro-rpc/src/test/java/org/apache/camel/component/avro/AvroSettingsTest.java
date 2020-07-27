@@ -30,7 +30,8 @@ public class AvroSettingsTest extends AvroTestSupport {
             context().addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("avro:http:localhost:" + avroPort + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").to("log:test");
+                    from("avro:http:localhost:" + avroPort
+                         + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").to("log:test");
                 }
             });
         });
@@ -42,7 +43,8 @@ public class AvroSettingsTest extends AvroTestSupport {
             context().addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:test").to("avro:http:localhost:" + avroPort + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
+                    from("direct:test").to("avro:http:localhost:" + avroPort
+                                           + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
                 }
             });
         });
@@ -54,7 +56,9 @@ public class AvroSettingsTest extends AvroTestSupport {
             context().addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:test").to("avro:http:localhost:" + avroPort + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true");
+                    from("direct:test")
+                            .to("avro:http:localhost:" + avroPort
+                                + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true");
                 }
             });
         });

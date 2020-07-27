@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 public class LZFDataFormatReifier extends DataFormatReifier<LZFDataFormat> {
 
     public LZFDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (LZFDataFormat)definition);
+        super(camelContext, (LZFDataFormat) definition);
     }
 
     @Override

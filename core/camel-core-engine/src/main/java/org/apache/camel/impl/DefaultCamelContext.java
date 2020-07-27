@@ -79,8 +79,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     private Model model = new DefaultModel(this);
 
     /**
-     * Creates the {@link ModelCamelContext} using
-     * {@link org.apache.camel.support.DefaultRegistry} as registry.
+     * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -89,10 +88,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     /**
-     * Creates the {@link CamelContext} using the given {@link BeanRepository}
-     * as first-choice repository, and the
-     * {@link org.apache.camel.support.SimpleRegistry} as fallback, via the
-     * {@link DefaultRegistry} implementation.
+     * Creates the {@link CamelContext} using the given {@link BeanRepository} as first-choice repository, and the
+     * {@link org.apache.camel.support.SimpleRegistry} as fallback, via the {@link DefaultRegistry} implementation.
      *
      * @param repository the bean repository.
      */
@@ -175,7 +172,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception {
         return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 
@@ -395,11 +393,14 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 // assign ids to the routes and validate that the id's is all unique
                 String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
                 if (duplicate != null) {
-                    throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+                    throw new FailedToStartRouteException(
+                            routeDefinition.getId(),
+                            "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
                 }
 
                 // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
-                if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate() && routeDefinition.getTemplateParameters() != null) {
+                if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
+                        && routeDefinition.getTemplateParameters() != null) {
                     Properties prop = new Properties();
                     prop.putAll(routeDefinition.getTemplateParameters());
                     pc.setLocalProperties(prop);
@@ -463,7 +464,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         return new ValidatorKey(new DataType(def.getType()));
     }
 
-
     @Override
     public void registerTransformer(TransformerDefinition def) {
         model.getTransformers().add(def);
@@ -472,7 +472,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
-        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+        return ObjectHelper.isNotEmpty(def.getScheme())
+                ? new TransformerKey(def.getScheme())
+                : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
 }

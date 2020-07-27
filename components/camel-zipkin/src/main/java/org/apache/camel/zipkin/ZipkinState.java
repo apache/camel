@@ -24,9 +24,8 @@ import org.apache.camel.Exchange;
 /**
  * The state of the zipkin trace which we store on the {@link Exchange}
  * <p/>
- * This is needed to keep track of of correlating when an existing span
- * is calling downstream service(s) and therefore must be able to correlate
- * those service calls with the parent span.
+ * This is needed to keep track of of correlating when an existing span is calling downstream service(s) and therefore
+ * must be able to correlate those service calls with the parent span.
  */
 public final class ZipkinState {
 

@@ -31,13 +31,14 @@ public class CamelSpringTestSupportActiveProfileTest extends CamelSpringTestSupp
     protected AbstractApplicationContext createApplicationContext() {
         // must not refresh when using active profiles
         // lets reuse the xml file from the other test
-        return new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/test/spring/CamelSpringActiveProfileTest-context.xml"}, false);
+        return new ClassPathXmlApplicationContext(
+                new String[] { "org/apache/camel/test/spring/CamelSpringActiveProfileTest-context.xml" }, false);
     }
 
     @Override
     protected String[] activeProfiles() {
         // return the active profiles to be used
-        return new String[]{"test"};
+        return new String[] { "test" };
     }
 
     @Test

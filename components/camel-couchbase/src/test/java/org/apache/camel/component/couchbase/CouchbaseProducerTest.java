@@ -67,7 +67,7 @@ public class CouchbaseProducerTest {
 
     @Mock
     private MutationResult response;
-//    Observable<String> myStringObservable
+    //    Observable<String> myStringObservable
 
     @Mock
     private MutationResult of;
@@ -88,31 +88,31 @@ public class CouchbaseProducerTest {
     @Test
     public void testBodyMandatory() throws Exception {
         assertThrows(CouchbaseException.class,
-            () -> producer.process(exchange));
+                () -> producer.process(exchange));
     }
 
     @Test
     public void testPersistToLowerThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, -1, 0));
+                () -> new CouchbaseProducer(endpoint, client, -1, 0));
     }
 
     @Test
     public void testPersistToHigherThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, 5, 0));
+                () -> new CouchbaseProducer(endpoint, client, 5, 0));
     }
 
     @Test
     public void testReplicateToLowerThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, 0, -1));
+                () -> new CouchbaseProducer(endpoint, client, 0, -1));
     }
 
     @Test
     public void testReplicateToHigherThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, 0, 4));
+                () -> new CouchbaseProducer(endpoint, client, 0, 4));
     }
 
     @Test

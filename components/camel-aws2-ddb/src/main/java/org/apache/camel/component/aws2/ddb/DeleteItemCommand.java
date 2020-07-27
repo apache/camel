@@ -29,8 +29,9 @@ public class DeleteItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        DeleteItemResponse result = ddbClient.deleteItem(DeleteItemRequest.builder().tableName(determineTableName()).key(determineKey()).returnValues(determineReturnValues())
-            .expected(determineUpdateCondition()).build());
+        DeleteItemResponse result = ddbClient.deleteItem(DeleteItemRequest.builder().tableName(determineTableName())
+                .key(determineKey()).returnValues(determineReturnValues())
+                .expected(determineUpdateCondition()).build());
 
         addAttributesToResult(result.attributes());
     }

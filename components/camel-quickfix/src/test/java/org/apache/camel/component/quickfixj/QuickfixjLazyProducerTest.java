@@ -50,7 +50,7 @@ public class QuickfixjLazyProducerTest {
         mockCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getIn()).thenReturn(mockCamelMessage);
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-        
+
         quickfixjEngine = TestSupport.createEngine(true);
         endpoint = Mockito.spy(new QuickfixjEndpoint(quickfixjEngine, "", new QuickfixjComponent()));
 
@@ -59,10 +59,10 @@ public class QuickfixjLazyProducerTest {
         inboundFixMessage.getHeader().setString(SenderCompID.FIELD, "SENDER");
         inboundFixMessage.getHeader().setString(TargetCompID.FIELD, "TARGET");
         sessionID = MessageUtils.getSessionID(inboundFixMessage);
-   
+
         Mockito.when(mockCamelMessage.getBody(Message.class)).thenReturn(inboundFixMessage);
 
-        Mockito.when(endpoint.getSessionID()).thenReturn(sessionID);     
+        Mockito.when(endpoint.getSessionID()).thenReturn(sessionID);
 
         producer = Mockito.spy(new QuickfixjProducer(endpoint));
     }
@@ -72,16 +72,16 @@ public class QuickfixjLazyProducerTest {
         QuickfixjEngine engine = (QuickfixjEngine) ReflectionTestUtils.getField(endpoint, "engine");
         assertThat(engine.isInitialized(), is(false));
         assertThat(engine.isStarted(), is(false));
-//        Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
-//        Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
-//        Mockito.doReturn(true).when(mockSession).send(Matchers.isA(Message.class));
+        //        Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
+        //        Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
+        //        Mockito.doReturn(true).when(mockSession).send(Matchers.isA(Message.class));
 
         producer.process(mockExchange);
 
         assertThat(engine.isInitialized(), is(true));
         assertThat(engine.isStarted(), is(true));
-//
-//        Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(IllegalStateException.class));
-//        Mockito.verify(mockSession).send(inboundFixMessage);
+        //
+        //        Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(IllegalStateException.class));
+        //        Mockito.verify(mockSession).send(inboundFixMessage);
     }
 }

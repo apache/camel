@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpAsyncTest extends HttpAsyncTestSupport {
- 
+
     @Test
     void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         // START SNIPPET: e2
@@ -57,7 +57,7 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
         assertMockEndpointsSatisfied();
         // END SNIPPET: e2
     }
- 
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -71,9 +71,9 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
 
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async
                 fromF("jetty:http://0.0.0.0:%s/myservice", getPort())
-                    .delay(1000)
-                    .transform(constant("Bye World"))
-                    .to("mock:result");
+                        .delay(1000)
+                        .transform(constant("Bye World"))
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

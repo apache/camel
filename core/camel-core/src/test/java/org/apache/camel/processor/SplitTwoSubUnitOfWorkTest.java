@@ -80,8 +80,9 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").to("mock:a").split(simple("${body.foo}")).shareUnitOfWork().to("mock:b").to("direct:line").end().split(simple("${body.bar}")).shareUnitOfWork()
-                    .to("mock:c").to("direct:line").end().to("mock:result");
+                from("direct:start").to("mock:a").split(simple("${body.foo}")).shareUnitOfWork().to("mock:b").to("direct:line")
+                        .end().split(simple("${body.bar}")).shareUnitOfWork()
+                        .to("mock:c").to("direct:line").end().to("mock:result");
 
                 from("direct:line").to("log:line").process(new Processor() {
                     @Override

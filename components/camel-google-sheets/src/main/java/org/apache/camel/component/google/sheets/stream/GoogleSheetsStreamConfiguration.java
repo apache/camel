@@ -102,8 +102,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 access token. This typically expires after an hour so
-     * refreshToken is recommended for long term usage.
+     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -114,9 +113,8 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can
-     * obtain a new accessToken whenever the current one expires - a necessity
-     * if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -138,9 +136,8 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the level of permissions you want a sheets application to have to
-     * a user account. See https://developers.google.com/identity/protocols/googlescopes
-     * for more info.
+     * Specifies the level of permissions you want a sheets application to have to a user account. See
+     * https://developers.google.com/identity/protocols/googlescopes for more info.
      */
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
@@ -182,8 +179,8 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Specify the maximum number of returned results. This will limit the number of rows in a returned value range
-     * data set or the number of returned value ranges in a batch request.
+     * Specify the maximum number of returned results. This will limit the number of rows in a returned value range data
+     * set or the number of returned value ranges in a batch request.
      *
      * @param maxResults
      */
@@ -249,8 +246,8 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * True if value range result should be split into rows or columns to process each of them individually. When true
-     * each row or column is represented with a separate exchange in batch processing. Otherwise value range object is used
-     * as exchange junk size.
+     * each row or column is represented with a separate exchange in batch processing. Otherwise value range object is
+     * used as exchange junk size.
      *
      * @param splitResults
      */
@@ -264,7 +261,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     public GoogleSheetsStreamConfiguration copy() {
         try {
-            return (GoogleSheetsStreamConfiguration)super.clone();
+            return (GoogleSheetsStreamConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

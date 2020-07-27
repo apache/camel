@@ -67,6 +67,7 @@ public class SpringContextScopeOnExceptionTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/SpringContextScopeOnExceptionTest.xml");
+        return createSpringCamelContext(this,
+                "/org/apache/camel/spring/processor/onexception/SpringContextScopeOnExceptionTest.xml");
     }
 }

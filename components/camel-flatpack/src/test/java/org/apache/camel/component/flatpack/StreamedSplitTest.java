@@ -41,7 +41,7 @@ public class StreamedSplitTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedItemDesc = {"James", "Claus", "Antoine", "Xavier"};
+    protected String[] expectedItemDesc = { "James", "Claus", "Antoine", "Xavier" };
 
     @Test
     public void testCamel() throws Exception {

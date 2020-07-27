@@ -56,8 +56,8 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
     /**
      * Replace the port placeholder with the dynamic server port
      * 
-     * @param uri the URI to process
-     * @return the result, may be {@code null} if the input is {@code null}
+     * @param  uri the URI to process
+     * @return     the result, may be {@code null} if the input is {@code null}
      */
     protected String resolve(String uri) {
         if (uri == null) {
@@ -131,8 +131,8 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
     }
 
     /**
-     * Return true, if java version (defined by method getRequiredJavaVersion()) is satisfied.
-     * Works for java versions 9+
+     * Return true, if java version (defined by method getRequiredJavaVersion()) is satisfied. Works for java versions
+     * 9+
      */
     boolean isJavaVersionSatisfied(int requiredVersion) {
         String version = System.getProperty("java.version");

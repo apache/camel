@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 public class DeleteItemCommandTest {
 
     private DeleteItemCommand command;
@@ -52,7 +50,6 @@ public class DeleteItemCommandTest {
         Map<String, AttributeValue> key = new HashMap<>();
         key.put("1", new AttributeValue("Key_1"));
         exchange.getIn().setHeader(DdbConstants.KEY, key);
-
 
         Map<String, ExpectedAttributeValue> updateCondition = new HashMap<>();
         updateCondition

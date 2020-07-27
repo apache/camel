@@ -29,5 +29,5 @@ public class EchoPojo {
     public String onEcho(String name) {
         return (String) service.requestBody(name);
     }
-    
+
 }

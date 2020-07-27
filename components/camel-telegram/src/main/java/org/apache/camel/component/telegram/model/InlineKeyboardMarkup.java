@@ -84,7 +84,7 @@ public class InlineKeyboardMarkup implements Serializable, ReplyMarkup {
     @Override
     public String toString() {
         return "InlineKeyboardMarkup{"
-            + "inlineKeyboard=" + inlineKeyboard
-            + '}';
+               + "inlineKeyboard=" + inlineKeyboard
+               + '}';
     }
 }

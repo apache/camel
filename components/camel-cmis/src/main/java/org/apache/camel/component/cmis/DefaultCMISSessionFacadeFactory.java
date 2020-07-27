@@ -30,7 +30,7 @@ public class DefaultCMISSessionFacadeFactory implements CMISSessionFacadeFactory
         // must use a copy of the properties
         Map<String, Object> copy = new HashMap<>(endpoint.getProperties());
         // which we then set on the newly created facade
-        
+
         PropertyBindingSupport.bindProperties(endpoint.getCamelContext(), facade, copy);
 
         return facade;

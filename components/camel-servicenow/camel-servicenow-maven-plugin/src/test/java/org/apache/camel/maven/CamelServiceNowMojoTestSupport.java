@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
-class CamelServiceNowMojoTestSupport  {
+class CamelServiceNowMojoTestSupport {
 
     protected CamelServiceNowGenerateMojo createMojo() throws IOException {
         CamelServiceNowGenerateMojo mojo = new CamelServiceNowGenerateMojo();

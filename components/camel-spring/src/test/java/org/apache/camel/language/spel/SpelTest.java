@@ -53,7 +53,7 @@ public class SpelTest extends LanguageTestSupport {
         assertPredicateFails("#{request.headers.foo == 'badString'}");
         assertPredicate("#{message.headers.foo == 'abc'}");
     }
-    
+
     @Test
     public void testResponseCreatesOutMessage() throws Exception {
         assertExpression("#{response.body}", null);

@@ -55,11 +55,11 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
         // convert the payload body to string
         String reply = context.getTypeConverter().convertTo(String.class, payload.getBody().get(0));
         assertNotNull(reply);
-        
+
         assertTrue(reply.contains("<personId>123</personId"));
         assertTrue(reply.contains("<ssn>456</ssn"));
         assertTrue(reply.contains("<name>Donald Duck</name"));
-        
+
         assertTrue(context.getEndpoint("personService") instanceof CamelContextAware);
         assertNotNull(context.getEndpoint("personService").getCamelContext(), "CamelContext should be set on CxfEndpoint");
     }
@@ -81,8 +81,8 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         String s = "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
-                                + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
-                                + "</GetPersonResponse>";
+                                   + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
+                                   + "</GetPersonResponse>";
 
                         Document xml = context.getTypeConverter().convertTo(Document.class, s);
                         exchange.getOut().setBody(xml);

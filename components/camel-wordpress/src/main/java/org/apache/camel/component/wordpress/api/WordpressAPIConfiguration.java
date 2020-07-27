@@ -69,7 +69,8 @@ public final class WordpressAPIConfiguration implements Serializable {
 
     @Override
     public String toString() {
-        return toStringHelper(this).addValue(this.apiUrl).add("Version", this.apiVersion).addValue(this.authentication).toString();
+        return toStringHelper(this).addValue(this.apiUrl).add("Version", this.apiVersion).addValue(this.authentication)
+                .toString();
     }
 
     @Override

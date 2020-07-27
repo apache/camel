@@ -54,11 +54,12 @@ public class DatagramPacketStringDecoder extends MessageToMessageDecoder<Address
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out)
+            throws Exception {
         if (msg.content() instanceof ByteBuf) {
-            ByteBuf payload = (ByteBuf)msg.content();
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                new DefaultAddressedEnvelope<>(payload.toString(charset), msg.recipient(), msg.sender());
+            ByteBuf payload = (ByteBuf) msg.content();
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
+                    = new DefaultAddressedEnvelope<>(payload.toString(charset), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         } else {
             LOG.debug("Ignoring message content as it is not an io.netty.buffer.ByteBuf instance.");

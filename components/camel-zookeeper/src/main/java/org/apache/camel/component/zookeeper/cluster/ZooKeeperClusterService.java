@@ -233,9 +233,8 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
                 managedInstance = true;
 
                 LOGGER.debug("Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
-                    configuration.getNamespace(),
-                    String.join(",", configuration.getNodes())
-                );
+                        configuration.getNamespace(),
+                        String.join(",", configuration.getNodes()));
 
                 curator = ZooKeeperCuratorHelper.createCurator(configuration);
                 curator.start();

@@ -60,13 +60,13 @@ public class DefaultAggregatorCollectionTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending
                 // the response to the mock
                 from("direct:start")
-                    // aggregated by header id
-                    // as we have not configured more on the aggregator it will
-                    // default to aggregate the
-                    // latest exchange only
-                    .aggregate(header("id")).aggregationStrategy(new UseLatestAggregationStrategy())
-                    // wait for 0.5 seconds to aggregate
-                    .completionTimeout(500L).to("mock:result");
+                        // aggregated by header id
+                        // as we have not configured more on the aggregator it will
+                        // default to aggregate the
+                        // latest exchange only
+                        .aggregate(header("id")).aggregationStrategy(new UseLatestAggregationStrategy())
+                        // wait for 0.5 seconds to aggregate
+                        .completionTimeout(500L).to("mock:result");
                 // END SNIPPET: e1
             }
         };

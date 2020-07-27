@@ -20,7 +20,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 
 public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
-    
+
     @Override
     public void configure() throws Exception {
         // get the required policy
@@ -31,16 +31,12 @@ public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
         errorHandler(transactionErrorHandler(required));
 
         // set the required policy for this route
-        from("direct:okay").policy(required).
-            setBody(constant("Tiger in Action")).bean("bookService").
-            setBody(constant("Elephant in Action")).bean("bookService");
+        from("direct:okay").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
+                .setBody(constant("Elephant in Action")).bean("bookService");
 
         // set the required policy for this route
-        from("direct:fail").policy(required).
-            setBody(constant("Tiger in Action")).bean("bookService").
-            setBody(constant("Donkey in Action")).bean("bookService");
+        from("direct:fail").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
+                .setBody(constant("Donkey in Action")).bean("bookService");
     }
 
 }
-
-

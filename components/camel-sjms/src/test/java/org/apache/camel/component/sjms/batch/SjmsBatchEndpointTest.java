@@ -73,7 +73,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
             }
         });
         assertThrows(FailedToCreateRouteException.class,
-            () -> context.start());
+                () -> context.start());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
             }
         });
         assertThrows(FailedToStartRouteException.class,
-            () -> context.start());
+                () -> context.start());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
             }
         });
         assertThrows(FailedToStartRouteException.class,
-            () -> context.start());
+                () -> context.start());
     }
 
     @Test
@@ -112,6 +112,6 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
             }
         });
         assertThrows(FailedToCreateRouteException.class,
-            () -> context.start());
+                () -> context.start());
     }
 }

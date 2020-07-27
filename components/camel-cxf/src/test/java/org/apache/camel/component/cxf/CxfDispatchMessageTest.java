@@ -48,31 +48,31 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchMessage(name, false);
         assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
-        
+
         org.apache.camel.Message response = exchange.getOut();
         assertNotNull(response, "The response message must not be null");
-        
+
         String value = decodeResponseFromMessage(response.getBody(InputStream.class), exchange);
         assertTrue(value.endsWith(name), "The response body must match the request");
     }
-    
+
     @Test
     public void testDipatchMessageOneway() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchMessage(name, true);
         assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
-        
+
         org.apache.camel.Message response = exchange.getOut();
         assertNotNull(response, "The response message must not be null");
-        
+
         assertNull(response.getBody(), "The response body must be null");
     }
-
 
     protected Exchange sendJaxWsDispatchMessage(final String name, final boolean oneway) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                InputStream request = encodeRequestInMessage(oneway ? MESSAGE_ONEWAY_TEMPLATE : MESSAGE_TEMPLATE, name, exchange);
+                InputStream request
+                        = encodeRequestInMessage(oneway ? MESSAGE_ONEWAY_TEMPLATE : MESSAGE_TEMPLATE, name, exchange);
                 exchange.getIn().setBody(request, InputStream.class);
                 // set the operation for oneway; otherwise use the default operation                
                 if (oneway) {
@@ -82,7 +82,7 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
         });
         return exchange;
     }
-    
+
     private static InputStream encodeRequestInMessage(String form, String name, Exchange exchange) {
         String payloadstr = String.format(form, name);
         InputStream message = null;

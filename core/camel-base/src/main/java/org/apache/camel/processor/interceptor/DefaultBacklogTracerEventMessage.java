@@ -34,7 +34,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String exchangeId;
     private final String messageAsXml;
 
-    public DefaultBacklogTracerEventMessage(long uid, long timestamp, String routeId, String toNode, String exchangeId, String messageAsXml) {
+    public DefaultBacklogTracerEventMessage(long uid, long timestamp, String routeId, String toNode, String exchangeId,
+                                            String messageAsXml) {
         this.uid = uid;
         this.timestamp = timestamp;
         this.routeId = routeId;
@@ -111,4 +112,3 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         return sb.toString();
     }
 }
-

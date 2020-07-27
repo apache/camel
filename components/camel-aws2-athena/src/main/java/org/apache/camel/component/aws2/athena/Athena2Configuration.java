@@ -30,95 +30,95 @@ import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable
 public class Athena2Configuration implements Cloneable {
 
     @UriPath(label = "producer",
-        description = "Logical name")
+             description = "Logical name")
     @Metadata(required = true)
     private String label;
 
     @UriParam(label = "producer",
-        defaultValue = "startQueryExecution",
-        description = "The Athena API function to call.")
+              defaultValue = "startQueryExecution",
+              description = "The Athena API function to call.")
     private Athena2Operations operation = Athena2Operations.startQueryExecution;
     @UriParam(label = "producer",
-        description = "The Athena database to use.")
+              description = "The Athena database to use.")
     private String database;
     @UriParam(label = "producer",
-        description = "The unique ID identifying the query execution.")
+              description = "The unique ID identifying the query execution.")
     private String queryExecutionId;
     @UriParam(label = "producer",
-        description = "The workgroup to use for running the query.")
+              description = "The workgroup to use for running the query.")
     private String workGroup;
     @UriParam(label = "producer",
-        description = "Pagination token to use in the case where the response from the previous request was truncated.")
+              description = "Pagination token to use in the case where the response from the previous request was truncated.")
     private String nextToken;
     @UriParam(label = "producer",
-        description = "Max number of results to return for the given operation (if supported by the Athena API endpoint).  If not set, will use the Athena API default for the given operation.")
+              description = "Max number of results to return for the given operation (if supported by the Athena API endpoint).  If not set, will use the Athena API default for the given operation.")
     private Integer maxResults;
     @UriParam(label = "producer",
-        defaultValue = "false",
-        description = "Include useful trace information at the beginning of queries as an SQL comment (prefixed with \"--\").")
+              defaultValue = "false",
+              description = "Include useful trace information at the beginning of queries as an SQL comment (prefixed with \"--\").")
     private boolean includeTrace;
     @UriParam(label = "producer",
-        description = "The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/.  Ensure this value ends with a forward slash ('/').")
+              description = "The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/.  Ensure this value ends with a forward slash ('/').")
     private String outputLocation;
     @UriParam(label = "producer",
-        defaultValue = "StreamList",
-        description = "How query results should be returned.  One of "
-            + "StreamList (default - return a GetQueryResultsIterable that can page through all results), "
-            + "SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), "
-            + "S3Pointer (return an S3 path pointing to the results).")
+              defaultValue = "StreamList",
+              description = "How query results should be returned.  One of "
+                            + "StreamList (default - return a GetQueryResultsIterable that can page through all results), "
+                            + "SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), "
+                            + "S3Pointer (return an S3 path pointing to the results).")
     private Athena2OutputType outputType = Athena2OutputType.StreamList;
 
     @UriParam(label = "advanced",
-        description = "A unique string to ensure issues queries are idempotent.  It is unlikely you will need to set this.")
+              description = "A unique string to ensure issues queries are idempotent.  It is unlikely you will need to set this.")
     private String clientRequestToken;
     @UriParam(label = "producer",
-        description = "The SQL query to run.  Except for simple queries, prefer setting this as the {@code body} of the "
-            + "Exchange or as a header using Athena2Constants.QUERY_STRING to avoid having to deal with URL encoding issues.")
+              description = "The SQL query to run.  Except for simple queries, prefer setting this as the {@code body} of the "
+                            + "Exchange or as a header using Athena2Constants.QUERY_STRING to avoid having to deal with URL encoding issues.")
     private String queryString;
     @UriParam(label = "producer",
-        description = "The encryption type to use when storing query results in S3.  One of SSE_S3, SSE_KMS, or CSE_KMS.")
+              description = "The encryption type to use when storing query results in S3.  One of SSE_S3, SSE_KMS, or CSE_KMS.")
     private EncryptionOption encryptionOption;
     @UriParam(label = "producer",
-        description = "For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.")
+              description = "For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.")
     private String kmsKey;
 
     @UriParam(label = "producer",
-        defaultValue = "0",
-        description = "Optional max wait time in millis to wait for a successful query completion.  "
-            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
+              defaultValue = "0",
+              description = "Optional max wait time in millis to wait for a successful query completion.  "
+                            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
     private long waitTimeout;
     @UriParam(label = "producer",
-        defaultValue = "1000",
-        description = "Milliseconds before the first poll for query execution status.  "
-            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
+              defaultValue = "1000",
+              description = "Milliseconds before the first poll for query execution status.  "
+                            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
     private long initialDelay = 1_000;
     @UriParam(label = "producer",
-        defaultValue = "2000",
-        description = "Milliseconds before the next poll for query execution status.  "
-            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
+              defaultValue = "2000",
+              description = "Milliseconds before the next poll for query execution status.  "
+                            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
     private long delay = 2_000;
 
     @UriParam(label = "producer",
-        defaultValue = "1",
-        description = "Maximum number of times to attempt a query.  Set to 1 to disable retries.  "
-            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
+              defaultValue = "1",
+              description = "Maximum number of times to attempt a query.  Set to 1 to disable retries.  "
+                            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
     private int maxAttempts = 1;
     @UriParam(label = "producer",
-        defaultValue = "never",
-        description = "Optional comma separated list of error types to retry the query for.  Use "
-            + "'retryable' to retry all retryable failure conditions (e.g. generic errors and resources exhausted), "
-            + "'generic' to retry 'GENERIC_INTERNAL_ERROR' failures, "
-            + "'exhausted' to retry queries that have exhausted resource limits, "
-            + "'always' to always retry regardless of failure condition, or "
-            + "'never' or null to never retry (default). "
-            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.",
-        enums = "never,always,retryable,exhausted,generic")
+              defaultValue = "never",
+              description = "Optional comma separated list of error types to retry the query for.  Use "
+                            + "'retryable' to retry all retryable failure conditions (e.g. generic errors and resources exhausted), "
+                            + "'generic' to retry 'GENERIC_INTERNAL_ERROR' failures, "
+                            + "'exhausted' to retry queries that have exhausted resource limits, "
+                            + "'always' to always retry regardless of failure condition, or "
+                            + "'never' or null to never retry (default). "
+                            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.",
+              enums = "never,always,retryable,exhausted,generic")
     private String retry;
     @UriParam(label = "producer",
-        defaultValue = "true",
-        description = "Reset the waitTimeout countdown in the event of a query retry.  "
-            + "If set to true, potential max time spent waiting for queries is equal to waitTimeout x maxAttempts.  "
-            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
+              defaultValue = "true",
+              description = "Reset the waitTimeout countdown in the event of a query retry.  "
+                            + "If set to true, potential max time spent waiting for queries is equal to waitTimeout x maxAttempts.  "
+                            + "See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.")
     private boolean resetWaitTimeoutOnRetry = true;
 
     @UriParam
@@ -207,10 +207,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which Athena client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1).  You'll need to use the name
-     * Region.EU_WEST_1.id().
+     * The region in which Athena client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id().
      */
     public void setRegion(String region) {
         this.region = region;
@@ -221,8 +219,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * The location in Amazon S3 where query results are stored, such as {@code s3://path/to/query/bucket/}.
-     * Ensure this value ends with a forward slash ('/').
+     * The location in Amazon S3 where query results are stored, such as {@code s3://path/to/query/bucket/}. Ensure this
+     * value ends with a forward slash ('/').
      */
     public void setOutputLocation(String outputLocation) {
         this.outputLocation = outputLocation;
@@ -233,9 +231,9 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * How query results should be returned.  One of
-     * {@code StreamList} (default - return a {@link GetQueryResultsIterable} that can page through all results),
-     * {@code SelectList} (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results),
+     * How query results should be returned. One of {@code StreamList} (default - return a
+     * {@link GetQueryResultsIterable} that can page through all results), {@code SelectList} (returns at most 1,000
+     * rows at a time, plus a NextToken value as a header than can be used for manual pagination of results),
      * {@code S3Pointer} (return an S3 path pointing to the results).
      */
     public void setOutputType(Athena2OutputType outputType) {
@@ -291,8 +289,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Max number of results to return for the given operation (if supported by the Athena API endpoint).
-     * If not set, will use the Athena API default for the given operation.
+     * Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set,
+     * will use the Athena API default for the given operation.
      */
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
@@ -314,7 +312,7 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * A unique string to ensure issues queries are idempotent.  It is unlikely you will need to set this.
+     * A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this.
      */
     public void setClientRequestToken(String clientRequestToken) {
         this.clientRequestToken = clientRequestToken;
@@ -325,8 +323,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * The encryption type to use when storing query results in S3.
-     * One of {@code SSE_S3}, {@code SSE_KMS}, or {@code CSE_KMS}.
+     * The encryption type to use when storing query results in S3. One of {@code SSE_S3}, {@code SSE_KMS}, or
+     * {@code CSE_KMS}.
      */
     public void setEncryptionOption(EncryptionOption encryptionOption) {
         this.encryptionOption = encryptionOption;
@@ -348,8 +346,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * The SQL query to run.  Except for simple queries, prefer setting this as the {@code body} of the
-     * Exchange or as a header using {@link Athena2Constants#QUERY_STRING} to avoid having to deal with URL encoding issues.
+     * The SQL query to run. Except for simple queries, prefer setting this as the {@code body} of the Exchange or as a
+     * header using {@link Athena2Constants#QUERY_STRING} to avoid having to deal with URL encoding issues.
      */
     public void setQueryString(String queryString) {
         this.queryString = queryString;
@@ -360,8 +358,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Milliseconds before the first poll for query execution status.
-     * See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.
+     * Milliseconds before the first poll for query execution status. See the section 'Waiting for Query Completion and
+     * Retrying Failed Queries' to learn more.
      */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
@@ -372,8 +370,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Milliseconds before the next poll for query execution status.
-     * See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.
+     * Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and
+     * Retrying Failed Queries' to learn more.
      */
     public void setDelay(long delay) {
         this.delay = delay;
@@ -384,8 +382,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Optional max wait time in millis to wait for a successful query completion.
-     * See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.
+     * Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query
+     * Completion and Retrying Failed Queries' to learn more.
      */
     public void setWaitTimeout(long waitTimeout) {
         this.waitTimeout = waitTimeout;
@@ -396,13 +394,11 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Optional comma separated list of error types to retry the query for.  Use
-     * "retryable" to retry all retryable failure conditions (e.g. generic errors and resources exhausted),
-     * "generic" to retry "GENERIC_INTERNAL_ERROR" failures,
-     * "exhausted" to retry queries that have exhausted resource limits,
-     * "always" to always retry regardless of failure condition, or
-     * "never" or null to never retry (default).
-     * See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.
+     * Optional comma separated list of error types to retry the query for. Use "retryable" to retry all retryable
+     * failure conditions (e.g. generic errors and resources exhausted), "generic" to retry "GENERIC_INTERNAL_ERROR"
+     * failures, "exhausted" to retry queries that have exhausted resource limits, "always" to always retry regardless
+     * of failure condition, or "never" or null to never retry (default). See the section 'Waiting for Query Completion
+     * and Retrying Failed Queries' to learn more.
      */
     public void setRetry(String retry) {
         this.retry = retry;
@@ -413,8 +409,8 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Maximum number of times to attempt a query.  Set to 1 to disable retries.
-     * See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.
+     * Maximum number of times to attempt a query. Set to 1 to disable retries. See the section 'Waiting for Query
+     * Completion and Retrying Failed Queries' to learn more.
      */
     public void setMaxAttempts(int maxAttempts) {
         this.maxAttempts = maxAttempts;
@@ -425,9 +421,9 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Reset the waitTimeout countdown in the event of a query retry.
-     * If set to true, potential max time spent waiting for queries is equal to waitTimeout x maxAttempts.
-     * See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more.
+     * Reset the waitTimeout countdown in the event of a query retry. If set to true, potential max time spent waiting
+     * for queries is equal to waitTimeout x maxAttempts. See the section 'Waiting for Query Completion and Retrying
+     * Failed Queries' to learn more.
      */
     public void setResetWaitTimeoutOnRetry(boolean resetWaitTimeoutOnRetry) {
         this.resetWaitTimeoutOnRetry = resetWaitTimeoutOnRetry;

@@ -87,7 +87,7 @@ public class FilteringXmlStreamWriterTest {
 
     @Test
     public void testWriteCharacters3Args() throws XMLStreamException {
-        char[] buffer = new char[] {'a', 'b', 'c'};
+        char[] buffer = new char[] { 'a', 'b', 'c' };
         filteringXmlStreamWriter.writeCharacters(buffer, 2, 3);
         verify(xmlStreamWriterMock).writeCharacters(same(buffer), eq(2), eq(3));
     }

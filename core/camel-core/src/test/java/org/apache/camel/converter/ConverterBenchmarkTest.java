@@ -49,16 +49,17 @@ public class ConverterBenchmarkTest {
     public void launchBenchmark() throws Exception {
 
         Options opt = new OptionsBuilder()
-            // Specify which benchmarks to run.
-            // You can be more specific if you'd like to run only one benchmark
-            // per test.
-            .include(this.getClass().getName() + ".*")
-            // Set the following options as needed
-            .mode(Mode.AverageTime).timeUnit(TimeUnit.MICROSECONDS).warmupTime(TimeValue.seconds(2)).warmupIterations(5).measurementTime(TimeValue.seconds(1))
-            .measurementIterations(5).threads(2).forks(1).shouldFailOnError(true).shouldDoGC(true)
-            // .jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
-            // .addProfiler(WinPerfAsmProfiler.class)
-            .build();
+                // Specify which benchmarks to run.
+                // You can be more specific if you'd like to run only one benchmark
+                // per test.
+                .include(this.getClass().getName() + ".*")
+                // Set the following options as needed
+                .mode(Mode.AverageTime).timeUnit(TimeUnit.MICROSECONDS).warmupTime(TimeValue.seconds(2)).warmupIterations(5)
+                .measurementTime(TimeValue.seconds(1))
+                .measurementIterations(5).threads(2).forks(1).shouldFailOnError(true).shouldDoGC(true)
+                // .jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
+                // .addProfiler(WinPerfAsmProfiler.class)
+                .build();
 
         new Runner(opt).run();
     }
@@ -142,7 +143,8 @@ public class ConverterBenchmarkTest {
     @Disabled
     @Test
     public void testConvertEnumPerfs() throws Exception {
-        Blackhole bh = new Blackhole("Today's password is swordfish. I understand instantiating Blackholes directly is dangerous.");
+        Blackhole bh
+                = new Blackhole("Today's password is swordfish. I understand instantiating Blackholes directly is dangerous.");
         BenchmarkState state = new BenchmarkState();
         state.initialize();
         doTest(bh, state);

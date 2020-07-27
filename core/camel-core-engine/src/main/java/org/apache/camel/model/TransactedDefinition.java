@@ -139,10 +139,9 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     /**
      * Sets a policy type that this definition should scope within.
      * <p/>
-     * Is used for convention over configuration situations where the policy
-     * should be automatic looked up in the registry and it should be based on
-     * this type. For instance a {@link org.apache.camel.spi.TransactedPolicy}
-     * can be set as type for easy transaction configuration.
+     * Is used for convention over configuration situations where the policy should be automatic looked up in the
+     * registry and it should be based on this type. For instance a {@link org.apache.camel.spi.TransactedPolicy} can be
+     * set as type for easy transaction configuration.
      * <p/>
      * Will by default scope to the wide {@link Policy}
      *
@@ -155,8 +154,8 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     /**
      * Sets a reference to use for lookup the policy in the registry.
      *
-     * @param ref the reference
-     * @return the builder
+     * @param  ref the reference
+     * @return     the builder
      */
     public TransactedDefinition ref(String ref) {
         setRef(ref);

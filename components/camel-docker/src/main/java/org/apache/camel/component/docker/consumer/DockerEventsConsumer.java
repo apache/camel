@@ -39,17 +39,17 @@ public class DockerEventsConsumer extends DefaultConsumer {
     private DockerEndpoint endpoint;
     private DockerComponent component;
     private EventsCmd eventsCmd;
-    
+
     public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.component = (DockerComponent)endpoint.getComponent();
+        this.component = (DockerComponent) endpoint.getComponent();
 
     }
 
     @Override
     public DockerEndpoint getEndpoint() {
-        return (DockerEndpoint)super.getEndpoint();
+        return (DockerEndpoint) super.getEndpoint();
     }
 
     /**
@@ -57,17 +57,19 @@ public class DockerEventsConsumer extends DefaultConsumer {
      */
     private long processInitialEvent() {
         long currentTime = System.currentTimeMillis();
-        Long initialRange = DockerHelper.getProperty(DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
+        Long initialRange
+                = DockerHelper.getProperty(DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
         if (initialRange != null) {
             currentTime = currentTime - initialRange;
         }
-        
+
         return currentTime;
     }
 
     @Override
     protected void doStart() throws Exception {
-        this.eventsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).eventsCmd().withSince(String.valueOf(processInitialEvent()));
+        this.eventsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).eventsCmd()
+                .withSince(String.valueOf(processInitialEvent()));
         this.eventsCmd.exec(new EventsCallback());
 
         super.doStart();
@@ -76,7 +78,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         this.eventsCmd.close();
-        
+
         super.doStop();
     }
 

@@ -42,7 +42,7 @@ public class RouteRefMultipleCamelContextRefsTest {
         Endpoint start1 = camel1.getEndpoint("direct:start");
         Endpoint start2 = camel2.getEndpoint("direct:start");
         assertNotSame(start1, start2);
-        
+
         MockEndpoint mock1 = camel1.getEndpoint("mock:result", MockEndpoint.class);
         mock1.expectedBodiesReceived("Hello World");
 
@@ -57,5 +57,5 @@ public class RouteRefMultipleCamelContextRefsTest {
 
         ac.stop();
     }
-    
+
 }

@@ -29,29 +29,34 @@ public interface SqlNamedProcessingStrategy extends SqlProcessingStrategy {
     /**
      * Commit callback if there are a query to be run after processing.
      *
-     * @param endpoint          the endpoint
-     * @param exchange          The exchange after it has been processed
-     * @param data              The original data delivered to the route
-     * @param namedJdbcTemplate The JDBC template
-     * @param parameterSource   Parameter sources for the named JDBC template
-     * @param query             The SQL query to execute
-     * @return the update count if the query returned an update count
-     * @throws Exception can be thrown in case of error
+     * @param  endpoint          the endpoint
+     * @param  exchange          The exchange after it has been processed
+     * @param  data              The original data delivered to the route
+     * @param  namedJdbcTemplate The JDBC template
+     * @param  parameterSource   Parameter sources for the named JDBC template
+     * @param  query             The SQL query to execute
+     * @return                   the update count if the query returned an update count
+     * @throws Exception         can be thrown in case of error
      */
-    int commit(DefaultSqlEndpoint endpoint, Exchange exchange, Object data,
-               NamedParameterJdbcTemplate namedJdbcTemplate, SqlParameterSource parameterSource, String query) throws Exception;
+    int commit(
+            DefaultSqlEndpoint endpoint, Exchange exchange, Object data,
+            NamedParameterJdbcTemplate namedJdbcTemplate, SqlParameterSource parameterSource, String query)
+            throws Exception;
 
     /**
-     * Commit callback when the batch is complete. This allows you to do one extra query after all rows has been processed in the batch.
+     * Commit callback when the batch is complete. This allows you to do one extra query after all rows has been
+     * processed in the batch.
      *
-     * @param endpoint          the endpoint
-     * @param namedJdbcTemplate The JDBC template
-     * @param parameterSource   Parameter sources for the named JDBC template
-     * @param query             The SQL query to execute
-     * @return the update count if the query returned an update count
-     * @throws Exception can be thrown in case of error
+     * @param  endpoint          the endpoint
+     * @param  namedJdbcTemplate The JDBC template
+     * @param  parameterSource   Parameter sources for the named JDBC template
+     * @param  query             The SQL query to execute
+     * @return                   the update count if the query returned an update count
+     * @throws Exception         can be thrown in case of error
      */
-    int commitBatchComplete(DefaultSqlEndpoint endpoint, NamedParameterJdbcTemplate namedJdbcTemplate,
-                            SqlParameterSource parameterSource, String query) throws Exception;
+    int commitBatchComplete(
+            DefaultSqlEndpoint endpoint, NamedParameterJdbcTemplate namedJdbcTemplate,
+            SqlParameterSource parameterSource, String query)
+            throws Exception;
 
 }

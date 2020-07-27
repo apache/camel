@@ -46,7 +46,8 @@ public class IronMQComponent extends DefaultComponent {
         Endpoint endpoint = new IronMQEndpoint(uri, this, ironMQConfiguration);
         ironMQConfiguration.setQueueName(remaining);
         setProperties(endpoint, parameters);
-        if (ironMQConfiguration.getClient() == null && (ironMQConfiguration.getProjectId() == null || ironMQConfiguration.getToken() == null)) {
+        if (ironMQConfiguration.getClient() == null
+                && (ironMQConfiguration.getProjectId() == null || ironMQConfiguration.getToken() == null)) {
             throw new IllegalArgumentException("Client or project and token must be specified.");
         }
 

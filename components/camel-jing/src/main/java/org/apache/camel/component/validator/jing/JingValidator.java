@@ -36,9 +36,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
 
 /**
- * A validator which uses the <a
- * href="http://www.thaiopensource.com/relaxng/jing.html">Jing</a> library to
- * validate XML against RelaxNG
+ * A validator which uses the <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing</a> library to validate XML
+ * against RelaxNG
  */
 public class JingValidator extends DefaultProducer {
     private Schema schema;
@@ -79,7 +78,6 @@ public class JingValidator extends DefaultProducer {
 
     // Properties
     // -------------------------------------------------------------------------
-
 
     public Schema getSchema() {
         return schema;

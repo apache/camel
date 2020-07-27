@@ -24,9 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
 /**
- * Implements a sticky load balancer using an {@link Expression} to calculate
- * a correlation key to perform the sticky load balancing; rather like jsessionid in the web
- * or JMSXGroupID in JMS.
+ * Implements a sticky load balancer using an {@link Expression} to calculate a correlation key to perform the sticky
+ * load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
  */
 public class StickyLoadBalancer extends QueueLoadBalancer {
     private Expression correlationExpression;
@@ -78,12 +77,11 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     //-------------------------------------------------------------------------
 
     /**
-     * A strategy to create the key for the sticky load balancing map.
-     * The default implementation uses the hash code of the value
-     * then modulos by the numberOfHashGroups to avoid the sticky map getting too big
+     * A strategy to create the key for the sticky load balancing map. The default implementation uses the hash code of
+     * the value then modulos by the numberOfHashGroups to avoid the sticky map getting too big
      *
-     * @param value the correlation value
-     * @return the key to be used in the sticky map
+     * @param  value the correlation value
+     * @return       the key to be used in the sticky map
      */
     protected Object getStickyKey(Object value) {
         int hashCode = 37;

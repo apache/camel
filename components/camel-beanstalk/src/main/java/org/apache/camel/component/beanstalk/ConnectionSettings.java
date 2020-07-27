@@ -63,14 +63,12 @@ public class ConnectionSettings {
     }
 
     /**
-     * Returns the {@link Client} instance ready for writing
-     * operations, e.g. "put".
+     * Returns the {@link Client} instance ready for writing operations, e.g. "put".
      * <p/>
      * <code>use(tube)</code> is applied during this call.
      *
-     * @return {@link Client} instance
-     * @throws IllegalArgumentException the exception is raised when this ConnectionSettings
-     *                                  has more than one tube.
+     * @return                          {@link Client} instance
+     * @throws IllegalArgumentException the exception is raised when this ConnectionSettings has more than one tube.
      */
     public Client newWritingClient() throws IllegalArgumentException {
         if (tubes.length > 1) {
@@ -90,13 +88,12 @@ public class ConnectionSettings {
     }
 
     /**
-     * Returns the {@link Client} instance for reading operations with all
-     * the tubes aleady watched
+     * Returns the {@link Client} instance for reading operations with all the tubes aleady watched
      * <p/>
      * <code>watch(tube)</code> is applied for every tube during this call.
      *
-     * @param useBlockIO configuration param to {@link Client}
-     * @return {@link Client} instance
+     * @param  useBlockIO configuration param to {@link Client}
+     * @return            {@link Client} instance
      */
     public Client newReadingClient(boolean useBlockIO) {
         final ClientImpl client = new ClientImpl(host, port, useBlockIO);

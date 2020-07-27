@@ -28,37 +28,39 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringSecurityAuthorizationPolicyConfigTest {
-    
+
     private AbstractXmlApplicationContext context;
-    
+
     @BeforeEach
     public void setUp() {
-        context = 
-            new ClassPathXmlApplicationContext(new String[] {"/org/apache/camel/component/spring/security/config/SpringSecurityAuthorizationPolicy.xml"});
+        context = new ClassPathXmlApplicationContext(
+                new String[] { "/org/apache/camel/component/spring/security/config/SpringSecurityAuthorizationPolicy.xml" });
     }
-    
+
     @AfterEach
     public void tearDown() {
         IOHelper.close(context);
     }
-    
+
     @Test
     public void testAuthorizationPolicy() {
-                
+
         SpringSecurityAuthorizationPolicy adminPolicy = context.getBean("admin", SpringSecurityAuthorizationPolicy.class);
         assertNotNull(adminPolicy, "We should get admin policy");
         assertNotNull(adminPolicy.getAccessDecisionManager(), "The accessDecisionManager should not be null");
         assertNotNull(adminPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
         assertNotNull(adminPolicy.getSpringSecurityAccessPolicy(), "The springSecurityAccessPolicy should not be null");
-        
+
         SpringSecurityAuthorizationPolicy userPolicy = context.getBean("user", SpringSecurityAuthorizationPolicy.class);
         assertNotNull(userPolicy, "We should get user policy");
         assertNotNull(userPolicy.getAccessDecisionManager(), "The accessDecisionManager should not be null");
         assertNotNull(userPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
         assertNotNull(userPolicy.getSpringSecurityAccessPolicy(), "The springSecurityAccessPolicy should not be null");
-        
-        assertEquals(adminPolicy.getAccessDecisionManager(), userPolicy.getAccessDecisionManager(), "user policy and admin policy should have same accessDecisionManager");
-        assertEquals(adminPolicy.getAuthenticationManager(), userPolicy.getAuthenticationManager(), "user policy and admin policy should have same authenticationManager");
+
+        assertEquals(adminPolicy.getAccessDecisionManager(), userPolicy.getAccessDecisionManager(),
+                "user policy and admin policy should have same accessDecisionManager");
+        assertEquals(adminPolicy.getAuthenticationManager(), userPolicy.getAuthenticationManager(),
+                "user policy and admin policy should have same authenticationManager");
     }
 
 }

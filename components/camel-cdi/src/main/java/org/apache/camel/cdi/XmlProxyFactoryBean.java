@@ -44,7 +44,8 @@ final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 
     private final CamelProxyFactoryDefinition proxy;
 
-    XmlProxyFactoryBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, Function<Bean<T>, String> toString, Bean<?> context, CamelProxyFactoryDefinition proxy) {
+    XmlProxyFactoryBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, Function<Bean<T>, String> toString,
+                        Bean<?> context, CamelProxyFactoryDefinition proxy) {
         super(manager, annotated, type, null, toString);
         this.manager = manager;
         this.context = context;
@@ -55,8 +56,8 @@ final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
     public T create(CreationalContext<T> creationalContext) {
         try {
             CamelContext context = isNotEmpty(proxy.getCamelContextId())
-                ? getReferenceByName(manager, proxy.getCamelContextId(), CamelContext.class).get()
-                : getReference(manager, CamelContext.class, this.context);
+                    ? getReferenceByName(manager, proxy.getCamelContextId(), CamelContext.class).get()
+                    : getReference(manager, CamelContext.class, this.context);
 
             Endpoint endpoint;
             if (isNotEmpty(proxy.getServiceUrl())) {

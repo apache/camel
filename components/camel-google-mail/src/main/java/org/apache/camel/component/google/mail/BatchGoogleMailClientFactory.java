@@ -36,7 +36,8 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     }
 
     @Override
-    public Gmail makeClient(String clientId, String clientSecret, String applicationName, String refreshToken, String accessToken) {
+    public Gmail makeClient(
+            String clientId, String clientSecret, String applicationName, String refreshToken, String accessToken) {
         if (clientId == null || clientSecret == null) {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Gmail client.");
         }
@@ -58,6 +59,7 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     // Authorizes the installed application to access user's protected data.
     private Credential authorize(String clientId, String clientSecret) throws Exception {
         // authorize
-        return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport).setClientSecrets(clientId, clientSecret).build();
+        return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport)
+                .setClientSecrets(clientId, clientSecret).build();
     }
 }

@@ -37,7 +37,8 @@ public class OnExceptionWireTapNewExchangeBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).wireTap("mock:tap").newExchangeBody(simple("Error due ${exception.message}")).end().handled(true).to("mock:ignore");
+                onException(IllegalArgumentException.class).wireTap("mock:tap")
+                        .newExchangeBody(simple("Error due ${exception.message}")).end().handled(true).to("mock:ignore");
 
                 from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }

@@ -55,12 +55,14 @@ public class SWFWorkflowProducer extends DefaultProducer {
                     break;
 
                 case GET_STATE:
-                    Object state = camelSWFClient.getWorkflowExecutionState(getWorkflowId(exchange), getRunId(exchange), getResultType(exchange));
+                    Object state = camelSWFClient.getWorkflowExecutionState(getWorkflowId(exchange), getRunId(exchange),
+                            getResultType(exchange));
                     endpoint.setResult(exchange, state);
                     break;
 
                 case DESCRIBE:
-                    Map<String, Object> workflowInfo = camelSWFClient.describeWorkflowInstance(getWorkflowId(exchange), getRunId(exchange));
+                    Map<String, Object> workflowInfo
+                            = camelSWFClient.describeWorkflowInstance(getWorkflowId(exchange), getRunId(exchange));
                     endpoint.setResult(exchange, workflowInfo);
                     break;
 
@@ -77,11 +79,13 @@ public class SWFWorkflowProducer extends DefaultProducer {
                     break;
 
                 case SIGNAL:
-                    camelSWFClient.signalWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getSignalName(exchange), getArguments(exchange));
+                    camelSWFClient.signalWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getSignalName(exchange),
+                            getArguments(exchange));
                     break;
 
                 case TERMINATE:
-                    camelSWFClient.terminateWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getReason(exchange), getDetails(exchange), getChildPolicy(exchange));
+                    camelSWFClient.terminateWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getReason(exchange),
+                            getDetails(exchange), getChildPolicy(exchange));
                     break;
 
                 default:
@@ -165,7 +169,6 @@ public class SWFWorkflowProducer extends DefaultProducer {
         return exchange.getIn().getBody();
     }
 
-
     @Override
     public String toString() {
         if (swfWorkflowProducerToString == null) {
@@ -175,6 +178,12 @@ public class SWFWorkflowProducer extends DefaultProducer {
     }
 
     private enum Operation {
-        SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY;
+        SIGNAL,
+        CANCEL,
+        TERMINATE,
+        GET_STATE,
+        START,
+        DESCRIBE,
+        GET_HISTORY;
     }
 }

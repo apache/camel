@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseJettyTest extends CamelTestSupport {
-    
+
     private static volatile int port;
 
     private static volatile int port2;
@@ -98,7 +98,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     protected void allowNullHeaders() {
-        JettyHttpComponent jetty = (JettyHttpComponent)context.getComponent("jetty");
+        JettyHttpComponent jetty = (JettyHttpComponent) context.getComponent("jetty");
         HttpHeaderFilterStrategy filterStrat = new HttpHeaderFilterStrategy();
         filterStrat.setAllowNullValues(true);
         jetty.setHeaderFilterStrategy(filterStrat);

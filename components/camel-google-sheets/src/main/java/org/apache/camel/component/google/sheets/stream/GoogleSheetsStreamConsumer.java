@@ -57,7 +57,7 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public GoogleSheetsStreamEndpoint getEndpoint() {
-        return (GoogleSheetsStreamEndpoint)super.getEndpoint();
+        return (GoogleSheetsStreamEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -65,7 +65,8 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> answer = new ArrayDeque<>();
 
         if (ObjectHelper.isNotEmpty(getConfiguration().getRange())) {
-            Sheets.Spreadsheets.Values.BatchGet request = getClient().spreadsheets().values().batchGet(getConfiguration().getSpreadsheetId());
+            Sheets.Spreadsheets.Values.BatchGet request
+                    = getClient().spreadsheets().values().batchGet(getConfiguration().getSpreadsheetId());
 
             request.setMajorDimension(getConfiguration().getMajorDimension());
             request.setValueRenderOption(getConfiguration().getValueRenderOption());
@@ -88,11 +89,13 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
                         if (getConfiguration().getMaxResults() > 0) {
                             valueRange.getValues().stream()
                                     .limit(getConfiguration().getMaxResults())
-                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(), valueRange.getRange(), valueRange.getMajorDimension(), values))
+                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
+                                            valueRange.getRange(), valueRange.getMajorDimension(), values))
                                     .forEach(answer::add);
                         } else {
                             valueRange.getValues().stream()
-                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(), valueRange.getRange(), valueRange.getMajorDimension(), values))
+                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
+                                            valueRange.getRange(), valueRange.getMajorDimension(), values))
                                     .forEach(answer::add);
                         }
                         rangeIndex.incrementAndGet();

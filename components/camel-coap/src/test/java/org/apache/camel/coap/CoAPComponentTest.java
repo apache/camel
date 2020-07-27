@@ -49,7 +49,8 @@ public class CoAPComponentTest extends CoAPTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBody("Camel CoAP");
         assertMockEndpointsSatisfied();
@@ -60,7 +61,8 @@ public class CoAPComponentTest extends CoAPTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         tcpSender.sendBody("Camel CoAP");
         assertMockEndpointsSatisfied();
@@ -73,7 +75,8 @@ public class CoAPComponentTest extends CoAPTestSupport {
             public void configure() {
                 fromF("coap://localhost:%d/TestResource", PORT).convertBodyTo(String.class).transform(body().prepend("Hello "));
 
-                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT).convertBodyTo(String.class).transform(body().prepend("Hello "));
+                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT).convertBodyTo(String.class)
+                        .transform(body().prepend("Hello "));
 
                 from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
 

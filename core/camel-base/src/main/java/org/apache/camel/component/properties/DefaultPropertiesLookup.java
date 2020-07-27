@@ -23,7 +23,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesSource;
 
 /**
- * Default {@link PropertiesLookup} which lookup properties from a {@link java.util.Properties} with all existing properties.
+ * Default {@link PropertiesLookup} which lookup properties from a {@link java.util.Properties} with all existing
+ * properties.
  */
 public class DefaultPropertiesLookup implements PropertiesLookup {
 

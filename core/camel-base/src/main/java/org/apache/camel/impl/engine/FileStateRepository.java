@@ -73,7 +73,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     /**
      * Creates a new file based repository using a {@link HashMap} as 1st level cache.
      *
-     * @param fileStore the file store
+     * @param fileStore        the file store
      * @param maxFileStoreSize the max size in bytes for the fileStore file
      */
     public static FileStateRepository fileStateRepository(File fileStore, long maxFileStoreSize) {
@@ -85,8 +85,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     /**
      * Creates a new file based repository using the given {@link java.util.Map} as 1st level cache.
      * <p/>
-     * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a
-     * memory leak.
+     * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a memory leak.
      *
      * @param store the file store
      * @param cache the cache to use as 1st level cache
@@ -179,8 +178,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     }
 
     /**
-     * Trunks the file store when the max store size is hit by rewriting the 1st level cache
-     * to the file store.
+     * Trunks the file store when the max store size is hit by rewriting the 1st level cache to the file store.
      */
     protected void trunkStore() {
         LOG.info("Trunking state filestore: {}", fileStore);

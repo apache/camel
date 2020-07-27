@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GZIPHelperTest {
 
-    private static byte[] sampleBytes = new byte[] {1, 2, 3, 1, 2, 3};
+    private static byte[] sampleBytes = new byte[] { 1, 2, 3, 1, 2, 3 };
     private static String sampleString = "<Hello>World</Hello>";
 
     @Test
@@ -76,7 +76,7 @@ public class GZIPHelperTest {
         assertTrue(GZIPHelper.isGzip("gzip"));
         assertTrue(GZIPHelper.isGzip("GZip"));
 
-        assertFalse(GZIPHelper.isGzip((String)null));
+        assertFalse(GZIPHelper.isGzip((String) null));
         assertFalse(GZIPHelper.isGzip("zip"));
     }
 

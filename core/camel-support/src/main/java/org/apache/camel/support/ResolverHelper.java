@@ -25,7 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Some helper methods for new resolvers (like {@link org.apache.camel.spi.ComponentResolver}, {@link org.apache.camel.spi.DataFormatResolver}, etc.).
+ * Some helper methods for new resolvers (like {@link org.apache.camel.spi.ComponentResolver},
+ * {@link org.apache.camel.spi.DataFormatResolver}, etc.).
  */
 public final class ResolverHelper {
 
@@ -51,8 +52,10 @@ public final class ResolverHelper {
         return lookupComponentInRegistryWithFallback(context, name, EXCEPTION_HANDLER);
     }
 
-    public static Component lookupComponentInRegistryWithFallback(CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
-        Object bean = lookupInRegistry(context, Component.class, false, exceptionHandler, name, name + COMPONENT_FALLBACK_SUFFIX);
+    public static Component lookupComponentInRegistryWithFallback(
+            CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
+        Object bean
+                = lookupInRegistry(context, Component.class, false, exceptionHandler, name, name + COMPONENT_FALLBACK_SUFFIX);
         if (bean != null) {
             if (bean instanceof Component) {
                 return (Component) bean;
@@ -76,8 +79,10 @@ public final class ResolverHelper {
         return lookupDataFormatInRegistryWithFallback(context, name, EXCEPTION_HANDLER);
     }
 
-    public static DataFormat lookupDataFormatInRegistryWithFallback(CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
-        Object bean = lookupInRegistry(context, DataFormat.class, false, exceptionHandler, name, name + DATA_FORMAT_FALLBACK_SUFFIX);
+    public static DataFormat lookupDataFormatInRegistryWithFallback(
+            CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
+        Object bean = lookupInRegistry(context, DataFormat.class, false, exceptionHandler, name,
+                name + DATA_FORMAT_FALLBACK_SUFFIX);
         if (bean instanceof DataFormat) {
             return (DataFormat) bean;
         }
@@ -92,8 +97,10 @@ public final class ResolverHelper {
         return lookupDataFormatFactoryInRegistryWithFallback(context, name, EXCEPTION_HANDLER);
     }
 
-    public static DataFormatFactory lookupDataFormatFactoryInRegistryWithFallback(CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
-        Object bean = lookupInRegistry(context, DataFormatFactory.class, false, exceptionHandler, name, name + DATA_FORMAT_FACTORY_FALLBACK_SUFFIX);
+    public static DataFormatFactory lookupDataFormatFactoryInRegistryWithFallback(
+            CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
+        Object bean = lookupInRegistry(context, DataFormatFactory.class, false, exceptionHandler, name,
+                name + DATA_FORMAT_FACTORY_FALLBACK_SUFFIX);
         if (bean instanceof DataFormatFactory) {
             return (DataFormatFactory) bean;
         }
@@ -108,7 +115,8 @@ public final class ResolverHelper {
         return lookupLanguageInRegistryWithFallback(context, name, EXCEPTION_HANDLER);
     }
 
-    public static Language lookupLanguageInRegistryWithFallback(CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
+    public static Language lookupLanguageInRegistryWithFallback(
+            CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
         Object bean = lookupInRegistry(context, Language.class, false, exceptionHandler, name, name + LANGUAGE_FALLBACK_SUFFIX);
         if (bean instanceof Language) {
             return (Language) bean;
@@ -120,7 +128,6 @@ public final class ResolverHelper {
         return null;
     }
 
-
     public static class LookupExceptionHandler {
 
         public void handleException(Exception e, Logger log, String name) {
@@ -129,7 +136,9 @@ public final class ResolverHelper {
 
     }
 
-    private static Object lookupInRegistry(CamelContext context, Class<?> type, boolean lookupByNameAndType, LookupExceptionHandler exceptionHandler, String... names) {
+    private static Object lookupInRegistry(
+            CamelContext context, Class<?> type, boolean lookupByNameAndType, LookupExceptionHandler exceptionHandler,
+            String... names) {
         for (String name : names) {
             try {
                 Object bean;

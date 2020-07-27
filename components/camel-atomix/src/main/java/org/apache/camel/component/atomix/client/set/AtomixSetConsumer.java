@@ -49,13 +49,12 @@ public final class AtomixSetConsumer extends AbstractAtomixClientConsumer<Atomix
         super.doStart();
 
         this.set = getAtomixEndpoint()
-            .getAtomix()
-            .getSet(
-                resourceName,
-                new DistributedSet.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
-                new DistributedSet.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
-            .join();
-
+                .getAtomix()
+                .getSet(
+                        resourceName,
+                        new DistributedSet.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
+                        new DistributedSet.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
+                .join();
 
         LOG.debug("Subscribe to events for set: {}", resourceName);
         this.listeners.add(this.set.onAdd(this::onEvent).join());

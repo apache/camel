@@ -34,14 +34,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A file read lock that uses an {@link IdempotentRepository} and
- * {@link FileRenameExclusiveReadLockStrategy rename} as the lock strategy. This
- * allows to plugin and use existing idempotent repositories that for example
- * supports clustering. The other read lock strategies that are using marker
- * files or file locks, are not guaranteed to work in clustered setup with
- * various platform and file systems.
+ * A file read lock that uses an {@link IdempotentRepository} and {@link FileRenameExclusiveReadLockStrategy rename} as
+ * the lock strategy. This allows to plugin and use existing idempotent repositories that for example supports
+ * clustering. The other read lock strategies that are using marker files or file locks, are not guaranteed to work in
+ * clustered setup with various platform and file systems.
  */
-public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSupport implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
+public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSupport
+        implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentRenameRepositoryReadLockStrategy.class);
     private final FileRenameExclusiveReadLockStrategy rename;
@@ -68,7 +67,8 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // in clustered mode then another node may have processed the file so we
         // must check here again if the file exists
         File path = file.getFile();
@@ -96,12 +96,16 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         rename.releaseExclusiveReadLockOnAbort(operations, file, exchange);
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         String key = asKey(file);
         if (removeOnRollback) {
             idempotentRepository.remove(exchange, key);
@@ -114,7 +118,9 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         String key = asKey(file);
         if (removeOnCommit) {
             idempotentRepository.remove(exchange, key);
@@ -177,8 +183,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a
-     * rollback.
+     * Whether to remove the file from the idempotent repository when doing a rollback.
      * <p/>
      * By default this is true.
      */
@@ -187,8 +192,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a
-     * rollback.
+     * Whether to remove the file from the idempotent repository when doing a rollback.
      * <p/>
      * By default this is true.
      */
@@ -197,8 +201,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a
-     * commit.
+     * Whether to remove the file from the idempotent repository when doing a commit.
      * <p/>
      * By default this is false.
      */
@@ -207,8 +210,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a
-     * commit.
+     * Whether to remove the file from the idempotent repository when doing a commit.
      * <p/>
      * By default this is false.
      */

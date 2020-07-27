@@ -113,7 +113,8 @@ public class GoogleSheetsConfiguration {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Sheets component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Sheets component can obtain a new accessToken whenever the current
+     * one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

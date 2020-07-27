@@ -94,11 +94,12 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final String sqsEndpointUri = String
-            .format("aws-sqs://MyNewCamelQueue?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s", accessKey, secretKey,
-                    "1209600", "65536", "60",
-                    "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyNewCamelQueue%2FSQSDefaultPolicy%22%2C%22"
-                                              + "Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22"
-                                              + "Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyNewCamelQueue%22%7D%5D%7D");
+                .format("aws-sqs://MyNewCamelQueue?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s",
+                        accessKey, secretKey,
+                        "1209600", "65536", "60",
+                        "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyNewCamelQueue%2FSQSDefaultPolicy%22%2C%22"
+                                                  + "Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22"
+                                                  + "Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyNewCamelQueue%22%7D%5D%7D");
 
         return new RouteBuilder() {
             @Override

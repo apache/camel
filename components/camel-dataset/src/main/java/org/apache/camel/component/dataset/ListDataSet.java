@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A DataSet that allows a list of static payloads to be used to create each message exchange
- * along with using a pluggable transformer to customize the messages.
+ * A DataSet that allows a list of static payloads to be used to create each message exchange along with using a
+ * pluggable transformer to customize the messages.
  */
 public class ListDataSet extends DataSetSupport {
     private List<Object> defaultBodies;
@@ -55,8 +55,8 @@ public class ListDataSet extends DataSetSupport {
     //-------------------------------------------------------------------------
 
     /**
-     * Creates the message body for a given message.  If the messageIndex is greater than the size
-     * of the list, use the modulus.
+     * Creates the message body for a given message. If the messageIndex is greater than the size of the list, use the
+     * modulus.
      */
     @Override
     protected Object createMessageBody(long messageIndex) {

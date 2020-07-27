@@ -31,8 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Disabled
 public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
-    private static final String SAMPLE_FILE_NAME_1 = String.format("sample-1-%s.txt", SftpConsumerDisconnectTest.class.getSimpleName());
-    private static final String SAMPLE_FILE_NAME_2 = String.format("sample-2-%s.txt", SftpConsumerDisconnectTest.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME_1
+            = String.format("sample-1-%s.txt", SftpConsumerDisconnectTest.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME_2
+            = String.format("sample-2-%s.txt", SftpConsumerDisconnectTest.class.getSimpleName());
     private static final String SAMPLE_FILE_CHARSET = "iso-8859-1";
     private static final String SAMPLE_FILE_PAYLOAD = "abc";
 
@@ -92,21 +94,23 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delete=true").routeId("foo").noAutoStartup().process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        disconnectAllSessions(); // disconnect all Sessions from
-                                                 // the SFTP server
-                    }
-                }).to("mock:result");
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            disconnectAllSessions(); // disconnect all Sessions
-                                                     // from the SFTP server
-                        }
-                    }).to("mock:result");
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delete=true")
+                        .routeId("foo").noAutoStartup().process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                disconnectAllSessions(); // disconnect all Sessions from
+                                                        // the SFTP server
+                            }
+                        }).to("mock:result");
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                     + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
+                             .process(new Processor() {
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+                                     disconnectAllSessions(); // disconnect all Sessions
+                                                             // from the SFTP server
+                                 }
+                             }).to("mock:result");
             }
         };
     }

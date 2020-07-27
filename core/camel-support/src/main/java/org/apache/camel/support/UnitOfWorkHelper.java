@@ -42,7 +42,7 @@ public final class UnitOfWorkHelper {
     /**
      * Done and stop the {@link UnitOfWork}.
      *
-     * @param uow the unit of work
+     * @param uow      the unit of work
      * @param exchange the exchange (will unset the UoW on the exchange)
      */
     public static void doneUow(UnitOfWork uow, Exchange exchange) {
@@ -54,14 +54,16 @@ public final class UnitOfWorkHelper {
             uow.done(exchange);
         } catch (Throwable e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
-                    + ". This exception will be ignored.", e);
+                     + ". This exception will be ignored.",
+                    e);
         }
         // stop
         try {
             uow.stop();
         } catch (Throwable e) {
             LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
-                    + ". This exception will be ignored.", e);
+                     + ". This exception will be ignored.",
+                    e);
         }
         // MUST clear and set uow to null on exchange after done
         ExtendedExchange ee = (ExtendedExchange) exchange;
@@ -98,7 +100,8 @@ public final class UnitOfWorkHelper {
         }
     }
 
-    public static void beforeRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
+    public static void beforeRouteSynchronizations(
+            Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
         List<Synchronization> copy = new ArrayList<>(synchronizations);
 
@@ -121,7 +124,8 @@ public final class UnitOfWorkHelper {
         }
     }
 
-    public static void afterRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
+    public static void afterRouteSynchronizations(
+            Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
         List<Synchronization> copy = new ArrayList<>(synchronizations);
 

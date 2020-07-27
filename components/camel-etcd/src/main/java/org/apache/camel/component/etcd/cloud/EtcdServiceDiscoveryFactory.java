@@ -112,7 +112,7 @@ public class EtcdServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     @Override
     public ServiceDiscovery newInstance(CamelContext camelContext) throws Exception {
         return ObjectHelper.equal("watch", type, true)
-            ? new EtcdWatchServiceDiscovery(configuration)
-            : new EtcdOnDemandServiceDiscovery(configuration);
+                ? new EtcdWatchServiceDiscovery(configuration)
+                : new EtcdOnDemandServiceDiscovery(configuration);
     }
 }

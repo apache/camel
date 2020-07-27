@@ -29,7 +29,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 
 /**
- * Tests that verify the usage of default settings in the XPath language by declaring a bean called xpath in the registry
+ * Tests that verify the usage of default settings in the XPath language by declaring a bean called xpath in the
+ * registry
  */
 public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 

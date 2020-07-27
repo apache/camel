@@ -31,44 +31,43 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
-    protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = 
-        MTOM_ENDPOINT_URI + "&properties.mtom-enabled=true"
-        + "&defaultOperationName=Detail";
+    protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = MTOM_ENDPOINT_URI + "&properties.mtom-enabled=true"
+                                                                  + "&defaultOperationName=Detail";
     private static final Logger LOG = LoggerFactory.getLogger(CxfJavaMtomProducerPayloadTest.class);
 
     @Override
     @SuppressWarnings("unchecked")
     @Test
-    public void testInvokingService() throws Exception {   
+    public void testInvokingService() throws Exception {
         if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
         final Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes("UTF-8"));
         final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
-        
+
         Exchange exchange = context.createProducerTemplate().send(MTOM_ENDPOINT_URI_MTOM_ENABLE, new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new Object[] {photo, image});
-                
+                exchange.getIn().setBody(new Object[] { photo, image });
+
             }
-            
+
         });
-        
+
         // Make sure we don't put the attachement into out message
         assertEquals(0, exchange.getOut(AttachmentMessage.class).getAttachments().size(), "The attachement size should be 0");
-        
+
         Object[] result = exchange.getOut().getBody(Object[].class);
-        
+
         Holder<byte[]> photo1 = (Holder<byte[]>) result[1];
-            
+
         Holder<Image> image1 = (Holder<Image>) result[2];
-        
+
         assertEquals("ResponseFromCamel", new String(photo1.value, "UTF-8"));
         assertNotNull(image1.value);
-        
+
     }
 
 }

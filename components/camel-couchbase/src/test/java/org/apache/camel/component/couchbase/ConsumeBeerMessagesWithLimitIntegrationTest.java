@@ -41,8 +41,8 @@ public class ConsumeBeerMessagesWithLimitIntegrationTest extends CamelTestSuppor
             public void configure() throws Exception {
 
                 // need couchbase installed on localhost with beer-sample data
-                from("couchbase:http://localhost/beer-sample?username=root&password=123456&designDocumentName=beer&viewName=brewery_beers&limit=10").
-                    to("mock:result");
+                from("couchbase:http://localhost/beer-sample?username=root&password=123456&designDocumentName=beer&viewName=brewery_beers&limit=10")
+                        .to("mock:result");
             }
         };
 

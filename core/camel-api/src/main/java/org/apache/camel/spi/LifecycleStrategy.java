@@ -36,9 +36,10 @@ public interface LifecycleStrategy {
     /**
      * Notification on initializing a {@link CamelContext}.
      *
-     * @param context the camel context
-     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}.
-     *                                        Any other runtime exceptions will be logged at <tt>WARN</tt> level by Camel will continue starting itself.
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
      */
     default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
     }
@@ -46,9 +47,10 @@ public interface LifecycleStrategy {
     /**
      * Notification on starting a {@link CamelContext}.
      *
-     * @param context the camel context
-     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}.
-     *                                        Any other runtime exceptions will be logged at <tt>WARN</tt> level by Camel will continue starting itself.
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
      */
     void onContextStart(CamelContext context) throws VetoCamelContextStartException;
 
@@ -156,8 +158,9 @@ public interface LifecycleStrategy {
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
-    void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-                         String sourceId, String routeId, String threadPoolProfileId);
+    void onThreadPoolAdd(
+            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
+            String sourceId, String routeId, String threadPoolProfileId);
 
     /**
      * Notification on removing a thread pool.

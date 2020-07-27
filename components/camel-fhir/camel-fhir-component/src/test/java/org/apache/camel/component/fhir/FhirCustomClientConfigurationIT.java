@@ -66,13 +66,15 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCreateApiMethod.class).getName();
 
-    private static final String TEST_URI_CUSTOM_CLIENT = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&client=#customClient";
+    private static final String TEST_URI_CUSTOM_CLIENT
+            = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&client=#customClient";
 
-    private static final String TEST_URI_CUSTOM_CLIENT_FACTORY = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&clientFactory=#customClientFactory&serverUrl=foobar";
+    private static final String TEST_URI_CUSTOM_CLIENT_FACTORY
+            = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&clientFactory=#customClientFactory&serverUrl=foobar";
 
     @BindToRegistry("customClient")
     private CustomClient client = new CustomClient();
-    
+
     @BindToRegistry("customClientFactory")
     private CustomClientFactory clientFactory = new CustomClientFactory();
 
@@ -119,7 +121,9 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public IHttpClient getHttpClient(StringBuilder theUrl, Map<String, List<String>> theIfNoneExistParams, String theIfNoneExistString, RequestTypeEnum theRequestType, List<Header> theHeaders) {
+        public IHttpClient getHttpClient(
+                StringBuilder theUrl, Map<String, List<String>> theIfNoneExistParams, String theIfNoneExistString,
+                RequestTypeEnum theRequestType, List<Header> theHeaders) {
             return null;
         }
 
@@ -214,7 +218,8 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void validateServerBaseIfConfiguredToDoSo(String theServerBase, IHttpClient theHttpClient, IRestfulClient theClient) {
+        public void validateServerBaseIfConfiguredToDoSo(
+                String theServerBase, IHttpClient theHttpClient, IRestfulClient theClient) {
 
         }
     }

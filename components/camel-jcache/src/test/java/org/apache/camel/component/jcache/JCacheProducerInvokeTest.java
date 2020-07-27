@@ -127,10 +127,10 @@ public class JCacheProducerInvokeTest extends JCacheComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:invoke")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:invoke");
                 from("direct:invoke-all")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:invoke-all");
             }
         };

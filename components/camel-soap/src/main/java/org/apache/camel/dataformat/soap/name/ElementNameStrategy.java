@@ -22,19 +22,20 @@ import javax.xml.namespace.QName;
  * Strategy interface for determining the element name for a SOAP body or fault
  */
 public interface ElementNameStrategy {
-    
+
     /**
      * Deterimine element name for given type
      * 
-     * @param soapAction
-     * @param type
-     * @return resolved element name
+     * @param  soapAction
+     * @param  type
+     * @return            resolved element name
      */
     QName findQNameForSoapActionOrType(String soapAction, Class<?> type);
-    
+
     /**
      * Determine exception class for given SOAP Fault QName
-     * @param faultName
+     * 
+     * @param  faultName
      * @return
      */
     Class<? extends Exception> findExceptionForFaultName(QName faultName);

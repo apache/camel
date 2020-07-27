@@ -64,8 +64,8 @@ public interface StatefulService extends SuspendableService, ShutdownableService
     boolean isSuspending();
 
     /**
-     * Helper methods so the service knows if it should keep running.
-     * Returns <tt>false</tt> if the service is being stopped or is stopped.
+     * Helper methods so the service knows if it should keep running. Returns <tt>false</tt> if the service is being
+     * stopped or is stopped.
      *
      * @return <tt>true</tt> if the service should continue to run.
      */

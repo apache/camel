@@ -108,7 +108,8 @@ public class ArangoCollectionUpdateTest extends AbstractArangoDbTest {
             exchange.getMessage().setHeader(MULTI_UPDATE, true);
         });
         assertTrue(result.getMessage().getBody() instanceof MultiDocumentEntity);
-        MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>> updateDocs = (MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>>) result.getMessage().getBody();
+        MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>> updateDocs
+                = (MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>>) result.getMessage().getBody();
         assertFalse(updateDocs.getDocuments().isEmpty());
 
         TestDocumentEntity test1Updated = collection.getDocument(test1.getKey(), TestDocumentEntity.class);

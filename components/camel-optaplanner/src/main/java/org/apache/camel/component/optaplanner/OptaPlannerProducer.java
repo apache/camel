@@ -44,7 +44,8 @@ public class OptaPlannerProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         if (configuration.isAsync()) {
-            executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), configuration.getThreadPoolSize());
+            executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                    endpoint.getEndpointUri(), configuration.getThreadPoolSize());
         }
         super.doStart();
     }
@@ -95,7 +96,7 @@ public class OptaPlannerProducer extends DefaultProducer {
         } else if (body instanceof ProblemFactChange) {
             LOGGER.debug("Adding ProblemFactChange to solver: [{}] with id [{}]", body, solverId);
             Solver<Object> solver = endpoint.getOrCreateSolver(solverId);
-            solver.addProblemFactChange((ProblemFactChange<Object>)body);
+            solver.addProblemFactChange((ProblemFactChange<Object>) body);
             if (!isAsync(exchange)) {
                 while (!solver.isEveryProblemFactChangeProcessed()) {
                     Thread.sleep(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_DELAY);
@@ -115,7 +116,8 @@ public class OptaPlannerProducer extends DefaultProducer {
     private void populateResult(Exchange exchange, Solver<Object> solver) {
         exchange.getIn().setBody(solver.getBestSolution());
         exchange.getIn().setHeader(OptaPlannerConstants.TIME_SPENT, solver.getTimeMillisSpent());
-        exchange.getIn().setHeader(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED, solver.isEveryProblemFactChangeProcessed());
+        exchange.getIn().setHeader(OptaPlannerConstants.IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED,
+                solver.isEveryProblemFactChangeProcessed());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_TERMINATE_EARLY, solver.isTerminateEarly());
         exchange.getIn().setHeader(OptaPlannerConstants.IS_SOLVING, solver.isSolving());
     }

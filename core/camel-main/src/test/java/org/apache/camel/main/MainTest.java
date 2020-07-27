@@ -87,7 +87,7 @@ public class MainTest {
     public void testLoadingRouteFromCommand() throws Exception {
         Main main = new Main();
         // let the main load the MyRouteBuilder
-        main.parseArguments(new String[]{"-r", "org.apache.camel.main.MainTest$MyRouteBuilder"});
+        main.parseArguments(new String[] { "-r", "org.apache.camel.main.MainTest$MyRouteBuilder" });
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

@@ -71,7 +71,8 @@ public class GroovyShellFactoryTest extends CamelTestSupport {
         exchange.getIn().setHeader("fileName", "Test.groovy");
 
         final Exception e = GroovyLanguage.groovy("new Exception()").evaluate(exchange, Exception.class);
-        assertTrue(Arrays.stream(e.getStackTrace()).anyMatch(stackTraceElement -> "Test.groovy".equals(stackTraceElement.getFileName())));
+        assertTrue(Arrays.stream(e.getStackTrace())
+                .anyMatch(stackTraceElement -> "Test.groovy".equals(stackTraceElement.getFileName())));
     }
 
     public static class Utils {

@@ -30,9 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test that exchange.isExternalRedelivered() is kept around even when
- * Message implementation changes from JmsMessage to DefaultMessage, when routing
- * from JMS over Jetty.
+ * Test that exchange.isExternalRedelivered() is kept around even when Message implementation changes from JmsMessage to
+ * DefaultMessage, when routing from JMS over Jetty.
  */
 public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
 

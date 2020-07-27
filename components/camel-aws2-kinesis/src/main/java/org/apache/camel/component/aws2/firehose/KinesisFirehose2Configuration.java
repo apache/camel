@@ -39,18 +39,20 @@ public class KinesisFirehose2Configuration implements Cloneable {
     private String region;
     @UriParam(description = "Amazon Kinesis Firehose client to use for all requests for this endpoint")
     private FirehoseClient amazonKinesisFirehoseClient;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the Kinesis Firehose client")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "To define a proxy protocol when instantiating the Kinesis Firehose client")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(description = "To define a proxy host when instantiating the Kinesis Firehose client")
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the Kinesis Firehose client")
     private Integer proxyPort;
     @UriParam(label = "producer", description = "The operation to do in case the user don't want to send only a record")
-    private KinesisFirehose2Operations operation;   
+    private KinesisFirehose2Operations operation;
     @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true", description = "Setting the autoDiscoverClient mechanism, if true, the component will "  
-            + " look for a client instance in the registry automatically otherwise it will skip that checking")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Setting the autoDiscoverClient mechanism, if true, the component will "
+                            + " look for a client instance in the registry automatically otherwise it will skip that checking")
     private boolean autoDiscoverClient = true;
 
     public void setAmazonKinesisFirehoseClient(FirehoseClient client) {
@@ -124,7 +126,7 @@ public class KinesisFirehose2Configuration implements Cloneable {
     public void setOperation(KinesisFirehose2Operations operation) {
         this.operation = operation;
     }
-    
+
     public boolean isTrustAllCertificates() {
         return trustAllCertificates;
     }
@@ -132,7 +134,7 @@ public class KinesisFirehose2Configuration implements Cloneable {
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
-    
+
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
     }
@@ -147,7 +149,7 @@ public class KinesisFirehose2Configuration implements Cloneable {
 
     public KinesisFirehose2Configuration copy() {
         try {
-            return (KinesisFirehose2Configuration)super.clone();
+            return (KinesisFirehose2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

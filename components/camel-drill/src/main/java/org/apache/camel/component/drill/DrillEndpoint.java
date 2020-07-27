@@ -37,7 +37,8 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 /**
  * Perform queries against an Apache Drill cluster.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true, category = {Category.DATABASE, Category.SQL})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true,
+             category = { Category.DATABASE, Category.SQL })
 public class DrillEndpoint extends DefaultPollingEndpoint {
 
     @UriPath(description = "Host name or IP address")
@@ -56,7 +57,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     /**
      * creates a drill endpoint
      *
-     * @param uri the endpoint uri
+     * @param uri       the endpoint uri
      * @param component the component
      */
     public DrillEndpoint(String uri, DrillComponent component) {
@@ -99,8 +100,8 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * ZooKeeper host name or IP address. Use local instead of a host name or IP
-     * address to connect to the local Drillbit
+     * ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local
+     * Drillbit
      *
      * @param host
      */
@@ -139,8 +140,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Cluster ID
-     * https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id
+     * Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id
      *
      * @param clusterId
      */

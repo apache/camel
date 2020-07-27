@@ -27,7 +27,8 @@ import org.apache.camel.util.function.ThrowingFunction;
  */
 public class ProducerServicePool extends ServicePool<AsyncProducer> {
 
-    public ProducerServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator, Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
+    public ProducerServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
+                               Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
         super(creator, getEndpoint, capacity);
     }
 }

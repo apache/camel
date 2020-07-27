@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
+ * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a>
  */
 @Component("cxfrs")
 public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
@@ -47,7 +47,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
     public CxfRsComponent() {
     }
-    
+
     public CxfRsComponent(CamelContext context) {
         super(context);
     }
@@ -78,13 +78,15 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
                 beanId = beanId.substring(2);
             }
 
-            AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
-                AbstractJAXRSFactoryBean.class);
+            AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId,
+                    AbstractJAXRSFactoryBean.class);
 
             CxfRsEndpointFactoryBean factory = null;
             if (bean.getClass().getName().contains("blueprint")) {
                 // use blueprint
-                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver().resolveMandatoryClass("org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean", CxfRsEndpointFactoryBean.class);
+                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(
+                        "org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean",
+                        CxfRsEndpointFactoryBean.class);
                 factory = getCamelContext().getInjector().newInstance(clazz);
             } else {
                 factory = new DefaultCxfRsEndpointFactoryBean();
@@ -97,8 +99,8 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
             // with to apply properties defined by URI query. 
             if (bean.getProperties() != null) {
                 Map<String, Object> copy = new HashMap<>();
-                copy.putAll(bean.getProperties());     
-                setProperties(answer, copy);      
+                copy.putAll(bean.getProperties());
+                setProperties(answer, copy);
             }
             // setup the skipFaultLogging
 
@@ -135,9 +137,10 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
         return answer;
     }
-    
+
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters)
+            throws Exception {
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) endpoint;
         cxfRsEndpoint.updateEndpointUri(uri);
     }

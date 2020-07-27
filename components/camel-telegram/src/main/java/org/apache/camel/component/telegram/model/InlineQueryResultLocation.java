@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a location on a map.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultlocation">
- * https://core.telegram.org/bots/api#inlinequeryresultlocation</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultlocation</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultLocation extends InlineQueryResult {

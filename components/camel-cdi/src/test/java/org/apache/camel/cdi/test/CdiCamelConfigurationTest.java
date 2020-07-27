@@ -44,14 +44,14 @@ public class CdiCamelConfigurationTest {
     @Deployment
     static Archive<?> createTestArchive() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(CdiCamelConfigurationTest.class)
-            // RouteBuilder which should not appear in the context
-            .addClass(EndpointInjectRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(CdiCamelConfigurationTest.class)
+                // RouteBuilder which should not appear in the context
+                .addClass(EndpointInjectRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     static void configuration(@Observes CdiCamelConfiguration configuration) {

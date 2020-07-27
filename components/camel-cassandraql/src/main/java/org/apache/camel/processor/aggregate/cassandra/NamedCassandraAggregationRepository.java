@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor.aggregate.cassandra;
 
-
 import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
- * Concrete implementation of {@link CassandraAggregationRepository} using 2
- * columns as primary key: name (partition key) and key (clustering key).
+ * Concrete implementation of {@link CassandraAggregationRepository} using 2 columns as primary key: name (partition
+ * key) and key (clustering key).
  */
 public class NamedCassandraAggregationRepository extends CassandraAggregationRepository {
     public NamedCassandraAggregationRepository() {
@@ -36,7 +35,7 @@ public class NamedCassandraAggregationRepository extends CassandraAggregationRep
     }
 
     public String getName() {
-        return (String)getPrefixPKValues()[0];
+        return (String) getPrefixPKValues()[0];
     }
 
     public final void setName(String name) {

@@ -50,7 +50,8 @@ public class SolrDeleteTest extends SolrComponentTestSupport {
         assertEquals(2, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
 
         //delete
-        template.sendBodyAndHeader("direct:splitThenCommit", Arrays.asList(TEST_ID, TEST_ID2), SolrConstants.OPERATION, SolrConstants.OPERATION_DELETE_BY_ID);
+        template.sendBodyAndHeader("direct:splitThenCommit", Arrays.asList(TEST_ID, TEST_ID2), SolrConstants.OPERATION,
+                SolrConstants.OPERATION_DELETE_BY_ID);
 
         //verify
         assertEquals(0, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
@@ -66,7 +67,8 @@ public class SolrDeleteTest extends SolrComponentTestSupport {
         assertEquals(2, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
 
         //delete
-        template.sendBodyAndHeader("direct:start", "id:test*", SolrConstants.OPERATION, SolrConstants.OPERATION_DELETE_BY_QUERY);
+        template.sendBodyAndHeader("direct:start", "id:test*", SolrConstants.OPERATION,
+                SolrConstants.OPERATION_DELETE_BY_QUERY);
         solrCommit();
 
         //verify

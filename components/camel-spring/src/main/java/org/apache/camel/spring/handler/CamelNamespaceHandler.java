@@ -81,7 +81,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
     protected Set<String> parserElementNames = new HashSet<>();
     protected Map<String, BeanDefinitionParser> parserMap = new HashMap<>();
-    
+
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<>();
 
@@ -192,7 +192,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
         return jaxbContext;
     }
-    
+
     protected class SSLContextParametersFactoryBeanBeanDefinitionParser extends BeanDefinitionParser {
 
         public SSLContextParametersFactoryBeanBeanDefinitionParser() {
@@ -203,7 +203,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
             doBeforeParse(element);
             super.doParse(element, builder);
-            
+
             // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires 
             // parserContext for no apparent reason.
             Binder<Node> binder;
@@ -212,12 +212,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            
+
             Object value = parseUsingJaxb(element, parserContext, binder);
-            
+
             if (value instanceof SSLContextParametersFactoryBean) {
-                SSLContextParametersFactoryBean bean = (SSLContextParametersFactoryBean)value;
-                
+                SSLContextParametersFactoryBean bean = (SSLContextParametersFactoryBean) value;
+
                 builder.addPropertyValue("cipherSuites", bean.getCipherSuites());
                 builder.addPropertyValue("cipherSuitesFilter", bean.getCipherSuitesFilter());
                 builder.addPropertyValue("secureSocketProtocols", bean.getSecureSocketProtocols());
@@ -225,11 +225,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("keyManagers", bean.getKeyManagers());
                 builder.addPropertyValue("trustManagers", bean.getTrustManagers());
                 builder.addPropertyValue("secureRandom", bean.getSecureRandom());
-                
+
                 builder.addPropertyValue("clientParameters", bean.getClientParameters());
                 builder.addPropertyValue("serverParameters", bean.getServerParameters());
             } else {
-                throw new BeanDefinitionStoreException("Parsed type is not of the expected type. Expected "
+                throw new BeanDefinitionStoreException(
+                        "Parsed type is not of the expected type. Expected "
                                                        + SSLContextParametersFactoryBean.class.getName() + " but found "
                                                        + value.getClass().getName());
             }
@@ -446,10 +447,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             if (ObjectHelper.isNotEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                                 // set the templates with the camel context
-                                if (localName.equals("template") || localName.equals("fluentTemplate") || localName.equals("consumerTemplate")
+                                if (localName.equals("template") || localName.equals("fluentTemplate")
+                                        || localName.equals("consumerTemplate")
                                         || localName.equals("proxy") || localName.equals("export")) {
                                     // set the camel context
-                                    definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+                                    definition.getPropertyValues().addPropertyValue("camelContext",
+                                            new RuntimeBeanReference(contextId));
                                 }
                             }
                         }
@@ -493,10 +496,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // set depends-on to the context for a routeBuilder bean
             try {
                 BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(routeBuilderName);
-                Method getDependsOn = definition.getClass().getMethod("getDependsOn", new Class[]{});
-                String[] dependsOn = (String[])getDependsOn.invoke(definition);
+                Method getDependsOn = definition.getClass().getMethod("getDependsOn", new Class[] {});
+                String[] dependsOn = (String[]) getDependsOn.invoke(definition);
                 if (dependsOn == null || dependsOn.length == 0) {
-                    dependsOn = new String[]{contextId};
+                    dependsOn = new String[] { contextId };
                 } else {
                     String[] temp = new String[dependsOn.length + 1];
                     System.arraycopy(dependsOn, 0, temp, 0, dependsOn.length);
@@ -504,7 +507,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     dependsOn = temp;
                 }
                 Method method = definition.getClass().getMethod("setDependsOn", String[].class);
-                method.invoke(definition, (Object)dependsOn);
+                method.invoke(definition, (Object) dependsOn);
             } catch (Exception e) {
                 // Do nothing here
             }
@@ -532,7 +535,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
-    protected void injectBeanPostProcessor(Element element, ParserContext parserContext, String contextId, BeanDefinitionBuilder builder) {
+    protected void injectBeanPostProcessor(
+            Element element, ParserContext parserContext, String contextId, BeanDefinitionBuilder builder) {
         Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
         element.appendChild(childElement);
 
@@ -651,7 +655,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     }
 
-    private void autoRegisterBeanDefinition(String id, BeanDefinition definition, ParserContext parserContext, String contextId) {
+    private void autoRegisterBeanDefinition(
+            String id, BeanDefinition definition, ParserContext parserContext, String contextId) {
         // it is a bit cumbersome to work with the spring bean definition parser
         // as we kinda need to eagerly register the bean definition on the parser context
         // and then later we might find out that we should not have done that in case we have multiple camel contexts
@@ -664,14 +669,15 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             autoRegisterMap.put(id, definition);
             parserContext.registerComponent(new BeanComponentDefinition(definition, id));
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Registered default: {} with id: {} on camel context: {}", definition.getBeanClassName(), id, contextId);
+                LOG.debug("Registered default: {} with id: {} on camel context: {}", definition.getBeanClassName(), id,
+                        contextId);
             }
         } else {
             // ups we have already registered it before with same id, but on another camel context
             // this is not good so we need to remove all traces of this auto registering.
             // end user must manually add the needed XML elements and provide unique ids access all camel context himself.
             LOG.debug("Unregistered default: {} with id: {} as we have multiple camel contexts and they must use unique ids."
-                    + " You must define the definition in the XML file manually to avoid id clashes when using multiple camel contexts",
+                      + " You must define the definition in the XML file manually to avoid id clashes when using multiple camel contexts",
                     definition.getBeanClassName(), id);
 
             parserContext.getRegistry().removeBeanDefinition(id);
@@ -692,7 +698,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // Need to add this dependency of CamelContext for Spring 3.0
             try {
                 Method method = definition.getClass().getMethod("setDependsOn", String[].class);
-                method.invoke(definition, (Object) new String[]{contextId});
+                method.invoke(definition, (Object) new String[] { contextId });
             } catch (Exception e) {
                 // Do nothing here
             }

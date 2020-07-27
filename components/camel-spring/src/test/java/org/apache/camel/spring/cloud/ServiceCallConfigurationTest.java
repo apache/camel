@@ -57,7 +57,8 @@ public class ServiceCallConfigurationTest {
         assertEquals(ServiceCallConstants.SERVICE_HOST, expConf1.getHostHeader());
         assertEquals(ServiceCallConstants.SERVICE_PORT, expConf1.getPortHeader());
 
-        StaticServiceCallServiceDiscoveryConfiguration discovery1 = (StaticServiceCallServiceDiscoveryConfiguration)conf.getServiceDiscoveryConfiguration();
+        StaticServiceCallServiceDiscoveryConfiguration discovery1
+                = (StaticServiceCallServiceDiscoveryConfiguration) conf.getServiceDiscoveryConfiguration();
         assertEquals(1, discovery1.getServers().size());
         assertEquals("localhost:9091", discovery1.getServers().get(0));
     }
@@ -69,10 +70,13 @@ public class ServiceCallConfigurationTest {
         assertNotNull(conf.getServiceDiscoveryConfiguration(), "No ServiceDiscoveryConfiguration (2)");
         assertNull(conf.getLoadBalancerConfiguration());
 
-        CombinedServiceCallServiceDiscoveryConfiguration discovery2 = (CombinedServiceCallServiceDiscoveryConfiguration)conf.getServiceDiscoveryConfiguration();
+        CombinedServiceCallServiceDiscoveryConfiguration discovery2
+                = (CombinedServiceCallServiceDiscoveryConfiguration) conf.getServiceDiscoveryConfiguration();
         assertEquals(2, discovery2.getServiceDiscoveryConfigurations().size());
-        assertTrue(discovery2.getServiceDiscoveryConfigurations().get(0) instanceof StaticServiceCallServiceDiscoveryConfiguration);
-        assertTrue(discovery2.getServiceDiscoveryConfigurations().get(1) instanceof StaticServiceCallServiceDiscoveryConfiguration);
+        assertTrue(discovery2.getServiceDiscoveryConfigurations()
+                .get(0) instanceof StaticServiceCallServiceDiscoveryConfiguration);
+        assertTrue(discovery2.getServiceDiscoveryConfigurations()
+                .get(1) instanceof StaticServiceCallServiceDiscoveryConfiguration);
 
         ServiceCallExpressionConfiguration expconf = conf.getExpressionConfiguration();
         assertNull(expconf.getExpression());
@@ -80,15 +84,18 @@ public class ServiceCallConfigurationTest {
         assertEquals("MyHostHeader", expconf.getHostHeader());
         assertEquals("MyPortHeader", expconf.getPortHeader());
 
-        StaticServiceCallServiceDiscoveryConfiguration sconf1 = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(0);
+        StaticServiceCallServiceDiscoveryConfiguration sconf1
+                = (StaticServiceCallServiceDiscoveryConfiguration) discovery2.getServiceDiscoveryConfigurations().get(0);
         assertEquals(1, sconf1.getServers().size());
         assertEquals("localhost:9092", sconf1.getServers().get(0));
 
-        StaticServiceCallServiceDiscoveryConfiguration sconf = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(1);
+        StaticServiceCallServiceDiscoveryConfiguration sconf
+                = (StaticServiceCallServiceDiscoveryConfiguration) discovery2.getServiceDiscoveryConfigurations().get(1);
         assertEquals(1, sconf.getServers().size());
         assertEquals("localhost:9093,localhost:9094,localhost:9095,localhost:9096", sconf.getServers().get(0));
 
-        CombinedServiceCallServiceFilterConfiguration filter = (CombinedServiceCallServiceFilterConfiguration)conf.getServiceFilterConfiguration();
+        CombinedServiceCallServiceFilterConfiguration filter
+                = (CombinedServiceCallServiceFilterConfiguration) conf.getServiceFilterConfiguration();
         assertEquals(2, filter.getServiceFilterConfigurations().size());
         assertTrue(filter.getServiceFilterConfigurations().get(0) instanceof HealthyServiceCallServiceFilterConfiguration);
         assertTrue(filter.getServiceFilterConfigurations().get(1) instanceof BlacklistServiceCallServiceFilterConfiguration);

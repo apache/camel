@@ -148,7 +148,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
 
         @Override
         protected void doStart() throws Exception {
-            consumer = (EventDrivenPollingConsumer)super.createPollingConsumer();
+            consumer = (EventDrivenPollingConsumer) super.createPollingConsumer();
             super.doStart();
         }
     }

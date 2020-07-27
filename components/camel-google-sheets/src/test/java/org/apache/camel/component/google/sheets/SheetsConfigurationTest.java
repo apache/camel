@@ -29,8 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SheetsConfigurationTest extends CamelTestSupport {
 
-    private static final String PATH_PREFIX = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
-    private static final String TEST_URI = "google-sheets://" + PATH_PREFIX + "/create?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+    private static final String PATH_PREFIX
+            = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
+    private static final String TEST_URI = "google-sheets://" + PATH_PREFIX
+                                           + "/create?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -49,7 +49,8 @@ public class MinaVMTransferExchangeOptionTest extends BaseMinaTest {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint(String.format("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()));
+        Endpoint endpoint = context.getEndpoint(
+                String.format("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()));
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -79,7 +80,6 @@ public class MinaVMTransferExchangeOptionTest extends BaseMinaTest {
             assertEquals("nihao", fault.getHeader("hello"));
         }
 
-
         // in should stay the same
         Message in = exchange.getIn();
         assertNotNull(in);
@@ -95,26 +95,27 @@ public class MinaVMTransferExchangeOptionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())).process(e -> {
-                    assertNotNull(e.getIn().getBody());
-                    assertNotNull(e.getIn().getHeaders());
-                    assertNotNull(e.getProperties());
-                    assertEquals("Hello!", e.getIn().getBody());
-                    assertEquals("feta", e.getIn().getHeader("cheese"));
-                    assertEquals("old", e.getProperty("ham"));
-                    assertEquals(ExchangePattern.InOut, e.getPattern());
-                    Boolean setException = (Boolean) e.getProperty("setException");
+                from(String.format("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()))
+                        .process(e -> {
+                            assertNotNull(e.getIn().getBody());
+                            assertNotNull(e.getIn().getHeaders());
+                            assertNotNull(e.getProperties());
+                            assertEquals("Hello!", e.getIn().getBody());
+                            assertEquals("feta", e.getIn().getHeader("cheese"));
+                            assertEquals("old", e.getProperty("ham"));
+                            assertEquals(ExchangePattern.InOut, e.getPattern());
+                            Boolean setException = (Boolean) e.getProperty("setException");
 
-                    if (setException) {
-                        e.getOut().setBody(new InterruptedException());
-                        e.getOut().setHeader("hello", "nihao");
-                    } else {
-                        e.getOut().setBody("Goodbye!");
-                        e.getOut().setHeader("cheese", "cheddar");
-                    }
-                    e.setProperty("salami", "fresh");
-                    e.setProperty("Charset", Charset.defaultCharset());
-                });
+                            if (setException) {
+                                e.getOut().setBody(new InterruptedException());
+                                e.getOut().setHeader("hello", "nihao");
+                            } else {
+                                e.getOut().setBody("Goodbye!");
+                                e.getOut().setHeader("cheese", "cheddar");
+                            }
+                            e.setProperty("salami", "fresh");
+                            e.setProperty("Charset", Charset.defaultCharset());
+                        });
             }
         };
     }

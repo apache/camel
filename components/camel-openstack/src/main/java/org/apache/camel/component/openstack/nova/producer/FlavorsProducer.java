@@ -67,7 +67,8 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String flavorId = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
+        final String flavorId
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
         StringHelper.notEmpty(flavorId, "FlavorID");
         final Flavor out = os.compute().flavors().get(flavorId);
         exchange.getIn().setBody(out);
@@ -80,7 +81,8 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String flavorId = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
+        final String flavorId
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
         StringHelper.notEmpty(flavorId, "FlavorID");
         final ActionResponse response = os.compute().flavors().delete(flavorId);
         checkFailure(response, exchange, "Delete flavor");

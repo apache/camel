@@ -84,7 +84,6 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
         }
     }
 
-
     public static class TestRoutes extends SpringRouteBuilder {
 
         @Override

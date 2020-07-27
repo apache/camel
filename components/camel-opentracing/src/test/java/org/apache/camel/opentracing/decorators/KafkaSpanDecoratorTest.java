@@ -50,7 +50,7 @@ public class KafkaSpanDecoratorTest {
 
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(endpoint.getEndpointUri())
-            .thenReturn("kafka:localhost:9092?topic=test&groupId=testing&consumersCount=1");
+                .thenReturn("kafka:localhost:9092?topic=test&groupId=testing&consumersCount=1");
 
         KafkaSpanDecorator decorator = new KafkaSpanDecorator();
 

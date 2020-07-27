@@ -76,13 +76,13 @@ public class LevelDBAggregateSerializedHeadersTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start?size=" + SIZE)
-                    .to("log:input?groupSize=500")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .to("log:input?groupSize=500")
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(repo)
                         .completionSize(SIZE)
                         .to("log:output?showHeaders=true")
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

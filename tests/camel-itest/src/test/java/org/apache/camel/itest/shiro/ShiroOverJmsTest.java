@@ -35,10 +35,10 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class ShiroOverJmsTest extends CamelTestSupport {
 
     private byte[] passPhrase = {
-        (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
-        (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
-        (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};
+            (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
+            (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
+            (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
+            (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17 };
 
     @Test
     void testShiroOverJms() throws Exception {
@@ -69,7 +69,8 @@ public class ShiroOverJmsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
+                final ShiroSecurityPolicy securityPolicy
+                        = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
                 securityPolicy.setBase64(true);
 
                 errorHandler(deadLetterChannel("mock:error"));

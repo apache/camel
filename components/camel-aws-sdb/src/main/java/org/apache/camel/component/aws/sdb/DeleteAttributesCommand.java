@@ -32,14 +32,14 @@ public class DeleteAttributesCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         DeleteAttributesRequest request = new DeleteAttributesRequest()
-            .withDomainName(determineDomainName())
-            .withItemName(determineItemName())
-            .withExpected(determineUpdateCondition())
-            .withAttributes(determineAttributes());
+                .withDomainName(determineDomainName())
+                .withItemName(determineItemName())
+                .withExpected(determineUpdateCondition())
+                .withAttributes(determineAttributes());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         this.sdbClient.deleteAttributes(request);
-        
+
         log.trace("Request sent");
     }
 

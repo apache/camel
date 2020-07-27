@@ -51,8 +51,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * A TransformerTest demonstrates contract based declarative transformation via
- * Java DSL.
+ * A TransformerTest demonstrates contract based declarative transformation via Java DSL.
  */
 public class TransformerRouteTest extends ContextTestSupport {
 
@@ -104,7 +103,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         });
 
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
-        ((DataTypeAware)exchange.getIn()).setBody("{name:XOrder}", new DataType("json:JsonXOrder"));
+        ((DataTypeAware) exchange.getIn()).setBody("{name:XOrder}", new DataType("json:JsonXOrder"));
         Exchange answerEx = template.send("direct:dataFormat", exchange);
         if (answerEx.getException() != null) {
             throw answerEx.getException();
@@ -179,7 +178,8 @@ public class TransformerRouteTest extends ContextTestSupport {
                 }).to("mock:xyzresult");
 
                 transformer().scheme("json").withDataFormat(new MyJsonDataFormatDefinition());
-                from("direct:dataFormat").inputType("json:JsonXOrder").outputType("json:JsonXOrderResponse").inOut("direct:xyz");
+                from("direct:dataFormat").inputType("json:JsonXOrder").outputType("json:JsonXOrderResponse")
+                        .inOut("direct:xyz");
 
                 context.addComponent("myxml", new MyXmlComponent());
                 transformer().fromType("xml:XmlXOrder").toType(XOrder.class).withUri("myxml:endpoint");
@@ -187,8 +187,10 @@ public class TransformerRouteTest extends ContextTestSupport {
                 from("direct:endpoint").inputType("xml:XmlXOrder").outputType("xml:XmlXOrderResponse").inOut("direct:xyz");
 
                 transformer().fromType("other:OtherXOrder").toType(XOrder.class).withJava(OtherToXOrderTransformer.class);
-                transformer().fromType(XOrderResponse.class).toType("other:OtherXOrderResponse").withJava(XOrderResponseToOtherTransformer.class);
-                from("direct:custom").inputType("other:OtherXOrder").outputType("other:OtherXOrderResponse").inOut("direct:xyz");
+                transformer().fromType(XOrderResponse.class).toType("other:OtherXOrderResponse")
+                        .withJava(XOrderResponseToOtherTransformer.class);
+                from("direct:custom").inputType("other:OtherXOrder").outputType("other:OtherXOrderResponse")
+                        .inOut("direct:xyz");
             }
         };
     }

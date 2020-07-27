@@ -43,8 +43,8 @@ import org.apache.maven.shared.filtering.MavenReaderFilter;
 @Mojo(name = "copy-resources", threadSafe = true)
 public class CopyResources extends AbstractMojo {
 
-    public static final List<String> NON_FILTERED_EXTENSIONS =
-            Collections.unmodifiableList(Arrays.asList("jpg", "jpeg", "gif", "bmp", "png"));
+    public static final List<String> NON_FILTERED_EXTENSIONS
+            = Collections.unmodifiableList(Arrays.asList("jpg", "jpeg", "gif", "bmp", "png"));
 
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
@@ -59,8 +59,8 @@ public class CopyResources extends AbstractMojo {
     private File outputDirectory;
 
     /**
-     * The list of resources we want to transfer. See the Maven Model for a
-     * description of how to code the resources element.
+     * The list of resources we want to transfer. See the Maven Model for a description of how to code the resources
+     * element.
      */
     @Parameter(required = true)
     private List<Resource> resources;

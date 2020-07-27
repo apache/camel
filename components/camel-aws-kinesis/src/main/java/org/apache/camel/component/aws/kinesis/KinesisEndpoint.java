@@ -39,7 +39,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Consume and produce records from AWS Kinesis Streams.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName",
+             category = { Category.CLOUD, Category.MESSAGING })
 public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -55,13 +56,15 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        kinesisClient = configuration.getAmazonKinesisClient() != null ? configuration.getAmazonKinesisClient()
-            : createKinesisClient();
+        kinesisClient = configuration.getAmazonKinesisClient() != null
+                ? configuration.getAmazonKinesisClient()
+                : createKinesisClient();
 
-
-        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
-            && configuration.getSequenceNumber().isEmpty()) {
-            throw new IllegalArgumentException("Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
+        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
+                && configuration.getSequenceNumber().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
         }
     }
 
@@ -121,7 +124,8 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonKinesisClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonKinesisClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonKinesisClientBuilder.standard().withCredentials(credentialsProvider);
             }

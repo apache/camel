@@ -40,17 +40,18 @@ public class CustomerServicesTest {
         ClassPathXmlApplicationContext clientContext = null;
         try {
             serverContext = new ClassPathXmlApplicationContext(
-                new String[] {"spring-config/server-applicationContext.xml"});
+                    new String[] { "spring-config/server-applicationContext.xml" });
             Object server = serverContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
             assertNotNull(server, "We should get server here");
 
             // add an interceptor to verify headers
             EndpointImpl.class.cast(server).getServer().getEndpoint().getInInterceptors()
-                .add(new HeaderChecker(Phase.READ));
+                    .add(new HeaderChecker(Phase.READ));
 
-            clientContext =  new ClassPathXmlApplicationContext(
-                new String[] {"spring-config/client-applicationContext.xml"});
-            CustomerServiceV1 customerService = clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
+            clientContext = new ClassPathXmlApplicationContext(
+                    new String[] { "spring-config/client-applicationContext.xml" });
+            CustomerServiceV1 customerService = clientContext
+                    .getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
 
             // CXF 2.1.2 only apply the SOAPAction for the request message (in SoapPreProtocolOutInterceptor)
             // After went through the SOAP 1.1 specification, I got that the SOAPAction is only for the request message
@@ -75,7 +76,7 @@ public class CustomerServicesTest {
         @Override
         public void handleMessage(Message message) throws Fault {
             Map<String, List<String>> headers
-                = CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
+                    = CastUtils.cast((Map<?, ?>) message.get(Message.PROTOCOL_HEADERS));
             assertNotNull(headers);
             assertEquals("\"getCustomer\"", headers.get("SOAPAction").get(0));
         }

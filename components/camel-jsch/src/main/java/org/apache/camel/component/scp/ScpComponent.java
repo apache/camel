@@ -43,7 +43,8 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     }
 
     @Override
-    protected GenericFileEndpoint<ScpFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected GenericFileEndpoint<ScpFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         int query = uri.indexOf('?');
         return new ScpEndpoint(uri, this, new ScpConfiguration(new URI(query >= 0 ? uri.substring(0, query) : uri)));
     }
@@ -64,15 +65,15 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     }
 
     /**
-     * JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default.
-     * But setting this option to <tt>true</tt> turns on the verbose logging again.
+     * JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But
+     * setting this option to <tt>true</tt> turns on the verbose logging again.
      */
     public void setVerboseLogging(boolean verboseLogging) {
         this.verboseLogging = verboseLogging;
     }
 
-    protected void initJsch()  {
-        JSch.setConfig("StrictHostKeyChecking",  "yes");
+    protected void initJsch() {
+        JSch.setConfig("StrictHostKeyChecking", "yes");
         JSch.setLogger(new com.jcraft.jsch.Logger() {
             @Override
             public boolean isEnabled(int level) {
@@ -102,4 +103,3 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     }
 
 }
-

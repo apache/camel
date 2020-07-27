@@ -142,8 +142,8 @@ public class PrinterPrintTest extends CamelTestSupport {
         }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        to("lpr://localhost/default?copies=1&flavor=DocFlavor.BYTE_ARRAY&mimeType=AUTOSENSE&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                from("direct:start").to(
+                        "lpr://localhost/default?copies=1&flavor=DocFlavor.BYTE_ARRAY&mimeType=AUTOSENSE&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
@@ -159,8 +159,8 @@ public class PrinterPrintTest extends CamelTestSupport {
         }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM&mimeType=GIF&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                from("direct:start").to(
+                        "lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM&mimeType=GIF&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
@@ -177,7 +177,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("lpr://localhost/default?copies=2&flavor=DocFlavor.INPUT_STREAM"
-                        + "&mimeType=JPEG&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                                        + "&mimeType=JPEG&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
@@ -194,7 +194,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM"
-                        + "&mimeType=JPEG&sendToPrinter=false&orientation=landscape");
+                                        + "&mimeType=JPEG&sendToPrinter=false&orientation=landscape");
             }
         });
         context.start();
@@ -203,9 +203,8 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     /**
-     * Test for resolution of bug CAMEL-3446.
-     * Not specifying mediaSize nor sides attributes make it use
-     * default values when starting the route.
+     * Test for resolution of bug CAMEL-3446. Not specifying mediaSize nor sides attributes make it use default values
+     * when starting the route.
      */
     @Test
     @Disabled
@@ -410,14 +409,14 @@ public class PrinterPrintTest extends CamelTestSupport {
         when(psDefault.getName()).thenReturn("DefaultPrinter");
         when(psDefault.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
         PrintServiceLookup psLookup = mock(PrintServiceLookup.class);
-        when(psLookup.getPrintServices()).thenReturn(new PrintService[]{psDefault});
+        when(psLookup.getPrintServices()).thenReturn(new PrintService[] { psDefault });
         when(psLookup.getDefaultPrintService()).thenReturn(psDefault);
         DocPrintJob docPrintJob = mock(DocPrintJob.class);
         when(psDefault.createPrintJob()).thenReturn(docPrintJob);
-        MediaTray[] trays = new MediaTray[]{
-            MediaTray.TOP,
-            MediaTray.MIDDLE,
-            MediaTray.BOTTOM
+        MediaTray[] trays = new MediaTray[] {
+                MediaTray.TOP,
+                MediaTray.MIDDLE,
+                MediaTray.BOTTOM
         };
         when(psDefault.getSupportedAttributeValues(Media.class, null, null)).thenReturn(trays);
         PrintServiceLookup.registerServiceProvider(psLookup);

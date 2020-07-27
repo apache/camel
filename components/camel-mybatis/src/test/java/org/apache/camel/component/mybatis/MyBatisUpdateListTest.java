@@ -74,8 +74,8 @@ public class MyBatisUpdateListTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:batchUpdateAccount?statementType=UpdateList")
-                    .to("mock:result");
+                        .to("mybatis:batchUpdateAccount?statementType=UpdateList")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -186,9 +186,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class)
     private CamelJMXAgentDefinition camelJMXAgent;
 
-    @XmlElements({@XmlElement(name = "consumerTemplate", type = ConsumerTemplateFactoryBean.class),
-                  @XmlElement(name = "redeliveryPolicyProfile", type = RedeliveryPolicyFactoryBean.class), @XmlElement(name = "template", type = ProducerTemplateFactoryBean.class),
-                  @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class)})
+    @XmlElements({
+            @XmlElement(name = "consumerTemplate", type = ConsumerTemplateFactoryBean.class),
+            @XmlElement(name = "redeliveryPolicyProfile", type = RedeliveryPolicyFactoryBean.class),
+            @XmlElement(name = "template", type = ProducerTemplateFactoryBean.class),
+            @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class) })
     private List<AbstractCamelFactoryBean<?>> beansFactory;
 
     @XmlTransient
@@ -311,16 +313,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
             return null;
         }
 
-        return (S)manager.getReference(bean, clazz, manager.createCreationalContext(bean));
+        return (S) manager.getReference(bean, clazz, manager.createCreationalContext(bean));
     }
 
     @Override
-    protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+    protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders)
+            throws Exception {
         // add filter to class resolver which then will filter
         getContext().getPackageScanClassResolver().addFilter(filter);
 
-        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, getContextClassLoaderOnStart(),
-                                                                                 getContext().getPackageScanClassResolver());
+        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(
+                getContext(), packages, getContextClassLoaderOnStart(),
+                getContext().getPackageScanClassResolver());
         finder.appendBuilders(builders);
 
         // and remove the filter
@@ -328,7 +332,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
-    protected void findRouteBuildersByContextScan(PackageScanFilter filter, boolean includeNonSingletons, List<RoutesBuilder> builders) throws Exception {
+    protected void findRouteBuildersByContextScan(
+            PackageScanFilter filter, boolean includeNonSingletons, List<RoutesBuilder> builders)
+            throws Exception {
         ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(manager, filter, includeNonSingletons);
         finder.appendBuilders(builders);
     }
@@ -445,7 +451,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         return defaultFaultToleranceConfiguration;
     }
 
-    public void setDefaultFaultToleranceConfiguration(FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration) {
+    public void setDefaultFaultToleranceConfiguration(
+            FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration) {
         this.defaultFaultToleranceConfiguration = defaultFaultToleranceConfiguration;
     }
 
@@ -557,16 +564,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     /**
-     * Sets the package names to be recursively searched for Java classes which
-     * extend {@link org.apache.camel.builder.RouteBuilder} to be auto-wired up
-     * to the {@link CamelContext} as a route. Note that classes are excluded if
-     * they are specifically configured in the deployment.
+     * Sets the package names to be recursively searched for Java classes which extend
+     * {@link org.apache.camel.builder.RouteBuilder} to be auto-wired up to the {@link CamelContext} as a route. Note
+     * that classes are excluded if they are specifically configured in the deployment.
      * <p/>
      * A more advanced configuration can be done using
      * {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
      *
      * @param packages the package names which are recursively searched
-     * @see #setPackageScan(org.apache.camel.model.PackageScanDefinition)
+     * @see            #setPackageScan(org.apache.camel.model.PackageScanDefinition)
      */
     public void setPackages(String[] packages) {
         this.packages = packages;
@@ -578,9 +584,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     /**
-     * Sets the package scanning information. Package scanning allows for the
-     * automatic discovery of certain camel classes at runtime for inclusion
-     * e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
+     * Sets the package scanning information. Package scanning allows for the automatic discovery of certain camel
+     * classes at runtime for inclusion e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
      *
      * @param packageScan the package scan
      */
@@ -595,9 +600,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     /**
-     * Sets the context scanning information. Context scanning allows for the
-     * automatic discovery of Camel routes runtime for inclusion e.g.
-     * {@link org.apache.camel.builder.RouteBuilder} implementations
+     * Sets the context scanning information. Context scanning allows for the automatic discovery of Camel routes
+     * runtime for inclusion e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
      *
      * @param contextScan the context scan
      */

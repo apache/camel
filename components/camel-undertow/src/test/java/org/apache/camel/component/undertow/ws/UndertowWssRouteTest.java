@@ -102,8 +102,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
         AsyncHttpClient c;
         AsyncHttpClientConfig config;
 
-        DefaultAsyncHttpClientConfig.Builder builder =
-                new DefaultAsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
 
         SslContext sslContext = SslContextBuilder
                 .forClient()
@@ -146,7 +145,8 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
                             public void onError(Throwable t) {
                                 t.printStackTrace();
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
@@ -169,11 +169,11 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:ws://localhost:" + getPort() + "/test")
-                     .log(">>> Message received from WebSocket Client : ${body}")
-                     .to("mock:client")
-                     .loop(10)
-                         .setBody().constant(">> Welcome on board!")
-                         .to("undertow:ws://localhost:" + getPort() + "/test");
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .to("mock:client")
+                        .loop(10)
+                        .setBody().constant(">> Welcome on board!")
+                        .to("undertow:ws://localhost:" + getPort() + "/test");
             }
         };
     }

@@ -63,8 +63,9 @@ public class Translate2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:translatePojoText", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
-                    .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
+                exchange.getIn()
+                        .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                                .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
             }
         });
 
@@ -98,10 +99,15 @@ public class Translate2ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:translateText").to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText").to("mock:result");
-                from("direct:translatePojoText").to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&pojoRequest=true").to("mock:result");
-                from("direct:translateTextOptions").to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
-                    .to("mock:result");
+                from("direct:translateText")
+                        .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText")
+                        .to("mock:result");
+                from("direct:translatePojoText").to(
+                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&pojoRequest=true")
+                        .to("mock:result");
+                from("direct:translateTextOptions").to(
+                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
+                        .to("mock:result");
             }
         };
     }

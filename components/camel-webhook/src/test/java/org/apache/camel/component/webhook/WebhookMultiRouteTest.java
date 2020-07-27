@@ -29,11 +29,13 @@ public class WebhookMultiRouteTest extends WebhookTestBase {
     @Test
     public void testMultiRoute() {
         String result = template.requestBody("netty-http:http://localhost:" + port
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://yy"), "", String.class);
+                                             + WebhookConfiguration.computeDefaultPath("wb-delegate://yy"),
+                "", String.class);
         assertEquals("uri: webhook", result);
 
         result = template.requestBody("netty-http:http://localhost:" + port
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"), "", String.class);
+                                      + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"),
+                "", String.class);
         assertEquals("msg: webhook", result);
     }
 
@@ -62,8 +64,6 @@ public class WebhookMultiRouteTest extends WebhookTestBase {
 
                 from("webhook:wb-delegate://xx")
                         .transform(body().prepend("msg: "));
-
-
 
             }
         };

@@ -19,10 +19,9 @@ package org.apache.camel.component.crypto.cms.common;
 public final class CryptoCmsConstants {
 
     /**
-     * Camel message header name for the CMS Signed Data. If in the camel
-     * component uri like "crypto-cms:sign://basic?includeContent=false"
-     * contains the option includeContent=false. Then the CMS Signed Data object
-     * is written into the CamelCryptoCmsSignedData header.
+     * Camel message header name for the CMS Signed Data. If in the camel component uri like
+     * "crypto-cms:sign://basic?includeContent=false" contains the option includeContent=false. Then the CMS Signed Data
+     * object is written into the CamelCryptoCmsSignedData header.
      */
     public static final String CAMEL_CRYPTO_CMS_SIGNED_DATA = "CamelCryptoCmsSignedData";
 

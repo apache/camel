@@ -37,9 +37,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no
- * results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 public class S3ConsumerDelimiterTest extends CamelTestSupport {
 
@@ -60,7 +59,8 @@ public class S3ConsumerDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" + "&maxMessagesPerPoll=5&delimiter=_").to("mock:result");
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" + "&maxMessagesPerPoll=5&delimiter=_")
+                        .to("mock:result");
             }
         };
     }

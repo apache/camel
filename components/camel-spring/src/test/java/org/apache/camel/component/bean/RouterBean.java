@@ -20,14 +20,13 @@ import org.apache.camel.Consume;
 import org.apache.camel.RecipientList;
 
 /**
- * An example POJO which has a method {@link #route) which can be used as a
- * Dynamic Recipient List
+ * An example POJO which has a method {@link #route) which can be used as a Dynamic Recipient List
  */
 public class RouterBean {
 
     @Consume("direct:start")
     @RecipientList
     public String[] route(String body) {
-        return new String[]{"mock:a", "mock:b"};
+        return new String[] { "mock:a", "mock:b" };
     }
 }

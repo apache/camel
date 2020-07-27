@@ -64,7 +64,7 @@ public final class Version implements Comparable<Version> {
             return false;
         }
 
-        final Version other = (Version)obj;
+        final Version other = (Version) obj;
 
         return compareTo(other) == 0;
     }
@@ -91,7 +91,9 @@ public final class Version implements Comparable<Version> {
         final Version required = new Version(requiredMajor, requiredMinor);
 
         if (this.compareTo(required) < 0) {
-            throw new UnsupportedOperationException("This operation requires API version at least " + requiredMajor + "." + requiredMinor + ", currently configured for " + major
+            throw new UnsupportedOperationException(
+                    "This operation requires API version at least " + requiredMajor + "." + requiredMinor
+                                                    + ", currently configured for " + major
                                                     + "." + minor);
         }
     }

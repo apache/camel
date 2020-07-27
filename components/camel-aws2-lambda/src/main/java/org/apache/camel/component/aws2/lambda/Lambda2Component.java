@@ -52,14 +52,16 @@ public class Lambda2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Lambda2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Lambda2Configuration();
+        Lambda2Configuration configuration
+                = this.configuration != null ? this.configuration.copy() : new Lambda2Configuration();
         Lambda2Endpoint endpoint = new Lambda2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         endpoint.setFunction(remaining);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getAwsLambdaClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAwsLambdaClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or awsLambdaClient must be specified");
         }
 

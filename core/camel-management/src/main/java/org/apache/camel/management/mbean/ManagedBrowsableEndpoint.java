@@ -112,7 +112,8 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
             toIndex = Integer.MAX_VALUE;
         }
         if (fromIndex > toIndex) {
-            throw new IllegalArgumentException("From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
+            throw new IllegalArgumentException(
+                    "From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
         }
 
         List<Exchange> exchanges = getEndpoint().getExchanges();

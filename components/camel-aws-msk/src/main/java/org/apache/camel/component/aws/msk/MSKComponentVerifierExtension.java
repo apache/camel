@@ -49,8 +49,10 @@ public class MSKComponentVerifierExtension extends DefaultComponentVerifierExten
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
-            .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("accessKey", parameters))
+                .error(ResultErrorHelper.requiresOption("secretKey", parameters))
+                .error(ResultErrorHelper.requiresOption("region", parameters));
 
         // Validate using the catalog
 
@@ -72,12 +74,15 @@ public class MSKComponentVerifierExtension extends DefaultComponentVerifierExten
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             ListClustersRequest request = new ListClustersRequest();
-            AWSKafka client = AWSKafkaClientBuilder.standard().withCredentials(credentialsProvider).withRegion(Regions.valueOf(configuration.getRegion())).build();
+            AWSKafka client = AWSKafkaClientBuilder.standard().withCredentials(credentialsProvider)
+                    .withRegion(Regions.valueOf(configuration.getRegion())).build();
             client.listClusters(request);
         } catch (SdkClientException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("aws_mks_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("aws_mks_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

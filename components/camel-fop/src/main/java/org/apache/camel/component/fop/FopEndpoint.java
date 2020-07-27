@@ -34,10 +34,12 @@ import org.apache.fop.apps.FopFactory;
 /**
  * Render messages into PDF and other output formats supported by Apache FOP.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, category = {Category.FILE, Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true,
+             category = { Category.FILE, Category.TRANSFORMATION })
 public class FopEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private FopOutputType outputType;
     @UriParam
     private String userConfigURL;
@@ -92,7 +94,6 @@ public class FopEndpoint extends DefaultEndpoint {
         this.fopFactory = fopFactory;
     }
 
-
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -100,8 +101,9 @@ public class FopEndpoint extends DefaultEndpoint {
         if (fopFactory == null && userConfigURL == null) {
             fopFactory = FopFactory.newInstance(new URI("./"));
         } else if (fopFactory != null && userConfigURL != null) {
-            throw new FopConfigException("More than one configuration. "
-                    + "You can configure fop either by config file or by supplying FopFactory but not both.");
+            throw new FopConfigException(
+                    "More than one configuration. "
+                                         + "You can configure fop either by config file or by supplying FopFactory but not both.");
         } else if (fopFactory == null && userConfigURL != null) {
             if (ResourceHelper.isClasspathUri(userConfigURL)) {
                 InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);

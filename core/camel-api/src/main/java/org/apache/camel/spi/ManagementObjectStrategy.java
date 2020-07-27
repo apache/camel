@@ -35,7 +35,7 @@ import org.apache.camel.health.HealthCheckRegistry;
  * Strategy for creating the managed object for the various beans Camel register for management.
  */
 public interface ManagementObjectStrategy {
-    
+
     Object getManagedObjectForCamelContext(CamelContext context);
 
     Object getManagedObjectForCamelHealth(CamelContext context, HealthCheckRegistry healthCheckRegistry);
@@ -46,8 +46,9 @@ public interface ManagementObjectStrategy {
 
     Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint);
 
-    Object getManagedObjectForErrorHandler(CamelContext context, Route route,
-                                           Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+    Object getManagedObjectForErrorHandler(
+            CamelContext context, Route route,
+            Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     Object getManagedObjectForRouteController(CamelContext context, RouteController routeController);
 
@@ -57,15 +58,17 @@ public interface ManagementObjectStrategy {
 
     Object getManagedObjectForProducer(CamelContext context, Producer producer);
 
-    Object getManagedObjectForProcessor(CamelContext context, Processor processor,
-                                        NamedNode definition, Route route);
+    Object getManagedObjectForProcessor(
+            CamelContext context, Processor processor,
+            NamedNode definition, Route route);
 
     Object getManagedObjectForService(CamelContext context, Service service);
 
     Object getManagedObjectForClusterService(CamelContext context, CamelClusterService service);
 
-    Object getManagedObjectForThreadPool(CamelContext context, ThreadPoolExecutor threadPool,
-                                         String id, String sourceId, String routeId, String threadPoolProfileId);
+    Object getManagedObjectForThreadPool(
+            CamelContext context, ThreadPoolExecutor threadPool,
+            String id, String sourceId, String routeId, String threadPoolProfileId);
 
     Object getManagedObjectForEventNotifier(CamelContext context, EventNotifier eventNotifier);
 }

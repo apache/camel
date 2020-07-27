@@ -34,15 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     private static final String RESPONSE_GREETING = "Hola ";
-    private static final byte[] RESPONSE_GREETING_BYTES = {0x48, 0x6f, 0x6c, 0x61, 0x20};
+    private static final byte[] RESPONSE_GREETING_BYTES = { 0x48, 0x6f, 0x6c, 0x61, 0x20 };
 
     @Test
     void testWebsocketSingleClient() throws Exception {
         TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola");
         wsclient.connect();
-        
+
         wsclient.sendTextMessage("Cerveza");
-        
+
         assertTrue(wsclient.await(10));
         List<String> received = wsclient.getReceived(String.class);
         assertEquals(1, received.size());
@@ -54,9 +54,9 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     void testWebsocketSingleClientForBytes() throws Exception {
         TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola");
         wsclient.connect();
-        
+
         wsclient.sendBytesMessage("Cerveza".getBytes("UTF-8"));
-        
+
         assertTrue(wsclient.await(10));
         List<String> received = wsclient.getReceived(String.class);
         assertEquals(1, received.size());
@@ -68,9 +68,9 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     void testWebsocketSingleClientForReader() throws Exception {
         TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola3");
         wsclient.connect();
-        
+
         wsclient.sendTextMessage("Cerveza");
-        
+
         assertTrue(wsclient.await(10));
         List<String> received = wsclient.getReceived(String.class);
         assertEquals(1, received.size());
@@ -82,9 +82,9 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     void testWebsocketSingleClientForInputStream() throws Exception {
         TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola3");
         wsclient.connect();
-        
+
         wsclient.sendBytesMessage("Cerveza".getBytes("UTF-8"));
-        
+
         assertTrue(wsclient.await(10));
         List<String> received = wsclient.getReceived(String.class);
         assertEquals(1, received.size());
@@ -98,16 +98,16 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
         TestClient wsclient2 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
         wsclient1.connect();
         wsclient2.connect();
-        
+
         wsclient1.sendTextMessage("Gambas");
         wsclient2.sendTextMessage("Calamares");
-        
+
         assertTrue(wsclient1.await(10));
         assertTrue(wsclient2.await(10));
-        
+
         List<String> received1 = wsclient1.getReceived(String.class);
         assertEquals(2, received1.size());
-        
+
         assertTrue(received1.contains("Hola Gambas"));
         assertTrue(received1.contains("Hola Calamares"));
 
@@ -146,7 +146,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
                         createResponse(exchange, false);
                     }
                 }).to("atmosphere-websocket:///hola2?sendToAll=true");
-                
+
                 // route for a single stream line
                 from("atmosphere-websocket:///hola3?useStreaming=true").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) {
@@ -171,15 +171,15 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
         } else {
             assertTrue(msg instanceof String || msg instanceof byte[], "Expects String or byte[]");
         }
-        
+
         if (msg instanceof String) {
-            exchange.getIn().setBody(RESPONSE_GREETING + msg);     
+            exchange.getIn().setBody(RESPONSE_GREETING + msg);
         } else if (msg instanceof byte[]) {
-            exchange.getIn().setBody(createByteResponse((byte[])msg));
+            exchange.getIn().setBody(createByteResponse((byte[]) msg));
         } else if (msg instanceof Reader) {
-            exchange.getIn().setBody(new StringReader(RESPONSE_GREETING + readAll((Reader)msg)));
+            exchange.getIn().setBody(new StringReader(RESPONSE_GREETING + readAll((Reader) msg)));
         } else if (msg instanceof InputStream) {
-            exchange.getIn().setBody(createByteResponse(readAll((InputStream)msg)));
+            exchange.getIn().setBody(createByteResponse(readAll((InputStream) msg)));
         }
     }
 
@@ -187,7 +187,9 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
         Object eventType = exchange.getIn().getHeader(WebsocketConstants.EVENT_TYPE);
 
         if (eventType instanceof Integer) {
-            if (eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE) || eventType.equals(WebsocketConstants.ONCLOSE_EVENT_TYPE) || eventType.equals(WebsocketConstants.ONERROR_EVENT_TYPE)) {
+            if (eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)
+                    || eventType.equals(WebsocketConstants.ONCLOSE_EVENT_TYPE)
+                    || eventType.equals(WebsocketConstants.ONERROR_EVENT_TYPE)) {
                 exchange.getIn().setBody("Error. This place should never be reached.");
             }
         }
@@ -220,7 +222,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
         return strbuf.toString();
     }
-    
+
     private static byte[] readAll(InputStream is) {
         ByteArrayOutputStream bytebuf = new ByteArrayOutputStream();
         try {

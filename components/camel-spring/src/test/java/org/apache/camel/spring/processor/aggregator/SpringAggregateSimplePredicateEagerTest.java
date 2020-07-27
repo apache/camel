@@ -25,7 +25,8 @@ public class SpringAggregateSimplePredicateEagerTest extends AggregateSimplePred
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateSimplePredicateEagerTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateSimplePredicateEagerTest.xml");
     }
 
 }

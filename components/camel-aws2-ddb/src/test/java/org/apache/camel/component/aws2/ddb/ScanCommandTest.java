@@ -51,7 +51,8 @@ public class ScanCommandTest {
     @Test
     public void execute() {
         Map<String, Condition> scanFilter = new HashMap<>();
-        Condition.Builder condition = Condition.builder().comparisonOperator(ComparisonOperator.GT.toString()).attributeValueList(AttributeValue.builder().n("1985").build());
+        Condition.Builder condition = Condition.builder().comparisonOperator(ComparisonOperator.GT.toString())
+                .attributeValueList(AttributeValue.builder().n("1985").build());
         scanFilter.put("year", condition.build());
         exchange.getIn().setHeader(Ddb2Constants.SCAN_FILTER, scanFilter);
 
@@ -60,14 +61,14 @@ public class ScanCommandTest {
         Map<String, AttributeValue> mapAssert = new HashMap<>();
         mapAssert.put("1", AttributeValue.builder().s("LAST_KEY").build());
 
-        ConsumedCapacity consumed = (ConsumedCapacity)exchange.getIn().getHeader(Ddb2Constants.CONSUMED_CAPACITY);
+        ConsumedCapacity consumed = (ConsumedCapacity) exchange.getIn().getHeader(Ddb2Constants.CONSUMED_CAPACITY);
         assertEquals(scanFilter, ddbClient.scanRequest.scanFilter());
         assertEquals(Integer.valueOf(10), exchange.getIn().getHeader(Ddb2Constants.SCANNED_COUNT, Integer.class));
         assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(Ddb2Constants.COUNT, Integer.class));
         assertEquals(Double.valueOf(1.0), consumed.capacityUnits());
         assertEquals(mapAssert, exchange.getIn().getHeader(Ddb2Constants.LAST_EVALUATED_KEY, Map.class));
 
-        Map<?, ?> items = (Map<?, ?>)exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
+        Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
         assertEquals(AttributeValue.builder().s("attrValue").build(), items.get("attrName"));
     }
 }

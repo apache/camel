@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
-    
+
     /**
-     * We receive an object array, because we call entityManager.createNativeQuery(nativeQuery)
-     * and not entityManager.createNativeQuery(nativeQuery, MultiSteps.class)
+     * We receive an object array, because we call entityManager.createNativeQuery(nativeQuery) and not
+     * entityManager.createNativeQuery(nativeQuery, MultiSteps.class)
      */
     @Override
     protected void assertReceivedResult(Exchange exchange) {
@@ -35,16 +35,15 @@ public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
         assertNotNull(result, "Received an object array");
         assertEquals("foo@bar.com", result[1], "address property");
     }
-    
+
     /**
-     * Is still 1, because we receive an object array which has no @Consumed annotation
-     * as the MultiSteps class has.
+     * Is still 1, because we receive an object array which has no @Consumed annotation as the MultiSteps class has.
      */
     @Override
     protected int getUpdatedStepValue() {
         return 1;
     }
-    
+
     @Override
     protected void assertURIQueryOption(JpaConsumer jpaConsumer) {
         assertEquals("select * from MultiSteps where step = 1", jpaConsumer.getNativeQuery());

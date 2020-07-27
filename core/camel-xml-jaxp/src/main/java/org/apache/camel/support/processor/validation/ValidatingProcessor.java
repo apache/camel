@@ -57,8 +57,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.support.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
 
 /**
- * A processor which validates the XML version of the inbound message body
- * against some schema either in XSD or RelaxNG
+ * A processor which validates the XML version of the inbound message body against some schema either in XSD or RelaxNG
  */
 public class ValidatingProcessor extends AsyncProcessorSupport {
 
@@ -169,8 +168,9 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
                     handler.handleErrors(exchange, schema, result);
                 } catch (SAXParseException e) {
                     // can be thrown for non well formed XML
-                    throw new SchemaValidationException(exchange, schema, Collections.singletonList(e), Collections.<SAXParseException> emptyList(),
-                                                        Collections.<SAXParseException> emptyList());
+                    throw new SchemaValidationException(
+                            exchange, schema, Collections.singletonList(e), Collections.<SAXParseException> emptyList(),
+                            Collections.<SAXParseException> emptyList());
                 }
             }
         } finally {
@@ -325,15 +325,13 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
     }
 
     /**
-     * Checks whether we need an {@link InputStream} to access the message body
-     * or header.
+     * Checks whether we need an {@link InputStream} to access the message body or header.
      * <p/>
-     * Depending on the content in the message body or header, we may not need
-     * to convert to {@link InputStream}.
+     * Depending on the content in the message body or header, we may not need to convert to {@link InputStream}.
      *
-     * @param exchange the current exchange
-     * @return <tt>true</tt> to convert to {@link InputStream} beforehand
-     *         converting to {@link Source} afterwards.
+     * @param  exchange the current exchange
+     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source}
+     *                  afterwards.
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
         Object content = getContentToValidate(exchange);
@@ -360,8 +358,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
     }
 
     /**
-     * Converts the inbound body or header to a {@link Source}, if it is
-     * <b>not</b> already a {@link Source}.
+     * Converts the inbound body or header to a {@link Source}, if it is <b>not</b> already a {@link Source}.
      * <p/>
      * This implementation will prefer to source in the following order:
      * <ul>
@@ -374,11 +371,11 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
     protected Source getSource(Exchange exchange, Object content) {
         // body or header may already be a source
         if (content instanceof Source) {
-            return (Source)content;
+            return (Source) content;
         }
         Source source = null;
         if (content instanceof InputStream) {
-            return new StreamSource((InputStream)content);
+            return new StreamSource((InputStream) content);
         }
         if (content != null) {
             TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, content.getClass());

@@ -64,11 +64,11 @@ public class RestDslSourceCodeGeneratorTest {
         final Oas20Document openapi = new Oas20Document();
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
 
         openapi.info = new Oas20Info();
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class RestDslSourceCodeGeneratorTest {
         openapi.info = info;
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class RestDslSourceCodeGeneratorTest {
         openapi.host = "localhost";
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class RestDslSourceCodeGeneratorTest {
         openapi.host = "localhost:8080";
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 
     @Test
@@ -105,6 +105,6 @@ public class RestDslSourceCodeGeneratorTest {
         final Oas20Document openapi = new Oas20Document();
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 }

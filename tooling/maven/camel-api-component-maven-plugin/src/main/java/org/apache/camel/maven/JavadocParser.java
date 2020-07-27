@@ -82,8 +82,8 @@ public class JavadocParser extends Parser {
                     final String nameAttr = (String) name;
                     final String idAttr = (String) id;
                     if (parserState == ParserState.INIT
-                        && ("method_summary".equals(nameAttr) || "method.summary".equals(nameAttr)
-                            || "method_summary".equals(idAttr) || "method.summary".equals(idAttr))) {
+                            && ("method_summary".equals(nameAttr) || "method.summary".equals(nameAttr)
+                                    || "method_summary".equals(idAttr) || "method.summary".equals(idAttr))) {
                         parserState = ParserState.METHOD_SUMMARY;
                     } else if (parserState == ParserState.METHOD) {
                         if (methodWithTypes == null) {
@@ -96,7 +96,7 @@ public class JavadocParser extends Parser {
                                 if (firstHyphen != -1) {
                                     final int lastHyphen = methodSignature.lastIndexOf('-');
                                     methodSignature = methodSignature.substring(0, firstHyphen) + "("
-                                        + methodSignature.substring(firstHyphen + 1, lastHyphen) + ")";
+                                                      + methodSignature.substring(firstHyphen + 1, lastHyphen) + ")";
                                     methodSignature = methodSignature.replace('-', ',');
                                 }
                                 // support varargs
@@ -126,7 +126,7 @@ public class JavadocParser extends Parser {
 
     private static String unescapeHtml(String htmlString) {
         String result = StringEscapeUtils.unescapeHtml(htmlString).replaceAll(NON_BREAKING_SPACE, " ")
-            .replaceAll(JAVA6_NON_BREAKING_SPACE, " ");
+                .replaceAll(JAVA6_NON_BREAKING_SPACE, " ");
         try {
             result = URLDecoder.decode(result, "UTF-8");
         } catch (UnsupportedEncodingException ignored) {
@@ -150,8 +150,8 @@ public class JavadocParser extends Parser {
 
             parserState = ParserState.METHOD_SUMMARY;
         } else if (parserState == ParserState.METHOD_SUMMARY
-            && !methods.isEmpty()
-            && HTML.Tag.TABLE.equals(tag.getHTMLTag())) {
+                && !methods.isEmpty()
+                && HTML.Tag.TABLE.equals(tag.getHTMLTag())) {
             // end of method summary table
             parserState = ParserState.INIT;
         }
@@ -199,6 +199,8 @@ public class JavadocParser extends Parser {
     }
 
     private enum ParserState {
-        INIT, METHOD_SUMMARY, METHOD
+        INIT,
+        METHOD_SUMMARY,
+        METHOD
     }
 }

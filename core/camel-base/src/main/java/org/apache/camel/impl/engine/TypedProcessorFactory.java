@@ -50,7 +50,8 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     }
 
     @Override
-    public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception {
+    public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
+            throws Exception {
         return null;
     }
 

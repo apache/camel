@@ -43,7 +43,7 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         Object answer = template.requestBody("http://localhost:" + getPort() + "/users/new", body);
         assertNotNull(answer);
-        BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream)answer));
+        BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) answer));
         String line;
         String answerString = "";
         while ((line = reader.readLine()) != null) {
@@ -55,7 +55,7 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
-        UserPojoEx user = (UserPojoEx)obj;
+        UserPojoEx user = (UserPojoEx) obj;
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
@@ -71,10 +71,10 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
                 rest("/users/")
-                    // REST binding converts from JSON to UserPojo
-                    .post("new").type(UserPojo.class).route()
-                    // then contract advice converts from UserPojo to UserPojoEx
-                    .inputType(UserPojoEx.class).to("mock:input");
+                        // REST binding converts from JSON to UserPojo
+                        .post("new").type(UserPojo.class).route()
+                        // then contract advice converts from UserPojo to UserPojoEx
+                        .inputType(UserPojoEx.class).to("mock:input");
             }
         };
     }

@@ -103,7 +103,8 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     public static class ValidationBean {
         private static final Logger LOG = LoggerFactory.getLogger(ValidationBean.class);
 
-        public void someMethod(String body, @Header("foo") String header, @ExchangeProperty("cheese") String cheese) throws ValidationException {
+        public void someMethod(String body, @Header("foo") String header, @ExchangeProperty("cheese") String cheese)
+                throws ValidationException {
             assertEquals("old", cheese);
 
             if ("bar".equals(header)) {

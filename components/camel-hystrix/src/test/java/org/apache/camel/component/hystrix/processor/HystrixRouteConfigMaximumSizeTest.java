@@ -35,7 +35,7 @@ public class HystrixRouteConfigMaximumSizeTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testGroupKeyAndThreadPoolKeyConfigFlagsDoNotScrapHystrixConfiguration() throws Exception {
         // dummy route
@@ -43,42 +43,43 @@ public class HystrixRouteConfigMaximumSizeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:foo")
-                    .circuitBreaker()
+                        .circuitBreaker()
                         .hystrixConfiguration().groupKey("test2").metricsHealthSnapshotIntervalInMilliseconds(99999).end()
                         .to("log:hello")
-                    .end();
-                
+                        .end();
+
             }
         };
-        
+
         rb.configure();
-        
+
         RouteDefinition route = rb.getRouteCollection().getRoutes().get(0);
         assertEquals(CircuitBreakerDefinition.class, route.getOutputs().get(0).getClass());
-        
-        HystrixConfigurationDefinition config = ((CircuitBreakerDefinition) route.getOutputs().get(0)).getHystrixConfiguration();
+
+        HystrixConfigurationDefinition config
+                = ((CircuitBreakerDefinition) route.getOutputs().get(0)).getHystrixConfiguration();
         assertEquals("test2", config.getGroupKey());
         assertEquals(Integer.toString(99999), config.getMetricsHealthSnapshotIntervalInMilliseconds());
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .circuitBreaker()
+                        .circuitBreaker()
                         .hystrixConfiguration().groupKey("myCamelApp").requestLogEnabled(false).corePoolSize(5)
-                            .maximumSize(15).allowMaximumSizeToDivergeFromCoreSize(true)
+                        .maximumSize(15).allowMaximumSizeToDivergeFromCoreSize(true)
                         .end()
                         .to("direct:foo")
-                    .onFallback()
+                        .onFallback()
                         .transform().constant("Fallback message")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("direct:foo")
-                    .transform().constant("Bye World");
+                        .transform().constant("Bye World");
             }
         };
     }

@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Jobs.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-job", title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-job", title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl",
+             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesJobEndpoint(String uri, KubernetesJobComponent component, KubernetesConfiguration config) {

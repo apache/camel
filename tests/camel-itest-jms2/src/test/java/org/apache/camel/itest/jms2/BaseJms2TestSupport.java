@@ -25,7 +25,6 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
-
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
@@ -53,8 +52,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
- * A support class that builds up and tears down an ActiveMQ Artemis instance to be used
- * for unit testing.
+ * A support class that builds up and tears down an ActiveMQ Artemis instance to be used for unit testing.
  */
 public class BaseJms2TestSupport extends CamelTestSupport {
 
@@ -71,7 +69,7 @@ public class BaseJms2TestSupport extends CamelTestSupport {
     /**
      * Set up the Broker
      *
-     * @see CamelTestSupport#doPreSetup()
+     * @see              CamelTestSupport#doPreSetup()
      *
      * @throws Exception
      */
@@ -87,23 +85,25 @@ public class BaseJms2TestSupport extends CamelTestSupport {
 
     protected void configureBroker(EmbeddedJMS broker) throws Exception {
         Configuration configuration = new ConfigurationImpl()
-            .setPersistenceEnabled(false)
-            .setJournalDirectory("target/data/journal")
-            .setSecurityEnabled(false)
-            .addAcceptorConfiguration("connector", brokerUri + "?protocols=CORE,AMQP")
-            .addAcceptorConfiguration("vm", "vm://123")
-            .addConnectorConfiguration("connector", new TransportConfiguration(NettyConnectorFactory.class.getName()));
+                .setPersistenceEnabled(false)
+                .setJournalDirectory("target/data/journal")
+                .setSecurityEnabled(false)
+                .addAcceptorConfiguration("connector", brokerUri + "?protocols=CORE,AMQP")
+                .addAcceptorConfiguration("vm", "vm://123")
+                .addConnectorConfiguration("connector", new TransportConfiguration(NettyConnectorFactory.class.getName()));
 
         JMSConfiguration jmsConfig = new JMSConfigurationImpl();
 
         ConnectionFactoryConfiguration cfConfig = new ConnectionFactoryConfigurationImpl().setName("cf").setConnectorNames(
-            Arrays.asList("connector")).setBindings("cf");
+                Arrays.asList("connector")).setBindings("cf");
         jmsConfig.getConnectionFactoryConfigurations().add(cfConfig);
 
-        JMSQueueConfiguration queueConfig = new JMSQueueConfigurationImpl().setName("queue1").setDurable(false).setBindings("queue/queue1");
+        JMSQueueConfiguration queueConfig
+                = new JMSQueueConfigurationImpl().setName("queue1").setDurable(false).setBindings("queue/queue1");
         jmsConfig.getQueueConfigurations().add(queueConfig);
 
-        JMSQueueConfiguration topicConfig = new JMSQueueConfigurationImpl().setName("foo").setDurable(true).setBindings("topic/foo");
+        JMSQueueConfiguration topicConfig
+                = new JMSQueueConfigurationImpl().setName("foo").setDurable(true).setBindings("topic/foo");
         jmsConfig.getQueueConfigurations().add(topicConfig);
 
         broker.setConfiguration(configuration).setJmsConfiguration(jmsConfig);
@@ -117,7 +117,7 @@ public class BaseJms2TestSupport extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        DefaultCamelContext dcc = (DefaultCamelContext)context;
+        DefaultCamelContext dcc = (DefaultCamelContext) context;
         while (!dcc.isStopped()) {
             LOG.info("Waiting on the Camel Context to stop");
         }

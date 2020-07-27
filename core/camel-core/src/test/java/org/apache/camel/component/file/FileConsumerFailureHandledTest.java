@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Unit test for consuming files but the exchange fails and is handled by the
- * failure handler (usually the DeadLetterChannel)
+ * Unit test for consuming files but the exchange fails and is handled by the failure handler (usually the
+ * DeadLetterChannel)
  */
 public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
@@ -123,13 +123,15 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 // special for not handled when we got beer
-                onException(ValidationException.class).onWhen(exceptionMessage().contains("beer")).handled(false).to("mock:beer");
+                onException(ValidationException.class).onWhen(exceptionMessage().contains("beer")).handled(false)
+                        .to("mock:beer");
 
                 // special failure handler for ValidationException
                 onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/data/messages/input/?initialDelay=0&delay=10&delete=true").process(new MyValidatorProcessor()).to("mock:valid");
+                from("file:target/data/messages/input/?initialDelay=0&delay=10&delete=true").process(new MyValidatorProcessor())
+                        .to("mock:valid");
             }
         };
     }

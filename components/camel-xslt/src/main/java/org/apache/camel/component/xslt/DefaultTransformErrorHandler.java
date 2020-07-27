@@ -26,12 +26,12 @@ import org.xml.sax.SAXParseException;
 import org.apache.camel.Exchange;
 
 /**
- * {@link ErrorHandler} and {@link ErrorListener} which will ignore warnings,
- * and throws error and fatal as exception, which ensures those can be caught by Camel and dealt-with.
+ * {@link ErrorHandler} and {@link ErrorListener} which will ignore warnings, and throws error and fatal as exception,
+ * which ensures those can be caught by Camel and dealt-with.
  * <p/>
  * Also any warning, error or fatal error is stored on the {@link Exchange} as a property with the keys
- * <tt>CamelXsltWarning</tt>, <tt>CamelXsltError</tt>, and <tt>CamelXsltFatalError</tt> which
- * allows end users to access those information form the exchange.
+ * <tt>CamelXsltWarning</tt>, <tt>CamelXsltError</tt>, and <tt>CamelXsltFatalError</tt> which allows end users to access
+ * those information form the exchange.
  */
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
 

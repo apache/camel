@@ -52,9 +52,9 @@ public class ZooKeeperGroupTest {
     public void setUp() throws Exception {
         int port = findFreePort();
         curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryOneTime(1))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryOneTime(1))
+                .build();
         //curator.start();
         group = new ZooKeeperGroup<>(curator, PATH, NodeState.class);
         //group.start();

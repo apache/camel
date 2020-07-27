@@ -23,7 +23,8 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
 
-    @ManagedAttribute(description = "The uri of the endpoint to send to. The uri can be dynamic computed using the expressions.", mask = true)
+    @ManagedAttribute(description = "The uri of the endpoint to send to. The uri can be dynamic computed using the expressions.",
+                      mask = true)
     String getUri();
 
     @ManagedAttribute(description = "Message Exchange Pattern")

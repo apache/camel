@@ -62,7 +62,7 @@ public class SmppProducerLazySessionCreationTest {
     @Test
     public void processShouldCreateTheSmppSession() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient",
@@ -72,7 +72,7 @@ public class SmppProducerLazySessionCreationTest {
                 NumberingPlanIndicator.UNKNOWN,
                 "");
         when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
-            .thenReturn("1");
+                .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);
         SmppBinding binding = mock(SmppBinding.class);
         Exchange exchange = mock(Exchange.class);
@@ -97,7 +97,7 @@ public class SmppProducerLazySessionCreationTest {
     @Test
     public void processShouldCreateTheSmppSessionWithTheSystemIdAndPasswordFromTheExchange() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://localhost:2775");
+                .thenReturn("smpp://localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient2",
@@ -107,7 +107,7 @@ public class SmppProducerLazySessionCreationTest {
                 NumberingPlanIndicator.UNKNOWN,
                 "");
         when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
-            .thenReturn("1");
+                .thenReturn("1");
         SmppBinding binding = mock(SmppBinding.class);
         Exchange exchange = mock(Exchange.class);
         Message in = mock(Message.class);

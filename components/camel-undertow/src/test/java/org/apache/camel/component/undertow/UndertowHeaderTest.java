@@ -72,12 +72,12 @@ public class UndertowHeaderTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}/headers")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
 
                 from("undertow:http://localhost:{{port}}/hello?matchOnUriPrefix=true")
-                    .to("mock:input")
-                    .transform().constant("Hello World");
+                        .to("mock:input")
+                        .transform().constant("Hello World");
             }
         };
     }

@@ -122,7 +122,8 @@ public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&searchTerm.fromSentDate=now-24h&initialDelay=100&delay=100").to("mock:result");
+                from("pop3://bill@localhost?password=secret&searchTerm.fromSentDate=now-24h&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

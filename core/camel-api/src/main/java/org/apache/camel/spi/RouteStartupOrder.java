@@ -23,8 +23,8 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 
 /**
- * Information about a route to be started where we want to control the order
- * in which they are started by {@link org.apache.camel.CamelContext}.
+ * Information about a route to be started where we want to control the order in which they are started by
+ * {@link org.apache.camel.CamelContext}.
  */
 public interface RouteStartupOrder {
 

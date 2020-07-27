@@ -33,7 +33,8 @@ public class HostUnavailableException extends CMDirectException {
         super(message, cause);
     }
 
-    public HostUnavailableException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
+    public HostUnavailableException(final String message, final Throwable cause, final boolean enableSuppression,
+                                    final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

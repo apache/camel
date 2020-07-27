@@ -48,12 +48,12 @@ public class TransformerBuilderTest extends TestSupport {
         Transformer transformer = ctx.resolveTransformer(new DataType("json:foo"), new DataType("xml:bar"));
         assertNotNull(transformer);
         assertEquals(ProcessorTransformer.class, transformer.getClass());
-        ProcessorTransformer pt = (ProcessorTransformer)transformer;
+        ProcessorTransformer pt = (ProcessorTransformer) transformer;
         Field f = ProcessorTransformer.class.getDeclaredField("processor");
         f.setAccessible(true);
         Object processor = f.get(pt);
         assertEquals(SendProcessor.class, processor.getClass());
-        SendProcessor sp = (SendProcessor)processor;
+        SendProcessor sp = (SendProcessor) processor;
         assertEquals("direct://transformer", sp.getEndpoint().getEndpointUri());
     }
 

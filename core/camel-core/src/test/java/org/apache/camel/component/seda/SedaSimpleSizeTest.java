@@ -45,7 +45,8 @@ public class SedaSimpleSizeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 endpoint("seda:foo");
 
-                from("direct:start").setBody().simple("${camelContext.getEndpoint('seda:foo').currentQueueSize}").to("mock:result");
+                from("direct:start").setBody().simple("${camelContext.getEndpoint('seda:foo').currentQueueSize}")
+                        .to("mock:result");
             }
         };
     }

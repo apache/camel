@@ -64,8 +64,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * The flatpack pzmap configuration file. Can be omitted in simpler
-     * situations, but its preferred to use the pzmap.
+     * The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
      */
     public void setDefinition(String definition) {
         this.definition = definition;
@@ -87,8 +86,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the first line is ignored for delimited files (for the column
-     * headers).
+     * Whether the first line is ignored for delimited files (for the column headers).
      * <p/>
      * Is by default true.
      */
@@ -125,8 +123,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Allows for lines to be shorter than expected and ignores the extra
-     * characters
+     * Allows for lines to be shorter than expected and ignores the extra characters
      */
     public void setAllowShortLines(String allowShortLines) {
         this.allowShortLines = allowShortLines;
@@ -137,8 +134,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Allows for lines to be longer than expected and ignores the extra
-     * characters.
+     * Allows for lines to be longer than expected and ignores the extra characters.
      */
     public void setIgnoreExtraColumns(String ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;

@@ -28,9 +28,10 @@ public class SpringErrorHandlerPropertiesPlaceholderTest extends SpringTestSuppo
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringErrorHandlerPropertiesPlaceholderTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringErrorHandlerPropertiesPlaceholderTest.xml");
     }
-    
+
     @Test
     public void testErrorHandler() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);

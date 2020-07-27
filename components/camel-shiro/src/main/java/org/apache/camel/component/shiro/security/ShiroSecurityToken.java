@@ -22,7 +22,7 @@ public class ShiroSecurityToken implements Serializable {
     private static final long serialVersionUID = 8018015867312416077L;
     private String username;
     private String password;
-    
+
     public ShiroSecurityToken(String username, String password) {
         this.username = username;
         this.password = password;

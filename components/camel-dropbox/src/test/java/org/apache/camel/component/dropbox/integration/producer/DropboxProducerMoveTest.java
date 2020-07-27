@@ -62,14 +62,15 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(String.format("dropbox://move?accessToken={{accessToken}}&remotePath=%s&newRemotePath=%s", workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
+                        .to(String.format("dropbox://move?accessToken={{accessToken}}&remotePath=%s&newRemotePath=%s",
+                                workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
                         .to("mock:result");
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE))
                         .setHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, constant(COPY_WORKDIR + "/" + FILE))
-                    .to("dropbox://move?accessToken={{accessToken}}")
-                    .to("mock:result");
+                        .to("dropbox://move?accessToken={{accessToken}}")
+                        .to("mock:result");
             }
         };
     }

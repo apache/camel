@@ -25,7 +25,8 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerNotEagerMaxMessagesPerPollTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/poll/?password=admin&delay=6000&delete=true" + "&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false";
+        return "ftp://admin@localhost:" + getPort() + "/poll/?password=admin&delay=6000&delete=true"
+               + "&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false";
     }
 
     @Override

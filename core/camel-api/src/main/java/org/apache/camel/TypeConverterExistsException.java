@@ -38,5 +38,3 @@ public class TypeConverterExistsException extends RuntimeCamelException {
         return fromType;
     }
 }
-
-

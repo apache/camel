@@ -29,7 +29,7 @@ public class ConsumerCreationStrategyFactoryTest {
     @Test
     public void givenPulsarConsumerIsNullwhenICreateFactoryverifyIllegalArgumentExceptionIsThrown() {
         assertThrows(IllegalArgumentException.class,
-            () -> ConsumerCreationStrategyFactory.create(null));
+                () -> ConsumerCreationStrategyFactory.create(null));
     }
 
     @Test

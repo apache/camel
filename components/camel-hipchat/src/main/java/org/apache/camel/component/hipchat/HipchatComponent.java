@@ -31,9 +31,10 @@ import org.slf4j.LoggerFactory;
  * Represents the component that manages {@link HipchatEndpoint}. Hipchat is an Atlassian software for team chat.
  *
  * The hipchat component uses the OAuth2 Hipchat API to produce/consume messages. For more details about Hipchat API
- * @see <a href="https://www.hipchat.com/docs/apiv2/auth">Hipchat API</a>. You can get the Oauth2 auth token
- * at @see <a href="https://www.hipchat.com/account/api">Hipchat Auth Token</a>. The messages produced and consumed
- * would be from/to owner of the provided auth token.
+ * 
+ * @see <a href="https://www.hipchat.com/docs/apiv2/auth">Hipchat API</a>. You can get the Oauth2 auth token at @see
+ *      <a href="https://www.hipchat.com/account/api">Hipchat Auth Token</a>. The messages produced and consumed would
+ *      be from/to owner of the provided auth token.
  */
 @Component("hipchat")
 public class HipchatComponent extends DefaultComponent {

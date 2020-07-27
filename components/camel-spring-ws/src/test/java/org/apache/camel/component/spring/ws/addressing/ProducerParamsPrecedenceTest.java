@@ -70,7 +70,8 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
 
         // check default actions
         Assertions.assertThat(sender.getMessageContext()).isNotNull();
-        MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties((SoapMessage)sender.getMessageContext().getRequest());
+        MessageAddressingProperties wsaProperties
+                = TestUtil.getWSAProperties((SoapMessage) sender.getMessageContext().getRequest());
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getReplyTo()).isNull();
         Assertions.assertThat(wsaProperties.getFaultTo()).isNull();
@@ -88,7 +89,8 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
 
         // check default actions
         Assertions.assertThat(sender.getMessageContext()).isNotNull();
-        MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties((SoapMessage)sender.getMessageContext().getRequest());
+        MessageAddressingProperties wsaProperties
+                = TestUtil.getWSAProperties((SoapMessage) sender.getMessageContext().getRequest());
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getReplyTo()).isNull();
         Assertions.assertThat(wsaProperties.getFaultTo()).isNull();
@@ -103,7 +105,8 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
 
         // check default actions
         Assertions.assertThat(sender.getMessageContext()).isNotNull();
-        MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties((SoapMessage)sender.getMessageContext().getRequest());
+        MessageAddressingProperties wsaProperties
+                = TestUtil.getWSAProperties((SoapMessage) sender.getMessageContext().getRequest());
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(new URI("http://reply.to"));
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(new URI("http://fault.to"));
@@ -118,7 +121,8 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
 
         // check default actions
         Assertions.assertThat(sender.getMessageContext()).isNotNull();
-        MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties((SoapMessage)sender.getMessageContext().getRequest());
+        MessageAddressingProperties wsaProperties
+                = TestUtil.getWSAProperties((SoapMessage) sender.getMessageContext().getRequest());
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(new URI("http://replyPrecedence.to"));
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(new URI("http://faultPrecedence.to"));
@@ -133,7 +137,8 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
 
         // check default actions
         Assertions.assertThat(sender.getMessageContext()).isNotNull();
-        MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties((SoapMessage)sender.getMessageContext().getRequest());
+        MessageAddressingProperties wsaProperties
+                = TestUtil.getWSAProperties((SoapMessage) sender.getMessageContext().getRequest());
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(new URI("http://fault.to"));
         Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(anonymousUri);
@@ -148,7 +153,8 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
 
         // check default actions
         Assertions.assertThat(sender.getMessageContext()).isNotNull();
-        MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties((SoapMessage)sender.getMessageContext().getRequest());
+        MessageAddressingProperties wsaProperties
+                = TestUtil.getWSAProperties((SoapMessage) sender.getMessageContext().getRequest());
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(new URI("http://faultPrecedence.to"));
         // /we set in sample data all precendence fields for simplier tests
@@ -159,6 +165,7 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/component/spring/ws/addresing/ProducerParamsPrecedenceTest-context.xml"});
+        return new ClassPathXmlApplicationContext(
+                new String[] { "org/apache/camel/component/spring/ws/addresing/ProducerParamsPrecedenceTest-context.xml" });
     }
 }

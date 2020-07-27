@@ -24,7 +24,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 
 public class Web3jIntegrationTestSupport extends CamelTestSupport {
 
-
     @EndpointInject("mock:result")
     protected MockEndpoint mockResult;
 

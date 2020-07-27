@@ -63,13 +63,13 @@ public class ZipkinProducerSpanKindTest extends CamelTestSupport {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        String b3Header = exchange.getIn().getHeader("b3", String.class);
-                        Assertions.assertThat(b3Header).isNotNull();
-                    }
-                });
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String b3Header = exchange.getIn().getHeader("b3", String.class);
+                                Assertions.assertThat(b3Header).isNotNull();
+                            }
+                        });
             }
         };
     }

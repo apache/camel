@@ -32,8 +32,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
- * A JCR {@link EventListener} which can be used to delegate processing to a
- * Camel endpoint.
+ * A JCR {@link EventListener} which can be used to delegate processing to a Camel endpoint.
  */
 public class EndpointEventListener implements EventListener {
 

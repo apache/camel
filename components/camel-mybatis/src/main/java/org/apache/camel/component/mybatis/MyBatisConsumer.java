@@ -109,7 +109,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total
+                      + " messages in this poll.");
             total = maxMessagesPerPoll;
         }
 
@@ -170,16 +171,14 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Gets the statement(s) to run after successful processing.
-     * Use comma to separate multiple statements.
+     * Gets the statement(s) to run after successful processing. Use comma to separate multiple statements.
      */
     public String getOnConsume() {
         return onConsume;
     }
 
     /**
-     * Sets the statement to run after successful processing.
-     * Use comma to separate multiple statements.
+     * Sets the statement to run after successful processing. Use comma to separate multiple statements.
      */
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
@@ -193,8 +192,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Sets how resultset should be delivered to route.
-     * Indicates delivery as either a list or individual object.
+     * Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object.
      * defaults to true.
      */
     public void setUseIterator(boolean useIterator) {
@@ -209,8 +207,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Sets whether empty resultset should be allowed to be sent to the next hop.
-     * defaults to false. So the empty resultset will be filtered out.
+     * Sets whether empty resultset should be allowed to be sent to the next hop. defaults to false. So the empty
+     * resultset will be filtered out.
      */
     public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
         this.routeEmptyResultSet = routeEmptyResultSet;

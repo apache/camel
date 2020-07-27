@@ -204,15 +204,14 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
 
             WorkItemHandler handler = new InOutCamelWorkItemHandler();
 
-            assertThrows(WorkItemHandlerRuntimeException.class, 
-                () -> handler.executeWorkItem(workItem, manager));
+            assertThrows(WorkItemHandlerRuntimeException.class,
+                    () -> handler.executeWorkItem(workItem, manager));
         } finally {
             // Cleanup
             context.removeRoute(routeId);
             ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         }
     }
-
 
     @Test
     public void testSyncInOutDontHandleException() throws Exception {
@@ -246,7 +245,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             WorkItemHandler handler = new InOutCamelWorkItemHandler();
 
             assertThrows(IllegalArgumentException.class,
-                () -> handler.executeWorkItem(workItem, manager));
+                    () -> handler.executeWorkItem(workItem, manager));
         } finally {
             // Cleanup
             context.removeRoute(routeId);
@@ -264,16 +263,16 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
                 from("direct:start").routeId(routeId)
                         .setBody(simple("${body.getParameter(\"Request\")}"))
                         .doTry()
-                            .throwException(new IllegalArgumentException("Illegal contennt!"))
+                        .throwException(new IllegalArgumentException("Illegal contennt!"))
                         .doCatch(IllegalArgumentException.class)
-                            .process(new Processor() {
-                            
-                                @Override
-                                public void process(Exchange exchange) throws Exception {
-                                    RuntimeCamelException exceptionWrapper = new RuntimeCamelException(Exchange.EXCEPTION_CAUGHT);        
-                                    throw exceptionWrapper;
-                                }
-                            })
+                        .process(new Processor() {
+
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                RuntimeCamelException exceptionWrapper = new RuntimeCamelException(Exchange.EXCEPTION_CAUGHT);
+                                throw exceptionWrapper;
+                            }
+                        })
                         .end()
                         .to("mock:result");
             }
@@ -297,7 +296,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             WorkItemHandler handler = new InOutCamelWorkItemHandler();
 
             assertThrows(RuntimeCamelException.class,
-                () -> handler.executeWorkItem(workItem, manager));
+                    () -> handler.executeWorkItem(workItem, manager));
         } finally {
             // Cleanup
             context.removeRoute(routeId);

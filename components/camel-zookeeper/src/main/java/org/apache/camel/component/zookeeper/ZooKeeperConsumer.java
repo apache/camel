@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <code>ZooKeeperConsumer</code> uses various {@link ZooKeeperOperation} to
- * interact and consume data from a ZooKeeper cluster.
+ * <code>ZooKeeperConsumer</code> uses various {@link ZooKeeperOperation} to interact and consume data from a ZooKeeper
+ * cluster.
  */
 @SuppressWarnings("rawtypes")
 public class ZooKeeperConsumer extends DefaultConsumer {
@@ -67,7 +67,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         }
 
         initializeConsumer();
-        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "Camel-Zookeeper OperationsExecutor", 1);
+        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "Camel-Zookeeper OperationsExecutor", 1);
 
         OperationsExecutor opsService = new OperationsExecutor();
         executor.submit(opsService);
@@ -179,14 +180,16 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
     private void addBasicDataConsumeSequence(String node) {
         operations.clear();
-        operations.add(new AnyOfOperations(node, new ExistsOperation(connection, node), new ExistenceChangedOperation(connection, node)));
+        operations.add(new AnyOfOperations(
+                node, new ExistsOperation(connection, node), new ExistenceChangedOperation(connection, node)));
         operations.add(new GetDataOperation(connection, node));
         operations.add(new DataChangedOperation(connection, node, false, configuration.isSendEmptyMessageOnDelete()));
     }
 
     private void addBasicChildListingSequence(String node) {
         operations.clear();
-        operations.add(new AnyOfOperations(node, new ExistsOperation(connection, node), new ExistenceChangedOperation(connection, node)));
+        operations.add(new AnyOfOperations(
+                node, new ExistsOperation(connection, node), new ExistenceChangedOperation(connection, node)));
         operations.add(new GetChildrenOperation(connection, node));
         operations.add(new ChildrenChangedOperation(connection, node, false));
     }

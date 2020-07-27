@@ -67,7 +67,8 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
         } catch (ResolveEndpointFailedException e) {
             IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Cannot use existing queue disruptor-vm://bar as the existing queue size " + 1024
-                    + " does not match given queue size 256", ise.getMessage());
+                         + " does not match given queue size 256",
+                    ise.getMessage());
         }
     }
 

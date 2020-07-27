@@ -70,7 +70,8 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10").process(new MyPreMoveCheckerProcessor()).to("mock:result");
+                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10")
+                        .process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
         };
     }

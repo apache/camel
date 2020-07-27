@@ -35,10 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
     private static final int PORT = AvailablePortFinder.getNextAvailable();
-    private static final String ORIGINAL_URL =
-            String.format("http://localhost:%s/original/Service", PORT);
-    private static final String PROXY_URL =
-            String.format("http://localhost:%s/proxy/Service", PORT);
+    private static final String ORIGINAL_URL = String.format("http://localhost:%s/original/Service", PORT);
+    private static final String PROXY_URL = String.format("http://localhost:%s/proxy/Service", PORT);
     private static final BareSoapServiceImpl IMPLEMENTATION = new BareSoapServiceImpl();
 
     @BeforeAll
@@ -52,8 +50,8 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
     protected String getServiceEndpointURI() {
         return String.format("cxf:%s?dataFormat=PAYLOAD&wsdlURL=classpath:bare.wsdl", ORIGINAL_URL);
-    }     
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -62,7 +60,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
             }
         };
     }
-    
+
     @Test
     public void testInvokeProxyService() {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();

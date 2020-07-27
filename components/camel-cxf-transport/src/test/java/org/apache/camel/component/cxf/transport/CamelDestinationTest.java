@@ -119,7 +119,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
     public void testGetTransportFactoryFromBus() throws Exception {
         Bus bus = BusFactory.getDefaultBus();
         assertNotNull(bus.getExtension(ConduitInitiatorManager.class)
-            .getConduitInitiator(CamelTransportFactory.TRANSPORT_ID));
+                .getConduitInitiator(CamelTransportFactory.TRANSPORT_ID));
     }
 
     @Test
@@ -147,16 +147,14 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         destination.shutdown();
     }
 
-
-
     private void verifyReceivedMessage(Message inMessage, String content) throws IOException {
-        ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
+        ByteArrayInputStream bis = (ByteArrayInputStream) inMessage.getContent(InputStream.class);
         byte bytes[] = new byte[bis.available()];
         bis.read(bytes);
         String reponse = new String(bytes);
         assertEquals(content, reponse, "The reponse date should be equals");
     }
-    
+
     @Test
     public void testRoundTripDestination() throws Exception {
 
@@ -204,7 +202,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         error.assertIsSatisfied();
         destination.shutdown();
     }
-    
+
     @Test
     public void testRoundTripDestinationWithFault() throws Exception {
 
@@ -240,10 +238,10 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
                 }
             }
         };
-        
+
         MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(1);
-        
+
         //this call will active the camelDestination
         destination.setMessageObserver(observer);
         // set is one way false for get response from destination
@@ -254,23 +252,23 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
 
         verifyReceivedMessage(inMessage, "HelloWorld Fault");
         error.assertIsSatisfied();
-        
+
         destination.shutdown();
     }
-    
+
     private Conduit getBackChannel(CamelDestination destination, Message m) throws IOException {
         return destination.getInbuiltBackChannel(m);
     }
-    
+
     @Test
     public void testExceptionForwardedToExchange() throws IOException {
         final RuntimeException expectedException = new RuntimeException("We simulate an exception in CXF processing");
-        
+
         DefaultCamelContext camelContext = new DefaultCamelContext();
         CamelDestination dest = mock(CamelDestination.class);
         doThrow(expectedException).when(dest).incoming(isA(org.apache.camel.Exchange.class));
         ConsumerProcessor consumerProcessor = dest.new ConsumerProcessor();
-        
+
         // Send our dummy exchange and check that the exception that occurred on incoming is set
         DefaultExchange exchange = new DefaultExchange(camelContext);
         consumerProcessor.process(exchange);
@@ -278,13 +276,13 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         assertNotNull(exc);
         assertEquals(expectedException, exc);
     }
-    
+
     @Test
     public void testCAMEL4073() throws Exception {
         try {
             Endpoint.publish("camel://foo", new Person() {
                 public void getPerson(Holder<String> personId, Holder<String> ssn, Holder<String> name)
-                    throws UnknownPersonFault {
+                        throws UnknownPersonFault {
                 }
             });
             fail("Should throw and Exception");

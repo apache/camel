@@ -60,8 +60,8 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     }
 
     /**
-     * The authorization URL to be used for this flow. This SHOULD be in the
-     * form of a URL. Required for implicit and access code flows
+     * The authorization URL to be used for this flow. This SHOULD be in the form of a URL. Required for implicit and
+     * access code flows
      */
     public void setAuthorizationUrl(String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
@@ -72,8 +72,8 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     }
 
     /**
-     * The token URL to be used for this flow. This SHOULD be in the form of a
-     * URL. Required for password, application, and access code flows.
+     * The token URL to be used for this flow. This SHOULD be in the form of a URL. Required for password, application,
+     * and access code flows.
      */
     public void setTokenUrl(String tokenUrl) {
         this.tokenUrl = tokenUrl;
@@ -84,8 +84,8 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     }
 
     /**
-     * The flow used by the OAuth2 security scheme. Valid values are "implicit",
-     * "password", "application" or "accessCode".
+     * The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or
+     * "accessCode".
      */
     public void setFlow(String flow) {
         this.flow = flow;

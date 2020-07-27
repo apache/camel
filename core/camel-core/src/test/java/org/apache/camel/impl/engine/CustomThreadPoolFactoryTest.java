@@ -62,11 +62,14 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, boolean allowCoreThreadTimeOut,
-                                             RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
-            throws IllegalArgumentException {
+        public ExecutorService newThreadPool(
+                int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                boolean allowCoreThreadTimeOut,
+                RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+                throws IllegalArgumentException {
             invoked = true;
-            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut, rejectedExecutionHandler, threadFactory);
+            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
+                    rejectedExecutionHandler, threadFactory);
         }
 
         public boolean isInvoked() {

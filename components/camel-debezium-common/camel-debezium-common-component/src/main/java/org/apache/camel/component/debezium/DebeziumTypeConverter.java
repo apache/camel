@@ -26,14 +26,15 @@ import org.apache.kafka.connect.errors.DataException;
 @Converter(generateLoader = true)
 public final class DebeziumTypeConverter {
 
-    private DebeziumTypeConverter() { }
+    private DebeziumTypeConverter() {
+    }
 
     /**
-     * Convert {@link Struct} to {@link HashMap}, this only works with flat fields and it doesn't handle nested structure.
-     * Also as a result of the conversion, the schema data will be lost which is expected.
+     * Convert {@link Struct} to {@link HashMap}, this only works with flat fields and it doesn't handle nested
+     * structure. Also as a result of the conversion, the schema data will be lost which is expected.
      *
-     * @param struct
-     * @return {@link Map}
+     * @param  struct
+     * @return        {@link Map}
      */
     @Converter
     public static Map<String, Object> toMap(final Struct struct) {

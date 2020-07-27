@@ -39,7 +39,8 @@ public class SpringPropertiesComponentFunctionTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesComponentFunctionTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringPropertiesComponentFunctionTest.xml");
     }
 
     @Test

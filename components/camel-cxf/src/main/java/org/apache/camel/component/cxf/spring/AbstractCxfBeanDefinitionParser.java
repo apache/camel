@@ -31,11 +31,10 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
 public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefinitionParser {
-    
+
     /**
-     * Override mapToProperty() to handle the '#' reference notation ourselves.  We put those 
-     * properties with '#' in property map and let component to invoke setProperties() on the
-     * endpoint. 
+     * Override mapToProperty() to handle the '#' reference notation ourselves. We put those properties with '#' in
+     * property map and let component to invoke setProperties() on the endpoint.
      */
     @Override
     protected void mapToProperty(BeanDefinitionBuilder bean, String propertyName, String val) {
@@ -65,15 +64,16 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
     }
 
     @Override
-    protected String resolveId(Element elem,
-                               AbstractBeanDefinition definition,
-                               ParserContext ctx)
-        throws BeanDefinitionStoreException {
-        String id = super.resolveId(elem, definition, ctx);        
-        
+    protected String resolveId(
+            Element elem,
+            AbstractBeanDefinition definition,
+            ParserContext ctx)
+            throws BeanDefinitionStoreException {
+        String id = super.resolveId(elem, definition, ctx);
+
         if (StringUtils.isEmpty(id)) {
             throw new BeanDefinitionStoreException("The bean id is needed.");
-        }       
+        }
         return id;
     }
 
@@ -85,7 +85,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
     @SuppressWarnings("unchecked")
     protected Map<String, Object> getPropertyMap(BeanDefinitionBuilder bean, boolean lazyInstantiation) {
         PropertyValue propertyValue = bean.getBeanDefinition().getPropertyValues().getPropertyValue("properties");
-        
+
         Map<String, Object> map = null;
         if (propertyValue == null) {
             if (lazyInstantiation) {
@@ -93,7 +93,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
                 bean.addPropertyValue("properties", map);
             }
         } else {
-            map = (Map<String, Object>)propertyValue.getValue();
+            map = (Map<String, Object>) propertyValue.getValue();
         }
         return map;
     }

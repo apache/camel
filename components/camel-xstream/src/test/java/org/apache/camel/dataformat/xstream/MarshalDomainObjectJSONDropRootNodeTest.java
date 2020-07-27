@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarshalDomainObjectJSONDropRootNodeTest extends CamelTestSupport {
-    
+
     @Test
     public void testMarshalAndUnmarshalWithPrettyPrint() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
@@ -43,18 +43,18 @@ public class MarshalDomainObjectJSONDropRootNodeTest extends CamelTestSupport {
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         // the line-separator used by JsonWriter is "\n", even on windows
         String expected = "{\n"
-                          + "  \"name\": \"pretty printed Camel\",\n" 
+                          + "  \"name\": \"pretty printed Camel\",\n"
                           + "  \"price\": 7.91,\n"
-                          + "  \"amount\": 1.0\n" 
+                          + "  \"amount\": 1.0\n"
                           + "}";
         assertEquals(expected, marshalledAsString);
 
         // must include class type when reversing
         String back = "{\"org.apache.camel.dataformat.xstream.PurchaseOrder\": {\n"
-                + "  \"name\": \"pretty printed Camel\",\n"
-                + "  \"price\": 7.91,\n"
-                + "  \"amount\": 1.0\n"
-                + "}}";
+                      + "  \"name\": \"pretty printed Camel\",\n"
+                      + "  \"price\": 7.91,\n"
+                      + "  \"amount\": 1.0\n"
+                      + "}}";
 
         template.sendBody("direct:backPretty", back);
 

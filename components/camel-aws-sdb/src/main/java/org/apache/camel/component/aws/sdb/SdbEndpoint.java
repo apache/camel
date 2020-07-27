@@ -44,7 +44,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Store and Retrieve data from/to AWS SDB service.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName", producerOnly = true, category = {Category.CLOUD, Category.DATABASE, Category.NOSQL})
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName",
+             producerOnly = true, category = { Category.CLOUD, Category.DATABASE, Category.NOSQL })
 public class SdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SdbEndpoint.class);
@@ -114,7 +115,8 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonSimpleDBClientBuilder.standard().withCredentials(credentialsProvider);
             }

@@ -32,7 +32,7 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
-        IAM2Endpoint endpoint = (IAM2Endpoint)component.createEndpoint("aws2-iam://TestDomain");
+        IAM2Endpoint endpoint = (IAM2Endpoint) component.createEndpoint("aws2-iam://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getIamClient());
     }
@@ -45,25 +45,26 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
             component.createEndpoint("aws2-iam://TestDomain");
         });
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
-        IAM2Endpoint endpoint = (IAM2Endpoint)component.createEndpoint("aws2-iam://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        IAM2Endpoint endpoint = (IAM2Endpoint) component
+                .createEndpoint("aws2-iam://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getIamClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
-        IAM2Endpoint endpoint = (IAM2Endpoint)component.createEndpoint("aws2-iam://TestDomain?accessKey=xxx&secretKey=yyy");
+        IAM2Endpoint endpoint = (IAM2Endpoint) component.createEndpoint("aws2-iam://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getIamClient());
     }

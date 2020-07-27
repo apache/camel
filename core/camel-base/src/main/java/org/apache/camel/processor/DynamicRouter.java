@@ -24,14 +24,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.ObjectHelper;
 
 /**
- * Implements a <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> pattern
- * where the destination(s) is computed at runtime.
+ * Implements a <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> pattern where the
+ * destination(s) is computed at runtime.
  * <p/>
- * This implementation builds on top of {@link org.apache.camel.processor.RoutingSlip} which contains
- * the most logic.
+ * This implementation builds on top of {@link org.apache.camel.processor.RoutingSlip} which contains the most logic.
  */
 public class DynamicRouter extends RoutingSlip {
-    
+
     public DynamicRouter(CamelContext camelContext) {
         super(camelContext);
     }

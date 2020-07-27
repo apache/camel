@@ -134,9 +134,8 @@ public class Athena2QueryHelperTest {
         configuration.setDelay(1);
 
         Athena2QueryHelper helper = new Athena2QueryHelper(
-            new DefaultExchange(new DefaultCamelContext()),
-            configuration
-        );
+                new DefaultExchange(new DefaultCamelContext()),
+                configuration);
 
         assertTrue(helper.shouldAttempt());
 
@@ -248,7 +247,8 @@ public class Athena2QueryHelperTest {
     @Test
     public void shouldRetryReturnsTrueForExhaustedResourcedError() {
         Athena2QueryHelper helper = athena2QueryHelperWithRetry("retryable");
-        assertTrue(helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "exhausted resources at this scale factor")));
+        assertTrue(helper.shouldRetry(
+                newGetQueryExecutionResponse(QueryExecutionState.FAILED, "exhausted resources at this scale factor")));
     }
 
     @Test
@@ -259,9 +259,8 @@ public class Athena2QueryHelperTest {
 
     private Athena2QueryHelper defaultAthena2QueryHelper() {
         return new Athena2QueryHelper(
-            new DefaultExchange(new DefaultCamelContext()),
-            new Athena2Configuration()
-        );
+                new DefaultExchange(new DefaultCamelContext()),
+                new Athena2Configuration());
     }
 
     private Athena2QueryHelper athena2QueryHelperWithRetry(String retry) {
@@ -269,24 +268,24 @@ public class Athena2QueryHelperTest {
         configuration.setRetry(retry);
 
         return new Athena2QueryHelper(
-            new DefaultExchange(new DefaultCamelContext()),
-            configuration
-        );
+                new DefaultExchange(new DefaultCamelContext()),
+                configuration);
     }
 
     private GetQueryExecutionResponse newGetQueryExecutionResponse(QueryExecutionState queryExecutionState) {
         return newGetQueryExecutionResponse(queryExecutionState, null);
     }
 
-    private GetQueryExecutionResponse newGetQueryExecutionResponse(QueryExecutionState queryExecutionState,
-                                                                   String stateChangeReason) {
+    private GetQueryExecutionResponse newGetQueryExecutionResponse(
+            QueryExecutionState queryExecutionState,
+            String stateChangeReason) {
         return GetQueryExecutionResponse.builder()
-            .queryExecution(QueryExecution.builder()
-                .status(QueryExecutionStatus.builder()
-                    .state(queryExecutionState)
-                    .stateChangeReason(stateChangeReason)
-                    .build())
-                .build())
-            .build();
+                .queryExecution(QueryExecution.builder()
+                        .status(QueryExecutionStatus.builder()
+                                .state(queryExecutionState)
+                                .stateChangeReason(stateChangeReason)
+                                .build())
+                        .build())
+                .build();
     }
 }

@@ -154,8 +154,7 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
     }
 
     /**
-     * Whether to trim the value to remove leading and trailing whitespaces and
-     * line breaks
+     * Whether to trim the value to remove leading and trailing whitespaces and line breaks
      */
     public void setTrim(String trim) {
         this.trim = trim;
@@ -179,8 +178,8 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
     }
 
     /**
-     * Allows derived classes to set a lazily created expressionType instance
-     * such as if using the {@link org.apache.camel.builder.ExpressionClause}
+     * Allows derived classes to set a lazily created expressionType instance such as if using the
+     * {@link org.apache.camel.builder.ExpressionClause}
      */
     protected void setExpressionType(ExpressionDefinition expressionType) {
         this.expressionType = expressionType;

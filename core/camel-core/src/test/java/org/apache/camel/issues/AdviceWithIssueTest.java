@@ -57,7 +57,8 @@ public class AdviceWithIssueTest extends ContextTestSupport {
             });
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.", e.getMessage());
+            assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
+                    e.getMessage());
         }
     }
 

@@ -44,7 +44,7 @@ public class JpaEndpointTest extends CamelTestSupport {
 
     /**
      * 
-     * @deprecated 
+     * @deprecated
      */
     @Deprecated
     @Test

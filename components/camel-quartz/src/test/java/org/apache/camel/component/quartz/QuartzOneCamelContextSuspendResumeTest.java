@@ -61,5 +61,4 @@ public class QuartzOneCamelContextSuspendResumeTest {
         mock1.assertIsSatisfied();
     }
 
-
 }

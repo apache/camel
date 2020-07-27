@@ -48,7 +48,8 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments").andReturn(200, new DeploymentListBuilder().addNewItem().and().build()).once();
+        server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments")
+                .andReturn(200, new DeploymentListBuilder().addNewItem().and().build()).once();
         List<Deployment> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(1, result.size());
@@ -56,8 +57,11 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new DeploymentListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect()
+                .withPath("/apis/extensions/v1beta1/namespaces/test/deployments?labelSelector="
+                          + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(200, new DeploymentListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("key1", "value1");
@@ -72,12 +76,15 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void createAndDeleteDeployment() throws Exception {
-        Deployment de1 = new DeploymentBuilder().withNewMetadata().withNamespace("test").withName("de1").withResourceVersion("1").withGeneration(2L).endMetadata().withNewSpec()
-            .withReplicas(0).endSpec().withNewStatus().withReplicas(1).withObservedGeneration(1L).endStatus().build();
+        Deployment de1 = new DeploymentBuilder().withNewMetadata().withNamespace("test").withName("de1")
+                .withResourceVersion("1").withGeneration(2L).endMetadata().withNewSpec()
+                .withReplicas(0).endSpec().withNewStatus().withReplicas(1).withObservedGeneration(1L).endStatus().build();
 
         server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments/de1").andReturn(200, de1).once();
         server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments/de1")
-            .andReturn(200, new DeploymentBuilder(de1).editStatus().withReplicas(0).withObservedGeneration(2L).endStatus().build()).times(5);
+                .andReturn(200,
+                        new DeploymentBuilder(de1).editStatus().withReplicas(0).withObservedGeneration(2L).endStatus().build())
+                .times(5);
 
         Exchange ex = template.request("direct:deleteDeployment", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
@@ -91,11 +98,17 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
 
     @Test
     public void createScaleAndDeleteDeployment() throws Exception {
-        server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments/de1").andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
-            .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus().withReplicas(1).endStatus().build()).once();
+        server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments/de1")
+                .andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
+                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
+                        .withReplicas(1).endStatus().build())
+                .once();
 
-        server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments/de1").andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
-            .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus().withReplicas(5).endStatus().build()).always();
+        server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments/de1")
+                .andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
+                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
+                        .withReplicas(5).endStatus().build())
+                .always();
         Exchange ex = template.request("direct:scaleDeployment", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
@@ -113,11 +126,16 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listDeployments");
-                from("direct:listByLabels").toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listDeploymentsByLabels");
-                from("direct:deleteDeployment").toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=deleteDeployment");
-                from("direct:createDeployment").toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=createDeployment");
-                from("direct:scaleDeployment").toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=scaleDeployment");
+                from("direct:list")
+                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listDeployments");
+                from("direct:listByLabels")
+                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listDeploymentsByLabels");
+                from("direct:deleteDeployment")
+                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=deleteDeployment");
+                from("direct:createDeployment")
+                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=createDeployment");
+                from("direct:scaleDeployment")
+                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=scaleDeployment");
             }
         };
     }

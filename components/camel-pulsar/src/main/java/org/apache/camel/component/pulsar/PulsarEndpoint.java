@@ -31,7 +31,8 @@ import org.apache.pulsar.client.api.PulsarClient;
 /**
  * Send and receive messages from/to Apache Pulsar messaging system.
  */
-@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", category = {Category.MESSAGING})
+@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar",
+             syntax = "pulsar:persistence://tenant/namespace/topic", category = { Category.MESSAGING })
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
@@ -137,8 +138,8 @@ public class PulsarEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets whether synchronous processing should be strictly used, or Camel is
-     * allowed to use asynchronous processing (if supported).
+     * Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing
+     * (if supported).
      */
     @Override
     public void setSynchronous(boolean synchronous) {
@@ -171,6 +172,6 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     @Override
     public PulsarComponent getComponent() {
-        return (PulsarComponent)super.getComponent();
+        return (PulsarComponent) super.getComponent();
     }
 }

@@ -68,6 +68,7 @@ public class FhirXmlDataformatErrorHandlerSpringTest extends CamelSpringTestSupp
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/fhir/xml/FhirXmlDataFormatErrorHandlerSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/fhir/xml/FhirXmlDataFormatErrorHandlerSpringTest.xml");
     }
 }

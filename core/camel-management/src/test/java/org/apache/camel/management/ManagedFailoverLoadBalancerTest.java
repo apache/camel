@@ -96,7 +96,7 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().failover(3, false, true, true, IOException.class, SQLException.class).id("mysend")
+                        .loadBalance().failover(3, false, true, true, IOException.class, SQLException.class).id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };

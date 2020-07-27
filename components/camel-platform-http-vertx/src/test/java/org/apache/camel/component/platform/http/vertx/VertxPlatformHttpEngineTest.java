@@ -89,11 +89,11 @@ public class VertxPlatformHttpEngineTest {
                 @Override
                 public void configure() throws Exception {
                     from("platform-http:/get")
-                        .routeId("get")
-                        .setBody().constant("get");
+                            .routeId("get")
+                            .setBody().constant("get");
                     from("platform-http:/post")
-                        .routeId("post")
-                        .transform().body(String.class, b -> b.toUpperCase());
+                            .routeId("post")
+                            .transform().body(String.class, b -> b.toUpperCase());
                 }
             });
 
@@ -105,21 +105,21 @@ public class VertxPlatformHttpEngineTest {
             });
 
             given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/get")
-            .then()
-                .statusCode(200)
-                .body(equalTo("get"));
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("get"));
 
             given()
-                .port(conf.getBindPort())
-                .body("post")
-            .when()
-                .post("/post")
-            .then()
-                .statusCode(200)
-                .body(equalTo("POST"));
+                    .port(conf.getBindPort())
+                    .body("post")
+                    .when()
+                    .post("/post")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("POST"));
 
         } finally {
             context.stop();
@@ -142,16 +142,16 @@ public class VertxPlatformHttpEngineTest {
                 @Override
                 public void configure() throws Exception {
                     from("platform-http:/")
-                        .transform().body(String.class, b -> b.toUpperCase());
+                            .transform().body(String.class, b -> b.toUpperCase());
                 }
             });
 
             context.start();
 
             String result = context.createFluentProducerTemplate()
-                .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
-                .withBody("test")
-                .request(String.class);
+                    .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
+                    .withBody("test")
+                    .request(String.class);
 
             assertThat(result).isEqualTo("TEST");
         } finally {
@@ -176,16 +176,16 @@ public class VertxPlatformHttpEngineTest {
                 @Override
                 public void configure() throws Exception {
                     from("platform-http:/")
-                        .transform().body(String.class, b -> b.toUpperCase());
+                            .transform().body(String.class, b -> b.toUpperCase());
                 }
             });
 
             context.start();
 
             String result = context.createFluentProducerTemplate()
-                .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
-                .withBody("test")
-                .request(String.class);
+                    .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
+                    .withBody("test")
+                    .request(String.class);
 
             assertThat(result).isEqualTo("TEST");
         } finally {
@@ -208,7 +208,7 @@ public class VertxPlatformHttpEngineTest {
                 @Override
                 public void configure() throws Exception {
                     from("platform-http:/")
-                        .transform().constant("cors");
+                            .transform().constant("cors");
                 }
             });
 
@@ -219,17 +219,17 @@ public class VertxPlatformHttpEngineTest {
             final String headers = "X-Custom";
 
             given()
-                .port(conf.getBindPort())
-                .header("Origin", origin)
-                .header("Access-Control-Request-Method", methods)
-                .header("Access-Control-Request-Headers", headers)
-            .when()
-                .get("/")
-            .then()
-                .statusCode(200)
-                .header("Access-Control-Allow-Origin", origin)
-                .header("Access-Control-Allow-Methods", methods)
-                .header("Access-Control-Allow-Headers", headers);
+                    .port(conf.getBindPort())
+                    .header("Origin", origin)
+                    .header("Access-Control-Request-Method", methods)
+                    .header("Access-Control-Request-Headers", headers)
+                    .when()
+                    .get("/")
+                    .then()
+                    .statusCode(200)
+                    .header("Access-Control-Allow-Origin", origin)
+                    .header("Access-Control-Allow-Methods", methods)
+                    .header("Access-Control-Allow-Headers", headers);
         } finally {
             context.stop();
         }
@@ -248,34 +248,34 @@ public class VertxPlatformHttpEngineTest {
                 @Override
                 public void configure() throws Exception {
                     from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
-                        .transform().simple("Hello ${header.name}");
+                            .transform().simple("Hello ${header.name}");
                 }
             });
 
             context.start();
 
             given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/greeting")
-            .then()
-                .statusCode(404);
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/greeting")
+                    .then()
+                    .statusCode(404);
 
             given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/greeting/Camel")
-            .then()
-                .statusCode(200)
-                .body(equalTo(greeting));
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/greeting/Camel")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo(greeting));
 
             given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/greeting/Camel/other/path/")
-            .then()
-                .statusCode(200)
-                .body(equalTo(greeting));
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/greeting/Camel/other/path/")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo(greeting));
         } finally {
             context.stop();
         }

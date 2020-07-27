@@ -90,8 +90,8 @@ public class ManagedPollEnricherTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich().simple("seda:${header.whereto}").timeout(1000).id("mysend")
-                    .to("mock:foo");
+                        .pollEnrich().simple("seda:${header.whereto}").timeout(1000).id("mysend")
+                        .to("mock:foo");
             }
         };
     }

@@ -31,7 +31,7 @@ public class SpringTarSplitterRouteTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/tarfile/SpringTarSplitterRouteTest.xml");

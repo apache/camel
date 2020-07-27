@@ -139,7 +139,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         assertEquals(1, tms.length);
         boolean b = tms[0] instanceof X509TrustManager;
         assertTrue(b);
-        X509TrustManager tm = (X509TrustManager)tms[0];
+        X509TrustManager tm = (X509TrustManager) tms[0];
         assertNotNull(tm.getAcceptedIssuers());
     }
 }

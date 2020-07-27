@@ -54,7 +54,6 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         collection.drop();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -88,7 +87,6 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         assertEquals("bar", docResult.getAttribute("foo"));
     }
 
-
     @Test
     public void findBeanByKey() {
         Exchange result = template.request("direct:findDocByKey", exchange -> {
@@ -101,7 +99,6 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         assertEquals("bar", docResult.getFoo());
 
     }
-
 
     @Test
     public void getMapByKey() {
@@ -116,7 +113,6 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         assertNotNull(docResult.get("foo"));
         assertEquals("bar", String.valueOf(docResult.get("foo")));
     }
-
 
     @Test
     public void getVpackSliceByKey() {

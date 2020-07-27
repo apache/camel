@@ -36,9 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
- * to register the object in JMX. The assembler is capable of using the Camel JMX annotations to
- * gather the list of JMX operations and attributes.
+ * An assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used to register the object in
+ * JMX. The assembler is capable of using the Camel JMX annotations to gather the list of JMX operations and attributes.
  */
 public class DefaultManagementMBeanAssembler extends ServiceSupport implements ManagementMBeanAssembler {
 
@@ -83,7 +82,8 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         RequiredModelMBean mbean;
         RequiredModelMBean mixinMBean = null;
 
-        boolean sanitize = camelContext.getManagementStrategy().getManagementAgent().getMask() != null && camelContext.getManagementStrategy().getManagementAgent().getMask();
+        boolean sanitize = camelContext.getManagementStrategy().getManagementAgent().getMask() != null
+                && camelContext.getManagementStrategy().getManagementAgent().getMask();
 
         // if we have a custom mbean then create a mixin mbean for the standard mbean which we would
         // otherwise have created that contains the out of the box attributes and operations
@@ -111,7 +111,7 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
 
         // Allows the managed object to send notifications
         if (obj instanceof NotificationSenderAware) {
-            ((NotificationSenderAware)obj).setNotificationSender(new NotificationSenderAdapter(mbean));
+            ((NotificationSenderAware) obj).setNotificationSender(new NotificationSenderAdapter(mbean));
         }
 
         return mbean;

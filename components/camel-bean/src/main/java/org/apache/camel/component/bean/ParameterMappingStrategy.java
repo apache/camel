@@ -24,11 +24,11 @@ import org.apache.camel.Expression;
 public interface ParameterMappingStrategy {
 
     /**
-     * Gets an expression used for evaluation with the current Exchange and its result
-     * is used as parameter value for the given type
+     * Gets an expression used for evaluation with the current Exchange and its result is used as parameter value for
+     * the given type
      *
-     * @param parameterType the parameter type
-     * @return the expression to evaluate as value
+     * @param  parameterType the parameter type
+     * @return               the expression to evaluate as value
      */
     Expression getDefaultParameterTypeExpression(Class<?> parameterType);
 }

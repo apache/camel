@@ -38,8 +38,7 @@ import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 
 /**
- * A Producer which sends messages to the Amazon MSK Service
- * <a href="http://aws.amazon.com/msk/">AWS MSK</a>
+ * A Producer which sends messages to the Amazon MSK Service <a href="http://aws.amazon.com/msk/">AWS MSK</a>
  */
 public class MSK2Producer extends DefaultProducer {
 
@@ -93,7 +92,7 @@ public class MSK2Producer extends DefaultProducer {
 
     @Override
     public MSK2Endpoint getEndpoint() {
-        return (MSK2Endpoint)super.getEndpoint();
+        return (MSK2Endpoint) super.getEndpoint();
     }
 
     private void listClusters(KafkaClient mskClient, Exchange exchange) throws InvalidPayloadException {
@@ -102,7 +101,7 @@ public class MSK2Producer extends DefaultProducer {
             if (payload instanceof ListClustersRequest) {
                 ListClustersResponse result;
                 try {
-                    result = mskClient.listClusters((ListClustersRequest)payload);
+                    result = mskClient.listClusters((ListClustersRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -134,7 +133,7 @@ public class MSK2Producer extends DefaultProducer {
             if (payload instanceof CreateClusterRequest) {
                 CreateClusterResponse response;
                 try {
-                    response = mskClient.createCluster((CreateClusterRequest)payload);
+                    response = mskClient.createCluster((CreateClusterRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -163,7 +162,8 @@ public class MSK2Producer extends DefaultProducer {
                 throw new IllegalArgumentException("Kafka Version must be specified");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO))) {
-                BrokerNodeGroupInfo brokerNodesGroupInfo = exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
+                BrokerNodeGroupInfo brokerNodesGroupInfo
+                        = exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
                 builder.brokerNodeGroupInfo(brokerNodesGroupInfo);
             } else {
                 throw new IllegalArgumentException("BrokerNodeGroupInfo must be specified");
@@ -186,7 +186,7 @@ public class MSK2Producer extends DefaultProducer {
             if (payload instanceof DeleteClusterRequest) {
                 DeleteClusterResponse result;
                 try {
-                    result = mskClient.deleteCluster((DeleteClusterRequest)payload);
+                    result = mskClient.deleteCluster((DeleteClusterRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -220,7 +220,7 @@ public class MSK2Producer extends DefaultProducer {
             if (payload instanceof DescribeClusterRequest) {
                 DescribeClusterResponse result;
                 try {
-                    result = mskClient.describeCluster((DescribeClusterRequest)payload);
+                    result = mskClient.describeCluster((DescribeClusterRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

@@ -32,8 +32,9 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
- * Class responsible for evaluating <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions">
- * Spring Expression Language (SpEL)</a> in the context of Camel.
+ * Class responsible for evaluating
+ * <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions"> Spring
+ * Expression Language (SpEL)</a> in the context of Camel.
  */
 public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
 

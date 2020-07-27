@@ -25,14 +25,14 @@ public final class AtomixMessaging {
     // ****************************************
 
     static final MessageProducer.Options OPTIONS_DIRECT = new MessageProducer.Options()
-        .withExecution(MessageProducer.Execution.SYNC)
-        .withDelivery(MessageProducer.Delivery.DIRECT);
+            .withExecution(MessageProducer.Execution.SYNC)
+            .withDelivery(MessageProducer.Delivery.DIRECT);
     static final MessageProducer.Options OPTIONS_BROADCAST = new MessageProducer.Options()
-        .withExecution(MessageProducer.Execution.ASYNC)
-        .withDelivery(MessageProducer.Delivery.BROADCAST);
+            .withExecution(MessageProducer.Execution.ASYNC)
+            .withDelivery(MessageProducer.Delivery.BROADCAST);
     static final MessageProducer.Options OPTIONS_BROADCAST_RANDOM = new MessageProducer.Options()
-        .withExecution(MessageProducer.Execution.ASYNC)
-        .withDelivery(MessageProducer.Delivery.RANDOM);
+            .withExecution(MessageProducer.Execution.ASYNC)
+            .withDelivery(MessageProducer.Delivery.RANDOM);
 
     // ****************************************
     // Emums

@@ -76,14 +76,15 @@ public class MicroProfileMetricsMetadataTest extends MicroProfileMetricsTestSupp
             @Override
             public void configure() throws Exception {
                 from("direct:metadata")
-                    .toF("microprofile-metrics:counter:test-counter?description=%s&displayName=%s&metricUnit=%s", METRIC_DESCRIPTION,
-                        METRIC_DISPLAY_NAME, KILOBYTES);
+                        .toF("microprofile-metrics:counter:test-counter?description=%s&displayName=%s&metricUnit=%s",
+                                METRIC_DESCRIPTION,
+                                METRIC_DISPLAY_NAME, KILOBYTES);
 
                 from("direct:metadataHeader")
-                    .setHeader(HEADER_METRIC_DESCRIPTION, constant(METRIC_DESCRIPTION))
-                    .setHeader(HEADER_METRIC_DISPLAY_NAME, constant(METRIC_DISPLAY_NAME))
-                    .setHeader(HEADER_METRIC_UNIT, constant(KILOBYTES))
-                    .to("microprofile-metrics:counter:test-counter-header");
+                        .setHeader(HEADER_METRIC_DESCRIPTION, constant(METRIC_DESCRIPTION))
+                        .setHeader(HEADER_METRIC_DISPLAY_NAME, constant(METRIC_DISPLAY_NAME))
+                        .setHeader(HEADER_METRIC_UNIT, constant(KILOBYTES))
+                        .to("microprofile-metrics:counter:test-counter-header");
             }
         };
     }

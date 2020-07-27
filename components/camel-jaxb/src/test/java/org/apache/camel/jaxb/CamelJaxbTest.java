@@ -50,10 +50,9 @@ public class CamelJaxbTest extends CamelTestSupport {
     @Test
     public void testUnmarshalBadCharsNoFiltering() throws Exception {
         String xml = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>";
-        assertThrows(CamelExecutionException.class, () ->
-            template.sendBody("direct:getJAXBElementValue", xml));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:getJAXBElementValue", xml));
     }
-    
+
     @Test
     public void testFilterNonXmlChars() throws Exception {
         String xmlUTF = "<Person><firstName>FOO</firstName><lastName>BAR \u20AC </lastName></Person>";
@@ -65,7 +64,7 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived(expected);
         template.sendBody("direct:unmarshalFilteringEnabled", xml);
         resultEndpoint.assertIsSatisfied();
-       
+
     }
 
     @Test
@@ -98,7 +97,7 @@ public class CamelJaxbTest extends CamelTestSupport {
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertTrue(body.contains("\u0004"), "Non-xml character unexpectedly did not get into marshalled contents");
     }
-    
+
     @Test
     public void testMarshalWithSchemaLocation() throws Exception {
         PersonType person = new PersonType();
@@ -172,15 +171,16 @@ public class CamelJaxbTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         resultEndpoint.reset();
-        resultEndpoint.expectedMessageCount(1);        
-        template.sendBody("direct:getJAXBElement", xml);        
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:getJAXBElement", xml);
         resultEndpoint.assertIsSatisfied();
-        assertTrue(resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement, "We should get the JAXBElement here");
-        
+        assertTrue(resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement,
+                "We should get the JAXBElement here");
+
         resultEndpoint.reset();
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodiesReceived(expected);
-        template.sendBody("direct:unmarshall", xml);        
+        template.sendBody("direct:unmarshall", xml);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -208,28 +208,28 @@ public class CamelJaxbTest extends CamelTestSupport {
                 customWriterAndFilterFormat.setXmlStreamWriterWrapper(new TestXmlStreamWriter());
 
                 from("direct:getJAXBElementValue")
-                    .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))                        
+                        .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))
                         .to("mock:result");
-                
+
                 from("direct:getJAXBElement")
-                    .unmarshal(dataFormat)
-                    .to("mock:result");
+                        .unmarshal(dataFormat)
+                        .to("mock:result");
 
                 from("direct:unmarshalFilteringEnabled")
-                    .unmarshal(filterEnabledFormat)
-                    .to("mock:result");
+                        .unmarshal(filterEnabledFormat)
+                        .to("mock:result");
 
                 from("direct:marshal")
-                    .marshal(dataFormat)
-                    .to("mock:result");
+                        .marshal(dataFormat)
+                        .to("mock:result");
 
                 from("direct:marshalWithoutContentType")
-                    .marshal(dataFormatWithoutContentType)
-                    .to("mock:result");
+                        .marshal(dataFormatWithoutContentType)
+                        .to("mock:result");
 
                 from("direct:marshalFilteringEnabled")
-                    .marshal(filterEnabledFormat)
-                    .to("mock:result");
+                        .marshal(filterEnabledFormat)
+                        .to("mock:result");
 
                 from("direct:marshalCustomWriter")
                         .marshal(customWriterFormat)
@@ -237,14 +237,14 @@ public class CamelJaxbTest extends CamelTestSupport {
                 from("direct:marshalCustomWriterAndFiltering")
                         .marshal(customWriterAndFilterFormat)
                         .to("mock:result");
-                
+
                 from("direct:unmarshall")
-                    .unmarshal()
-                    .jaxb(PersonType.class.getPackage().getName())
-                    .to("mock:result");
+                        .unmarshal()
+                        .jaxb(PersonType.class.getPackage().getName())
+                        .to("mock:result");
 
             }
         };
     }
-    
+
 }

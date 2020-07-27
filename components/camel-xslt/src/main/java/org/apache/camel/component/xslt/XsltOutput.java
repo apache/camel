@@ -18,7 +18,9 @@ package org.apache.camel.component.xslt;
 
 public enum XsltOutput {
 
-    string, bytes, DOM, file
+    string,
+    bytes,
+    DOM,
+    file
 
 }
-

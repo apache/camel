@@ -61,7 +61,8 @@ public class AggregateGroupMessageTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").aggregate(constant(true), new GroupedMessageAggregationStrategy()).completionTimeout(500L).to("mock:result");
+                from("direct:start").aggregate(constant(true), new GroupedMessageAggregationStrategy()).completionTimeout(500L)
+                        .to("mock:result");
             }
         };
     }

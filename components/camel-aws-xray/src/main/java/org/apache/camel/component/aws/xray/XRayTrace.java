@@ -22,14 +22,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotates a class for being a target for tracing via Camel's AWS XRay tracer. The target class
- * has thus to be either a Camel {@link org.apache.camel.Processor Processor} or a
- * <code>.bean(...)</code> invoked class.
+ * Annotates a class for being a target for tracing via Camel's AWS XRay tracer. The target class has thus to be either
+ * a Camel {@link org.apache.camel.Processor Processor} or a <code>.bean(...)</code> invoked class.
  * <p/>
- * The <em>metricName</em> argument allows to define a custom name visible in the resulting AWS XRay
- * trace. If none is defined the simple class name of the respective class will be used.
+ * The <em>metricName</em> argument allows to define a custom name visible in the resulting AWS XRay trace. If none is
+ * defined the simple class name of the respective class will be used.
  */
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XRayTrace {
 

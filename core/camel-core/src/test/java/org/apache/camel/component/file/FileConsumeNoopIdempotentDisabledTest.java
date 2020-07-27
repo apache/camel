@@ -47,7 +47,8 @@ public class FileConsumeNoopIdempotentDisabledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/noop?initialDelay=0&delay=10&noop=true&idempotent=false").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/noop?initialDelay=0&delay=10&noop=true&idempotent=false").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

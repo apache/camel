@@ -28,5 +28,3 @@ public class TestBean implements Processor {
         exchange.getMessage().setBody("Added this message from bean to original message from Rest Service -> " + body);
     }
 }
-
-

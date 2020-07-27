@@ -36,7 +36,8 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_
  */
 public interface MicrometerRoutePolicyNamingStrategy {
 
-    Predicate<Meter.Id> ROUTE_POLICIES = id -> MicrometerRoutePolicyService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+    Predicate<Meter.Id> ROUTE_POLICIES
+            = id -> MicrometerRoutePolicyService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
 
     MicrometerRoutePolicyNamingStrategy DEFAULT = route -> DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 
@@ -55,15 +56,13 @@ public interface MicrometerRoutePolicyNamingStrategy {
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
                 SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
                 ROUTE_ID_TAG, route.getId(),
-                FAILED_TAG, Boolean.toString(exchange.isFailed())
-        );
+                FAILED_TAG, Boolean.toString(exchange.isFailed()));
     }
 
     default Tags getExchangeStatusTags(Route route) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
                 SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
-                ROUTE_ID_TAG, route.getId()
-        );
+                ROUTE_ID_TAG, route.getId());
     }
 }

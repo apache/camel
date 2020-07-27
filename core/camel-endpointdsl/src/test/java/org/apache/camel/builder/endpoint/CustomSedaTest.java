@@ -50,13 +50,13 @@ public class CustomSedaTest extends ContextTestSupport {
                 context.addComponent("seda2", seda2);
 
                 from(seda("foo"))
-                    .to(mock("result"));
+                        .to(mock("result"));
 
                 from(seda("seda2", "foo"))
-                    .to(mock("result"));
+                        .to(mock("result"));
 
                 from(direct("foo"))
-                    .to(seda("seda2", "foo"));
+                        .to(seda("seda2", "foo"));
             }
         };
     }

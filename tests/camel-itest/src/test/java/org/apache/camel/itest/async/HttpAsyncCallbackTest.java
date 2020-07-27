@@ -61,8 +61,8 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
 
     // START SNIPPET: e2
     /**
-     * Our own callback that will gather all the responses.
-     * We extend the SynchronizationAdapter class as we then only need to override the onComplete method.
+     * Our own callback that will gather all the responses. We extend the SynchronizationAdapter class as we then only
+     * need to override the onComplete method.
      */
     private static class MyCallback extends SynchronizationAdapter {
 
@@ -96,9 +96,9 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
                 // The mocks are here for unit test
                 // Simulate a slow http service (delaying a bit) we want to invoke async
                 from("jetty:http://0.0.0.0:" + getPort() + "/myservice")
-                    .delay(300)
-                    .transform(body().prepend("Hello "))
-                    .to("mock:result");
+                        .delay(300)
+                        .transform(body().prepend("Hello "))
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

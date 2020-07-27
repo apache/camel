@@ -130,10 +130,8 @@ public class ShardListTest {
                     .withShardId(id)
                     .withParentShardId(previous)
                     .withSequenceNumberRange(new SequenceNumberRange()
-                        .withStartingSequenceNumber(seqStart)
-                        .withEndingSequenceNumber(seqEnd)
-                    )
-            );
+                            .withStartingSequenceNumber(seqStart)
+                            .withEndingSequenceNumber(seqEnd)));
             previous = id;
         }
         return result;

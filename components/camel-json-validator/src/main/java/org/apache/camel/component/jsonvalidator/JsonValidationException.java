@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 public class JsonValidationException extends ValidationException {
-    
+
     private static final long serialVersionUID = 1L;
 
     private final JsonSchema schema;

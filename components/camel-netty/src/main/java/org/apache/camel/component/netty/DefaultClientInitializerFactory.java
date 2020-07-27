@@ -33,7 +33,7 @@ import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
+public class DefaultClientInitializerFactory extends ClientInitializerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultClientInitializerFactory.class);
 
     private final NettyProducer producer;
@@ -86,7 +86,8 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
             }
-            ChannelHandler timeout = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            ChannelHandler timeout
+                    = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
             addToPipeline("timeout", channelPipeline, timeout);
         }
 

@@ -60,7 +60,8 @@ public class ApnsProducerTest extends CamelTestSupport {
         String message = "Hello World";
         String messagePayload = APNS.newPayload().alertBody(message).build();
 
-        EnhancedApnsNotification apnsNotification = new EnhancedApnsNotification(1, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
+        EnhancedApnsNotification apnsNotification
+                = new EnhancedApnsNotification(1, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
         server.stopAt(apnsNotification.length());
 
         template.sendBody("direct:test", message);
@@ -69,15 +70,14 @@ public class ApnsProducerTest extends CamelTestSupport {
         assertArrayEquals(apnsNotification.marshall(), server.getReceived().toByteArray());
     }
 
-
     @Test
     @Timeout(5)
     public void testProducerWithApnsNotification() throws InterruptedException {
         String message = "Hello World";
         String messagePayload = APNS.newPayload().alertBody(message).build();
 
-        final EnhancedApnsNotification apnsNotification =
-                new EnhancedApnsNotification(14, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
+        final EnhancedApnsNotification apnsNotification
+                = new EnhancedApnsNotification(14, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
         server.stopAt(apnsNotification.length());
 
         template.sendBody("direct:testWithApnsNotification", apnsNotification);

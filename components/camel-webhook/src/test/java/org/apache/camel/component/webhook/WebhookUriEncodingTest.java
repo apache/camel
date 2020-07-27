@@ -31,7 +31,8 @@ public class WebhookUriEncodingTest extends WebhookTestBase {
 
     @Test
     public void test() {
-        Exchange exchange = template.send("netty-http:http://localhost:" + port + "/base/uri", ExchangePattern.InOut, e -> e.getMessage().setBody(""));
+        Exchange exchange = template.send("netty-http:http://localhost:" + port + "/base/uri", ExchangePattern.InOut,
+                e -> e.getMessage().setBody(""));
         Message result = exchange.getMessage();
         assertEquals("msg: webhook", result.getBody(String.class));
         assertEquals("hello} world", result.getHeader("foo"));

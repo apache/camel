@@ -35,14 +35,14 @@ final class CamelCdiDeployment implements TestRule {
         this.context = context;
 
         weld = new Weld()
-            // TODO: check parallel execution
-            .containerId("camel-context-cdi")
-            .property(ConfigurationKey.RELAXED_CONSTRUCTION.get(), true)
-            .property(Weld.SHUTDOWN_HOOK_SYSTEM_PROPERTY, false)
-            .enableDiscovery()
-            .beanClasses(test.getJavaClass().getDeclaredClasses())
-            .addBeanClass(test.getJavaClass())
-            .addExtension(new CdiCamelExtension());
+                // TODO: check parallel execution
+                .containerId("camel-context-cdi")
+                .property(ConfigurationKey.RELAXED_CONSTRUCTION.get(), true)
+                .property(Weld.SHUTDOWN_HOOK_SYSTEM_PROPERTY, false)
+                .enableDiscovery()
+                .beanClasses(test.getJavaClass().getDeclaredClasses())
+                .addBeanClass(test.getJavaClass())
+                .addExtension(new CdiCamelExtension());
 
         // Apply deployment customization provided by the @Beans annotation
         // if present on the test class
@@ -53,7 +53,7 @@ final class CamelCdiDeployment implements TestRule {
                 // It is not necessary to add the alternative class with WELD-2218
                 // anymore, though it's kept for previous versions
                 weld.addBeanClass(alternative)
-                    .addAlternative(alternative);
+                        .addAlternative(alternative);
             }
             for (Class<?> clazz : beans.classes()) {
                 weld.addBeanClass(clazz);

@@ -20,5 +20,6 @@ package org.apache.camel.component.salesforce.api.dto.analytics.reports;
  * Grouping column sort order.
  */
 public enum ColumnSortOrderEnum {
-    Asc, Desc
+    Asc,
+    Desc
 }

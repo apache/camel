@@ -31,7 +31,8 @@ public class RabbitConsumerHangTest {
     private Connection conn = Mockito.mock(Connection.class);
     private Channel channel = Mockito.mock(Channel.class);
 
-    @Test @Timeout(5)
+    @Test
+    @Timeout(5)
     public void testHandleDeliveryShouldNotHangForeverIfChanelWasClosed() throws Exception {
         Mockito.when(consumer.getEndpoint()).thenReturn(endpoint);
         Mockito.when(consumer.getConnection()).thenReturn(conn);

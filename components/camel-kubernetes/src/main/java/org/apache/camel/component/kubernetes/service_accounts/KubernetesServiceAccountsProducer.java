@@ -46,7 +46,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -94,7 +94,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
     protected void doListServiceAccountsByLabels(Exchange exchange, String operation) throws Exception {
         ServiceAccountList saList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
+        Map<String, String> labels
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             NonNamespaceOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, Resource<ServiceAccount, DoneableServiceAccount>> serviceAccounts;
@@ -137,7 +138,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
     protected void doCreateServiceAccount(Exchange exchange, String operation) throws Exception {
         ServiceAccount sa = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        ServiceAccount saToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, ServiceAccount.class);
+        ServiceAccount saToCreate
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, ServiceAccount.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Create a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Create a specific Service Account require specify a namespace name");
@@ -163,7 +165,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             LOG.error("Delete a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific Service Account require specify a namespace name");
         }
-        boolean saDeleted = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).delete();
+        boolean saDeleted
+                = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(saDeleted);

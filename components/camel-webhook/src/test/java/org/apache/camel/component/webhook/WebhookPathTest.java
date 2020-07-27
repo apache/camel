@@ -43,8 +43,8 @@ public class WebhookPathTest extends WebhookTestBase {
 
     @Test
     public void testRootPathError() {
-        assertThrows(CamelExecutionException.class, () ->
-            template.requestBody("netty-http:http://localhost:" + port, "", String.class));
+        assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:" + port, "", String.class));
     }
 
     @Override

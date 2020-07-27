@@ -53,7 +53,7 @@ public class RestNettyHttpBindingModeAutoWithXmlTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/xml").type(UserJaxbPojo.class)
+                        .post("new").consumes("application/xml").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

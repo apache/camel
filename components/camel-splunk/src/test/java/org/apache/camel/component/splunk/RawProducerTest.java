@@ -103,11 +103,17 @@ public class RawProducerTest extends SplunkMockTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:stream").to("splunk://stream?username=foo&password=bar&index=myindex&sourceType=SourceType&source=Source&raw=true").to("mock:stream-result");
+                from("direct:stream").to(
+                        "splunk://stream?username=foo&password=bar&index=myindex&sourceType=SourceType&source=Source&raw=true")
+                        .to("mock:stream-result");
 
-                from("direct:submit").to("splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test&raw=true").to("mock:submitresult");
+                from("direct:submit").to(
+                        "splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test&raw=true")
+                        .to("mock:submitresult");
 
-                from("direct:tcp").to("splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test&raw=true").to("mock:tcpresult");
+                from("direct:tcp").to(
+                        "splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test&raw=true")
+                        .to("mock:tcpresult");
             }
         };
     }

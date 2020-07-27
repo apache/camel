@@ -63,7 +63,7 @@ final class CamelCoapResource extends CoapResource {
             final List<CamelCoapResource> possibles = new LinkedList<>();
             for (Resource r : getChildren()) {
                 if (r.getName().startsWith("{") && r.getName().endsWith("}")) {
-                    possibles.add((CamelCoapResource)r);
+                    possibles.add((CamelCoapResource) r);
                 }
             }
             if (possibles.size() == 1) {

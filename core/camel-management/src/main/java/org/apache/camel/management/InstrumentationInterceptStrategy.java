@@ -25,12 +25,11 @@ import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.util.KeyValueHolder;
 
 /**
- * This strategy class wraps targeted processors with a
- * {@link InstrumentationProcessor}. Each InstrumentationProcessor has an
- * embedded {@link ManagedPerformanceCounter} for monitoring performance metrics.
+ * This strategy class wraps targeted processors with a {@link InstrumentationProcessor}. Each InstrumentationProcessor
+ * has an embedded {@link ManagedPerformanceCounter} for monitoring performance metrics.
  * <p/>
- * This class looks up a map to determine which PerformanceCounter should go into the
- * InstrumentationProcessor for any particular target processor.
+ * This class looks up a map to determine which PerformanceCounter should go into the InstrumentationProcessor for any
+ * particular target processor.
  */
 public class InstrumentationInterceptStrategy implements ManagementInterceptStrategy {
 
@@ -38,7 +37,7 @@ public class InstrumentationInterceptStrategy implements ManagementInterceptStra
     private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor>> wrappedProcessors;
 
     public InstrumentationInterceptStrategy(Map<NamedNode, PerformanceCounter> registeredCounters,
-            Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor>> wrappedProcessors) {
+                                            Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor>> wrappedProcessors) {
         this.registeredCounters = registeredCounters;
         this.wrappedProcessors = wrappedProcessors;
     }
@@ -50,12 +49,14 @@ public class InstrumentationInterceptStrategy implements ManagementInterceptStra
 
     @Override
     public InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target) {
-        InstrumentationProcessor instrumentationProcessor = new DefaultInstrumentationProcessor(definition.getShortName(), target);
+        InstrumentationProcessor instrumentationProcessor
+                = new DefaultInstrumentationProcessor(definition.getShortName(), target);
         PerformanceCounter counter = registeredCounters.get(definition);
         if (counter != null) {
             // add it to the mapping of wrappers so we can later change it to a
             // decorated counter when we register the processor
-            KeyValueHolder<NamedNode, InstrumentationProcessor> holder = new KeyValueHolder<>(definition, instrumentationProcessor);
+            KeyValueHolder<NamedNode, InstrumentationProcessor> holder
+                    = new KeyValueHolder<>(definition, instrumentationProcessor);
             wrappedProcessors.put(target, holder);
         }
         return instrumentationProcessor;

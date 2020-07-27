@@ -47,7 +47,7 @@ final class OffsetDateTimeConverter implements SingleValueConverter {
             return null;
         }
 
-        final OffsetDateTime offsetDateTime = (OffsetDateTime)value;
+        final OffsetDateTime offsetDateTime = (OffsetDateTime) value;
 
         return ISO_OFFSET_DATE_TIME.format(offsetDateTime);
     }

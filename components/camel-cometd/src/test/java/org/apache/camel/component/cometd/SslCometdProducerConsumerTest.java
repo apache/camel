@@ -56,7 +56,7 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+              + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
         super.setUp();
     }

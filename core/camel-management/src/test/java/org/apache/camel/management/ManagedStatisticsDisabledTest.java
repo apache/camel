@@ -50,7 +50,7 @@ public class ManagedStatisticsDisabledTest extends ManagementTestSupport {
         // use route to get the total time
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
-        
+
         // disable statistics
         mbeanServer.setAttribute(on, new Attribute("StatisticsEnabled", false));
 

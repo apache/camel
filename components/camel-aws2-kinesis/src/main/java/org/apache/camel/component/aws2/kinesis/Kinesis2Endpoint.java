@@ -43,7 +43,8 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS 2 Kinesis", syntax = "aws2-kinesis:streamName", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS 2 Kinesis", syntax = "aws2-kinesis:streamName",
+             category = { Category.CLOUD, Category.MESSAGING })
 public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -59,11 +60,14 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        kinesisClient = configuration.getAmazonKinesisClient() != null ? configuration.getAmazonKinesisClient() : createKinesisClient();
+        kinesisClient = configuration.getAmazonKinesisClient() != null
+                ? configuration.getAmazonKinesisClient() : createKinesisClient();
 
-        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
-            && configuration.getSequenceNumber().isEmpty()) {
-            throw new IllegalArgumentException("Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
+        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
+                && configuration.getSequenceNumber().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
         }
     }
 
@@ -115,7 +119,8 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -123,7 +128,8 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -140,8 +146,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

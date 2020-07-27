@@ -41,7 +41,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         jdbcTemplate = new JdbcTemplate(db);
 
@@ -72,7 +72,8 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
                 break;
             }
         }
-        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class), "Should have deleted all 3 rows");
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class),
+                "Should have deleted all 3 rows");
     }
 
     @Override
@@ -83,7 +84,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects order by id?initialDelay=0&delay=50&consumer.onConsumeBatchComplete=delete from projects")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -43,13 +43,11 @@ public class TagImageCmdHeaderTest extends BaseDockerHeaderTest<TagImageCmd> {
         String tag = "1.0";
         boolean force = true;
 
-
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE_ID, imageId);
         headers.put(DockerConstants.DOCKER_REPOSITORY, repository);
         headers.put(DockerConstants.DOCKER_TAG, tag);
         headers.put(DockerConstants.DOCKER_FORCE, force);
-
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 

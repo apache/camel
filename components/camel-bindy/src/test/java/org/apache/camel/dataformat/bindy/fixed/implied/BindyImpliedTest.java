@@ -39,10 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 public class BindyImpliedTest {
 
-    public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
-    public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
     // *************************************************************************
     //
@@ -92,8 +92,8 @@ public class BindyImpliedTest {
         uresult.assertIsSatisfied();
 
         // check the model
-        Exchange exc  = uresult.getReceivedExchanges().get(0);
-        Record   data = exc.getIn().getBody(Record.class);
+        Exchange exc = uresult.getReceivedExchanges().get(0);
+        Record data = exc.getIn().getBody(Record.class);
 
         assertEquals(123.45D, data.getField1(), 0D);
         assertEquals(67.89D, data.getField2(), 0D);
@@ -116,11 +116,11 @@ public class BindyImpliedTest {
             bindy.type(BindyType.Fixed);
 
             from(URI_DIRECT_MARSHALL)
-                .marshal(bindy)
-                .to(URI_MOCK_MARSHALL_RESULT);
+                    .marshal(bindy)
+                    .to(URI_MOCK_MARSHALL_RESULT);
             from(URI_DIRECT_UNMARSHALL)
-                .unmarshal().bindy(BindyType.Fixed, Record.class)
-                .to(URI_MOCK_UNMARSHALL_RESULT);
+                    .unmarshal().bindy(BindyType.Fixed, Record.class)
+                    .to(URI_MOCK_UNMARSHALL_RESULT);
         }
     }
 
@@ -131,10 +131,10 @@ public class BindyImpliedTest {
     @FixedLengthRecord(length = 30, paddingChar = ' ')
     public static class Record {
 
-        @DataField(pos =  1, length = 5, precision = 2, impliedDecimalSeparator = true)
+        @DataField(pos = 1, length = 5, precision = 2, impliedDecimalSeparator = true)
         private Double field1;
 
-        @DataField(pos =  6, length = 5, precision = 2)
+        @DataField(pos = 6, length = 5, precision = 2)
         private Double field2;
 
         @DataField(pos = 11, length = 5, precision = 2, impliedDecimalSeparator = true)
@@ -148,7 +148,6 @@ public class BindyImpliedTest {
 
         @DataField(pos = 26, length = 5, precision = 2)
         private BigDecimal field6;
-
 
         // *********************************************************************
         // GETTER/SETTERS
@@ -209,13 +208,13 @@ public class BindyImpliedTest {
         @Override
         public String toString() {
             return "Record{"
-                    +   "field1=<" + field1 + ">"
-                    + ", field2=<" + field2 + ">"
-                    + ", field3=<" + field3 + ">"
-                    + ", field4=<" + field4 + ">"
-                    + ", field5=<" + field6 + ">"
-                    + ", field6=<" + field6 + ">"
-                    + "}";
+                   + "field1=<" + field1 + ">"
+                   + ", field2=<" + field2 + ">"
+                   + ", field3=<" + field3 + ">"
+                   + ", field4=<" + field4 + ">"
+                   + ", field5=<" + field6 + ">"
+                   + ", field6=<" + field6 + ">"
+                   + "}";
         }
     }
 }

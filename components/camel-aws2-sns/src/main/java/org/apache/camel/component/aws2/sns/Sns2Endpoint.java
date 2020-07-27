@@ -58,7 +58,9 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS 2 Simple Notification System (SNS)", syntax = "aws2-sns:topicNameOrArn", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING, Category.MOBILE})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS 2 Simple Notification System (SNS)",
+             syntax = "aws2-sns:topicNameOrArn", producerOnly = true,
+             category = { Category.CLOUD, Category.MESSAGING, Category.MOBILE })
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Endpoint.class);
@@ -156,19 +158,22 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
 
-            snsClient.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(configuration.getTopicArn()).attributeName("Policy").attributeValue(configuration.getPolicy())
-                .build());
+            snsClient.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(configuration.getTopicArn())
+                    .attributeName("Policy").attributeValue(configuration.getPolicy())
+                    .build());
 
             LOG.trace("Topic policy updated");
         }
 
         if (configuration.isSubscribeSNStoSQS()) {
             if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getQueueUrl()))) {
-                SubscribeResponse resp = snsClient.subscribe(SubscribeRequest.builder().topicArn(configuration.getTopicArn()).protocol("sqs").endpoint(configuration.getQueueUrl())
-                    .returnSubscriptionArn(true).build());
+                SubscribeResponse resp = snsClient.subscribe(SubscribeRequest.builder().topicArn(configuration.getTopicArn())
+                        .protocol("sqs").endpoint(configuration.getQueueUrl())
+                        .returnSubscriptionArn(true).build());
                 LOG.trace("Subscription of SQS Queue to SNS Topic done with Amazon resource name: {}", resp.subscriptionArn());
             } else {
-                throw new IllegalArgumentException("Using the SubscribeSNStoSQS option require both AmazonSQSClient and Queue URL options");
+                throw new IllegalArgumentException(
+                        "Using the SubscribeSNStoSQS option require both AmazonSQSClient and Queue URL options");
             }
         }
 
@@ -201,8 +206,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     /**
-     * Provide the possibility to override this method for an mock
-     * implementation
+     * Provide the possibility to override this method for an mock implementation
      *
      * @return AmazonSNSClient
      */
@@ -214,7 +218,8 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -222,7 +227,8 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -239,8 +245,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

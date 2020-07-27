@@ -93,9 +93,9 @@ public class RestDslXmlGeneratorV3Test {
     public void shouldGenerateXmlWithRestComponent() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             final String xml = RestDslGenerator.toXml(document)
-                .withRestComponent("servlet")
-                .withRestContextPath("/foo")
-                .generate(context);
+                    .withRestComponent("servlet")
+                    .withRestContextPath("/foo")
+                    .generate(context);
 
             final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreWithRestComponentXml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

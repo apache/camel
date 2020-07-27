@@ -32,34 +32,34 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
     @Test
     @Disabled
     public void testUpdateBlockBlob() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.send("direct:updateBlockBlob", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Block Blob"));
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
     }
-    
+
     @Test
     @Disabled
     public void testUploadBlobBlocks() throws Exception {
         result.expectedMessageCount(1);
         final BlobBlock st = new BlobBlock(new ByteArrayInputStream("Block Blob List".getBytes()));
         template.send("direct:uploadBlobBlocks", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody(st));
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
     }
 
@@ -69,43 +69,45 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
         result.expectedMessageCount(1);
         OutputStream os = new ByteArrayOutputStream();
         template.send("direct:getBlockBlob", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody(os));
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
     }
-    
+
     @Test
     @Disabled
     public void testUpdateAppendBlob() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.send("direct:updateAppendBlob", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Append Blob"));
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
     }
-    
+
     @Test
     @Disabled
     public void testUpdatePageBlob() throws Exception {
         result.expectedMessageCount(1);
         final byte[] data = new byte[512];
-        Arrays.fill(data, (byte)1);
-        template.send("direct:updatePageBlob", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody(new ByteArrayInputStream(data)));
-        
+        Arrays.fill(data, (byte) 1);
+        template.send("direct:updatePageBlob", ExchangePattern.InOnly,
+                exchange -> exchange.getIn().setBody(new ByteArrayInputStream(data)));
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/azure/blob/BlobServiceProducerSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/azure/blob/BlobServiceProducerSpringTest-context.xml");
     }
-    
+
 }

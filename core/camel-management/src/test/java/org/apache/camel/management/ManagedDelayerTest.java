@@ -59,7 +59,7 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         assertTrue(total > 90, "Should take around 0.1 sec: was " + total);
 
         // change the delay time using JMX
-        mbeanServer.invoke(delayerName, "constantDelay", new Object[]{200}, new String[]{"java.lang.Integer"});
+        mbeanServer.invoke(delayerName, "constantDelay", new Object[] { 200 }, new String[] { "java.lang.Integer" });
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
@@ -82,9 +82,9 @@ public class ManagedDelayerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:foo")
-                    .delay(100).id("mydelayer")
-                    .to("mock:result");
+                        .to("log:foo")
+                        .delay(100).id("mydelayer")
+                        .to("mock:result");
             }
         };
     }

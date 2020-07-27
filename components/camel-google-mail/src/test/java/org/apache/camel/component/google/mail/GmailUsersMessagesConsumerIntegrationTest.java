@@ -28,15 +28,15 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages}
- * APIs.
+ * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages} APIs.
  */
 public class GmailUsersMessagesConsumerIntegrationTest extends AbstractGoogleMailTestSupport {
 
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesConsumerIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
 
     @Test
     public void testConsumer() throws Exception {

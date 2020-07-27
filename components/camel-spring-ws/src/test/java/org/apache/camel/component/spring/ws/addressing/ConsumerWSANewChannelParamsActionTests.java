@@ -40,7 +40,8 @@ public class ConsumerWSANewChannelParamsActionTests extends AbstractConsumerTest
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/component/spring/ws/addresing/ConsumerWSAParamsActionTests-context.xml"});
+        return new ClassPathXmlApplicationContext(
+                new String[] { "org/apache/camel/component/spring/ws/addresing/ConsumerWSAParamsActionTests-context.xml" });
     }
 
 }

@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirCreate} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirCreate} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirCreateIT extends AbstractFhirTestSupport {
 
@@ -84,11 +84,11 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for resource
                 from("direct://RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
+                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
 
                 // test route for resource
                 from("direct://RESOURCE_STRING")
-                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&log=true");
+                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&log=true");
 
             }
         };

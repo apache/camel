@@ -26,11 +26,11 @@ import org.apache.camel.spi.UriEndpoint;
  * Access etcd cluster statistcs.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-stats", title = "Etcd Stats",
-        syntax = "etcd-stats:path", label = "clustering,database")
+             syntax = "etcd-stats:path", label = "clustering,database")
 public class EtcdStatsEndpoint extends AbstractEtcdPollingEndpoint {
 
     public EtcdStatsEndpoint(
-            String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
+                             String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
         super(uri, component, configuration, path);
     }
 

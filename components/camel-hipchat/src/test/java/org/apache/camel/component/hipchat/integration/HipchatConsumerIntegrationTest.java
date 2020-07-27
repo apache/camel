@@ -40,7 +40,7 @@ public class HipchatConsumerIntegrationTest extends CamelTestSupport {
         result.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                StatusLine status = (StatusLine)exchange.getIn().getHeader(HipchatConstants.FROM_USER_RESPONSE_STATUS);
+                StatusLine status = (StatusLine) exchange.getIn().getHeader(HipchatConstants.FROM_USER_RESPONSE_STATUS);
                 return 200 == status.getStatusCode();
             }
         });
@@ -53,14 +53,14 @@ public class HipchatConsumerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String hipchatEndpointUri = "hipchat:http:api.hipchat.com?authToken=XXXX&consumeUsers=@ShreyasPurohit&delay=1000";
+                String hipchatEndpointUri
+                        = "hipchat:http:api.hipchat.com?authToken=XXXX&consumeUsers=@ShreyasPurohit&delay=1000";
 
                 from(hipchatEndpointUri)
-                    .idempotentConsumer(
-                        simple("${in.header.HipchatMessageDate} ${in.header.HipchatFromUser}"),
-                        MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                    )
-                    .to("mock:result");
+                        .idempotentConsumer(
+                                simple("${in.header.HipchatMessageDate} ${in.header.HipchatFromUser}"),
+                                MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .to("mock:result");
             }
         };
     }

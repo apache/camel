@@ -45,7 +45,9 @@ public class YammerMessageProducer extends DefaultProducer {
                 url.append(".json");
                 break;
             default:
-                throw new Exception(String.format("%s is not a valid Yammer message producer function type.", endpoint.getConfig().getFunction().name()));
+                throw new Exception(
+                        String.format("%s is not a valid Yammer message producer function type.",
+                                endpoint.getConfig().getFunction().name()));
         }
 
         return url.toString();

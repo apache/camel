@@ -60,12 +60,10 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
 
         if (ttl > 0) {
             value.set(val, Duration.ofMillis(ttl)).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             value.set(val).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -74,16 +72,15 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     @InvokeOnHeader("GET")
     boolean onGet(Message message, AsyncCallback callback) throws Exception {
         final DistributedValue<Object> value = getResource(message);
-        final ReadConsistency consistency = message.getHeader(RESOURCE_READ_CONSISTENCY,  configuration::getReadConsistency, ReadConsistency.class);
+        final ReadConsistency consistency
+                = message.getHeader(RESOURCE_READ_CONSISTENCY, configuration::getReadConsistency, ReadConsistency.class);
 
         if (consistency != null) {
             value.get(consistency).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             value.get().thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -99,12 +96,10 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
 
         if (ttl > 0) {
             value.getAndSet(val, Duration.ofMillis(ttl)).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             value.getAndSet(val).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -122,12 +117,10 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
 
         if (ttl > 0) {
             value.compareAndSet(oldVal, newVal, Duration.ofMillis(ttl)).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         } else {
             value.compareAndSet(oldVal, newVal).thenAccept(
-                result -> processResult(message, callback, result)
-            );
+                    result -> processResult(message, callback, result));
         }
 
         return false;
@@ -150,11 +143,11 @@ public final class AtomixValueProducer extends AbstractAtomixClientProducer<Atom
     @Override
     protected DistributedValue<Object> createResource(String resourceName) {
         return getAtomixEndpoint()
-            .getAtomix()
-            .getValue(
-                resourceName,
-                new DistributedValue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
-                new DistributedValue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
-            .join();
+                .getAtomix()
+                .getValue(
+                        resourceName,
+                        new DistributedValue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
+                        new DistributedValue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
+                .join();
     }
 }

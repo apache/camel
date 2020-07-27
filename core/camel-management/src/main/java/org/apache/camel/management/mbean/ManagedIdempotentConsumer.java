@@ -25,7 +25,8 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 @ManagedResource(description = "Managed Idempotent Consumer")
 public class ManagedIdempotentConsumer extends ManagedProcessor implements ManagedIdempotentConsumerMBean {
 
-    public ManagedIdempotentConsumer(CamelContext context, IdempotentConsumer idempotentConsumer, IdempotentConsumerDefinition definition) {
+    public ManagedIdempotentConsumer(CamelContext context, IdempotentConsumer idempotentConsumer,
+                                     IdempotentConsumerDefinition definition) {
         super(context, idempotentConsumer, definition);
     }
 

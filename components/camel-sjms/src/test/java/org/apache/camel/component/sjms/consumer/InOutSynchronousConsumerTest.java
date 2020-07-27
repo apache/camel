@@ -42,12 +42,12 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:before")
-                    .process(exchange -> beforeThreadName = Thread.currentThread().getName())
-                    .inOut(url)
-                    .process(exchange -> afterThreadName = Thread.currentThread().getName())
-                    .to("log:after")
-                    .to("mock:result");
+                        .to("log:before")
+                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
+                        .inOut(url)
+                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .to("log:after")
+                        .to("mock:result");
 
                 from("sjms:queue:in?exchangePattern=InOut").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }

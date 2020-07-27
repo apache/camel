@@ -82,7 +82,8 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work&delete=true&idempotent=false&initialDelay=0&delay=10").process(new MyPreMoveCheckerProcessor()).to("mock:result");
+                from("file://target/data/premove?preMove=work&delete=true&idempotent=false&initialDelay=0&delay=10")
+                        .process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
         };
     }

@@ -63,8 +63,10 @@ import org.slf4j.LoggerFactory;
  *
  * This component uses plain JMS API where as the jms component uses Spring JMS.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName", category = {Category.MESSAGING})
-public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
+@UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName",
+             category = { Category.MESSAGING })
+public class SjmsEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private boolean topic;
@@ -73,120 +75,123 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     @UriPath(enums = "queue,topic", defaultValue = "queue", description = "The kind of destination to use")
     private String destinationType;
-    @UriPath(description = "DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.") @Metadata(required = true)
+    @UriPath(description = "DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.")
+    @Metadata(required = true)
     private String destinationName;
     @UriParam(label = "consumer", defaultValue = "true",
-            description = "Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).")
+              description = "Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous = true;
     @UriParam(label = "advanced",
-            description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam(label = "advanced",
-            description = "Whether to include all JMSXxxx properties when mapping from JMS to Camel Message."
-                + " Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.")
+              description = "Whether to include all JMSXxxx properties when mapping from JMS to Camel Message."
+                            + " Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.")
     private boolean includeAllJMSXProperties;
     @UriParam(label = "consumer,transaction",
-            description = "Specifies whether to use transacted mode")
+              description = "Specifies whether to use transacted mode")
     private boolean transacted;
     @UriParam(label = "transaction,advanced", defaultValue = "true",
-            description = "Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers."
-                + " If you need transaction against multiple JMS providers, use jms component to leverage XA transaction.")
+              description = "Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers."
+                            + " If you need transaction against multiple JMS providers, use jms component to leverage XA transaction.")
     private boolean sharedJMSSession = true;
     @UriParam(label = "producer",
-            description = "Sets the reply to destination name used for InOut producer endpoints. The type of the reply "
-                    + "to destination can be determined by the starting prefix (topic: or queue:) in its name.")
+              description = "Sets the reply to destination name used for InOut producer endpoints. The type of the reply "
+                            + "to destination can be determined by the starting prefix (topic: or queue:) in its name.")
     private String namedReplyTo;
-    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
-            description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
+    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE",
+              enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
+              description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
     @Deprecated
     private int sessionCount = 1;
     @UriParam(label = "producer", defaultValue = "1",
-            description = "Sets the number of producers used for this endpoint.")
+              description = "Sets the number of producers used for this endpoint.")
     private int producerCount = 1;
     @UriParam(label = "consumer", defaultValue = "1",
-            description = "Sets the number of consumer listeners used for this endpoint.")
+              description = "Sets the number of consumer listeners used for this endpoint.")
     private int consumerCount = 1;
     @UriParam(label = "producer", defaultValue = "-1",
-            description = "Flag used to adjust the Time To Live value of produced messages.",
-            javaType = "java.time.Duration")
+              description = "Flag used to adjust the Time To Live value of produced messages.",
+              javaType = "java.time.Duration")
     private long ttl = -1;
     @UriParam(label = "producer", defaultValue = "true",
-            description = "Flag used to enable/disable message persistence.")
+              description = "Flag used to enable/disable message persistence.")
     private boolean persistent = true;
     @UriParam(label = "consumer",
-            description = "Sets the durable subscription Id required for durable topics.")
+              description = "Sets the durable subscription Id required for durable topics.")
     private String durableSubscriptionId;
     @UriParam(label = "producer,advanced", defaultValue = "5s",
-            description = "Sets the amount of time we should wait before timing out a InOut response.",
-            javaType = "java.time.Duration")
+              description = "Sets the amount of time we should wait before timing out a InOut response.",
+              javaType = "java.time.Duration")
     private long responseTimeOut = 5000;
     @UriParam(label = "consumer,advanced",
-            description = "Sets the JMS Message selector syntax.")
+              description = "Sets the JMS Message selector syntax.")
     private String messageSelector;
     @UriParam(label = "consumer,transaction", defaultValue = "-1",
-            description = "If transacted sets the number of messages to process before committing a transaction.")
+              description = "If transacted sets the number of messages to process before committing a transaction.")
     private int transactionBatchCount = -1;
     @UriParam(label = "consumer,transaction", defaultValue = "5s",
-            description = "Sets timeout (in millis) for batch transactions, the value should be 1000 or higher.",
-            javaType = "java.time.Duration")
+              description = "Sets timeout (in millis) for batch transactions, the value should be 1000 or higher.",
+              javaType = "java.time.Duration")
     private long transactionBatchTimeout = 5000;
     @UriParam(label = "advanced",
-            description = "Whether to startup the consumer message listener asynchronously, when starting a route."
-                + " For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover."
-                + " This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker"
-                + " using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level,"
-                + " and the consumer will not be able to receive messages; You can then restart the route to retry.")
+              description = "Whether to startup the consumer message listener asynchronously, when starting a route."
+                            + " For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover."
+                            + " This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker"
+                            + " using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level,"
+                            + " and the consumer will not be able to receive messages; You can then restart the route to retry.")
     private boolean asyncStartListener;
     @UriParam(label = "advanced",
-            description = "Whether to stop the consumer message listener asynchronously, when stopping a route.")
+              description = "Whether to stop the consumer message listener asynchronously, when stopping a route.")
     private boolean asyncStopListener;
     @UriParam(label = "producer,advanced", defaultValue = "true",
-            description = "Whether to prefill the producer connection pool on startup, or create connections lazy when needed.")
+              description = "Whether to prefill the producer connection pool on startup, or create connections lazy when needed.")
     private boolean prefillPool = true;
     @UriParam(label = "producer,advanced", defaultValue = "true",
-            description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.")
+              description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.")
     private boolean allowNullBody = true;
     @UriParam(label = "advanced", defaultValue = "true",
-            description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc."
-                + " See section about how mapping works below for more details.")
+              description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc."
+                            + " See section about how mapping works below for more details.")
     private boolean mapJmsMessage = true;
     @UriParam(label = "transaction",
-            description = "Sets the commit strategy.")
+              description = "Sets the commit strategy.")
     private TransactionCommitStrategy transactionCommitStrategy;
     @UriParam(label = "advanced",
-            description = "To use a custom DestinationCreationStrategy.")
+              description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
     @UriParam(label = "advanced",
-            description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.")
+              description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
     @UriParam(label = "advanced",
-            description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
-                + " Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -)."
-                + " The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters."
-                + " You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
+              description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
+                            + " Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -)."
+                            + " The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters."
+                            + " You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     @UriParam(label = "advanced",
-            description = "Initializes the connectionResource for the endpoint, which takes precedence over the component's connectionResource, if any")
+              description = "Initializes the connectionResource for the endpoint, which takes precedence over the component's connectionResource, if any")
     private ConnectionResource connectionResource;
     @UriParam(label = "advanced",
-            description = "Initializes the connectionFactory for the endpoint, which takes precedence over the component's connectionFactory, if any")
+              description = "Initializes the connectionFactory for the endpoint, which takes precedence over the component's connectionFactory, if any")
     private ConnectionFactory connectionFactory;
     @UriParam(label = "advanced",
-            description = "The maximum number of connections available to this endpoint")
+              description = "The maximum number of connections available to this endpoint")
     private Integer connectionCount;
     @UriParam(label = "advanced",
-            description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
+              description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
     private ExceptionListener exceptionListener;
     @UriParam(defaultValue = "WARN", label = "consumer,logging",
-            description = "Allows to configure the default errorHandler logging level for logging uncaught exceptions.")
+              description = "Allows to configure the default errorHandler logging level for logging uncaught exceptions.")
     private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
     @UriParam(defaultValue = "true", label = "consumer,logging",
-            description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
+              description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     private boolean errorHandlerLogStackTrace = true;
     @UriParam(label = "consumer", description = "Try to apply reconnection logic on consumer pool", defaultValue = "true")
     private boolean reconnectOnError = true;
-    @UriParam(label = "consumer", javaType = "java.time.Duration", description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
+    @UriParam(label = "consumer", javaType = "java.time.Duration",
+              description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
     private long reconnectBackOff = 5000;
 
     private volatile boolean closeConnectionResource;
@@ -263,20 +268,25 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     protected ConnectionResource createConnectionResource(Object source) {
         if (getConnectionFactory() == null) {
-            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
+            throw new IllegalArgumentException(
+                    String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
         }
 
         try {
-            logger.debug("Creating ConnectionResource with connectionCount: {} using ConnectionFactory: {}", getConnectionCount(), getConnectionFactory());
+            logger.debug("Creating ConnectionResource with connectionCount: {} using ConnectionFactory: {}",
+                    getConnectionCount(), getConnectionFactory());
             // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory(),
-                getComponent().getConnectionUsername(), getComponent().getConnectionPassword(), getComponent().getConnectionClientId(),
-                getComponent().getConnectionMaxWait(), getComponent().isConnectionTestOnBorrow());
+            ConnectionFactoryResource connections = new ConnectionFactoryResource(
+                    getConnectionCount(), getConnectionFactory(),
+                    getComponent().getConnectionUsername(), getComponent().getConnectionPassword(),
+                    getComponent().getConnectionClientId(),
+                    getComponent().getConnectionMaxWait(), getComponent().isConnectionTestOnBorrow());
             if (exceptionListener != null) {
                 connections.setExceptionListener(exceptionListener);
             } else {
                 // add a exception listener that logs so we can see any errors that happens
-                ExceptionListener listener = new SjmsLoggingExceptionListener(new LoggingExceptionHandler(getCamelContext(), source.getClass()), isErrorHandlerLogStackTrace());
+                ExceptionListener listener = new SjmsLoggingExceptionListener(
+                        new LoggingExceptionHandler(getCamelContext(), source.getClass()), isErrorHandlerLogStackTrace());
                 connections.setExceptionListener(listener);
             }
             connections.fillPool();
@@ -303,12 +313,13 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
      * Creates the {@link org.apache.camel.component.sjms.jms.JmsBinding} to use.
      */
     protected JmsBinding createBinding() {
-        return new JmsBinding(isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(), getMessageCreatedStrategy());
+        return new JmsBinding(
+                isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(),
+                getMessageCreatedStrategy());
     }
 
     /**
-     * Sets the binding used to convert from a Camel message to and from a JMS
-     * message
+     * Sets the binding used to convert from a Camel message to and from a JMS message
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
@@ -346,9 +357,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Whether to include all JMSXxxx properties when mapping from JMS to Camel Message.
-     * Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc.
-     * Note: If you are using a custom headerFilterStrategy then this option does not apply.
+     * Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will
+     * include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy
+     * then this option does not apply.
      */
     public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
         this.includeAllJMSXProperties = includeAllJMSXProperties;
@@ -366,14 +377,16 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Initializes the connectionResource for the endpoint, which takes precedence over the component's connectionResource, if any
+     * Initializes the connectionResource for the endpoint, which takes precedence over the component's
+     * connectionResource, if any
      */
     public void setConnectionResource(ConnectionResource connectionResource) {
         this.connectionResource = connectionResource;
     }
 
     public void setConnectionResource(String connectionResource) {
-        this.connectionResource = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionResource, ConnectionResource.class);
+        this.connectionResource
+                = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionResource, ConnectionResource.class);
     }
 
     @Override
@@ -382,7 +395,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+     * Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing
+     * (if supported).
      */
     @Override
     public void setSynchronous(boolean synchronous) {
@@ -394,15 +408,15 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE
+     * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE,
+     * DUPS_OK_ACKNOWLEDGE
      */
     public void setAcknowledgementMode(SessionAcknowledgementType acknowledgementMode) {
         this.acknowledgementMode = acknowledgementMode;
     }
 
     /**
-     * Flag set by the endpoint used by consumers and producers to determine if
-     * the endpoint is a JMS Topic.
+     * Flag set by the endpoint used by consumers and producers to determine if the endpoint is a JMS Topic.
      */
     public boolean isTopic() {
         return topic;
@@ -417,9 +431,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Sets the number of Session instances used for this endpoint. Value is
-     * ignored for endpoints that require a dedicated session such as a
-     * transacted or InOut endpoint.
+     * Sets the number of Session instances used for this endpoint. Value is ignored for endpoints that require a
+     * dedicated session such as a transacted or InOut endpoint.
      *
      * @param sessionCount the number of Session instances, default is 1
      */
@@ -559,10 +572,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Specifies whether to share JMS session with other SJMS endpoints.
-     * Turn this off if your route is accessing to multiple JMS providers.
-     * If you need transaction against multiple JMS providers, use jms
-     * component to leverage XA transaction.
+     * Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to
+     * multiple JMS providers. If you need transaction against multiple JMS providers, use jms component to leverage XA
+     * transaction.
      */
     public void setSharedJMSSession(boolean share) {
         this.sharedJMSSession = share;
@@ -573,9 +585,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Sets the reply to destination name used for InOut producer endpoints.
-     * The type of the reply to destination can be determined by the starting
-     * prefix (topic: or queue:) in its name.
+     * Sets the reply to destination name used for InOut producer endpoints. The type of the reply to destination can be
+     * determined by the starting prefix (topic: or queue:) in its name.
      */
     public void setNamedReplyTo(String namedReplyTo) {
         this.namedReplyTo = namedReplyTo;
@@ -583,13 +594,12 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Whether to startup the consumer message listener asynchronously, when starting a route.
-     * For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying
-     * and/or failover. This will cause Camel to block while starting routes. By setting this option to true,
-     * you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread
-     * in asynchronous mode. If this option is used, then beware that if the connection could not be established,
-     * then an exception is logged at WARN level, and the consumer will not be able to receive messages;
-     * You can then restart the route to retry.
+     * Whether to startup the consumer message listener asynchronously, when starting a route. For example if a
+     * JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover.
+     * This will cause Camel to block while starting routes. By setting this option to true, you will let routes
+     * startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this
+     * option is used, then beware that if the connection could not be established, then an exception is logged at WARN
+     * level, and the consumer will not be able to receive messages; You can then restart the route to retry.
      */
     public void setAsyncStartListener(boolean asyncStartListener) {
         this.asyncStartListener = asyncStartListener;
@@ -637,7 +647,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.
+     * Whether to allow sending messages with no body. If this option is false and the message body is null, then an
+     * JMSException is thrown.
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
@@ -648,8 +659,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc.
-     * See section about how mapping works below for more details.
+     * Specifies whether Camel should auto map the received JMS message to a suited payload type, such as
+     * javax.jms.TextMessage to a String etc. See section about how mapping works below for more details.
      */
     public void setMapJmsMessage(boolean mapJmsMessage) {
         this.mapJmsMessage = mapJmsMessage;
@@ -660,8 +671,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt>
-     * objects when Camel is sending a JMS message.
+     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of
+     * <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.
      */
     public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
@@ -675,26 +686,27 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     /**
-     * Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification.
-     * Camel provides two implementations out of the box: default and passthrough.
-     * The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is.
-     * Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters.
-     * You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
-     * and refer to it using the # notation.
+     * Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel
+     * provides two implementations out of the box: default and passthrough. The default strategy will safely marshal
+     * dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do
+     * not care whether JMS header keys contain illegal characters. You can provide your own implementation of the
+     * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.
      */
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
 
     /**
-     * Initializes the connectionFactory for the endpoint, which takes precedence over the component's connectionFactory, if any
+     * Initializes the connectionFactory for the endpoint, which takes precedence over the component's
+     * connectionFactory, if any
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
     public void setConnectionFactory(String connectionFactory) {
-        this.connectionFactory = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionFactory, ConnectionFactory.class);
+        this.connectionFactory
+                = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionFactory, ConnectionFactory.class);
 
     }
 

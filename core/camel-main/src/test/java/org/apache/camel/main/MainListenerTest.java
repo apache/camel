@@ -34,12 +34,12 @@ public class MainListenerTest {
         List<String> events = new ArrayList<>();
         Main main = new Main();
         main.addMainListener((MainListener) Proxy.newProxyInstance(
-            MainListener.class.getClassLoader(),
-            new Class[]{MainListener.class},
-            (proxy, method, args) -> {
-                events.add(method.getName());
-                return null;
-            }));
+                MainListener.class.getClassLoader(),
+                new Class[] { MainListener.class },
+                (proxy, method, args) -> {
+                    events.add(method.getName());
+                    return null;
+                }));
         Thread thread = new Thread(() -> {
             try {
                 main.run();
@@ -61,14 +61,12 @@ public class MainListenerTest {
         try {
             main.setDefaultPropertyPlaceholderLocation("false");
             main.setInitialProperties(propertiesOf(
-                "camel.context.name", "my-ctx"
-            ));
+                    "camel.context.name", "my-ctx"));
             main.addMainListener(new MainListenerSupport() {
                 @Override
                 public void beforeConfigure(BaseMainSupport main) {
                     main.getCamelContext().getPropertiesComponent().setOverrideProperties(propertiesOf(
-                        "camel.context.name", "my-ctx-override"
-                    ));
+                            "camel.context.name", "my-ctx-override"));
                 }
             });
             main.start();

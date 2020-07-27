@@ -177,7 +177,8 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = DefaultFluentProducerTemplate.on(context).withProcessor(exchange -> exchange.getIn().setBody("Hello World")).to("direct:exception").send();
+        Exchange out = DefaultFluentProducerTemplate.on(context)
+                .withProcessor(exchange -> exchange.getIn().setBody("Hello World")).to("direct:exception").send();
 
         assertTrue(out.isFailed());
         assertEquals("Forced exception by unit test", out.getException().getMessage());
@@ -225,7 +226,9 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exchange out = DefaultFluentProducerTemplate.on(context).withProcessor(exchange -> exchange.getIn().setBody("Hello World")).to("direct:exception").request(Exchange.class);
+        Exchange out
+                = DefaultFluentProducerTemplate.on(context).withProcessor(exchange -> exchange.getIn().setBody("Hello World"))
+                        .to("direct:exception").request(Exchange.class);
 
         assertTrue(out.isFailed());
         assertEquals("Forced exception by unit test", out.getException().getMessage());
@@ -262,7 +265,8 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
             String out = context.createFluentProducerTemplate().withExchange(exchange).to("direct:in").request(String.class);
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.", e.getMessage());
+            assertEquals("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.",
+                    e.getMessage());
         }
     }
 
@@ -273,17 +277,23 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         final Integer expectedResult = new Integer(123);
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
+        assertEquals(expectedResult,
+                template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello").to("direct:inout").request(Integer.class));
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello")
+                .to("direct:inout").request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
+        assertEquals(expectedResult,
+                template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to(context.getEndpoint("direct:inout")).request(Integer.class));
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello")
+                .to(context.getEndpoint("direct:inout")).request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello").to(context.getEndpoint("direct:inout")).request(Integer.class));
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello")
+                .to(context.getEndpoint("direct:inout")).request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello").to(context.getEndpoint("direct:inout")).request(Integer.class));
+        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello")
+                .to(context.getEndpoint("direct:inout")).request(Integer.class));
     }
 
     @Test
@@ -294,8 +304,10 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("body-1", "body-2");
 
         FluentProducerTemplate fluent = context.createFluentProducerTemplate();
-        Future<String> future1 = fluent.to("direct:async").withHeader("action", "action-1").withBody("body-1").asyncRequest(String.class);
-        Future<String> future2 = fluent.to("direct:async").withHeader("action", "action-2").withBody("body-2").asyncRequest(String.class);
+        Future<String> future1
+                = fluent.to("direct:async").withHeader("action", "action-1").withBody("body-1").asyncRequest(String.class);
+        Future<String> future2
+                = fluent.to("direct:async").withHeader("action", "action-2").withBody("body-2").asyncRequest(String.class);
 
         String result1 = future1.get();
         String result2 = future2.get();
@@ -338,7 +350,8 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     public void testWithCustomizer() throws Exception {
         getMockEndpoint("mock:custom").expectedBodiesReceived("Hello World");
 
-        FluentProducerTemplate fluent = context.createFluentProducerTemplate().withTemplateCustomizer(t -> t.setDefaultEndpointUri("mock:custom"));
+        FluentProducerTemplate fluent
+                = context.createFluentProducerTemplate().withTemplateCustomizer(t -> t.setDefaultEndpointUri("mock:custom"));
 
         fluent.withBody("Hello World").send();
 
@@ -356,7 +369,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 from("direct:sum").process(exchange -> {
                     Object body = exchange.getIn().getBody();
                     if (body instanceof Integer) {
-                        exchange.getIn().setBody((Integer)body + 1);
+                        exchange.getIn().setBody((Integer) body + 1);
                     } else {
                         throw new IllegalArgumentException("Expected body of type Integer");
                     }

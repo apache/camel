@@ -37,29 +37,31 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
                 from("direct:start")
-                    .streamCaching()
-                    .choice()
+                        .streamCaching()
+                        .choice()
                         .when().jsonpath("$.store.book[?(@.price < 10)]")
-                            .to("mock:cheap")
+                        .to("mock:cheap")
                         .when().jsonpath("$.store.book[?(@.price < 30)]")
-                            .to("mock:average")
+                        .to("mock:average")
                         .otherwise()
-                            .to("mock:expensive");
+                        .to("mock:expensive");
 
                 from("direct:bicycle")
-                    .streamCaching()
-                    .choice()
+                        .streamCaching()
+                        .choice()
                         .when().method(new BeanPredicate())
-                            .to("mock:cheap")
+                        .to("mock:cheap")
                         .otherwise()
-                            .to("mock:expensive");
+                        .to("mock:expensive");
 
                 from("direct:bicycle2")
-                    .streamCaching()
-                    .choice()
-                    .when(PredicateBuilder.isLessThan(ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"), ExpressionBuilder.constantExpression(100)))
+                        .streamCaching()
+                        .choice()
+                        .when(PredicateBuilder.isLessThan(
+                                ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"),
+                                ExpressionBuilder.constantExpression(100)))
                         .to("mock:cheap")
-                    .otherwise()
+                        .otherwise()
                         .to("mock:expensive");
             }
         };

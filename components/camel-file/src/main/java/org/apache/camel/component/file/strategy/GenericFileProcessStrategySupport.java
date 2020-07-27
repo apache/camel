@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for implementations of {@link GenericFileProcessStrategy}.
  */
-public abstract class GenericFileProcessStrategySupport<T> extends ServiceSupport implements GenericFileProcessStrategy<T>, CamelContextAware {
+public abstract class GenericFileProcessStrategySupport<T> extends ServiceSupport
+        implements GenericFileProcessStrategy<T>, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileProcessStrategySupport.class);
 
@@ -62,7 +63,9 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public boolean begin(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         // if we use exclusive read then acquire the exclusive read (waiting
         // until we got it)
         if (exclusiveReadLockStrategy != null) {
@@ -77,7 +80,9 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void abort(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
 
@@ -88,7 +93,9 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void commit(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
 
@@ -99,7 +106,9 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     @Override
-    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void rollback(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
 
@@ -117,7 +126,8 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
 
-    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) throws IOException {
+    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to)
+            throws IOException {
         // deleting any existing files before renaming
         try {
             operations.deleteFile(to.getAbsoluteFilePath());
@@ -129,7 +139,8 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         boolean mkdir = operations.buildDirectory(to.getParent(), to.isAbsolute());
 
         if (!mkdir) {
-            throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
+            throw new GenericFileOperationFailedException(
+                    "Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
         }
 
         LOG.debug("Renaming file: {} to: {}", from, to);
@@ -153,7 +164,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     @Override
     protected void doStart() throws Exception {
         if (exclusiveReadLockStrategy instanceof CamelContextAware) {
-            ((CamelContextAware)exclusiveReadLockStrategy).setCamelContext(camelContext);
+            ((CamelContextAware) exclusiveReadLockStrategy).setCamelContext(camelContext);
         }
         ServiceHelper.startService(exclusiveReadLockStrategy);
     }

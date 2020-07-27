@@ -36,26 +36,27 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalSNSClientMisconfiguration() throws Exception {
 
         SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-sns://MyTopic"));
+                () -> component.createEndpoint("aws-sns://MyTopic"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
         SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
-        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        SnsEndpoint endpoint = (SnsEndpoint) component
+                .createEndpoint("aws-sns://MyTopic?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(awsSNSClient, endpoint.getConfiguration().getAmazonSNSClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 

@@ -84,17 +84,17 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
 
     private static String payload;
     private KeyPair keyPair;
-    
+
     static {
         boolean includeNewLine = true;
         if (TestSupport.getJavaMajorVersion() >= 9) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + (includeNewLine ? "\n" : "")
-            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+                  + (includeNewLine ? "\n" : "")
+                  + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
-    
+
     public SignatureDigestMethodTest() throws Exception {
         // BouncyCastle is required for some algorithms
         if (Security.getProvider("BC") == null) {
@@ -102,7 +102,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
             Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
             cons = c.getConstructor(new Class[] {});
 
-            Provider provider = (java.security.Provider)cons.newInstance();
+            Provider provider = (java.security.Provider) cons.newInstance();
             Security.insertProviderAt(provider, 2);
         }
     }
@@ -137,7 +137,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha1")
@@ -236,7 +236,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                         .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
                 // END SNIPPET: signature and digest algorithm
             }
-        }};
+        } };
     }
 
     @Test
@@ -245,70 +245,70 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
         sendBody("direct:sha1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA224() throws Exception {
         setupMock();
         sendBody("direct:sha224", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA256() throws Exception {
         setupMock();
         sendBody("direct:sha256", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA384() throws Exception {
         setupMock();
         sendBody("direct:sha384", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA512() throws Exception {
         setupMock();
         sendBody("direct:sha512", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRIPEMD160() throws Exception {
         setupMock();
         sendBody("direct:ripemd160", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testWHIRLPOOL() throws Exception {
         setupMock();
         sendBody("direct:whirlpool", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA3224() throws Exception {
         setupMock();
         sendBody("direct:sha3_224", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA3256() throws Exception {
         setupMock();
         sendBody("direct:sha3_256", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA3384() throws Exception {
         setupMock();
         sendBody("direct:sha3_384", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSHA3512() throws Exception {
         setupMock();
@@ -423,14 +423,14 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     }
 
     /**
-     * KeySelector which retrieves the public key from the KeyValue element and
-     * returns it. NOTE: If the key algorithm doesn't match signature algorithm,
-     * then the public key will be ignored.
+     * KeySelector which retrieves the public key from the KeyValue element and returns it. NOTE: If the key algorithm
+     * doesn't match signature algorithm, then the public key will be ignored.
      */
     static class KeyValueKeySelector extends KeySelector {
         @Override
-        public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
-            throws KeySelectorException {
+        public KeySelectorResult select(
+                KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
+                throws KeySelectorException {
             if (keyInfo == null) {
                 throw new KeySelectorException("Null KeyInfo object!");
             }

@@ -47,8 +47,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * Sets the configuration options for server-side client-authentication requirements.
-     * The value must be one of NONE, WANT, REQUIRE as defined in {@link ClientAuthentication}.
+     * Sets the configuration options for server-side client-authentication requirements. The value must be one of NONE,
+     * WANT, REQUIRE as defined in {@link ClientAuthentication}.
      *
      * @param value the desired configuration options or {@code null} to use the defaults
      */
@@ -65,7 +65,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
         LOG.trace("Configuring server-side SSLContext parameters on SSLContext [{}]...", context);
         if (this.getSessionTimeout() != null) {
-            LOG.debug("Configuring server-side SSLContext session timeout on SSLContext [{}] to [{}].", context, this.getSessionTimeout());
+            LOG.debug("Configuring server-side SSLContext session timeout on SSLContext [{}] to [{}].", context,
+                    this.getSessionTimeout());
             this.configureSessionContext(context.getServerSessionContext(), this.getSessionTimeout());
         }
         LOG.trace("Configured server-side SSLContext parameters on SSLContext [{}].", context);
@@ -74,12 +75,10 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     /**
      * {@inheritDoc}
      * <p/>
-     * This implementation allows for configuration of the need and want settings
-     * for client authentication, but ignores the enabled cipher suites
-     * and protocols as they are not client and server side specific in an
-     * {@code SSLEngine}. Consequently, overriding them here would be a bit odd
-     * as the server side specific configuration shouldn't really override a
-     * shared client/server configuration option.
+     * This implementation allows for configuration of the need and want settings for client authentication, but ignores
+     * the enabled cipher suites and protocols as they are not client and server side specific in an {@code SSLEngine}.
+     * Consequently, overriding them here would be a bit odd as the server side specific configuration shouldn't really
+     * override a shared client/server configuration option.
      */
     @Override
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
@@ -91,8 +90,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
         if (this.getClientAuthentication() != null) {
 
-            final ClientAuthentication clientAuthValue =
-                    ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
+            final ClientAuthentication clientAuthValue
+                    = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
             Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
                 @Override
@@ -125,13 +124,13 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
     @Override
     protected List<Configurer<SSLServerSocket>> getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext context) {
-        List<Configurer<SSLServerSocket>> sslServerSocketConfigurers =
-                super.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
+        List<Configurer<SSLServerSocket>> sslServerSocketConfigurers
+                = super.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
 
         if (this.getClientAuthentication() != null) {
 
-            final ClientAuthentication clientAuthValue =
-                    ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
+            final ClientAuthentication clientAuthValue
+                    = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
             Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
                 @Override
@@ -163,8 +162,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * This class has no bearing on {@code SSLSocketFactory} instances and therefore provides no
-     * configurers for that purpose.
+     * This class has no bearing on {@code SSLSocketFactory} instances and therefore provides no configurers for that
+     * purpose.
      */
     @Override
     protected List<Configurer<SSLSocketFactory>> getSSLSocketFactoryConfigurers(SSLContext context) {

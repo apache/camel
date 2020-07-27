@@ -47,11 +47,13 @@ public class FtpProducerAllowNullBodyTest extends FtpServerTestSupport {
             template.sendBody(getFtpUrl() + "&allowNullBody=false", null);
             fail("Should have thrown a GenericFileOperationFailedException");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
         }
 
-        assertFalse(new File(FTP_ROOT_DIR + "/allownull/allowNullBody.txt").exists(), "allowNullBody set to false with null body should not create a new file");
+        assertFalse(new File(FTP_ROOT_DIR + "/allownull/allowNullBody.txt").exists(),
+                "allowNullBody set to false with null body should not create a new file");
     }
 
 }

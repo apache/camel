@@ -46,8 +46,10 @@ public class AWS2EC2ComponentVerifierExtension extends DefaultComponentVerifierE
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
-            .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("accessKey", parameters))
+                .error(ResultErrorHelper.requiresOption("secretKey", parameters))
+                .error(ResultErrorHelper.requiresOption("region", parameters));
 
         // Validate using the catalog
 
@@ -67,17 +69,21 @@ public class AWS2EC2ComponentVerifierExtension extends DefaultComponentVerifierE
         try {
             AWS2EC2Configuration configuration = setProperties(new AWS2EC2Configuration(), parameters);
             if (!Ec2Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
+                        VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
                 return builder.error(errorBuilder.build()).build();
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             Ec2ClientBuilder clientBuilder = Ec2Client.builder();
-            Ec2Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
+            Ec2Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build();
             client.describeInstances();
         } catch (AwsServiceException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("aws_ec2_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("aws_ec2_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

@@ -52,6 +52,6 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
         }
 
         // default is platform mbs
-        assertNotNull(mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));        
+        assertNotNull(mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));
     }
 }

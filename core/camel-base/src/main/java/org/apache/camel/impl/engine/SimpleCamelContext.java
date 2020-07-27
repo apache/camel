@@ -87,8 +87,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleCamelContext.class);
 
     /**
-     * Creates the {@link CamelContext} using {@link DefaultRegistry} as
-     * registry.
+     * Creates the {@link CamelContext} using {@link DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -97,12 +96,10 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     /**
-     * Creates the {@link CamelContext} and allows to control whether the
-     * context should automatic initialize or not.
+     * Creates the {@link CamelContext} and allows to control whether the context should automatic initialize or not.
      * <p/>
-     * This is used by some Camel components such as camel-cdi and
-     * camel-blueprint, however this constructor is not intended for regular
-     * Camel end users.
+     * This is used by some Camel components such as camel-cdi and camel-blueprint, however this constructor is not
+     * intended for regular Camel end users.
      *
      * @param init whether to automatic initialize.
      */
@@ -118,7 +115,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter(getCamelContextReference(), getPackageScanClassResolver(), getInjector(),
+        return new DefaultTypeConverter(
+                getCamelContextReference(), getPackageScanClassResolver(), getInjector(),
                 getDefaultFactoryFinder(), isLoadTypeConverters());
     }
 
@@ -130,7 +128,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
             typeConverter = createTypeConverter();
         }
         if (typeConverter instanceof TypeConverterRegistry) {
-            return (TypeConverterRegistry)typeConverter;
+            return (TypeConverterRegistry) typeConverter;
         }
         return null;
     }
@@ -177,8 +175,9 @@ public class SimpleCamelContext extends AbstractCamelContext {
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
         return new BaseServiceResolver<>(ModelJAXBContextFactory.FACTORY, ModelJAXBContextFactory.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find ModelJAXBContextFactory on classpath. "
-                        + "Add camel-xml-jaxb to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find ModelJAXBContextFactory on classpath. "
+                                                                + "Add camel-xml-jaxb to classpath."));
     }
 
     @Override
@@ -237,7 +236,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
             LOG.info("Using WebSphere specific PackageScanClassResolver");
-            packageScanClassResolver = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
+            packageScanClassResolver
+                    = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
         } else {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
         }
@@ -258,8 +258,9 @@ public class SimpleCamelContext extends AbstractCamelContext {
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
         return new BaseServiceResolver<>(RuntimeCamelCatalog.FACTORY, RuntimeCamelCatalog.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find RuntimeCamelCatalog on classpath. "
-                        + "Add camel-core-catalog to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find RuntimeCamelCatalog on classpath. "
+                                                                + "Add camel-core-catalog to classpath."));
     }
 
     @Override
@@ -283,16 +284,18 @@ public class SimpleCamelContext extends AbstractCamelContext {
     protected BeanProxyFactory createBeanProxyFactory() {
         return new BaseServiceResolver<>(BeanProxyFactory.FACTORY, BeanProxyFactory.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find BeanProxyFactory on classpath. "
-                        + "Add camel-bean to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find BeanProxyFactory on classpath. "
+                                                                + "Add camel-bean to classpath."));
     }
 
     @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
         return new BaseServiceResolver<>(BeanProcessorFactory.FACTORY, BeanProcessorFactory.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find BeanProcessorFactory on classpath. "
-                        + "Add camel-bean to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find BeanProcessorFactory on classpath. "
+                                                                + "Add camel-bean to classpath."));
     }
 
     @Override
@@ -304,24 +307,27 @@ public class SimpleCamelContext extends AbstractCamelContext {
     protected XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader() {
         return new BaseServiceResolver<>(XMLRoutesDefinitionLoader.FACTORY, XMLRoutesDefinitionLoader.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find XMLRoutesDefinitionLoader on classpath. "
-                        + "Add either camel-xml-io or camel-xml-jaxb to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find XMLRoutesDefinitionLoader on classpath. "
+                                                                + "Add either camel-xml-io or camel-xml-jaxb to classpath."));
     }
 
     @Override
     protected ModelToXMLDumper createModelToXMLDumper() {
         return new BaseServiceResolver<>(ModelToXMLDumper.FACTORY, ModelToXMLDumper.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. "
-                        + "Add camel-xml-jaxb to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find ModelToXMLDumper on classpath. "
+                                                                + "Add camel-xml-jaxb to classpath."));
     }
 
     @Override
     protected RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory() {
         return new BaseServiceResolver<>(RestBindingJaxbDataFormatFactory.FACTORY, RestBindingJaxbDataFormatFactory.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find RestBindingJaxbDataFormatFactory on classpath. "
-                        + "Add camel-jaxb to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find RestBindingJaxbDataFormatFactory on classpath. "
+                                                                + "Add camel-jaxb to classpath."));
     }
 
     @Override
@@ -358,8 +364,9 @@ public class SimpleCamelContext extends AbstractCamelContext {
     protected RestRegistryFactory createRestRegistryFactory() {
         return new BaseServiceResolver<>(RestRegistryFactory.FACTORY, RestRegistryFactory.class)
                 .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find RestRegistryFactory on classpath. "
-                        + "Add camel-rest to classpath."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find RestRegistryFactory on classpath. "
+                                                                + "Add camel-rest to classpath."));
     }
 
     @Override
@@ -380,8 +387,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return new MulticastProcessor(getCamelContextReference(), null, processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
+    public AsyncProcessor createMulticast(
+            Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
+        return new MulticastProcessor(
+                getCamelContextReference(), null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
+                null, false, false);
     }
 
     @Override
@@ -405,7 +415,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception {
         throw new UnsupportedOperationException();
     }
 

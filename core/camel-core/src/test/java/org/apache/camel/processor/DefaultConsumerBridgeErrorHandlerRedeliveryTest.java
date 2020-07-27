@@ -47,7 +47,8 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
         // the error handler
         assertEquals(0, redeliverCounter.get());
 
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
     }
@@ -67,8 +68,8 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
                         redeliverCounter.incrementAndGet();
                     }
                 })
-                    // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0).handled(true).to("mock:dead");
+                        // setting delay to zero is just to make unit testing faster
+                        .redeliveryDelay(0).handled(true).to("mock:dead");
 
                 // configure the consumer to bridge with the Camel error
                 // handler,

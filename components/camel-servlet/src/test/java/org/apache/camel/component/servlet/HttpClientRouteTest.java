@@ -41,7 +41,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testHttpClient() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/hello",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/hello",
                 new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
         WebResponse response = query(req);
 
@@ -50,7 +51,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         assertEquals("/hello", response.getHeaderField("PATH"), "Get a wrong message header");
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
 
-        req = new PostMethodWebRequest(contextUrl + "/services/helloworld",
+        req = new PostMethodWebRequest(
+                contextUrl + "/services/helloworld",
                 new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
         response = query(req);
 
@@ -62,7 +64,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testHttpRestricMethod() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testHttpMethodRestrict",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/testHttpMethodRestrict",
                 new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         WebResponse response = query(req);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
@@ -81,7 +84,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testHttpConverter() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testConverter",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/testConverter",
                 new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
@@ -90,7 +94,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testHttpUnicodeResponseWithStringResponse() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testUnicodeWithStringResponse",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/testUnicodeWithStringResponse",
                 new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
@@ -99,7 +104,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testHttpUnicodeResponseWithObjectResponse() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testUnicodeWithObjectResponse",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/testUnicodeWithObjectResponse",
                 new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");

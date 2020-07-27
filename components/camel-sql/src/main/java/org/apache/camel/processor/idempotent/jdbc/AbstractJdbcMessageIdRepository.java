@@ -36,17 +36,17 @@ import org.springframework.transaction.support.TransactionTemplate;
  * <p/>
  * Subclasses need only implement theses methods:
  * <ul>
- *   <li>{@link #queryForInt(String key) queryForInt(String key)}</li>
- *   <li>{@link #insert(String key) insert(String key)}</li>
- *   <li>{@link #delete(String key) delete(String key)}</li>
+ * <li>{@link #queryForInt(String key) queryForInt(String key)}</li>
+ * <li>{@link #insert(String key) insert(String key)}</li>
+ * <li>{@link #delete(String key) delete(String key)}</li>
  * </ul>
  * <p/>
  * These methods should perform the named database operation.
  * <p/>
- * <b>Important:</b> Implementations of this should use <tt>String</tt> as the generic type as that is
- * what is required by Camel to allow using the idempotent repository with the Idempotent Consumer EIP
- * and also as file consumer read-lock. It was a mistake to make {@link IdempotentRepository} parameterized,
- * as it should have been a pre-configured to use a <tt>String</tt> type.
+ * <b>Important:</b> Implementations of this should use <tt>String</tt> as the generic type as that is what is required
+ * by Camel to allow using the idempotent repository with the Idempotent Consumer EIP and also as file consumer
+ * read-lock. It was a mistake to make {@link IdempotentRepository} parameterized, as it should have been a
+ * pre-configured to use a <tt>String</tt> type.
  */
 @ManagedResource(description = "JDBC IdempotentRepository")
 public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport implements IdempotentRepository {
@@ -65,7 +65,8 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
         this.transactionTemplate = transactionTemplate;
     }
 
-    public AbstractJdbcMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate, String processorName) {
+    public AbstractJdbcMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate,
+                                           String processorName) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcTemplate.afterPropertiesSet();
         this.processorName = processorName;
@@ -79,27 +80,27 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
     /**
      * Operation that returns the number of rows, if any, for the specified key
      *
-     * @param key  the key
-     * @return int number of rows
+     * @param  key the key
+     * @return     int number of rows
      */
     protected abstract int queryForInt(String key);
 
     /**
      * Operation that inserts the key if it does not already exist
      *
-     * @param key  the key
-     * @return int number of rows inserted
+     * @param  key the key
+     * @return     int number of rows inserted
      */
     protected abstract int insert(String key);
 
     /**
      * Operations that deletes the key if it exists
      *
-     * @param key  the key
-     * @return int number of rows deleted
+     * @param  key the key
+     * @return     int number of rows deleted
      */
     protected abstract int delete(String key);
-    
+
     /**
      * Operations that deletes all the rows
      *
@@ -176,7 +177,7 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
         });
         return rc.booleanValue();
     }
-    
+
     @ManagedOperation(description = "Clear the store")
     @Override
     public void clear() {

@@ -31,14 +31,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
-    implements ApplicationContextAware, BeanIdAware {
+        implements ApplicationContextAware, BeanIdAware {
     private String beanId;
     private int loggingSizeLimit;
     private LoggingFeature loggingFeature;
 
     public SpringJAXRSClientFactoryBean() {
     }
-    
+
     public boolean isLoggingFeatureEnabled() {
         return loggingFeature != null;
     }
@@ -56,7 +56,7 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
             }
             getFeatures().add(loggingFeature);
         }
-        
+
     }
 
     public int getLoggingSizeLimit() {
@@ -76,8 +76,6 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
         }
     }
 
-    
-    
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         if (bus == null) {
@@ -92,14 +90,14 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
 
     @Override
     public void setBeanId(String id) {
-        beanId = id;            
+        beanId = id;
     }
-    
+
     // add this method for testing
     List<String> getSchemaLocations() {
         return schemaLocations;
     }
-   
+
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         if (skipFaultLogging) {
             if (this.getProperties() == null) {

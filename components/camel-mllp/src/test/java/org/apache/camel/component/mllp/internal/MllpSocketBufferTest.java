@@ -77,7 +77,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         instance.write(buildTestBytes(false, false, false));
         assertNull(instance.toHl7String());
 
-
         instance.reset();
         instance.write(buildTestBytes(null, true, true, true));
         assertEquals("", instance.toHl7String());
@@ -135,7 +134,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         instance.reset();
         instance.write(buildTestBytes(false, false, false));
         assertNull(instance.toHl7String());
-
 
         instance.reset();
         instance.write(buildTestBytes(null, true, true, true));
@@ -205,7 +203,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         instance.write(buildTestBytes(false, false, false));
         assertNull(instance.toMllpPayload());
 
-
         instance.reset();
         instance.write(buildTestBytes(null, true, true, true));
         assertArrayEquals(new byte[0], instance.toMllpPayload());
@@ -264,7 +261,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         instance.write(buildTestBytes(false, false, false));
         assertNull(instance.toMllpPayload());
 
-
         instance.reset();
         instance.write(buildTestBytes(null, true, true, true));
         assertArrayEquals(new byte[0], instance.toMllpPayload());
@@ -289,7 +285,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         instance.write(buildTestBytes(null, false, false, false));
         assertNull(instance.toMllpPayload());
     }
-
 
     /**
      * Description of test.

@@ -65,7 +65,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
-    private static final String[] STANDARD_HEADERS = {"Message-ID", "MIME-Version", "Content-Type"};
+    private static final String[] STANDARD_HEADERS = { "Message-ID", "MIME-Version", "Content-Type" };
     private String multipartSubType = "mixed";
     private boolean multipartWithoutAttachment;
     private boolean headersInline;
@@ -107,7 +107,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             writeBodyPart(bodyContent, part, contentType);
             mp.addBodyPart(part);
             if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
-                for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+                for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects()
+                        .entrySet()) {
                     String attachmentFilename = entry.getKey();
                     Attachment attachment = entry.getValue();
                     part = new MimeBodyPart();
@@ -259,7 +260,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                     Header header = headers.nextElement();
                     camelAttachment.addHeader(header.getName(), header.getValue());
                 }
-                camelMessage.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(getAttachmentKey(bp), camelAttachment);
+                camelMessage.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(getAttachmentKey(bp),
+                        camelAttachment);
             }
         }
         if (content instanceof BodyPart) {

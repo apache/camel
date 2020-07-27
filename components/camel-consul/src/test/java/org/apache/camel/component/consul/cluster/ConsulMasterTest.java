@@ -78,7 +78,8 @@ public class ConsulMasterTest {
 
             ConsulClusterService service = new ConsulClusterService();
             service.setId("node-" + id);
-            service.setUrl(String.format("http://%s:%d", container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT)));
+            service.setUrl(String.format("http://%s:%d", container.getContainerIpAddress(),
+                    container.getMappedPort(Consul.DEFAULT_HTTP_PORT)));
 
             LOGGER.info("Consul URL {}", service.getUrl());
 
@@ -89,7 +90,8 @@ public class ConsulMasterTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("master:my-ns:timer:consul?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}").process(e -> contextLatch.countDown());
+                    from("master:my-ns:timer:consul?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

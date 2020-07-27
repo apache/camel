@@ -25,7 +25,7 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 public class TopicLoadBalancerReifier extends LoadBalancerReifier<TopicLoadBalancerDefinition> {
 
     public TopicLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
-        super(route, (TopicLoadBalancerDefinition)definition);
+        super(route, (TopicLoadBalancerDefinition) definition);
     }
 
     @Override

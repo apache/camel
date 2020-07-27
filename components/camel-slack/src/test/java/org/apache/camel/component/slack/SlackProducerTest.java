@@ -25,9 +25,9 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class SlackProducerTest extends CamelTestSupport {
-    
+
     protected static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
-    
+
     @EndpointInject("mock:errors")
     MockEndpoint errors;
 
@@ -54,9 +54,9 @@ public class SlackProducerTest extends CamelTestSupport {
 
                 onException(Exception.class).handled(true).to(errors);
 
-                final String slacUser =  System.getProperty("SLACK_USER", "CamelTest");
+                final String slacUser = System.getProperty("SLACK_USER", "CamelTest");
                 from("undertow:http://localhost:" + UNDERTOW_PORT + "/slack/webhook").setBody(constant("{\"ok\": true}"));
-                
+
                 from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slacUser));
             }
         };

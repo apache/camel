@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.infinispan;
 
-
 public interface InfinispanConsumerHandler {
     InfinispanEventListener start(InfinispanConsumer consumer);
 

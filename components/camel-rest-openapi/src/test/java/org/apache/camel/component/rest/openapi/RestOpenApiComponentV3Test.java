@@ -102,8 +102,8 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         assertEquals(Integer.valueOf(14), created.id);
 
         petstore.verify(
-            postRequestedFor(urlEqualTo("/api/v3/pet")).withHeader("Accept", equalTo("application/xml, application/json"))
-                .withHeader("Content-Type", equalTo("application/xml")));
+                postRequestedFor(urlEqualTo("/api/v3/pet")).withHeader("Accept", equalTo("application/xml, application/json"))
+                        .withHeader("Content-Type", equalTo("application/xml")));
     }
 
     @ParameterizedTest
@@ -119,7 +119,7 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.name);
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-            equalTo("application/xml, application/json")));
+                equalTo("application/xml, application/json")));
     }
 
     @ParameterizedTest
@@ -135,7 +135,7 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.name);
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-            equalTo("application/xml, application/json")));
+                equalTo("application/xml, application/json")));
     }
 
     @ParameterizedTest
@@ -154,8 +154,8 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.name);
 
         petstore.verify(
-            getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept", equalTo("application/xml, application/json"))
-                .withHeader("api_key", equalTo("dolphins")));
+                getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept", equalTo("application/xml, application/json"))
+                        .withHeader("api_key", equalTo("dolphins")));
     }
 
     @ParameterizedTest
@@ -174,7 +174,7 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.name);
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14?api_key=dolphins")).withHeader("Accept",
-            equalTo("application/xml, application/json")));
+                equalTo("application/xml, application/json")));
     }
 
     @ParameterizedTest
@@ -183,15 +183,15 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         doSetUp(componentName);
 
         final Pets pets = template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available",
-            Pets.class);
+                Pets.class);
 
         assertNotNull(pets);
         assertNotNull(pets.pets);
         assertEquals(2, pets.pets.size());
 
         petstore.verify(
-            getRequestedFor(urlPathEqualTo("/api/v3/pet/findByStatus")).withQueryParam("status", equalTo("available"))
-                .withHeader("Accept", equalTo("application/xml, application/json")));
+                getRequestedFor(urlPathEqualTo("/api/v3/pet/findByStatus")).withQueryParam("status", equalTo("available"))
+                        .withHeader("Accept", equalTo("application/xml, application/json")));
     }
 
     @Override
@@ -245,25 +245,25 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
     @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
         petstore.stubFor(get(urlEqualTo("/openapi-v3.json")).willReturn(aResponse().withBody(
-            Files.readAllBytes(Paths.get(RestOpenApiComponentV3Test.class.getResource("/openapi-v3.json").toURI())))));
+                Files.readAllBytes(Paths.get(RestOpenApiComponentV3Test.class.getResource("/openapi-v3.json").toURI())))));
 
         petstore.stubFor(post(urlEqualTo("/api/v3/pet"))
-            .withRequestBody(equalTo(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><name>Jean-Luc Picard</name></Pet>"))
-            .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_CREATED)
-                .withBody("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id></Pet>")));
+                .withRequestBody(equalTo(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><name>Jean-Luc Picard</name></Pet>"))
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_CREATED)
+                        .withBody("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id></Pet>")));
 
         petstore.stubFor(
-            get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+                get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
 
         petstore.stubFor(get(urlPathEqualTo("/api/v3/pet/findByStatus")).withQueryParam("status", equalTo("available"))
-            .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pets><Pet><id>1</id><name>Olafur Eliason Arnalds</name></Pet><Pet><name>Jean-Luc Picard</name></Pet></pets>")));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pets><Pet><id>1</id><name>Olafur Eliason Arnalds</name></Pet><Pet><name>Jean-Luc Picard</name></Pet></pets>")));
 
         petstore.stubFor(get(urlEqualTo("/api/v3/pet/14?api_key=dolphins"))
-            .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
     }
 
 }

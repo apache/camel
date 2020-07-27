@@ -26,8 +26,8 @@ public interface ResultHandlerFactory {
     /**
      * Creates the {@link ResultHandler} to use
      *
-     * @param exchange the current exchange
-     * @return the result handler
+     * @param  exchange the current exchange
+     * @return          the result handler
      */
     ResultHandler createResult(Exchange exchange) throws Exception;
 }

@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.RssDataFormat;
 public class RssDataFormatReifier extends DataFormatReifier<RssDataFormat> {
 
     public RssDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (RssDataFormat)definition);
+        super(camelContext, (RssDataFormat) definition);
     }
 
     @Override

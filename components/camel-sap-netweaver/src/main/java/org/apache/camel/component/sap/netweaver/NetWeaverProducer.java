@@ -78,7 +78,8 @@ public class NetWeaverProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword=" + getEndpoint().getPassword() + "&authMethod=Basic";
+        String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword="
+                     + getEndpoint().getPassword() + "&authMethod=Basic";
         if (LOG.isInfoEnabled()) {
             LOG.info("Creating NetWeaverProducer using url: {}", URISupport.sanitizeUri(url));
         }

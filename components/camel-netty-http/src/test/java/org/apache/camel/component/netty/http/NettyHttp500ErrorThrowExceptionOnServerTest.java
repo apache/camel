@@ -51,12 +51,12 @@ public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
     public void testHttp500ErrorDisabled() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        String body = template.requestBody("netty-http:http://localhost:{{port}}/foo?throwExceptionOnFailure=false", "Hello World", String.class);
+        String body = template.requestBody("netty-http:http://localhost:{{port}}/foo?throwExceptionOnFailure=false",
+                "Hello World", String.class);
         assertTrue(body.startsWith("java.lang.IllegalArgumentException: Camel cannot do this"));
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -64,8 +64,8 @@ public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .throwException(new IllegalArgumentException("Camel cannot do this"));
+                        .to("mock:input")
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

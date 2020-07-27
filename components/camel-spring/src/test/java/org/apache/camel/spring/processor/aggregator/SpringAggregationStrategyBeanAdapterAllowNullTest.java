@@ -25,6 +25,7 @@ public class SpringAggregationStrategyBeanAdapterAllowNullTest extends Aggregati
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregationStrategyBeanAdapterAllowNullTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregationStrategyBeanAdapterAllowNullTest.xml");
     }
 }

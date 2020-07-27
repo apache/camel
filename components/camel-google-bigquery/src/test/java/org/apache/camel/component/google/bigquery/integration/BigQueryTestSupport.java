@@ -109,9 +109,9 @@ public class BigQueryTestSupport extends CamelTestSupport {
     protected void assertRowExist(String tableName, Map<String, String> row) throws Exception {
         QueryRequest queryRequest = new QueryRequest();
         String query = "SELECT * FROM " + DATASET_ID + "." + tableName + " WHERE "
-                + row.entrySet().stream()
-                .map(e -> e.getKey() + " = '" + e.getValue() + "'")
-                .collect(Collectors.joining(" AND "));
+                       + row.entrySet().stream()
+                               .map(e -> e.getKey() + " = '" + e.getValue() + "'")
+                               .collect(Collectors.joining(" AND "));
         LOGGER.debug("Query: {}", query);
         queryRequest.setQuery(query);
         QueryResponse queryResponse = getConnectionFactory()

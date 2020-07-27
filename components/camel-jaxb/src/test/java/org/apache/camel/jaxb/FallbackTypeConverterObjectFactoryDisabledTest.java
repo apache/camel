@@ -26,14 +26,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FallbackTypeConverterObjectFactoryDisabledTest extends CamelTestSupport {
-    
+
     @Test
     public void testObjectFactoryFalse() throws Exception {
         Message in = new Message("Hello World");
         getMockEndpoint("mock:a").expectedBodiesReceived(in);
 
-        assertThrows(CamelExecutionException.class, () ->
-            template.sendBody("direct:a", in));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:a", in));
     }
 
     @Override

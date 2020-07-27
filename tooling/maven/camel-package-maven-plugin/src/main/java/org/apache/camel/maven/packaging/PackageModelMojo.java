@@ -27,8 +27,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Analyses the Camel EIPs in a project and generates extra descriptor
- * information for easier auto-discovery in Camel.
+ * Analyses the Camel EIPs in a project and generates extra descriptor information for easier auto-discovery in Camel.
  */
 @Mojo(name = "generate-eips-list", threadSafe = true)
 public class PackageModelMojo extends AbstractGeneratorMojo {
@@ -48,10 +47,9 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -65,11 +63,12 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
         camelMetaDir.mkdirs();
 
         // find all json files in camel-core
-        List<String> models = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model")).map(p -> p.getFileName().toString())
-            // strip out .json from the name
-            .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
-            // sort
-            .sorted().collect(Collectors.toList());
+        List<String> models = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model"))
+                .map(p -> p.getFileName().toString())
+                // strip out .json from the name
+                .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
+                // sort
+                .sorted().collect(Collectors.toList());
 
         if (!models.isEmpty()) {
             StringBuilder sb = new StringBuilder();

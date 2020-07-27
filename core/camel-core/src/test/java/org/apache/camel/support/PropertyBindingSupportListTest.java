@@ -140,7 +140,8 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("bar.gold-customer[]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith("Cannot set property: gold-customer[] as either a Map/List because target bean is not a Map or List type"));
+            assertTrue(iae.getMessage().startsWith(
+                    "Cannot set property: gold-customer[] as either a Map/List because target bean is not a Map or List type"));
         }
     }
 

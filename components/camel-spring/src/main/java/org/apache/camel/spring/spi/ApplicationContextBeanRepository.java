@@ -28,8 +28,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
 /**
- * A {@link BeanRepository} implementation which looks up the objects in the Spring
- * {@link ApplicationContext}
+ * A {@link BeanRepository} implementation which looks up the objects in the Spring {@link ApplicationContext}
  */
 public class ApplicationContextBeanRepository implements BeanRepository {
     private ApplicationContext applicationContext;
@@ -58,7 +57,7 @@ public class ApplicationContextBeanRepository implements BeanRepository {
             return type.cast(answer);
         } catch (Throwable e) {
             String msg = "Found bean: " + name + " in ApplicationContext: " + applicationContext
-                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+                         + " of type: " + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }

@@ -64,7 +64,7 @@ public abstract class AbstractMicroProfileMetricsProducer<T extends Metric> exte
         String metricDescription = getStringHeader(in, HEADER_METRIC_DESCRIPTION, endpoint.getDescription());
         String metricDisplayName = getStringHeader(in, HEADER_METRIC_DISPLAY_NAME, endpoint.getDisplayName());
         String metricUnit = getStringHeader(in, HEADER_METRIC_UNIT, endpoint.getMetricUnit());
-        MetricType metricType = exchange.getIn().getHeader(HEADER_METRIC_TYPE,  endpoint.getMetricType(), MetricType.class);
+        MetricType metricType = exchange.getIn().getHeader(HEADER_METRIC_TYPE, endpoint.getMetricType(), MetricType.class);
 
         List<Tag> allTags = new ArrayList<>();
         allTags.addAll(MicroProfileMetricsHelper.getMetricsTag(endpoint.getTags()));
@@ -72,13 +72,13 @@ public abstract class AbstractMicroProfileMetricsProducer<T extends Metric> exte
         allTags.addAll(MicroProfileMetricsHelper.getMetricsTag(headerTags));
 
         List<Tag> finalTags = allTags.stream()
-            .map(tag -> MicroProfileMetricsHelper.parseTag(tag.getTagName() + "=" + tag.getTagValue()))
-            .collect(Collectors.toList());
+                .map(tag -> MicroProfileMetricsHelper.parseTag(tag.getTagName() + "=" + tag.getTagValue()))
+                .collect(Collectors.toList());
         finalTags.add(MicroProfileMetricsHelper.parseTag(CAMEL_CONTEXT_TAG + "=" + getEndpoint().getCamelContext().getName()));
 
         MetadataBuilder builder = new MetadataBuilder()
-            .withName(metricName)
-            .withType(metricType);
+                .withName(metricName)
+                .withType(metricType);
 
         if (metricDescription != null) {
             builder.withDescription(metricDescription);

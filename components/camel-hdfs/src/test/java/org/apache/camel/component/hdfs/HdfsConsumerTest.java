@@ -171,7 +171,8 @@ public class HdfsConsumerTest {
 
         ByteArrayOutputStream body = exchange.getIn().getBody(ByteArrayOutputStream.class);
         assertThat(body, notNullValue());
-        assertThat(body.toString(), startsWith("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget fermentum arcu, vel dignissim ipsum."));
+        assertThat(body.toString(), startsWith(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget fermentum arcu, vel dignissim ipsum."));
     }
 
     @Test

@@ -51,10 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @WebTest
-public class ResteasyProducerTest  extends CamelTestSupport {
-    
+public class ResteasyProducerTest extends CamelTestSupport {
+
     @Resource
     URI baseUri;
 
@@ -80,34 +79,36 @@ public class ResteasyProducerTest  extends CamelTestSupport {
 
                 DataFormat dataFormat = new JacksonDataFormat(Customer.class);
 
-
                 from("direct:getAll").to("resteasy:" + baseUri.toString() + "customer/getAll?resteasyMethod=GET");
 
                 from("direct:get").to("resteasy:" + baseUri.toString() + "customer/getCustomer?resteasyMethod=GET");
 
-                from("direct:getUnmarshal").to("resteasy:" + baseUri.toString() + "customer/getCustomer?resteasyMethod=GET").unmarshal(dataFormat);
+                from("direct:getUnmarshal").to("resteasy:" + baseUri.toString() + "customer/getCustomer?resteasyMethod=GET")
+                        .unmarshal(dataFormat);
 
                 from("direct:post").to("resteasy:" + baseUri.toString() + "customer/createCustomer?resteasyMethod=POST");
 
-                from("direct:postInHeader").marshal(dataFormat).to("resteasy:" + baseUri.toString() + "customer/createCustomer");
+                from("direct:postInHeader").marshal(dataFormat)
+                        .to("resteasy:" + baseUri.toString() + "customer/createCustomer");
 
-                from("direct:postMarshal").marshal(dataFormat).to("resteasy:" + baseUri.toString() + "customer/createCustomer?resteasyMethod=POST");
+                from("direct:postMarshal").marshal(dataFormat)
+                        .to("resteasy:" + baseUri.toString() + "customer/createCustomer?resteasyMethod=POST");
 
-                from("direct:put").marshal(dataFormat).to("resteasy:" + baseUri.toString() + "customer/updateCustomer?resteasyMethod=PUT");
+                from("direct:put").marshal(dataFormat)
+                        .to("resteasy:" + baseUri.toString() + "customer/updateCustomer?resteasyMethod=PUT");
 
                 from("direct:delete").to("resteasy:" + baseUri.toString() + "customer/deleteCustomer?resteasyMethod=DELETE");
 
-                from("direct:queryHeader").to("resteasy:"  + baseUri.toString() + "customer/getAll?resteasyMethod=GET");
+                from("direct:queryHeader").to("resteasy:" + baseUri.toString() + "customer/getAll?resteasyMethod=GET");
 
                 from("direct:methodHeader").to("resteasy:" + baseUri.toString() + "customer/getAll?resteasyMethod=GET");
 
-                from("direct:wrongMethod").to("resteasy:"  + baseUri.toString() + "customer/getAll?resteasyMethod=GET");
+                from("direct:wrongMethod").to("resteasy:" + baseUri.toString() + "customer/getAll?resteasyMethod=GET");
 
                 from("direct:notExisting").to("resteasy:" + baseUri.toString() + "customer/getAll?resteasyMethod=GET");
             }
         };
     }
-
 
     @Test
     public void testGet() throws Exception {
@@ -126,12 +127,12 @@ public class ResteasyProducerTest  extends CamelTestSupport {
         assertEquals(expectedBody, response);
     }
 
-
     @Test
     public void testGetWithQueryUnmarshal() throws Exception {
         Integer customerId = 2;
         Customer expectedCustomer = new Customer("Camel", "Rider", customerId);
-        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId, Customer.class);
+        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId,
+                Customer.class);
         assertEquals(expectedCustomer, customer);
     }
 
@@ -139,10 +140,13 @@ public class ResteasyProducerTest  extends CamelTestSupport {
     public void testPost() throws Exception {
         Integer customerId = 3;
         Customer expectedCustomer = new Customer("TestPost", "TestPost", customerId);
-        String response = template.requestBodyAndHeader("direct:post", "{\"name\":\"TestPost\",\"surname\":\"TestPost\",\"id\":3}", Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON, String.class);
+        String response
+                = template.requestBodyAndHeader("direct:post", "{\"name\":\"TestPost\",\"surname\":\"TestPost\",\"id\":3}",
+                        Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
 
-        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId, Customer.class);
+        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId,
+                Customer.class);
         assertEquals(expectedCustomer, customer);
 
         template.sendBodyAndHeader("direct:delete", null, Exchange.HTTP_QUERY, "id=" + customerId);
@@ -153,10 +157,12 @@ public class ResteasyProducerTest  extends CamelTestSupport {
         Integer customerId = 4;
         Customer expectedCustomer = new Customer("TestPostMarshal", "TestPostMarshal", customerId);
 
-        String response = template.requestBodyAndHeader("direct:postMarshal", expectedCustomer, Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON, String.class);
+        String response = template.requestBodyAndHeader("direct:postMarshal", expectedCustomer, Exchange.CONTENT_TYPE,
+                MediaType.APPLICATION_JSON, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
 
-        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId, Customer.class);
+        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId,
+                Customer.class);
         assertEquals(expectedCustomer, customer);
 
         template.sendBodyAndHeader("direct:delete", null, Exchange.HTTP_QUERY, "id=" + customerId);
@@ -167,20 +173,23 @@ public class ResteasyProducerTest  extends CamelTestSupport {
         Integer customerId = 5;
         Customer customer = new Customer("TestPut", "TestPut", customerId);
 
-        String response = template.requestBodyAndHeader("direct:postMarshal", customer, Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON, String.class);
+        String response = template.requestBodyAndHeader("direct:postMarshal", customer, Exchange.CONTENT_TYPE,
+                MediaType.APPLICATION_JSON, String.class);
         assertEquals("Customer added : " + customer, response);
 
-        Customer oldCustomer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId, Customer.class);
+        Customer oldCustomer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY,
+                "id=" + customerId, Customer.class);
         assertEquals(customer, oldCustomer);
 
         oldCustomer.setName("Updated");
         oldCustomer.setSurname("updated");
 
-        response = template.requestBodyAndHeader("direct:put", oldCustomer, Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON, String.class);
+        response = template.requestBodyAndHeader("direct:put", oldCustomer, Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON,
+                String.class);
         assertEquals("Customer updated : " + oldCustomer, response);
 
-
-        Customer updatedCustomer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId, Customer.class);
+        Customer updatedCustomer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY,
+                "id=" + customerId, Customer.class);
         assertEquals(oldCustomer, updatedCustomer);
         assertNotEquals(customer, updatedCustomer);
 
@@ -192,10 +201,12 @@ public class ResteasyProducerTest  extends CamelTestSupport {
         Integer customerId = 6;
         Customer expectedCustomer = new Customer("TestDelete", "TestDelete", customerId);
 
-        String response = template.requestBodyAndHeader("direct:postMarshal", expectedCustomer, Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON, String.class);
+        String response = template.requestBodyAndHeader("direct:postMarshal", expectedCustomer, Exchange.CONTENT_TYPE,
+                MediaType.APPLICATION_JSON, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
 
-        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId, Customer.class);
+        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId,
+                Customer.class);
         assertEquals(expectedCustomer, customer);
 
         template.sendBodyAndHeader("direct:delete", null, Exchange.HTTP_QUERY, "id=" + customerId);
@@ -204,15 +215,13 @@ public class ResteasyProducerTest  extends CamelTestSupport {
         assertEquals("Customer with given id doesn't exist", response);
     }
 
-
     @Test
     public void testMethodInHeader() throws Exception {
         Integer customerId = 7;
         Customer expectedCustomer = new Customer("TestPostInHeader", "TestPostInHeader", customerId);
 
-
         //check default value for http method
-        Exchange exchange =  template.request("direct:postInHeader", new Processor() {
+        Exchange exchange = template.request("direct:postInHeader", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
 
@@ -229,31 +238,30 @@ public class ResteasyProducerTest  extends CamelTestSupport {
         String response = template.requestBodyAndHeaders("direct:postInHeader", expectedCustomer, headers, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
 
-        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId, Customer.class);
+        Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId,
+                Customer.class);
         assertEquals(expectedCustomer, customer);
 
         template.sendBodyAndHeader("direct:delete", null, Exchange.HTTP_QUERY, "id=" + customerId);
     }
 
-
     @Test
     public void testSettingNotExistingHttpMethod() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.requestBodyAndHeader("direct:getAll", null, ResteasyConstants.RESTEASY_HTTP_METHOD, "GAT"));
+                () -> template.requestBodyAndHeader("direct:getAll", null, ResteasyConstants.RESTEASY_HTTP_METHOD, "GAT"));
     }
-
 
     @SuppressWarnings("rawtypes")
     @Test
     public void testHead() throws Exception {
-        Exchange exchange =  template.request("direct:getAll", new Processor() {
+        Exchange exchange = template.request("direct:getAll", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getMessage().setHeader(ResteasyConstants.RESTEASY_HTTP_METHOD, "HEAD");
             }
         });
 
-        Map<String, Object> headers =  exchange.getMessage().getHeaders();
+        Map<String, Object> headers = exchange.getMessage().getHeaders();
         ArrayList contentType = (ArrayList) headers.get("Content-Type");
         //ArrayList server = (ArrayList) headers.get("Server");
         ArrayList contentLength = (ArrayList) headers.get("Content-Length");
@@ -265,6 +273,4 @@ public class ResteasyProducerTest  extends CamelTestSupport {
         assertEquals(new Integer(200), responseCode);
     }
 
-
 }
-

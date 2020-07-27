@@ -41,14 +41,13 @@ import static org.apache.camel.TimeoutMap.Listener.Type.Remove;
 /**
  * Default implementation of the {@link TimeoutMap}.
  * <p/>
- * This implementation supports thread safe and non thread safe, in the manner you can enable locking or not.
- * By default locking is enabled and thus we are thread safe.
+ * This implementation supports thread safe and non thread safe, in the manner you can enable locking or not. By default
+ * locking is enabled and thus we are thread safe.
  * <p/>
- * You must provide a {@link java.util.concurrent.ScheduledExecutorService} in the constructor which is used
- * to schedule a background task which check for old entries to purge. This implementation will shutdown the scheduler
- * if its being stopped.
- * You must also invoke {@link #start()} to startup the timeout map, before its ready to be used.
- * And you must invoke {@link #stop()} to stop the map when no longer in use.
+ * You must provide a {@link java.util.concurrent.ScheduledExecutorService} in the constructor which is used to schedule
+ * a background task which check for old entries to purge. This implementation will shutdown the scheduler if its being
+ * stopped. You must also invoke {@link #start()} to startup the timeout map, before its ready to be used. And you must
+ * invoke {@link #stop()} to stop the map when no longer in use.
  */
 public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMap<K, V> {
 
@@ -209,7 +208,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     // Properties
     // -------------------------------------------------------------------------
-    
+
     public long getPurgePollTime() {
         return purgePollTime;
     }

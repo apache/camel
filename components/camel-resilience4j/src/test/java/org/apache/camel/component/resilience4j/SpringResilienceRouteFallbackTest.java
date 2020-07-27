@@ -28,7 +28,8 @@ public class SpringResilienceRouteFallbackTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/resilience4j/SpringResilienceRouteFallbackTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/resilience4j/SpringResilienceRouteFallbackTest.xml");
     }
 
     @Test

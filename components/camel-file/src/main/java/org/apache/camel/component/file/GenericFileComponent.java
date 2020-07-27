@@ -47,7 +47,8 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
     }
 
     @Override
-    protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
 
         // create the correct endpoint based on the protocol
         final GenericFileEndpoint<T> endpoint;
@@ -75,21 +76,19 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
     /**
      * A factory method for derived file components to create the endpoint
      *
-     * @param uri the full URI of the endpoint
-     * @param remaining the remaining part of the URI without the query
-     *            parameters or component prefix
-     * @param parameters the optional parameters passed in
-     * @return a newly created endpoint or null if the endpoint cannot be
-     *         created based on the inputs
-     * @throws Exception can be thrown
+     * @param  uri        the full URI of the endpoint
+     * @param  remaining  the remaining part of the URI without the query parameters or component prefix
+     * @param  parameters the optional parameters passed in
+     * @return            a newly created endpoint or null if the endpoint cannot be created based on the inputs
+     * @throws Exception  can be thrown
      */
-    protected abstract GenericFileEndpoint<T> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception;
+    protected abstract GenericFileEndpoint<T> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception;
 
     /**
-     * A factory method for derived file components to perform validation of
-     * properties
+     * A factory method for derived file components to perform validation of properties
      *
-     * @param endpoint the endpoint
+     * @param  endpoint  the endpoint
      * @throws Exception can be thrown in case of validation errors
      */
     protected abstract void afterPropertiesSet(GenericFileEndpoint<T> endpoint) throws Exception;
@@ -97,8 +96,8 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
     /**
      * Helper to create a sort comparator
      *
-     * @param it iterator
-     * @return Comparator<Exchange>
+     * @param  it iterator
+     * @return    Comparator<Exchange>
      */
     private Comparator<Exchange> createSortByComparator(Iterator<String> it) {
         if (!it.hasNext()) {
@@ -116,6 +115,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         StringHelper.notEmpty(reminder, "sortBy expression", this);
 
         // recursive add nested sorters
-        return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), reminder, reverse, ignoreCase, createSortByComparator(it));
+        return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), reminder, reverse, ignoreCase,
+                createSortByComparator(it));
     }
 }

@@ -51,14 +51,16 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
                                                                                  + "&approvalContextId=%s"//
                                                                                  + "&approvalNextApproverIds=%s"//
                                                                                  + "&approvalComments=Integration test"//
-                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, accountIds.get(0), userId),
-                                                                   NOT_USED, ApprovalResult.class);
+                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
+                format, accountIds.get(0), userId),
+                NOT_USED, ApprovalResult.class);
 
         assertNotNull(approvalResult, "Approval should have resulted in value");
 
         assertEquals(1, approvalResult.size(), "There should be one Account waiting approval");
 
-        assertEquals("Instance status of the item in approval result should be `Pending`", "Pending", approvalResult.iterator().next().getInstanceStatus());
+        assertEquals("Instance status of the item in approval result should be `Pending`", "Pending",
+                approvalResult.iterator().next().getInstanceStatus());
 
         // as it stands on 18.11.2016. the GET method on
         // /vXX.X/process/approvals/ with Accept other than
@@ -87,8 +89,9 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
                                                                                  + "format=%s"//
                                                                                  + "&approvalActionType=Submit"//
                                                                                  + "&approvalNextApproverIds=%s"//
-                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, userId),
-                                                                   approvalRequests, ApprovalResult.class);
+                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
+                format, userId),
+                approvalRequests, ApprovalResult.class);
 
         assertEquals(approvalRequests.size(), approvalResult.size(), "Should have same number of approval results as requests");
     }

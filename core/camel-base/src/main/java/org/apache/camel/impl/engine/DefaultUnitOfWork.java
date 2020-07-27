@@ -68,7 +68,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Set<Object> transactedBy;
 
     public DefaultUnitOfWork(Exchange exchange) {
-        this(exchange, exchange.getContext().getInflightRepository(), exchange.getContext().isAllowUseOriginalMessage(), exchange.getContext().isUseBreadcrumb());
+        this(exchange, exchange.getContext().getInflightRepository(), exchange.getContext().isAllowUseOriginalMessage(),
+             exchange.getContext().isUseBreadcrumb());
     }
 
     protected DefaultUnitOfWork(Exchange exchange, Logger logger, InflightRepository inflightRepository,
@@ -77,7 +78,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         this.log = logger;
     }
 
-    public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+    public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage,
+                             boolean useBreadcrumb) {
         this.exchange = exchange;
         this.log = LOG;
         this.allowUseOriginalMessage = allowUseOriginalMessage;
@@ -110,7 +112,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                 exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
             }
         }
-        
+
         // fire event
         if (context.isEventNotificationApplicable()) {
             try {
@@ -236,7 +238,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public void beforeRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
+            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
+                    exchange);
         }
         if (synchronizations != null && !synchronizations.isEmpty()) {
             UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, synchronizations, log);
@@ -246,7 +249,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public void afterRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
+            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
+                    exchange);
         }
         if (synchronizations != null && !synchronizations.isEmpty()) {
             UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);

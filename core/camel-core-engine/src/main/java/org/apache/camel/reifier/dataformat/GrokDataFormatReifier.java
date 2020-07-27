@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.GrokDataFormat;
 public class GrokDataFormatReifier extends DataFormatReifier<GrokDataFormat> {
 
     public GrokDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (GrokDataFormat)definition);
+        super(camelContext, (GrokDataFormat) definition);
     }
 
     @Override

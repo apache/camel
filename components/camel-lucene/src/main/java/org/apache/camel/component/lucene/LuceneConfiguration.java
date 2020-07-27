@@ -33,9 +33,11 @@ public class LuceneConfiguration {
     private transient URI uri;
     private transient String authority;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private LuceneOperation operation;
     @UriParam
     private File srcDir;
@@ -55,16 +57,17 @@ public class LuceneConfiguration {
 
     public void parseURI(URI uri, Map<String, Object> parameters, LuceneComponent component) throws Exception {
         String protocol = uri.getScheme();
-        
+
         if (!protocol.equalsIgnoreCase("lucene")) {
             throw new IllegalArgumentException("Unrecognized Lucene protocol: " + protocol + " for uri: " + uri);
         }
         this.uri = uri;
         this.authority = uri.getAuthority();
         if (!isValidAuthority()) {
-            throw new URISyntaxException(uri.toASCIIString(),
+            throw new URISyntaxException(
+                    uri.toASCIIString(),
                     "Incorrect URI syntax and/or Operation specified for the Lucene endpoint."
-                    + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
+                                         + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
         }
         setHost(retrieveTokenFromAuthority("hostname"));
 
@@ -83,11 +86,12 @@ public class LuceneConfiguration {
 
         setMaxHits(component.getAndRemoveParameter(parameters, "maxHits", Integer.class, 10));
     }
-    
+
     private boolean isValidAuthority() throws URISyntaxException {
         if ((!authority.contains(":"))
-            || ((authority.split(":")[0]) == null)
-            || ((!authority.split(":")[1].equalsIgnoreCase("insert")) && (!authority.split(":")[1].equalsIgnoreCase("query")))) {
+                || ((authority.split(":")[0]) == null)
+                || ((!authority.split(":")[1].equalsIgnoreCase("insert"))
+                        && (!authority.split(":")[1].equalsIgnoreCase("query")))) {
             return false;
         }
         return true;
@@ -96,7 +100,7 @@ public class LuceneConfiguration {
 
     private String retrieveTokenFromAuthority(String token) throws URISyntaxException {
         String retval;
-        
+
         if (token.equalsIgnoreCase("hostname")) {
             retval = uri.getAuthority().split(":")[0];
         } else {
@@ -154,9 +158,9 @@ public class LuceneConfiguration {
     }
 
     /**
-     * An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text.
-     * The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer.
-     * Lucene also offers a rich set of analyzers out of the box
+     * An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from
+     * text. The value for analyzer can be any class that extends the abstract class
+     * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box
      */
     public void setAnalyzer(Analyzer analyzer) {
         this.analyzer = analyzer;

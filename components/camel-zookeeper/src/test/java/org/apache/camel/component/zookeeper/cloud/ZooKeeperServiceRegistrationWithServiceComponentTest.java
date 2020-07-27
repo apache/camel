@@ -40,10 +40,10 @@ public class ZooKeeperServiceRegistrationWithServiceComponentTest extends ZooKee
             @Override
             public void configure() throws Exception {
                 fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=zookeeper", SERVICE_NAME, SERVICE_PORT)
-                    .routeId(SERVICE_ID)
-                    .routeGroup(SERVICE_NAME)
-                    .noAutoStartup()
-                    .to("log:service-registry?level=INFO");
+                        .routeId(SERVICE_ID)
+                        .routeGroup(SERVICE_NAME)
+                        .noAutoStartup()
+                        .to("log:service-registry?level=INFO");
             }
         };
     }

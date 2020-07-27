@@ -58,7 +58,8 @@ public class WebsocketEndpointTest {
     }
 
     /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketEndpoint#createConsumer(org.apache.camel.Processor)} .
+     * Test method for
+     * {@link org.apache.camel.component.websocket.WebsocketEndpoint#createConsumer(org.apache.camel.Processor)} .
      */
     @Test
     public void testCreateConsumer() throws Exception {
@@ -70,7 +71,8 @@ public class WebsocketEndpointTest {
         InOrder inOrder = inOrder(component, processor);
         ArgumentCaptor<NodeSynchronization> synchronizationCaptor = ArgumentCaptor.forClass(NodeSynchronization.class);
         ArgumentCaptor<WebsocketConsumer> consumerCaptor = ArgumentCaptor.forClass(WebsocketConsumer.class);
-        inOrder.verify(component, times(1)).addServlet(synchronizationCaptor.capture(), consumerCaptor.capture(), eq(REMAINING));
+        inOrder.verify(component, times(1)).addServlet(synchronizationCaptor.capture(), consumerCaptor.capture(),
+                eq(REMAINING));
         inOrder.verifyNoMoreInteractions();
 
         assertEquals(DefaultNodeSynchronization.class, synchronizationCaptor.getValue().getClass());
@@ -90,7 +92,8 @@ public class WebsocketEndpointTest {
         assertEquals(WebsocketProducer.class, producer.getClass());
         InOrder inOrder = inOrder(component, processor);
         ArgumentCaptor<NodeSynchronization> synchronizationCaptor = ArgumentCaptor.forClass(NodeSynchronization.class);
-        inOrder.verify(component, times(1)).addServlet(synchronizationCaptor.capture(), (WebsocketConsumer) isNull(), eq(REMAINING));
+        inOrder.verify(component, times(1)).addServlet(synchronizationCaptor.capture(), (WebsocketConsumer) isNull(),
+                eq(REMAINING));
         inOrder.verifyNoMoreInteractions();
 
         assertEquals(DefaultNodeSynchronization.class, synchronizationCaptor.getValue().getClass());

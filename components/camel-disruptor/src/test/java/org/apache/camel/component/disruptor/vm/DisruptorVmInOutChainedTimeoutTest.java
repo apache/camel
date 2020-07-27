@@ -70,7 +70,7 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
                 from("disruptor-vm:a")
                         .to("mock:a")
-                                // this timeout will trigger an exception to occur
+                        // this timeout will trigger an exception to occur
                         .to("disruptor-vm:b?timeout=200")
                         .to("mock:a2");
             }

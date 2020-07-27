@@ -21,9 +21,9 @@ import org.springframework.core.Ordered;
 /**
  * This class centralizes the order of execution of spring test execution listeners:
  * <ol>
- *  <li>{@link CamelSpringTestContextLoaderTestExecutionListener}</li>
- *  <li>{@link StopWatchTestExecutionListener}</li>
- *  <li>Spring default listeners</li>
+ * <li>{@link CamelSpringTestContextLoaderTestExecutionListener}</li>
+ * <li>{@link StopWatchTestExecutionListener}</li>
+ * <li>Spring default listeners</li>
  * </ol>
  */
 public final class SpringTestExecutionListenerSorter {

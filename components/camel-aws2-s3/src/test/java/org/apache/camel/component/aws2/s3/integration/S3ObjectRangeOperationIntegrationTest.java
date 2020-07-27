@@ -49,7 +49,9 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);
 
     @BindToRegistry("amazonS3Client")
-    S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.US_WEST_1).build();
+    S3Client client
+            = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+                    .region(Region.US_WEST_1).build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -98,10 +100,11 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
     private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
+        try (Reader reader
+                = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
             int c = 0;
             while ((c = reader.read()) != -1) {
-                textBuilder.append((char)c);
+                textBuilder.append((char) c);
             }
         }
         return textBuilder.toString();

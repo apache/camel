@@ -84,7 +84,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStart() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.start);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
@@ -100,7 +101,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStartWithOverride() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.start);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.stop);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
@@ -115,7 +117,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStop() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.stop);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.stop);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
@@ -130,7 +133,8 @@ public class TimerProducerTest {
     @Test
     public void testProcessStopWithOverride() throws Exception {
         when(endpoint.getAction()).thenReturn(MetricsTimerAction.stop);
-        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class))
+                .thenReturn(MetricsTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();

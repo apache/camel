@@ -108,7 +108,8 @@ public class SetExchangePatternTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void assertMessageReceivedWithPattern(String sendUri, ExchangePattern expectedPattern) throws InterruptedException {
+    protected void assertMessageReceivedWithPattern(String sendUri, ExchangePattern expectedPattern)
+            throws InterruptedException {
         ExchangePattern sendPattern;
         switch (expectedPattern) {
             case InOut:

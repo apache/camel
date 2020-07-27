@@ -49,10 +49,12 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + HEADERS_EXCHANGE + "?username=cameltest&password=cameltest&exchangeType=headers&queue=" + QUEUE + "&args=#args")
+    @EndpointInject("rabbitmq:localhost:5672/" + HEADERS_EXCHANGE
+                    + "?username=cameltest&password=cameltest&exchangeType=headers&queue=" + QUEUE + "&args=#args")
     private Endpoint headersExchangeWithQueue;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + "ex7" + "?username=cameltest&password=cameltest&exchangeType=headers&autoDelete=false&durable=true&queue=q7&arg.binding.fizz=buzz")
+    @EndpointInject("rabbitmq:localhost:5672/" + "ex7"
+                    + "?username=cameltest&password=cameltest&exchangeType=headers&autoDelete=false&durable=true&queue=q7&arg.binding.fizz=buzz")
     private Endpoint headersExchangeWithQueueDefiniedInline;
 
     @BindToRegistry("args")
@@ -122,9 +124,8 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     }
 
     /**
-     * Tests the proper rabbit binding arguments are in place when the
-     * headersExchangeWithQueue is created. Should only receive messages with
-     * the header [foo=bar]
+     * Tests the proper rabbit binding arguments are in place when the headersExchangeWithQueue is created. Should only
+     * receive messages with the header [foo=bar]
      */
     @Test
     public void sentMessageIsReceivedWithHeadersRouting() throws InterruptedException, IOException, TimeoutException {
@@ -138,7 +139,8 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
         channel.basicPublish(HEADERS_EXCHANGE, "", propertiesWithHeader("foo", "bra"), MSG.getBytes());
 
         // Only one message should be received, waiting for some other messages
-        Awaitility.await().during(1000, TimeUnit.MILLISECONDS).atMost(2000, TimeUnit.MILLISECONDS).until(() -> to.getReceivedCounter() >= 1);
+        Awaitility.await().during(1000, TimeUnit.MILLISECONDS).atMost(2000, TimeUnit.MILLISECONDS)
+                .until(() -> to.getReceivedCounter() >= 1);
 
         to.assertIsSatisfied();
     }

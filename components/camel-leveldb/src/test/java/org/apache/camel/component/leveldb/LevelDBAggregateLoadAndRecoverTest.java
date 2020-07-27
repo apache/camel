@@ -98,8 +98,8 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
                 repo.setRecoveryInterval(500);
 
                 from("seda:start?size=" + SIZE)
-                    .to("log:input?groupSize=500")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .to("log:input?groupSize=500")
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(repo)
                         .completionSize(10)
                         .to("log:output?showHeaders=true")
@@ -113,7 +113,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
                             }
                         })
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

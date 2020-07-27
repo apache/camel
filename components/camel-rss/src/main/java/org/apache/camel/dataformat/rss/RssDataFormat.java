@@ -32,8 +32,8 @@ import org.apache.camel.support.service.ServiceSupport;
  * <p/>
  * This data format supports two operations:
  * <ul>
- *   <li>marshal = from ROME SyndFeed to XML String </li>
- *   <li>unmarshal = from XML String to ROME SyndFeed </li>
+ * <li>marshal = from ROME SyndFeed to XML String</li>
+ * <li>unmarshal = from XML String to ROME SyndFeed</li>
  * </ul>
  * <p/>
  * Uses <a href="https://rome.dev.java.net/">ROME</a> for RSS parsing.

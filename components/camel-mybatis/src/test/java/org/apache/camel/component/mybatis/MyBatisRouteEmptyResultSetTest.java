@@ -34,7 +34,8 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be an empty list
-        assertEquals(0, endpoint.getReceivedExchanges().get(0).getIn().getBody(ArrayList.class).size(), "Should be an empty list");
+        assertEquals(0, endpoint.getReceivedExchanges().get(0).getIn().getBody(ArrayList.class).size(),
+                "Should be an empty list");
     }
 
     @Override

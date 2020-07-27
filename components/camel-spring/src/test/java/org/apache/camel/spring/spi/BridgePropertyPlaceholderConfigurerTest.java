@@ -27,9 +27,9 @@ public class BridgePropertyPlaceholderConfigurerTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurer.xml");   
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurer.xml");
     }
-    
+
     @Test
     public void testProperty() throws Exception {
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);

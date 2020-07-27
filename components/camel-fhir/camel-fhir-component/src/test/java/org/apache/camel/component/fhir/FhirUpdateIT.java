@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirUpdate} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirUpdate} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirUpdateIT extends AbstractFhirTestSupport {
 
@@ -62,7 +62,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
-        assertEquals(date, ((Patient)result.getResource()).getBirthDate(), "Birth date not updated!");
+        assertEquals(date, ((Patient) result.getResource()).getBirthDate(), "Birth date not updated!");
     }
 
     @Test
@@ -80,7 +80,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
-        assertEquals(date, ((Patient)result.getResource()).getBirthDate(), "Birth date not updated!");
+        assertEquals(date, ((Patient) result.getResource()).getBirthDate(), "Birth date not updated!");
     }
 
     @Test
@@ -100,7 +100,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
-        assertEquals(date, ((Patient)result.getResource()).getBirthDate(), "Birth date not updated!");
+        assertEquals(date, ((Patient) result.getResource()).getBirthDate(), "Birth date not updated!");
     }
 
     @Test
@@ -120,7 +120,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
-        assertEquals(date, ((Patient)result.getResource()).getBirthDate(), "Birth date not updated!");
+        assertEquals(date, ((Patient) result.getResource()).getBirthDate(), "Birth date not updated!");
     }
 
     @Test
@@ -140,7 +140,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
-        assertEquals(date, ((Patient)result.getResource()).getBirthDate(), "Birth date not updated!");
+        assertEquals(date, ((Patient) result.getResource()).getBirthDate(), "Birth date not updated!");
     }
 
     @Test
@@ -161,7 +161,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
-        assertEquals(date, ((Patient)result.getResource()).getBirthDate(), "Birth date not updated!");
+        assertEquals(date, ((Patient) result.getResource()).getBirthDate(), "Birth date not updated!");
     }
 
     @Test
@@ -182,7 +182,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
-        assertEquals(date, ((Patient)result.getResource()).getBirthDate(), "Birth date not updated!");
+        assertEquals(date, ((Patient) result.getResource()).getBirthDate(), "Birth date not updated!");
     }
 
     @Override

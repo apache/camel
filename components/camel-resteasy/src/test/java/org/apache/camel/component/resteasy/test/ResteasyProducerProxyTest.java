@@ -48,9 +48,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @WebTest
-public class ResteasyProducerProxyTest extends CamelTestSupport {   
+public class ResteasyProducerProxyTest extends CamelTestSupport {
 
     @Resource
     URI baseUri;
@@ -59,14 +58,15 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     public static Archive<?> createTestArchive() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(Customer.class, CustomerService.class, CustomerList.class, ProxyProducerInterface.class, ResteasyProducerProxyTestApp.class)
+                .addClasses(Customer.class, CustomerService.class, CustomerList.class, ProxyProducerInterface.class,
+                        ResteasyProducerProxyTestApp.class)
                 .addPackage("org.apache.camel.component.resteasy")
                 .addPackage("org.apache.camel.component.resteasy.servlet")
                 .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml").importRuntimeAndTestDependencies().resolve()
                         .withTransitivity().asFile())
                 .addAsWebInfResource(new File("src/test/resources/webWithoutAppContext2.xml"), "web.xml");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -75,40 +75,57 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
                 CamelContext camelContext = getContext();
                 camelContext.addComponent("resteasy", resteasy);
 
-
                 DataFormat dataFormat = new JacksonDataFormat(Customer.class);
 
+                from("direct:getAll")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=getAllCustomers");
 
-                from("direct:getAll").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=getAllCustomers");
+                from("direct:get")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=getCustomer");
 
-                from("direct:get").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=getCustomer");
+                from("direct:getUnmarshal")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=getCustomer")
+                        .unmarshal(dataFormat);
 
-                from("direct:getUnmarshal").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=getCustomer").unmarshal(dataFormat);
+                from("direct:post")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=createCustomer");
 
-                from("direct:post").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=createCustomer");
+                from("direct:put").marshal(dataFormat)
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=updateCustomer");
 
-                from("direct:put").marshal(dataFormat).to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=updateCustomer");
+                from("direct:delete")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=deleteCustomer");
 
-                from("direct:delete").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=deleteCustomer");
+                from("direct:moreAttributes")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=getSpecificThreeCustomers");
 
-                from("direct:moreAttributes").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=getSpecificThreeCustomers");
-                
-                from("direct:differentType").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=checkIfCustomerExists");
+                from("direct:differentType")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=checkIfCustomerExists");
 
-                from("direct:notResponseType").to("resteasy:" + baseUri.toString() + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
-                        + "&proxyMethod=getCustomerWithoutResponse");
+                from("direct:notResponseType")
+                        .to("resteasy:" + baseUri.toString()
+                            + "?proxyClientClass=org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface"
+                            + "&proxyMethod=getCustomerWithoutResponse");
             }
         };
     }
-    
+
     private void deleteCustomer(Integer id) {
         Map<String, Object> headers = new HashMap<>();
         ArrayList<Object> params = new ArrayList<Object>();
@@ -148,7 +165,6 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         });
         assertEquals(expectedBody, response.getMessage().getBody(String.class));
     }
-
 
     @Test
     public void testProxyGetUnmarshal() throws Exception {
@@ -195,8 +211,6 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
-
-
 
         params.clear();
         headers.clear();
@@ -247,8 +261,8 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
 
-
-        String expectedCustomers = "[{\"name\":\"Test\",\"surname\":\"Test\",\"id\":6},{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2},{\"name\":\"Roman\",\"surname\":\"Jakubco\",\"id\":1}]";
+        String expectedCustomers
+                = "[{\"name\":\"Test\",\"surname\":\"Test\",\"id\":6},{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2},{\"name\":\"Roman\",\"surname\":\"Jakubco\",\"id\":1}]";
         headers.clear();
         params.clear();
         params.add(6);
@@ -274,7 +288,6 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
-
 
         headers.clear();
         params.clear();
@@ -319,8 +332,6 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
 
-
-
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
         Exchange exchange = template.request("direct:differentType", new Processor() {
             @Override
@@ -350,7 +361,6 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
         assertEquals("Customer added : " + expectedCustomer, response);
-
 
         headers.clear();
         params.clear();

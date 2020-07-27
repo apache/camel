@@ -39,7 +39,9 @@ public class DataFrameSparkProducer extends DefaultProducer {
         Dataset<Row> dataFrame = resolveDataFrame(exchange);
         DataFrameCallback dataFrameCallback = resolveDataFrameCallback(exchange);
         Object body = exchange.getIn().getBody();
-        Object result = body instanceof List ? dataFrameCallback.onDataFrame(dataFrame, ((List) body).toArray(new Object[0])) : dataFrameCallback.onDataFrame(dataFrame, body);
+        Object result = body instanceof List
+                ? dataFrameCallback.onDataFrame(dataFrame, ((List) body).toArray(new Object[0]))
+                : dataFrameCallback.onDataFrame(dataFrame, body);
         collectResults(exchange, result);
     }
 
@@ -76,7 +78,7 @@ public class DataFrameSparkProducer extends DefaultProducer {
 
     protected DataFrameCallback resolveDataFrameCallback(Exchange exchange) {
         if (exchange.getIn().getHeader(SPARK_DATAFRAME_CALLBACK_HEADER) != null) {
-            return  (DataFrameCallback) exchange.getIn().getHeader(SPARK_DATAFRAME_CALLBACK_HEADER);
+            return (DataFrameCallback) exchange.getIn().getHeader(SPARK_DATAFRAME_CALLBACK_HEADER);
         } else if (getEndpoint().getDataFrameCallback() != null) {
             return getEndpoint().getDataFrameCallback();
         } else {

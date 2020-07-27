@@ -40,7 +40,8 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
  * Represents the component that manages {@link Olingo4Endpoint}.
  */
 @Component("olingo4")
-public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Olingo4Configuration, Olingo4ApiCollection> implements SSLContextParametersAware {
+public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Olingo4Configuration, Olingo4ApiCollection>
+        implements SSLContextParametersAware {
 
     @Metadata
     Olingo4Configuration configuration;
@@ -92,7 +93,8 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, Olingo4ApiName apiName, Olingo4Configuration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, Olingo4ApiName apiName, Olingo4Configuration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new Olingo4Endpoint(uri, this, apiName, methodName, endpointConfiguration);
@@ -170,9 +172,9 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
 
         Olingo4AppImpl olingo4App;
         if (clientBuilder == null || clientBuilder instanceof HttpAsyncClientBuilder) {
-            olingo4App = new Olingo4AppImpl(configuration.getServiceUri(), (HttpAsyncClientBuilder)clientBuilder);
+            olingo4App = new Olingo4AppImpl(configuration.getServiceUri(), (HttpAsyncClientBuilder) clientBuilder);
         } else {
-            olingo4App = new Olingo4AppImpl(configuration.getServiceUri(), (HttpClientBuilder)clientBuilder);
+            olingo4App = new Olingo4AppImpl(configuration.getServiceUri(), (HttpClientBuilder) clientBuilder);
         }
         apiProxy = new Olingo4AppWrapper(olingo4App);
         apiProxy.getOlingo4App().setContentType(configuration.getContentType());

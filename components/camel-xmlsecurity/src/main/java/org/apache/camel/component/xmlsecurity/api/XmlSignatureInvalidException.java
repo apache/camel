@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
-
 /**
  * This exception is thrown if XML signature verification fails.
  */

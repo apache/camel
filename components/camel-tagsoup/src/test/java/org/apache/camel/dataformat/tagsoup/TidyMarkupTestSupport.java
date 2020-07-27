@@ -34,11 +34,11 @@ import org.xml.sax.SAXException;
 import org.apache.camel.util.IOHelper;
 
 public final class TidyMarkupTestSupport {
-    
+
     private TidyMarkupTestSupport() {
         // Utility class
     }
-    
+
     public static String loadFileAsString(File file) throws Exception {
         StringBuilder fileContent = new StringBuilder();
         BufferedReader input = IOHelper.buffered(new FileReader(file));

@@ -57,15 +57,15 @@ public class JettyValidatorTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .convertBodyTo(String.class)
-                    .to("log:in")
-                    .doTry()
+                        .convertBodyTo(String.class)
+                        .to("log:in")
+                        .doTry()
                         .to("validator:OptimizationRequest.xsd")
                         .transform(constant("<ok/>"))
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .transform(constant("<error/>"))
-                    .end()
-                    .to("log:out");
+                        .end()
+                        .to("log:out");
             }
         };
     }

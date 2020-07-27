@@ -59,7 +59,7 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
             assertIsInstanceOf(CamelExecutionException.class, e.getCause());
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
 
-            final DisruptorEndpoint de = (DisruptorEndpoint)context.getRoute("disruptor").getEndpoint();
+            final DisruptorEndpoint de = (DisruptorEndpoint) context.getRoute("disruptor").getEndpoint();
             assertNotNull(de, "Consumer endpoint cannot be null");
             //we can't remove the exchange from a Disruptor once it is published, but it should never reach the
             //mock:result endpoint because it should be filtered out by the DisruptorConsumer

@@ -62,17 +62,18 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup().routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        counter++;
-                        if (counter < 3) {
-                            // file should exists
-                            File file = new File("target/data/deletefile/hello.txt");
-                            assertTrue(file.exists(), "The file should NOT have been deleted");
-                            throw new IllegalArgumentException("Forced by unittest");
-                        }
-                    }
-                }).convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup()
+                        .routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                counter++;
+                                if (counter < 3) {
+                                    // file should exists
+                                    File file = new File("target/data/deletefile/hello.txt");
+                                    assertTrue(file.exists(), "The file should NOT have been deleted");
+                                    throw new IllegalArgumentException("Forced by unittest");
+                                }
+                            }
+                        }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

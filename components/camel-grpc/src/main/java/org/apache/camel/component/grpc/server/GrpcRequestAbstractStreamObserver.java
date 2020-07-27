@@ -24,8 +24,7 @@ import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 /**
- * gRPC request abstract stream observer is the base class for other stream
- * observer implementations
+ * gRPC request abstract stream observer is the base class for other stream observer implementations
  */
 public abstract class GrpcRequestAbstractStreamObserver implements StreamObserver<Object> {
     protected final GrpcEndpoint endpoint;
@@ -34,7 +33,8 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
     protected StreamObserver<Object> responseObserver;
     protected Map<String, Object> headers;
 
-    public GrpcRequestAbstractStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer, StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    public GrpcRequestAbstractStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
+                                             StreamObserver<Object> responseObserver, Map<String, Object> headers) {
         this.endpoint = endpoint;
         this.consumer = consumer;
         this.responseObserver = responseObserver;

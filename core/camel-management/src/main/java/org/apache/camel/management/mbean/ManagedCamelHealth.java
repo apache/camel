@@ -102,30 +102,29 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
             final TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.camelHealthDetailsTabularType());
             final CompositeType type = CamelOpenMBeanTypes.camelHealthDetailsCompositeType();
 
-            for (HealthCheck.Result result: HealthCheckHelper.invoke(context)) {
+            for (HealthCheck.Result result : HealthCheckHelper.invoke(context)) {
                 CompositeData data = new CompositeDataSupport(
-                    type,
-                    new String[] {
-                        "id",
-                        "group",
-                        "state",
-                        "enabled",
-                        "readiness",
-                        "liveness",
-                        "interval",
-                        "failureThreshold"
-                    },
-                    new Object[] {
-                        result.getCheck().getId(),
-                        result.getCheck().getGroup(),
-                        result.getState().name(),
-                        result.getCheck().getConfiguration().isEnabled(),
-                        result.getCheck().isReadiness(),
-                        result.getCheck().isLiveness(),
-                        result.getCheck().getConfiguration().getInterval(),
-                        result.getCheck().getConfiguration().getFailureThreshold()
-                    }
-                );
+                        type,
+                        new String[] {
+                                "id",
+                                "group",
+                                "state",
+                                "enabled",
+                                "readiness",
+                                "liveness",
+                                "interval",
+                                "failureThreshold"
+                        },
+                        new Object[] {
+                                result.getCheck().getId(),
+                                result.getCheck().getGroup(),
+                                result.getState().name(),
+                                result.getCheck().getConfiguration().isEnabled(),
+                                result.getCheck().isReadiness(),
+                                result.getCheck().isLiveness(),
+                                result.getCheck().getConfiguration().getInterval(),
+                                result.getCheck().getConfiguration().getFailureThreshold()
+                        });
 
                 answer.put(data);
             }

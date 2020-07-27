@@ -44,7 +44,9 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
         final C configuration = getConfiguration();
 
         if (ObjectHelper.isEmpty(remaining) && ObjectHelper.isEmpty(configuration.getName())) {
-            throw new IllegalArgumentException(String.format("Connector name must be configured on endpoint using syntax debezium-%s:name", configuration.getConnectorDatabaseType()));
+            throw new IllegalArgumentException(
+                    String.format("Connector name must be configured on endpoint using syntax debezium-%s:name",
+                            configuration.getConnectorDatabaseType()));
         }
 
         // if we have name in path, we override the name in the configuration

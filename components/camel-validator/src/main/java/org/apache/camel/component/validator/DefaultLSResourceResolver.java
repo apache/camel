@@ -47,7 +47,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         this.resourceUri = resourceUri;
         this.resourcePath = FileUtil.onlyPath(resourceUri);
     }
-    
+
     private String getUri(String systemId) {
         if (resourcePath != null) {
             return FileUtil.onlyPath(resourceUri) + "/" + systemId;
@@ -60,8 +60,10 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
         // systemId should be mandatory
         if (systemId == null) {
-            throw new IllegalArgumentException(String.format("Resource: %s refers an invalid resource without SystemId."
-                    + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s", resourceUri, type, namespaceURI, publicId, systemId, baseURI));
+            throw new IllegalArgumentException(
+                    String.format("Resource: %s refers an invalid resource without SystemId."
+                                  + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s",
+                            resourceUri, type, namespaceURI, publicId, systemId, baseURI));
         }
         String resourceURI = null;
         // Build up the relative path for using relatedURI and baseURI
@@ -85,9 +87,9 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         }
         return new DefaultLSInput(publicId, systemId, baseURI, resourceURI);
     }
-    
+
     private final class DefaultLSInput implements LSInput {
-        
+
         private final String publicId;
         private final String systemId;
         private final String baseURI;
@@ -109,13 +111,13 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
                     ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, relatedURI);
                     return relatedURI;
                 } catch (IOException e) {
-                   // ignore the exception
+                    // ignore the exception
                 }
             }
             // don't use the relative path
             return getUri(systemId);
         }
-        
+
         @Override
         public Reader getCharacterStream() {
             return null;

@@ -33,24 +33,26 @@ import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.test.client.RequestMatcher;
 
 /**
- * Check if the MessageFilter is used and resolved from endpoint uri or global
- * context configuration.
+ * Check if the MessageFilter is used and resolved from endpoint uri or global context configuration.
  */
 @CamelSpringTest
-@ContextConfiguration(locations = {"classpath:org/apache/camel/component/spring/ws/DefaultMessageFilter-context.xml"})
+@ContextConfiguration(locations = { "classpath:org/apache/camel/component/spring/ws/DefaultMessageFilter-context.xml" })
 public class MessageFilterResolvingDefaultsTest extends AbstractSmockClientTest {
 
     @Autowired
     private ProducerTemplate template;
-    
-    private String body = "<customerCountRequest xmlns='http://springframework.org/spring-ws'>" + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
+
+    private String body = "<customerCountRequest xmlns='http://springframework.org/spring-ws'>"
+                          + "<customerName>John Doe</customerName>" + "</customerCountRequest>";
 
     @Test
     public void isUsedDefaultFilter() {
-        expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1"))).andExpect(doesntContains(soapHeader(new QName("http://virtualCheck/", "localFilter"))))
-            .andExpect(doesntContains(soapHeader(new QName("http://virtualCheck/", "globalFilter"))));
+        expect(soapHeader(new QName("http://newHeaderSupport/", "testHeaderValue1")))
+                .andExpect(doesntContains(soapHeader(new QName("http://virtualCheck/", "localFilter"))))
+                .andExpect(doesntContains(soapHeader(new QName("http://virtualCheck/", "globalFilter"))));
 
-        template.sendBodyAndHeader("direct:sendDefault", body, "headerKey", new QName("http://newHeaderSupport/", "testHeaderValue1"));
+        template.sendBodyAndHeader("direct:sendDefault", body, "headerKey",
+                new QName("http://newHeaderSupport/", "testHeaderValue1"));
 
     }
 

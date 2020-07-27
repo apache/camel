@@ -41,5 +41,6 @@ public final class Constants {
     public static final String DEPRECATED_ATTRIBUTE_NAME = "deprecated";
     public static final String MODEL_ATTRIBUTE_NAME = "model";
 
-    private Constants() { }
+    private Constants() {
+    }
 }

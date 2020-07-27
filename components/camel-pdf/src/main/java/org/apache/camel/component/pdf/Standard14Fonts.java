@@ -22,7 +22,8 @@ import java.util.Map;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 /**
- * The 14 standard fonts by name. Created here because there is no way to get a standard font by name in {@code pdfbox} 2.0
+ * The 14 standard fonts by name. Created here because there is no way to get a standard font by name in {@code pdfbox}
+ * 2.0
  *
  * @author <a href="https://github.com/ppalaga">Peter Palaga</a>
  */
@@ -51,8 +52,8 @@ public final class Standard14Fonts {
     /**
      * Get one of the 14 standard fonts by base font name.
      *
-     * @param fontName the base font name, such as {@code "Helvetica"} or {@code "Helvetica-Bold"}
-     * @return the {@link PDType1Font} or null, of the {@code fontName} is not mapped to any font
+     * @param  fontName the base font name, such as {@code "Helvetica"} or {@code "Helvetica-Bold"}
+     * @return          the {@link PDType1Font} or null, of the {@code fontName} is not mapped to any font
      */
     public static PDType1Font getByName(String fontName) {
         return FONTS_BY_NAME.get(fontName);

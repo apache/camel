@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
  * A processor which validates the content of the inbound message body against a {@link Predicate}.
  */
 public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(PredicateValidatingProcessor.class);
 
     private final Predicate predicate;
-    
+
     public PredicateValidatingProcessor(Predicate predicate) {
         ObjectHelper.notNull(predicate, "predicate", this);
         this.predicate = predicate;

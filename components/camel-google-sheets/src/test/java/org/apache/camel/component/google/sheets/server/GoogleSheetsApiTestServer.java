@@ -114,8 +114,8 @@ public final class GoogleSheetsApiTestServer {
     }
 
     /**
-     * Builder builds server instance from given http server builder adding more
-     * setting options in fluent builder pattern style.
+     * Builder builds server instance from given http server builder adding more setting options in fluent builder
+     * pattern style.
      */
     public static class Builder {
         private final HttpServerBuilder serverBuilder;
@@ -187,8 +187,9 @@ public final class GoogleSheetsApiTestServer {
             HttpConfiguration httpConfiguration = new HttpConfiguration(parent);
             httpConfiguration.setCustomizers(Collections.singletonList(new SecureRequestCustomizer()));
 
-            ServerConnector sslConnector = new ServerConnector(new org.eclipse.jetty.server.Server(), new SslConnectionFactory(sslContextFactory, "http/1.1"),
-                                                               new HttpConnectionFactory(httpConfiguration));
+            ServerConnector sslConnector = new ServerConnector(
+                    new org.eclipse.jetty.server.Server(), new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                    new HttpConnectionFactory(httpConfiguration));
             sslConnector.setPort(securePort);
 
             serverBuilder.connector(sslConnector);
@@ -218,8 +219,9 @@ public final class GoogleSheetsApiTestServer {
             clientDetails.setAccessTokenValiditySeconds(3000);
             clientDetails.setAutoApproveScopes(Arrays.asList("read", "write"));
             clientDetails.setScope(Arrays.asList("read", "write"));
-            clientDetails.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("client_credentials"), new SimpleGrantedAuthority("authorization_code"),
-                                                       new SimpleGrantedAuthority("password"), new SimpleGrantedAuthority("refresh_token")));
+            clientDetails.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("client_credentials"),
+                    new SimpleGrantedAuthority("authorization_code"),
+                    new SimpleGrantedAuthority("password"), new SimpleGrantedAuthority("refresh_token")));
 
             OAuth2AuthenticationProcessingFilter filter = new OAuth2AuthenticationProcessingFilter();
             OAuth2AuthenticationManager oauth2AuthenticationManager = new OAuth2AuthenticationManager();
@@ -254,7 +256,8 @@ public final class GoogleSheetsApiTestServer {
 
     private static class GzipServletFilter extends OncePerRequestFilter {
         @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                throws ServletException, IOException {
             HttpServletRequest filteredRequest = request;
             HttpServletResponse filteredResponse = response;
 
@@ -271,7 +274,7 @@ public final class GoogleSheetsApiTestServer {
             filterChain.doFilter(filteredRequest, filteredResponse);
 
             if (filteredResponse instanceof GzipHttpServletResponseWrapper) {
-                ((GzipHttpServletResponseWrapper)filteredResponse).finish();
+                ((GzipHttpServletResponseWrapper) filteredResponse).finish();
             }
         }
     }
@@ -280,7 +283,7 @@ public final class GoogleSheetsApiTestServer {
         /**
          * Constructs a request adaptor wrapping the given request.
          *
-         * @param request
+         * @param  request
          * @throws IllegalArgumentException if the request is null
          */
         public GzipHttpServletRequestWrapper(HttpServletRequest request) {
@@ -301,7 +304,7 @@ public final class GoogleSheetsApiTestServer {
             /**
              * Default constructor using wrapped input stream.
              *
-             * @param request
+             * @param  request
              * @throws IOException
              */
             public GzipServletInputStream(ServletRequest request) throws IOException {

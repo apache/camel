@@ -28,12 +28,13 @@ import org.apache.camel.spi.Validator;
 public class EndpointValidatorReifier extends ValidatorReifier<EndpointValidatorDefinition> {
 
     public EndpointValidatorReifier(CamelContext camelContext, ValidatorDefinition definition) {
-        super(camelContext, (EndpointValidatorDefinition)definition);
+        super(camelContext, (EndpointValidatorDefinition) definition);
     }
 
     @Override
     protected Validator doCreateValidator() {
-        Endpoint endpoint = definition.getUri() != null ? camelContext.getEndpoint(definition.getUri()) : lookup(definition.getRef(), Endpoint.class);
+        Endpoint endpoint = definition.getUri() != null
+                ? camelContext.getEndpoint(definition.getUri()) : lookup(definition.getRef(), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
         return new ProcessorValidator(camelContext).setProcessor(processor).setType(definition.getType());
     }

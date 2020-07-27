@@ -23,8 +23,8 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * A component for validating XML payloads using the
- * <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing library</a>
+ * A component for validating XML payloads using the <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing
+ * library</a>
  */
 @Component("jing")
 public class JingComponent extends DefaultComponent {

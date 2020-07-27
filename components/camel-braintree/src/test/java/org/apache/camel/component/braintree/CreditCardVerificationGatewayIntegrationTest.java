@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CreditCardVerificationGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreditCardVerificationGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(CreditCardVerificationGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(CreditCardVerificationGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for find
     @Disabled
@@ -49,7 +50,8 @@ public class CreditCardVerificationGatewayIntegrationTest extends AbstractBraint
     @Test
     public void testSearch() throws Exception {
         // using com.braintreegateway.CreditCardVerificationSearchRequest message body for single parameter "query"
-        final ResourceCollection<CreditCardVerification> result = requestBody("direct://SEARCH", null, ResourceCollection.class);
+        final ResourceCollection<CreditCardVerification> result
+                = requestBody("direct://SEARCH", null, ResourceCollection.class);
 
         assertNotNull(result, "search result");
         LOG.debug("search: " + result);
@@ -61,10 +63,10 @@ public class CreditCardVerificationGatewayIntegrationTest extends AbstractBraint
             public void configure() {
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for search
                 from("direct://SEARCH")
-                    .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
             }
         };
     }

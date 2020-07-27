@@ -31,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDBSpanDecoratorTest {
 
-    private static final String MONGODB_STATEMENT =
-            "mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery";
+    private static final String MONGODB_STATEMENT = "mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery";
 
     @Test
     public void testGetOperationName() {

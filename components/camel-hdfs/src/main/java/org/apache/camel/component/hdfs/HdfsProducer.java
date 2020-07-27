@@ -112,9 +112,11 @@ public class HdfsProducer extends DefaultProducer {
 
             Optional<SplitStrategy> idleStrategy = tryFindIdleStrategy(config.getSplitStrategies());
             if (idleStrategy.isPresent()) {
-                scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "HdfsIdleCheck");
+                scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                        "HdfsIdleCheck");
                 LOG.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
-                scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy.get()), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
+                scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy.get()), config.getCheckIdleInterval(),
+                        config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
             LOG.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
@@ -291,7 +293,8 @@ public class HdfsProducer extends DefaultProducer {
 
             LOG.trace("IdleCheck running");
 
-            if (System.currentTimeMillis() - oStream.getLastAccess() > strategy.value && !idle.get() && !oStream.isBusy().get()) {
+            if (System.currentTimeMillis() - oStream.getLastAccess() > strategy.value && !idle.get()
+                    && !oStream.isBusy().get()) {
                 idle.set(true);
                 try {
                     LOG.trace("Closing stream as idle");
@@ -308,4 +311,3 @@ public class HdfsProducer extends DefaultProducer {
         }
     }
 }
-

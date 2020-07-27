@@ -44,19 +44,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort";
+    protected static final String SERVER_ADDRESS
+            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort";
 
     @BeforeAll
     public static void startService() {
         Greeter implementor = new GreeterImplWithSleep();
-        Endpoint.publish(SERVER_ADDRESS, implementor); 
+        Endpoint.publish(SERVER_ADDRESS, implementor);
     }
-    
+
     @Test
     public void testInvokingJaxWsServerWithCxfEndpoint() throws Exception {
         sendTimeOutMessage("cxf://bean:springEndpoint");
     }
-    
+
     protected void sendTimeOutMessage(String endpointUri) throws Exception {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
@@ -78,7 +79,7 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
                 requestContext.put(HTTPClientPolicy.class.getName(), clientPolicy);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
-                
+
             }
         });
         return exchange;
@@ -89,6 +90,5 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/cxfMessageHeaderTimeOutContext.xml");
     }
-
 
 }

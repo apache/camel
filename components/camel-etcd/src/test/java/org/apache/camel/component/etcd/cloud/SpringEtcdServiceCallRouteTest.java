@@ -36,21 +36,21 @@ public class SpringEtcdServiceCallRouteTest extends SpringEtcdTestSupport {
     @Override
     public void doPreSetup() throws Exception {
         JsonNode service1 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9091");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9091");
         JsonNode service2 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9092");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9092");
         JsonNode service3 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9093");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9093");
         JsonNode service4 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9094");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9094");
 
         EtcdClient client = getClient();
         client.put("/etcd-services-1/" + "service-1", MAPPER.writeValueAsString(service1)).send().get();

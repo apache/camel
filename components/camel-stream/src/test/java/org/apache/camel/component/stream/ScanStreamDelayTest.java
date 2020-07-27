@@ -34,7 +34,6 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
  */
 public class ScanStreamDelayTest extends CamelTestSupport {
 
-
     private File file;
 
     @Override
@@ -69,7 +68,7 @@ public class ScanStreamDelayTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("stream:file?fileName=target/stream/scanstreamdelayfile.txt&scanStream=true&scanStreamDelay=1000")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

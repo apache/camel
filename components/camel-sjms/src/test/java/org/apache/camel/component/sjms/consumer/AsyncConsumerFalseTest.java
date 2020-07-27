@@ -62,11 +62,11 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
                 // disable async in only mode on the consumer
                 from("sjms:queue:start")
                         .choice()
-                            .when(body().contains("Camel"))
-                            .to("async:camel?delay=2000")
-                            .to("mock:result")
+                        .when(body().contains("Camel"))
+                        .to("async:camel?delay=2000")
+                        .to("mock:result")
                         .otherwise()
-                            .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

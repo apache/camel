@@ -64,8 +64,9 @@ public final class HttpEntityConverter {
         if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
             InputStream stream = GZIPHelper.compressGzip(contentEncoding, in);
-            entity = new InputStreamEntity(stream, stream instanceof ByteArrayInputStream
-                ? stream.available() != 0 ? stream.available() : -1 : -1);
+            entity = new InputStreamEntity(
+                    stream, stream instanceof ByteArrayInputStream
+                            ? stream.available() != 0 ? stream.available() : -1 : -1);
         } else {
             entity = new InputStreamEntity(in, -1);
         }
@@ -83,8 +84,9 @@ public final class HttpEntityConverter {
         if (exchange != null && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
             InputStream stream = GZIPHelper.compressGzip(contentEncoding, data);
-            entity = new InputStreamEntity(stream, stream instanceof ByteArrayInputStream
-                ? stream.available() != 0 ? stream.available() : -1 : -1);
+            entity = new InputStreamEntity(
+                    stream, stream instanceof ByteArrayInputStream
+                            ? stream.available() != 0 ? stream.available() : -1 : -1);
         } else {
             // create the Repeatable HttpEntity
             entity = new ByteArrayEntity(data);

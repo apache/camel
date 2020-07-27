@@ -33,12 +33,12 @@ public class CBORObjectListSplitTest extends CamelTestSupport {
     void testCBOR() throws InterruptedException, JsonProcessingException {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessagesMatches(body().isInstanceOf(DummyObject.class));
-        
+
         DummyObject d1 = new DummyObject();
         d1.setDummy("value1");
         DummyObject d2 = new DummyObject();
         d2.setDummy("value2");
-        
+
         List<DummyObject> list = new ArrayList<>();
         list.add(d1);
         list.add(d2);
@@ -64,7 +64,7 @@ public class CBORObjectListSplitTest extends CamelTestSupport {
             }
         };
     }
-    
+
     public static class DummyObject {
 
         private String dummy;

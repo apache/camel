@@ -39,9 +39,11 @@ public enum AS2MessageStructure {
     public boolean isSigned() {
         return isSigned;
     }
+
     public boolean isEncrypted() {
         return isEncrypted;
     }
+
     public boolean isCompressed() {
         return isCompressed;
     }

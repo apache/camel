@@ -49,11 +49,15 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // this user REST service is json only
-                rest("/books").tag("dude").description("Book order service").consumes("application/json").produces("application/json")
+                rest("/books").tag("dude").description("Book order service").consumes("application/json")
+                        .produces("application/json")
 
-                    .get("/{id}").description("Find order by id").outType(BookOrder.class).responseMessage().message("The order returned").endResponseMessage().param().name("id")
-                    .type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam().to("bean:bookService?method=getOrder(${header.id})")
-                    .get("/books/{id}/line/{lineNum}").outType(LineItem.class).to("bean:bookService?method=getOrder(${header.id})");
+                        .get("/{id}").description("Find order by id").outType(BookOrder.class).responseMessage()
+                        .message("The order returned").endResponseMessage().param().name("id")
+                        .type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam()
+                        .to("bean:bookService?method=getOrder(${header.id})")
+                        .get("/books/{id}/line/{lineNum}").outType(LineItem.class)
+                        .to("bean:bookService?method=getOrder(${header.id})");
             }
         };
     }
@@ -62,14 +66,15 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestSwaggerReader reader = new RestSwaggerReader();
 
-        Swagger swagger = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        Swagger swagger
+                = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();

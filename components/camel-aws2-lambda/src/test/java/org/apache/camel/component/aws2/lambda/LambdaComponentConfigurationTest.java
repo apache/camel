@@ -33,8 +33,9 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint)component
-            .createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
+                .createEndpoint(
+                        "aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
 
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -86,7 +87,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        Lambda2Endpoint endpoint = (Lambda2Endpoint)component.createEndpoint("aws2-lambda://myFunction");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint) component.createEndpoint("aws2-lambda://myFunction");
 
         assertEquals("myFunction", endpoint.getFunction());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
@@ -99,7 +100,8 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Lambda2Endpoint endpoint = (Lambda2Endpoint)component.createEndpoint("aws2-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
+                .createEndpoint("aws2-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("myFunction", endpoint.getFunction());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -113,8 +115,9 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Lambda2Endpoint endpoint = (Lambda2Endpoint)component
-            .createEndpoint("aws2-lambda://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
+                .createEndpoint(
+                        "aws2-lambda://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

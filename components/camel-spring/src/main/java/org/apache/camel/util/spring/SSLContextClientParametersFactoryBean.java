@@ -30,10 +30,10 @@ import org.springframework.context.ApplicationContextAware;
 @XmlType(propOrder = {})
 public class SSLContextClientParametersFactoryBean extends AbstractSSLContextClientParametersFactoryBean
         implements FactoryBean<SSLContextClientParameters>, ApplicationContextAware {
-    
+
     @XmlTransient
     private ApplicationContext applicationContext;
-    
+
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);

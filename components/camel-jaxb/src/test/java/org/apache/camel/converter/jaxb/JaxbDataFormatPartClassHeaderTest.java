@@ -72,12 +72,14 @@ public class JaxbDataFormatPartClassHeaderTest extends CamelTestSupport {
             public void configure() throws Exception {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Address.class.getPackage().getName());
-                jaxbDataFormat.setPartNamespace(new QName("http://www.camel.apache.org/jaxb/example/address/123", "addressToBeOverriden"));
+                jaxbDataFormat.setPartNamespace(
+                        new QName("http://www.camel.apache.org/jaxb/example/address/123", "addressToBeOverriden"));
                 jaxbDataFormat.setPrettyPrint(true);
 
                 from("direct:marshall")
                         .setHeader(JaxbConstants.JAXB_PART_CLASS, simple("org.apache.camel.example.Address"))
-                        .setHeader(JaxbConstants.JAXB_PART_NAMESPACE, simple("{http://www.camel.apache.org/jaxb/example/address/1}address"))
+                        .setHeader(JaxbConstants.JAXB_PART_NAMESPACE,
+                                simple("{http://www.camel.apache.org/jaxb/example/address/1}address"))
                         .marshal(jaxbDataFormat)
                         .to("mock:marshall");
             }

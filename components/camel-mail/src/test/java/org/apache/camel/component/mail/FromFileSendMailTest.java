@@ -42,7 +42,7 @@ public class FromFileSendMailTest extends CamelTestSupport {
 
         Mailbox mailbox = Mailbox.get("james@localhost");
         assertEquals(1, mailbox.size());
-        Object body = mailbox.get(0).getContent(); 
+        Object body = mailbox.get(0).getContent();
         assertEquals("Hi how are you", body);
         Object subject = mailbox.get(0).getSubject();
         assertEquals("Hello World", subject);
@@ -54,10 +54,10 @@ public class FromFileSendMailTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/mailtext?initialDelay=100&delay=100")
-                    .setHeader("Subject", constant("Hello World"))
-                    .setHeader("To", constant("james@localhost"))
-                    .setHeader("From", constant("claus@localhost"))
-                    .to("smtp://localhost?password=secret&username=claus&initialDelay=100&delay=100", "mock:result");
+                        .setHeader("Subject", constant("Hello World"))
+                        .setHeader("To", constant("james@localhost"))
+                        .setHeader("From", constant("claus@localhost"))
+                        .to("smtp://localhost?password=secret&username=claus&initialDelay=100&delay=100", "mock:result");
             }
         };
     }

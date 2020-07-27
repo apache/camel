@@ -65,12 +65,12 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").inOut("activemq:queue:foo?replyTo=myReplies")
-                    .to("mock:reply")
-                    .process(exchange -> {
-                        if (counter++ < 2) {
-                            throw new IllegalArgumentException("Damn");
-                        }
-                    }).to("mock:result");
+                        .to("mock:reply")
+                        .process(exchange -> {
+                            if (counter++ < 2) {
+                                throw new IllegalArgumentException("Damn");
+                            }
+                        }).to("mock:result");
 
                 from("activemq:queue:foo").to("mock:foo").transform(body().prepend("Bye "));
             }

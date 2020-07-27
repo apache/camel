@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  */
 public class SizedScheduledExecutorServiceTest {
-    
+
     @Test
     public void testSizedScheduledExecutorService() throws Exception {
         ScheduledThreadPoolExecutor delegate = new ScheduledThreadPoolExecutor(5);
-        
+
         SizedScheduledExecutorService sized = new SizedScheduledExecutorService(delegate, 2);
-        
+
         Runnable task = new Runnable() {
             @Override
             public void run() {
@@ -46,7 +46,7 @@ public class SizedScheduledExecutorServiceTest {
 
         sized.schedule(task, 2, TimeUnit.SECONDS);
         sized.schedule(task, 3, TimeUnit.SECONDS);
-        
+
         try {
             sized.schedule(task, 4, TimeUnit.SECONDS);
             fail("Should have thrown exception");

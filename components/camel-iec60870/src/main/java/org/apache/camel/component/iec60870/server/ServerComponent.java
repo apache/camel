@@ -43,7 +43,7 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
     @Override
     protected void applyDataModuleOptions(final ServerOptions options, final Map<String, Object> parameters) {
         if (parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS) instanceof DataModuleOptions) {
-            options.setDataModuleOptions((DataModuleOptions)parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS));
+            options.setDataModuleOptions((DataModuleOptions) parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS));
         }
     }
 
@@ -57,7 +57,8 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final ServerConnectionMultiplexor connection, final ObjectAddress address) {
+    protected Endpoint createEndpoint(
+            final String uri, final ServerConnectionMultiplexor connection, final ObjectAddress address) {
         return new ServerEndpoint(uri, this, connection, address);
     }
 

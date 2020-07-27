@@ -34,7 +34,8 @@ public class HistogramProducer extends AbstractMetricsProducer {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+            throws Exception {
         Message in = exchange.getIn();
         Histogram histogram = registry.histogram(metricsName);
         Long value = endpoint.getValue();

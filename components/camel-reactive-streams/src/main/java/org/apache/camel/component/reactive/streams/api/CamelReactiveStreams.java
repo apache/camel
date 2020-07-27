@@ -31,7 +31,8 @@ public final class CamelReactiveStreams {
     }
 
     public static CamelReactiveStreamsService get(CamelContext context) {
-        ReactiveStreamsComponent component = context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class);
+        ReactiveStreamsComponent component
+                = context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class);
 
         return ObjectHelper.notNull(component.getReactiveStreamsService(), "ReactiveStreamsService");
     }

@@ -47,8 +47,10 @@ import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_
  * For more info, see:
  * <ul>
  * <li><a href="https://github.com/elastic/beats">https://github.com/elastic/beats</a></li>
- * <li><a href="https://github.com/logstash-plugins/logstash-input-beats/blob/master/PROTOCOL.md">https://github.com/logstash-plugins/logstash-input-beats/blob/master/PROTOCOL.md</a></li>
- * <li><a href="https://github.com/elastic/logstash-forwarder/blob/master/PROTOCOL.md">https://github.com/elastic/logstash-forwarder/blob/master/PROTOCOL.md</a></li>
+ * <li><a href=
+ * "https://github.com/logstash-plugins/logstash-input-beats/blob/master/PROTOCOL.md">https://github.com/logstash-plugins/logstash-input-beats/blob/master/PROTOCOL.md</a></li>
+ * <li><a href=
+ * "https://github.com/elastic/logstash-forwarder/blob/master/PROTOCOL.md">https://github.com/elastic/logstash-forwarder/blob/master/PROTOCOL.md</a></li>
  * <li><a href="https://github.com/elastic/libbeat/issues/279">https://github.com/elastic/libbeat/issues/279</a></li>
  * </ul>
  */
@@ -98,7 +100,8 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
             }
         } finally {
             if (!frameDecoded) {
-                LOG.debug("Not enough data to decode a complete frame, retry when more data is available. Reader index was {}", in.readerIndex());
+                LOG.debug("Not enough data to decode a complete frame, retry when more data is available. Reader index was {}",
+                        in.readerIndex());
                 in.resetReaderIndex();
             }
         }
@@ -198,8 +201,8 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
     /**
      * Read a string that is prefixed by its length encoded by a 4 bytes integer.
      *
-     * @param in the buffer to consume
-     * @return the read string or {@code null} if not enough data available to read the whole string
+     * @param  in the buffer to consume
+     * @return    the read string or {@code null} if not enough data available to read the whole string
      */
     private String readLengthPrefixedString(ByteBuf in) {
         if (!in.isReadable(INT_LENGTH)) {

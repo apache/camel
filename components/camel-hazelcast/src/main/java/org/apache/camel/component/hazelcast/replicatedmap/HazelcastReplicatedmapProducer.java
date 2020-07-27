@@ -31,7 +31,8 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
 
     private final ReplicatedMap<Object, Object> cache;
 
-    public HazelcastReplicatedmapProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
+    public HazelcastReplicatedmapProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
+                                          String cacheName) {
         super(endpoint);
         this.cache = hazelcastInstance.getReplicatedMap(cacheName);
     }
@@ -76,7 +77,9 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

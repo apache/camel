@@ -22,7 +22,7 @@ import org.apache.camel.support.ExchangeHelper;
 /**
  * Implementation of the {@link SynchronizedExchange} interface optimized for single consumers.
  */
-public class SingleConsumerSynchronizedExchange extends  AbstractSynchronizedExchange {
+public class SingleConsumerSynchronizedExchange extends AbstractSynchronizedExchange {
 
     public SingleConsumerSynchronizedExchange(Exchange exchange) {
         super(exchange);

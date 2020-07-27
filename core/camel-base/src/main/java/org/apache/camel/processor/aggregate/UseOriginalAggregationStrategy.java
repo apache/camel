@@ -20,9 +20,9 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
 /**
- * An {@link AggregationStrategy} which just uses the original exchange
- * which can be needed when you want to preserve the original Exchange. For example when splitting an {@link Exchange}
- * and then you may want to keep routing using the original {@link Exchange}.
+ * An {@link AggregationStrategy} which just uses the original exchange which can be needed when you want to preserve
+ * the original Exchange. For example when splitting an {@link Exchange} and then you may want to keep routing using the
+ * original {@link Exchange}.
  *
  * @see org.apache.camel.processor.Splitter
  */
@@ -71,8 +71,8 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
             return newExchange.getException();
         } else {
             return (newExchange != null && newExchange.getException() != null)
-                ? newExchange.getException()
-                : oldExchange.getException();
+                    ? newExchange.getException()
+                    : oldExchange.getException();
         }
     }
 

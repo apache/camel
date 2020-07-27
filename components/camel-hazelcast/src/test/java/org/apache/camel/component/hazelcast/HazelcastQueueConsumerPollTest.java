@@ -36,10 +36,10 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
 
     @Mock
     private IQueue<String> queue;
-    
+
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
+        when(hazelcastInstance.<String> getQueue("foo")).thenReturn(queue);
     }
 
     @Override
@@ -55,10 +55,9 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
     @Test
     public void add() throws InterruptedException {
         when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn("foo");
-        
+
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(1);
-
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
 
@@ -70,7 +69,8 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo?queueConsumerMode=Poll", HazelcastConstants.QUEUE_PREFIX)).to("mock:result");
+                from(String.format("hazelcast-%sfoo?queueConsumerMode=Poll", HazelcastConstants.QUEUE_PREFIX))
+                        .to("mock:result");
             }
         };
     }

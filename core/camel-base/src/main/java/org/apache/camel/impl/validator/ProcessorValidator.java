@@ -50,12 +50,12 @@ public class ProcessorValidator extends Validator {
      * Perform content validation with specified type using Processor.
      *
      * @param message message to apply validation
-     * @param type 'from' data type
+     * @param type    'from' data type
      */
     @Override
     public void validate(Message message, DataType type) throws ValidationException {
         Exchange exchange = message.getExchange();
-        
+
         LOG.debug("Sending to validate processor '{}'", processor);
         // create a new exchange to use during validation to avoid side-effects on original exchange
         Exchange validateExchange = new DefaultExchange(exchange);
@@ -74,7 +74,7 @@ public class ProcessorValidator extends Validator {
 
         } catch (Exception e) {
             if (e instanceof ValidationException) {
-                throw (ValidationException)e;
+                throw (ValidationException) e;
             } else {
                 throw new ValidationException(String.format("Validation failed for '%s'", type), exchange, e);
             }
@@ -84,8 +84,8 @@ public class ProcessorValidator extends Validator {
     /**
      * Set processor to use
      *
-     * @param processor Processor
-     * @return this ProcessorTransformer instance
+     * @param  processor Processor
+     * @return           this ProcessorTransformer instance
      */
     public ProcessorValidator setProcessor(Processor processor) {
         this.processor = processor;
@@ -96,8 +96,7 @@ public class ProcessorValidator extends Validator {
     @Override
     public String toString() {
         if (validatorString == null) {
-            validatorString =
-                String.format("ProcessorValidator[type='%s', processor='%s']", getType(), processor);
+            validatorString = String.format("ProcessorValidator[type='%s', processor='%s']", getType(), processor);
         }
         return validatorString;
     }

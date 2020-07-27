@@ -60,21 +60,23 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = lookup(definition.getAggregationStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy)aggStrategy;
+                strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter
+                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
+                throw new IllegalArgumentException(
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
             }
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(camelContext);
+            ((CamelContextAware) strategy).setCamelContext(camelContext);
         }
 
         return strategy;

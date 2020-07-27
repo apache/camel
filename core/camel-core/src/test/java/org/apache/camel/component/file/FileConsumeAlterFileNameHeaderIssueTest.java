@@ -51,8 +51,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10&delete=true")
-                    // remove all headers
-                    .removeHeaders("*").to("mock:result");
+                        // remove all headers
+                        .removeHeaders("*").to("mock:result");
             }
         });
         context.start();
@@ -79,8 +79,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10&delete=true")
-                    // change file header
-                    .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
+                        // change file header
+                        .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
             }
         });
         context.start();
@@ -106,8 +106,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10")
-                    // remove all headers
-                    .removeHeaders("*").to("mock:result");
+                        // remove all headers
+                        .removeHeaders("*").to("mock:result");
             }
         });
         context.start();
@@ -134,8 +134,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10")
-                    // change file header
-                    .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
+                        // change file header
+                        .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
             }
         });
         context.start();

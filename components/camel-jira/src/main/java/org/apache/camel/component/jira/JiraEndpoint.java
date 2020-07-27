@@ -53,19 +53,26 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
 /**
  * Interact with JIRA issue tracker.
  * <p>
- * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK. Available endpoint URIs include:
+ * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK. Available endpoint URIs
+ * include:
  * <p>
- * CONSUMERS jira://newIssues (retrieve only new issues after the route is started) jira://newComments (retrieve only new comments after the route is started)
+ * CONSUMERS jira://newIssues (retrieve only new issues after the route is started) jira://newComments (retrieve only
+ * new comments after the route is started)
  * <p>
- * PRODUCERS jira://addIssue (add an issue) jira://addComment (add a comment on a given issue) jira://attach (add an attachment on a given issue) jira://deleteIssue (delete a given issue)
- * jira://updateIssue (update fields of a given issue) jira://transitionIssue (transition a status of a given issue) jira://watchers (add/remove watchers of a given issue)
+ * PRODUCERS jira://addIssue (add an issue) jira://addComment (add a comment on a given issue) jira://attach (add an
+ * attachment on a given issue) jira://deleteIssue (delete a given issue) jira://updateIssue (update fields of a given
+ * issue) jira://transitionIssue (transition a status of a given issue) jira://watchers (add/remove watchers of a given
+ * issue)
  * <p>
  * The endpoints will respond with jira-rest-java-client POJOs (Issue, Comment, etc.)
  * <p>
- * Note: Rather than webhooks, this endpoint relies on simple polling.  Reasons include: - concerned about reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the
- * types of payloads we're polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not publicly accessible where a webhook would fail
+ * Note: Rather than webhooks, this endpoint relies on simple polling. Reasons include: - concerned about
+ * reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the types of payloads we're
+ * polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not
+ * publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type", category = {Category.API, Category.REPORTING})
+@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type",
+             category = { Category.API, Category.REPORTING })
 public class JiraEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);
@@ -103,10 +110,12 @@ public class JiraEndpoint extends DefaultEndpoint {
         final URI jiraServerUri = URI.create(configuration.getJiraUrl());
         if (configuration.getUsername() != null) {
             LOG.info("Jira Basic authentication with username/password.");
-            client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(), configuration.getPassword());
+            client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
+                    configuration.getPassword());
         } else {
             LOG.info("Jira OAuth authentication.");
-            JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(configuration.getConsumerKey(),
+            JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
+                    configuration.getConsumerKey(),
                     configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
                     configuration.getJiraUrl());
             client = factory.create(jiraServerUri, oAuthHandler);
@@ -170,16 +179,18 @@ public class JiraEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers: AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue, Watchers. See this class javadoc description for more
-     * information.
+     * Operation to perform. Consumers: NewIssues, NewComments. Producers: AddIssue, AttachFile, DeleteIssue,
+     * TransitionIssue, UpdateIssue, Watchers. See this class javadoc description for more information.
      */
     public void setType(JiraType type) {
         this.type = type;
     }
 
     /**
-     * JQL is the query language from JIRA which allows you to retrieve the data you want. For example <tt>jql=project=MyProject</tt> Where MyProject is the product key in Jira. It is important to use
-     * the RAW() and set the JQL inside it to prevent camel parsing it, example: RAW(project in (MYP, COM) AND resolution = Unresolved)
+     * JQL is the query language from JIRA which allows you to retrieve the data you want. For example
+     * <tt>jql=project=MyProject</tt> Where MyProject is the product key in Jira. It is important to use the RAW() and
+     * set the JQL inside it to prevent camel parsing it, example: RAW(project in (MYP, COM) AND resolution =
+     * Unresolved)
      */
     public String getJql() {
         return jql;

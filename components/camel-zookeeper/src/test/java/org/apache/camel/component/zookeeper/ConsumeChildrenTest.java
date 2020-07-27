@@ -37,13 +37,13 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             public void configure() throws Exception {
                 from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/grimm?repeat=true&listChildren=true")
-                    .sort(body(), new NaturalSortComparator(Order.Descending))
-                    .to("mock:zookeeper-data");
+                        .sort(body(), new NaturalSortComparator(Order.Descending))
+                        .to("mock:zookeeper-data");
             }
-        }};
+        } };
     }
 
     @Test
@@ -59,11 +59,13 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"), createChildListing("hansel", "gretel"), createChildListing("gretel"),
-                                         createChildListing());
+        validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"),
+                createChildListing("hansel", "gretel"), createChildListing("gretel"),
+                createChildListing());
     }
 
-    private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected) throws CamelExchangeException, NoSuchHeaderException {
+    private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected)
+            throws CamelExchangeException, NoSuchHeaderException {
         int index = 0;
         for (Exchange received : mock.getReceivedExchanges()) {
             Watcher.Event.EventType expectedEvent;
@@ -74,7 +76,8 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
             }
             List<?> actual = received.getIn().getMandatoryBody(List.class);
             assertEquals(expected[index++], actual);
-            assertEquals(expectedEvent, ExchangeHelper.getMandatoryHeader(received,  ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE, Watcher.Event.EventType.class));
+            assertEquals(expectedEvent, ExchangeHelper.getMandatoryHeader(received, ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE,
+                    Watcher.Event.EventType.class));
             validateChildrenCountChangesEachTime(mock);
         }
     }
@@ -84,7 +87,7 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
         List<Exchange> received = mock.getReceivedExchanges();
         for (int x = 0; x < received.size(); x++) {
             Message zkm = mock.getReceivedExchanges().get(x).getIn();
-            int childCount = ((Stat)zkm.getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS)).getNumChildren();
+            int childCount = ((Stat) zkm.getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS)).getNumChildren();
             assertNotSame(lastChildCount, childCount, "Num of children did not change");
             lastChildCount = childCount;
         }

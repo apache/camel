@@ -47,13 +47,14 @@ public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport
         template.asyncSendBody("direct:bar", "Bye World");
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesStatsAsXml", new Object[] { false, true },
+                new String[] { "boolean", "boolean" });
         log.info(xml);
 
         // should be valid XML
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
         assertNotNull(doc);
-        
+
         int processors = doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
         assertEquals(5, processors);
     }

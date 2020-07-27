@@ -33,8 +33,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.BufferCaster.cast;
 
 /**
- * Some core java.nio based
- * <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
+ * Some core java.nio based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
 @Converter(generateLoader = true)
 public final class NIOConverter {
@@ -73,9 +72,9 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(File file) throws IOException {
         InputStream in = null;
         try {
-            byte[] buf = new byte[(int)file.length()];
+            byte[] buf = new byte[(int) file.length()];
             in = IOHelper.buffered(new FileInputStream(file));
-            int sizeLeft = (int)file.length();
+            int sizeLeft = (int) file.length();
             int offset = 0;
             while (sizeLeft > 0) {
                 int readSize = in.read(buf, offset, sizeLeft);

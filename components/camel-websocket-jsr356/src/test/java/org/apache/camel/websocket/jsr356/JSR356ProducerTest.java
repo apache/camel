@@ -66,7 +66,8 @@ public class JSR356ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:ensureServerModeSendsProperly").id("camel_consumer_acts_as_client").convertBodyTo(String.class)
-                    .to("websocket-jsr356://ws://localhost:" + configuration.getHttpPort() + "/existingserver?sessionCount=5");
+                        .to("websocket-jsr356://ws://localhost:" + configuration.getHttpPort()
+                            + "/existingserver?sessionCount=5");
             }
         };
     }

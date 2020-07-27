@@ -27,7 +27,8 @@ public class SpringHystrixRouteConfigTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixRouteConfigTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/hystrix/processor/SpringHystrixRouteConfigTest.xml");
     }
 
     @Test

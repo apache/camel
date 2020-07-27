@@ -108,7 +108,8 @@ public class DdbStreamConsumerTest {
     @Test
     public void itResumesFromAfterTheLastSeenSequenceNumberWhenAShardIteratorHasExpired() throws Exception {
         endpoint.getConfiguration().setIteratorType(ShardIteratorType.LATEST);
-        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_b_000", "shard_iterator_b_001");
+        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_b_000",
+                "shard_iterator_b_001");
         when(shardIteratorHandler.getShardIterator(ArgumentMatchers.anyString())).thenReturn("shard_iterator_b_001");
         when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class)))
                 .thenAnswer(recordsAnswer)
@@ -123,15 +124,18 @@ public class DdbStreamConsumerTest {
         verify(shardIteratorHandler, times(2)).getShardIterator(null); // first poll. Second poll, getRecords fails with an expired shard.
         verify(shardIteratorHandler).getShardIterator("9"); // second poll, with a resumeFrom.
         assertEquals("9", exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
-        assertEquals("11", exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
-        assertEquals("13", exchangeCaptor.getAllValues().get(2).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("11",
+                exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("13",
+                exchangeCaptor.getAllValues().get(2).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
     }
 
     @Test
     public void atSeqNumber35GivesFirstRecordWithSeq35() throws Exception {
         endpoint.getConfiguration().setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
         endpoint.getConfiguration().setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
-        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
+        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001",
+                "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.
             undertest.poll();
@@ -140,15 +144,18 @@ public class DdbStreamConsumerTest {
         ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
         verify(processor, times(2)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
 
-        assertEquals("35", exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
-        assertEquals("40", exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("35",
+                exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("40",
+                exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
     }
 
     @Test
     public void afterSeqNumber35GivesFirstRecordWithSeq40() throws Exception {
         endpoint.getConfiguration().setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
         endpoint.getConfiguration().setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
-        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
+        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001",
+                "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.
             undertest.poll();
@@ -157,7 +164,8 @@ public class DdbStreamConsumerTest {
         ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
         verify(processor, times(1)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
 
-        assertEquals("40", exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("40",
+                exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
     }
 
     private static Collection<Record> createRecords(String... sequenceNumbers) {
@@ -165,8 +173,7 @@ public class DdbStreamConsumerTest {
 
         for (String seqNum : sequenceNumbers) {
             results.add(new Record()
-                    .withDynamodb(new StreamRecord().withSequenceNumber(seqNum))
-            );
+                    .withDynamodb(new StreamRecord().withSequenceNumber(seqNum)));
         }
 
         return results;

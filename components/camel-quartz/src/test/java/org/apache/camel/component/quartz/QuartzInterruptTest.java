@@ -42,7 +42,8 @@ public class QuartzInterruptTest extends BaseQuartzTest {
                 QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
                 quartz.setInterruptJobsOnShutdown(true);
 
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=100").routeId("myRoute").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=100").routeId("myRoute")
+                        .to("mock:result");
             }
         };
     }

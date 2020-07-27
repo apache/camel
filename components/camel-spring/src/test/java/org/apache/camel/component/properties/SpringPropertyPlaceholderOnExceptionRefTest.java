@@ -27,7 +27,8 @@ public class SpringPropertyPlaceholderOnExceptionRefTest extends PropertiesCompo
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/properties/SpringPropertyPlaceholderOnExceptionRefTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/component/properties/SpringPropertyPlaceholderOnExceptionRefTest.xml");
     }
 
 }

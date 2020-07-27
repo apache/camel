@@ -40,13 +40,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration
 public class BindyConverterTest extends CamelTestSupport {
 
-    public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
     public static final String URI_DIRECT_THROUGH = "direct:through";
 
-    public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
-    public static final String URI_MOCK_THROUGH  = "mock:through-result";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
+    public static final String URI_MOCK_THROUGH = "mock:through-result";
 
     // *************************************************************************
     //
@@ -94,7 +94,7 @@ public class BindyConverterTest extends CamelTestSupport {
         uresult.assertIsSatisfied();
 
         // check the model
-        Exchange  exc  = uresult.getReceivedExchanges().get(0);
+        Exchange exc = uresult.getReceivedExchanges().get(0);
         DataModel data = exc.getIn().getBody(DataModel.class);
 
         assertEquals("0123456789", data.field1);
@@ -179,7 +179,7 @@ public class BindyConverterTest extends CamelTestSupport {
         tresult.expectedMessageCount(1);
         tresult.assertIsSatisfied();
 
-        Exchange exc  = tresult.getReceivedExchanges().get(0);
+        Exchange exc = tresult.getReceivedExchanges().get(0);
         return exc.getIn().getBody(AllCombinations.class);
     }
 
@@ -197,11 +197,11 @@ public class BindyConverterTest extends CamelTestSupport {
                         .type(BindyType.Fixed);
 
                 from(URI_DIRECT_MARSHALL)
-                    .marshal(bindy)
-                    .to(URI_MOCK_MARSHALL_RESULT);
+                        .marshal(bindy)
+                        .to(URI_MOCK_MARSHALL_RESULT);
                 from(URI_DIRECT_UNMARSHALL)
-                    .unmarshal().bindy(BindyType.Fixed, DataModel.class)
-                    .to(URI_MOCK_UNMARSHALL_RESULT);
+                        .unmarshal().bindy(BindyType.Fixed, DataModel.class)
+                        .to(URI_MOCK_UNMARSHALL_RESULT);
 
                 BindyDataFormat bindy2 = new BindyDataFormat()
                         .classType(AllCombinations.class)
@@ -222,7 +222,7 @@ public class BindyConverterTest extends CamelTestSupport {
 
     @FixedLengthRecord(length = 10, paddingChar = ' ')
     public static class DataModel {
-        @DataField(pos =  1, length = 10, trim = true)
+        @DataField(pos = 1, length = 10, trim = true)
         @BindyConverter(CustomConverter.class)
         public String field1;
     }

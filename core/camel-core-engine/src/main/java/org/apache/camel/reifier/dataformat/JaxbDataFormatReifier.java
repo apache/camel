@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
 
     public JaxbDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (JaxbDataFormat)definition);
+        super(camelContext, (JaxbDataFormat) definition);
     }
 
     @Override

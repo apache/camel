@@ -60,12 +60,14 @@ public class BonitaAPIUtil {
         return instance;
     }
 
-    public UploadFileResponse uploadFile(ProcessDefinitionResponse processDefinition,
-            FileInput file) throws Exception {
+    public UploadFileResponse uploadFile(
+            ProcessDefinitionResponse processDefinition,
+            FileInput file)
+            throws Exception {
         WebTarget resource = webTarget
-            .path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload")
-            .resolveTemplate("processName", processDefinition.getName())
-            .resolveTemplate("processVersion", processDefinition.getVersion());
+                .path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload")
+                .resolveTemplate("processName", processDefinition.getName())
+                .resolveTemplate("processVersion", processDefinition.getVersion());
 
         File tempFile = Files.createTempFile("tempFile", ".tmp").toFile();
         FileOutputStream fos = new FileOutputStream(tempFile);
@@ -82,8 +84,10 @@ public class BonitaAPIUtil {
                 entity(attachment, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
     }
 
-    public Map<String, Serializable> prepareInputs(ProcessDefinitionResponse processDefinition,
-            Map<String, Serializable> inputs) throws Exception {
+    public Map<String, Serializable> prepareInputs(
+            ProcessDefinitionResponse processDefinition,
+            Map<String, Serializable> inputs)
+            throws Exception {
         for (Entry<String, Serializable> entry : inputs.entrySet()) {
             if (entry.getValue() instanceof FileInput) {
                 FileInput file = (FileInput) entry.getValue();

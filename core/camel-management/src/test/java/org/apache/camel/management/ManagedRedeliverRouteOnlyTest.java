@@ -66,17 +66,17 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
                 context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 
                 onException(Exception.class).handled(true)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(4).logStackTrace(false)
-                    .setBody().constant("Error");
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(4).logStackTrace(false)
+                        .setBody().constant("Error");
 
                 from("direct:start")
-                    .to("mock:foo")
-                    .process(exchange -> {
-                        log.info("Invoking me");
+                        .to("mock:foo")
+                        .process(exchange -> {
+                            log.info("Invoking me");
 
-                        throw new IllegalArgumentException("Damn");
-                    }).id("myprocessor");
+                            throw new IllegalArgumentException("Damn");
+                        }).id("myprocessor");
             }
         };
     }

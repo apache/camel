@@ -49,7 +49,8 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
     private final CamelContext camelContext;
     private SSLContext sslContext;
 
-    public HttpServerSharedInitializerFactory(NettySharedHttpServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
+    public HttpServerSharedInitializerFactory(NettySharedHttpServerBootstrapConfiguration configuration,
+                                              HttpServerConsumerChannelFactory channelFactory,
                                               CamelContext camelContext) {
         this.configuration = configuration;
         this.channelFactory = channelFactory;

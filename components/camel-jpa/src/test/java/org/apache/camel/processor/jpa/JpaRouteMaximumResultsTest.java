@@ -49,7 +49,8 @@ public class JpaRouteMaximumResultsTest extends AbstractJpaTest {
             public void configure() {
                 from("direct:start").to("jpa://" + SendEmail.class.getName());
 
-                from("jpa://" + SendEmail.class.getName() + "?maximumResults=1&consumeDelete=false&delay=5000").to("mock:result");
+                from("jpa://" + SendEmail.class.getName() + "?maximumResults=1&consumeDelete=false&delay=5000")
+                        .to("mock:result");
             }
         };
     }

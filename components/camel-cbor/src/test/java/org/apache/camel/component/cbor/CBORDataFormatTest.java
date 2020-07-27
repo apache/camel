@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CBORDataFormatTest extends CamelTestSupport {
-    
+
     @Test
     void testMarshalAndUnmarshalMap() throws Exception {
         Map<String, Object> in = new HashMap<>();
@@ -44,7 +44,7 @@ public class CBORDataFormatTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     void testMarshalAndUnmarshalAuthor() throws Exception {
         Author auth = new Author();
@@ -58,7 +58,7 @@ public class CBORDataFormatTest extends CamelTestSupport {
         Object marshalled = template.requestBody("direct:in-auth", auth);
 
         template.sendBody("direct:back-auth", marshalled);
-        
+
         Author authReturned = mock.getExchanges().get(0).getIn().getBody(Author.class);
         assertEquals("Don", authReturned.getName());
         assertEquals("Winslow", authReturned.getSurname());
@@ -77,10 +77,10 @@ public class CBORDataFormatTest extends CamelTestSupport {
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
-                
+
                 CBORDataFormat spec = new CBORDataFormat();
                 spec.setUnmarshalType(Author.class);
-                
+
                 from("direct:in-auth").marshal(spec);
                 from("direct:back-auth").unmarshal(spec).to("mock:reverse-auth");
             }

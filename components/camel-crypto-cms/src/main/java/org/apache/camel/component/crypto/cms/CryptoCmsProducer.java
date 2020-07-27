@@ -34,10 +34,10 @@ public class CryptoCmsProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception { // NOPMD a
-                                                              // processor can
-                                                              // throw any
-                                                              // exception
-        // try {
+                                                             // processor can
+                                                             // throw any
+                                                             // exception
+                                                             // try {
         processor.process(exchange);
         // } catch (Exception e) {
         // exchange.setException(e);

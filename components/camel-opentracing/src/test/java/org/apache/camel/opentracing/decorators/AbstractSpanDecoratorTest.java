@@ -85,7 +85,7 @@ public class AbstractSpanDecoratorTest {
         Exchange exchange = Mockito.mock(Exchange.class);
 
         Mockito.when(exchange.isFailed()).thenReturn(true);
-        
+
         Exception e = new Exception("Test Message");
         Mockito.when(exchange.getException()).thenReturn(e);
 

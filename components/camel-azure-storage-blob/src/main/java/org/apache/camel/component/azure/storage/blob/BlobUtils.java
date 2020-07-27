@@ -40,7 +40,8 @@ public final class BlobUtils {
 
     public static Long getInputStreamLength(final InputStream inputStream) throws IOException {
         if (!inputStream.markSupported()) {
-            throw new IllegalArgumentException("Reset inputStream is not supported, provide an inputstream with supported mark/reset.");
+            throw new IllegalArgumentException(
+                    "Reset inputStream is not supported, provide an inputstream with supported mark/reset.");
         }
         final long length = IOUtils.toByteArray(inputStream).length;
         inputStream.reset();
@@ -49,12 +50,14 @@ public final class BlobUtils {
     }
 
     public static String getContainerName(final BlobConfiguration configuration, final Exchange exchange) {
-        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange)) ? configuration.getContainerName()
+        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange))
+                ? configuration.getContainerName()
                 : BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange);
     }
 
     public static String getBlobName(final BlobConfiguration configuration, final Exchange exchange) {
-        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobNameFromHeaders(exchange)) ? configuration.getBlobName()
+        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobNameFromHeaders(exchange))
+                ? configuration.getBlobName()
                 : BlobExchangeHeaders.getBlobNameFromHeaders(exchange);
     }
 

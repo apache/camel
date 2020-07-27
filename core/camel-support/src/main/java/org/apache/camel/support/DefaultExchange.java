@@ -349,7 +349,7 @@ public final class DefaultExchange implements ExtendedExchange {
         // lazy create
         if (out == null) {
             out = (in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
+                    ? ((MessageSupport) in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }
         return out;
@@ -402,7 +402,6 @@ public final class DefaultExchange implements ExtendedExchange {
             setIn(message);
         }
     }
-
 
     @Override
     public Exception getException() {
@@ -689,7 +688,7 @@ public final class DefaultExchange implements ExtendedExchange {
      */
     protected void configureMessage(Message message) {
         if (message instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport)message;
+            MessageSupport messageSupport = (MessageSupport) message;
             messageSupport.setExchange(this);
             messageSupport.setCamelContext(getContext());
         }

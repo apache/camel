@@ -39,8 +39,10 @@ public class AuthenticationValidationHandler extends BasicValidationHandler {
     }
 
     @Override
-    public void handle(final HttpRequest request, final HttpResponse response,
-                       final HttpContext context) throws HttpException, IOException {
+    public void handle(
+            final HttpRequest request, final HttpResponse response,
+            final HttpContext context)
+            throws HttpException, IOException {
         if (!getExpectedCredential().equals(context.getAttribute("creds"))) {
             response.setStatusCode(HttpStatus.SC_UNAUTHORIZED);
             return;

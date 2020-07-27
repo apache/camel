@@ -52,16 +52,19 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
  * Send requests to Facebook APIs supported by Facebook4J.
  *
  * It allows producing messages to retrieve, add, and delete posts, likes, comments, photos, albums, videos, photos,
- * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups, locations, etc.
+ * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups,
+ * locations, etc.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", category = {Category.SOCIAL})
+@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName",
+             category = { Category.SOCIAL })
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     private FacebookNameStyle nameStyle;
 
-    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = true)
+    @UriPath(name = "methodName", description = "What operation to perform")
+    @Metadata(required = true)
 
     private String method;
     private FacebookMethodsType methodName;
@@ -74,7 +77,8 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
     private List<FacebookMethodsType> candidates;
 
     public FacebookEndpoint(String uri, FacebookComponent facebookComponent,
-                            String remaining, FacebookEndpointConfiguration configuration) throws NoTypeConversionAvailableException {
+                            String remaining,
+                            FacebookEndpointConfiguration configuration) throws NoTypeConversionAvailableException {
         super(uri, facebookComponent);
         this.configuration = configuration;
         this.method = remaining;
@@ -150,7 +154,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
             // error if there are no candidates
             if (candidates.isEmpty()) {
                 throw new IllegalArgumentException(
-                    String.format("No matching operation for %s, with arguments %s", method, arguments));
+                        String.format("No matching operation for %s, with arguments %s", method, arguments));
             }
 
             if (nameStyle == null) {

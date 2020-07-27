@@ -18,11 +18,11 @@ package org.apache.camel.component.chatscript.utils;
 
 public final class ChatScriptConstants {
     public static final int DEFAULT_PORT = 1024;
-    public static final String URI_ERROR = "Invalid URI. Format must be of the form chatscript://host[:port]/botname?[options...]";
+    public static final String URI_ERROR
+            = "Invalid URI. Format must be of the form chatscript://host[:port]/botname?[options...]";
 
     private ChatScriptConstants() {
         // restrict instantiation
     }
-
 
 }

@@ -44,8 +44,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
  * <li>languages</li>
  * <li>others</li>
  * </ul>
- * And for each of those generates extra descriptors and schema files for easier
- * auto-discovery in Camel and tooling.
+ * And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling.
  */
 @Mojo(name = "prepare-components", threadSafe = true)
 public class PrepareComponentMojo extends AbstractGeneratorMojo {
@@ -102,12 +101,13 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     protected boolean prepareComponent;
 
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         configurerSourceOutDir = new File(project.getBasedir(), "src/generated/java");
         configurerResourceOutDir = componentOutDir
                 = dataFormatOutDir = languageOutDir
-                = otherOutDir = schemaOutDir
-                = new File(project.getBasedir(), "src/generated/resources");
+                        = otherOutDir = schemaOutDir
+                                = new File(project.getBasedir(), "src/generated/resources");
         buildDir = new File(project.getBuild().getDirectory());
         prepareComponent = Boolean.parseBoolean(project.getProperties().getProperty("camel-prepare-component", "false"));
         super.execute(project, projectHelper, buildContext);
@@ -116,10 +116,9 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -128,15 +127,19 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         }
 
         int count = 0;
-        count += new PackageComponentMojo(getLog(), project, projectHelper, buildDir,
-                        componentOutDir, buildContext).prepareComponent();
-        count += new PackageDataFormatMojo(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir,
-                        configurerResourceOutDir, schemaOutDir, buildContext).prepareDataFormat();
-        count += new PackageLanguageMojo(getLog(), project, projectHelper, buildDir, languageOutDir,
-                        schemaOutDir, buildContext).prepareLanguage();
+        count += new PackageComponentMojo(
+                getLog(), project, projectHelper, buildDir,
+                componentOutDir, buildContext).prepareComponent();
+        count += new PackageDataFormatMojo(
+                getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir,
+                configurerResourceOutDir, schemaOutDir, buildContext).prepareDataFormat();
+        count += new PackageLanguageMojo(
+                getLog(), project, projectHelper, buildDir, languageOutDir,
+                schemaOutDir, buildContext).prepareLanguage();
         if (count == 0 && new File(project.getBasedir(), "src/main/java").isDirectory()) {
             // okay its not any of the above then its other
-            new PackageOtherMojo(getLog(), project, projectHelper, otherOutDir,
+            new PackageOtherMojo(
+                    getLog(), project, projectHelper, otherOutDir,
                     schemaOutDir, buildContext).prepareOthers();
         }
 
@@ -168,20 +171,21 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
-            Pattern pattern = Pattern.compile("<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
+            Pattern pattern = Pattern.compile(
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
             Matcher matcher = pattern.matcher(between);
             TreeSet<String> dependencies = new TreeSet<>();
             while (matcher.find()) {
                 dependencies.add(matcher.group());
             }
             dependencies.add("<dependency>\n"
-                        + "\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
-                        + "\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                        + "\t\t</dependency>");
+                             + "\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
+                             + "\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                             + "\t\t</dependency>");
 
             final String updatedPom = before + startDependenciesMarker + "\n\t\t"
-                    + String.join("\n\t\t", dependencies) + "\n\t"
-                    + endDependenciesMarker + after;
+                                      + String.join("\n\t\t", dependencies) + "\n\t"
+                                      + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {

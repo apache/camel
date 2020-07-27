@@ -41,10 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration
 public class CamelGreeterFileDomTest {
     private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterFileDomTest.class);
-    
+
     private static final String REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-        + "<soap:Body><greetMe xmlns=\"http://apache.org/hello_world_soap_http/types\">"
-        + "<requestType>Willem</requestType></greetMe></soap:Body></soap:Envelope>";
+                                          + "<soap:Body><greetMe xmlns=\"http://apache.org/hello_world_soap_http/types\">"
+                                          + "<requestType>Willem</requestType></greetMe></soap:Body></soap:Envelope>";
     private static Endpoint endpoint;
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
@@ -54,7 +54,7 @@ public class CamelGreeterFileDomTest {
     }
     @Autowired
     protected CamelContext camelContext;
-    
+
     @BeforeAll
     public static void startServer() {
         // Start the Greeter Server
@@ -77,13 +77,13 @@ public class CamelGreeterFileDomTest {
     void testCamelGreeter() {
         TestSupport.deleteDirectory("target/greeter/response");
         assertNotNull(camelContext);
-        
+
         ProducerTemplate template = camelContext.createProducerTemplate();
         Object result = template.requestBody("direct:start", REQUEST);
         template.stop();
 
         assertEquals("Hello Willem", result, "The result is wrong.");
-        
+
         File file = new File("target/greeter/response/response.txt");
         assertTrue(file.exists(), "File " + file + " should be there.");
     }

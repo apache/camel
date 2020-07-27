@@ -38,10 +38,10 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
-                    .handled(true);
+                        .handled(true);
 
                 from("servlet:/hello?httpBinding.eagerCheckContentAvailable=true")
-                    .setProperty("myProperty").method(ServletSetExchangePropertyBeanTest.class, "throwException");
+                        .setProperty("myProperty").method(ServletSetExchangePropertyBeanTest.class, "throwException");
             }
         };
     }

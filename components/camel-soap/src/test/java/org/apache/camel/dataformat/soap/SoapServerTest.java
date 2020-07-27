@@ -72,9 +72,9 @@ public class SoapServerTest extends CamelTestSupport {
                         .handled(true) //
                         .marshal(soapDataFormat) //
                         .end() //
-                    .unmarshal(soapDataFormat) //
-                    .bean(serverBean) //
-                    .marshal(soapDataFormat);
+                        .unmarshal(soapDataFormat) //
+                        .bean(serverBean) //
+                        .marshal(soapDataFormat);
             }
         };
     }

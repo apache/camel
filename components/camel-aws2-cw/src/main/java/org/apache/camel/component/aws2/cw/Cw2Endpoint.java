@@ -41,7 +41,8 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS 2 CloudWatch", syntax = "aws2-cw:namespace", producerOnly = true, category = {Category.CLOUD, Category.MONITORING})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS 2 CloudWatch", syntax = "aws2-cw:namespace",
+             producerOnly = true, category = { Category.CLOUD, Category.MONITORING })
 public class Cw2Endpoint extends DefaultEndpoint {
 
     @UriParam
@@ -67,7 +68,8 @@ public class Cw2Endpoint extends DefaultEndpoint {
     public void doInit() throws Exception {
         super.doInit();
 
-        cloudWatchClient = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
+        cloudWatchClient
+                = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
     }
 
     @Override
@@ -104,7 +106,8 @@ public class Cw2Endpoint extends DefaultEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -112,7 +115,8 @@ public class Cw2Endpoint extends DefaultEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -129,8 +133,7 @@ public class Cw2Endpoint extends DefaultEndpoint {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

@@ -41,11 +41,11 @@ public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                        + OPERATION.toLowerCase() + "=" + ETH_LOG_OBSERVABLE + "&"
-                        + "fromBlock=earliest&"
-                        + "toBlock=latest&"
-                        + "address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952")
-                        .to("mock:result");
+                     + OPERATION.toLowerCase() + "=" + ETH_LOG_OBSERVABLE + "&"
+                     + "fromBlock=earliest&"
+                     + "toBlock=latest&"
+                     + "address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952")
+                             .to("mock:result");
             }
         };
     }

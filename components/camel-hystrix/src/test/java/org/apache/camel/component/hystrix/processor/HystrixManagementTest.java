@@ -110,9 +110,9 @@ public class HystrixManagementTest extends CamelTestSupport {
 
                 from("direct:start").routeId("start")
                         .circuitBreaker().id("myHystrix")
-                            .to("direct:foo")
+                        .to("direct:foo")
                         .onFallback()
-                            .transform().constant("Fallback message")
+                        .transform().constant("Fallback message")
                         .end()
                         .to("mock:result");
 

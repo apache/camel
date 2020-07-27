@@ -94,16 +94,16 @@ public class JmsJaxbTest extends CamelTestSupport {
                 errorHandler(deadLetterChannel("jms:queue:error").redeliveryDelay(0));
 
                 onException(InvalidOrderException.class).maximumRedeliveries(0).handled(true)
-                    .to("jms:queue:invalid");
+                        .to("jms:queue:invalid");
 
                 DataFormat jaxb = new JaxbDataFormat("org.apache.camel.itest.jms");
 
                 from("jms:queue:in")
-                    .unmarshal(jaxb)
-                    .choice()
+                        .unmarshal(jaxb)
+                        .choice()
                         .when().method(JmsJaxbTest.class, "isWine").to("jms:queue:wine")
                         .otherwise().throwException(new InvalidOrderException("We only like wine"))
-                    .end();
+                        .end();
 
                 from("jms:queue:wine").to("mock:wine");
                 from("jms:queue:error").to("mock:error");

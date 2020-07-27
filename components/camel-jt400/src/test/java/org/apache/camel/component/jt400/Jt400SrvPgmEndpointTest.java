@@ -40,9 +40,9 @@ public class Jt400SrvPgmEndpointTest extends Jt400TestSupport {
     public void setUp() throws Exception {
         super.setUp();
         endpoint = (Jt400Endpoint) resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
-                + "@" + HOST + PGM
-                + "?connectionPool=#mockPool&guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255"
-                + "&procedureName=" + PROCEDURE);
+                                                            + "@" + HOST + PGM
+                                                            + "?connectionPool=#mockPool&guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255"
+                                                            + "&procedureName=" + PROCEDURE);
     }
 
     /**

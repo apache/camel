@@ -53,7 +53,7 @@ import org.apache.maven.project.MavenProject;
  * Injects EIP documentation to camel schema.
  */
 @Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-        defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+      defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class EipDocumentationEnricherMojo extends AbstractMojo {
 
     /**
@@ -203,8 +203,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         saveToFile(document, outputCamelSchemaFile, XmlHelper.buildTransformer());
     }
 
-    private boolean jsonFileExistsForElement(Map<String, File> jsonFiles,
-                                             String elementName) {
+    private boolean jsonFileExistsForElement(
+            Map<String, File> jsonFiles,
+            String elementName) {
         return jsonFiles.containsKey(elementName);
     }
 
@@ -219,11 +220,13 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     /**
      * Recursively injects documentation to complex type attributes and it's parents.
      */
-    private void injectAttributesDocumentation(DomFinder domFinder,
-                                               DocumentationEnricher documentationEnricher,
-                                               File jsonFile,
-                                               String type,
-                                               Set<String> injectedTypes) throws XPathExpressionException {
+    private void injectAttributesDocumentation(
+            DomFinder domFinder,
+            DocumentationEnricher documentationEnricher,
+            File jsonFile,
+            String type,
+            Set<String> injectedTypes)
+            throws XPathExpressionException {
         if (injectedTypes.contains(type)) {
             return;
         }
@@ -262,7 +265,8 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return baseType.replace("tns:", "");
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer) throws IOException, TransformerException {
+    private void saveToFile(Document document, File outputFile, Transformer transformer)
+            throws IOException, TransformerException {
         try (FileOutputStream os = new FileOutputStream(outputFile)) {
             StreamResult result = new StreamResult(os);
             DOMSource source = new DOMSource(document);

@@ -32,8 +32,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("azure-blob")
 public class BlobServiceComponent extends DefaultComponent {
 
-    public static final String MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE =
-            "One of azureBlobClient, credentials or both credentialsAccountName and credentialsAccountKey must be specified";
+    public static final String MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE
+            = "One of azureBlobClient, credentials or both credentialsAccountName and credentialsAccountKey must be specified";
 
     @Metadata(label = "advanced")
     private BlobServiceConfiguration configuration;
@@ -48,7 +48,8 @@ public class BlobServiceComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final BlobServiceConfiguration configuration = this.configuration != null ? this.configuration.copy() : new BlobServiceConfiguration();
+        final BlobServiceConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new BlobServiceConfiguration();
 
         String[] parts = null;
         if (remaining != null) {
@@ -97,7 +98,8 @@ public class BlobServiceComponent extends DefaultComponent {
         CloudBlob client = cfg.getAzureBlobClient();
 
         //if no azureBlobClient is provided fallback to credentials
-        StorageCredentials creds = client == null ? cfg.getAccountCredentials()
+        StorageCredentials creds = client == null
+                ? cfg.getAccountCredentials()
                 : client.getServiceClient().getCredentials();
         if ((creds == null || creds instanceof StorageCredentialsAnonymous) && !cfg.isPublicForRead()) {
             throw new IllegalArgumentException(MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);

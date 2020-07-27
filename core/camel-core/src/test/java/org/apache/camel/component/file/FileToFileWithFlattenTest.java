@@ -51,7 +51,8 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true").to("file://target/data/flatten-out", "mock:result");
+                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true")
+                        .to("file://target/data/flatten-out", "mock:result");
             }
         });
         context.start();
@@ -77,7 +78,8 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true").to("file://target/data/flatten-out?flatten=true", "mock:result");
+                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true")
+                        .to("file://target/data/flatten-out?flatten=true", "mock:result");
             }
         });
         context.start();

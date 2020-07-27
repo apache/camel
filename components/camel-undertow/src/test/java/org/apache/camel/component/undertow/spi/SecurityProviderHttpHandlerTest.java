@@ -33,7 +33,7 @@ public class SecurityProviderHttpHandlerTest extends AbstractSecurityProviderTes
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext =  super.createCamelContext();
+        CamelContext camelContext = super.createCamelContext();
         securityConfiguration.setWrapHttpHandler(f -> null);
         return camelContext;
     }

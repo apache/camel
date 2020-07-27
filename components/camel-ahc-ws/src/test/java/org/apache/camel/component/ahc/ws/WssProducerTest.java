@@ -31,14 +31,15 @@ import org.junit.jupiter.api.Disabled;
 @Disabled("Not yet migrated to work with Jetty 9")
 public class WssProducerTest extends WsProducerTestBase {
     protected static final String PW = "changeit";
-    
+
     @Override
     protected Connector getConnector() throws Exception {
 
         SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setSslContext(defineSSLContextServerParameters().createSSLContext(camelContext));
 
-        ServerConnector https = new ServerConnector(server,
+        ServerConnector https = new ServerConnector(
+                server,
                 new SslConnectionFactory(sslContextFactory, null));
         return https;
     }

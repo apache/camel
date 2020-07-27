@@ -46,10 +46,10 @@ public class CamelExchangeException extends CamelException {
      * <p/>
      * All fields is optional so you can pass in only an exception, or just a message etc. or any combination.
      *
-     * @param message  the message
-     * @param exchange the exchange
-     * @param cause    the caused exception
-     * @return an error message (without stacktrace from exception)
+     * @param  message  the message
+     * @param  exchange the exchange
+     * @param  cause    the caused exception
+     * @return          an error message (without stacktrace from exception)
      */
     public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
         StringBuilder sb = new StringBuilder();

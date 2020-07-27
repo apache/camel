@@ -82,18 +82,18 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&reuseChannel=true").id("client")
-                    .process(new Processor() {
-                        public void process(final Exchange exchange) {
-                            final Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
-                            channels.add(channel);
-                            assertTrue(channel.isActive(), "Should be active");
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                final Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
+                                channels.add(channel);
+                                assertTrue(channel.isActive(), "Should be active");
 
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody("Bye " + body);
-                        }
-                    })
-                    .to("mock:receive")
-                    .noAutoStartup();
+                                String body = exchange.getIn().getBody(String.class);
+                                exchange.getOut().setBody("Bye " + body);
+                            }
+                        })
+                        .to("mock:receive")
+                        .noAutoStartup();
             }
         };
     }
@@ -115,7 +115,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
 
             bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(new ServerInitializer());
+                    .childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
             channel = cf.channel();
@@ -165,7 +165,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
 
             // Add the text line codec combination first,
             pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                8192, Delimiters.lineDelimiter()));
+                    8192, Delimiters.lineDelimiter()));
             // the encoder and decoder are static as these are sharable
             pipeline.addLast("decoder", DECODER);
             pipeline.addLast("encoder", ENCODER);

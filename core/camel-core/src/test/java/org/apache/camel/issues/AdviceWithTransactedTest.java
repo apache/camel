@@ -51,8 +51,8 @@ public class AdviceWithTransactedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:advice")
-                    // use policy instead of transacted (but its similar)
-                    .policy(new MyDummyPolicy()).log("Advice ${body}").to("mock:result");
+                        // use policy instead of transacted (but its similar)
+                        .policy(new MyDummyPolicy()).log("Advice ${body}").to("mock:result");
             }
         };
     }

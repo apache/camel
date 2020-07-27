@@ -37,7 +37,8 @@ public class TelegramComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private AsyncHttpClientConfig clientConfig;
 
-    @Metadata(label = "advanced", defaultValue = BOT_API_DEFAULT_URL, description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
+    @Metadata(label = "advanced", defaultValue = BOT_API_DEFAULT_URL,
+              description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
     private String baseUri = BOT_API_DEFAULT_URL;
 
     public TelegramComponent() {
@@ -65,7 +66,8 @@ public class TelegramComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         if (endpoint.getConfiguration().getAuthorizationToken() == null) {
-            throw new IllegalArgumentException("AuthorizationToken must be configured on either component or endpoint for telegram: " + uri);
+            throw new IllegalArgumentException(
+                    "AuthorizationToken must be configured on either component or endpoint for telegram: " + uri);
         }
 
         return endpoint;

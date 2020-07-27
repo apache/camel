@@ -43,7 +43,6 @@ public class XQueryFilterTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<person name='Hiram' city='Tampa'/>");
 
-
         resultEndpoint.assertIsSatisfied();
     }
 

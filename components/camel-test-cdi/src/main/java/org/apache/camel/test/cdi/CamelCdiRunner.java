@@ -46,7 +46,8 @@ public class CamelCdiRunner extends BlockJUnit4ClassRunner {
     }
 
     @Override
-    protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) {
+    protected void validatePublicVoidNoArgMethods(
+            Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) {
         // Overrides the default validation to allow test methods with
         // parameters so that we can inject CDI references.
         List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);

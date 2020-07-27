@@ -51,8 +51,8 @@ public class SoroushResponse {
     @Override
     public String toString() {
         return "SoroushResponse{"
-                + "resultCode=" + resultCode
-                + ", resultMessage='" + resultMessage + '\''
-                + '}';
+               + "resultCode=" + resultCode
+               + ", resultMessage='" + resultMessage + '\''
+               + '}';
     }
 }

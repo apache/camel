@@ -29,7 +29,7 @@ public class SpringSimpleNewlineTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/springSimpleNewline.xml");
     }
-    
+
     @Test
     public void testSimpleNewline() {
         String result = template.requestBody("direct:start", "Camel", String.class);

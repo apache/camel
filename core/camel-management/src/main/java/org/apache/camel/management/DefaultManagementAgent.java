@@ -96,7 +96,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             values.put(JmxSystemPropertyKeys.MBEAN_DOMAIN, mBeanObjectDomainName);
         }
         if (System.getProperty(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID) != null) {
-            onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
+            onlyRegisterProcessorWithCustomId
+                    = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
             values.put(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID, onlyRegisterProcessorWithCustomId);
         }
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
@@ -128,7 +129,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             values.put(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED, endpointRuntimeStatisticsEnabled);
         }
         if (System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL) != null) {
-            statisticsLevel = camelContext.getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class, System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
+            statisticsLevel = camelContext.getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class,
+                    System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
             values.put(JmxSystemPropertyKeys.STATISTICS_LEVEL, statisticsLevel);
         }
         if (System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN) != null) {
@@ -399,7 +401,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration)
-        throws JMException {
+            throws JMException {
 
         // have we already registered the bean, there can be shared instances in the camel routes
         boolean exists = isRegistered(name);

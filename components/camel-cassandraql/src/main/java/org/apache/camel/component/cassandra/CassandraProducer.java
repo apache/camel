@@ -64,7 +64,7 @@ public class CassandraProducer extends DefaultProducer {
 
     @Override
     public CassandraEndpoint getEndpoint() {
-        return (CassandraEndpoint)super.getEndpoint();
+        return (CassandraEndpoint) super.getEndpoint();
     }
 
     public boolean isPrepareStatements() {
@@ -80,10 +80,10 @@ public class CassandraProducer extends DefaultProducer {
         } else if (objectArrayClazz.isInstance(cqlParamsObj)) {
             cqlParams = objectArrayClazz.cast(cqlParamsObj);
         } else if (cqlParamsObj instanceof Collection) {
-            final Collection cqlParamsColl = (Collection)cqlParamsObj;
+            final Collection cqlParamsColl = (Collection) cqlParamsObj;
             cqlParams = cqlParamsColl.toArray();
         } else {
-            cqlParams = new Object[] {cqlParamsObj};
+            cqlParams = new Object[] { cqlParamsObj };
         }
         return cqlParams;
     }
@@ -94,7 +94,7 @@ public class CassandraProducer extends DefaultProducer {
     private ResultSet execute(Message message) {
         Object messageCql = message.getHeader(CassandraConstants.CQL_QUERY);
         // Convert Empty string to null
-        if (messageCql instanceof String && ((String)messageCql).isEmpty()) {
+        if (messageCql instanceof String && ((String) messageCql).isEmpty()) {
             messageCql = null;
         }
         Object[] cqlParams = getCqlParams(message);
@@ -120,8 +120,8 @@ public class CassandraProducer extends DefaultProducer {
             lPreparedStatement = this.preparedStatement;
         } else if (messageCql instanceof String) {
             // Message CQL
-            lPreparedStatement = getEndpoint().prepareStatement((String)messageCql);
-        }  else if (messageCql instanceof SimpleStatement) {
+            lPreparedStatement = getEndpoint().prepareStatement((String) messageCql);
+        } else if (messageCql instanceof SimpleStatement) {
             // Message Statement
             lPreparedStatement = getEndpoint().getSession().prepare((SimpleStatement) messageCql);
         } else {
@@ -147,7 +147,7 @@ public class CassandraProducer extends DefaultProducer {
             cql = getEndpoint().getCql();
         } else if (messageCql instanceof String) {
             // Message CQL
-            cql = (String)messageCql;
+            cql = (String) messageCql;
         } else if (messageCql instanceof SimpleStatement) {
             // Message Statement
             statement = (SimpleStatement) messageCql;

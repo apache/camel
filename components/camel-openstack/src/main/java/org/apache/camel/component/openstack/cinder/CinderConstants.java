@@ -36,6 +36,7 @@ public final class CinderConstants extends OpenstackConstants {
 
     public static final String GET_ALL_TYPES = "getAllTypes";
 
-    private CinderConstants() { }
+    private CinderConstants() {
+    }
 
 }

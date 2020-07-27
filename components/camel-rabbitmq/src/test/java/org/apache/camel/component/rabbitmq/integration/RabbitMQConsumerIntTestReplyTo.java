@@ -104,7 +104,8 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+                throws IOException {
             received.add(new String(body));
         }
     }

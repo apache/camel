@@ -22,13 +22,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Spring based integration test for the smpp component. To run this test, ensure that
- * the SMSC is running on:
- * host:     localhost
- * port:     2775
- * user:     smppclient
- * password: password
- * <br/>
+ * Spring based integration test for the smpp component. To run this test, ensure that the SMSC is running on: host:
+ * localhost port: 2775 user: smppclient password: password <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
  */
 @Disabled("Must be manually tested")
@@ -45,7 +40,7 @@ public class SmppProducerReconnectIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producerr");
+                        .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producerr");
             }
         };
     }

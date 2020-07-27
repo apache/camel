@@ -109,9 +109,9 @@ public class Olingo4Index {
      */
     public void index(Object result) {
         if (result instanceof ClientEntitySet) {
-            index((ClientEntitySet)result);
+            index((ClientEntitySet) result);
         } else if (result instanceof Iterable) {
-            index((Iterable<?>)result);
+            index((Iterable<?>) result);
         } else {
             indexDefault(result);
         }
@@ -120,9 +120,9 @@ public class Olingo4Index {
     @SuppressWarnings("unchecked")
     public Object filterResponse(Object response) {
         if (response instanceof ClientEntitySet) {
-            response = filter((ClientEntitySet)response);
+            response = filter((ClientEntitySet) response);
         } else if (response instanceof Iterable) {
-            response = filter((Iterable<Object>)response);
+            response = filter((Iterable<Object>) response);
         } else if (response.getClass().isArray()) {
             List<Object> result = new ArrayList<>();
             final int size = Array.getLength(response);

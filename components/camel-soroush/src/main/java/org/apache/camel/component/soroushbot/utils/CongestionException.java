@@ -29,11 +29,12 @@ public class CongestionException extends RuntimeException {
     public SoroushMessage getSoroushMessage() {
         return soroushMessage;
     }
+
     @Override
     public String getLocalizedMessage() {
         return "MaximumConnectionRetryReachedException{"
-                + "soroushMessage=" + soroushMessage
-                + ", message=" + getMessage()
-                + "} ";
+               + "soroushMessage=" + soroushMessage
+               + ", message=" + getMessage()
+               + "} ";
     }
 }

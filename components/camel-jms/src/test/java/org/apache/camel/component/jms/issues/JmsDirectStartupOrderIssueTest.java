@@ -74,10 +74,10 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:foo").routeId("amq").startupOrder(100).autoStartup(false)
-                    .to("direct:foo");
+                        .to("direct:foo");
 
                 from("direct:foo").routeId("direct").startupOrder(1)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

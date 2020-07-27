@@ -51,12 +51,12 @@ public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport impl
             @Override
             public void configure() throws Exception {
                 from("seda:foo")
-                    .dynamicRouter().method(DynamicRouterConvertBodyToIssueTest.class, "slip")
-                    .to("mock:result");
+                        .dynamicRouter().method(DynamicRouterConvertBodyToIssueTest.class, "slip")
+                        .to("mock:result");
 
                 from("direct:while_body")
-                    .process(new DynamicRouterConvertBodyToIssueTest())
-                    .convertBodyTo(String.class);
+                        .process(new DynamicRouterConvertBodyToIssueTest())
+                        .convertBodyTo(String.class);
             }
         };
     }

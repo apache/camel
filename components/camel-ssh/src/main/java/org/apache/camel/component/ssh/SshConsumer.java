@@ -60,7 +60,8 @@ public class SshConsumer extends ScheduledPollConsumer {
 
         String knownHostResource = endpoint.getKnownHostsResource();
         if (knownHostResource != null) {
-            client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(exchange.getContext(), knownHostResource,
+            client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(
+                    exchange.getContext(), knownHostResource,
                     endpoint.isFailOnUnknownHost()));
         }
 

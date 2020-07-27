@@ -463,11 +463,11 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     public void testIsGetter() throws Exception {
         ExampleBean bean = new ExampleBean();
 
-        Method name = bean.getClass().getMethod("getName", (Class<?>[])null);
+        Method name = bean.getClass().getMethod("getName", (Class<?>[]) null);
         assertEquals(true, IntrospectionSupport.isGetter(name));
         assertEquals(false, IntrospectionSupport.isSetter(name));
 
-        Method price = bean.getClass().getMethod("getPrice", (Class<?>[])null);
+        Method price = bean.getClass().getMethod("getPrice", (Class<?>[]) null);
         assertEquals(true, IntrospectionSupport.isGetter(price));
         assertEquals(false, IntrospectionSupport.isSetter(price));
     }
@@ -489,19 +489,19 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     public void testOtherIsGetter() throws Exception {
         OtherExampleBean bean = new OtherExampleBean();
 
-        Method customerId = bean.getClass().getMethod("getCustomerId", (Class<?>[])null);
+        Method customerId = bean.getClass().getMethod("getCustomerId", (Class<?>[]) null);
         assertEquals(true, IntrospectionSupport.isGetter(customerId));
         assertEquals(false, IntrospectionSupport.isSetter(customerId));
 
-        Method goldCustomer = bean.getClass().getMethod("isGoldCustomer", (Class<?>[])null);
+        Method goldCustomer = bean.getClass().getMethod("isGoldCustomer", (Class<?>[]) null);
         assertEquals(true, IntrospectionSupport.isGetter(goldCustomer));
         assertEquals(false, IntrospectionSupport.isSetter(goldCustomer));
 
-        Method silverCustomer = bean.getClass().getMethod("isSilverCustomer", (Class<?>[])null);
+        Method silverCustomer = bean.getClass().getMethod("isSilverCustomer", (Class<?>[]) null);
         assertEquals(true, IntrospectionSupport.isGetter(silverCustomer));
         assertEquals(false, IntrospectionSupport.isSetter(silverCustomer));
 
-        Method company = bean.getClass().getMethod("getCompany", (Class<?>[])null);
+        Method company = bean.getClass().getMethod("getCompany", (Class<?>[]) null);
         assertEquals(true, IntrospectionSupport.isGetter(company));
         assertEquals(false, IntrospectionSupport.isSetter(company));
 
@@ -556,7 +556,8 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testFindSetterMethodsOrderedByParameterType() throws Exception {
-        List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false, false, false);
+        List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean",
+                false, false, false);
 
         assertNotNull(setters);
         assertEquals(2, setters.size());

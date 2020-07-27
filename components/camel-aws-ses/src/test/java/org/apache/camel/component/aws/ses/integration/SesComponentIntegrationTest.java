@@ -51,7 +51,7 @@ public class SesComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+                        .to("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy");
             }
         };
     }

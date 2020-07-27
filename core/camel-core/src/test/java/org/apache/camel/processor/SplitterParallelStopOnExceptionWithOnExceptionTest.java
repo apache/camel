@@ -84,7 +84,8 @@ public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextT
             public void configure() throws Exception {
                 onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
-                from("direct:start").split(body().tokenize(",")).stopOnException().parallelProcessing().process(new MyProcessor()).to("mock:split");
+                from("direct:start").split(body().tokenize(",")).stopOnException().parallelProcessing()
+                        .process(new MyProcessor()).to("mock:split");
             }
         };
     }

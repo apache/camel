@@ -60,10 +60,10 @@ public class PropertiesConfigurationTest {
     @Deployment
     public static JavaArchive createDeployment() {
         return Maven.configureResolver().workOffline()
-            .loadPomFromFile("pom.xml")
-            .resolve("org.apache.camel:camel-cdi")
-            .withoutTransitivity()
-            .asSingle(JavaArchive.class);
+                .loadPomFromFile("pom.xml")
+                .resolve("org.apache.camel:camel-cdi")
+                .withoutTransitivity()
+                .asSingle(JavaArchive.class);
     }
 
     @Test

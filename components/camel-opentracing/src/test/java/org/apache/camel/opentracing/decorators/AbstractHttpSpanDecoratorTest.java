@@ -259,7 +259,7 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(exchange.getMessage()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class)).thenReturn(200);
-        
+
         SpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
             public String getComponent() {

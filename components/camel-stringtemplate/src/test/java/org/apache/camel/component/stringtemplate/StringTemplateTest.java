@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringTemplateTest extends CamelTestSupport {
-    
+
     @Test
     public void test() throws Exception {
         Exchange response = template.request("direct:a", exchange -> {
@@ -35,12 +35,13 @@ public class StringTemplateTest extends CamelTestSupport {
             exchange.getIn().setHeader("name", "Christian");
             exchange.setProperty("item", "7");
         });
-        
+
         assertEquals("Dear Christian. You ordered item 7 on Monday.", response.getMessage().getBody());
-        assertEquals("org/apache/camel/component/stringtemplate/template.tm", response.getMessage().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
+        assertEquals("org/apache/camel/component/stringtemplate/template.tm",
+                response.getMessage().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
         assertEquals("Christian", response.getMessage().getHeader("name"));
     }
-    
+
     @Test
     public void testVariableMap() throws Exception {
         Exchange exchange = template.request("direct:a", exchange1 -> {
@@ -65,8 +66,8 @@ public class StringTemplateTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").
-                        to("string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true&allowContextMapAll=true");
+                from("direct:a").to(
+                        "string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

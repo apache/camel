@@ -86,7 +86,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("healthyRoute")
-                    .setBody(constant("Hello Camel MicroProfile Health"));
+                        .setBody(constant("Hello Camel MicroProfile Health"));
             }
         };
     }

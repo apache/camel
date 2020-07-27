@@ -136,7 +136,8 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
-    public CamelEvent createExchangeFailureHandlingEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
+    public CamelEvent createExchangeFailureHandlingEvent(
+            Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
         if (handler instanceof DelegateProcessor) {
@@ -146,8 +147,9 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
-    public CamelEvent createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler,
-                                                        boolean deadLetterChannel, String deadLetterUri) {
+    public CamelEvent createExchangeFailureHandledEvent(
+            Exchange exchange, Processor failureHandler,
+            boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
         if (handler instanceof DelegateProcessor) {

@@ -55,7 +55,8 @@ public class StatefulQuartzRouteTest extends BaseQuartzTest {
             @Override
             public void configure() {
                 // START SNIPPET: example
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1&stateful=true").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1&stateful=true")
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

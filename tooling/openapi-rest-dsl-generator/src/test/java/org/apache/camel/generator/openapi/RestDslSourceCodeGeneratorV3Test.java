@@ -66,11 +66,11 @@ public class RestDslSourceCodeGeneratorV3Test {
         final Oas30Document openapi = new Oas30Document();
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
 
         openapi.info = new Oas30Info();
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class RestDslSourceCodeGeneratorV3Test {
         openapi.info = info;
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class RestDslSourceCodeGeneratorV3Test {
         openapi.addServer("http://localhost", "test server url");
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class RestDslSourceCodeGeneratorV3Test {
         openapi.addServer("http://localhost:8080", "test server url");
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 
     @Test
@@ -107,6 +107,6 @@ public class RestDslSourceCodeGeneratorV3Test {
         final Oas30Document openapi = new Oas30Document();
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 }

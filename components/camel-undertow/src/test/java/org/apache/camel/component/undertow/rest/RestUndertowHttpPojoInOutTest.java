@@ -34,7 +34,7 @@ public class RestUndertowHttpPojoInOutTest extends BaseUndertowTest {
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
-    
+
     @Test
     public void testUndertowGetRequest() throws Exception {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/lives", null, String.class);
@@ -54,18 +54,18 @@ public class RestUndertowHttpPojoInOutTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    // just return the default country here
-                    .get("lives").to("direct:start")
-                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+                        // just return the default country here
+                        .get("lives").to("direct:start")
+                        .post("lives").type(UserPojo.class).outType(CountryPojo.class)
                         .route()
                         .bean(new UserService(), "livesWhere");
-            
+
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");
                 country.setCountry("England");
-                
+
                 from("direct:start").transform().constant(country);
-                
+
             }
         };
     }

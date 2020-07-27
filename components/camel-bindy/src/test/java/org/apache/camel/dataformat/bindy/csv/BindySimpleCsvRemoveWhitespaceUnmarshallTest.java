@@ -30,7 +30,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @ContextConfiguration
 @CamelSpringTest
 public class BindySimpleCsvRemoveWhitespaceUnmarshallTest {
@@ -47,16 +46,17 @@ public class BindySimpleCsvRemoveWhitespaceUnmarshallTest {
     @Test
     public void testUnMarshallMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
-        
+
         template.sendBody(record);
-        
+
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.assertExchangeReceived(0);
         assertEquals(2, exchange.getIn().getBody(List.class).size());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassandremovewhitespace.Order.class);
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
+                org.apache.camel.dataformat.bindy.model.simple.oneclassandremovewhitespace.Order.class);
 
         @Override
         public void configure() {

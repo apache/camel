@@ -97,10 +97,13 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // test topic subscription
                 // from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&"
-                from("salesforce:CamelTestTopic?notifyForFields=ALL&" + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
-                     + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").to("mock:CamelTestTopic");
+                from("salesforce:CamelTestTopic?notifyForFields=ALL&"
+                     + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                     + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
+                             .to("mock:CamelTestTopic");
 
-                from("salesforce:CamelTestTopic?rawPayload=true&notifyForFields=ALL&" + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                from("salesforce:CamelTestTopic?rawPayload=true&notifyForFields=ALL&"
+                     + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
                      + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").to("mock:RawPayloadCamelTestTopic");
 
                 // route for creating test record
@@ -108,7 +111,8 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // route for finding test topic
                 from("direct:query")
-                    .to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&" + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
+                        .to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&"
+                            + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
 
                 // route for removing test record
                 from("direct:deleteSObjectWithId").to("salesforce:deleteSObjectWithId?sObjectIdName=Name");

@@ -51,8 +51,7 @@ public class SplunkEvent implements Serializable {
      */
     public static final String COMMON_DURATION = "duration";
     /**
-     * The fully qualified domain name of the device transmitting or recording
-     * the log record.
+     * The fully qualified domain name of the device transmitting or recording the log record.
      */
     public static final String COMMON_DVC_HOST = "dvc_host";
     /**
@@ -76,8 +75,7 @@ public class SplunkEvent implements Serializable {
      */
     public static final String COMMON_DVC_NT_DOMAIN = "dvc_nt_domain";
     /**
-     * The Windows NT host name of the device recording or transmitting the
-     * event.
+     * The Windows NT host name of the device recording or transmitting the event.
      */
     public static final String COMMON_DVC_NT_HOST = "dvc_nt_host";
     /**
@@ -89,8 +87,7 @@ public class SplunkEvent implements Serializable {
      */
     public static final String COMMON_END_TIME = "end_time";
     /**
-     * A unique identifier that identifies the event. This is unique to the
-     * reporting device.
+     * A unique identifier that identifies the event. This is unique to the reporting device.
      */
     public static final String COMMON_EVENT_ID = "event_id";
     /**
@@ -102,20 +99,17 @@ public class SplunkEvent implements Serializable {
      */
     public static final String COMMON_LOG_LEVEL = "log_level";
     /**
-     * The name of the event as reported by the device. The name should not
-     * contain information that's already being parsed into other fields from
-     * the event, such as IP addresses.
+     * The name of the event as reported by the device. The name should not contain information that's already being
+     * parsed into other fields from the event, such as IP addresses.
      */
     public static final String COMMON_NAME = "name";
     /**
-     * An integer assigned by the device operating system to the process
-     * creating the record.
+     * An integer assigned by the device operating system to the process creating the record.
      */
     public static final String COMMON_PID = "pid";
     /**
-     * An environment-specific assessment of the event's importance, based on
-     * elements such as event severity, business function of the affected
-     * system, or other locally defined variables.
+     * An environment-specific assessment of the event's importance, based on elements such as event severity, business
+     * function of the affected system, or other locally defined variables.
      */
     public static final String COMMON_PRIORITY = "priority";
     /**
@@ -127,18 +121,15 @@ public class SplunkEvent implements Serializable {
      */
     public static final String COMMON_PRODUCT_VERSION = "product_version";
     /**
-     * The result root cause, such as connection refused, timeout, crash, and so
-     * on.
+     * The result root cause, such as connection refused, timeout, crash, and so on.
      */
     public static final String COMMON_REASON = "reason";
     /**
-     * The action result. Often is a binary choice: succeeded and failed,
-     * allowed and denied, and so on.
+     * The action result. Often is a binary choice: succeeded and failed, allowed and denied, and so on.
      */
     public static final String COMMON_RESULT = "result";
     /**
-     * The severity (or priority) of an event as reported by the originating
-     * device.
+     * The severity (or priority) of an event as reported by the originating device.
      */
     public static final String COMMON_SEVERITY = "severity";
     /**
@@ -150,8 +141,7 @@ public class SplunkEvent implements Serializable {
      */
     public static final String COMMON_TRANSACTION_ID = "transaction_id";
     /**
-     * A uniform record locator (a web address, in other words) included in a
-     * record.
+     * A uniform record locator (a web address, in other words) included in a record.
      */
     public static final String COMMON_URL = "url";
     /**
@@ -244,10 +234,10 @@ public class SplunkEvent implements Serializable {
     /**
      * Constructor to create a generic event
      * 
-     * @param eventName the event name
-     * @param eventID the event id
+     * @param eventName       the event name
+     * @param eventID         the event id
      * @param useInternalDate whether or not to add a date to the event string
-     * @param quoteValues whether or not to put quotes around values
+     * @param quoteValues     whether or not to put quotes around values
      */
     public SplunkEvent(String eventName, String eventID, boolean useInternalDate, boolean quoteValues) {
         this.event = new LinkedHashMap<>();
@@ -265,7 +255,7 @@ public class SplunkEvent implements Serializable {
      * Constructor to create a generic event with the default format
      * 
      * @param eventName the event name
-     * @param eventID the event ID
+     * @param eventID   the event ID
      */
     public SplunkEvent(String eventName, String eventID) {
         this(eventName, eventID, true, true);
@@ -325,8 +315,8 @@ public class SplunkEvent implements Serializable {
     }
 
     /**
-     * Utility method for formatting Throwable,Error,Exception objects in a more
-     * linear and Splunk friendly manner than printStackTrace
+     * Utility method for formatting Throwable,Error,Exception objects in a more linear and Splunk friendly manner than
+     * printStackTrace
      * 
      * @param throwable the Throwable object to add to the event
      */
@@ -335,10 +325,10 @@ public class SplunkEvent implements Serializable {
     }
 
     /**
-     * Utility method for formatting Throwable,Error,Exception objects in a more
-     * linear and Splunk friendly manner than printStackTrace
+     * Utility method for formatting Throwable,Error,Exception objects in a more linear and Splunk friendly manner than
+     * printStackTrace
      * 
-     * @param throwable the Throwable object to add to the event
+     * @param throwable       the Throwable object to add to the event
      * @param stackTraceDepth maximum number of stacktrace elements to log
      */
     public void addThrowable(Throwable throwable, int stackTraceDepth) {
@@ -346,12 +336,11 @@ public class SplunkEvent implements Serializable {
     }
 
     /**
-     * Internal private method for formatting Throwable,Error,Exception objects
-     * in a more linear and Splunk friendly manner than printStackTrace
+     * Internal private method for formatting Throwable,Error,Exception objects in a more linear and Splunk friendly
+     * manner than printStackTrace
      * 
-     * @param throwable the Throwable object to add to the event
-     * @param stackTraceDepth maximum number of stacktrace elements to log, -1
-     *            for all
+     * @param throwable       the Throwable object to add to the event
+     * @param stackTraceDepth maximum number of stacktrace elements to log, -1 for all
      */
 
     private void addThrowableObject(Throwable throwable, int stackTraceDepth) {

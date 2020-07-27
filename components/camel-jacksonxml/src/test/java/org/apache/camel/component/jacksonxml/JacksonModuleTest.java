@@ -27,7 +27,8 @@ public class JacksonModuleTest extends CamelTestSupport {
     public void testCustomModule() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).isEqualTo("<TestOtherPojo><my-name>Camel</my-name><my-country>Denmark</my-country></TestOtherPojo>");
+        mock.message(0).body(String.class)
+                .isEqualTo("<TestOtherPojo><my-name>Camel</my-name><my-country>Denmark</my-country></TestOtherPojo>");
 
         TestOtherPojo pojo = new TestOtherPojo();
         pojo.setName("Camel");

@@ -102,7 +102,7 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     public FakeDockerCmdExecFactory() {
     }
-    
+
     @Override
     public VersionCmd.Exec createVersionCmdExec() {
         return new VersionCmd.Exec() {

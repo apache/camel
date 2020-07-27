@@ -51,7 +51,7 @@ public class UnaryExpression extends BaseSimpleNode {
     /**
      * Accepts the left node to this operator
      *
-     * @param left  the left node to accept
+     * @param left the left node to accept
      */
     public void acceptLeft(SimpleNode left) {
         this.left = left;

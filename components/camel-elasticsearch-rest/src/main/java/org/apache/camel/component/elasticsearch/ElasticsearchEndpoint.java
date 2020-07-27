@@ -29,7 +29,8 @@ import org.elasticsearch.client.RestClient;
  * Send requests to with an ElasticSearch via REST API.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elasticsearch Rest",
-    syntax = "elasticsearch-rest:clusterName", producerOnly = true, category = {Category.SEARCH, Category.MONITORING})
+             syntax = "elasticsearch-rest:clusterName", producerOnly = true,
+             category = { Category.SEARCH, Category.MONITORING })
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -37,7 +38,8 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private RestClient client;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, RestClient client) throws Exception {
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config,
+                                 RestClient client) throws Exception {
         super(uri, component);
         this.configuration = config;
         this.client = client;

@@ -34,7 +34,8 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         if (!WordpressServiceProvider.getInstance().hasAuthentication()) {
-            LOG.warn("Wordpress Producer hasn't authentication. This may lead to errors during route execution. Wordpress writing operations need authentication.");
+            LOG.warn(
+                    "Wordpress Producer hasn't authentication. This may lead to errors during route execution. Wordpress writing operations need authentication.");
         }
     }
 
@@ -44,7 +45,7 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
 
     @Override
     public WordpressEndpoint getEndpoint() {
-        return (WordpressEndpoint)super.getEndpoint();
+        return (WordpressEndpoint) super.getEndpoint();
     }
 
     @Override

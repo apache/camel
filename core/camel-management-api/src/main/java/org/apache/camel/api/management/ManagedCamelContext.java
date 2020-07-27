@@ -31,8 +31,8 @@ public interface ManagedCamelContext {
     /**
      * Gets the managed processor client api from any of the routes which with the given id
      *
-     * @param id id of the processor
-     * @return the processor or <tt>null</tt> if not found
+     * @param  id id of the processor
+     * @return    the processor or <tt>null</tt> if not found
      */
     default ManagedProcessorMBean getManagedProcessor(String id) {
         return getManagedProcessor(id, ManagedProcessorMBean.class);
@@ -41,9 +41,10 @@ public interface ManagedCamelContext {
     /**
      * Gets the managed processor client api from any of the routes which with the given id
      *
-     * @param id id of the processor
-     * @param type the managed processor type from the {@link org.apache.camel.api.management.mbean} package.
-     * @return the processor or <tt>null</tt> if not found
+     * @param  id                       id of the processor
+     * @param  type                     the managed processor type from the
+     *                                  {@link org.apache.camel.api.management.mbean} package.
+     * @return                          the processor or <tt>null</tt> if not found
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
@@ -51,16 +52,16 @@ public interface ManagedCamelContext {
     /**
      * Gets the managed step client api from any of the routes which with the given id
      *
-     * @param id id of the step
-     * @return the step or <tt>null</tt> if not found
+     * @param  id id of the step
+     * @return    the step or <tt>null</tt> if not found
      */
     ManagedStepMBean getManagedStep(String id);
 
     /**
      * Gets the managed route client api with the given route id
      *
-     * @param routeId id of the route
-     * @return the route or <tt>null</tt> if not found
+     * @param  routeId id of the route
+     * @return         the route or <tt>null</tt> if not found
      */
     default ManagedRouteMBean getManagedRoute(String routeId) {
         return getManagedRoute(routeId, ManagedRouteMBean.class);
@@ -69,9 +70,10 @@ public interface ManagedCamelContext {
     /**
      * Gets the managed route client api with the given route id
      *
-     * @param routeId id of the route
-     * @param type the managed route type from the {@link org.apache.camel.api.management.mbean} package.
-     * @return the route or <tt>null</tt> if not found
+     * @param  routeId                  id of the route
+     * @param  type                     the managed route type from the {@link org.apache.camel.api.management.mbean}
+     *                                  package.
+     * @return                          the route or <tt>null</tt> if not found
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);

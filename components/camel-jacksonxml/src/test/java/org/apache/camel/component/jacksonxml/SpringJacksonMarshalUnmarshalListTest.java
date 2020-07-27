@@ -71,7 +71,8 @@ public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSuppor
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jacksonxml/SpringJacksonMarshalUnmarshalListTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jacksonxml/SpringJacksonMarshalUnmarshalListTest.xml");
     }
 
 }

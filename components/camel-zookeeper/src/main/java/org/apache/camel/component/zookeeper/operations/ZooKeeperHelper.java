@@ -51,8 +51,7 @@ public final class ZooKeeperHelper {
                 }
             }
 
-        }
-        while (pos < path.length());
+        } while (pos < path.length());
     }
 
 }

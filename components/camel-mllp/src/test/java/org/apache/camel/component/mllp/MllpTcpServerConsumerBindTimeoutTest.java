@@ -70,14 +70,14 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
-                    .toF("log:%s?level=INFO&showAll=true", routeId)
-                    .log(LoggingLevel.INFO, routeId, "Test route complete");
+                        .toF("log:%s?level=INFO&showAll=true", routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route complete");
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
-                    .routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Test route received message")
-                    .to(result);
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
+                                .routeId(routeId)
+                                .log(LoggingLevel.INFO, routeId, "Test route received message")
+                                .to(result);
 
             }
         };
@@ -112,4 +112,3 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
     }
 
 }
-

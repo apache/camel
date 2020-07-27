@@ -30,12 +30,12 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpression;
 
 /**
- * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when
- * processing by other error handlers such as the {@link org.apache.camel.model.OnExceptionDefinition}.
+ * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when processing by other error handlers
+ * such as the {@link org.apache.camel.model.OnExceptionDefinition}.
  * <p/>
  * This error handler is used as a fail-safe to ensure that error handling does not run in endless recursive looping
- * which potentially can happen if a new exception is thrown while error handling a previous exception which then
- * cause new error handling to process and this then keep on failing with new exceptions in an endless loop.
+ * which potentially can happen if a new exception is thrown while error handling a previous exception which then cause
+ * new error handling to process and this then keep on failing with new exceptions in an endless loop.
  */
 public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
 
@@ -100,7 +100,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         }
 
                         String msg = "Exception occurred while trying to handle previously thrown exception on exchangeId: "
-                            + exchange.getExchangeId() + " using: [" + processor + "].";
+                                     + exchange.getExchangeId() + " using: [" + processor + "].";
                         if (previous != null) {
                             msg += " The previous and the new exception will be logged in the following.";
                             log(msg);

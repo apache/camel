@@ -58,7 +58,8 @@ public class QueueServiceProducerTest {
 
                 from("direct:addMessage").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=addMessage");
 
-                from("direct:retrieveMessage").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=retrieveMessage");
+                from("direct:retrieveMessage")
+                        .to("azure-queue://camelqueue/queue1?credentials=#creds&operation=retrieveMessage");
             }
         });
 
@@ -73,7 +74,7 @@ public class QueueServiceProducerTest {
 
             it = producer.requestBody("direct:listQueues", null, Iterable.class).iterator();
             assertTrue(it.hasNext(), "Has queues");
-            CloudQueue queue = (CloudQueue)it.next();
+            CloudQueue queue = (CloudQueue) it.next();
             assertEquals("queue1", queue.getName());
             assertFalse(it.hasNext(), "No more queues");
 

@@ -38,7 +38,8 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
 
     private static final Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS;
     static {
-        Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> map
+                = new HashMap<>();
         map.put(LoadBalancerDefinition.class, LoadBalancerReifier::new);
         map.put(CustomLoadBalancerDefinition.class, CustomLoadBalancerReifier::new);
         map.put(FailoverLoadBalancerDefinition.class, FailoverLoadBalancerReifier::new);
@@ -58,8 +59,10 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
         this.definition = definition;
     }
 
-    public static LoadBalancerReifier<? extends LoadBalancerDefinition> reifier(Route route, LoadBalancerDefinition definition) {
-        BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier = LOAD_BALANCERS.get(definition.getClass());
+    public static LoadBalancerReifier<? extends LoadBalancerDefinition> reifier(
+            Route route, LoadBalancerDefinition definition) {
+        BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier
+                = LOAD_BALANCERS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(route, definition);
         }

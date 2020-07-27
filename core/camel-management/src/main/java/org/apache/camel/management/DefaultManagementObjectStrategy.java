@@ -204,7 +204,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForComponent(CamelContext context, Component component, String name) {
         ManagedComponent mc = new ManagedComponent(name, component);
         mc.init(context.getManagementStrategy());
@@ -212,7 +212,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat) {
         ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
         md.init(context.getManagementStrategy());
@@ -220,7 +220,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint) {
         // we only want to manage singleton endpoints
         if (!endpoint.isSingleton()) {
@@ -239,8 +239,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForErrorHandler(CamelContext context, Route route,
-                                                  Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    public Object getManagedObjectForErrorHandler(
+            CamelContext context, Route route,
+            Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         ManagedErrorHandler me = new ManagedErrorHandler(route, errorHandler, errorHandlerBuilder);
         me.init(context.getManagementStrategy());
         return me;
@@ -271,8 +272,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForThreadPool(CamelContext context, ThreadPoolExecutor threadPool,
-                                                String id, String sourceId, String routeId, String threadPoolProfileId) {
+    public Object getManagedObjectForThreadPool(
+            CamelContext context, ThreadPoolExecutor threadPool,
+            String id, String sourceId, String routeId, String threadPoolProfileId) {
         ManagedThreadPool mtp = new ManagedThreadPool(context, threadPool, id, sourceId, routeId, threadPoolProfileId);
         mtp.init(context.getManagementStrategy());
         return mtp;
@@ -319,9 +321,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
-    public Object getManagedObjectForProcessor(CamelContext context, Processor processor,
-                                               NamedNode node, Route route) {
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    public Object getManagedObjectForProcessor(
+            CamelContext context, Processor processor,
+            NamedNode node, Route route) {
         ManagedProcessor answer = null;
 
         ProcessorDefinition<?> definition = (ProcessorDefinition<?>) node;
@@ -359,7 +362,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof RoutingSlip) {
                 answer = new ManagedRoutingSlip(context, (RoutingSlip) target, (RoutingSlipDefinition) definition);
             } else if (target instanceof FilterProcessor) {
-                answer = new ManagedFilter(context, (FilterProcessor) target, (ExpressionNode)definition);
+                answer = new ManagedFilter(context, (FilterProcessor) target, (ExpressionNode) definition);
             } else if (target instanceof LogProcessor) {
                 answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
@@ -369,17 +372,22 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof UnmarshalProcessor) {
                 answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, (UnmarshalDefinition) definition);
             } else if (target instanceof FailOverLoadBalancer) {
-                answer = new ManagedFailoverLoadBalancer(context, (FailOverLoadBalancer) target, (LoadBalanceDefinition) definition);
+                answer = new ManagedFailoverLoadBalancer(
+                        context, (FailOverLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof RandomLoadBalancer) {
-                answer = new ManagedRandomLoadBalancer(context, (RandomLoadBalancer) target, (LoadBalanceDefinition) definition);
+                answer = new ManagedRandomLoadBalancer(
+                        context, (RandomLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof RoundRobinLoadBalancer) {
-                answer = new ManagedRoundRobinLoadBalancer(context, (RoundRobinLoadBalancer) target, (LoadBalanceDefinition) definition);
+                answer = new ManagedRoundRobinLoadBalancer(
+                        context, (RoundRobinLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof StickyLoadBalancer) {
-                answer = new ManagedStickyLoadBalancer(context, (StickyLoadBalancer) target, (LoadBalanceDefinition) definition);
+                answer = new ManagedStickyLoadBalancer(
+                        context, (StickyLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof TopicLoadBalancer) {
                 answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof WeightedLoadBalancer) {
-                answer = new ManagedWeightedLoadBalancer(context, (WeightedLoadBalancer) target, (LoadBalanceDefinition) definition);
+                answer = new ManagedWeightedLoadBalancer(
+                        context, (WeightedLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, (RecipientListDefinition) definition);
             } else if (target instanceof Splitter) {
@@ -445,7 +453,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof BeanProcessor) {
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof IdempotentConsumer) {
-                answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, (IdempotentConsumerDefinition) definition);
+                answer = new ManagedIdempotentConsumer(
+                        context, (IdempotentConsumer) target, (IdempotentConsumerDefinition) definition);
             } else if (target instanceof AggregateProcessor) {
                 answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, (AggregateDefinition) definition);
             } else if (target instanceof Enricher) {

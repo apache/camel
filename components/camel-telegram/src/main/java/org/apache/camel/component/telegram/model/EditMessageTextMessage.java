@@ -47,11 +47,11 @@ public class EditMessageTextMessage extends OutgoingMessage {
      *
      * @param chatId                Unique identifier for the target chat or username of the target channel.
      * @param messageId             Identifier of the message to edit. Required if inline_message_id is not specified.
-     * @param inlineMessageId       Required if chat_id and message_id are not specified.
-     *                              Identifier of the inline message.
+     * @param inlineMessageId       Required if chat_id and message_id are not specified. Identifier of the inline
+     *                              message.
      * @param text                  New text of the message.
-     * @param parseMode             Send Markdown or HTML, if you want Telegram apps to show bold, italic,
-     *                              fixed-width text or inline URLs in your bot's message.
+     * @param parseMode             Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width
+     *                              text or inline URLs in your bot's message.
      * @param disableWebPagePreview Disables link previews for links in this message.
      * @param replyMarkup           An inline keyboard that appears right next to the message it belongs to.
      */
@@ -93,7 +93,7 @@ public class EditMessageTextMessage extends OutgoingMessage {
     public static Builder builder() {
         return new Builder();
     }
-    
+
     public static final class Builder {
         protected String chatId;
         private Integer messageId;
@@ -143,7 +143,7 @@ public class EditMessageTextMessage extends OutgoingMessage {
 
         public EditMessageTextMessage build() {
             return new EditMessageTextMessage(
-                chatId, messageId, inlineMessageId, text, parseMode, disableWebPagePreview, replyMarkup);
+                    chatId, messageId, inlineMessageId, text, parseMode, disableWebPagePreview, replyMarkup);
         }
     }
 }

@@ -106,7 +106,8 @@ class QueueProducerIT extends CamelTestSupport {
         final Map<String, Object> sentMessageHeaders = result.getExchanges().get(0).getMessage().getHeaders();
 
         // check message
-        assertEquals("test-message-1", serviceClient.getQueueClientWrapper(queueName).peekMessages(1, null).get(0).getMessageText());
+        assertEquals("test-message-1",
+                serviceClient.getQueueClientWrapper(queueName).peekMessages(1, null).get(0).getMessageText());
 
         result.reset();
 

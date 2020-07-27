@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     private static final String PORT_PATH = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH
-        + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
+                                                      + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
 
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
@@ -74,7 +74,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI)
-                    .recipientList(simple("direct:${header.operationName}"));
+                        .recipientList(simple("direct:${header.operationName}"));
 
                 from("direct:getCustomer").process(new Processor() {
                     @Override

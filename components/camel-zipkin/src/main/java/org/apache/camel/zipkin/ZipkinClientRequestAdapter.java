@@ -56,7 +56,7 @@ final class ZipkinClientRequestAdapter {
                 cache.reset();
             }
         }
-        
+
         Map<String, String> customTags = exchange.getProperty("camel.client.customtags", Map.class);
         if (customTags != null && !customTags.isEmpty()) {
             for (Map.Entry<String, String> tag : customTags.entrySet()) {

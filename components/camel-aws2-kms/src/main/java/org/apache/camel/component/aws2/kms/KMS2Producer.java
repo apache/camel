@@ -41,8 +41,7 @@ import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionRequest;
 import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
 
 /**
- * A Producer which sends messages to the Amazon KMS Service
- * <a href="http://aws.amazon.com/kms/">AWS KMS</a>
+ * A Producer which sends messages to the Amazon KMS Service <a href="http://aws.amazon.com/kms/">AWS KMS</a>
  */
 public class KMS2Producer extends DefaultProducer {
 
@@ -106,7 +105,7 @@ public class KMS2Producer extends DefaultProducer {
 
     @Override
     public KMS2Endpoint getEndpoint() {
-        return (KMS2Endpoint)super.getEndpoint();
+        return (KMS2Endpoint) super.getEndpoint();
     }
 
     private void listKeys(KmsClient kmsClient, Exchange exchange) throws InvalidPayloadException {
@@ -115,7 +114,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof ListKeysRequest) {
                 ListKeysResponse result;
                 try {
-                    result = kmsClient.listKeys((ListKeysRequest)payload);
+                    result = kmsClient.listKeys((ListKeysRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Keys command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -147,7 +146,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof CreateKeyRequest) {
                 CreateKeyResponse result;
                 try {
-                    result = kmsClient.createKey((CreateKeyRequest)payload);
+                    result = kmsClient.createKey((CreateKeyRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -179,7 +178,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof DisableKeyRequest) {
                 DisableKeyResponse result;
                 try {
-                    result = kmsClient.disableKey((DisableKeyRequest)payload);
+                    result = kmsClient.disableKey((DisableKeyRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Disable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -213,7 +212,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof ScheduleKeyDeletionRequest) {
                 ScheduleKeyDeletionResponse result;
                 try {
-                    result = kmsClient.scheduleKeyDeletion((ScheduleKeyDeletionRequest)payload);
+                    result = kmsClient.scheduleKeyDeletion((ScheduleKeyDeletionRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Schedule Key Deletion command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -251,7 +250,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof DescribeKeyRequest) {
                 DescribeKeyResponse result;
                 try {
-                    result = kmsClient.describeKey((DescribeKeyRequest)payload);
+                    result = kmsClient.describeKey((DescribeKeyRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -285,7 +284,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof EnableKeyRequest) {
                 EnableKeyResponse result;
                 try {
-                    result = kmsClient.enableKey((EnableKeyRequest)payload);
+                    result = kmsClient.enableKey((EnableKeyRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Enable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

@@ -101,10 +101,12 @@ public class PulsarConsumerPatternInTest extends PulsarTestSupport {
 
         to.expectedBodiesReceivedInAnyOrder("Hello World!", "Bye World!");
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer
+                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
         producer.send("Hello World!");
 
-        Producer<String> producer2 = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_TWO_URI).create();
+        Producer<String> producer2
+                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_TWO_URI).create();
         producer2.send("Bye World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);

@@ -110,7 +110,7 @@ public final class DslHelper {
 
     public static String generateComponentBuilderClassName(final ComponentModel componentModel, final String suffix) {
         return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme()))
-                + "Component" + suffix;
+               + "Component" + suffix;
     }
 
     private static String wrapEnumValues(List<String> enumValues) {

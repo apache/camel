@@ -31,7 +31,8 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getManagementStrategy().init();
-        DefaultManagementObjectNameStrategy naming = (DefaultManagementObjectNameStrategy)context.getManagementStrategy().getManagementObjectNameStrategy();
+        DefaultManagementObjectNameStrategy naming
+                = (DefaultManagementObjectNameStrategy) context.getManagementStrategy().getManagementObjectNameStrategy();
         naming.setHostName("localhost");
         context.getManagementStrategy().getManagementAgent().setIncludeHostName(true);
         context.getManagementNameStrategy().setNamePattern("cool-#name#");
@@ -49,7 +50,8 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
 
         assertTrue(context.getManagementName().startsWith("cool"));
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\"camel-1\"");
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
     }
 

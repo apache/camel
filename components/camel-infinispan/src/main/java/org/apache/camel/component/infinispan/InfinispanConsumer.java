@@ -41,7 +41,8 @@ public class InfinispanConsumer extends DefaultConsumer {
     private BasicCache<Object, Object> cache;
     private ContinuousQuery<Object, Object> continuousQuery;
 
-    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, InfinispanManager manager, InfinispanConfiguration configuration) {
+    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, InfinispanManager manager,
+                              InfinispanConfiguration configuration) {
         super(endpoint, processor);
         this.cacheName = cacheName;
         this.configuration = configuration;
@@ -84,7 +85,7 @@ public class InfinispanConsumer extends DefaultConsumer {
                 continuousQuery.addContinuousQueryListener(query, new ContinuousQueryEventListener(cache.getName()));
             } else {
                 throw new IllegalArgumentException(
-                    "Can't run continuous queries against embedded cache (" + cache.getName() + ")");
+                        "Can't run continuous queries against embedded cache (" + cache.getName() + ")");
             }
         } else {
             if (manager.isCacheContainerEmbedded()) {
@@ -93,7 +94,7 @@ public class InfinispanConsumer extends DefaultConsumer {
                 consumerHandler = InfinispanConsumerRemoteHandler.INSTANCE;
             } else {
                 throw new UnsupportedOperationException(
-                    "Unsupported CacheContainer type " + manager.getCacheContainer().getClass().getName());
+                        "Unsupported CacheContainer type " + manager.getCacheContainer().getClass().getName());
             }
 
             listener = consumerHandler.start(this);

@@ -30,7 +30,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
-        IronMQEndpoint endpoint = (IronMQEndpoint)component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy");
+        IronMQEndpoint endpoint = (IronMQEndpoint) component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy");
 
         assertEquals("TestQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getProjectId());
@@ -47,7 +47,8 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfigurationAndIronMQCloud() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
-        IronMQEndpoint endpoint = (IronMQEndpoint)component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&ironMQCloud=https://iron.foo");
+        IronMQEndpoint endpoint = (IronMQEndpoint) component
+                .createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&ironMQCloud=https://iron.foo");
 
         assertEquals("TestQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getProjectId());
@@ -62,9 +63,10 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMaximalConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
-        IronMQEndpoint endpoint = (IronMQEndpoint)component
-            .createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&timeout=120&visibilityDelay=5&maxMessagesPerPoll=20&preserveHeaders=true&wait=30"
-                            + "&ironMQCloud=https://iron.foo&batchDelete=true");
+        IronMQEndpoint endpoint = (IronMQEndpoint) component
+                .createEndpoint(
+                        "ironmq://TestQueue?projectId=xxx&token=yyy&timeout=120&visibilityDelay=5&maxMessagesPerPoll=20&preserveHeaders=true&wait=30"
+                                + "&ironMQCloud=https://iron.foo&batchDelete=true");
         assertEquals("TestQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getProjectId());
         assertEquals("yyy", endpoint.getConfiguration().getToken());
@@ -81,9 +83,10 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithPollConsumerConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
-        IronMQEndpoint endpoint = (IronMQEndpoint)component
-            .createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&initialDelay=200&delay=400&timeout=120&maxMessagesPerPoll=20");
-        IronMQConsumer consumer = (IronMQConsumer)endpoint.createConsumer(null);
+        IronMQEndpoint endpoint = (IronMQEndpoint) component
+                .createEndpoint(
+                        "ironmq://TestQueue?projectId=xxx&token=yyy&initialDelay=200&delay=400&timeout=120&maxMessagesPerPoll=20");
+        IronMQConsumer consumer = (IronMQConsumer) endpoint.createConsumer(null);
 
         assertEquals(200, consumer.getInitialDelay());
         assertEquals(400, consumer.getDelay());
@@ -95,7 +98,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("ironmq://testqueue?projectId=yyy"));
+                () -> component.createEndpoint("ironmq://testqueue?projectId=yyy"));
     }
 
     @Test
@@ -103,6 +106,6 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("ironmq://MyQueue?token=xxx"));
+                () -> component.createEndpoint("ironmq://MyQueue?token=xxx"));
     }
 }

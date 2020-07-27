@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit testing demonstrating how to store incoming requests as files and
- * serving a response back.
+ * Unit testing demonstrating how to store incoming requests as files and serving a response back.
  */
 public class HttpToFileTest extends BaseJettyTest {
 
@@ -70,10 +69,12 @@ public class HttpToFileTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // put the incoming data on the seda queue and return a fixed
                 // response that we got the file
-                from("jetty:http://localhost:{{port}}/myworld").convertBodyTo(String.class).to("seda:in").setBody(constant("We got the file"));
+                from("jetty:http://localhost:{{port}}/myworld").convertBodyTo(String.class).to("seda:in")
+                        .setBody(constant("We got the file"));
 
                 // store the content from the queue as a file
-                from("seda:in").setHeader(Exchange.FILE_NAME, constant("hello.txt")).convertBodyTo(String.class).to("file://target/myworld/").to("mock:result");
+                from("seda:in").setHeader(Exchange.FILE_NAME, constant("hello.txt")).convertBodyTo(String.class)
+                        .to("file://target/myworld/").to("mock:result");
             }
         };
     }

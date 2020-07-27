@@ -19,11 +19,10 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * A {@link ByteArrayOutputStream} that is capable of returning a
- * {@link InputStreamCache} view of the buffer.
+ * A {@link ByteArrayOutputStream} that is capable of returning a {@link InputStreamCache} view of the buffer.
  * <p/>
- * This implementation avoids any buffer copying when caching in memory {@link java.io.InputStream}
- * as the buffer can be shared.
+ * This implementation avoids any buffer copying when caching in memory {@link java.io.InputStream} as the buffer can be
+ * shared.
  */
 public final class CachedByteArrayOutputStream extends ByteArrayOutputStream {
 

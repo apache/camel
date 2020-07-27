@@ -94,7 +94,7 @@ public class ManagedRecipientListTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .recipientList(header("whereto")).id("mysend");
+                        .recipientList(header("whereto")).id("mysend");
             }
         };
     }

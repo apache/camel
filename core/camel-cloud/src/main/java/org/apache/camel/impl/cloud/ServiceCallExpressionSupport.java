@@ -55,16 +55,17 @@ public abstract class ServiceCallExpressionSupport extends ExpressionAdapter {
     public Object evaluate(Exchange exchange) {
         try {
             return buildCamelEndpointUri(
-                ExchangeHelper.getMandatoryHeader(exchange, ServiceCallConstants.SERVICE_NAME, String.class),
-                ExchangeHelper.getMandatoryHeader(exchange, hostHeader, String.class),
-                exchange.getIn().getHeader(portHeader, Integer.class),
-                exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_URI, String.class),
-                exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, String.class),
-                exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, String.class));
+                    ExchangeHelper.getMandatoryHeader(exchange, ServiceCallConstants.SERVICE_NAME, String.class),
+                    ExchangeHelper.getMandatoryHeader(exchange, hostHeader, String.class),
+                    exchange.getIn().getHeader(portHeader, Integer.class),
+                    exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_URI, String.class),
+                    exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, String.class),
+                    exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, String.class));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
-    protected abstract String buildCamelEndpointUri(String name, String host, Integer port, String uri, String contextPath, String scheme);
+    protected abstract String buildCamelEndpointUri(
+            String name, String host, Integer port, String uri, String contextPath, String scheme);
 }

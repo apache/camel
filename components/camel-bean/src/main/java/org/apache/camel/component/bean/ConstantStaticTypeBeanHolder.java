@@ -20,8 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
 /**
- * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class
- * where the intention is to only invoke static methods, without the need for creating an instance of the type.
+ * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class where the intention is to
+ * only invoke static methods, without the need for creating an instance of the type.
  */
 public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
 

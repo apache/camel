@@ -24,16 +24,15 @@ public class SmppSplitter {
     /**
      * The length of the UDH in bytes.
      * <p/>
-     * The real length of the header must be 6 bytes, but the first byte that
-     * contains the length of the header must not be counted.
+     * The real length of the header must be 6 bytes, but the first byte that contains the length of the header must not
+     * be counted.
      */
     protected static final int UDHIE_HEADER_LENGTH = 0x05;
 
     /**
      * The real length of the UDH header.
      * <p/>
-     * The real length of the UDH header is {@link #UDHIE_HEADER_LENGTH}
-     * {@code + 1}.
+     * The real length of the UDH header is {@link #UDHIE_HEADER_LENGTH} {@code + 1}.
      * 
      * @see #UDHIE_HEADER_LENGTH
      */
@@ -49,20 +48,16 @@ public class SmppSplitter {
     /**
      * The value that identifier length of the SAR fragment.
      * <p/>
-     * {@code 0x00} value must be used if the length of the reference number is
-     * 1 byte.<br/>
-     * {@code 0x08} value must be used if the length of the reference number is
-     * 2 bytes.
+     * {@code 0x00} value must be used if the length of the reference number is 1 byte.<br/>
+     * {@code 0x08} value must be used if the length of the reference number is 2 bytes.
      */
     protected static final byte UDHIE_IDENTIFIER_SAR = 0x00;
 
     /**
      * The length of the SAR fragment.
      * <p/>
-     * {@code 0x03} value must be used if the length of the reference number is
-     * 1 byte.<br/>
-     * {@code 0x04} value must be used if the length of the reference number is
-     * 2 bytes.
+     * {@code 0x03} value must be used if the length of the reference number is 1 byte.<br/>
+     * {@code 0x04} value must be used if the length of the reference number is 2 bytes.
      */
     protected static final byte UDHIE_SAR_LENGTH = 0x03;
 
@@ -77,7 +72,7 @@ public class SmppSplitter {
     protected static final int MAX_SEG_COUNT = 255;
 
     private static final Logger LOG = LoggerFactory.getLogger(SmppSplitter.class);
-    
+
     /**
      * Current reference number.
      */
@@ -94,8 +89,7 @@ public class SmppSplitter {
     }
 
     /**
-     * Returns reference number which length is
-     * {@link #UDHIE_SAR_REF_NUM_LENGTH}.
+     * Returns reference number which length is {@link #UDHIE_SAR_REF_NUM_LENGTH}.
      * 
      * @return the reference number of the multipart message
      */
@@ -110,9 +104,9 @@ public class SmppSplitter {
     protected static synchronized byte getCurrentReferenceNumber() {
         return (byte) refNum;
     }
-    
+
     /**
-     * only needed for the unit tests 
+     * only needed for the unit tests
      */
     protected static synchronized void resetCurrentReferenceNumber() {
         SmppSplitter.refNum = 0;
@@ -120,7 +114,7 @@ public class SmppSplitter {
 
     public byte[][] split(byte[] message) {
         if (!isSplitRequired()) {
-            return new byte[][] {message};
+            return new byte[][] { message };
         }
 
         int segmentLength = getSegmentLength();

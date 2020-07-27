@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A Consumer for the SEDA component.
  * <p/>
- * In this implementation there is a little <i>slack period</i> when you suspend/stop the consumer, by which
- * the consumer may pickup a newly arrived messages and process it. That period is up till 1 second.
+ * In this implementation there is a little <i>slack period</i> when you suspend/stop the consumer, by which the
+ * consumer may pickup a newly arrived messages and process it. That period is up till 1 second.
  */
 public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownAware, Suspendable {
 
@@ -155,7 +155,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             // do not poll if we are suspended or starting again after resuming
             if (isSuspending() || isSuspended() || isStarting()) {
                 if (shutdownPending && queue.isEmpty()) {
-                    LOG.trace("Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
+                    LOG.trace(
+                            "Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
                     // we want to shutdown so break out if there queue is empty
                     break;
                 } else {
@@ -175,7 +176,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 // use the end user configured poll timeout
                 exchange = queue.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Polled queue {} with timeout {} ms. -> {}", ObjectHelper.getIdentityHashCode(queue), pollTimeout, exchange);
+                    LOG.trace("Polled queue {} with timeout {} ms. -> {}", ObjectHelper.getIdentityHashCode(queue), pollTimeout,
+                            exchange);
                 }
                 if (exchange != null) {
                     try {
@@ -192,7 +194,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                         // log exception if an exception occurred and was not handled
                         if (newExchange.getException() != null) {
                             exchange.setException(newExchange.getException());
-                            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                            getExceptionHandler().handleException("Error processing exchange", exchange,
+                                    exchange.getException());
                         }
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
@@ -218,8 +221,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     /**
      * Strategy to prepare exchange for being processed by this consumer
      *
-     * @param exchange the exchange
-     * @return the exchange to process by this consumer.
+     * @param  exchange the exchange
+     * @return          the exchange to process by this consumer.
      */
     protected Exchange prepareExchange(Exchange exchange) {
         // send a new copied exchange with new camel context
@@ -232,12 +235,12 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     /**
      * Send the given {@link Exchange} to the consumer(s).
      * <p/>
-     * If multiple consumers then they will each receive a copy of the Exchange.
-     * A multicast processor will send the exchange in parallel to the multiple consumers.
+     * If multiple consumers then they will each receive a copy of the Exchange. A multicast processor will send the
+     * exchange in parallel to the multiple consumers.
      * <p/>
      * If there is only a single consumer then its dispatched directly to it using same thread.
      * 
-     * @param exchange the exchange
+     * @param  exchange  the exchange
      * @throws Exception can be thrown if processing of the exchange failed
      */
     protected void sendToConsumers(final Exchange exchange) throws Exception {
@@ -301,7 +304,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         }
 
         getEndpoint().onStopped(this);
-        
+
         shutdownExecutor();
 
         super.doStop();
@@ -327,7 +330,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
         // create thread pool if needed
         if (executor == null) {
-            executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
+            executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                    getEndpoint().getEndpointUri(), poolSize);
         }
 
         // submit needed number of tasks

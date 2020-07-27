@@ -36,8 +36,9 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Consume data from AWS Kinesis Firehose streams.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "aws-kinesis-firehose", title = "AWS Kinesis Firehose", syntax = "aws-kinesis-firehose:streamName",
-    producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "aws-kinesis-firehose", title = "AWS Kinesis Firehose",
+             syntax = "aws-kinesis-firehose:streamName",
+             producerOnly = true, category = { Category.CLOUD, Category.MESSAGING })
 public class KinesisFirehoseEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -63,8 +64,9 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null ? configuration.getAmazonKinesisFirehoseClient()
-            : createKinesisFirehoseClient();
+        kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null
+                ? configuration.getAmazonKinesisFirehoseClient()
+                : createKinesisFirehoseClient();
 
     }
 
@@ -93,7 +95,8 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonKinesisFirehoseClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonKinesisFirehoseClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonKinesisFirehoseClientBuilder.standard().withCredentials(credentialsProvider);
             }

@@ -24,11 +24,13 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 /**
  *
  */
-public class SpringDefaultCamelContextAllowUseOriginalMessageFalseTest extends DefaultCamelContextAllowUseOriginalMessageFalseTest {
+public class SpringDefaultCamelContextAllowUseOriginalMessageFalseTest
+        extends DefaultCamelContextAllowUseOriginalMessageFalseTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/impl/SpringDefaultCamelContextAllowUseOriginalMessageFalseTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/impl/SpringDefaultCamelContextAllowUseOriginalMessageFalseTest.xml");
     }
 
 }

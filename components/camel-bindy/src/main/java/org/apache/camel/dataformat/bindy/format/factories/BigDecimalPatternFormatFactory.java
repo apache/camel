@@ -39,7 +39,8 @@ public class BigDecimalPatternFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new BigDecimalPatternFormat(formattingOptions.getPattern(),
+        return new BigDecimalPatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getLocale(),
                 formattingOptions.getPrecision(),
                 formattingOptions.getRounding(),
@@ -49,16 +50,17 @@ public class BigDecimalPatternFormatFactory extends AbstractFormatFactory {
 
     private static class BigDecimalPatternFormat extends NumberPatternFormat<BigDecimal> {
 
-        BigDecimalPatternFormat(String pattern, Locale locale, int precision, String rounding, String decimalSeparator, String groupingSeparator) {
+        BigDecimalPatternFormat(String pattern, Locale locale, int precision, String rounding, String decimalSeparator,
+                                String groupingSeparator) {
             super(pattern, locale, precision, rounding, decimalSeparator, groupingSeparator);
         }
 
         @Override
         public BigDecimal parse(String string) throws Exception {
             if (getNumberFormat() != null) {
-                DecimalFormat df = (DecimalFormat)getNumberFormat();
+                DecimalFormat df = (DecimalFormat) getNumberFormat();
                 df.setParseBigDecimal(true);
-                BigDecimal bd = (BigDecimal)df.parse(string.trim());
+                BigDecimal bd = (BigDecimal) df.parse(string.trim());
                 if (super.getPrecision() != -1) {
                     bd = bd.setScale(super.getPrecision(), RoundingMode.valueOf(super.getRounding()));
                 }

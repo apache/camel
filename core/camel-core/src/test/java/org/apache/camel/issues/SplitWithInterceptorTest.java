@@ -42,7 +42,9 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
         private static int doneCount;
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
             if (definition instanceof SplitDefinition) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
 

@@ -56,8 +56,8 @@ public final class AtmosAPIFacade {
     /**
      * Return a singleton instance of this class
      *
-     * @param client the AtmosClient performing atmos low level operations
-     * @return the singleton instance of this class
+     * @param  client the AtmosClient performing atmos low level operations
+     * @return        the singleton instance of this class
      */
     public static AtmosAPIFacade getInstance(AtmosApi client) {
         if (instance == null) {
@@ -70,12 +70,10 @@ public final class AtmosAPIFacade {
     /**
      * Put or upload a new file or an entire directory to atmos
      *
-     * @param localPath the file path or the dir path on the local filesystem
-     * @param remotePath the remote path destination on atmos
-     * the file already existing with the same name
-     * will be overridden.
-     * @return a AtmosResult object reporting for each remote path the result of
-     * the operation.
+     * @param  localPath      the file path or the dir path on the local filesystem
+     * @param  remotePath     the remote path destination on atmos the file already existing with the same name will be
+     *                        overridden.
+     * @return                a AtmosResult object reporting for each remote path the result of the operation.
      * @throws AtmosException
      */
     public AtmosResult put(String localPath, String remotePath) throws AtmosException {
@@ -173,11 +171,11 @@ public final class AtmosAPIFacade {
     }
 
     /**
-     * Delete every files and subdirectories inside the remote directory. In
-     * case the remotePath is a file, delete the file.
+     * Delete every files and subdirectories inside the remote directory. In case the remotePath is a file, delete the
+     * file.
      *
-     * @param remotePath the remote location to delete
-     * @return a AtmosResult object with the result of the delete operation.
+     * @param  remotePath     the remote location to delete
+     * @return                a AtmosResult object with the result of the delete operation.
      * @throws AtmosException
      */
     public AtmosResult del(String remotePath) throws AtmosException {
@@ -192,9 +190,9 @@ public final class AtmosAPIFacade {
     /**
      * Rename a remote path with the new path location.
      *
-     * @param remotePath the existing remote path to be renamed
-     * @param newRemotePath the new remote path substituting the old one
-     * @return a AtmosResult object with the result of the move operation.
+     * @param  remotePath     the existing remote path to be renamed
+     * @param  newRemotePath  the new remote path substituting the old one
+     * @return                a AtmosResult object with the result of the move operation.
      * @throws AtmosException
      */
     public AtmosResult move(String remotePath, String newRemotePath) throws AtmosException {
@@ -208,9 +206,9 @@ public final class AtmosAPIFacade {
     /**
      * Get the content of every file inside the remote path.
      *
-     * @param remotePath the remote path where to download from
-     * @return a AtmosResult object with the content (ByteArrayOutputStream) of
-     * every files inside the remote path.
+     * @param  remotePath     the remote path where to download from
+     * @return                a AtmosResult object with the content (ByteArrayOutputStream) of every files inside the
+     *                        remote path.
      * @throws AtmosException
      */
     public AtmosResult get(String remotePath) throws AtmosException {
@@ -224,7 +222,8 @@ public final class AtmosAPIFacade {
         return result;
     }
 
-    private void downloadFilesInFolder(String atmosPath, Map<String, ByteArrayOutputStream> resultEntries) throws AtmosException {
+    private void downloadFilesInFolder(String atmosPath, Map<String, ByteArrayOutputStream> resultEntries)
+            throws AtmosException {
         ObjectPath atmosEntry = new ObjectPath(atmosPath);
         if (AtmosAPIFacade.client.getSystemMetadata(atmosEntry) == null) {
             throw new AtmosException(atmosPath + " does not exist or cannot obtain metadata");

@@ -40,8 +40,8 @@ public class GroovyResourceTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().groovy("resource:classpath:mygroovy.groovy")
-                    .to("mock:result");
+                        .transform().groovy("resource:classpath:mygroovy.groovy")
+                        .to("mock:result");
             }
         };
     }

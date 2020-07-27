@@ -48,12 +48,10 @@ import org.slf4j.LoggerFactory;
 /**
  * DefaultChannel is the default {@link Channel}.
  * <p/>
- * The current implementation is just a composite containing the interceptors and error handler
- * that beforehand was added to the route graph directly.
- * <br/>
- * With this {@link Channel} we can in the future implement better strategies for routing the
- * {@link Exchange} in the route graph, as we have a {@link Channel} between each and every node
- * in the graph.
+ * The current implementation is just a composite containing the interceptors and error handler that beforehand was
+ * added to the route graph directly. <br/>
+ * With this {@link Channel} we can in the future implement better strategies for routing the {@link Exchange} in the
+ * route graph, as we have a {@link Channel} between each and every node in the graph.
  */
 public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
@@ -159,22 +157,23 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     }
 
     /**
-     * Initializes the channel.
-     * If the initialized output definition contained outputs (children) then
-     * the childDefinition will be set so we can leverage fine grained tracing
+     * Initializes the channel. If the initialized output definition contained outputs (children) then the
+     * childDefinition will be set so we can leverage fine grained tracing
      *
-     * @param route      the route context
-     * @param definition        the route definition the {@link Channel} represents
-     * @param childDefinition   the child definition
-     * @throws Exception is thrown if some error occurred
+     * @param  route           the route context
+     * @param  definition      the route definition the {@link Channel} represents
+     * @param  childDefinition the child definition
+     * @throws Exception       is thrown if some error occurred
      */
-    public void initChannel(Route route,
-                            NamedNode definition,
-                            NamedNode childDefinition,
-                            List<InterceptStrategy> interceptors,
-                            Processor nextProcessor,
-                            NamedRoute routeDefinition,
-                            boolean first) throws Exception {
+    public void initChannel(
+            Route route,
+            NamedNode definition,
+            NamedNode childDefinition,
+            List<InterceptStrategy> interceptors,
+            Processor nextProcessor,
+            NamedRoute routeDefinition,
+            boolean first)
+            throws Exception {
         this.route = route;
         this.definition = definition;
         this.camelContext = route.getCamelContext();
@@ -243,10 +242,10 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             Processor wrapped = strategy.wrapProcessorInInterceptors(route.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
                 LOG.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
-                        + " This causes the asynchronous routing engine to not work as optimal as possible."
-                        + " See more details at the InterceptStrategy javadoc."
-                        + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
-                        + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
+                         + " This causes the asynchronous routing engine to not work as optimal as possible."
+                         + " See more details at the InterceptStrategy javadoc."
+                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
+                         + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
             }
             if (!(wrapped instanceof WrapProcessor)) {
                 // wrap the target so it becomes a service and we can manage its lifecycle

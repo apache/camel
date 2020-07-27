@@ -20,9 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * The SoroushBot consumer. if concurrentConsumer set to 1, this Consumer will be Instantiated
- * every message will be processed in order of their arrival time
- * this consumer support both Sync and Async processors.
+ * The SoroushBot consumer. if concurrentConsumer set to 1, this Consumer will be Instantiated every message will be
+ * processed in order of their arrival time this consumer support both Sync and Async processors.
  */
 
 //CHECKSTYLE:OFF

@@ -71,7 +71,7 @@ class AnnotatedDecorator implements Annotated {
     private <T extends Annotation> T getDecoratingAnnotation(Class<T> annotationType) {
         for (Annotation annotation : annotations) {
             if (annotationType.isAssignableFrom(annotation.annotationType())) {
-                return (T)annotation;
+                return (T) annotation;
             }
         }
         return null;

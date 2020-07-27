@@ -45,7 +45,7 @@ public class CamelGreeterConsumerTest {
         //things to set them into the URL's in the spring contexts 
         System.setProperty("CamelGreeterConsumerTest.port", Integer.toString(port));
     }
- 
+
     @Autowired
     protected CamelContext camelContext;
 
@@ -57,12 +57,12 @@ public class CamelGreeterConsumerTest {
         List<String> params = new ArrayList<>();
         params.add("Willem");
         Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
-                                                   params, CxfConstants.OPERATION_NAME, "greetMe");
+                params, CxfConstants.OPERATION_NAME, "greetMe");
         assertTrue(result instanceof List, "Result is a list instance ");
-        assertEquals(((List<?>)result).get(0), "HelloWillem", "Get the wrong response");
+        assertEquals(((List<?>) result).get(0), "HelloWillem", "Get the wrong response");
         try {
             template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
-                                            params, CxfConstants.OPERATION_NAME, "pingMe");
+                    params, CxfConstants.OPERATION_NAME, "pingMe");
             fail("Expect exception here.");
         } catch (Exception ex) {
             assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception.");

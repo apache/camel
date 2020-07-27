@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Tests mbeans is NOT registered when adding a 2nd route after CamelContext has been started,
- * because the registerNewRoutes is set to false
+ * Tests mbeans is NOT registered when adding a 2nd route after CamelContext has been started, because the
+ * registerNewRoutes is set to false
  */
 public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends ManagementTestSupport {
 

@@ -41,7 +41,8 @@ public class MailBindingAttachmentFileTest {
 
     private final MailBinding binding = new MailBinding();
 
-    @ParameterizedTest @MethodSource("fileNames")
+    @ParameterizedTest
+    @MethodSource("fileNames")
     public void shouldSanitizeAttachmentFileNames(String name) throws MessagingException, IOException {
         final Session session = Session.getInstance(new Properties());
         final Message message = new MimeMessage(session);

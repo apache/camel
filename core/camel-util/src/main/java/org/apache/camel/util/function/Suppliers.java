@@ -78,7 +78,8 @@ public final class Suppliers {
         return Optional.ofNullable(answer);
     }
 
-    public static <T> Optional<T> firstMatching(Predicate<T> predicate, ThrowingSupplier<T, Exception>... suppliers) throws Exception {
+    public static <T> Optional<T> firstMatching(Predicate<T> predicate, ThrowingSupplier<T, Exception>... suppliers)
+            throws Exception {
         T answer = null;
 
         for (ThrowingSupplier<T, Exception> supplier : suppliers) {

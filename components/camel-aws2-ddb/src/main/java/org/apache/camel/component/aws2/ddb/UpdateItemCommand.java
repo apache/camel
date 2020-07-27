@@ -32,8 +32,9 @@ public class UpdateItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        UpdateItemResponse result = ddbClient.updateItem(UpdateItemRequest.builder().tableName(determineTableName()).key(determineKey()).attributeUpdates(determineUpdateValues())
-            .expected(determineUpdateCondition()).returnValues(determineReturnValues()).build());
+        UpdateItemResponse result = ddbClient.updateItem(UpdateItemRequest.builder().tableName(determineTableName())
+                .key(determineKey()).attributeUpdates(determineUpdateValues())
+                .expected(determineUpdateCondition()).returnValues(determineReturnValues()).build());
 
         addAttributesToResult(result.attributes());
     }

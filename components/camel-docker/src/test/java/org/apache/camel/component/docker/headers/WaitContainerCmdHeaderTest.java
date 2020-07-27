@@ -40,7 +40,7 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
 
     @Mock
     private WaitContainerResultCallback callback;
-    
+
     @Test
     void waitContainerHeaderTest() {
 
@@ -48,7 +48,6 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
 
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
-
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 

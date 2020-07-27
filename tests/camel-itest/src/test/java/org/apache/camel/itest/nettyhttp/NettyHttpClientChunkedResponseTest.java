@@ -37,12 +37,12 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
     void testNettyHttpClientChunked() {
         invokeService(port1, true);
     }
-    
+
     @Test
     void testNettyHttpRouteClientChunked() {
         invokeService(port2, false);
     }
-    
+
     private void invokeService(int port, boolean checkChunkedHeader) {
         Exchange out = template.request("netty-http:http://localhost:" + port + "/test", new Processor() {
 
@@ -58,7 +58,6 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
             assertEquals("chunked", out.getMessage().getHeader("Transfer-Encoding"));
         }
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -70,13 +69,13 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
 
                 // use jetty as server as it supports sending response as chunked encoding
                 from("jetty:http://localhost:" + port1 + "/test")
-                    .setHeader("Transfer-Encoding", constant("chunked"))
-                    .transform().simple("Bye ${body}");
-                
+                        .setHeader("Transfer-Encoding", constant("chunked"))
+                        .transform().simple("Bye ${body}");
+
                 // set up a netty http proxy
                 from("netty-http:http://localhost:" + port2 + "/test")
-                    .to("netty-http:http://localhost:" + port1 + "/test?bridgeEndpoint=true&throwExceptionOnFailure=false");
-          
+                        .to("netty-http:http://localhost:" + port1 + "/test?bridgeEndpoint=true&throwExceptionOnFailure=false");
+
             }
         };
     }

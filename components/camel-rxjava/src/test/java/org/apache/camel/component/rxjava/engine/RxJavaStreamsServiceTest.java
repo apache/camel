@@ -67,7 +67,8 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
 
         AtomicInteger value = new AtomicInteger(0);
 
-        Flowable.fromPublisher(crs.fromStream("numbers", Integer.class)).doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue())).subscribe();
+        Flowable.fromPublisher(crs.fromStream("numbers", Integer.class))
+                .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue())).subscribe();
 
         template.sendBody("direct:reactive", 1);
         template.sendBody("direct:reactive", 2);
@@ -87,8 +88,9 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         final CountDownLatch latch = new CountDownLatch(num);
         final AtomicInteger value = new AtomicInteger(0);
 
-        Flowable.fromPublisher(crs.fromStream("tick", Integer.class)).doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue())).doOnNext(n -> latch.countDown())
-            .subscribe();
+        Flowable.fromPublisher(crs.fromStream("tick", Integer.class))
+                .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue())).doOnNext(n -> latch.countDown())
+                .subscribe();
 
         context.start();
 
@@ -165,10 +167,11 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         AtomicInteger value = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(3);
 
-        Flowable.fromPublisher(timer).map(exchange -> ExchangeHelper.getHeaderOrProperty(exchange, Exchange.TIMER_COUNTER, Integer.class))
-            .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue()))
-            .doOnNext(res -> latch.countDown())
-            .subscribe();
+        Flowable.fromPublisher(timer)
+                .map(exchange -> ExchangeHelper.getHeaderOrProperty(exchange, Exchange.TIMER_COUNTER, Integer.class))
+                .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue()))
+                .doOnNext(res -> latch.countDown())
+                .subscribe();
 
         assertTrue(latch.await(2, TimeUnit.SECONDS));
     }
@@ -248,8 +251,9 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         AtomicInteger value = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
 
-        Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e, String.class)).doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res))
-            .doOnNext(res -> latch.countDown()).subscribe();
+        Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e, String.class))
+                .doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res))
+                .doOnNext(res -> latch.countDown()).subscribe();
 
         assertTrue(latch.await(2, TimeUnit.SECONDS));
     }
@@ -262,7 +266,8 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         CountDownLatch latch = new CountDownLatch(1);
 
         Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e)).map(Exchange::getMessage).map(e -> e.getBody(String.class))
-            .doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown()).subscribe();
+                .doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown())
+                .subscribe();
 
         assertTrue(latch.await(2, TimeUnit.SECONDS));
     }
@@ -275,7 +280,8 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         CountDownLatch latch = new CountDownLatch(1);
         Function<Object, Publisher<String>> fun = crs.to("bean:hello", String.class);
 
-        Flowable.just(1, 2, 3).flatMap(fun::apply).doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown()).subscribe();
+        Flowable.just(1, 2, 3).flatMap(fun::apply).doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res))
+                .doOnNext(res -> latch.countDown()).subscribe();
 
         assertTrue(latch.await(2, TimeUnit.SECONDS));
     }
@@ -289,7 +295,8 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         Function<Object, Publisher<Exchange>> fun = crs.to("bean:hello");
 
         Flowable.just(1, 2, 3).flatMap(fun::apply).map(Exchange::getMessage).map(e -> e.getBody(String.class))
-            .doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown()).subscribe();
+                .doOnNext(res -> assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown())
+                .subscribe();
 
         assertTrue(latch.await(2, TimeUnit.SECONDS));
     }
@@ -335,6 +342,6 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         });
 
         assertThrows(FailedToStartRouteException.class,
-            () -> context.start());
+                () -> context.start());
     }
 }

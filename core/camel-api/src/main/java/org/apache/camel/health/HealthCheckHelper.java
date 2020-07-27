@@ -32,11 +32,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper for invoking {@link HealthCheck}'s.
  *
- * The helper will lookup the {@link HealthCheckRegistry} from {@link CamelContext} and gather
- * all the registered {@link HealthCheck}s and invoke them and gather their responses.
+ * The helper will lookup the {@link HealthCheckRegistry} from {@link CamelContext} and gather all the registered
+ * {@link HealthCheck}s and invoke them and gather their responses.
  *
- * The helper allows to filter out unwanted health checks using {@link HealthCheckFilter} or
- * to invoke only readiness or liveness checks.
+ * The helper allows to filter out unwanted health checks using {@link HealthCheckFilter} or to invoke only readiness or
+ * liveness checks.
  */
 public final class HealthCheckHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckHelper.class);
@@ -47,8 +47,8 @@ public final class HealthCheckHelper {
     /**
      * Get the group of the given check or an empty string if the group is not set.
      *
-     * @param check the health check
-     * @return the {@link HealthCheck#getGroup()} or an empty string if it is <code>null</code>
+     * @param  check the health check
+     * @return       the {@link HealthCheck#getGroup()} or an empty string if it is <code>null</code>
      */
     public static String getGroup(HealthCheck check) {
         return ObjectHelper.supplyIfEmpty(check.getGroup(), () -> "");
@@ -98,9 +98,9 @@ public final class HealthCheckHelper {
     /**
      * Invokes the checks and returns a collection of results.
      *
-     * @param camelContext the camel context.
+     * @param camelContext    the camel context.
      * @param optionsSupplier a supplier for options.
-     * @param filter filter to exclude some checks.
+     * @param filter          filter to exclude some checks.
      */
     public static Collection<HealthCheck.Result> invoke(
             CamelContext camelContext,
@@ -113,8 +113,8 @@ public final class HealthCheckHelper {
             // If no health check service is defined, this endpoint invokes the
             // check one by one.
             return registry.stream()
-                .collect(Collectors.groupingBy(HealthCheckHelper::getGroup))
-                .entrySet().stream()
+                    .collect(Collectors.groupingBy(HealthCheckHelper::getGroup))
+                    .entrySet().stream()
                     .map(Map.Entry::getValue)
                     .flatMap(Collection::stream)
                     .filter(check -> !filter.test(check))
@@ -130,13 +130,13 @@ public final class HealthCheckHelper {
     }
 
     /**
-     * Query the status of a check by id. Note that this may result in an effective
-     * invocation of the {@link HealthCheck}.
+     * Query the status of a check by id. Note that this may result in an effective invocation of the
+     * {@link HealthCheck}.
      *
-     * @param camelContext the camel context.
-     * @param id the check id.
-     * @param options the check options.
-     * @return an optional {@link HealthCheck.Result}.
+     * @param  camelContext the camel context.
+     * @param  id           the check id.
+     * @param  options      the check options.
+     * @return              an optional {@link HealthCheck.Result}.
      */
     public static Optional<HealthCheck.Result> query(CamelContext camelContext, String id, Map<String, Object> options) {
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
@@ -153,10 +153,10 @@ public final class HealthCheckHelper {
     /**
      * Invoke a check by id.
      *
-     * @param camelContext the camel context.
-     * @param id the check id.
-     * @param options the check options.
-     * @return an optional {@link HealthCheck.Result}.
+     * @param  camelContext the camel context.
+     * @param  id           the check id.
+     * @param  options      the check options.
+     * @return              an optional {@link HealthCheck.Result}.
      */
     public static Optional<HealthCheck.Result> invoke(CamelContext camelContext, String id, Map<String, Object> options) {
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);

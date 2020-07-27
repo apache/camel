@@ -64,13 +64,13 @@ public class JpaProducerRemoveTest extends AbstractJpaTest {
         return new SpringRouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .id("foo")
-                    .to("jpa://" + SendEmail.class.getName() + "?usePassedInEntityManager=true")
-                    .to("mock:result");
+                        .id("foo")
+                        .to("jpa://" + SendEmail.class.getName() + "?usePassedInEntityManager=true")
+                        .to("mock:result");
                 from("direct:remove")
-                    .id("foo1")
-                    .to("jpa://" + SendEmail.class.getName() + "?remove=true&usePassedInEntityManager=true")
-                    .to("mock:result");
+                        .id("foo1")
+                        .to("jpa://" + SendEmail.class.getName() + "?remove=true&usePassedInEntityManager=true")
+                        .to("mock:result");
             }
         };
     }

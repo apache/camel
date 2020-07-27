@@ -44,8 +44,8 @@ public final class AhcHelper {
     /**
      * Writes the given object as response body to the output stream
      *
-     * @param stream output stream
-     * @param target   object to write
+     * @param  stream              output stream
+     * @param  target              object to write
      * @throws java.io.IOException is thrown if error writing
      */
     public static void writeObjectToStream(OutputStream stream, Object target) throws IOException {
@@ -58,10 +58,10 @@ public final class AhcHelper {
     /**
      * Deserializes the input stream to a Java object
      *
-     * @param is input stream for the Java object
-     * @return the java object, or <tt>null</tt> if input stream was <tt>null</tt>
+     * @param  is                     input stream for the Java object
+     * @return                        the java object, or <tt>null</tt> if input stream was <tt>null</tt>
      * @throws ClassNotFoundException is thrown if class not found
-     * @throws IOException can be thrown
+     * @throws IOException            can be thrown
      */
     public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {
         if (is == null) {
@@ -88,13 +88,14 @@ public final class AhcHelper {
     /**
      * Creates the URL to invoke.
      *
-     * @param exchange the exchange
-     * @param endpoint the endpoint
-     * @return the URL to invoke
-     * @throws java.net.URISyntaxException is thrown if the URL is invalid
-     * @throws UnsupportedEncodingException 
+     * @param  exchange                     the exchange
+     * @param  endpoint                     the endpoint
+     * @return                              the URL to invoke
+     * @throws java.net.URISyntaxException  is thrown if the URL is invalid
+     * @throws UnsupportedEncodingException
      */
-    public static String createURL(Exchange exchange, AhcEndpoint endpoint) throws URISyntaxException, UnsupportedEncodingException {
+    public static String createURL(Exchange exchange, AhcEndpoint endpoint)
+            throws URISyntaxException, UnsupportedEncodingException {
         String url = doCreateURL(exchange, endpoint);
         return URISupport.normalizeUri(url);
     }
@@ -138,10 +139,13 @@ public final class AhcHelper {
                             path = path.substring(1);
                         }
                     } else {
-                        throw new RuntimeExchangeException("Cannot analyze the Exchange.HTTP_PATH header, due to: cannot find the right HTTP_BASE_URI", exchange);
+                        throw new RuntimeExchangeException(
+                                "Cannot analyze the Exchange.HTTP_PATH header, due to: cannot find the right HTTP_BASE_URI",
+                                exchange);
                     }
                 } catch (Throwable t) {
-                    throw new RuntimeExchangeException("Cannot analyze the Exchange.HTTP_PATH header, due to: " + t.getMessage(), exchange, t);
+                    throw new RuntimeExchangeException(
+                            "Cannot analyze the Exchange.HTTP_PATH header, due to: " + t.getMessage(), exchange, t);
                 }
             }
             if (path.length() > 0) {
@@ -163,10 +167,10 @@ public final class AhcHelper {
     /**
      * Creates the URI to invoke.
      *
-     * @param exchange the exchange
-     * @param url      the url to invoke
-     * @param endpoint the endpoint
-     * @return the URI to invoke
+     * @param  exchange the exchange
+     * @param  url      the url to invoke
+     * @param  endpoint the endpoint
+     * @return          the URI to invoke
      */
     public static URI createURI(Exchange exchange, String url, AhcEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);

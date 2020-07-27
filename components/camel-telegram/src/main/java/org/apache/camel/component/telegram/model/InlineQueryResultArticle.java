@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to an article or web page.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultarticle">
- * https://core.telegram.org/bots/api#inlinequeryresultarticle</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultarticle</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultArticle extends InlineQueryResult {

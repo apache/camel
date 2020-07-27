@@ -34,7 +34,8 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
 
     @Test
     public void testSetAcceptableSchema() throws Exception {
-        DefaultPackageScanClassResolver resolver = (DefaultPackageScanClassResolver)context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+        DefaultPackageScanClassResolver resolver
+                = (DefaultPackageScanClassResolver) context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
         assertNotNull(resolver);
     }
 

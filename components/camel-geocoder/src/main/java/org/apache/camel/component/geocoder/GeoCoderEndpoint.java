@@ -31,10 +31,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Find geocodes (latitude and longitude) for a given address or the other way
- * round.
+ * Find geocodes (latitude and longitude) for a given address or the other way round.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, category = {Category.API, Category.LOCATION})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng",
+             producerOnly = true, category = { Category.API, Category.LOCATION })
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -47,7 +47,8 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     private String clientId;
     @UriParam(label = "security", secret = true, description = "Client Key to access Google GeoCoding server.")
     private String clientKey;
-    @UriParam(label = "security", secret = true, description = "API Key to access Google. Mandatory for Google GeoCoding server.")
+    @UriParam(label = "security", secret = true,
+              description = "API Key to access Google. Mandatory for Google GeoCoding server.")
     private String apiKey;
     @UriParam(description = "URL to the geocoder server. Mandatory for Nominatim server.", displayName = "Server URL")
     private String serverUrl;
@@ -121,8 +122,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The geo latitude and longitude which should be prefixed with
-     * <tt>latlng:</tt>
+     * The geo latitude and longitude which should be prefixed with <tt>latlng:</tt>
      */
     public void setLatlng(String latlng) {
         this.latlng = latlng;
@@ -133,8 +133,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Whether to only enrich the Exchange with headers, and leave the body
-     * as-is.
+     * Whether to only enrich the Exchange with headers, and leave the body as-is.
      */
     public void setHeadersOnly(boolean headersOnly) {
         this.headersOnly = headersOnly;

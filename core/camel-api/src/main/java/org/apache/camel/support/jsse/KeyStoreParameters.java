@@ -29,33 +29,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A representation of configuration options for creating and loading a
- * {@link KeyStore} instance.
+ * A representation of configuration options for creating and loading a {@link KeyStore} instance.
  */
 public class KeyStoreParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyStoreParameters.class);
 
     /**
-     * The optional type of the key store to load. See Appendix A in the 
-     * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore">
-     * Java Cryptography Architecture Standard Algorithm Name Documentation</a> for more information on standard names.
+     * The optional type of the key store to load. See Appendix A in the
+     * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore"> Java
+     * Cryptography Architecture Standard Algorithm Name Documentation</a> for more information on standard names.
      */
     protected String type;
-    
+
     /**
      * The optional password for reading/opening/verifying the key store.
      */
     protected String password;
-    
+
     /**
      * The optional provider identifier for instantiating the key store.
      */
     protected String provider;
-    
+
     /**
-     * The optional file path, class path resource, or URL of the resource
-     * used to load the key store.
+     * The optional file path, class path resource, or URL of the resource used to load the key store.
      */
     protected String resource;
 
@@ -68,9 +66,8 @@ public class KeyStoreParameters extends JsseParameters {
 
     /**
      * Sets the type of the key store to create and load. See Appendix A in the
-     * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore"
-     * >Java Cryptography Architecture Standard Algorithm Name
-     * Documentation</a> for more information on standard names.
+     * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore" >Java
+     * Cryptography Architecture Standard Algorithm Name Documentation</a> for more information on standard names.
      * 
      * @param value the key store type identifier (may be {@code null})
      */
@@ -106,7 +103,7 @@ public class KeyStoreParameters extends JsseParameters {
      *
      * @param value the provider identifier (may be {@code null})
      *
-     * @see Security#getProviders()
+     * @see         Security#getProviders()
      */
     public void setProvider(String value) {
         this.provider = value;
@@ -120,8 +117,7 @@ public class KeyStoreParameters extends JsseParameters {
     }
 
     /**
-     * Sets the optional file path, class path resource, or URL of the resource
-     * used to load the key store.
+     * Sets the optional file path, class path resource, or URL of the resource used to load the key store.
      * 
      * @param value the resource (may be {@code null})
      */
@@ -130,23 +126,18 @@ public class KeyStoreParameters extends JsseParameters {
     }
 
     /**
-     * Creates a {@link KeyStoreParameters} instance based off of the configuration state
-     * of this instance. If {@link #getType()} returns {@code null}, the default
-     * key store type is loaded, otherwise the type will be of that specified.
+     * Creates a {@link KeyStoreParameters} instance based off of the configuration state of this instance. If
+     * {@link #getType()} returns {@code null}, the default key store type is loaded, otherwise the type will be of that
+     * specified.
      * <p/>
-     * The created instance will always be loaded, but if the type requires an
-     * input stream and {@link #getResource()} returns {@code null}, the
-     * instance will be empty. The loading of the resource, if not {@code null},
-     * is attempted by treating the resource as a file path, a class path
-     * resource, and a URL in that order. An exception is thrown if the resource
-     * cannot be resolved to readable input stream using any of the above
-     * methods.
+     * The created instance will always be loaded, but if the type requires an input stream and {@link #getResource()}
+     * returns {@code null}, the instance will be empty. The loading of the resource, if not {@code null}, is attempted
+     * by treating the resource as a file path, a class path resource, and a URL in that order. An exception is thrown
+     * if the resource cannot be resolved to readable input stream using any of the above methods.
      * 
-     * @return a configured and loaded key store
-     * @throws GeneralSecurityException if there is an error creating an instance
-     *             with the given configuration
-     * @throws IOException if there is an error resolving the configured
-     *             resource to an input stream
+     * @return                          a configured and loaded key store
+     * @throws GeneralSecurityException if there is an error creating an instance with the given configuration
+     * @throws IOException              if there is an error resolving the configured resource to an input stream
      */
     public KeyStore createKeyStore() throws GeneralSecurityException, IOException {
         LOG.trace("Creating KeyStore instance from KeyStoreParameters [{}].", this);
@@ -167,26 +158,26 @@ public class KeyStoreParameters extends JsseParameters {
         } else {
             ks = KeyStore.getInstance(ksType, this.parsePropertyValue(this.provider));
         }
-        
+
         if (this.resource == null) {
             ks.load(null, ksPassword);
         } else {
             InputStream is = this.resolveResource(this.parsePropertyValue(this.resource));
             ks.load(is, ksPassword);
         }
-        
+
         if (LOG.isDebugEnabled()) {
             List<String> aliases = new LinkedList<>();
-            
+
             Enumeration<String> aliasEnum = ks.aliases();
             while (aliasEnum.hasMoreElements()) {
                 aliases.add(aliasEnum.nextElement());
             }
-            
+
             LOG.debug("KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
-                      new Object[] {ks, this, ks.getProvider(), ks.getType(), aliases});
+                    new Object[] { ks, this, ks.getProvider(), ks.getType(), aliases });
         }
-        
+
         return ks;
     }
 

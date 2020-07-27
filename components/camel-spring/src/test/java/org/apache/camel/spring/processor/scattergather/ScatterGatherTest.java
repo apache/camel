@@ -42,10 +42,10 @@ public class ScatterGatherTest extends ContextTestSupport {
         headers.put("quoteRequestId", "quoteRequest-1");
         template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);
         // END SNIPPET: e2
-        
+
         result.assertIsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/scattergather/scatter-gather.xml");

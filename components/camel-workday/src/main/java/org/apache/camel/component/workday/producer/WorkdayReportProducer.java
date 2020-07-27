@@ -37,7 +37,6 @@ public class WorkdayReportProducer extends WorkdayDefaultProducer {
         super(endpoint);
     }
 
-
     @Override
     public String prepareUri(WorkdayConfiguration configuration) {
         Map<String, Object> parameters = configuration.getParameters();
@@ -51,7 +50,8 @@ public class WorkdayReportProducer extends WorkdayDefaultProducer {
 
         stringBuilder.append("format=");
         stringBuilder.append(configuration.getReportFormat());
-        String uriString = String.format(WORKDAY_RASS_URL_TEMPLATE, configuration.getHost(), configuration.getTenant(), stringBuilder.toString());
+        String uriString = String.format(WORKDAY_RASS_URL_TEMPLATE, configuration.getHost(), configuration.getTenant(),
+                stringBuilder.toString());
 
         return uriString;
     }

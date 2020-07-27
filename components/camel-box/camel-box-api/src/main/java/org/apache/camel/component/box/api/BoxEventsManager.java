@@ -44,24 +44,20 @@ public class BoxEventsManager {
     private EventStream eventStream;
 
     /**
-     * Create events manager to manage the events of Box connection's
-     * authenticated user.
+     * Create events manager to manage the events of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxEventsManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
     }
 
     /**
-     * Create an event stream with optional starting initial position and add
-     * listener that will be notified when an event is received.
+     * Create an event stream with optional starting initial position and add listener that will be notified when an
+     * event is received.
      * 
-     * @param startingPosition
-     *            - the starting position of the event stream.
-     * @param listener
-     *            - the listener to add to event stream.
+     * @param startingPosition - the starting position of the event stream.
+     * @param listener         - the listener to add to event stream.
      */
     public void listen(EventListener listener, Long startingPosition) {
         try {

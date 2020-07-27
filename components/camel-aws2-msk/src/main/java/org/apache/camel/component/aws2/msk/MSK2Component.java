@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.kafka.KafkaClient;
 public class MSK2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(MSK2Component.class);
-    
+
     @Metadata
     private MSK2Configuration configuration = new MSK2Configuration();
 
@@ -58,7 +58,8 @@ public class MSK2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getMskClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getMskClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon msk client or accessKey and secretKey must be specified");
         }
         return endpoint;

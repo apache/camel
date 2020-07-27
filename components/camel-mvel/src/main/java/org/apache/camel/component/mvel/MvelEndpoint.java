@@ -38,7 +38,8 @@ import org.mvel2.templates.TemplateRuntime;
 /**
  * Transform messages using an MVEL template.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION, Category.SCRIPT})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true,
+             category = { Category.TRANSFORMATION, Category.SCRIPT })
 public class MvelEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
@@ -70,8 +71,8 @@ public class MvelEndpoint extends ResourceEndpoint {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
@@ -98,7 +99,8 @@ public class MvelEndpoint extends ResourceEndpoint {
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(MvelConstants.MVEL_RESOURCE_URI);
 
-                log.debug("{} set to {} creating new endpoint to handle exchange", MvelConstants.MVEL_RESOURCE_URI, newResourceUri);
+                log.debug("{} set to {} creating new endpoint to handle exchange", MvelConstants.MVEL_RESOURCE_URI,
+                        newResourceUri);
                 MvelEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
                 return;
@@ -123,10 +125,13 @@ public class MvelEndpoint extends ResourceEndpoint {
             compiled = TemplateCompiler.compileTemplate(content, mvelContext);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Mvel content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
+                log.debug("Mvel content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                        getEndpointUri());
             }
             // getResourceAsInputStream also considers the content cache
-            Reader reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
+            Reader reader = getEncoding() != null
+                    ? new InputStreamReader(getResourceAsInputStream(), getEncoding())
+                    : new InputStreamReader(getResourceAsInputStream());
             String template = IOHelper.toString(reader);
             if (!template.equals(this.template)) {
                 this.template = template;

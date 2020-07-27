@@ -38,7 +38,8 @@ public class TransformXpathTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(NodeList.class);
 
-        String xml = context.getTypeConverter().convertTo(String.class, new File("src/test/resources/org/apache/camel/processor/students.xml"));
+        String xml = context.getTypeConverter().convertTo(String.class,
+                new File("src/test/resources/org/apache/camel/processor/students.xml"));
 
         template.sendBody("direct:start", xml);
 

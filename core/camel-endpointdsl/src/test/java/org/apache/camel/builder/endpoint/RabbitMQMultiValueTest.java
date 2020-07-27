@@ -42,11 +42,10 @@ public class RabbitMQMultiValueTest extends ContextTestSupport {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder =
-                        rabbitmq("mytopic").advanced()
-                                .args("foo", "123")
-                                .args("bar", "456")
-                                .args("beer", "yes").basic();
+                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder = rabbitmq("mytopic").advanced()
+                        .args("foo", "123")
+                        .args("bar", "456")
+                        .args("beer", "yes").basic();
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
@@ -77,9 +76,8 @@ public class RabbitMQMultiValueTest extends ContextTestSupport {
                 map.put("bar", "456");
                 map.put("beer", "yes");
 
-                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder =
-                        rabbitmq("mytopic").advanced()
-                                .args(map).basic();
+                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder = rabbitmq("mytopic").advanced()
+                        .args(map).basic();
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);

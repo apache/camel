@@ -48,8 +48,8 @@ public final class AtomUtils {
     /**
      * Parses the given uri and returns the response as a atom feed document.
      *
-     * @param uri the uri for the atom feed.
-     * @return the document
+     * @param  uri            the uri for the atom feed.
+     * @return                the document
      * @throws IOException    is thrown if error reading from the uri
      * @throws ParseException is thrown if the parsing failed
      */

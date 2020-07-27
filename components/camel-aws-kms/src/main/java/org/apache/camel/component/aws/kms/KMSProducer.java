@@ -40,8 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon KMS Service
- * <a href="http://aws.amazon.com/kms/">AWS KMS</a>
+ * A Producer which sends messages to the Amazon KMS Service <a href="http://aws.amazon.com/kms/">AWS KMS</a>
  */
 public class KMSProducer extends DefaultProducer {
 
@@ -105,7 +104,7 @@ public class KMSProducer extends DefaultProducer {
 
     @Override
     public KMSEndpoint getEndpoint() {
-        return (KMSEndpoint)super.getEndpoint();
+        return (KMSEndpoint) super.getEndpoint();
     }
 
     private void listKeys(AWSKMS kmsClient, Exchange exchange) {

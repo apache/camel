@@ -151,12 +151,12 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:back")
-                    .unmarshal(new SnakeYAMLDataFormat())
-                    .to("mock:reverse");
+                        .unmarshal(new SnakeYAMLDataFormat())
+                        .to("mock:reverse");
 
                 from("direct:back2")
-                    .unmarshal(dataFormat)
-                    .to("mock:reverse2");
+                        .unmarshal(dataFormat)
+                        .to("mock:reverse2");
             }
         };
     }

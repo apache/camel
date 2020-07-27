@@ -42,7 +42,8 @@ public class RouteIdRestDefinitionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start1?timeout=30000").to("mock:result");
                 from("direct:start2").to("mock:result");
-                rest("/say/hello").get("/bar").id("getSayHelloBar").to("mock:result").get("/bar/{user}").id("getSayHelloBarWithUser").to("mock:result");
+                rest("/say/hello").get("/bar").id("getSayHelloBar").to("mock:result").get("/bar/{user}")
+                        .id("getSayHelloBarWithUser").to("mock:result");
             }
         };
     }

@@ -47,8 +47,10 @@ public class BasicValidationHandler implements HttpRequestHandler {
     }
 
     @Override
-    public void handle(final HttpRequest request, final HttpResponse response,
-                       final HttpContext context) throws HttpException, IOException {
+    public void handle(
+            final HttpRequest request, final HttpResponse response,
+            final HttpContext context)
+            throws HttpException, IOException {
 
         if (expectedMethod != null && !expectedMethod.equals(request.getRequestLine().getMethod())) {
             response.setStatusCode(HttpStatus.SC_METHOD_FAILURE);

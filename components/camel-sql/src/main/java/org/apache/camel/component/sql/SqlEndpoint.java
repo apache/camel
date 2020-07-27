@@ -30,7 +30,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * Perform SQL queries using Spring JDBC.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query", category = {Category.DATABASE, Category.SQL})
+@UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query",
+             category = { Category.DATABASE, Category.SQL })
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")
@@ -47,8 +48,10 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
-        SqlProcessingStrategy proStrategy = getProcessingStrategy() != null ? getProcessingStrategy() : new DefaultSqlProcessingStrategy(prepareStrategy);
+        SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null
+                ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
+        SqlProcessingStrategy proStrategy
+                = getProcessingStrategy() != null ? getProcessingStrategy() : new DefaultSqlProcessingStrategy(prepareStrategy);
         SqlConsumer consumer = new SqlConsumer(this, processor, getJdbcTemplate(), query, prepareStrategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
@@ -66,8 +69,10 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
-        SqlProducer result = new SqlProducer(this, query, getJdbcTemplate(), prepareStrategy, isBatch(),
+        SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null
+                ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
+        SqlProducer result = new SqlProducer(
+                this, query, getJdbcTemplate(), prepareStrategy, isBatch(),
                 isAlwaysPopulateStatement(), isUseMessageBodyForSql());
         result.setParametersCount(getParametersCount());
         return result;
@@ -84,7 +89,8 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
     }
 
     /**
-     * Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.
+     * Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify
+     * the location of the file.
      */
     public void setQuery(String query) {
         this.query = query;

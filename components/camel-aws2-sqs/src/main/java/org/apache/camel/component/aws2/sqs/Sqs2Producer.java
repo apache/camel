@@ -48,8 +48,8 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 /**
- * A Producer which sends messages to the Amazon Web Service Simple Queue
- * Service <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
+ * A Producer which sends messages to the Amazon Web Service Simple Queue Service
+ * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
  */
 public class Sqs2Producer extends DefaultProducer {
 
@@ -59,7 +59,8 @@ public class Sqs2Producer extends DefaultProducer {
 
     public Sqs2Producer(Sqs2Endpoint endpoint) throws NoFactoryAvailableException {
         super(endpoint);
-        if (endpoint.getConfiguration().isFifoQueue() && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+        if (endpoint.getConfiguration().isFifoQueue()
+                && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
             throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
         }
     }
@@ -110,7 +111,7 @@ public class Sqs2Producer extends DefaultProducer {
         if (exchange.getIn().getBody() instanceof Iterable) {
             Iterable c = exchange.getIn().getBody(Iterable.class);
             for (Object o : c) {
-                String object = (String)o;
+                String object = (String) o;
                 SendMessageBatchRequestEntry.Builder entry = SendMessageBatchRequestEntry.builder();
                 entry.id(UUID.randomUUID().toString());
                 entry.messageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
@@ -161,7 +162,8 @@ public class Sqs2Producer extends DefaultProducer {
             String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
             request.messageGroupId(messageGroupId);
 
-            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
+                    = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
             String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
             request.messageDeduplicationId(messageDeduplicationId);
 
@@ -175,7 +177,8 @@ public class Sqs2Producer extends DefaultProducer {
             String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
             request.messageGroupId(messageGroupId);
 
-            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
+                    = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
             String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
             request.messageDeduplicationId(messageDeduplicationId);
 
@@ -224,7 +227,7 @@ public class Sqs2Producer extends DefaultProducer {
 
     @Override
     public Sqs2Endpoint getEndpoint() {
-        return (Sqs2Endpoint)super.getEndpoint();
+        return (Sqs2Endpoint) super.getEndpoint();
     }
 
     @Override
@@ -243,20 +246,20 @@ public class Sqs2Producer extends DefaultProducer {
             // message attribute
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 Object value = entry.getValue();
-                if (value instanceof String && !((String)value).isEmpty()) {
+                if (value instanceof String && !((String) value).isEmpty()) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String");
-                    mav.stringValue((String)value);
+                    mav.stringValue((String) value);
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof ByteBuffer) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("Binary");
-                    mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer)value));
+                    mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Boolean) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("Number.Boolean");
-                    mav.stringValue(((Boolean)value) ? "1" : "0");
+                    mav.stringValue(((Boolean) value) ? "1" : "0");
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Number) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
@@ -287,7 +290,8 @@ public class Sqs2Producer extends DefaultProducer {
                 } else {
                     // cannot translate the message header to message attribute
                     // value
-                    LOG.warn("Cannot put the message header key={}, value={} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
+                    LOG.warn("Cannot put the message header key={}, value={} into Sqs MessageAttribute", entry.getKey(),
+                            entry.getValue());
                 }
             }
         }

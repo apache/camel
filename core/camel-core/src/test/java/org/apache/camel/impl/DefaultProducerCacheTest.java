@@ -230,7 +230,8 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private class MyServicePool extends ProducerServicePool {
 
-        public MyServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator, Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
+        public MyServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
+                             Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
             super(creator, getEndpoint, capacity);
         }
 

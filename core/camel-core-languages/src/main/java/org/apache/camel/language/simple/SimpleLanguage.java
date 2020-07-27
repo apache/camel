@@ -146,8 +146,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     /**
-     * Creates a new {@link Expression} (or {@link Predicate}
-     * if the resultType is a <tt>Boolean</tt>, or <tt>boolean</tt> type).
+     * Creates a new {@link Expression} (or {@link Predicate} if the resultType is a <tt>Boolean</tt>, or
+     * <tt>boolean</tt> type).
      */
     public static Expression simple(String expression, Class<?> resultType) {
         return new SimpleLanguage().createExpression(expression, resultType);
@@ -187,8 +187,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     /**
      * Does the expression include a simple function.
      *
-     * @param expression the expression
-     * @return <tt>true</tt> if one or more simple function is included in the expression
+     * @param  expression the expression
+     * @return            <tt>true</tt> if one or more simple function is included in the expression
      */
     public static boolean hasSimpleFunction(String expression) {
         return SimpleTokenizer.hasFunctionStartToken(expression);

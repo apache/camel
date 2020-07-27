@@ -27,7 +27,7 @@ public class ZooKeeperCuratorHelperTest {
 
     @Test
     public void testCreateCuratorRetryPolicy() throws Exception {
-        ZooKeeperCuratorConfiguration configuration  = new ZooKeeperCuratorConfiguration();
+        ZooKeeperCuratorConfiguration configuration = new ZooKeeperCuratorConfiguration();
 
         configuration.setNodes("nodes1,node2,node3");
         configuration.setReconnectBaseSleepTime(10);
@@ -39,8 +39,9 @@ public class ZooKeeperCuratorHelperTest {
 
         assertNotNull(curatorFramework);
         ExponentialBackoffRetry retryPolicy = (ExponentialBackoffRetry) curatorFramework.getZookeeperClient().getRetryPolicy();
-        
-        assertEquals(configuration.getReconnectBaseSleepTime(), retryPolicy.getBaseSleepTimeMs(), "retryPolicy.reconnectBaseSleepTime");
+
+        assertEquals(configuration.getReconnectBaseSleepTime(), retryPolicy.getBaseSleepTimeMs(),
+                "retryPolicy.reconnectBaseSleepTime");
         assertEquals(configuration.getReconnectMaxRetries(), retryPolicy.getN(), "retryPolicy.reconnectMaxRetries");
         // retryPolicy.maxSleepMs not visible here
 

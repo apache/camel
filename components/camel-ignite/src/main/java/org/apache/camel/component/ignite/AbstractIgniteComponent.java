@@ -40,10 +40,11 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 public abstract class AbstractIgniteComponent extends DefaultComponent {
 
     /**
-     * Modes of managing the underlying {@link Ignite} instance. 
+     * Modes of managing the underlying {@link Ignite} instance.
      */
     public enum IgniteLifecycleMode {
-        USER_MANAGED, COMPONENT_MANAGED
+        USER_MANAGED,
+        COMPONENT_MANAGED
     }
 
     private IgniteLifecycleMode lifecycleMode = IgniteLifecycleMode.COMPONENT_MANAGED;
@@ -72,12 +73,15 @@ public abstract class AbstractIgniteComponent extends DefaultComponent {
             } else if (configurationResource instanceof String) {
                 ignite = Ignition.start((String) configurationResource);
             } else {
-                throw new IllegalStateException("An unsupported configuration resource was provided to the Ignite component. " + "Supported types are: URL, InputStream, String.");
+                throw new IllegalStateException(
+                        "An unsupported configuration resource was provided to the Ignite component. "
+                                                + "Supported types are: URL, InputStream, String.");
             }
         } else if (igniteConfiguration != null) {
             ignite = Ignition.start(igniteConfiguration);
         } else {
-            throw new IllegalStateException("No configuration resource or IgniteConfiguration was provided to the Ignite component.");
+            throw new IllegalStateException(
+                    "No configuration resource or IgniteConfiguration was provided to the Ignite component.");
         }
     }
 

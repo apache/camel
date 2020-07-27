@@ -41,7 +41,7 @@ public class CqlSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("cql://host1,host2:8080/" + keyspace + "?cql="
-                + cql + "&consistencyLevel=quorum");
+                                                           + cql + "&consistencyLevel=quorum");
         Mockito.when(exchange.getIn()).thenReturn(message);
 
         SpanDecorator decorator = new CqlSpanDecorator();

@@ -52,13 +52,15 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/myserver").to("log:A")
-                    // remove http headers before and after invoking http
-                    // service
-                    .removeHeaders("CamelHttp*").to("http://localhost:{{port}}/other").removeHeaders("CamelHttp*").to("mock:bar")
-                    // now just force an exception immediately
-                    .throwException(new IllegalArgumentException("I cannot do this"));
+                        // remove http headers before and after invoking http
+                        // service
+                        .removeHeaders("CamelHttp*").to("http://localhost:{{port}}/other").removeHeaders("CamelHttp*")
+                        .to("mock:bar")
+                        // now just force an exception immediately
+                        .throwException(new IllegalArgumentException("I cannot do this"));
 
-                from("jetty://http://localhost:{{port}}/other").convertBodyTo(String.class).to("log:C").to("mock:foo").transform().simple("Bye ${body}");
+                from("jetty://http://localhost:{{port}}/other").convertBodyTo(String.class).to("log:C").to("mock:foo")
+                        .transform().simple("Bye ${body}");
             }
         };
     }

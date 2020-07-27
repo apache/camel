@@ -34,8 +34,7 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 
 /**
- * Caches a Secret Keyring. Assumes that the password for all private keys is
- * the same.
+ * Caches a Secret Keyring. Assumes that the password for all private keys is the same.
  */
 public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 
@@ -52,33 +51,33 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 
     /**
      * 
-     * @param secretKeyRing
-     *            secret key ring as byte array
-     * @param password
-     *            password for the private keys, assuming that all private keys
-     *            have the same password
-     * @param provider
+     * @param  secretKeyRing secret key ring as byte array
+     * @param  password      password for the private keys, assuming that all private keys have the same password
+     * @param  provider
      * @throws PGPException
      * @throws IOException
      */
-    public DefaultPGPSecretKeyAccessor(byte[] secretKeyRing, String password, String provider) throws PGPException, IOException {
+    public DefaultPGPSecretKeyAccessor(byte[] secretKeyRing, String password, String provider) throws PGPException,
+                                                                                               IOException {
         ObjectHelper.notNull(secretKeyRing, "secretKeyRing");
         StringHelper.notEmpty(password, "password");
         StringHelper.notEmpty(provider, "provider");
-        pgpSecretKeyring = 
-            new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(secretKeyRing)),
-                                           new BcKeyFingerprintCalculator());
+        pgpSecretKeyring = new PGPSecretKeyRingCollection(
+                PGPUtil.getDecoderStream(new ByteArrayInputStream(secretKeyRing)),
+                new BcKeyFingerprintCalculator());
         this.password = password;
         this.provider = provider;
     }
 
     @Override
-    public List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts) throws Exception {
+    public List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts)
+            throws Exception {
         List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<>(3);
         for (String useridPart : useridParts) {
             List<PGPSecretKeyAndPrivateKeyAndUserId> partResult = userIdPart2SecretKeyList.get(useridPart);
             if (partResult == null) {
-                partResult = PGPDataFormatUtil.findSecretKeysWithPrivateKeyAndUserId(Collections.singletonMap(useridPart, password),
+                partResult = PGPDataFormatUtil.findSecretKeysWithPrivateKeyAndUserId(
+                        Collections.singletonMap(useridPart, password),
                         provider, pgpSecretKeyring);
                 userIdPart2SecretKeyList.put(useridPart, partResult);
             }

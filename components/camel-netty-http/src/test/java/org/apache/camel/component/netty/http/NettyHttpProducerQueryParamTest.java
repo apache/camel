@@ -43,7 +43,8 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
 
     @Test
     public void testQueryParametersWithHeader() throws Exception {
-        Exchange exchange = template.request(url, exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks"));
+        Exchange exchange
+                = template.request(url, exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks"));
         assertNotNull(exchange);
 
         String body = exchange.getMessage().getBody(String.class);
@@ -72,7 +73,8 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
     @Test
     public void testQueryParametersInUriWithDynamicPath() throws Exception {
         // remove "/cheese" from the endpoint URL and place it in the Exchange.HTTP_PATH header
-        Exchange exchange = template.request((url + "&quote=Camel%20rocks").replace("/cheese", ""), exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/cheese"));
+        Exchange exchange = template.request((url + "&quote=Camel%20rocks").replace("/cheese", ""),
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/cheese"));
         assertNotNull(exchange);
 
         String body = exchange.getMessage().getBody(String.class);

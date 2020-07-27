@@ -49,11 +49,11 @@ public class PgEventPubSubIntegrationTest extends AbstractPgEventIntegrationTest
             @Override
             public void configure() throws Exception {
                 from(timerEndpoint)
-                    .setBody(constant(TEST_MESSAGE_BODY))
-                    .to(notifyEndpoint);
+                        .setBody(constant(TEST_MESSAGE_BODY))
+                        .to(notifyEndpoint);
 
                 from(subscribeEndpoint)
-                    .to(mockEndpoint);
+                        .to(mockEndpoint);
             }
         };
     }

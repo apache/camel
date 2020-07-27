@@ -57,7 +57,8 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization",
+                auth, String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -78,8 +79,8 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

@@ -29,7 +29,7 @@ public class SolrAddBeanTest extends SolrComponentTestSupport {
         //add bean
         Item item = new Item();
         item.id = TEST_ID;
-        item.categories =  new String[] {"aaa", "bbb", "ccc"};
+        item.categories = new String[] { "aaa", "bbb", "ccc" };
 
         template.sendBodyAndHeader("direct:start", item, SolrConstants.OPERATION, SolrConstants.OPERATION_ADD_BEAN);
         template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);

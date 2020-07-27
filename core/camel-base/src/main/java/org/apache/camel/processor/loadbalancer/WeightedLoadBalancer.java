@@ -24,9 +24,9 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     protected final List<DistributionRatio> ratios;
     protected final int distributionRatioSum;
     protected int runtimeRatioSum;
-    
+
     transient int lastIndex = -1;
-    
+
     public WeightedLoadBalancer(List<Integer> distributionRatios) {
         List<DistributionRatio> ratios = distributionRatios.stream()
                 .map(DistributionRatio::new)
@@ -36,7 +36,7 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
                 .mapToInt(DistributionRatio::getDistributionWeight).sum();
         this.runtimeRatioSum = distributionRatioSum;
     }
-    
+
     public int getLastChosenProcessorIndex() {
         return lastIndex;
     }
@@ -45,8 +45,9 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     protected void doStart() throws Exception {
         super.doStart();
         if (getProcessors().size() != ratios.size()) {
-            throw new IllegalArgumentException("Loadbalacing with " + getProcessors().size()
-                + " should match number of distributions " + ratios.size());
+            throw new IllegalArgumentException(
+                    "Loadbalacing with " + getProcessors().size()
+                                               + " should match number of distributions " + ratios.size());
         }
     }
 

@@ -24,7 +24,8 @@ public class SpringPropertiesComponentInterceptFromTest extends PropertiesCompon
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/properties/SpringPropertiesComponentInterceptFromTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/component/properties/SpringPropertiesComponentInterceptFromTest.xml");
     }
 
 }

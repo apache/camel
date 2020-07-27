@@ -85,7 +85,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         if (def != null) {
             try {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
-                    .getObjectNameForStep(camelContext, processor, def);
+                        .getObjectNameForStep(camelContext, processor, def);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
             } catch (MalformedObjectNameException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);

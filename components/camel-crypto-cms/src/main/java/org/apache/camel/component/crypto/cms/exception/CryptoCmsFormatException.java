@@ -17,8 +17,7 @@
 package org.apache.camel.component.crypto.cms.exception;
 
 /**
- * Exception thrown when the decoding of an input stream to a cms object, like
- * singed data or enveloped data, fails.
+ * Exception thrown when the decoding of an input stream to a cms object, like singed data or enveloped data, fails.
  * 
  */
 public class CryptoCmsFormatException extends CryptoCmsException {

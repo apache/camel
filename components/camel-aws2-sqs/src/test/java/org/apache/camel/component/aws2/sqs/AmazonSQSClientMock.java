@@ -91,25 +91,30 @@ public class AmazonSQSClientMock implements SqsClient {
         message.body(sendMessageRequest.messageBody());
         message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
         message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
-        message.receiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5zC9+4QMqJZ0DJ3gVOmjI2Gh/oFnb0IeJqy5Zc8kH4JX7GVpfjcEDjaAPSeOkXQZRcaBqt"
+        message.receiptHandle(
+                "0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5zC9+4QMqJZ0DJ3gVOmjI2Gh/oFnb0IeJqy5Zc8kH4JX7GVpfjcEDjaAPSeOkXQZRcaBqt"
                               + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
 
         synchronized (messages) {
             messages.add(message.build());
         }
 
-        return SendMessageResponse.builder().messageId("f6fb6f99-5eb2-4be4-9b15-144774141458").md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee").build();
+        return SendMessageResponse.builder().messageId("f6fb6f99-5eb2-4be4-9b15-144774141458")
+                .md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee").build();
     }
 
     @Override
     public ReceiveMessageResponse receiveMessage(ReceiveMessageRequest receiveMessageRequest) {
-        Integer maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null ? receiveMessageRequest.maxNumberOfMessages() : Integer.MAX_VALUE;
+        Integer maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null
+                ? receiveMessageRequest.maxNumberOfMessages() : Integer.MAX_VALUE;
         ReceiveMessageResponse.Builder result = ReceiveMessageResponse.builder();
         Collection<Message> resultMessages = new ArrayList<>();
 
         synchronized (messages) {
             int fetchSize = 0;
-            for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext() && fetchSize < maxNumberOfMessages; fetchSize++) {
+            for (Iterator<Message> iterator = messages.iterator();
+                 iterator.hasNext() && fetchSize < maxNumberOfMessages;
+                 fetchSize++) {
                 Message rc = iterator.next();
                 resultMessages.add(rc);
                 iterator.remove();
@@ -184,7 +189,8 @@ public class AmazonSQSClientMock implements SqsClient {
     }
 
     @Override
-    public ChangeMessageVisibilityResponse changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest) {
+    public ChangeMessageVisibilityResponse changeMessageVisibility(
+            ChangeMessageVisibilityRequest changeMessageVisibilityRequest) {
         this.changeMessageVisibilityRequests.add(changeMessageVisibilityRequest);
         return ChangeMessageVisibilityResponse.builder().build();
     }

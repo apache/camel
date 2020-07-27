@@ -63,7 +63,8 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
@@ -87,7 +88,8 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
     }
@@ -114,13 +116,13 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration()
-                    .component("undertow")
-                    .host("localhost")
-                    .port(getPort());
+                        .component("undertow")
+                        .host("localhost")
+                        .port(getPort());
 
                 rest("/")
-                    .get("/verify")
-                    .route()
+                        .get("/verify")
+                        .route()
                         .process(e -> e.getMessage().setBody("ok"));
             }
         };

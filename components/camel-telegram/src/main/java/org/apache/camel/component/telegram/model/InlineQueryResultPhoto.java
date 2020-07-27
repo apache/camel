@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a photo.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultphoto">
- * https://core.telegram.org/bots/api#inlinequeryresultphoto</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultphoto</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultPhoto extends InlineQueryResult {

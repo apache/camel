@@ -57,8 +57,7 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail message to a String body.
-     * Can return null.
+     * Converts the given JavaMail message to a String body. Can return null.
      */
     @Converter
     public static String toString(Message message) throws MessagingException, IOException {
@@ -77,8 +76,8 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail multipart to a String body, where the content-type of the multipart
-     * must be text based (ie start with text). Can return null.
+     * Converts the given JavaMail multipart to a String body, where the content-type of the multipart must be text
+     * based (ie start with text). Can return null.
      */
     @Converter
     public static String toString(Multipart multipart) throws MessagingException, IOException {
@@ -90,7 +89,7 @@ public final class MailConverters {
                 if (multipart.getCount() < 1) {
                     break;
                 }
-                part = ((MimeMultipart)content).getBodyPart(0);
+                part = ((MimeMultipart) content).getBodyPart(0);
                 content = part.getContent();
             }
             // Perform a case insensitive "startsWith" check that works for different locales
@@ -111,8 +110,8 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail multipart to a InputStream body, where the content-type of the multipart
-     * must be text based (ie start with text). Can return null.
+     * Converts the given JavaMail multipart to a InputStream body, where the content-type of the multipart must be text
+     * based (ie start with text). Can return null.
      */
     @Converter
     public static InputStream toInputStream(Multipart multipart, Exchange exchange) throws IOException, MessagingException {
@@ -124,15 +123,16 @@ public final class MailConverters {
     }
 
     /**
-     * Converts a JavaMail multipart into a body of any type a String can be
-     * converted into. The content-type of the part must be text based.
+     * Converts a JavaMail multipart into a body of any type a String can be converted into. The content-type of the
+     * part must be text based.
      */
     @Converter(fallback = true)
-    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws MessagingException, IOException {
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry)
+            throws MessagingException, IOException {
         if (Multipart.class.isAssignableFrom(value.getClass())) {
             TypeConverter tc = registry.lookup(type, String.class);
             if (tc != null) {
-                String s = toString((Multipart)value);
+                String s = toString((Multipart) value);
                 if (s != null) {
                     return tc.convertTo(type, s);
                 }
@@ -224,13 +224,13 @@ public final class MailConverters {
      */
     public static SortTerm[] toSortTerm(String sortTerm) {
         ArrayList<SortTerm> result = new ArrayList<>();
-        
+
         if (sortTerm == null) {
             return null;
         }
-        
+
         String[] sortTerms = sortTerm.split(",");
-        for (String key : sortTerms) {          
+        for (String key : sortTerms) {
             if ("arrival".equals(key)) {
                 result.add(SortTerm.ARRIVAL);
             } else if ("cc".equals(key)) {
@@ -255,7 +255,7 @@ public final class MailConverters {
             return null;
         }
     }
-    
+
     private static long extractOffset(String now) {
         Matcher matcher = NOW_PATTERN.matcher(now);
         if (matcher.matches()) {

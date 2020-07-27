@@ -24,7 +24,8 @@ import com.hazelcast.map.listener.EntryUpdatedListener;
 import com.hazelcast.map.listener.MapClearedListener;
 import com.hazelcast.map.listener.MapEvictedListener;
 
-public interface MapEntryListener<K, V> extends MapClearedListener, MapEvictedListener,
-    EntryAddedListener<K, V>, EntryEvictedListener<K, V>, EntryRemovedListener<K, V>,
-    EntryMergedListener<K, V>, EntryUpdatedListener<K, V> {
+public interface MapEntryListener<K, V>
+        extends MapClearedListener, MapEvictedListener,
+        EntryAddedListener<K, V>, EntryEvictedListener<K, V>, EntryRemovedListener<K, V>,
+        EntryMergedListener<K, V>, EntryUpdatedListener<K, V> {
 }

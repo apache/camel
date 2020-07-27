@@ -36,7 +36,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testJsonApiMarshal() throws Exception {
-        Class<?>[] formats = {MyBook.class, MyAuthor.class};
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
 
         MyBook book = this.generateTestDataAsObject();
@@ -52,29 +52,29 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testJsonApiMarshalNoAnnotationOnType() throws Exception {
-        Class<?>[] formats = {MyBook.class, MyAuthor.class};
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
 
         Exchange exchange = new DefaultExchange(context);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         assertThrows(DocumentSerializationException.class,
-            () -> jsonApiDataFormat.marshal(exchange, new FooBar(), baos));
+                () -> jsonApiDataFormat.marshal(exchange, new FooBar(), baos));
     }
 
     @Test
     public void testJsonApiMarshalWrongType() throws Exception {
-        Class<?>[] formats = {MyBook.class, MyAuthor.class};
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
 
         Exchange exchange = new DefaultExchange(context);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         assertThrows(DocumentSerializationException.class,
-            () -> jsonApiDataFormat.marshal(exchange, new MyFooBar("bar"), baos));
+                () -> jsonApiDataFormat.marshal(exchange, new MyFooBar("bar"), baos));
     }
 
     @Test
     public void testJsonApiUnmarshall() throws Exception {
-        Class<?>[] formats = {MyBook.class, MyAuthor.class};
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(MyBook.class, formats);
 
         String jsonApiInput = this.generateTestDataAsString();
@@ -83,14 +83,14 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
         Object outputObj = jsonApiDataFormat.unmarshal(exchange, new ByteArrayInputStream(jsonApiInput.getBytes()));
 
         assertNotNull(outputObj);
-        MyBook book = (MyBook)outputObj;
+        MyBook book = (MyBook) outputObj;
         assertEquals("Camel in Action", book.getTitle());
         assertEquals("1", book.getAuthor().getAuthorId());
     }
 
     @Test
     public void testJsonApiUnmarshalWrongType() throws Exception {
-        Class<?>[] formats = {MyBook.class, MyAuthor.class};
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat();
         jsonApiDataFormat.setDataFormatTypes(formats);
         jsonApiDataFormat.setMainFormatType(MyBook.class);
@@ -99,7 +99,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         assertThrows(UnregisteredTypeException.class,
-            () -> jsonApiDataFormat.unmarshal(exchange, new ByteArrayInputStream(jsonApiInput.getBytes())));
+                () -> jsonApiDataFormat.unmarshal(exchange, new ByteArrayInputStream(jsonApiInput.getBytes())));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Class<?>[] formats = {MyAuthor.class};
+                Class<?>[] formats = { MyAuthor.class };
                 JsonApiDataFormat jsonApi = new JsonApiDataFormat(MyAuthor.class, formats);
 
                 from("direct:startMarshal").marshal(jsonApi).to("mock:resultMarshal");

@@ -46,16 +46,16 @@ public class Jms2TopicSharedTest extends BaseJms2TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to(TEST_DESTINATION_NAME);
+                        .to(TEST_DESTINATION_NAME);
 
                 from(TEST_DESTINATION_NAME)
-                    .to("log:test.log.1?showBody=true", "mock:result");
+                        .to("log:test.log.1?showBody=true", "mock:result");
 
                 from(TEST_DESTINATION_NAME + "?subscriptionName=sharedTest&subscriptionShared=true")
-                    .to("log:test.log.2?showBody=true", "mock:result2");
+                        .to("log:test.log.2?showBody=true", "mock:result2");
 
                 from(TEST_DESTINATION_NAME + "?subscriptionName=sharedTest&subscriptionShared=true")
-                    .to("log:test.log.3?showBody=true", "mock:result2");
+                        .to("log:test.log.3?showBody=true", "mock:result2");
             }
         };
     }

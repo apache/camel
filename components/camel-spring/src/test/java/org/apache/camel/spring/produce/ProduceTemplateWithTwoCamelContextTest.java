@@ -28,7 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class ProduceTemplateWithTwoCamelContextTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate producer;
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 

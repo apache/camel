@@ -98,19 +98,19 @@ public class HttpProducerSessionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getTestServerEndpointSessionUrl() + "?cookieStore=#noopCookieStore")
-                    .to(getTestServerEndpointSessionUrl() + "?cookieStore=#noopCookieStore")
-                    .to("mock:result");
+                        .to(getTestServerEndpointSessionUrl() + "?cookieStore=#noopCookieStore")
+                        .to(getTestServerEndpointSessionUrl() + "?cookieStore=#noopCookieStore")
+                        .to("mock:result");
 
                 from("direct:instance")
-                    .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
-                    .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
-                    .to("mock:result");
+                        .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
+                        .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
+                        .to("mock:result");
 
                 from("direct:exchange")
-                    .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
-                    .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
-                    .to("mock:result");
+                        .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
+                        .to(getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
+                        .to("mock:result");
             }
         };
     }

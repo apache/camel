@@ -92,7 +92,6 @@ public class TelegramConsumer extends ScheduledPollConsumer {
         }
     }
 
-
     private void updateOffset(List<Update> updates) {
         OptionalLong ol = updates.stream().mapToLong(Update::getUpdateId).max();
         if (ol.isPresent()) {

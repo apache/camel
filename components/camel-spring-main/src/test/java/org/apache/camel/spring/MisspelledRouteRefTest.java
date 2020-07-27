@@ -29,7 +29,7 @@ public class MisspelledRouteRefTest {
     @Test
     public void testApplicationContextFailed() throws Exception {
         try {
-            Main main = new Main(); 
+            Main main = new Main();
             main.setApplicationContextUri("org/apache/camel/spring/MisspelledRouteRefTest.xml");
             main.start();
             fail("Should have thrown an exception");
@@ -39,4 +39,3 @@ public class MisspelledRouteRefTest {
         }
     }
 }
-

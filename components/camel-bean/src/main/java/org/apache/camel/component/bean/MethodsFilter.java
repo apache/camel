@@ -25,8 +25,7 @@ import java.util.List;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * This class aims at retaining the right methods while parsing a given
- * {@link java.lang.Class}.
+ * This class aims at retaining the right methods while parsing a given {@link java.lang.Class}.
  */
 class MethodsFilter {
 
@@ -36,16 +35,14 @@ class MethodsFilter {
     /**
      * Creates a <code>MethodsFilter</code> for a given {@link java.lang.Class}.
      *
-     * @param clazz The {@link java.lang.Class} whose methods are to be
-     *            filtered.
+     * @param clazz The {@link java.lang.Class} whose methods are to be filtered.
      */
     public MethodsFilter(Class<?> clazz) {
         this.inheritingClass = clazz;
     }
 
     /**
-     * Retains methods, preferring those from public classes in case of
-     * overrides.
+     * Retains methods, preferring those from public classes in case of overrides.
      *
      * @param proposedMethod The method proposed to the filter.
      */
@@ -59,7 +56,8 @@ class MethodsFilter {
 
             if (Modifier.isPublic(proposedMethod.getDeclaringClass().getModifiers())) {
                 boolean overridden = ObjectHelper.isOverridingMethod(inheritingClass, proposedMethod, alreadyRegistered, false);
-                boolean overridding = ObjectHelper.isOverridingMethod(inheritingClass, alreadyRegistered, proposedMethod, false);
+                boolean overridding
+                        = ObjectHelper.isOverridingMethod(inheritingClass, alreadyRegistered, proposedMethod, false);
 
                 boolean registeredMethodIsPublic = Modifier.isPublic(alreadyRegistered.getDeclaringClass().getModifiers());
 

@@ -23,8 +23,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
- * for working with fixed width and delimited files
+ * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a> for working with fixed width and delimited files
  */
 @Component("flatpack")
 public class FlatpackComponent extends DefaultComponent {

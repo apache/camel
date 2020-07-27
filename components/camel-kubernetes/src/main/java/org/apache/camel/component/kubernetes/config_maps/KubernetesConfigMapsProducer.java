@@ -45,7 +45,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -95,7 +95,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
     protected void doListConfigMapsByLabels(Exchange exchange, String operation) throws Exception {
         ConfigMapList configMapsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
-        FilterWatchListMultiDeletable<ConfigMap, ConfigMapList, Boolean, Watch, Watcher<ConfigMap>> configMaps = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace();
+        FilterWatchListMultiDeletable<ConfigMap, ConfigMapList, Boolean, Watch, Watcher<ConfigMap>> configMaps
+                = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             configMaps.withLabel(entry.getKey(), entry.getValue());
         }
@@ -127,7 +128,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         ConfigMap configMap = null;
         String cfMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        HashMap<String, String> configMapData = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, HashMap.class);
+        HashMap<String, String> configMapData
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, HashMap.class);
         if (ObjectHelper.isEmpty(cfMapName)) {
             LOG.error("Create a specific configMap require specify a configMap name");
             throw new IllegalArgumentException("Create a specific configMap require specify a configMap name");
@@ -141,7 +143,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific configMap require specify a data map");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
-        ConfigMap cfMapCreating = new ConfigMapBuilder().withNewMetadata().withName(cfMapName).withLabels(labels).endMetadata().withData(configMapData).build();
+        ConfigMap cfMapCreating = new ConfigMapBuilder().withNewMetadata().withName(cfMapName).withLabels(labels).endMetadata()
+                .withData(configMapData).build();
         configMap = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).create(cfMapCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
@@ -159,7 +162,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
             LOG.error("Delete a specific config map require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific config map require specify a namespace name");
         }
-        boolean cfMapDeleted = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).withName(configMapName).delete();
+        boolean cfMapDeleted
+                = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).withName(configMapName).delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(cfMapDeleted);

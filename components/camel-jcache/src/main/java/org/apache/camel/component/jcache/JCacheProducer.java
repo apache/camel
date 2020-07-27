@@ -58,7 +58,7 @@ public class JCacheProducer extends DefaultProducer {
             action.execute(cache, exchange);
         } else {
             throw new IllegalArgumentException(
-                String.format("The value '%s' is not allowed for parameter '%s'", actionName, JCacheConstants.ACTION));
+                    String.format("The value '%s' is not allowed for parameter '%s'", actionName, JCacheConstants.ACTION));
         }
     }
 
@@ -70,7 +70,7 @@ public class JCacheProducer extends DefaultProducer {
     }
 
     private JCacheEndpoint getJCacheEndpoint() {
-        return (JCacheEndpoint)getEndpoint();
+        return (JCacheEndpoint) getEndpoint();
     }
 
     private Cache getCache() throws Exception {
@@ -87,9 +87,8 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 cache.put(
-                    exchange.getIn().getHeader(JCacheConstants.KEY),
-                    exchange.getIn().getBody()
-                );
+                        exchange.getIn().getHeader(JCacheConstants.KEY),
+                        exchange.getIn().getBody());
             }
         },
         PUTALL {
@@ -100,8 +99,7 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 cache.putAll(
-                    exchange.getIn().getBody(Map.class)
-                );
+                        exchange.getIn().getBody(Map.class));
             }
         },
         PUTIFABSENT {
@@ -113,11 +111,10 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 exchange.getIn().setHeader(
-                    JCacheConstants.RESULT,
-                    cache.putIfAbsent(
-                        exchange.getIn().getHeader(JCacheConstants.KEY),
-                        exchange.getIn().getBody())
-                );
+                        JCacheConstants.RESULT,
+                        cache.putIfAbsent(
+                                exchange.getIn().getHeader(JCacheConstants.KEY),
+                                exchange.getIn().getBody()));
             }
         },
         GET {
@@ -129,8 +126,7 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 exchange.getIn().setBody(
-                    cache.get(exchange.getIn().getHeader(JCacheConstants.KEY))
-                );
+                        cache.get(exchange.getIn().getHeader(JCacheConstants.KEY)));
             }
         },
         GETALL {
@@ -142,9 +138,8 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 exchange.getIn().setBody(
-                    cache.getAll(
-                        exchange.getIn().getHeader(JCacheConstants.KEYS, Set.class))
-                );
+                        cache.getAll(
+                                exchange.getIn().getHeader(JCacheConstants.KEYS, Set.class)));
             }
         },
         GETANDREMOVE {
@@ -156,9 +151,8 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 exchange.getIn().setBody(
-                    cache.getAndRemove(
-                        exchange.getIn().getHeader(JCacheConstants.KEY))
-                );
+                        cache.getAndRemove(
+                                exchange.getIn().getHeader(JCacheConstants.KEY)));
             }
         },
         GETANDREPLACE {
@@ -170,10 +164,9 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 exchange.getIn().setBody(
-                    cache.getAndReplace(
-                        exchange.getIn().getHeader(JCacheConstants.KEY),
-                        exchange.getIn().getBody())
-                );
+                        cache.getAndReplace(
+                                exchange.getIn().getHeader(JCacheConstants.KEY),
+                                exchange.getIn().getBody()));
             }
         },
         GETANDPUT {
@@ -185,10 +178,9 @@ public class JCacheProducer extends DefaultProducer {
             @Override
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 exchange.getIn().setBody(
-                    cache.getAndPut(
-                        exchange.getIn().getHeader(JCacheConstants.KEY),
-                        exchange.getIn().getBody())
-                );
+                        cache.getAndPut(
+                                exchange.getIn().getHeader(JCacheConstants.KEY),
+                                exchange.getIn().getBody()));
             }
         },
         REPLACE {
@@ -202,16 +194,15 @@ public class JCacheProducer extends DefaultProducer {
                 Object oldValue = exchange.getIn().getHeader(JCacheConstants.OLD_VALUE);
 
                 exchange.getIn().setHeader(
-                    JCacheConstants.RESULT,
-                    oldValue != null
-                        ? cache.replace(
-                            exchange.getIn().getHeader(JCacheConstants.KEY),
-                            oldValue,
-                            exchange.getIn().getBody())
-                        : cache.replace(
-                            exchange.getIn().getHeader(JCacheConstants.KEY),
-                            exchange.getIn().getBody())
-                );
+                        JCacheConstants.RESULT,
+                        oldValue != null
+                                ? cache.replace(
+                                        exchange.getIn().getHeader(JCacheConstants.KEY),
+                                        oldValue,
+                                        exchange.getIn().getBody())
+                                : cache.replace(
+                                        exchange.getIn().getHeader(JCacheConstants.KEY),
+                                        exchange.getIn().getBody()));
             }
         },
         REMOVE {
@@ -225,14 +216,13 @@ public class JCacheProducer extends DefaultProducer {
                 Object oldValue = exchange.getIn().getHeader(JCacheConstants.OLD_VALUE);
 
                 exchange.getIn().setHeader(
-                    JCacheConstants.RESULT,
-                    oldValue != null
-                        ? cache.remove(
-                            exchange.getIn().getHeader(JCacheConstants.KEY),
-                            oldValue)
-                        : cache.remove(
-                            exchange.getIn().getHeader(JCacheConstants.KEY))
-                );
+                        JCacheConstants.RESULT,
+                        oldValue != null
+                                ? cache.remove(
+                                        exchange.getIn().getHeader(JCacheConstants.KEY),
+                                        oldValue)
+                                : cache.remove(
+                                        exchange.getIn().getHeader(JCacheConstants.KEY)));
             }
         },
         REMOVEALL {
@@ -257,13 +247,12 @@ public class JCacheProducer extends DefaultProducer {
                 headerIsNotNull(exchange, JCacheConstants.ENTRY_PROCESSOR);
 
                 if (exchange.getIn().getHeader(JCacheConstants.KEYS) == null
-                    && exchange.getIn().getHeader(JCacheConstants.KEY) == null) {
+                        && exchange.getIn().getHeader(JCacheConstants.KEY) == null) {
                     throw new IllegalArgumentException(
-                        String.format("Either %s or %s must be set for action %s",
-                            JCacheConstants.KEYS,
-                            JCacheConstants.KEY,
-                            name())
-                    );
+                            String.format("Either %s or %s must be set for action %s",
+                                    JCacheConstants.KEYS,
+                                    JCacheConstants.KEY,
+                                    name()));
                 }
             }
 
@@ -271,7 +260,8 @@ public class JCacheProducer extends DefaultProducer {
             void execute(Cache<Object, Object> cache, Exchange exchange) {
                 Message message = exchange.getIn();
                 Set<Object> keys = message.getHeader(JCacheConstants.KEYS, Set.class);
-                EntryProcessor<Object, Object, Object> entryProcessor = message.getHeader(JCacheConstants.ENTRY_PROCESSOR, EntryProcessor.class);
+                EntryProcessor<Object, Object, Object> entryProcessor
+                        = message.getHeader(JCacheConstants.ENTRY_PROCESSOR, EntryProcessor.class);
 
                 Collection<Object> arguments = message.getHeader(JCacheConstants.ARGUMENTS, Collection.class);
                 if (arguments == null) {
@@ -279,16 +269,15 @@ public class JCacheProducer extends DefaultProducer {
                 }
 
                 message.setBody(
-                    keys != null
-                        ? cache.invokeAll(
-                            keys,
-                            entryProcessor,
-                            arguments)
-                        : cache.invoke(
-                            exchange.getIn().getHeader(JCacheConstants.KEY),
-                            entryProcessor,
-                            arguments)
-                );
+                        keys != null
+                                ? cache.invokeAll(
+                                        keys,
+                                        entryProcessor,
+                                        arguments)
+                                : cache.invoke(
+                                        exchange.getIn().getHeader(JCacheConstants.KEY),
+                                        entryProcessor,
+                                        arguments));
             }
         },
         CLEAR {
@@ -301,7 +290,6 @@ public class JCacheProducer extends DefaultProducer {
                 cache.clear();
             }
         };
-
 
         static final Action[] VALUES = values();
 
@@ -327,8 +315,7 @@ public class JCacheProducer extends DefaultProducer {
             for (int i = keys.length - 1; i >= 0; i--) {
                 if (exchange.getIn().getHeader(keys[i]) == null) {
                     throw new IllegalArgumentException(
-                        String.format("Header %s must be set for action %s", keys[i], name())
-                    );
+                            String.format("Header %s must be set for action %s", keys[i], name()));
                 }
             }
         }

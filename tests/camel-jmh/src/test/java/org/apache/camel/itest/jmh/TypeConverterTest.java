@@ -103,7 +103,6 @@ public class TypeConverterTest {
         }
     }
 
-
     @Benchmark
     public void typeConvertIntegerToString(BenchmarkCamelContextState state, Blackhole bh) {
         String string = state.camel.getTypeConverter().convertTo(String.class, state.someInteger);

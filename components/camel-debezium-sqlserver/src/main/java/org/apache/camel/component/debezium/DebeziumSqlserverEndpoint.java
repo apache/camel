@@ -24,13 +24,15 @@ import org.apache.camel.spi.UriParam;
 /**
  * Capture changes from an SQL Server database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector", syntax = "debezium-sqlserver:name", category = {Category.DATABASE, Category.SQL}, consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector",
+             syntax = "debezium-sqlserver:name", category = { Category.DATABASE, Category.SQL }, consumerOnly = true)
 public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration> {
 
     @UriParam
     private SqlServerConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumSqlserverEndpoint(final String uri, final DebeziumSqlserverComponent component, final SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumSqlserverEndpoint(final String uri, final DebeziumSqlserverComponent component,
+                                     final SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

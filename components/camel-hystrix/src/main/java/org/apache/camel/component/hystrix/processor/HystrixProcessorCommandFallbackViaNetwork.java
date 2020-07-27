@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Hystrix Command the Camel Hystrix EIP when executing fallback.
- * The fallback may require networking and therefore should run in another Hystrix Command
+ * Hystrix Command the Camel Hystrix EIP when executing fallback. The fallback may require networking and therefore
+ * should run in another Hystrix Command
  */
 public class HystrixProcessorCommandFallbackViaNetwork extends HystrixCommand<Message> {
 

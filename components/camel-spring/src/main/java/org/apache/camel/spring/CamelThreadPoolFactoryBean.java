@@ -37,7 +37,8 @@ import org.springframework.context.ApplicationContextAware;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelThreadPoolFactoryBean extends AbstractCamelThreadPoolFactoryBean implements FactoryBean<ExecutorService>, ApplicationContextAware {
+public class CamelThreadPoolFactoryBean extends AbstractCamelThreadPoolFactoryBean
+        implements FactoryBean<ExecutorService>, ApplicationContextAware {
 
     @XmlTransient
     private ApplicationContext applicationContext;

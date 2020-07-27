@@ -26,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SnsComponentSpringTest extends CamelSpringTestSupport {
-    
+
     @Test
     public void sendInOnly() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -35,10 +35,10 @@ public class SnsComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getIn().getHeader(SnsConstants.MESSAGE_ID));
     }
-    
+
     @Test
     public void sendInOut() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
@@ -47,7 +47,7 @@ public class SnsComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(SnsConstants.MESSAGE_ID));
     }
 

@@ -53,9 +53,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
     private String rejectOld;
 
     /**
-     * Creates a new {@link StreamResequencerConfig} instance using default
-     * values for <code>capacity</code> (1000) and <code>timeout</code> (1000L).
-     * Elements of the sequence are compared using the default
+     * Creates a new {@link StreamResequencerConfig} instance using default values for <code>capacity</code> (1000) and
+     * <code>timeout</code> (1000L). Elements of the sequence are compared using the default
      * {@link ExpressionResultComparator}.
      */
     public StreamResequencerConfig() {
@@ -63,26 +62,22 @@ public class StreamResequencerConfig extends ResequencerConfig {
     }
 
     /**
-     * Creates a new {@link StreamResequencerConfig} instance using the given
-     * values for <code>capacity</code> and <code>timeout</code>. Elements of
-     * the sequence are compared using the default
-     * {@link ExpressionResultComparator}.
+     * Creates a new {@link StreamResequencerConfig} instance using the given values for <code>capacity</code> and
+     * <code>timeout</code>. Elements of the sequence are compared using the default {@link ExpressionResultComparator}.
      * 
      * @param capacity capacity of the resequencer's inbound queue.
-     * @param timeout minimum time to wait for missing elements (messages).
+     * @param timeout  minimum time to wait for missing elements (messages).
      */
     public StreamResequencerConfig(int capacity, long timeout) {
         this(capacity, timeout, null, null);
     }
 
     /**
-     * Creates a new {@link StreamResequencerConfig} instance using the given
-     * values for <code>capacity</code> and <code>timeout</code>. Elements of
-     * the sequence are compared with the given
-     * {@link ExpressionResultComparator}.
+     * Creates a new {@link StreamResequencerConfig} instance using the given values for <code>capacity</code> and
+     * <code>timeout</code>. Elements of the sequence are compared with the given {@link ExpressionResultComparator}.
      * 
-     * @param capacity capacity of the resequencer's inbound queue.
-     * @param timeout minimum time to wait for missing elements (messages).
+     * @param capacity   capacity of the resequencer's inbound queue.
+     * @param timeout    minimum time to wait for missing elements (messages).
      * @param comparator comparator for sequence comparision
      */
     public StreamResequencerConfig(int capacity, long timeout, ExpressionResultComparator comparator) {
@@ -90,30 +85,24 @@ public class StreamResequencerConfig extends ResequencerConfig {
     }
 
     /**
-     * Creates a new {@link StreamResequencerConfig} instance using the given
-     * values for <code>capacity</code> and <code>timeout</code>. Elements of
-     * the sequence are compared using the default
-     * {@link ExpressionResultComparator}.
+     * Creates a new {@link StreamResequencerConfig} instance using the given values for <code>capacity</code> and
+     * <code>timeout</code>. Elements of the sequence are compared using the default {@link ExpressionResultComparator}.
      *
-     * @param capacity capacity of the resequencer's inbound queue.
-     * @param timeout minimum time to wait for missing elements (messages).
-     * @param rejectOld if true, throws an exception when messages older than
-     *            the last delivered message are processed
+     * @param capacity  capacity of the resequencer's inbound queue.
+     * @param timeout   minimum time to wait for missing elements (messages).
+     * @param rejectOld if true, throws an exception when messages older than the last delivered message are processed
      */
     public StreamResequencerConfig(int capacity, long timeout, Boolean rejectOld) {
         this(capacity, timeout, rejectOld, null);
     }
 
     /**
-     * Creates a new {@link StreamResequencerConfig} instance using the given
-     * values for <code>capacity</code> and <code>timeout</code>. Elements of
-     * the sequence are compared with the given
-     * {@link ExpressionResultComparator}.
+     * Creates a new {@link StreamResequencerConfig} instance using the given values for <code>capacity</code> and
+     * <code>timeout</code>. Elements of the sequence are compared with the given {@link ExpressionResultComparator}.
      *
-     * @param capacity capacity of the resequencer's inbound queue.
-     * @param timeout minimum time to wait for missing elements (messages).
-     * @param rejectOld if true, throws an exception when messages older than
-     *            the last delivered message are processed
+     * @param capacity   capacity of the resequencer's inbound queue.
+     * @param timeout    minimum time to wait for missing elements (messages).
+     * @param rejectOld  if true, throws an exception when messages older than the last delivered message are processed
      * @param comparator comparator for sequence comparision
      */
     public StreamResequencerConfig(int capacity, long timeout, Boolean rejectOld, ExpressionResultComparator comparator) {
@@ -124,9 +113,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
     }
 
     /**
-     * Returns a new {@link StreamResequencerConfig} instance using default
-     * values for <code>capacity</code> (1000) and <code>timeout</code> (1000L).
-     * Elements of the sequence are compared using the default
+     * Returns a new {@link StreamResequencerConfig} instance using default values for <code>capacity</code> (1000) and
+     * <code>timeout</code> (1000L). Elements of the sequence are compared using the default
      * {@link ExpressionResultComparator}.
      * 
      * @return a default {@link StreamResequencerConfig}.
@@ -162,8 +150,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
     }
 
     /**
-     * Sets the interval in milli seconds the stream resequencer will at most
-     * wait while waiting for condition of being able to deliver.
+     * Sets the interval in milli seconds the stream resequencer will at most wait while waiting for condition of being
+     * able to deliver.
      */
     public void setDeliveryAttemptInterval(String deliveryAttemptInterval) {
         this.deliveryAttemptInterval = deliveryAttemptInterval;
@@ -203,8 +191,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
     }
 
     /**
-     * If true, throws an exception when messages older than the last delivered
-     * message are processed
+     * If true, throws an exception when messages older than the last delivered message are processed
      */
     public void setRejectOld(String value) {
         this.rejectOld = value;

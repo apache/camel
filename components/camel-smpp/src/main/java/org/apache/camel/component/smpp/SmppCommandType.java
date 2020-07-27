@@ -72,24 +72,19 @@ public enum SmppCommandType {
     public abstract SmppCommand createCommand(SMPPSession session, SmppConfiguration config);
 
     /**
-     * Tries to return an instance of {@link SmppCommandType} using
-     * {@link SmppConstants#COMMAND} header of the incoming message.
+     * Tries to return an instance of {@link SmppCommandType} using {@link SmppConstants#COMMAND} header of the incoming
+     * message.
      * <p/>
-     * Returns {@link #SUBMIT_SM} if there is no {@link SmppConstants#COMMAND}
-     * header in the incoming message or value of such a header cannot be
-     * recognized.
+     * Returns {@link #SUBMIT_SM} if there is no {@link SmppConstants#COMMAND} header in the incoming message or value
+     * of such a header cannot be recognized.
      * <p/>
-     * The valid values for the {@link SmppConstants#COMMAND} header are: <span
-     * style="font: bold;">SubmitSm</span> <span
-     * style="font: bold;">ReplaceSm</span>, <span
-     * style="font: bold;">QuerySm</span>, <span
-     * style="font: bold;">SubmitMulti</span>, <span
-     * style="font: bold;">CancelSm</span>, <span
-     * style="font: bold;">DataSm</span>.
+     * The valid values for the {@link SmppConstants#COMMAND} header are: <span style="font: bold;">SubmitSm</span>
+     * <span style="font: bold;">ReplaceSm</span>, <span style="font: bold;">QuerySm</span>,
+     * <span style="font: bold;">SubmitMulti</span>, <span style="font: bold;">CancelSm</span>,
+     * <span style="font: bold;">DataSm</span>.
      * 
-     * @param exchange
-     *            an exchange to get an incoming message from
-     * @return an instance of {@link SmppCommandType}
+     * @param  exchange an exchange to get an incoming message from
+     * @return          an instance of {@link SmppCommandType}
      */
     public static SmppCommandType fromExchange(Exchange exchange) {
         Message in = exchange.getIn();

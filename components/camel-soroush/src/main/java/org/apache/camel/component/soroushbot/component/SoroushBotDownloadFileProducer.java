@@ -22,12 +22,10 @@ import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * this producer is responsible for uri of type {@link SoroushAction#downloadFile}
- * e.g. "soroush:downloadFile/[token]"
- * if you pass a message to this endpoint, it tries to download the resource
- * ({@link SoroushMessage#fileUrl} and {@link SoroushMessage#thumbnailUrl})
- * if provided and store them in
- * {@link SoroushMessage#file} or {@link SoroushMessage#thumbnail}.
+ * this producer is responsible for uri of type {@link SoroushAction#downloadFile} e.g. "soroush:downloadFile/[token]"
+ * if you pass a message to this endpoint, it tries to download the resource ({@link SoroushMessage#fileUrl} and
+ * {@link SoroushMessage#thumbnailUrl}) if provided and store them in {@link SoroushMessage#file} or
+ * {@link SoroushMessage#thumbnail}.
  */
 public class SoroushBotDownloadFileProducer extends DefaultProducer {
     SoroushBotEndpoint endpoint;

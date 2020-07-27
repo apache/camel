@@ -59,7 +59,8 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
     }
 
     public ProcessorDefinition<?> endParent() {
-        return this.parent.map(ServiceCallDefinition::end).orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
+        return this.parent.map(ServiceCallDefinition::end)
+                .orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
     }
 
     // *************************************************************************
@@ -91,30 +92,35 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
+                type = camelContext.adapt(ExtendedCamelContext.class)
+                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
 
             if (type != null) {
                 if (ServiceDiscoveryFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceDiscoveryFactory)camelContext.getInjector().newInstance(type, false);
+                    factory = (ServiceDiscoveryFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new IllegalArgumentException("Resolving ServiceDiscovery: " + factoryKey
-                                                       + " detected type conflict: Not a ServiceDiscoveryFactory implementation. Found: " + type.getName());
+                    throw new IllegalArgumentException(
+                            "Resolving ServiceDiscovery: " + factoryKey
+                                                       + " detected type conflict: Not a ServiceDiscoveryFactory implementation. Found: "
+                                                       + type.getName());
                 }
             }
 
             try {
                 Map<String, Object> parameters = new HashMap<>();
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null, false);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null,
+                        false);
 
                 parameters.replaceAll((k, v) -> {
                     if (v instanceof String) {
                         try {
-                            v = camelContext.resolvePropertyPlaceholders((String)v);
+                            v = camelContext.resolvePropertyPlaceholders((String) v);
                         } catch (Exception e) {
-                            throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
+                            throw new IllegalArgumentException(
+                                    String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                         }
                     }
 

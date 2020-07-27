@@ -39,8 +39,8 @@ public abstract class CryptoCmsMarshallerConfiguration {
     }
 
     /**
-     * Indicates whether the Signed Data or Enveloped Data instance shall be
-     * base 64 encoded. Default value is <code>false</code>.
+     * Indicates whether the Signed Data or Enveloped Data instance shall be base 64 encoded. Default value is
+     * <code>false</code>.
      */
     public void setToBase64(Boolean toBase64) {
         this.toBase64 = toBase64;

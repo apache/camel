@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
 
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -47,7 +46,8 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDeleteZipFileWhenUnmarshalWithDataFormat() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteZipFileWhenUnmarshalWithDataFormat").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("file://target/" + "testDeleteZipFileWhenUnmarshalWithDataFormat").whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(2);
         String zipFile = createZipFile("testDeleteZipFileWhenUnmarshalWithDataFormat");
 
@@ -61,7 +61,8 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDeleteZipFileWhenUnmarshalWithSplitter() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteZipFileWhenUnmarshalWithSplitter").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteZipFileWhenUnmarshalWithSplitter")
+                .whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(2);
         String zipFile = createZipFile("testDeleteZipFileWhenUnmarshalWithSplitter");
 
@@ -72,7 +73,6 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
         // the original file should have been deleted,
         assertFalse(new File(zipFile).exists(), "File should been deleted");
     }
-
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

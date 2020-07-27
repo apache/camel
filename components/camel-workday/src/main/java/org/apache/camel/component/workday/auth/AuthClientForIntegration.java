@@ -72,7 +72,9 @@ public class AuthClientForIntegration implements AutheticationClient {
         CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
 
         if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new IllegalStateException("Got the invalid http status value '" + httpResponse.getStatusLine() + "' as the result of the Token Request '" + tokenUrl + "'");
+            throw new IllegalStateException(
+                    "Got the invalid http status value '" + httpResponse.getStatusLine()
+                                            + "' as the result of the Token Request '" + tokenUrl + "'");
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -89,7 +91,10 @@ public class AuthClientForIntegration implements AutheticationClient {
         HttpPost postMethod = new HttpPost(tokenUrl);
         postMethod.addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
         postMethod.addHeader(AUTHORIZATION_HEADER,
-                             "Basic " + new String(Base64.getEncoder().encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret()).getBytes())));
+                "Basic " + new String(
+                        Base64.getEncoder()
+                                .encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret())
+                                        .getBytes())));
         postMethod.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
 
         return postMethod;

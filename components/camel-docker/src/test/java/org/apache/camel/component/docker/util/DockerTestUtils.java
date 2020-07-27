@@ -24,11 +24,11 @@ import org.apache.camel.component.docker.DockerConfiguration;
 import org.apache.camel.component.docker.DockerConstants;
 
 public final class DockerTestUtils {
-    
+
     private DockerTestUtils() {
-        
+
     }
-    
+
     public static Map<String, Object> getDefaultParameters(String host, Integer port, DockerConfiguration dockerConfiguration) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(DockerConstants.DOCKER_HOST, host);
@@ -57,7 +57,7 @@ public final class DockerTestUtils {
         clientProfile.setTlsVerify(dockerConfiguration.isTlsVerify());
         clientProfile.setSocket(dockerConfiguration.isSocket());
         clientProfile.setCmdExecFactory(dockerConfiguration.getCmdExecFactory());
-        
+
         return clientProfile;
     }
 

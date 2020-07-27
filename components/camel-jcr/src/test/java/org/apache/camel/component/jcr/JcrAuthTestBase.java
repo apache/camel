@@ -35,8 +35,8 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
- * Base class for tests that use authentication/authorization in the repository.
- * Ensures that the transient repo is set up properly for each test.
+ * Base class for tests that use authentication/authorization in the repository. Ensures that the transient repo is set
+ * up properly for each test.
  */
 public abstract class JcrAuthTestBase extends CamelTestSupport {
 

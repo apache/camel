@@ -38,8 +38,8 @@ public class CombinedServiceDiscovery implements ServiceDiscovery {
     @Override
     public List<ServiceDefinition> getServices(String name) {
         return delegates.stream()
-            .flatMap(d -> d.getServices(name).stream())
-            .collect(Collectors.toList());
+                .flatMap(d -> d.getServices(name).stream())
+                .collect(Collectors.toList());
     }
 
     // **********************

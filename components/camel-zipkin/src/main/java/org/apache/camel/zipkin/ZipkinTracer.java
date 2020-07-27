@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 import brave.Span;
 import brave.Span.Kind;
 import brave.Tracing;
@@ -71,46 +70,38 @@ import zipkin2.reporter.libthrift.LibthriftSender;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 /**
- * To use Zipkin with Camel then setup this {@link ZipkinTracer} in your Camel
- * application.
+ * To use Zipkin with Camel then setup this {@link ZipkinTracer} in your Camel application.
  * <p/>
- * Events (span) are captured for incoming and outgoing messages being sent
- * to/from Camel. This means you need to configure which which Camel endpoints
- * that maps to zipkin service names. The mapping can be configured using
+ * Events (span) are captured for incoming and outgoing messages being sent to/from Camel. This means you need to
+ * configure which which Camel endpoints that maps to zipkin service names. The mapping can be configured using
  * <ul>
  * <li>route id - A Camel route id</li>
  * <li>endpoint url - A Camel endpoint url</li>
  * </ul>
- * For both kinds you can use wildcards and regular expressions to match, which
- * is using the rules from {@link PatternHelper#matchPattern(String, String)}
- * and {@link EndpointHelper#matchEndpoint(CamelContext, String, String)}
+ * For both kinds you can use wildcards and regular expressions to match, which is using the rules from
+ * {@link PatternHelper#matchPattern(String, String)} and
+ * {@link EndpointHelper#matchEndpoint(CamelContext, String, String)}
  * <p/>
- * To match all Camel messages you can use <tt>*</tt> in the pattern and
- * configure that to the same service name. <br/>
- * If no mapping has been configured then Camel will fallback and use endpoint
- * uri's as service names. However its recommended to configure service mappings
- * so you can use human logic names instead of Camel endpoint uris in the names.
+ * To match all Camel messages you can use <tt>*</tt> in the pattern and configure that to the same service name. <br/>
+ * If no mapping has been configured then Camel will fallback and use endpoint uri's as service names. However its
+ * recommended to configure service mappings so you can use human logic names instead of Camel endpoint uris in the
+ * names.
  * <p/>
- * Camel will auto-configure a {@link Reporter span reporter} one hasn't been
- * explicitly configured, and if the hostname and port to a zipkin collector has
- * been configured as environment variables
+ * Camel will auto-configure a {@link Reporter span reporter} one hasn't been explicitly configured, and if the hostname
+ * and port to a zipkin collector has been configured as environment variables
  * <ul>
  * <li>ZIPKIN_COLLECTOR_HTTP_SERVICE_HOST - The http hostname</li>
  * <li>ZIPKIN_COLLECTOR_HTTP_SERVICE_PORT - The port number</li>
  * </ul>
  * or
  * <ul>
- * <li>ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST - The Scribe (Thrift RPC)
- * hostname</li>
+ * <li>ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST - The Scribe (Thrift RPC) hostname</li>
  * <li>ZIPKIN_COLLECTOR_THRIFT_SERVICE_PORT - The port number</li>
  * </ul>
  * <p/>
- * This class is implemented as both an
- * {@link org.apache.camel.spi.EventNotifier} and {@link RoutePolicy} that
- * allows to trap when Camel starts/ends an {@link Exchange} being routed using
- * the {@link RoutePolicy} and during the routing if the {@link Exchange} sends
- * messages, then we track them using the
- * {@link org.apache.camel.spi.EventNotifier}.
+ * This class is implemented as both an {@link org.apache.camel.spi.EventNotifier} and {@link RoutePolicy} that allows
+ * to trap when Camel starts/ends an {@link Exchange} being routed using the {@link RoutePolicy} and during the routing
+ * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
  */
 // NOTE: this implementation currently only does explicit propagation, meaning
 // that non-camel
@@ -164,7 +155,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         consumerComponentToSpanKind.put("amqp", Span.Kind.CONSUMER);
     }
 
-
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         // ensure this zipkin tracer gets initialized when Camel starts
@@ -173,8 +163,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Registers this {@link ZipkinTracer} on the {@link CamelContext} if not
-     * already registered.
+     * Registers this {@link ZipkinTracer} on the {@link CamelContext} if not already registered.
      */
     public void init(CamelContext camelContext) {
         if (!camelContext.hasService(this)) {
@@ -204,8 +193,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Sets the POST URL for zipkin's
-     * <a href="http://zipkin.io/zipkin-api/#/">v2 api</a>, usually
+     * Sets the POST URL for zipkin's <a href="http://zipkin.io/zipkin-api/#/">v2 api</a>, usually
      * "http://zipkinhost:9411/api/v2/spans"
      */
     public void setEndpoint(String endpoint) {
@@ -242,9 +230,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Configures a rate that decides how many events should be traced by
-     * zipkin. The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%,
-     * 0.1f is 10%).
+     * Configures a rate that decides how many events should be traced by zipkin. The rate is expressed as a percentage
+     * (1.0f = 100%, 0.5f is 50%, 0.1f is 10%).
      *
      * @param rate minimum sample rate is 0.0001, or 0.01% of traces
      */
@@ -260,8 +247,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Returns the reporter used to send timing data (spans) to the zipkin
-     * server.
+     * Returns the reporter used to send timing data (spans) to the zipkin server.
      */
     public Reporter<zipkin2.Span> getSpanReporter() {
         return spanReporter;
@@ -288,10 +274,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Adds a client service mapping that matches Camel events to the given
-     * zipkin service name. See more details at the class javadoc.
+     * Adds a client service mapping that matches Camel events to the given zipkin service name. See more details at the
+     * class javadoc.
      *
-     * @param pattern the pattern such as route id, endpoint url
+     * @param pattern     the pattern such as route id, endpoint url
      * @param serviceName the zipkin service name
      */
     public void addClientServiceMapping(String pattern, String serviceName) {
@@ -307,10 +293,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Adds a server service mapping that matches Camel events to the given
-     * zipkin service name. See more details at the class javadoc.
+     * Adds a server service mapping that matches Camel events to the given zipkin service name. See more details at the
+     * class javadoc.
      *
-     * @param pattern the pattern such as route id, endpoint url
+     * @param pattern     the pattern such as route id, endpoint url
      * @param serviceName the zipkin service name
      */
     public void addServerServiceMapping(String pattern, String serviceName) {
@@ -326,8 +312,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Adds an exclude pattern that will disable tracing with zipkin for Camel
-     * messages that matches the pattern.
+     * Adds an exclude pattern that will disable tracing with zipkin for Camel messages that matches the pattern.
      *
      * @param pattern the pattern such as route id, endpoint url
      */
@@ -343,14 +328,12 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     /**
      * Whether to include the Camel message body in the zipkin traces.
      * <p/>
-     * This is not recommended for production usage, or when having big
-     * payloads. You can limit the size by configuring the <a href=
-     * "http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max
+     * This is not recommended for production usage, or when having big payloads. You can limit the size by configuring
+     * the <a href= "http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max
      * debug log size</a>.
      * <p/>
-     * By default message bodies that are stream based are <b>not</b> included.
-     * You can use the option {@link #setIncludeMessageBodyStreams(boolean)} to
-     * turn that on.
+     * By default message bodies that are stream based are <b>not</b> included. You can use the option
+     * {@link #setIncludeMessageBodyStreams(boolean)} to turn that on.
      */
     @ManagedAttribute(description = "Whether to include the Camel message body in the zipkin traces")
     public void setIncludeMessageBody(boolean includeMessageBody) {
@@ -363,16 +346,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     /**
-     * Whether to include message bodies that are stream based in the zipkin
-     * traces.
+     * Whether to include message bodies that are stream based in the zipkin traces.
      * <p/>
-     * This requires enabling
-     * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>
-     * on the routes or globally on the CamelContext.
+     * This requires enabling <a href="http://camel.apache.org/stream-caching.html">stream caching</a> on the routes or
+     * globally on the CamelContext.
      * <p/>
-     * This is not recommended for production usage, or when having big
-     * payloads. You can limit the size by configuring the <a href=
-     * "http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max
+     * This is not recommended for production usage, or when having big payloads. You can limit the size by configuring
+     * the <a href= "http://camel.apache.org/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html">max
      * debug log size</a>.
      */
     @ManagedAttribute(description = "Whether to include stream based Camel message bodies in the zipkin traces")
@@ -432,7 +412,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         ObjectHelper.notNull(spanReporter, "Reporter<zipkin2.Span>", this);
 
         if (clientServiceMappings.isEmpty() && serverServiceMappings.isEmpty()) {
-            LOG.warn("No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
+            LOG.warn(
+                    "No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
             useFallbackServiceNames = true;
         }
 
@@ -460,7 +441,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         // stop and close collector
         ServiceHelper.stopAndShutdownService(spanReporter);
         if (spanReporter instanceof Closeable) {
-            IOHelper.close((Closeable)spanReporter);
+            IOHelper.close((Closeable) spanReporter);
         }
         // clear braves
         braves.clear();
@@ -577,10 +558,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private Tracing newTracing(String serviceName) {
         Tracing brave = null;
         if (camelContext.isUseMDCLogging()) {
-            brave = Tracing.newBuilder().currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder().addScopeDecorator(MDCScopeDecorator.create()).build())
+            brave = Tracing.newBuilder()
+                    .currentTraceContext(
+                            ThreadLocalCurrentTraceContext.newBuilder().addScopeDecorator(MDCScopeDecorator.create()).build())
                     .localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
         } else {
-            brave = Tracing.newBuilder().localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
+            brave = Tracing.newBuilder().localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter)
+                    .build();
         }
         return brave;
     }
@@ -637,13 +621,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
         if (LOG.isDebugEnabled()) {
             if (parentId != null) {
-                LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName,
+                        traceId, spanId, parentId));
             } else {
                 LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
             }
         }
     }
-
 
     //protected for testing
     protected Kind getProducerComponentSpanKind(Endpoint endpoint) {
@@ -678,9 +662,11 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             }
             if (LOG.isDebugEnabled()) {
                 if (parentId != null) {
-                    LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                    LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName,
+                            traceId, spanId, parentId));
                 } else {
-                    LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                    LOG.debug(String.format("clientResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId,
+                            spanId));
                 }
             }
         }
@@ -720,7 +706,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
         if (LOG.isDebugEnabled()) {
             if (parentId != null) {
-                LOG.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                LOG.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName,
+                        traceId, spanId, parentId));
             } else {
                 LOG.debug(String.format("serverRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
             }
@@ -728,7 +715,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         return span;
     }
-
 
     //protected for testing
     protected Kind getConsumerComponentSpanKind(Endpoint endpoint) {
@@ -758,9 +744,11 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             }
             if (LOG.isDebugEnabled()) {
                 if (parentId != null) {
-                    LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName, traceId, spanId, parentId));
+                    LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s, parentId=%20s]", serviceName,
+                            traceId, spanId, parentId));
                 } else {
-                    LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
+                    LOG.debug(String.format("serverResponse[service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId,
+                            spanId));
                 }
             }
         }
@@ -787,14 +775,14 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
             // client events
             if (event instanceof ExchangeSendingEvent) {
-                ExchangeSendingEvent ese = (ExchangeSendingEvent)event;
+                ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
                 String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
                 Tracing brave = getTracing(serviceName);
                 if (brave != null) {
                     clientRequest(brave, serviceName, ese);
                 }
             } else if (event instanceof ExchangeSentEvent) {
-                ExchangeSentEvent ese = (ExchangeSentEvent)event;
+                ExchangeSentEvent ese = (ExchangeSentEvent) event;
                 String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
                 Tracing brave = getTracing(serviceName);
                 if (brave != null) {

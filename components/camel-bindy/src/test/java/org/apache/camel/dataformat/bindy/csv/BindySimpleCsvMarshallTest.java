@@ -39,7 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 @CamelSpringTest
 public class BindySimpleCsvMarshallTest {
-    
+
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
@@ -103,7 +103,8 @@ public class BindySimpleCsvMarshallTest {
         @Override
         public void configure() {
 
-            BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+            BindyCsvDataFormat camelDataFormat
+                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             camelDataFormat.setLocale("en");
 
             // default should errors go to mock:error

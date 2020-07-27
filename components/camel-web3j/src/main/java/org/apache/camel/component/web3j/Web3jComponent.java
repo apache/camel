@@ -41,7 +41,8 @@ public class Web3jComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         Web3jConfiguration conf = configuration != null ? configuration.copy() : new Web3jConfiguration();
 
         Web3jEndpoint endpoint = new Web3jEndpoint(uri, remaining, this, conf);

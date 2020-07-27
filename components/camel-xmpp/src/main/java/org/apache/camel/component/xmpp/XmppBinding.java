@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a
- * XMPP {@link Message}
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a XMPP
+ * {@link Message}
  */
 public class XmppBinding {
 
@@ -114,7 +114,6 @@ public class XmppBinding {
         }
     }
 
-
     /**
      * Extracts the body from the XMPP message
      */
@@ -136,10 +135,10 @@ public class XmppBinding {
 
         ExtensionElement jpe = stanza.getExtension(JivePropertiesExtension.NAMESPACE);
         if (jpe instanceof JivePropertiesExtension) {
-            extractHeadersFrom((JivePropertiesExtension)jpe, exchange, answer);
+            extractHeadersFrom((JivePropertiesExtension) jpe, exchange, answer);
         }
         if (jpe instanceof DefaultExtensionElement) {
-            extractHeadersFrom((DefaultExtensionElement)jpe, exchange, answer);
+            extractHeadersFrom((DefaultExtensionElement) jpe, exchange, answer);
         }
 
         if (stanza instanceof Message) {

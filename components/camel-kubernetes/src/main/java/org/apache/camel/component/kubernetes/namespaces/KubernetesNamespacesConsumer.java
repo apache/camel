@@ -51,7 +51,7 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -90,7 +90,8 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            NonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, Resource<Namespace, DoneableNamespace>> w = getEndpoint().getKubernetesClient().namespaces();
+            NonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, Resource<Namespace, DoneableNamespace>> w
+                    = getEndpoint().getKubernetesClient().namespaces();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 w.withName(getEndpoint().getKubernetesConfiguration().getNamespace());
             }

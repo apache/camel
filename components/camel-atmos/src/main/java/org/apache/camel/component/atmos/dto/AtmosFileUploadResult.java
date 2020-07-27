@@ -25,17 +25,17 @@ import org.apache.camel.component.atmos.util.AtmosResultHeader;
 public class AtmosFileUploadResult extends AtmosResult {
 
     /**
-     * Object payload contained in Exchange
-     * In case of a single file Exchange Header is populated with the name of the remote path uploaded
-     * In case of a multiple files Exchange Header is populated with the name of the remote paths uploaded
-     * In case of a single file Exchange Body is populated with the result code of the upload operation for the remote path.
-     * In case of multiple files Exchange Body is populated with a map containing as key the remote path uploaded
-     * and as value the result code of the upload operation
+     * Object payload contained in Exchange In case of a single file Exchange Header is populated with the name of the
+     * remote path uploaded In case of a multiple files Exchange Header is populated with the name of the remote paths
+     * uploaded In case of a single file Exchange Body is populated with the result code of the upload operation for the
+     * remote path. In case of multiple files Exchange Body is populated with a map containing as key the remote path
+     * uploaded and as value the result code of the upload operation
+     * 
      * @param exchange
      */
     @Override
     public void populateExchange(Exchange exchange) {
-        Map<String, AtmosResultCode> map = (Map<String, AtmosResultCode>)resultEntries;
+        Map<String, AtmosResultCode> map = (Map<String, AtmosResultCode>) resultEntries;
         if (map.size() == 1) {
             //set info in exchange
             String pathExtracted = null;

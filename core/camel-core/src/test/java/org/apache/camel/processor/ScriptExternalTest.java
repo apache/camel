@@ -47,8 +47,8 @@ public class ScriptExternalTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    // should not affect the body
-                    .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")).to("mock:result");
+                        // should not affect the body
+                        .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")).to("mock:result");
             }
         };
     }

@@ -41,7 +41,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
     @Test
     public void testWireTapShutdown() throws Exception {
-        final MyTapBean tapBean = (MyTapBean)context.getRegistry().lookupByName("tap");
+        final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSmppCommand implements SmppCommand {
-    
+
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected SMPPSession session;
@@ -52,7 +52,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
         } else {
             message = exchange.getIn();
         }
-        
+
         return message;
     }
 
@@ -78,7 +78,8 @@ public abstract class AbstractSmppCommand implements SmppCommand {
                 } else if (value instanceof Short) {
                     optParam = new OptionalParameter.Short(key, (Short) value);
                 } else {
-                    log.info("Couldn't determine optional parameter for value {} (type: {}). Skip this one.", value, value.getClass());
+                    log.info("Couldn't determine optional parameter for value {} (type: {}). Skip this one.", value,
+                            value.getClass());
                     continue;
                 }
 
@@ -92,8 +93,8 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     }
 
     /**
-     * @deprecated will be removed in Camel 2.13.0/3.0.0 - use createOptionalParametersByCode instead
-     * @param optinalParamaters
+     * @deprecated                   will be removed in Camel 2.13.0/3.0.0 - use createOptionalParametersByCode instead
+     * @param      optinalParamaters
      * @return
      */
     @Deprecated
@@ -130,7 +131,8 @@ public abstract class AbstractSmppCommand implements SmppCommand {
 
                 optParams.add(optParam);
             } catch (Exception e) {
-                log.info("Couldn't determine optional parameter for key {} and value {}. Skip this one.", entry.getKey(), value);
+                log.info("Couldn't determine optional parameter for key {} and value {}. Skip this one.", entry.getKey(),
+                        value);
             }
         }
 
@@ -138,7 +140,8 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     }
 
     @SuppressWarnings("unchecked")
-    protected Class<? extends OptionalParameter> determineTypeClass(Tag tag) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    protected Class<? extends OptionalParameter> determineTypeClass(Tag tag)
+            throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         // we have to use reflection because the type field is private
         Field f = tag.getClass().getDeclaredField("type");
         f.setAccessible(true);

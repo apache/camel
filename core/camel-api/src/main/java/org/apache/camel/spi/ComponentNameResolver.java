@@ -28,8 +28,8 @@ public interface ComponentNameResolver {
     /**
      * Discovers which components are available on the classpath.
      *
-     * @param camelContext the camel context
-     * @return the component names on the classpath
+     * @param  camelContext the camel context
+     * @return              the component names on the classpath
      */
     Set<String> resolveNames(CamelContext camelContext);
 }

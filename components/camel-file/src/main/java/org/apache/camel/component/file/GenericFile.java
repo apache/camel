@@ -31,8 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Generic File. Specific implementations of a file based endpoint need to
- * provide a File for transfer.
+ * Generic File. Specific implementations of a file based endpoint need to provide a File for transfer.
  */
 public class GenericFile<T> implements WrappedFile<T> {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFile.class);
@@ -163,7 +162,7 @@ public class GenericFile<T> implements WrappedFile<T> {
             }
 
             if ((isProbeContentTypeFromEndpoint || probeContentType) && file instanceof File) {
-                File f = (File)file;
+                File f = (File) file;
                 Path path = f.toPath();
                 try {
                     message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
@@ -202,8 +201,7 @@ public class GenericFile<T> implements WrappedFile<T> {
     }
 
     /**
-     * Changes the name of this remote file. This method alters the absolute and
-     * relative names as well.
+     * Changes the name of this remote file. This method alters the absolute and relative names as well.
      *
      * @param newName the new name
      */
@@ -212,7 +210,8 @@ public class GenericFile<T> implements WrappedFile<T> {
 
         // Make sure the names is normalized.
         String newFileName = FileUtil.normalizePath(newName);
-        String newEndpointPath = FileUtil.normalizePath(endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
+        String newEndpointPath = FileUtil.normalizePath(
+                endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: {}", newFileName);

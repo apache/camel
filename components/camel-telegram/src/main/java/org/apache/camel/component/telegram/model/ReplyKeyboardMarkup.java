@@ -87,7 +87,7 @@ public class ReplyKeyboardMarkup implements Serializable, ReplyMarkup {
         sb.append(", keyboard='").append(keyboard);
         sb.append('}');
         return sb.toString();
-    }    
+    }
 
     public static Builder builder() {
         return new Builder();

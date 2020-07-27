@@ -38,7 +38,8 @@ public class ExecException extends RuntimeCamelException {
         this.stdout = stdout;
     }
 
-    public ExecException(String message, final InputStream stdout, final InputStream stderr, final int exitValue, Throwable cause) {
+    public ExecException(String message, final InputStream stdout, final InputStream stderr, final int exitValue,
+                         Throwable cause) {
         super(message, cause);
         this.exitValue = exitValue;
         this.stderr = stderr;

@@ -83,7 +83,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
         template.sendBody(url, "Message One");
         template.sendBody(url, "Message Two");
 
-        final ServiceSupport consumer = (ServiceSupport)context.getRoute("foo").getConsumer();
+        final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
 
         // wait long enough to have the consumer suspended
         await().atMost(2, TimeUnit.SECONDS).until(consumer::isSuspended);
@@ -108,7 +108,8 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
                 int threshold = 2;
                 long failureWindow = 30;
                 long halfOpenAfter = 1000;
-                ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
+                ThrottlingExceptionRoutePolicy policy
+                        = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
                 policy.setHalfOpenHandler(new NeverCloseHandler());
 
                 from(url).routeId("foo").routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");

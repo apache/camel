@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class GmailUsersIntegrationTest extends AbstractGoogleMailTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersApiMethod.class).getName();
 
     @Test
     public void testGetProfile() throws Exception {

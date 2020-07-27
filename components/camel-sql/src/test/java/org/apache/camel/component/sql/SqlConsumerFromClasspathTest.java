@@ -31,7 +31,7 @@ public class SqlConsumerFromClasspathTest extends SqlConsumerTest {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:classpath:sql/selectProjects.sql")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

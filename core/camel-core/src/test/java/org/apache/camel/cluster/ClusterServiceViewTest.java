@@ -129,7 +129,7 @@ public class ClusterServiceViewTest {
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events);
 
-        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership)(v, l) -> {
+        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
             results.add(i);
             latch.countDown();
         }));
@@ -150,7 +150,7 @@ public class ClusterServiceViewTest {
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events * 2);
 
-        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership)(v, l) -> {
+        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
             results.add(i);
             latch.countDown();
         }));
@@ -158,10 +158,11 @@ public class ClusterServiceViewTest {
         service.start();
         view.setLeader(true);
 
-        IntStream.range(events, events * 2).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership)(v, l) -> {
-            results.add(i);
-            latch.countDown();
-        }));
+        IntStream.range(events, events * 2)
+                .forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
+                    results.add(i);
+                    latch.countDown();
+                }));
 
         latch.await(10, TimeUnit.SECONDS);
 

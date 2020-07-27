@@ -27,7 +27,7 @@ public class WeightedRandomLoadBalancer extends WeightedLoadBalancer {
     public WeightedRandomLoadBalancer(List<Integer> distributionRatioList) {
         super(distributionRatioList);
     }
-    
+
     @Override
     protected synchronized AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         int randomWeight = ThreadLocalRandom.current().nextInt(runtimeRatioSum);

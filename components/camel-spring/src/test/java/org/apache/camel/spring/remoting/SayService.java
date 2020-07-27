@@ -34,7 +34,7 @@ public class SayService implements ISay {
     @Override
     public String say() {
         LOG.info("Invoking say() method with message: " + message);
-        
+
         return message;
     }
 

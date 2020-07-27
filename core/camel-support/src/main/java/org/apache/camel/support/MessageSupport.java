@@ -27,12 +27,11 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 
 /**
- * A base class for implementation inheritance providing the core
- * {@link Message} body handling features but letting the derived class deal
- * with headers.
+ * A base class for implementation inheritance providing the core {@link Message} body handling features but letting the
+ * derived class deal with headers.
  *
- * Unless a specific provider wishes to do something particularly clever with
- * headers you probably want to just derive from {@link DefaultMessage}
+ * Unless a specific provider wishes to do something particularly clever with headers you probably want to just derive
+ * from {@link DefaultMessage}
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
     ExtendedCamelContext camelContext;
@@ -186,7 +185,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
             setCamelContext(((CamelContextAware) that).getCamelContext());
         }
         if (that instanceof DataTypeAware && ((DataTypeAware) that).hasDataType()) {
-            setDataType(((DataTypeAware)that).getDataType());
+            setDataType(((DataTypeAware) that).getDataType());
         }
         // cover over exchange if none has been assigned
         if (getExchange() == null) {
@@ -261,11 +260,9 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     public abstract Message newInstance();
 
     /**
-     * A factory method to allow a provider to lazily create the message body
-     * for inbound messages from other sources
+     * A factory method to allow a provider to lazily create the message body for inbound messages from other sources
      *
-     * @return the value of the message body or null if there is no value
-     *         available
+     * @return the value of the message body or null if there is no value available
      */
     protected Object createBody() {
         return null;

@@ -35,13 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  *
  */
 public class XMLTokenExpressionIteratorInvalidXMLTest {
-    private static final String DATA_TEMPLATE = 
-        "<?xml version=\"1.0\" encoding=\"utf-u\"?>"
-        + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
-        + "    <statement>Hello World</statement>"
-        + "    <statement>{0}</statement>"
-        + "</Statements>";
-
+    private static final String DATA_TEMPLATE = "<?xml version=\"1.0\" encoding=\"utf-u\"?>"
+                                                + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
+                                                + "    <statement>Hello World</statement>"
+                                                + "    <statement>{0}</statement>"
+                                                + "</Statements>";
 
     private static final Map<String, String> NSMAP = Collections.singletonMap("", "http://www.apache.org/xml/test");
 
@@ -66,7 +64,7 @@ public class XMLTokenExpressionIteratorInvalidXMLTest {
         } catch (Exception e) {
             exp = e;
         } finally {
-            ((Closeable)tokenizer).close();
+            ((Closeable) tokenizer).close();
         }
 
         if (error) {

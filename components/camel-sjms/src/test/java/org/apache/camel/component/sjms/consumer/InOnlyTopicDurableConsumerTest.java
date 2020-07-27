@@ -26,10 +26,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
-    
+
     private static final String CONNECTION_ID = "test-connection-1";
     private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=false";
-    
+
     @Override
     protected boolean useJmx() {
         return false;
@@ -51,7 +51,6 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    
     /*
      * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
      *
@@ -78,10 +77,10 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sjms:topic:foo?durableSubscriptionId=bar1")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("sjms:topic:foo?durableSubscriptionId=bar2")
-                    .to("mock:result2");
+                        .to("mock:result2");
             }
         };
     }

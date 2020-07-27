@@ -24,8 +24,8 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
- * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels
- * properties component. This allows to use configuration management from MicroProfile with Camel.
+ * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels properties
+ * component. This allows to use configuration management from MicroProfile with Camel.
  */
 public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {
 
@@ -44,7 +44,7 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
         final Properties answer = new Properties();
         final Config config = ConfigProvider.getConfig();
 
-        for (String key: config.getPropertyNames()) {
+        for (String key : config.getPropertyNames()) {
             answer.put(key, config.getValue(key, String.class));
         }
 
@@ -56,7 +56,7 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
         final Properties answer = new Properties();
         final Config config = ConfigProvider.getConfig();
 
-        for (String name: config.getPropertyNames()) {
+        for (String name : config.getPropertyNames()) {
             if (filter.test(name)) {
                 config.getOptionalValue(name, String.class).ifPresent(v -> answer.put(name, v));
             }

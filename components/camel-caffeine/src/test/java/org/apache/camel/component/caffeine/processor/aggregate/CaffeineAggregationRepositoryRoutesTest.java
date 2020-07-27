@@ -49,8 +49,7 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
         mock.expectedBodiesReceived(SUM);
 
         IntStream.of(VALUES).forEach(
-            i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR)
-        );
+                i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR));
 
         mock.assertIsSatisfied();
     }
@@ -75,17 +74,17 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(ENDPOINT_DIRECT)
-                    .routeId("AggregatingRouteOne")
-                    .aggregate(header(CORRELATOR))
-                    .aggregationRepository(createAggregateRepository())
-                    .aggregationStrategy(CaffeineAggregationRepositoryRoutesTest.this::aggregate)
-                    .completionSize(VALUES.length)
+                        .routeId("AggregatingRouteOne")
+                        .aggregate(header(CORRELATOR))
+                        .aggregationRepository(createAggregateRepository())
+                        .aggregationStrategy(CaffeineAggregationRepositoryRoutesTest.this::aggregate)
+                        .completionSize(VALUES.length)
                         .to("log:org.apache.camel.component.caffeine.processor.aggregate?level=INFO&showAll=true&multiline=true")
                         .to(ENDPOINT_MOCK);
             }
         };
     }
-    
+
     protected static int[] generateRandomArrayOfInt(int size, int lower, int upper) {
         Random random = new Random();
         int[] array = new int[size];
@@ -94,7 +93,7 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
 
         return array;
     }
-    
+
     protected CaffeineAggregationRepository createAggregateRepository() {
         CaffeineAggregationRepository repository = new CaffeineAggregationRepository();
 

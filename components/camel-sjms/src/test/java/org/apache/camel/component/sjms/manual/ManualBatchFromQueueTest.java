@@ -71,8 +71,8 @@ public class ManualBatchFromQueueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sjms-batch:queue:foo?asyncStartListener=true&completionSize=3&completionTimeout=60000&aggregationStrategy=#testStrategy")
-                    .to("log:foo")
-                    .to("mock:foo");
+                        .to("log:foo")
+                        .to("mock:foo");
             }
         };
     }

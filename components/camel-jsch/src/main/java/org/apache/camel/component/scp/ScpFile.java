@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.scp;
 
-
 /**
  * SFTP remote file operations
  */
@@ -37,18 +36,23 @@ public class ScpFile {
     public boolean isDirectory() {
         return directory;
     }
+
     public void setDirectory(boolean directory) {
         this.directory = directory;
     }
+
     public int getAttrs() {
         return attrs;
     }
+
     public void setAttrs(int attrs) {
         this.attrs = attrs;
     }
+
     public int getLength() {
         return length;
     }
+
     public void setLength(int length) {
         this.length = length;
     }

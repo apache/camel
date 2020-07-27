@@ -47,15 +47,11 @@ public class HttpRedirectTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/someplaceelse", new BasicValidationHandler(GET.name(), null, null, "Bye World")).
-                registerHandler("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/someplaceelse", new BasicValidationHandler(GET.name(), null, null, "Bye World"))
+                .registerHandler("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).create();
         localServer.start();
 
         super.setUp();
@@ -75,8 +71,8 @@ public class HttpRedirectTest extends BaseHttpTest {
     public void httpRedirect() throws Exception {
 
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
-                + "/test?httpClient.redirectsEnabled=false&httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
-                + "&httpClient.staleConnectionCheckEnabled=false";
+                     + "/test?httpClient.redirectsEnabled=false&httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
+                     + "&httpClient.staleConnectionCheckEnabled=false";
         Exchange out = template.request(uri, exchange -> {
             // no data
         });
@@ -85,15 +81,17 @@ public class HttpRedirectTest extends BaseHttpTest {
         HttpOperationFailedException cause = out.getException(HttpOperationFailedException.class);
         assertNotNull(cause);
         assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, cause.getStatusCode());
-        assertEquals("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/someplaceelse", cause.getRedirectLocation());
+        assertEquals(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/someplaceelse",
+                cause.getRedirectLocation());
     }
 
     @Test
     public void httpHandleRedirect() throws Exception {
 
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
-                + "/test?httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
-                + "&httpClient.staleConnectionCheckEnabled=false";
+                     + "/test?httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
+                     + "&httpClient.staleConnectionCheckEnabled=false";
         Exchange out = template.request(uri, exchange -> {
             // no data
         });
@@ -113,8 +111,10 @@ public class HttpRedirectTest extends BaseHttpTest {
         }
 
         @Override
-        public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws HttpException, IOException {
-            httpResponse.setHeader("location", "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/someplaceelse");
+        public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext)
+                throws HttpException, IOException {
+            httpResponse.setHeader("location", "http://" + localServer.getInetAddress().getHostName() + ":"
+                                               + localServer.getLocalPort() + "/someplaceelse");
             httpResponse.setStatusCode(code);
         }
     }

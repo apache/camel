@@ -29,7 +29,7 @@ public class CamelFileDataSource extends FileDataSource {
         super(file);
         this.fileName = fileName;
     }
-    
+
     @Override
     public String getContentType() {
         if (typeMap == null) {
@@ -38,12 +38,12 @@ public class CamelFileDataSource extends FileDataSource {
             return typeMap.getContentType(fileName);
         }
     }
-    
+
     @Override
     public void setFileTypeMap(FileTypeMap map) {
         typeMap = map;
     }
-    
+
     @Override
     public String getName() {
         if (fileName != null) {

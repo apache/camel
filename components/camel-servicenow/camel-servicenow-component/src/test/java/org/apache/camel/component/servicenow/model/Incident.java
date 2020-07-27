@@ -41,10 +41,8 @@ public class Incident {
     @JsonProperty("impact")
     private int impact;
 
-
     public Incident() {
     }
-
 
     public String getId() {
         return id;

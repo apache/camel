@@ -61,7 +61,7 @@ public class SmppProducerTest {
     @Test
     public void doStartShouldStartANewSmppSession() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameters = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient",
@@ -71,7 +71,7 @@ public class SmppProducerTest {
                 NumberingPlanIndicator.UNKNOWN,
                 "");
         when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameters))
-            .thenReturn("1");
+                .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);
 
         producer.doStart();
@@ -85,7 +85,7 @@ public class SmppProducerTest {
     @Test
     public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
 
         producer.doStop();
@@ -94,7 +94,7 @@ public class SmppProducerTest {
     @Test
     public void doStopShouldCloseTheSMPPSession() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
 
         producer.doStart();

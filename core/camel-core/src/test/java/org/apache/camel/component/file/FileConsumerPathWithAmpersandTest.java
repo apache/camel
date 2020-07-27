@@ -47,7 +47,8 @@ public class FileConsumerPathWithAmpersandTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file&stuff?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file&stuff?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

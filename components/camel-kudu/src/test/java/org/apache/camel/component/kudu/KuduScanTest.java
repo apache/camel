@@ -48,11 +48,11 @@ public class KuduScanTest extends AbstractKuduTest {
 
                 //integration test route
                 from("direct:scan").to("kudu:localhost:7051/" + TABLE + "?operation=scan")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("direct:scan2")
-                    .to("kudu:localhost:7051/TestTable?operation=scan")
-                    .to("mock:result");
+                        .to("kudu:localhost:7051/TestTable?operation=scan")
+                        .to("mock:result");
             }
         };
     }
@@ -72,7 +72,7 @@ public class KuduScanTest extends AbstractKuduTest {
         successEndpoint.expectedMessageCount(1);
 
         sendBody("direct:scan", null);
-        
+
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
 
@@ -121,7 +121,7 @@ public class KuduScanTest extends AbstractKuduTest {
         successEndpoint.assertIsSatisfied();
 
         List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
-                                                                            .get(0).getIn().getBody(List.class);
+                .get(0).getIn().getBody(List.class);
 
         assertEquals(results.size(), 1, "Wrong number of results.");
 

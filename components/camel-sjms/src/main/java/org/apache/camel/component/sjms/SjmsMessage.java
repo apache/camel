@@ -218,8 +218,7 @@ public class SjmsMessage extends DefaultMessage {
     }
 
     /**
-     * Ensure that the headers have been populated from the underlying JMS message
-     * before we start mutating the headers
+     * Ensure that the headers have been populated from the underlying JMS message before we start mutating the headers
      */
     protected void ensureInitialHeaders() {
         if (jmsMessage != null && !hasPopulatedHeaders()) {

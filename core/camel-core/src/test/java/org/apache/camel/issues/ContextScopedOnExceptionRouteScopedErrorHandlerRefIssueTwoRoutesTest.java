@@ -66,9 +66,11 @@ public class ContextScopedOnExceptionRouteScopedErrorHandlerRefIssueTwoRoutesTes
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled").end();
 
-                from("direct:foo").errorHandler(new ErrorHandlerBuilderRef("myDLC")).to("mock:foo").throwException(new IOException("Damn IO"));
+                from("direct:foo").errorHandler(new ErrorHandlerBuilderRef("myDLC")).to("mock:foo")
+                        .throwException(new IOException("Damn IO"));
 
-                from("direct:start").errorHandler(new ErrorHandlerBuilderRef("myDLC")).to("mock:a").throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").errorHandler(new ErrorHandlerBuilderRef("myDLC")).to("mock:a")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

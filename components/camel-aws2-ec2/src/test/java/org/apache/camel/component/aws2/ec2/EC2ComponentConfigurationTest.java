@@ -34,7 +34,8 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         Ec2Client amazonEc2Client = new AmazonEC2ClientMock();
         context.getRegistry().bind("amazonEc2Client", amazonEc2Client);
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://TestDomain?amazonEc2Client=#amazonEc2Client&accessKey=xxx&secretKey=yyy");
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component
+                .createEndpoint("aws2-ec2://TestDomain?amazonEc2Client=#amazonEc2Client&accessKey=xxx&secretKey=yyy");
 
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -44,7 +45,8 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyy");
+        AWS2EC2Endpoint endpoint
+                = (AWS2EC2Endpoint) component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -96,7 +98,7 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://testDomain");
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component.createEndpoint("aws2-ec2://testDomain");
 
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
@@ -108,7 +110,8 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component
+                .createEndpoint("aws2-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
@@ -121,8 +124,9 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component
-            .createEndpoint("aws2-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component
+                .createEndpoint(
+                        "aws2-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

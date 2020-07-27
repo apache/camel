@@ -36,23 +36,24 @@ public class AmazonSESClientMock extends AbstractAmazonSimpleEmailService {
         this.sendEmailRequest = sendEmailRequest;
         SendEmailResult result = new SendEmailResult();
         result.setMessageId("1");
-        
+
         return result;
     }
-    
+
     @Override
-    public SendRawEmailResult sendRawEmail(SendRawEmailRequest sendRawEmailRequest) throws AmazonServiceException, AmazonClientException {
+    public SendRawEmailResult sendRawEmail(SendRawEmailRequest sendRawEmailRequest)
+            throws AmazonServiceException, AmazonClientException {
         this.sendRawEmailRequest = sendRawEmailRequest;
         SendRawEmailResult result = new SendRawEmailResult();
         result.setMessageId("1");
-        
+
         return result;
     }
 
     public SendEmailRequest getSendEmailRequest() {
         return sendEmailRequest;
     }
-    
+
     public SendRawEmailRequest getSendRawEmailRequest() {
         return sendRawEmailRequest;
     }

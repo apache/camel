@@ -30,10 +30,9 @@ public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
 
     public RouteConcurrentTest() {
         super(
-            TestDataBuilder.createTrace().inRandomOrder()
-                .withSegment(TestDataBuilder.createSegment("foo"))
-                .withSegment(TestDataBuilder.createSegment("bar"))
-        );
+              TestDataBuilder.createTrace().inRandomOrder()
+                      .withSegment(TestDataBuilder.createSegment("foo"))
+                      .withSegment(TestDataBuilder.createSegment("bar")));
     }
 
     @Test
@@ -54,13 +53,13 @@ public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo?concurrentConsumers=5").routeId("foo")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"))
-                    .to("seda:bar");
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"))
+                        .to("seda:bar");
 
                 from("seda:bar?concurrentConsumers=5").routeId("bar")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(0,500)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(0,500)}"));
             }
         };
     }

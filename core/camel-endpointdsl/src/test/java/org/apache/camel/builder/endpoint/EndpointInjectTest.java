@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;
 
 /**
@@ -50,9 +49,9 @@ public class EndpointInjectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(direct("foo"))
-                    .to(seda("foo"));
+                        .to(seda("foo"));
                 from(seda("foo"))
-                    .to(foo);
+                        .to(foo);
             }
         };
     }

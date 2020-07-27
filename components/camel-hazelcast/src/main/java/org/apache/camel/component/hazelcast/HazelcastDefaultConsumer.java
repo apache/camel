@@ -26,7 +26,8 @@ public class HazelcastDefaultConsumer extends DefaultConsumer {
     protected final String cacheName;
     protected HazelcastInstance hazelcastInstance;
 
-    public HazelcastDefaultConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+    public HazelcastDefaultConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
+                                    String cacheName) {
         super(endpoint, processor);
         this.cacheName = cacheName;
         this.hazelcastInstance = hazelcastInstance;

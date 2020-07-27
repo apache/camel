@@ -18,5 +18,7 @@ package org.apache.camel.component.aws2.sqs;
 
 public enum Sqs2Operations {
 
-    sendBatchMessage, deleteMessage, listQueues
+    sendBatchMessage,
+    deleteMessage,
+    listQueues
 }

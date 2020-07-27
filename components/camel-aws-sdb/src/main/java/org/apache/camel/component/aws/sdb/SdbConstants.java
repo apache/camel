@@ -20,7 +20,7 @@ package org.apache.camel.component.aws.sdb;
  * Constants used in Camel AWS SDB component
  */
 public interface SdbConstants {
-    
+
     String ATTRIBUTES = "CamelAwsSdbAttributes";
     String ATTRIBUTE_NAMES = "CamelAwsSdbAttributeNames";
     String ATTRIBUTE_NAME_COUNT = "CamelAwsSdbAttributeNameCount";

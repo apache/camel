@@ -70,7 +70,7 @@ public class ConnectionId {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ConnectionId other = (ConnectionId)obj;
+        final ConnectionId other = (ConnectionId) obj;
         if (this.connectionId == null) {
             if (other.connectionId != null) {
                 return false;

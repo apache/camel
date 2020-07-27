@@ -62,24 +62,24 @@ public class Jt400PgmProducer extends DefaultProducer {
             } else {
                 pgmCall = new ServiceProgramCall(iSeries);
                 ((ServiceProgramCall) pgmCall)
-                    .setProcedureName(getISeriesEndpoint().getProcedureName());
+                        .setProcedureName(getISeriesEndpoint().getProcedureName());
                 ((ServiceProgramCall) pgmCall)
-                    .setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
+                        .setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
             }
             pgmCall.setProgram(commandStr);
             pgmCall.setParameterList(parameterList);
 
             if (LOG.isDebugEnabled()) {
                 LOG.trace(
-                    "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
-                    new Object[]{commandStr, iSeries.getSystemName(), iSeries.getUserId()});
+                        "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
+                        new Object[] { commandStr, iSeries.getSystemName(), iSeries.getUserId() });
             }
 
             boolean result = pgmCall.run();
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", commandStr,
-                    iSeries.getSystemName(), result);
+                        iSeries.getSystemName(), result);
             }
 
             if (result) {
@@ -94,7 +94,8 @@ public class Jt400PgmProducer extends DefaultProducer {
         }
     }
 
-    private ProgramParameter[] getParameterList(Exchange exchange, AS400 iSeries) throws InvalidPayloadException, PropertyVetoException {
+    private ProgramParameter[] getParameterList(Exchange exchange, AS400 iSeries)
+            throws InvalidPayloadException, PropertyVetoException {
 
         Object body = exchange.getIn().getMandatoryBody();
 
@@ -158,7 +159,8 @@ public class Jt400PgmProducer extends DefaultProducer {
         return parameterList;
     }
 
-    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs, AS400 iSeries) throws InvalidPayloadException {
+    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs, AS400 iSeries)
+            throws InvalidPayloadException {
 
         Object body = exchange.getIn().getMandatoryBody();
         Object[] params = (Object[]) body;

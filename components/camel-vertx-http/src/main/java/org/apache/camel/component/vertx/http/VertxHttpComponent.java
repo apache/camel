@@ -41,7 +41,8 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 @Component("vertx-http")
-public class VertxHttpComponent extends HeaderFilterStrategyComponent implements RestProducerFactory, SSLContextParametersAware {
+public class VertxHttpComponent extends HeaderFilterStrategyComponent
+        implements RestProducerFactory, SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private Vertx vertx;
@@ -78,14 +79,15 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
 
         // Recreate the http uri with the remaining parameters which the endpoint did not use
         URI httpUri = URISupport.createRemainingURI(
-                new URI(uriHttpUriAddress.getScheme(),
+                new URI(
+                        uriHttpUriAddress.getScheme(),
                         uriHttpUriAddress.getUserInfo(),
                         uriHttpUriAddress.getHost(),
                         uriHttpUriAddress.getPort(),
                         uriHttpUriAddress.getPath(),
                         uriHttpUriAddress.getQuery(),
                         uriHttpUriAddress.getFragment()),
-                        parameters);
+                parameters);
 
         configuration.setHttpUri(httpUri);
 
@@ -93,9 +95,11 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
     }
 
     @Override
-    public Producer createProducer(CamelContext camelContext, String host,
+    public Producer createProducer(
+            CamelContext camelContext, String host,
             String verb, String basePath, String uriTemplate, String queryParameters, String consumes,
-            String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+            String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
@@ -162,7 +166,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
         if (vertx == null) {
             Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
             if (vertxes.size() == 1) {
-                vertx  = vertxes.iterator().next();
+                vertx = vertxes.iterator().next();
             }
         }
 
@@ -230,8 +234,8 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
     /**
      * Whether to allow java serialization when a request has the Content-Type application/x-java-serialized-object
      * <p/>
-     * This is disabled by default. If you enable this, be aware that Java will deserialize the incoming
-     * data from the request. This can be a potential security risk.
+     * This is disabled by default. If you enable this, be aware that Java will deserialize the incoming data from the
+     * request. This can be a potential security risk.
      */
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;

@@ -35,7 +35,7 @@ public class CouchbaseComponentTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        component = context.getComponent("couchbase",  CouchbaseComponent.class);
+        component = context.getComponent("couchbase", CouchbaseComponent.class);
     }
 
     @Override

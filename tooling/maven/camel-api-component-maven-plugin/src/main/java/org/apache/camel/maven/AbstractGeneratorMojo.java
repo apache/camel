@@ -125,10 +125,10 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     private ClassLoader buildProjectClassLoader() throws DependencyResolutionRequiredException {
         URL[] urls = project.getTestClasspathElements().stream()
-            .map(File::new)
-            .map(ThrowingHelper.wrapAsFunction(e -> e.toURI().toURL()))
-            .peek(url -> log.debug("Adding project path " + url))
-            .toArray(URL[]::new);
+                .map(File::new)
+                .map(ThrowingHelper.wrapAsFunction(e -> e.toURI().toURL()))
+                .peek(url -> log.debug("Adding project path " + url))
+                .toArray(URL[]::new);
 
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         return new URLClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());

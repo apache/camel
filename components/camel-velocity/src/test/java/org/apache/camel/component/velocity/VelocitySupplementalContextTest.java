@@ -60,9 +60,9 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:input")
-                    .setHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT).constant(supplementalContext)
-                    .to("velocity:template-in-header?allowTemplateFromHeader=true&allowContextMapAll=true")
-                    .to("mock:results");
+                        .setHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT).constant(supplementalContext)
+                        .to("velocity:template-in-header?allowTemplateFromHeader=true&allowContextMapAll=true")
+                        .to("mock:results");
             }
         };
     }

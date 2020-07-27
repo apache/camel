@@ -50,7 +50,7 @@ public class AddBreadcrumbHttpHeaderTestInterceptor implements ClientInterceptor
 
     @Override
     public void afterCompletion(MessageContext messageContext, Exception ex) throws WebServiceClientException {
-         // noop
+        // noop
 
     }
 

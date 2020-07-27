@@ -49,8 +49,8 @@ public class OutgoingSetGameScoreMessage extends OutgoingMessage {
      * @param userId             User identifier
      * @param score              New score, must be non-negative
      * @param force              Pass True, if the high score is allowed to decreases
-     * @param disableEditMessage Pass True, if the game message should not be automatically edited to
-     *                           include the current scoreboard
+     * @param disableEditMessage Pass True, if the game message should not be automatically edited to include the
+     *                           current scoreboard
      * @param messageId          Required if inline_message_id is not specified. Identifier of the sent message
      * @param inlineMessageId    Required if chat_id and message_id are not specified. Identifier of the inline message
      */

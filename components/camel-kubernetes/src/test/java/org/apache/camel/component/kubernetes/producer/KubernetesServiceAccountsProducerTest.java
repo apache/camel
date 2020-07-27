@@ -48,7 +48,10 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/api/v1/serviceaccounts").andReturn(200, new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/api/v1/serviceaccounts")
+                .andReturn(200,
+                        new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         List<ServiceAccount> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
@@ -57,7 +60,9 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/serviceaccounts?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200,
+                        new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("key1", "value1");
@@ -90,9 +95,12 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccounts");
-                from("direct:listByLabels").to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccountsByLabels");
-                from("direct:delete").to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=deleteServiceAccount");
+                from("direct:list")
+                        .to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccounts");
+                from("direct:listByLabels").to(
+                        "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccountsByLabels");
+                from("direct:delete").to(
+                        "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=deleteServiceAccount");
             }
         };
     }

@@ -29,6 +29,7 @@ public class MyCoolBeanTest {
 
     @Autowired
     ApplicationContext applicationContext;
+
     @Test
     public void testProducerTemplate() throws Exception {
         MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);

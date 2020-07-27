@@ -44,8 +44,10 @@ import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 @ManagedResource(description = "JPA based message id repository")
 public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository {
-    protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
-    protected static final String QUERY_CLEAR_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    protected static final String QUERY_STRING
+            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
+    protected static final String QUERY_CLEAR_STRING
+            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaMessageIdRepository.class);
 
@@ -59,7 +61,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         this(entityManagerFactory, createTransactionTemplate(entityManagerFactory), processorName);
     }
 
-    public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate, String processorName) {
+    public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate,
+                                  String processorName) {
         this.entityManagerFactory = entityManagerFactory;
         this.processorName = processorName;
         this.transactionTemplate = transactionTemplate;
@@ -69,7 +72,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         return jpaMessageIdRepository(Persistence.createEntityManagerFactory(persistenceUnit), processorName);
     }
 
-    public static JpaMessageIdRepository jpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
+    public static JpaMessageIdRepository jpaMessageIdRepository(
+            EntityManagerFactory entityManagerFactory, String processorName) {
         return new JpaMessageIdRepository(entityManagerFactory, processorName);
     }
 
@@ -88,7 +92,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager
+                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
@@ -137,7 +142,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager
+                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -179,7 +185,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager
+                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {

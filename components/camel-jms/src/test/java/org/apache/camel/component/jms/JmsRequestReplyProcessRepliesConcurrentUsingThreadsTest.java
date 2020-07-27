@@ -67,18 +67,18 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .log("request - ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("request - ${body}")
+                        .transform(body().prepend("Bye "));
 
                 from("seda:start")
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .to("activemq:queue:foo")
-                    .log("reply   - ${body}")
-                    .threads(5)
-                    .log("delay   - ${body}")
-                    .delay(2000)
-                    .log("done    - ${body}")
-                    .to("mock:result");
+                        .setExchangePattern(ExchangePattern.InOut)
+                        .to("activemq:queue:foo")
+                        .log("reply   - ${body}")
+                        .threads(5)
+                        .log("delay   - ${body}")
+                        .delay(2000)
+                        .log("done    - ${body}")
+                        .to("mock:result");
             }
         };
     }

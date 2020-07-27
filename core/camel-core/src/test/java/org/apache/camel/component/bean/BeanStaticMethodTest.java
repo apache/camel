@@ -37,8 +37,9 @@ public class BeanStaticMethodTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setBody().simple("The host is ${bean:type:org.apache.camel.util.InetAddressUtil?method=getLocalHostNameSafe}")
-                    .to("mock:result");
+                        .setBody()
+                        .simple("The host is ${bean:type:org.apache.camel.util.InetAddressUtil?method=getLocalHostNameSafe}")
+                        .to("mock:result");
             }
         };
     }

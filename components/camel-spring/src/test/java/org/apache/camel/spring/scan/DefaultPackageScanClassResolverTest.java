@@ -45,7 +45,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
         annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
     }
-    
+
     @Test
     public void testFindByAnnotationWithoutExtraFilters() {
         Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
@@ -66,7 +66,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         Set<Class<?>> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class);
     }
-    
+
     @Test
     public void testFindByAnnotationWithIncludePackageFilter() {
         filter.addIncludePattern(scanPackage + ".b.*");
@@ -118,25 +118,25 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         Set<Class<?>> scanned = resolver.findByFilter(filter, "org.apache.camel.spring.scan");
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class, ScanTargetThree.class);
     }
-    
+
     @Test
     public void testFindImplementationsWithIncludePackageFilter() {
         filter.addIncludePattern(scanPackage + ".b.*");
         resolver.addFilter(filter);
-        
+
         Set<Class<?>> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
-        validateMatchingSetContains(scanned,  ScanTargetTwo.class);
+        validateMatchingSetContains(scanned, ScanTargetTwo.class);
     }
-    
+
     @Test
     public void testFindImplementationsWithExcludePackageFilter() {
         filter.addExcludePattern(scanPackage + ".a.*");
         resolver.addFilter(filter);
-        
+
         Set<Class<?>> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
-        validateMatchingSetContains(scanned,  ScanTargetTwo.class);
+        validateMatchingSetContains(scanned, ScanTargetTwo.class);
     }
-    
+
     @Test
     // Need to run the mvn clean install to create the jar file when running it from IDE
     public void testFindByFilterPackageInJarUrl() throws Exception {
@@ -145,7 +145,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             savedClassLoader = Thread.currentThread().getContextClassLoader();
             // build a mock URLClassLoader
             URL url = getClass().getResource("/package_scan_test.jar");
-            URL urls[] = {new URL("jar:" + url.toString() + "!/")};
+            URL urls[] = { new URL("jar:" + url.toString() + "!/") };
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
 
             Thread.currentThread().setContextClassLoader(classLoader);
@@ -157,12 +157,12 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             resolver.addFilter(filter);
             Set<Class<?>> scanned = resolver.findByFilter(filter, "a.b.c");
             assertEquals(1, scanned.size());
-            assertEquals("class a.b.c.Test", scanned.iterator().next().toString());            
+            assertEquals("class a.b.c.Test", scanned.iterator().next().toString());
         } finally {
             Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
     }
-    
+
     @Test
     // Need to run the mvn clean install to create the test jar file when running it from IDE
     public void testFindByFilterPackageInJarUrlWithPlusChars() throws Exception {
@@ -171,7 +171,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             savedClassLoader = Thread.currentThread().getContextClassLoader();
             URL url = getClass().getResource("/package+scan+test.jar");
 
-            URL urls[] = {new URL("jar:" + url.toString() + "!/")};
+            URL urls[] = { new URL("jar:" + url.toString() + "!/") };
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
 
             Thread.currentThread().setContextClassLoader(classLoader);

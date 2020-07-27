@@ -61,17 +61,17 @@ public class AtomixMessagingTest extends AtomixClientTestSupport {
         mock2.expectedBodiesReceived("broadcast-message");
 
         template.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.DIRECT)
-            .withHeader(AtomixClientConstants.MEMBER_NAME, "member-1")
-            .withHeader(AtomixClientConstants.CHANNEL_NAME, "channel")
-            .withBody("direct-message")
-            .send();
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.DIRECT)
+                .withHeader(AtomixClientConstants.MEMBER_NAME, "member-1")
+                .withHeader(AtomixClientConstants.CHANNEL_NAME, "channel")
+                .withBody("direct-message")
+                .send();
 
         template.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.BROADCAST)
-            .withHeader(AtomixClientConstants.CHANNEL_NAME, "channel")
-            .withBody("direct-message")
-            .send();
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMessaging.Action.BROADCAST)
+                .withHeader(AtomixClientConstants.CHANNEL_NAME, "channel")
+                .withBody("direct-message")
+                .send();
     }
 
     // ************************************
@@ -83,12 +83,12 @@ public class AtomixMessagingTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("atomix-messaging:group");
+                        .to("atomix-messaging:group");
 
                 from("atomix-messaging:group?memberName=member-1&channelName=channel")
-                    .to("mock:member-1");
+                        .to("mock:member-1");
                 from("atomix-messaging:group?memberName=member-2&channelName=channel")
-                    .to("mock:member-2");
+                        .to("mock:member-2");
             }
         };
     }

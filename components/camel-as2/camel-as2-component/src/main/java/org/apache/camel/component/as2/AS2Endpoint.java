@@ -50,7 +50,8 @@ import org.apache.http.entity.ContentType;
 /**
  * Transfer data securely and reliably using the AS2 protocol (RFC4130).
  */
-@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName", category = {Category.FILE})
+@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName",
+             category = { Category.FILE })
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriParam
@@ -92,7 +93,6 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configureConsumer(consumer);
         return consumer;
     }
-
 
     public String getRequestUri() {
         return configuration.getRequestUri();
@@ -272,8 +272,9 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         try {
             as2ClientConnection = AS2ConnectionHelper.createAS2ClientConnection(configuration);
         } catch (UnknownHostException e) {
-            throw new RuntimeCamelException(String.format("Client HTTP connection failed: Unknown target host '%s'",
-                    configuration.getTargetHostname()));
+            throw new RuntimeCamelException(
+                    String.format("Client HTTP connection failed: Unknown target host '%s'",
+                            configuration.getTargetHostname()));
         } catch (IOException e) {
             throw new RuntimeCamelException("Client HTTP connection failed", e);
         }

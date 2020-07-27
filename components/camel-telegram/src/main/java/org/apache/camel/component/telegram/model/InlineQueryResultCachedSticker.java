@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a sticker stored on the Telegram servers.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultcachedsticker">
- * https://core.telegram.org/bots/api#inlinequeryresultcachedsticker</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultcachedsticker</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultCachedSticker extends InlineQueryResult {

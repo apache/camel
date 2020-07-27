@@ -38,7 +38,18 @@ public final class SyslogConverter {
     private static final Logger LOG = LoggerFactory.getLogger(SyslogConverter.class);
 
     private enum MONTHS {
-        jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
+        jan,
+        feb,
+        mar,
+        apr,
+        may,
+        jun,
+        jul,
+        aug,
+        sep,
+        oct,
+        nov,
+        dec
     }
 
     private static Map<String, MONTHS> monthValueMap = new HashMap<String, MONTHS>() {
@@ -235,7 +246,7 @@ public final class SyslogConverter {
             while (((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') || inblock) {
                 if (charFound == '[') {
                     inblock = true;
-                } 
+                }
                 if (charFound == ']') {
                     inblock = false;
                 }
@@ -311,18 +322,14 @@ public final class SyslogConverter {
         // Need to parse the date.
 
         /**
-         * The TIMESTAMP field is the local time and is in the format of
-         * "Mmm dd hh:mm:ss" (without the quote marks) where: Mmm is the English
-         * language abbreviation for the month of the year with the first
-         * character in uppercase and the other two characters in lowercase. The
-         * following are the only acceptable values: Jan, Feb, Mar, Apr, May,
-         * Jun, Jul, Aug, Sep, Oct, Nov, Dec dd is the day of the month. If the
-         * day of the month is less than 10, then it MUST be represented as a
-         * space and then the number. For example, the 7th day of August would
-         * be represented as "Aug  7", with two spaces between the "g" and the
-         * "7". hh:mm:ss is the local time. The hour (hh) is represented in a
-         * 24-hour format. Valid entries are between 00 and 23, inclusive. The
-         * minute (mm) and second (ss) entries are between 00 and 59 inclusive.
+         * The TIMESTAMP field is the local time and is in the format of "Mmm dd hh:mm:ss" (without the quote marks)
+         * where: Mmm is the English language abbreviation for the month of the year with the first character in
+         * uppercase and the other two characters in lowercase. The following are the only acceptable values: Jan, Feb,
+         * Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec dd is the day of the month. If the day of the month is less
+         * than 10, then it MUST be represented as a space and then the number. For example, the 7th day of August would
+         * be represented as "Aug 7", with two spaces between the "g" and the "7". hh:mm:ss is the local time. The hour
+         * (hh) is represented in a 24-hour format. Valid entries are between 00 and 23, inclusive. The minute (mm) and
+         * second (ss) entries are between 00 and 59 inclusive.
          */
 
         char[] month = new char[3];

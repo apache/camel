@@ -28,7 +28,7 @@ public interface AfterPropertiesConfigured {
      * <p/>
      * This allows to perform any post init work.
      *
-     * @param camelContext  the Camel Context
+     * @param camelContext the Camel Context
      */
     void afterPropertiesConfigured(CamelContext camelContext);
 }

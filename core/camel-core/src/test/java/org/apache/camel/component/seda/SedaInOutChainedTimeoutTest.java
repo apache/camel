@@ -51,8 +51,8 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
                 errorHandler(noErrorHandler());
 
                 from("seda:a").to("mock:a")
-                    // this timeout will trigger an exception to occur
-                    .to("seda:b?timeout=2000").to("mock:a2");
+                        // this timeout will trigger an exception to occur
+                        .to("seda:b?timeout=2000").to("mock:a2");
 
                 from("seda:b").to("mock:b").delay(3000).transform().constant("Bye World");
             }

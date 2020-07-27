@@ -68,7 +68,8 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         setGroupSize(groupSize);
     }
 
-    public ThroughputLogger(CamelLogger logger, CamelContext camelContext, Long groupInterval, Long groupDelay, Boolean groupActiveOnly) {
+    public ThroughputLogger(CamelLogger logger, CamelContext camelContext, Long groupInterval, Long groupDelay,
+                            Boolean groupActiveOnly) {
         this(logger);
         this.camelContext = camelContext;
         setGroupInterval(groupInterval);
@@ -211,7 +212,8 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         if (groupInterval != null) {
             ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-            logSchedulerService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ThroughputLogger");
+            logSchedulerService
+                    = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ThroughputLogger");
             Runnable scheduledLogTask = new ScheduledLogTask();
             LOG.info("Scheduling throughput logger to run every {} millis.", groupInterval);
             // must use fixed rate to have it trigger at every X interval
@@ -240,8 +242,8 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         groupStartTime = time;
 
         return getAction() + ": " + receivedCount + " messages so far. Last group took: " + duration
-                + " millis which is: " + numberFormat.format(rate)
-                + " messages per second. average: " + numberFormat.format(average);
+               + " millis which is: " + numberFormat.format(rate)
+               + " messages per second. average: " + numberFormat.format(average);
     }
 
     /**
@@ -253,7 +255,8 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
-                LOG.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet", camelContext.getName());
+                LOG.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet",
+                        camelContext.getName());
                 return;
             }
 
@@ -262,12 +265,12 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
     }
 
     protected void createGroupIntervalLogMessage() {
-        
+
         // this indicates that no messages have been received yet...don't logger yet
         if (startTime == 0) {
             return;
         }
-        
+
         int receivedCount = receivedCounter.get();
 
         // if configured, hide logger messages when no new messages have been received
@@ -288,9 +291,10 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         groupStartTime = time;
         groupReceivedCount = receivedCount;
 
-        lastLogMessage = getAction() + ": " + currentCount + " new messages, with total " + receivedCount + " so far. Last group took: " + duration
-                + " millis which is: " + numberFormat.format(rate)
-                + " messages per second. average: " + numberFormat.format(average);
+        lastLogMessage = getAction() + ": " + currentCount + " new messages, with total " + receivedCount
+                         + " so far. Last group took: " + duration
+                         + " millis which is: " + numberFormat.format(rate)
+                         + " messages per second. average: " + numberFormat.format(average);
         logger.log(lastLogMessage);
     }
 

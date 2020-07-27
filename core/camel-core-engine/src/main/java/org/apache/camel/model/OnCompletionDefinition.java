@@ -37,9 +37,10 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")
-@XmlType(propOrder = {"onWhen", "outputs"})
+@XmlType(propOrder = { "onWhen", "outputs" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
+public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition>
+        implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
               enums = "AfterConsumer,BeforeConsumer")
@@ -110,13 +111,10 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Removes all existing
-     * {@link org.apache.camel.model.OnCompletionDefinition} from the
-     * definition.
+     * Removes all existing {@link org.apache.camel.model.OnCompletionDefinition} from the definition.
      * <p/>
-     * This is used to let route scoped <tt>onCompletion</tt> overrule any
-     * global <tt>onCompletion</tt>. Hence we remove all existing as they are
-     * global.
+     * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>. Hence we remove
+     * all existing as they are global.
      *
      * @param definition the parent definition that is the route
      */
@@ -133,11 +131,10 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Sets the mode to be after route is done (default due backwards
-     * compatible).
+     * Sets the mode to be after route is done (default due backwards compatible).
      * <p/>
-     * This executes the on completion work <i>after</i> the route consumer have
-     * written response back to the callee (if its InOut mode).
+     * This executes the on completion work <i>after</i> the route consumer have written response back to the callee (if
+     * its InOut mode).
      *
      * @return the builder
      */
@@ -149,8 +146,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     /**
      * Sets the mode to be before consumer is done.
      * <p/>
-     * This allows the on completion work to execute <i>before</i> the route
-     * consumer, writes any response back to the callee (if its InOut mode).
+     * This allows the on completion work to execute <i>before</i> the route consumer, writes any response back to the
+     * callee (if its InOut mode).
      *
      * @return the builder
      */
@@ -160,15 +157,15 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Will only synchronize when the {@link org.apache.camel.Exchange}
-     * completed successfully (no errors).
+     * Will only synchronize when the {@link org.apache.camel.Exchange} completed successfully (no errors).
      *
      * @return the builder
      */
     public OnCompletionDefinition onCompleteOnly() {
         boolean isOnFailureOnly = Boolean.toString(true).equals(onFailureOnly);
         if (isOnFailureOnly) {
-            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+            throw new IllegalArgumentException(
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able
@@ -179,15 +176,15 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Will only synchronize when the {@link org.apache.camel.Exchange} ended
-     * with failure (exception or FAULT message).
+     * Will only synchronize when the {@link org.apache.camel.Exchange} ended with failure (exception or FAULT message).
      *
      * @return the builder
      */
     public OnCompletionDefinition onFailureOnly() {
         boolean isOnCompleteOnly = Boolean.toString(true).equals(onCompleteOnly);
         if (isOnCompleteOnly) {
-            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+            throw new IllegalArgumentException(
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able
@@ -198,14 +195,12 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Sets an additional predicate that should be true before the onCompletion
-     * is triggered.
+     * Sets an additional predicate that should be true before the onCompletion is triggered.
      * <p/>
-     * To be used for fine grained controlling whether a completion callback
-     * should be invoked or not
+     * To be used for fine grained controlling whether a completion callback should be invoked or not
      *
-     * @param predicate predicate that determines true or false
-     * @return the builder
+     * @param  predicate predicate that determines true or false
+     * @return           the builder
      */
     public OnCompletionDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
@@ -213,8 +208,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Will use the original input message body when an
-     * {@link org.apache.camel.Exchange} for this on completion.
+     * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
      * By default this feature is off.
      *
@@ -226,9 +220,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * To use a custom Thread Pool to be used for parallel processing. Notice if
-     * you set this option, then parallel processing is automatic implied, and
-     * you do not have to enable that option as well.
+     * To use a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
+     * processing is automatic implied, and you do not have to enable that option as well.
      */
     @Override
     public OnCompletionDefinition executorService(ExecutorService executorService) {
@@ -237,9 +230,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Refers to a custom Thread Pool to be used for parallel processing. Notice
-     * if you set this option, then parallel processing is automatic implied,
-     * and you do not have to enable that option as well.
+     * Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
+     * processing is automatic implied, and you do not have to enable that option as well.
      */
     @Override
     public OnCompletionDefinition executorServiceRef(String executorServiceRef) {
@@ -248,10 +240,9 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * If enabled then the on completion process will run asynchronously by a
-     * separate thread from a thread pool. By default this is false, meaning the
-     * on completion process will run synchronously using the same caller thread
-     * as from the route.
+     * If enabled then the on completion process will run asynchronously by a separate thread from a thread pool. By
+     * default this is false, meaning the on completion process will run synchronously using the same caller thread as
+     * from the route.
      *
      * @return the builder
      */
@@ -261,10 +252,9 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * If enabled then the on completion process will run asynchronously by a
-     * separate thread from a thread pool. By default this is false, meaning the
-     * on completion process will run synchronously using the same caller thread
-     * as from the route.
+     * If enabled then the on completion process will run asynchronously by a separate thread from a thread pool. By
+     * default this is false, meaning the on completion process will run synchronously using the same caller thread as
+     * from the route.
      *
      * @return the builder
      */
@@ -346,8 +336,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Will use the original input message body when an
-     * {@link org.apache.camel.Exchange} for this on completion.
+     * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
      * By default this feature is off.
      */

@@ -40,7 +40,7 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     /**
      * Gets the next {@link Processor} to route to (not wrapped)
      *
-     * @return  the next processor
+     * @return the next processor
      */
     Processor getNextProcessor();
 

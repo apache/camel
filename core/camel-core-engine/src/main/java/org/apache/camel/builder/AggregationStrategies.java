@@ -25,9 +25,8 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 
 /**
- * Toolbox class to create commonly used Aggregation Strategies in a fluent
- * manner. For more information about the supported {@link AggregationStrategy},
- * see links to the Javadocs of the relevant class below.
+ * Toolbox class to create commonly used Aggregation Strategies in a fluent manner. For more information about the
+ * supported {@link AggregationStrategy}, see links to the Javadocs of the relevant class below.
  * 
  * @since 2.12
  */
@@ -37,9 +36,8 @@ public final class AggregationStrategies {
     }
 
     /**
-     * Creates a {@link FlexibleAggregationStrategy} pivoting around a
-     * particular type, e.g. it casts all <tt>pick expression</tt> results to
-     * the desired type.
+     * Creates a {@link FlexibleAggregationStrategy} pivoting around a particular type, e.g. it casts all
+     * <tt>pick expression</tt> results to the desired type.
      * 
      * @param type The type the {@link FlexibleAggregationStrategy} deals with.
      */
@@ -48,9 +46,8 @@ public final class AggregationStrategies {
     }
 
     /**
-     * Creates a {@link FlexibleAggregationStrategy} with no particular type,
-     * i.e. performing no casts or type conversion of <tt>pick expression</tt>
-     * results.
+     * Creates a {@link FlexibleAggregationStrategy} with no particular type, i.e. performing no casts or type
+     * conversion of <tt>pick expression</tt> results.
      */
     public static FlexibleAggregationStrategy<Object> flexible() {
         return new FlexibleAggregationStrategy<>();
@@ -77,17 +74,15 @@ public final class AggregationStrategies {
     /**
      * Use the original exchange.
      *
-     * @param propagateException whether to propgate exception if errors was
-     *            thrown during processing splitted messages.
-     * @see org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
+     * @param propagateException whether to propgate exception if errors was thrown during processing splitted messages.
+     * @see                      org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
      */
     public static AggregationStrategy useOriginal(boolean propagateException) {
         return new UseOriginalAggregationStrategy(propagateException);
     }
 
     /**
-     * Creates a {@link GroupedExchangeAggregationStrategy} aggregation
-     * strategy.
+     * Creates a {@link GroupedExchangeAggregationStrategy} aggregation strategy.
      */
     public static AggregationStrategy groupedExchange() {
         return new GroupedExchangeAggregationStrategy();
@@ -101,24 +96,21 @@ public final class AggregationStrategies {
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the
-     * aggregation strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Object bean) {
         return new AggregationStrategyBeanAdapter(bean);
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the
-     * aggregation strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Object bean, String methodName) {
         return new AggregationStrategyBeanAdapter(bean, methodName);
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the
-     * aggregation strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy beanAllowNull(Object bean, String methodName) {
         AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(bean, methodName);
@@ -128,24 +120,21 @@ public final class AggregationStrategies {
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the
-     * aggregation strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Class<?> type) {
         return new AggregationStrategyBeanAdapter(type);
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the
-     * aggregation strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Class<?> type, String methodName) {
         return new AggregationStrategyBeanAdapter(type, methodName);
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the
-     * aggregation strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy beanAllowNull(Class<?> type, String methodName) {
         AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(type, methodName);
@@ -167,7 +156,7 @@ public final class AggregationStrategies {
      * Creates a {@link StringAggregationStrategy} with delimiter.
      * 
      * @param delimiter The delimiter to join with.
-     * @since 3.0.0
+     * @since           3.0.0
      */
     public static StringAggregationStrategy string(String delimiter) {
         return string().delimiter(delimiter);

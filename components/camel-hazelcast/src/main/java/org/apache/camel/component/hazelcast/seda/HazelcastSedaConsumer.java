@@ -54,7 +54,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         int concurrentConsumers = endpoint.getConfiguration().getConcurrentConsumers();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), concurrentConsumers);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
+                concurrentConsumers);
         for (int i = 0; i < concurrentConsumers; i++) {
             executor.execute(this);
         }
@@ -112,7 +113,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                             if (transactionCtx != null) {
                                 transactionCtx.rollbackTransaction();
                             }
-                            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                            getExceptionHandler().handleException("Error processing exchange", exchange,
+                                    exchange.getException());
                         }
 
                     } catch (Exception e) {

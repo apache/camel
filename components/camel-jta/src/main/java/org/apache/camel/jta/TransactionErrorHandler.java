@@ -43,10 +43,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Does transactional execution according given policy. This class is based on
- * {@link org.apache.camel.spring.spi.TransactionErrorHandler} excluding
- * redelivery functionality. In the Spring implementation redelivering is done
- * within the transaction which is not appropriate in JTA since every error
- * breaks the current transaction.
+ * {@link org.apache.camel.spring.spi.TransactionErrorHandler} excluding redelivery functionality. In the Spring
+ * implementation redelivering is done within the transaction which is not appropriate in JTA since every error breaks
+ * the current transaction.
  */
 public class TransactionErrorHandler extends ErrorHandlerSupport
         implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
@@ -68,23 +67,17 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     /**
      * Creates the transaction error handler.
      *
-     * @param camelContext
-     *            the camel context
-     * @param output
-     *            outer processor that should use this default error handler
-     * @param exceptionPolicyStrategy
-     *            strategy for onException handling
-     * @param transactionPolicy
-     *            the transaction policy
-     * @param executorService
-     *            the {@link java.util.concurrent.ScheduledExecutorService} to
-     *            be used for redelivery thread pool. Can be <tt>null</tt>.
-     * @param rollbackLoggingLevel
-     *            logging level to use for logging transaction rollback occurred
+     * @param camelContext            the camel context
+     * @param output                  outer processor that should use this default error handler
+     * @param exceptionPolicyStrategy strategy for onException handling
+     * @param transactionPolicy       the transaction policy
+     * @param executorService         the {@link java.util.concurrent.ScheduledExecutorService} to be used for
+     *                                redelivery thread pool. Can be <tt>null</tt>.
+     * @param rollbackLoggingLevel    logging level to use for logging transaction rollback occurred
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output,
-            ExceptionPolicyStrategy exceptionPolicyStrategy, JtaTransactionPolicy transactionPolicy,
-            ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel) {
+                                   ExceptionPolicyStrategy exceptionPolicyStrategy, JtaTransactionPolicy transactionPolicy,
+                                   ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel) {
         this.output = output;
         this.transactionPolicy = transactionPolicy;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
@@ -167,12 +160,12 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                 Exception cause = exchange.getException();
                 if (cause != null) {
                     LOG.debug("Transaction rollback ({}) redelivered({}) for {} "
-                        + "due exchange was marked for rollbackOnlyLast and caught: ",
-                        transactionKey, redelivered, ids, cause);
+                              + "due exchange was marked for rollbackOnlyLast and caught: ",
+                            transactionKey, redelivered, ids, cause);
                 } else {
                     LOG.debug("Transaction rollback ({}) redelivered({}) for {} "
-                        + "due exchange was marked for rollbackOnlyLast",
-                        transactionKey, redelivered, ids);
+                              + "due exchange was marked for rollbackOnlyLast",
+                            transactionKey, redelivered, ids);
                 }
             }
             // remove caused exception due we was marked as rollback only last
@@ -230,12 +223,10 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     /**
      * Processes the {@link Exchange} using the error handler.
      * <p/>
-     * This implementation will invoke ensure this occurs synchronously, that
-     * means if the async routing engine did kick in, then this implementation
-     * will wait for the task to complete before it continues.
+     * This implementation will invoke ensure this occurs synchronously, that means if the async routing engine did kick
+     * in, then this implementation will wait for the task to complete before it continues.
      *
-     * @param exchange
-     *            the exchange
+     * @param exchange the exchange
      */
     protected void processByErrorHandler(final Exchange exchange) {
         try {

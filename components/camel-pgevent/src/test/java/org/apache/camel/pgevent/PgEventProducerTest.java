@@ -81,7 +81,7 @@ public class PgEventProducerTest {
         PgEventProducer producer = new PgEventProducer(endpoint);
         producer.start();
         assertThrows(InvalidStateException.class,
-            () -> producer.process(exchange));
+                () -> producer.process(exchange));
     }
 
     @Test

@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook to
- * properly stop the main instance.
+ * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook to properly stop the main
+ * instance.
  */
 public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultMainShutdownStrategy.class);
@@ -39,8 +39,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     /**
-     * Disable the hangup support. No graceful stop by calling stop() on a
-     * Hangup signal.
+     * Disable the hangup support. No graceful stop by calling stop() on a Hangup signal.
      */
     public void disableHangupSupport() {
         hangupInterceptorEnabled = false;

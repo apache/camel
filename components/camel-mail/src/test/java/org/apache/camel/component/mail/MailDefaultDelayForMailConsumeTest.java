@@ -59,7 +59,6 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
         assertTrue(delta > 1000 - 1000L, "Camel should not default poll the mailbox to often");
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

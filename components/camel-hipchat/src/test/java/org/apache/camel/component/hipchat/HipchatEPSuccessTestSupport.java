@@ -33,10 +33,10 @@ public class HipchatEPSuccessTestSupport extends HipchatEndpoint {
     private CloseableHttpResponse closeableHttpResponse;
 
     public HipchatEPSuccessTestSupport(
-            String uri,
-            HipchatComponent component,
-            HipchatComponentProducerTest.PostCallback callback,
-            CloseableHttpResponse consumerResponse) {
+                                       String uri,
+                                       HipchatComponent component,
+                                       HipchatComponentProducerTest.PostCallback callback,
+                                       CloseableHttpResponse consumerResponse) {
         super(uri, component);
         this.callback = callback;
         this.closeableHttpResponse = consumerResponse;

@@ -87,34 +87,47 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
         ConsulEndpoint endpoint;
         switch (remaining) {
             case "kv":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new));
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new),
+                        Optional.of(ConsulKeyValueConsumer::new));
                 break;
             case "event":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulEventProducer::new), Optional.of(ConsulEventConsumer::new));
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulEventProducer::new),
+                        Optional.of(ConsulEventConsumer::new));
                 break;
             case "agent":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulAgentProducer::new), Optional.empty());
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulAgentProducer::new), Optional.empty());
                 break;
             case "coordinates":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulCoordinatesProducer::new), Optional.empty());
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulCoordinatesProducer::new), Optional.empty());
                 break;
             case "health":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulHealthProducer::new), Optional.empty());
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulHealthProducer::new), Optional.empty());
                 break;
             case "status":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulStatusProducer::new), Optional.empty());
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulStatusProducer::new), Optional.empty());
                 break;
             case "preparedQuery":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulPreparedQueryProducer::new), Optional.empty());
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulPreparedQueryProducer::new), Optional.empty());
                 break;
             case "catalog":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulCatalogProducer::new), Optional.empty());
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulCatalogProducer::new), Optional.empty());
                 break;
             case "session":
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulSessionProducer::new), Optional.empty());
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulSessionProducer::new), Optional.empty());
                 break;
             default:
-                endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new));
+                endpoint = new ConsulEndpoint(
+                        remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new),
+                        Optional.of(ConsulKeyValueConsumer::new));
         }
 
         setProperties(endpoint, parameters);

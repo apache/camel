@@ -48,8 +48,10 @@ public class Ddb2StreamComponentVerifierExtension extends DefaultComponentVerifi
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
-            .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("accessKey", parameters))
+                .error(ResultErrorHelper.requiresOption("secretKey", parameters))
+                .error(ResultErrorHelper.requiresOption("region", parameters));
 
         // Validate using the catalog
 
@@ -69,17 +71,21 @@ public class Ddb2StreamComponentVerifierExtension extends DefaultComponentVerifi
         try {
             Ddb2StreamConfiguration configuration = setProperties(new Ddb2StreamConfiguration(), parameters);
             if (!DynamoDbStreamsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
+                        VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
                 return builder.error(errorBuilder.build()).build();
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();
-            DynamoDbStreamsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
+            DynamoDbStreamsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build();
             client.listStreams();
         } catch (SdkClientException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("aws_ddb_stream_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("aws_ddb_stream_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

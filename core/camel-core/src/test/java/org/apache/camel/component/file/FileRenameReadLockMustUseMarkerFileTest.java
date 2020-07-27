@@ -64,18 +64,20 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup().process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        // got a file, so we should have a .camelLock file as
-                        // well
-                        String name = exchange.getIn().getHeader(Exchange.FILE_PATH) + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-                        File lock = new File(name);
+                from("file:target/data/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // got a file, so we should have a .camelLock file as
+                                // well
+                                String name = exchange.getIn().getHeader(Exchange.FILE_PATH)
+                                              + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+                                File lock = new File(name);
 
-                        // lock file should exist
-                        assertTrue(lock.exists(), "Lock file should exist: " + name);
-                    }
-                }).convertBodyTo(String.class).to("mock:result");
+                                // lock file should exist
+                                assertTrue(lock.exists(), "Lock file should exist: " + name);
+                            }
+                        }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

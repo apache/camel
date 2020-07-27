@@ -32,23 +32,24 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCompute;
 
 /**
- * Run <a href="https://apacheignite.readme.io/docs/compute-grid">compute operations</a>
- * on an Ignite cluster.
+ * Run <a href="https://apacheignite.readme.io/docs/compute-grid">compute operations</a> on an Ignite cluster.
  * 
- * You can pass an IgniteCallable, an IgniteRunnable, an IgniteClosure,
- * or collections of them, along with their parameters if necessary.
- * This endpoint only supports producers.
+ * You can pass an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their
+ * parameters if necessary. This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId", category = {Category.COMPUTE}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId",
+             category = { Category.COMPUTE }, producerOnly = true)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String endpointId;
 
     @UriParam(label = "producer")
     private ClusterGroupExpression clusterGroupExpression;
 
-    @UriParam(label = "producer") @Metadata(required = true)
+    @UriParam(label = "producer")
+    @Metadata(required = true)
     private IgniteComputeExecutionType executionType;
 
     @UriParam(label = "producer")
@@ -60,7 +61,8 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private Long timeoutMillis;
 
-    public IgniteComputeEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteComputeComponent igniteComponent) throws ClassNotFoundException {
+    public IgniteComputeEndpoint(String uri, String remaining, Map<String, Object> parameters,
+                                 IgniteComputeComponent igniteComponent) throws ClassNotFoundException {
         super(uri, igniteComponent);
     }
 
@@ -76,7 +78,8 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     public IgniteCompute createIgniteCompute() {
         Ignite ignite = ignite();
-        IgniteCompute compute = clusterGroupExpression == null ? ignite.compute() : ignite.compute(clusterGroupExpression.getClusterGroup(ignite));
+        IgniteCompute compute = clusterGroupExpression == null
+                ? ignite.compute() : ignite.compute(clusterGroupExpression.getClusterGroup(ignite));
 
         if (computeName != null) {
             compute = compute.withName(computeName);
@@ -125,9 +128,8 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * The compute operation to perform. Possible values: CALL, BROADCAST, APPLY,
-     *  EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN.
-     * The component expects different payload types depending on the operation.
+     * The compute operation to perform. Possible values: CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL,
+     * AFFINITY_RUN. The component expects different payload types depending on the operation.
      */
     public void setExecutionType(IgniteComputeExecutionType executionType) {
         this.executionType = executionType;
@@ -162,14 +164,16 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Gets the timeout interval for triggered jobs, in milliseconds, which will be set via {@link IgniteCompute#withTimeout(long)}.
+     * Gets the timeout interval for triggered jobs, in milliseconds, which will be set via
+     * {@link IgniteCompute#withTimeout(long)}.
      */
     public Long getTimeoutMillis() {
         return timeoutMillis;
     }
 
     /**
-     * The timeout interval for triggered jobs, in milliseconds, which will be set via {@link IgniteCompute#withTimeout(long)}.
+     * The timeout interval for triggered jobs, in milliseconds, which will be set via
+     * {@link IgniteCompute#withTimeout(long)}.
      */
     public void setTimeoutMillis(Long timeoutMillis) {
         this.timeoutMillis = timeoutMillis;

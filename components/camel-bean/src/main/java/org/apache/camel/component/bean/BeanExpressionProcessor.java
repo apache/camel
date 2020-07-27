@@ -17,8 +17,9 @@
 package org.apache.camel.component.bean;
 
 /**
- * A bean processor that is optimised for being invoked one time from an {@link org.apache.camel.language.bean.BeanExpression}.
- * Where as {@link BeanProcessor} is a bean that is a {@link org.apache.camel.Service} and intended for long lifecycle.
+ * A bean processor that is optimised for being invoked one time from an
+ * {@link org.apache.camel.language.bean.BeanExpression}. Where as {@link BeanProcessor} is a bean that is a
+ * {@link org.apache.camel.Service} and intended for long lifecycle.
  */
 public class BeanExpressionProcessor extends AbstractBeanProcessor {
 

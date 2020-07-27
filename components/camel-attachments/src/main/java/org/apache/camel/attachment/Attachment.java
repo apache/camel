@@ -36,20 +36,18 @@ public interface Attachment {
     DataHandler getDataHandler();
 
     /**
-     * Get all the headers for this header name. Returns null if no headers for
-     * this header name are available.
+     * Get all the headers for this header name. Returns null if no headers for this header name are available.
      *
-     * @param headerName he name of this header
-     * @return a comma separated list of all header values
+     * @param  headerName he name of this header
+     * @return            a comma separated list of all header values
      */
     String getHeader(String headerName);
 
     /**
-     * Get all the headers for this header name. Returns null if no headers for
-     * this header name are available.
+     * Get all the headers for this header name. Returns null if no headers for this header name are available.
      *
-     * @param name The name of this header
-     * @return a list of all header values
+     * @param  name The name of this header
+     * @return      a list of all header values
      */
     List<String> getHeaderAsList(String name);
 
@@ -61,10 +59,9 @@ public interface Attachment {
     Collection<String> getHeaderNames();
 
     /**
-     * Set the value for this headerName. Replaces all existing header values
-     * with this new value.
+     * Set the value for this headerName. Replaces all existing header values with this new value.
      * 
-     * @param headerName the name of this header
+     * @param headerName  the name of this header
      * @param headerValue the value for this header
      */
     void setHeader(String headerName, String headerValue);
@@ -72,7 +69,7 @@ public interface Attachment {
     /**
      * Add this value to the existing values for this headerName.
      * 
-     * @param headerName the name of this header
+     * @param headerName  the name of this header
      * @param headerValue the value for this header
      */
     void addHeader(String headerName, String headerValue);

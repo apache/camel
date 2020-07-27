@@ -25,16 +25,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QNameStrategyTest {
-    
+
     /**
-     * The strategy should always produce the QName that
-     * it was given on the constructor
+     * The strategy should always produce the QName that it was given on the constructor
      */
     @Test
     public void testQName() {
         QName elementName = new QName("http://my.name.org", "myElement");
         QNameStrategy strategy = new QNameStrategy(elementName);
-        
+
         QName actualElementName = strategy.findQNameForSoapActionOrType(null, GetCustomersByName.class);
         assertEquals(elementName, actualElementName);
     }

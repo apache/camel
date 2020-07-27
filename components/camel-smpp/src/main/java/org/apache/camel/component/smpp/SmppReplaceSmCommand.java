@@ -63,7 +63,7 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
             log.debug("Sent replacement command for a short message for exchange id '{}' and message id '{}'",
                     exchange.getExchangeId(), replaceSm.getMessageId());
         }
-        
+
         Message rspMsg = getResponseMessage(exchange);
         rspMsg.setHeader(SmppConstants.ID, replaceSm.getMessageId());
     }
@@ -101,7 +101,8 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
         }
 
         if (in.getHeaders().containsKey(SmppConstants.SCHEDULE_DELIVERY_TIME)) {
-            replaceSm.setScheduleDeliveryTime(SmppUtils.formatTime(in.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, Date.class)));
+            replaceSm.setScheduleDeliveryTime(
+                    SmppUtils.formatTime(in.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, Date.class)));
         }
 
         if (in.getHeaders().containsKey(SmppConstants.VALIDITY_PERIOD)) {

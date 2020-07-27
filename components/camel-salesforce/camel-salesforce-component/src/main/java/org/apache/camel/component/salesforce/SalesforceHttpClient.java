@@ -36,8 +36,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import static java.util.Optional.ofNullable;
 
 /**
- * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest}
- * requests.
+ * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest} requests.
  */
 public class SalesforceHttpClient extends HttpClient {
 
@@ -82,7 +81,8 @@ public class SalesforceHttpClient extends HttpClient {
 
             getProtocolHandlersMethod = HttpClient.class.getMethod("getProtocolHandlers");
         } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Found no method of adding SalesforceSecurityHandler as ProtocolHandler to Jetty HttpClient. You need Jetty 9.2 or newer on the classpath.");
+            throw new IllegalStateException(
+                    "Found no method of adding SalesforceSecurityHandler as ProtocolHandler to Jetty HttpClient. You need Jetty 9.2 or newer on the classpath.");
         }
     }
 

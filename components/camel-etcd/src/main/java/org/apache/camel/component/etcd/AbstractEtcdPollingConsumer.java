@@ -42,7 +42,7 @@ public abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer 
 
     protected EtcdClient getClient() throws Exception {
         if (client == null) {
-            client = ((EtcdEndpoint)getEndpoint()).createClient();
+            client = ((EtcdEndpoint) getEndpoint()).createClient();
         }
 
         return client;

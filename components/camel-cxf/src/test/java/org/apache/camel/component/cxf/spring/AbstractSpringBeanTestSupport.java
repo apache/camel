@@ -22,14 +22,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class AbstractSpringBeanTestSupport {
-    
+
     protected ClassPathXmlApplicationContext ctx;
-    
+
     protected abstract String[] getApplicationContextFiles();
-    
+
     @BeforeEach
     public void setUp() throws Exception {
-        ctx =  new ClassPathXmlApplicationContext(getApplicationContextFiles());
+        ctx = new ClassPathXmlApplicationContext(getApplicationContextFiles());
     }
 
     @AfterEach

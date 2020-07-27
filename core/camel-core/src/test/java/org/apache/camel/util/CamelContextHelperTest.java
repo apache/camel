@@ -60,6 +60,7 @@ public class CamelContextHelperTest extends ContextTestSupport {
             fail("Exception thrown: " + t);
         }
     }
+
     private <T> void fl(Callable<T> r, Class<? extends Exception> exceptionClass) {
         try {
             r.call();

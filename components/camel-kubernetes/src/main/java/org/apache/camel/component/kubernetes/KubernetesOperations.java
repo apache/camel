@@ -86,7 +86,7 @@ public interface KubernetesOperations {
     String GET_NODE_OPERATION = "getNode";
     String CREATE_NODE_OPERATION = "createNode";
     String DELETE_NODE_OPERATION = "deleteNode";
-    
+
     // HPA
     String LIST_HPA = "listHPA";
     String LIST_HPA_BY_LABELS_OPERATION = "listHPAByLabels";

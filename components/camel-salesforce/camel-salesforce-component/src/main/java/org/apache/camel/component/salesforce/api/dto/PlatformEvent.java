@@ -50,9 +50,10 @@ public final class PlatformEvent implements Serializable {
             return false;
         }
 
-        final PlatformEvent other = (PlatformEvent)obj;
+        final PlatformEvent other = (PlatformEvent) obj;
 
-        return Objects.equals(created, other.created) && Objects.equals(createdById, other.createdById) && Objects.equals(eventData, other.eventData);
+        return Objects.equals(created, other.created) && Objects.equals(createdById, other.createdById)
+                && Objects.equals(eventData, other.eventData);
     }
 
     public ZonedDateTime getCreated() {
@@ -79,7 +80,8 @@ public final class PlatformEvent implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("PlatformEvent: createdById: ").append(createdById).append(", createdId: ").append(created).append(", data: ").append(eventData)
-            .toString();
+        return new StringBuilder().append("PlatformEvent: createdById: ").append(createdById).append(", createdId: ")
+                .append(created).append(", data: ").append(eventData)
+                .toString();
     }
 }

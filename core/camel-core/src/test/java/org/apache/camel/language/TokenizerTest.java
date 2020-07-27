@@ -180,7 +180,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPair() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
-        exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
+        exchange.getIn().setBody(
+                "<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
 
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
@@ -196,7 +197,8 @@ public class TokenizerTest extends ExchangeTestSupport {
         Expression exp = TokenizeLanguage.tokenizeXML("${header.foo}", null);
 
         exchange.getIn().setHeader("foo", "<person>");
-        exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
+        exchange.getIn().setBody(
+                "<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
 
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
@@ -211,7 +213,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairNoXMLTag() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("person", null);
 
-        exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
+        exchange.getIn().setBody(
+                "<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
 
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
@@ -226,8 +229,9 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithNoise() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
-        exchange.getIn().setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons>\n<person>James</person>\n<person>Claus</person>\n"
-                                 + "<!-- more bla bla --><person>Jonathan</person>\n<person>Hadrian</person>\n</persons>   ");
+        exchange.getIn()
+                .setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons>\n<person>James</person>\n<person>Claus</person>\n"
+                         + "<!-- more bla bla --><person>Jonathan</person>\n<person>Hadrian</person>\n</persons>   ");
 
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
@@ -271,7 +275,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     @Test
     public void testTokenizeXMLPairWithSimilarChildNames() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("Trip", "Trips");
-        exchange.getIn().setBody("<?xml version='1.0' encoding='UTF-8'?>\n<Trips>\n<Trip>\n<TripType>\n</TripType>\n</Trip>\n</Trips>");
+        exchange.getIn()
+                .setBody("<?xml version='1.0' encoding='UTF-8'?>\n<Trips>\n<Trip>\n<TripType>\n</TripType>\n</Trip>\n</Trips>");
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(1, names.size());
     }
@@ -280,7 +285,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithDefaultNamespace() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
 
-        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
+        exchange.getIn().setBody(
+                "<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
                                  + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
 
         List<?> names = exp.evaluate(exchange, List.class);
@@ -296,7 +302,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithDefaultNamespaceNotInherit() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
-        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
+        exchange.getIn().setBody(
+                "<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
                                  + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
 
         List<?> names = exp.evaluate(exchange, List.class);
@@ -312,7 +319,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithDefaultAndFooNamespace() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
 
-        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">\n<person>James</person>\n<person>Claus</person>\n"
+        exchange.getIn().setBody(
+                "<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">\n<person>James</person>\n<person>Claus</person>\n"
                                  + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
 
         List<?> names = exp.evaluate(exchange, List.class);
@@ -329,8 +337,9 @@ public class TokenizerTest extends ExchangeTestSupport {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
         exchange.getIn()
-            .setBody("<?xml version=\"1.0\"?><persons>\n<person xmlns=\"http:acme.com/persons\">James</person>\n<person xmlns=\"http:acme.com/persons\">Claus</person>\n"
-                     + "<person xmlns=\"http:acme.com/persons\">Jonathan</person>\n<person xmlns=\"http:acme.com/persons\">Hadrian</person>\n</persons>\n");
+                .setBody(
+                        "<?xml version=\"1.0\"?><persons>\n<person xmlns=\"http:acme.com/persons\">James</person>\n<person xmlns=\"http:acme.com/persons\">Claus</person>\n"
+                         + "<person xmlns=\"http:acme.com/persons\">Jonathan</person>\n<person xmlns=\"http:acme.com/persons\">Hadrian</person>\n</persons>\n");
 
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
@@ -345,7 +354,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithLocalAndInheritedNamespace() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
 
-        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n<person>Claus</person>\n"
+        exchange.getIn().setBody(
+                "<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n<person>Claus</person>\n"
                                  + "<person>Jonathan</person>\n<person xmlns:bar=\"http:bar.com\">Hadrian</person>\n</persons>\n");
 
         List<?> names = exp.evaluate(exchange, List.class);
@@ -361,7 +371,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithLocalAndNotInheritedNamespace() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
-        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n"
+        exchange.getIn().setBody(
+                "<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n"
                                  + "<person>Claus</person>\n<person>Jonathan</person>\n<person xmlns:bar=\"http:bar.com\">Hadrian</person>\n</persons>\n");
 
         List<?> names = exp.evaluate(exchange, List.class);
@@ -378,7 +389,9 @@ public class TokenizerTest extends ExchangeTestSupport {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
         exchange.getIn()
-            .setBody("<persons><person id=\"1\">James</person><person id=\"2\">Claus</person><person id=\"3\">Jonathan</person>" + "<person id=\"4\">Hadrian</person></persons>");
+                .setBody(
+                        "<persons><person id=\"1\">James</person><person id=\"2\">Claus</person><person id=\"3\">Jonathan</person>"
+                         + "<person id=\"4\">Hadrian</person></persons>");
 
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
@@ -393,7 +406,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithAttributesInheritNamespace() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
 
-        exchange.getIn().setBody("<persons xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
+        exchange.getIn().setBody(
+                "<persons xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
                                  + "<person id=\"3\">Jonathan</person><person id=\"4\">Hadrian</person></persons>");
 
         List<?> names = exp.evaluate(exchange, List.class);
@@ -409,7 +423,8 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPairWithAttributes2InheritNamespace() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
 
-        exchange.getIn().setBody("<persons riders=\"true\" xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
+        exchange.getIn().setBody(
+                "<persons riders=\"true\" xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
                                  + "<person id=\"3\">Jonathan</person><person id=\"4\">Hadrian</person></persons>");
 
         List<?> names = exp.evaluate(exchange, List.class);

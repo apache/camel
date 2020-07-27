@@ -77,7 +77,7 @@ public class XmppComponent extends DefaultComponent {
         }
 
         endpointCache.put(cacheKey, endpoint);
-        
+
         return endpoint;
     }
 

@@ -71,23 +71,24 @@ public class SchemaValidationException extends ValidationException {
         return warnings;
     }
 
-    protected static String message(Object schema, List<SAXParseException> fatalErrors,
-                                    List<SAXParseException> errors, List<SAXParseException> warnings) {
+    protected static String message(
+            Object schema, List<SAXParseException> fatalErrors,
+            List<SAXParseException> errors, List<SAXParseException> warnings) {
         StringBuilder buffer = new StringBuilder("Validation failed for: ")
-            .append(schema)
-            .append("\n");
+                .append(schema)
+                .append("\n");
 
         if (!fatalErrors.isEmpty()) {
             buffer.append("fatal errors: [")
-                .append("\n");
+                    .append("\n");
             appendDetails(buffer, fatalErrors);
             buffer.append("]")
-                .append("\n");
+                    .append("\n");
         }
 
         if (!errors.isEmpty()) {
             buffer.append("errors: [")
-                .append("\n");
+                    .append("\n");
             appendDetails(buffer, errors);
             buffer.append("]");
         }

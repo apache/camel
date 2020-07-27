@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 public class QueryCommandTest {
 
     private QueryCommand command;
@@ -63,14 +61,14 @@ public class QueryCommandTest {
         exchange.getIn().setHeader(DdbConstants.START_KEY, startKey);
         exchange.getIn().setHeader(DdbConstants.LIMIT, 10);
         exchange.getIn().setHeader(DdbConstants.SCAN_INDEX_FORWARD, true);
-        
+
         Map<String, Condition> keyConditions = new HashMap<>();
         Condition condition = new Condition()
-            .withComparisonOperator(ComparisonOperator.GT.toString())
-            .withAttributeValueList(new AttributeValue().withN("1985"));
-        
+                .withComparisonOperator(ComparisonOperator.GT.toString())
+                .withAttributeValueList(new AttributeValue().withN("1985"));
+
         keyConditions.put("1", condition);
-        
+
         exchange.getIn().setHeader(DdbConstants.KEY_CONDITIONS, keyConditions);
 
         command.execute();

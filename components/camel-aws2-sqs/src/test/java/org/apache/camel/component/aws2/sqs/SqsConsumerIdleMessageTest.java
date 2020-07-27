@@ -23,10 +23,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no
- * results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 public class SqsConsumerIdleMessageTest extends CamelTestSupport {
 
@@ -48,7 +48,8 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5" + "&sendEmptyMessageWhenIdle=true").to("mock:result");
+                from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5"
+                     + "&sendEmptyMessageWhenIdle=true").to("mock:result");
             }
         };
     }

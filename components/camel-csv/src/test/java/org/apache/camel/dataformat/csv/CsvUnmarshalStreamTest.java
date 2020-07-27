@@ -71,7 +71,6 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
         result.reset();
         result.expectedMessageCount(EXPECTED_COUNT);
 
-
         template.sendBody("direct:start", new MyFileInputStream(new File("src/test/resources/data.csv")));
 
         assertMockEndpointsSatisfied();

@@ -25,27 +25,24 @@ import org.springframework.test.context.ContextConfiguration;
 @CamelSpringTest
 @ContextConfiguration
 public class SpringXmlSecurityDataFormatTest implements CamelContextAware {
-    
+
     CamelContext camelContext;
-    
+
     TestHelper testHelper = new TestHelper();
-    
-   
+
     @Test
     public void testPartialPayloadAsymmetricKeyDecryptionCustomNS() throws Exception {
         testHelper.testDecryption(TestHelper.NS_XML_FRAGMENT, camelContext);
     }
-
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
-
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
-    
+
 }

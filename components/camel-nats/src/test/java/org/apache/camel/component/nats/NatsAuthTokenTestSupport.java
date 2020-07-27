@@ -26,7 +26,7 @@ public class NatsAuthTokenTestSupport extends ContainerAwareTestSupport {
     public static final String CONTAINER_IMAGE = "nats:2.1.4";
     public static final String CONTAINER_NAME = "nats-auth-token";
     public static final String TOKEN = "!admin23456";
-    
+
     @Override
     protected GenericContainer<?> createContainer() {
         return natsContainer();
@@ -34,22 +34,20 @@ public class NatsAuthTokenTestSupport extends ContainerAwareTestSupport {
 
     public static GenericContainer natsContainer() {
         return new GenericContainer(CONTAINER_IMAGE)
-            .withNetworkAliases(CONTAINER_NAME)
-            .waitingFor(Wait.forLogMessageContaining("Server is ready", 1))
-            .withCommand(
-                         "-DV",
-                         "-auth",
-                         TOKEN           
-                     );
+                .withNetworkAliases(CONTAINER_NAME)
+                .waitingFor(Wait.forLogMessageContaining("Server is ready", 1))
+                .withCommand(
+                        "-DV",
+                        "-auth",
+                        TOKEN);
     }
-    
+
     public String getNatsBrokerUrl() {
         return String.format(
-            "%s@%s:%d",
-            TOKEN,
-            getContainerHost(CONTAINER_NAME),
-            getContainerPort(CONTAINER_NAME, 4222)
-        );
+                "%s@%s:%d",
+                TOKEN,
+                getContainerHost(CONTAINER_NAME),
+                getContainerPort(CONTAINER_NAME, 4222));
     }
 
     @Override

@@ -43,7 +43,8 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
 
     private final ErrorHandlerDefinition handler;
 
-    XmlErrorHandlerFactoryBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, Function<Bean<ErrorHandlerBuilder>, String> toString, ErrorHandlerDefinition handler) {
+    XmlErrorHandlerFactoryBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type,
+                               Function<Bean<ErrorHandlerBuilder>, String> toString, ErrorHandlerDefinition handler) {
         super(manager, annotated, type, null, toString);
         this.manager = manager;
         this.handler = handler;

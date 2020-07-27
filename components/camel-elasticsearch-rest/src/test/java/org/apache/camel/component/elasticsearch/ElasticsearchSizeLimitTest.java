@@ -53,11 +53,11 @@ public class ElasticsearchSizeLimitTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:index")
-                    .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
                 from("direct:searchWithSizeTwo")
-                    .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&size=2");
+                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&size=2");
                 from("direct:searchFrom3")
-                    .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&from=3");
+                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&from=3");
             }
         };
     }

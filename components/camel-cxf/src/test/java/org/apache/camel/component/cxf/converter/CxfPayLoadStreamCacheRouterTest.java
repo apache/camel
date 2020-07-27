@@ -41,9 +41,9 @@ public class CxfPayLoadStreamCacheRouterTest extends CxfSimpleRouterTest {
                     public void process(Exchange exchange) throws Exception {
                         Object payload = exchange.getIn().getBody();
                         assertTrue(payload instanceof StreamCache, "payload is not a StreamCache");
-                    }                    
+                    }
                 })
-                .to(serviceEndpointURI);
+                        .to(serviceEndpointURI);
                 // END SNIPPET: payload
             }
         };

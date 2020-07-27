@@ -33,7 +33,7 @@ public class MyRouteTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:foo")
-                    .to("mock:foo");
+                        .to("mock:foo");
             }
         };
     }

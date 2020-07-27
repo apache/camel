@@ -171,7 +171,8 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("foo", 123);
         exchange.getIn().setHeader("bar", "beer");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true && ${header.foo} == 123 && ${header.bar} == 'beer'", true, null);
+        SimplePredicateParser parser = new SimplePredicateParser(
+                "${header.high} == true && ${header.foo} == 123 && ${header.bar} == 'beer'", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange), "Should match");

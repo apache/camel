@@ -74,12 +74,12 @@ public class HttpInboundStreamHandler extends MessageToMessageDecoder<HttpObject
     @Override
     protected void decode(ChannelHandlerContext ctx, HttpObject msg, List<Object> out) throws Exception {
         if (msg instanceof HttpRequest) {
-            InboundStreamHttpRequest request = new InboundStreamHttpRequest((HttpRequest)msg, is);
+            InboundStreamHttpRequest request = new InboundStreamHttpRequest((HttpRequest) msg, is);
             out.add(request);
         }
 
         if (msg instanceof HttpResponse) {
-            InboundStreamHttpResponse response = new InboundStreamHttpResponse((HttpResponse)msg, is);
+            InboundStreamHttpResponse response = new InboundStreamHttpResponse((HttpResponse) msg, is);
             out.add(response);
         }
 

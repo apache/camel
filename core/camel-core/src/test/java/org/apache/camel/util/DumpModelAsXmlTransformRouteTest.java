@@ -44,13 +44,13 @@ public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
         Document doc = new XmlConverter().toDOMDocument(xml, null);
         NodeList nodes = doc.getElementsByTagName("simple");
         assertEquals(1, nodes.getLength());
-        Element node = (Element)nodes.item(0);
+        Element node = (Element) nodes.item(0);
         assertNotNull(node, "Node <simple> expected to be instanceof Element");
         assertEquals("Hello ${body}", node.getTextContent());
 
         nodes = doc.getElementsByTagName("to");
         assertEquals(1, nodes.getLength());
-        node = (Element)nodes.item(0);
+        node = (Element) nodes.item(0);
         assertNotNull(node, "Node <to> expected to be instanceof Element");
         assertEquals("mock:result", node.getAttribute("uri"));
         assertEquals("myMock", node.getAttribute("id"));

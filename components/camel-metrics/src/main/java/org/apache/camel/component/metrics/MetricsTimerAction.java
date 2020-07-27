@@ -18,6 +18,7 @@ package org.apache.camel.component.metrics;
 
 public enum MetricsTimerAction {
 
-    start, stop
+    start,
+    stop
 
 }

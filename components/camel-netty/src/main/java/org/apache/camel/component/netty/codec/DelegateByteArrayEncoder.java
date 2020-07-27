@@ -22,9 +22,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 
 /**
- * We need to derive from the original encoder because we need to
- * call the encode method directly which is protected in the original
- * one.
+ * We need to derive from the original encoder because we need to call the encode method directly which is protected in
+ * the original one.
  */
 public class DelegateByteArrayEncoder extends ByteArrayEncoder {
 

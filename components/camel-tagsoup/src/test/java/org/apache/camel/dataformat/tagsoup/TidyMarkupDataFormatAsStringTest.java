@@ -59,7 +59,7 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
 
                 log.debug("Received " + tidyMarkup);
                 assertNotNull(tidyMarkup, "Should be able to convert received body to a string");
-                
+
             } catch (Exception e) {
                 fail("Failed to convert the resulting String to XML: " + e.getLocalizedMessage());
             }

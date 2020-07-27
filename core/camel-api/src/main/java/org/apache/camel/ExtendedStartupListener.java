@@ -19,7 +19,8 @@ package org.apache.camel;
 /**
  * Extended {@link StartupListener} that is invoked when the {@link CamelContext} is fully started.
  * <p/>
- * <b>Important:</b> You can use this listener to add and start new routes to the {@link CamelContext} which is now supported.
+ * <b>Important:</b> You can use this listener to add and start new routes to the {@link CamelContext} which is now
+ * supported.
  *
  * @see StartupListener
  */

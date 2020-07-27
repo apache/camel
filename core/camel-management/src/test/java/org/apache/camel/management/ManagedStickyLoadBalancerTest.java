@@ -77,7 +77,7 @@ public class ManagedStickyLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().sticky(header("num")).id("mysend")
+                        .loadBalance().sticky(header("num")).id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };

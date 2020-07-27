@@ -96,9 +96,9 @@ public final class ZooKeeperClusteredRoutePolicyFactoryTest {
                 @Override
                 public void configure() throws Exception {
                     from("timer:zookeeper?delay=1000&period=1000")
-                        .routeId("route-" + id)
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                            .routeId("route-" + id)
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

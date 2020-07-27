@@ -35,8 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout
- * map
+ * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout map
  */
 public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestSupport {
 

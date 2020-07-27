@@ -33,13 +33,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirCapabilities} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirCapabilities} APIs. The class source won't be generated
+ * again if the generator MOJO finds it under src/test/java.
  */
 public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirCapabilitiesIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCapabilitiesApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = FhirApiCollection.getCollection().getApiName(FhirCapabilitiesApiMethod.class).getName();
 
     @Test
     public void testOfType() throws Exception {
@@ -47,7 +48,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
 
         LOG.debug("ofType: " + result);
         assertNotNull(result, "ofType result");
-        assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement)result).getStatus());
+        assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement) result).getStatus());
     }
 
     @Test
@@ -55,11 +56,12 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.ENCODE_JSON.getHeaderName(), Boolean.TRUE);
 
-        org.hl7.fhir.instance.model.api.IBaseConformance result = requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
+        org.hl7.fhir.instance.model.api.IBaseConformance result
+                = requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
 
         LOG.debug("ofType: " + result);
         assertNotNull(result, "ofType result");
-        assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement)result).getStatus());
+        assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement) result).getStatus());
     }
 
     @Override
@@ -68,7 +70,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for ofType
                 from("direct://OF_TYPE")
-                    .to("fhir://" + PATH_PREFIX + "/ofType?inBody=type&log=true");
+                        .to("fhir://" + PATH_PREFIX + "/ofType?inBody=type&log=true");
 
             }
         };

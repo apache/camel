@@ -61,10 +61,10 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         if (definition.getIgnoreInvalidEndpoint() != null) {
             processor.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
         }
-        if  (definition.getAllowOptimisedComponents() != null) {
+        if (definition.getAllowOptimisedComponents() != null) {
             processor.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
         }
-        if  (definition.getAutoStartComponents() != null) {
+        if (definition.getAutoStartComponents() != null) {
             processor.setAutoStartupComponents(parseBoolean(definition.getAutoStartComponents(), true));
         }
         return processor;
@@ -119,8 +119,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
     // -------------------------------------------------------------------------
 
     /**
-     * We need to split the string safely for each + sign, but avoid splitting
-     * within RAW(...).
+     * We need to split the string safely for each + sign, but avoid splitting within RAW(...).
      */
     private static String[] safeSplitRaw(String s) {
         List<String> list = new ArrayList<>();

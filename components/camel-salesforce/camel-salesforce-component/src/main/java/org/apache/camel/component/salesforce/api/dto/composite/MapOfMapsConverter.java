@@ -59,7 +59,7 @@ public class MapOfMapsConverter implements Converter {
             final Map<String, String> attributes = new HashMap<>();
             final Iterator attributeNames = reader.getAttributeNames();
             while (attributeNames.hasNext()) {
-                final String attributeName = (String)attributeNames.next();
+                final String attributeName = (String) attributeNames.next();
                 attributes.put(attributeName, reader.getAttribute(attributeName));
             }
 
@@ -72,7 +72,7 @@ public class MapOfMapsConverter implements Converter {
                     nested = newNested;
                 } else {
                     @SuppressWarnings("unchecked")
-                    final Map<String, Object> nestedMap = (Map<String, Object>)nested;
+                    final Map<String, Object> nestedMap = (Map<String, Object>) nested;
                     nestedMap.put(ATTRIBUTES_PROPERTY, attributes);
                 }
             }

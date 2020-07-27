@@ -39,11 +39,10 @@ import org.slf4j.LoggerFactory;
 /**
  * The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages.
  * <p>
- * Since XSLT does not directly support providing multiple XML payloads as an input, this aggregator injects
- * the new incoming XML document (<tt>newExchange</tt>) into the <tt>oldExchange</tt> as an exchange property of
- * type {@link Document}. The old exchange therefore remains accessible as the root context.
- * This exchange property can then be accessed from your XSLT by declaring an {@code <xsl:param />} at the top
- * of your stylesheet:
+ * Since XSLT does not directly support providing multiple XML payloads as an input, this aggregator injects the new
+ * incoming XML document (<tt>newExchange</tt>) into the <tt>oldExchange</tt> as an exchange property of type
+ * {@link Document}. The old exchange therefore remains accessible as the root context. This exchange property can then
+ * be accessed from your XSLT by declaring an {@code <xsl:param />} at the top of your stylesheet:
  *
  * <code>
  *     <xsl:param name="new-exchange" />
@@ -56,8 +55,8 @@ import org.slf4j.LoggerFactory;
  *     </xsl:template>
  * </code>
  *
- * The exchange property name defaults to <tt>new-exchange</tt> but can be
- * changed through {@link #setPropertyName(String)}.
+ * The exchange property name defaults to <tt>new-exchange</tt> but can be changed through
+ * {@link #setPropertyName(String)}.
  * <p>
  * Some code bits have been copied from the {@link org.apache.camel.component.xslt.XsltEndpoint}.
  */
@@ -172,7 +171,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     /**
      * Loads the resource.
      *
-     * @param resourceUri the resource to load
+     * @param  resourceUri          the resource to load
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException          is thrown if error loading resource
      */
@@ -228,7 +227,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
 
         if (transformerFactory == null && transformerFactoryClass != null) {
             Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
-                XsltAggregationStrategy.class.getClassLoader());
+                    XsltAggregationStrategy.class.getClassLoader());
             TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
             xslt.setTransformerFactory(factory);
         } else if (transformerFactory != null) {

@@ -67,12 +67,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     /**
-     * Calls the async version of the processor's process method and waits
-     * for it to complete before returning. This can be used by {@link AsyncProcessor}
-     * objects to implement their sync version of the process method.
+     * Calls the async version of the processor's process method and waits for it to complete before returning. This can
+     * be used by {@link AsyncProcessor} objects to implement their sync version of the process method.
      * <p/>
      * <b>Important:</b> This method is discouraged to be used, as its better to invoke the asynchronous
-     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever possible.
+     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever
+     * possible.
      *
      * @param processor the processor
      * @param exchange  the exchange
@@ -178,7 +178,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         if (entry != null) {
             try {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
+                sb.append(
+                        "Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
                 sb.append(exchange.getExchangeId());
                 sb.append("\n");
 
@@ -197,7 +198,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 if (statistics.isStatisticsEnabled()) {
                     interruptedCounter.incrementAndGet();
                 }
-                exchange.setException(new RejectedExecutionException("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
+                exchange.setException(new RejectedExecutionException(
+                        "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
                 exchange.adapt(ExtendedExchange.class).setInterrupted(true);
                 entry.getLatch().countDown();
             }
@@ -237,7 +239,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                     try {
                         interrupt(entry.getExchange());
                     } catch (Throwable e) {
-                        LOG.warn("Error while interrupting thread: " + entry.getBlockedThread().getName() + ". This exception is ignored.", e);
+                        LOG.warn("Error while interrupting thread: " + entry.getBlockedThread().getName()
+                                 + ". This exception is ignored.",
+                                e);
                     }
                 }
             } else {
@@ -254,7 +258,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         StringBuilder sb = new StringBuilder();
         sb.append("\n");
         sb.append("Blocked Thread\n");
-        sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+        sb.append(
+                "---------------------------------------------------------------------------------------------------------------------------------------\n");
 
         sb.append(style("Id:")).append(entry.getBlockedThread().getId()).append("\n");
         sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append("\n");
@@ -379,8 +384,10 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String toString() {
-            return String.format("AsyncProcessAwaitManager utilization[blocked=%s, interrupted=%s, total=%s min=%s, max=%s, mean=%s]",
-                    getThreadsBlocked(), getThreadsInterrupted(), getTotalDuration(), getMinDuration(), getMaxDuration(), getMeanDuration());
+            return String.format(
+                    "AsyncProcessAwaitManager utilization[blocked=%s, interrupted=%s, total=%s min=%s, max=%s, mean=%s]",
+                    getThreadsBlocked(), getThreadsInterrupted(), getTotalDuration(), getMinDuration(), getMaxDuration(),
+                    getMeanDuration());
         }
     }
 

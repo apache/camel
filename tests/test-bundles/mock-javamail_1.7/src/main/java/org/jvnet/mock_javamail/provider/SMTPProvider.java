@@ -22,9 +22,9 @@ public class SMTPProvider extends Provider {
 
     public SMTPProvider() {
         super(Type.TRANSPORT,
-                "smtp",
-                "org.jvnet.mock_javamail.MockTransport",
-                "Apache Software Foundation",
-                "1.0");
+              "smtp",
+              "org.jvnet.mock_javamail.MockTransport",
+              "Apache Software Foundation",
+              "1.0");
     }
 }

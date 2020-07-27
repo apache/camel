@@ -32,12 +32,18 @@ public class FtpRecursiveDepth2Test extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a2", "b2", "a3", "b3");
 
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2?password=admin", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2?password=admin", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/bar?password=admin", "b2", Exchange.FILE_NAME, "b2.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/foo?password=admin", "a2", Exchange.FILE_NAME, "a2.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/foo/bar?password=admin", "a3", Exchange.FILE_NAME, "a3.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/bar/foo?password=admin", "b3", Exchange.FILE_NAME, "b3.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2?password=admin", "a", Exchange.FILE_NAME,
+                "a.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2?password=admin", "b", Exchange.FILE_NAME,
+                "b.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/bar?password=admin", "b2",
+                Exchange.FILE_NAME, "b2.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/foo?password=admin", "a2",
+                Exchange.FILE_NAME, "a2.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/foo/bar?password=admin", "a3",
+                Exchange.FILE_NAME, "a3.txt");
+        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth2/bar/foo?password=admin", "b3",
+                Exchange.FILE_NAME, "b3.txt");
 
         assertMockEndpointsSatisfied();
     }

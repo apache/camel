@@ -56,22 +56,22 @@ public class JmsRoutingSlipIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // need to use InOut as we do request/reply over JMS
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .routingSlip(header("mySlip"))
-                    .to("mock:result");
+                        // need to use InOut as we do request/reply over JMS
+                        .setExchangePattern(ExchangePattern.InOut)
+                        .routingSlip(header("mySlip"))
+                        .to("mock:result");
 
                 from("activemq:queue:a")
-                    .to("mock:a")
-                    .transform(body().append("A"));
+                        .to("mock:a")
+                        .transform(body().append("A"));
 
                 from("activemq:queue:b")
-                    .to("mock:b")
-                    .transform(body().append("B"));
+                        .to("mock:b")
+                        .transform(body().append("B"));
 
                 from("activemq:queue:c")
-                    .to("mock:c")
-                    .transform(body().append("C"));
+                        .to("mock:c")
+                        .transform(body().append("C"));
             }
         };
     }

@@ -86,7 +86,8 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
     class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+                throws Exception {
             MyEndpoint answer = new MyEndpoint(uri, this, remaining);
             setProperties(answer, parameters);
             return answer;

@@ -24,15 +24,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 public class UpdateTableCommandTest {
 
     private UpdateTableCommand command;
     private AmazonDDBClientMock ddbClient;
     private DdbConfiguration configuration;
     private Exchange exchange;
-    
+
     @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
@@ -41,14 +39,14 @@ public class UpdateTableCommandTest {
         configuration.setReadCapacity(20L);
         configuration.setWriteCapacity(30L);
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new UpdateTableCommand(ddbClient, configuration, exchange);
     }
 
     @Test
     public void testExecute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", ddbClient.updateTableRequest.getTableName());
         assertEquals(Long.valueOf(20), ddbClient.updateTableRequest.getProvisionedThroughput().getReadCapacityUnits());
         assertEquals(Long.valueOf(30), ddbClient.updateTableRequest.getProvisionedThroughput().getWriteCapacityUnits());

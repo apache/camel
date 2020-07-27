@@ -24,8 +24,8 @@ public class DefaultSplunkConfigurationFactory implements SplunkConfigurationFac
 
     @Override
     public SplunkConfiguration parseMap(Map<String, Object> parameters) {
-        String username = (String)parameters.get("username");
-        String password = (String)parameters.get("password");
+        String username = (String) parameters.get("username");
+        String password = (String) parameters.get("password");
         if (ObjectHelper.isEmpty(username) || ObjectHelper.isEmpty(password)) {
             throw new IllegalArgumentException("Username and password has to be specified");
         }

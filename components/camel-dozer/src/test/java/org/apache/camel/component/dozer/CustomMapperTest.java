@@ -28,39 +28,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class CustomMapperTest {
-    
+
     private CustomMapper customMapper;
-    
+
     @BeforeEach
     public void setup() {
         customMapper = new CustomMapper(new DefaultClassResolver());
     }
-    
+
     @Test
     void selectMapperOneMethod() {
         customMapper.setParameter(MapperWithOneMethod.class.getName());
         assertNotNull(customMapper.selectMethod(MapperWithOneMethod.class, String.class));
     }
-    
+
     @Test
     void selectMapperMultipleMethods() throws Exception {
         Method selectedMethod = customMapper.selectMethod(MapperWithTwoMethods.class, B.class);
         assertNotNull(selectedMethod);
         assertEquals(MapperWithTwoMethods.class.getMethod("convertToA", B.class), selectedMethod);
     }
-    
+
     @Test
     void mapCustomFindOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName());
         assertNotNull(customMapper.mapCustom(new B(), B.class));
     }
-    
+
     @Test
     void mapCustomDeclaredOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName() + ",convertToA");
         assertNotNull(customMapper.mapCustom(new B(), B.class));
     }
-    
+
     @Test
     void mapCustomInvalidOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName() + ",convertToB");
@@ -80,30 +80,28 @@ public class CustomMapperTest {
 }
 
 class A {
-    
+
 }
 
 class B extends A {
-    
+
 }
 
 class MapperWithOneMethod {
-    
+
     public A convertToA(String val) {
         return new A();
     }
 }
 
 class MapperWithTwoMethods {
-    
+
     public A convertToA(String val) {
         return new A();
     }
-    
+
     public A convertToA(B val) {
         return new A();
     }
-    
+
 }
-
-

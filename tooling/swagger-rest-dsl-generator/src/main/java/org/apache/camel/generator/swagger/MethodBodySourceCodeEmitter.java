@@ -102,7 +102,7 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
 
     Object[] extend(final Object first, final Object... others) {
         if (others == null || others.length == 0) {
-            return new Object[] {first};
+            return new Object[] { first };
         }
 
         final Object[] ret = new Object[1 + others.length];

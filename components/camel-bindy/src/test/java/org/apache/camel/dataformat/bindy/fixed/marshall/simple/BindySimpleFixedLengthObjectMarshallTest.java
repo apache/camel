@@ -40,11 +40,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(
-        classes = {
-                BindySimpleFixedLengthObjectMarshallTest.Configuration.class})
+                      classes = {
+                              BindySimpleFixedLengthObjectMarshallTest.Configuration.class })
 @CamelSpringTest
 public class BindySimpleFixedLengthObjectMarshallTest {
-    
+
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
@@ -101,7 +101,7 @@ public class BindySimpleFixedLengthObjectMarshallTest {
     @DirtiesContext
     public void testMarshallList() throws Exception {
         expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n"
-                 + "10A9  MarcoolM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
+                   + "10A9  MarcoolM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
         result.expectedBodiesReceived(expected);
         error.expectedMessageCount(0);
 
@@ -168,7 +168,6 @@ public class BindySimpleFixedLengthObjectMarshallTest {
 
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
-
 
         public int getOrderNr() {
             return orderNr;
@@ -260,11 +259,12 @@ public class BindySimpleFixedLengthObjectMarshallTest {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }
-
 
 }

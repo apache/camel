@@ -62,7 +62,6 @@ public class RestUndertowHttpBindingModeXmlTest extends BaseUndertowTest {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -72,7 +71,7 @@ public class RestUndertowHttpBindingModeXmlTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(UserJaxbPojo.class)
+                        .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

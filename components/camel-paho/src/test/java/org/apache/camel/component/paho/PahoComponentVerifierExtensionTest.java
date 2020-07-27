@@ -40,7 +40,8 @@ public class PahoComponentVerifierExtensionTest extends CamelTestSupport {
     public void testParameters() throws Exception {
         Component component = context().getComponent("paho");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("brokerUrl", "l");
@@ -53,7 +54,8 @@ public class PahoComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivity() throws Exception {
         Component component = context().getComponent("paho");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("brokerUrl", "l");

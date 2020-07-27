@@ -70,11 +70,11 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
     /**
      * Checks whether we need an {@link InputStream} to access the message body.
      * <p/>
-     * Depending on the content in the message body, we may not need to convert
-     * to {@link InputStream}.
+     * Depending on the content in the message body, we may not need to convert to {@link InputStream}.
      *
-     * @param exchange the current exchange
-     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source} afterwards.
+     * @param  exchange the current exchange
+     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source}
+     *                  afterwards.
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
         Object body = exchange.getIn().getBody();
@@ -105,10 +105,10 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
      * <p/>
      * This implementation will prefer to source in the following order:
      * <ul>
-     *   <li>StAX - If StAX is allowed</li>
-     *   <li>SAX - SAX as 2nd choice</li>
-     *   <li>Stream - Stream as 3rd choice</li>
-     *   <li>DOM - DOM as 4th choice</li>
+     * <li>StAX - If StAX is allowed</li>
+     * <li>SAX - SAX as 2nd choice</li>
+     * <li>Stream - Stream as 3rd choice</li>
+     * <li>DOM - DOM as 4th choice</li>
      * </ul>
      */
     protected Source getSource(Exchange exchange, Object body) {

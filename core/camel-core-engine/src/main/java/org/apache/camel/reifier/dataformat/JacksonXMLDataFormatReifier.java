@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 public class JacksonXMLDataFormatReifier extends DataFormatReifier<JacksonXMLDataFormat> {
 
     public JacksonXMLDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (JacksonXMLDataFormat)definition);
+        super(camelContext, (JacksonXMLDataFormat) definition);
     }
 
     @Override

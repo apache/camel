@@ -25,7 +25,8 @@ import org.apache.camel.support.PatternHelper;
 /**
  * {@link org.apache.camel.spi.RoutePolicyFactory} which executes for a duration and then triggers an action.
  * <p/>
- * This can be used to stop a set of routes (or CamelContext) after it has processed a number of messages, or has been running for N seconds.
+ * This can be used to stop a set of routes (or CamelContext) after it has processed a number of messages, or has been
+ * running for N seconds.
  */
 public class DurationRoutePolicyFactory implements RoutePolicyFactory {
 

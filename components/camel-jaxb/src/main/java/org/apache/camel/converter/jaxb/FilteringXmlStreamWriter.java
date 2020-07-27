@@ -21,8 +21,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * {@link XMLStreamWriter} wrapper that filters out non-XML characters, see
- * {@link NonXmlCharFilterer} for details. Filtering applies to
+ * {@link XMLStreamWriter} wrapper that filters out non-XML characters, see {@link NonXmlCharFilterer} for details.
+ * Filtering applies to
  * <ul>
  * <li>Characters</li>
  * <li>CData</li>
@@ -39,18 +39,15 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
     private String encoding;
 
     /**
-     * @param writer
-     *            target writer to wrap.
+     * @param writer target writer to wrap.
      */
     public FilteringXmlStreamWriter(XMLStreamWriter writer) {
         this.writer = writer;
     }
 
     /**
-     * @param writer
-     *            target writer to wrap.
-     * @param encoding
-     *            the encoding to write in the xml prolog.
+     * @param writer   target writer to wrap.
+     * @param encoding the encoding to write in the xml prolog.
      *
      */
     public FilteringXmlStreamWriter(XMLStreamWriter writer, String encoding) {
@@ -63,7 +60,7 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
      */
     @Override
     public void writeAttribute(String prefix, String namespaceURI, String localName, String value)
-        throws XMLStreamException {
+            throws XMLStreamException {
         String filteredValue = nonXmlCharFilterer.filter(value);
         writer.writeAttribute(prefix, namespaceURI, localName, filteredValue);
     }
@@ -73,7 +70,7 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
      */
     @Override
     public void writeAttribute(String namespaceURI, String localName, String value)
-        throws XMLStreamException {
+            throws XMLStreamException {
         String filteredValue = nonXmlCharFilterer.filter(value);
         writer.writeAttribute(namespaceURI, localName, filteredValue);
     }
@@ -175,7 +172,7 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
 
     @Override
     public void writeEmptyElement(String prefix, String localName, String namespaceURI)
-        throws XMLStreamException {
+            throws XMLStreamException {
         writer.writeEmptyElement(prefix, localName, namespaceURI);
     }
 
@@ -244,7 +241,7 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
 
     @Override
     public void writeStartElement(String prefix, String localName, String namespaceURI)
-        throws XMLStreamException {
+            throws XMLStreamException {
         writer.writeStartElement(prefix, localName, namespaceURI);
     }
 

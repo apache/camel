@@ -20,8 +20,8 @@ import org.apache.camel.Message;
 import org.apache.camel.component.hbase.model.HBaseData;
 
 /**
- * A {@link org.apache.camel.component.hbase.mapping.CellMappingStrategy} implementation.
- * It distinguishes between multiple cell, by reading headers with index suffix.
+ * A {@link org.apache.camel.component.hbase.mapping.CellMappingStrategy} implementation. It distinguishes between
+ * multiple cell, by reading headers with index suffix.
  * <p/>
  * In case of multiple headers:
  * <ul>

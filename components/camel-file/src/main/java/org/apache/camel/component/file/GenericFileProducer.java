@@ -102,8 +102,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
     /**
      * Perform the work to process the fileExchange
      *
-     * @param exchange fileExchange
-     * @param target the target filename
+     * @param  exchange  fileExchange
+     * @param  target    the target filename
      * @throws Exception is thrown if some error
      */
     protected void processExchange(Exchange exchange, String target) throws Exception {
@@ -142,7 +142,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
                             LOG.trace("An existing file already exists: {}. Ignore and do not override it.", target);
                             return;
                         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
-                            throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
+                            throw new GenericFileOperationFailedException(
+                                    "File already exist: " + target + ". Cannot write new file.");
                         } else if (endpoint.getFileExist() == GenericFileExist.Move) {
                             // move any existing file first
                             doMoveExistingFile(target);
@@ -188,7 +189,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
                             LOG.trace("An existing file already exists: {}. Ignore and do not override it.", target);
                             return;
                         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
-                            throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
+                            throw new GenericFileOperationFailedException(
+                                    "File already exist: " + target + ". Cannot write new file.");
                         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
                             // we override the target so we do this by deleting
                             // it so the temp file can be renamed later
@@ -258,7 +260,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
         // confuses java.io.File)
         to = FileUtil.normalizePath(to);
         if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+            throw new GenericFileOperationFailedException(
+                    "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
 
         boolean renamed = operations.renameFile(fileName, to);
@@ -268,25 +271,22 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     /**
-     * If we fail writing out a file, we will call this method. This hook is
-     * provided to disconnect from servers or clean up files we created (if
-     * needed).
+     * If we fail writing out a file, we will call this method. This hook is provided to disconnect from servers or
+     * clean up files we created (if needed).
      */
     public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         throw exception;
     }
 
     /**
-     * Perform any actions that need to occur before we write such as connecting
-     * to an FTP server etc.
+     * Perform any actions that need to occur before we write such as connecting to an FTP server etc.
      */
     public void preWriteCheck(Exchange exchange) throws Exception {
         // nothing needed to check
     }
 
     /**
-     * Perform any actions that need to occur after we are done such as
-     * disconnecting.
+     * Perform any actions that need to occur after we are done such as disconnecting.
      */
     public void postWriteCheck(Exchange exchange) {
         // nothing needed to check
@@ -345,14 +345,16 @@ public class GenericFileProducer<T> extends DefaultProducer {
             exchange.getIn().setHeader(Exchange.FILE_NAME, value);
         }
 
-        if (value instanceof String && StringHelper.hasStartToken((String)value, "simple")) {
-            LOG.warn("Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).", value, Exchange.FILE_NAME);
+        if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
+            LOG.warn(
+                    "Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).",
+                    value, Exchange.FILE_NAME);
         }
 
         // expression support
         Expression expression = endpoint.getFileName();
         if (value instanceof Expression) {
-            expression = (Expression)value;
+            expression = (Expression) value;
         }
 
         // evaluate the name as a String from the value
@@ -400,7 +402,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
             String compatchAnswer = FileUtil.compactPath(answer);
             String compatchBaseDir = FileUtil.compactPath(baseDir);
             if (!compatchAnswer.startsWith(compatchBaseDir)) {
-                throw new IllegalArgumentException("Cannot write file with name: " + compatchAnswer + " as the filename is jailed to the starting directory: " + compatchBaseDir);
+                throw new IllegalArgumentException(
+                        "Cannot write file with name: " + compatchAnswer
+                                                   + " as the filename is jailed to the starting directory: "
+                                                   + compatchBaseDir);
             }
         }
 

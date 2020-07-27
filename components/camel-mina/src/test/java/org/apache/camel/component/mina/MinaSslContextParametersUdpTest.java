@@ -68,7 +68,8 @@ public class MinaSslContextParametersUdpTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina:udp://127.0.0.1:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters").to("mock:result");
+                from("mina:udp://127.0.0.1:" + getPort()
+                     + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters").to("mock:result");
             }
         };
     }

@@ -48,14 +48,16 @@ public class BaseServiceResolver<T> {
 
         if (type != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Found {}: {} via: {}{}", factoryClass.getSimpleName(), type.getName(), FactoryFinder.DEFAULT_PATH, factoryKey);
+                log.debug("Found {}: {} via: {}{}", factoryClass.getSimpleName(), type.getName(), FactoryFinder.DEFAULT_PATH,
+                        factoryKey);
             }
             if (factoryClass.isAssignableFrom(type)) {
                 T answer = factoryClass.cast(context.getInjector().newInstance(type, false));
                 log.debug("Detected and using {}: {}", factoryClass.getSimpleName(), answer);
                 return Optional.of(answer);
             } else {
-                throw new IllegalArgumentException("Type is not a " + factoryClass.getSimpleName() + " implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Type is not a " + factoryClass.getSimpleName() + " implementation. Found: " + type.getName());
             }
         }
         return Optional.empty();

@@ -74,7 +74,8 @@ public class GitRemoteProducerTest extends GitTestSupport {
             public void configure() throws Exception {
                 from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:commit").to("git://" + gitLocalRepo + "?operation=commit");
-                from("direct:push").to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
+                from("direct:push")
+                        .to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
             }
         };
     }

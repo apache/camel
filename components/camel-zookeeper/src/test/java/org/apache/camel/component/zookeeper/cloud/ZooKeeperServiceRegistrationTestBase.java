@@ -63,15 +63,15 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         container.start();
 
         curator = CuratorFrameworkFactory.builder()
-            .connectString(container.getConnectionString())
-            .retryPolicy(new ExponentialBackoffRetry(1000, 3))
-            .build();
+                .connectString(container.getConnectionString())
+                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .build();
 
         discovery = ServiceDiscoveryBuilder.builder(ZooKeeperServiceRegistry.MetaData.class)
-            .client(curator)
-            .basePath(SERVICE_PATH)
-            .serializer(new JsonInstanceSerializer<>(ZooKeeperServiceRegistry.MetaData.class))
-            .build();
+                .client(curator)
+                .basePath(SERVICE_PATH)
+                .serializer(new JsonInstanceSerializer<>(ZooKeeperServiceRegistry.MetaData.class))
+                .build();
 
         curator.start();
         discovery.start();
@@ -89,7 +89,6 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
             container.stop();
         }
     }
-
 
     protected Map<String, String> getMetadata() {
         return Collections.emptyMap();
@@ -126,16 +125,15 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         assertEquals(1, services.size());
 
         ServiceInstance<ZooKeeperServiceRegistry.MetaData> instance = services.iterator().next();
-        assertEquals(SERVICE_PORT, (int)instance.getPort());
+        assertEquals(SERVICE_PORT, (int) instance.getPort());
         assertEquals("localhost", instance.getAddress());
         assertEquals("http", instance.getPayload().get(ServiceDefinition.SERVICE_META_PROTOCOL));
         assertEquals("/service/endpoint", instance.getPayload().get(ServiceDefinition.SERVICE_META_PATH));
 
         getMetadata().forEach(
-            (k, v) -> {
-                assertEquals(v, instance.getPayload().get(k));
-            }
-        );
+                (k, v) -> {
+                    assertEquals(v, instance.getPayload().get(k));
+                });
 
         // let stop the route
         context().getRouteController().stopRoute(SERVICE_ID);

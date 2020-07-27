@@ -24,8 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CAMEL-4795, there should be no exceptions in the logs (before the fix there
- * was a NPE)
+ * CAMEL-4795, there should be no exceptions in the logs (before the fix there was a NPE)
  */
 public class JettyAsyncThrottleTest extends BaseJettyTest {
 
@@ -58,8 +57,9 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
                 int port2 = getNextPort();
                 int port3 = getNextPort();
 
-                from("jetty:http://localhost:{{port}}/myservice").removeHeaders("*").throttle(2).asyncDelayed().loadBalance().failover().to("http://localhost:" + port2 + "/foo")
-                    .to("http://localhost:" + port3 + "/bar").end().to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").removeHeaders("*").throttle(2).asyncDelayed().loadBalance()
+                        .failover().to("http://localhost:" + port2 + "/foo")
+                        .to("http://localhost:" + port3 + "/bar").end().to("mock:result");
 
                 from("jetty:http://localhost:" + port2 + "/foo").transform().constant("foo").to("mock:foo");
 

@@ -53,7 +53,8 @@ public final class DebeziumMongodbComponent extends DebeziumComponent<MongoDbCon
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
-        return new DebeziumMongodbEndpoint(uri, this,  configuration);
+    protected DebeziumEndpoint initializeDebeziumEndpoint(
+            String uri, MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
+        return new DebeziumMongodbEndpoint(uri, this, configuration);
     }
 }

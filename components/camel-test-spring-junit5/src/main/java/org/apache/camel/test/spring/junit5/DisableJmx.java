@@ -24,20 +24,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates if JMX should be globally disabled in the {@code CamelContext}s that are bootstrapped 
- * during the test through the use of Spring Test loaded application contexts.  Note that the
- * presence of this annotation will result in the manipulation of System Properties that
- * will affect Camel contexts constructed outside of the Spring Test loaded application contexts.
+ * Indicates if JMX should be globally disabled in the {@code CamelContext}s that are bootstrapped during the test
+ * through the use of Spring Test loaded application contexts. Note that the presence of this annotation will result in
+ * the manipulation of System Properties that will affect Camel contexts constructed outside of the Spring Test loaded
+ * application contexts.
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface DisableJmx {
-    
+
     /**
-     * Whether the test annotated with this annotation should be run with JMX disabled in Camel.
-     * Defaults to {@code true}. 
+     * Whether the test annotated with this annotation should be run with JMX disabled in Camel. Defaults to
+     * {@code true}.
      */
     boolean value() default true;
 }

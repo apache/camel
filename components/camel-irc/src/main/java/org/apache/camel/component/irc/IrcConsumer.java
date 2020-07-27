@@ -74,7 +74,7 @@ public class IrcConsumer extends DefaultConsumer {
             connection.doPrivmsg("nickserv", "identify " + configuration.getNickPassword());
             connection.doPrivmsg("nickserv", "set enforce on");
         }
-        
+
         endpoint.joinChannels();
     }
 

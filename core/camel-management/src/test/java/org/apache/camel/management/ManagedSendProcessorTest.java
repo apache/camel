@@ -74,7 +74,7 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mock:result").id("mysend");
+                        .to("mock:result").id("mysend");
 
                 from("direct:foo").to("mock:foo");
             }

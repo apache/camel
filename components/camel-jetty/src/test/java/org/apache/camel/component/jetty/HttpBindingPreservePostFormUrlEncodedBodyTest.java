@@ -52,10 +52,14 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
 
                         // for unit testing make sure we got right message
                         assertEquals("b1=x&b2=y", body, "The body message is wrong");
-                        assertEquals("a", exchange.getIn().getHeader("query1"), "Get a wrong query parameter from the message header");
-                        assertEquals("b", exchange.getIn().getHeader("query2"), "Get a wrong query parameter from the message header");
-                        assertEquals("x", exchange.getIn().getHeader("b1"), "Get a wrong form parameter from the message header");
-                        assertEquals("y", exchange.getIn().getHeader("b2"), "Get a wrong form parameter from the message header");
+                        assertEquals("a", exchange.getIn().getHeader("query1"),
+                                "Get a wrong query parameter from the message header");
+                        assertEquals("b", exchange.getIn().getHeader("query2"),
+                                "Get a wrong query parameter from the message header");
+                        assertEquals("x", exchange.getIn().getHeader("b1"),
+                                "Get a wrong form parameter from the message header");
+                        assertEquals("y", exchange.getIn().getHeader("b2"),
+                                "Get a wrong form parameter from the message header");
 
                         // send a response
                         exchange.getOut().setBody("Request message is OK");

@@ -39,7 +39,7 @@ public class SchemaMojoIntegrationTest {
         final SchemaMojo mojo = new SchemaMojo();
         setup(mojo);
 
-        mojo.includes = new String[] {"Account"};
+        mojo.includes = new String[] { "Account" };
         mojo.outputDirectory = temp.getRoot();
         mojo.jsonSchemaFilename = "test-schema.json";
         mojo.jsonSchemaId = JsonUtils.DEFAULT_ID_PREFIX;
@@ -52,7 +52,8 @@ public class SchemaMojoIntegrationTest {
         assertTrue(schemaFile.exists(), "Output file was not created");
         final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final JsonSchema jsonSchema = objectMapper.readValue(schemaFile, JsonSchema.class);
-        assertTrue(jsonSchema.isObjectSchema() && !((ObjectSchema)jsonSchema).getOneOf().isEmpty(), "Expected root JSON schema with oneOf element");
+        assertTrue(jsonSchema.isObjectSchema() && !((ObjectSchema) jsonSchema).getOneOf().isEmpty(),
+                "Expected root JSON schema with oneOf element");
     }
 
 }

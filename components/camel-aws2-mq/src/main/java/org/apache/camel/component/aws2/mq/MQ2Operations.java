@@ -18,5 +18,10 @@ package org.apache.camel.component.aws2.mq;
 
 public enum MQ2Operations {
 
-    listBrokers, createBroker, deleteBroker, rebootBroker, updateBroker, describeBroker
+    listBrokers,
+    createBroker,
+    deleteBroker,
+    rebootBroker,
+    updateBroker,
+    describeBroker
 }

@@ -105,7 +105,7 @@ public class TransformerContractTest extends ContextTestSupport {
         mocka2.setExpectedCount(1);
         mockb.setExpectedCount(1);
         Exchange answer = template.send("direct:a", ex -> {
-            DataTypeAware message = (DataTypeAware)ex.getIn();
+            DataTypeAware message = (DataTypeAware) ex.getIn();
             message.setBody("<foo/>", new DataType("xml"));
         });
         mocka.assertIsSatisfied();
@@ -117,7 +117,7 @@ public class TransformerContractTest extends ContextTestSupport {
         assertEquals("<foo/>", exa.getIn().getBody());
         assertEquals(A.class, exb.getIn().getBody().getClass());
         assertEquals(B.class, exa2.getIn().getBody().getClass());
-        assertEquals("<fooResponse/>", new String((byte[])answer.getIn().getBody()));
+        assertEquals("<fooResponse/>", new String((byte[]) answer.getIn().getBody()));
     }
 
     public static class MyTypeConverters implements TypeConverters {

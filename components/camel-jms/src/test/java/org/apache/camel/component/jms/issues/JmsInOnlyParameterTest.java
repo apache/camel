@@ -75,12 +75,12 @@ public class JmsInOnlyParameterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:in?exchangePattern=InOnly")
-                    .transform().constant("Bye World")
-                    .to("mock:result");
+                        .to("activemq:queue:in?exchangePattern=InOnly")
+                        .transform().constant("Bye World")
+                        .to("mock:result");
 
                 from("activemq:queue:in")
-                    .to("mock:in");
+                        .to("mock:in");
             }
         };
     }

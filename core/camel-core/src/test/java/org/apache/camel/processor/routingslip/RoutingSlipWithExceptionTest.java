@@ -149,7 +149,8 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().routingSlip(header(ROUTING_SLIP_HEADER)).end().to("mock:noexception").doCatch(Exception.class).to("mock:exception");
+                from("direct:start").doTry().routingSlip(header(ROUTING_SLIP_HEADER)).end().to("mock:noexception")
+                        .doCatch(Exception.class).to("mock:exception");
             }
         };
     }

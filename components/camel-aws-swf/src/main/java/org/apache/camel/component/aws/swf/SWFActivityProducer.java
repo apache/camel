@@ -27,7 +27,7 @@ public class SWFActivityProducer extends DefaultProducer {
     private final CamelSWFActivityClient camelSWFClient;
     private SWFEndpoint endpoint;
     private SWFConfiguration configuration;
-    
+
     private transient String swfActivityProducerToString;
 
     public SWFActivityProducer(SWFEndpoint endpoint, CamelSWFActivityClient camelSWFActivityClient) {

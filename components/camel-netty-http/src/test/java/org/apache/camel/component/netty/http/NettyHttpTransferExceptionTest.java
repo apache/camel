@@ -31,7 +31,8 @@ public class NettyHttpTransferExceptionTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
         try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo?transferException=true", "Hello World", String.class);
+            template.requestBody("netty-http:http://localhost:{{port}}/foo?transferException=true", "Hello World",
+                    String.class);
             fail("Should have failed");
         } catch (CamelExecutionException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -47,8 +48,8 @@ public class NettyHttpTransferExceptionTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?transferException=true")
-                    .to("mock:input")
-                    .throwException(new IllegalArgumentException("Camel cannot do this"));
+                        .to("mock:input")
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

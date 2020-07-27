@@ -206,13 +206,13 @@ public class RedisKeyTest extends RedisTestSupport {
     public void shouldExecuteSORT() throws Exception {
         List<Integer> list = new ArrayList<>();
         list.add(5);
-        when(redisTemplate.sort(ArgumentMatchers.<SortQuery<String>>any())).thenReturn(list);
+        when(redisTemplate.sort(ArgumentMatchers.<SortQuery<String>> any())).thenReturn(list);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SORT",
                 RedisConstants.KEY, "key");
 
-        verify(redisTemplate).sort(ArgumentMatchers.<SortQuery<String>>any());
+        verify(redisTemplate).sort(ArgumentMatchers.<SortQuery<String>> any());
         assertEquals(list, result);
     }
 

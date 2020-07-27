@@ -41,7 +41,7 @@ public class CharsetTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedItemDesc = {"SOME VALVE", "AN ENGINE", "A BELT", "A ÄöÜ"};
+    protected String[] expectedItemDesc = { "SOME VALVE", "AN ENGINE", "A BELT", "A ÄöÜ" };
 
     @Test
     public void testCamel() throws Exception {

@@ -139,7 +139,8 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("bar.gold-customer[foo]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith("Cannot set property: gold-customer[foo] as either a Map/List because target bean is not a Map or List type"));
+            assertTrue(iae.getMessage().startsWith(
+                    "Cannot set property: gold-customer[foo] as either a Map/List because target bean is not a Map or List type"));
         }
     }
 
@@ -168,7 +169,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Map<String, Company> works; // should auto-create this via the
-                                            // setter
+                                           // setter
         private boolean goldCustomer;
 
         public int getAge() {

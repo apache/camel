@@ -57,8 +57,10 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
     int messageCount;
 
     public java.sql.Connection initDb() throws Exception {
-        String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, " + "messageId varchar(96) NOT NULL, "
-                                 + "messageCorrelationId varchar(96) NOT NULL, " + "messageContent varchar(2048) NOT NULL, " + "PRIMARY KEY (id) )";
+        String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, "
+                                 + "messageId varchar(96) NOT NULL, "
+                                 + "messageCorrelationId varchar(96) NOT NULL, " + "messageContent varchar(2048) NOT NULL, "
+                                 + "PRIMARY KEY (id) )";
 
         java.sql.Connection conn = getJDBCConnection();
         try {
@@ -86,7 +88,8 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            LOG.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: " + resultSet.getString(3) + ", content: " + resultSet.getString(4));
+            LOG.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: "
+                     + resultSet.getString(3) + ", content: " + resultSet.getString(4));
         }
         return count;
     }
@@ -172,7 +175,7 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
     public static class MarkRollbackOnly {
         public String enrich(Exchange exchange) throws Exception {
             LOG.info("Got exchange: " + exchange);
-            LOG.info("Got message: " + ((JmsMessage)exchange.getIn()).getJmsMessage());
+            LOG.info("Got message: " + ((JmsMessage) exchange.getIn()).getJmsMessage());
 
             LOG.info("Current tx: " + transactionManager[0].getTransaction());
             LOG.info("Marking rollback only...");

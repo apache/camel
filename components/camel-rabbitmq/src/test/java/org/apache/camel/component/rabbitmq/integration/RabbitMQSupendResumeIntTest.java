@@ -32,7 +32,8 @@ public class RabbitMQSupendResumeIntTest extends AbstractRabbitMQIntTest {
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&queue=q6&routingKey=rk3&autoDelete=false")
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE
+                    + "?username=cameltest&password=cameltest&queue=q6&routingKey=rk3&autoDelete=false")
     private Endpoint rabbitMQEndpoint;
 
     @Produce("direct:start")

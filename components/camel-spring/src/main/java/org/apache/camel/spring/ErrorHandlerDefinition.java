@@ -34,15 +34,18 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType {
-    @XmlAttribute @Metadata(defaultValue = "DefaultErrorHandler", required = true)
+    @XmlAttribute
+    @Metadata(defaultValue = "DefaultErrorHandler", required = true)
     private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
     private String deadLetterHandleNewException;
-    @XmlAttribute @Metadata(defaultValue = "ERROR")
+    @XmlAttribute
+    @Metadata(defaultValue = "ERROR")
     private LoggingLevel level;
-    @XmlAttribute @Metadata(defaultValue = "WARN")
+    @XmlAttribute
+    @Metadata(defaultValue = "WARN")
     private LoggingLevel rollbackLoggingLevel;
     @XmlAttribute
     private String logName;
@@ -96,15 +99,15 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     }
 
     /**
-     * Whether the dead letter channel should handle (and ignore) any new exception that may been thrown during sending the
-     * message to the dead letter endpoint.
+     * Whether the dead letter channel should handle (and ignore) any new exception that may been thrown during sending
+     * the message to the dead letter endpoint.
      * <p/>
-     * The default value is <tt>true</tt> which means any such kind of exception is handled and ignored. Set this to <tt>false</tt>
-     * to let the exception be propagated back on the {@link org.apache.camel.Exchange}. This can be used in situations
-     * where you use transactions, and want to use Camel's dead letter channel to deal with exceptions during routing,
-     * but if the dead letter channel itself fails because of a new exception being thrown, then by setting this to <tt>false</tt>
-     * the new exceptions is propagated back and set on the {@link org.apache.camel.Exchange}, which allows the transaction
-     * to detect the exception, and rollback.
+     * The default value is <tt>true</tt> which means any such kind of exception is handled and ignored. Set this to
+     * <tt>false</tt> to let the exception be propagated back on the {@link org.apache.camel.Exchange}. This can be used
+     * in situations where you use transactions, and want to use Camel's dead letter channel to deal with exceptions
+     * during routing, but if the dead letter channel itself fails because of a new exception being thrown, then by
+     * setting this to <tt>false</tt> the new exceptions is propagated back and set on the
+     * {@link org.apache.camel.Exchange}, which allows the transaction to detect the exception, and rollback.
      */
     public void setDeadLetterHandleNewException(String deadLetterHandleNewException) {
         this.deadLetterHandleNewException = deadLetterHandleNewException;
@@ -150,34 +153,31 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an {@link org.apache.camel.Exchange}
-     * is moved to the dead letter queue.
+     * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an
+     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
      * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange}
-     * is doomed for failure.
-     * <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original
-     * IN message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
-     * snapshot of the IN message.
-     * For instance if you route transform the IN body during routing and then failed. With the original exchange
-     * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange}
-     * again as the IN message is the same as when Camel received it.
-     * So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
+     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
+     * the original exchange store in the dead letter queue it might be easier to manually re submit the
+     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
+     * able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original
-     * body and headers, where as the latter only includes the original body. You can use the latter to enrich
-     * the message with custom headers and include the original message body. The former wont let you do this, as its
-     * using the original message body and headers as they are.
-     * You cannot enable both useOriginalMessage and useOriginalBody.
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
+     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
+     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current {@link org.apache.camel.spi.UnitOfWork}.
-     * An unit of work typically spans one route, or multiple routes if they are connected using internal
-     * endpoints such as direct or seda. When messages is passed via external endpoints such as JMS or HTTP
-     * then the consumer will create a new unit of work, with the message it received as input as the
-     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work
-     * boundary for the messages in their sub-route (eg the splitted message); however these EIPs have
-     * an option named <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in
-     * regard to error handling and therefore use the parent original message.
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
@@ -192,34 +192,31 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Message} body (original body only) when an {@link org.apache.camel.Exchange}
-     * is moved to the dead letter queue.
+     * Will use the original input {@link org.apache.camel.Message} body (original body only) when an
+     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
      * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange}
-     * is doomed for failure.
-     * <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original
-     * IN message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
-     * snapshot of the IN message.
-     * For instance if you route transform the IN body during routing and then failed. With the original exchange
-     * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange}
-     * again as the IN message is the same as when Camel received it.
-     * So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
+     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
+     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
+     * the original exchange store in the dead letter queue it might be easier to manually re submit the
+     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
+     * able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original
-     * body and headers, where as the latter only includes the original body. You can use the latter to enrich
-     * the message with custom headers and include the original message body. The former wont let you do this, as its
-     * using the original message body and headers as they are.
-     * You cannot enable both useOriginalMessage and useOriginalBody.
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
+     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
+     * with custom headers and include the original message body. The former wont let you do this, as its using the
+     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current {@link org.apache.camel.spi.UnitOfWork}.
-     * An unit of work typically spans one route, or multiple routes if they are connected using internal
-     * endpoints such as direct or seda. When messages is passed via external endpoints such as JMS or HTTP
-     * then the consumer will create a new unit of work, with the message it received as input as the
-     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work
-     * boundary for the messages in their sub-route (eg the splitted message); however these EIPs have
-     * an option named <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in
-     * regard to error handling and therefore use the parent original message.
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
@@ -234,7 +231,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     }
 
     /**
-     * References to the {@link org.springframework.transaction.support.TransactionTemplate} to use with the transaction error handler.
+     * References to the {@link org.springframework.transaction.support.TransactionTemplate} to use with the transaction
+     * error handler.
      */
     public void setTransactionTemplateRef(String transactionTemplateRef) {
         this.transactionTemplateRef = transactionTemplateRef;
@@ -245,7 +243,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     }
 
     /**
-     * References to the {@link org.springframework.transaction.PlatformTransactionManager} to use with the transaction error handler.
+     * References to the {@link org.springframework.transaction.PlatformTransactionManager} to use with the transaction
+     * error handler.
      */
     public void setTransactionManagerRef(String transactionManagerRef) {
         this.transactionManagerRef = transactionManagerRef;
@@ -269,8 +268,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a reference to a processor that should be processed <b>just after</b> an exception occurred.
-     * Can be used to perform custom logging about the occurred exception at the exact time it happened.
+     * Sets a reference to a processor that should be processed <b>just after</b> an exception occurred. Can be used to
+     * perform custom logging about the occurred exception at the exact time it happened.
      * <p/>
      * Important: Any exception thrown from this processor will be ignored.
      */
@@ -283,9 +282,9 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a reference to a processor to prepare the {@link org.apache.camel.Exchange} before
-     * handled by the failure processor / dead letter channel. This allows for example to enrich the message
-     * before sending to a dead letter queue.
+     * Sets a reference to a processor to prepare the {@link org.apache.camel.Exchange} before handled by the failure
+     * processor / dead letter channel. This allows for example to enrich the message before sending to a dead letter
+     * queue.
      */
     public void setOnPrepareFailureRef(String onPrepareFailureRef) {
         this.onPrepareFailureRef = onPrepareFailureRef;

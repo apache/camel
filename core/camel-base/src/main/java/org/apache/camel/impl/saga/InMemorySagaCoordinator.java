@@ -124,7 +124,6 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         return CompletableFuture.completedFuture(null);
     }
 
-
     @Override
     public CompletableFuture<Void> complete() {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPLETING);
@@ -159,13 +158,14 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
                 });
     }
 
-    public CompletableFuture<Boolean> doFinalize(Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor, String description) {
+    public CompletableFuture<Boolean> doFinalize(
+            Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor, String description) {
         CompletableFuture<Boolean> result = CompletableFuture.completedFuture(true);
         for (CamelSagaStep step : reversed(steps)) {
             Optional<Endpoint> endpoint = endpointExtractor.apply(step);
             if (endpoint.isPresent()) {
-                result = result.thenCompose(prevResult ->
-                        doFinalize(endpoint.get(), step, 0, description).thenApply(res -> prevResult && res));
+                result = result.thenCompose(
+                        prevResult -> doFinalize(endpoint.get(), step, 0, description).thenApply(res -> prevResult && res));
             }
         }
         return result.whenComplete((done, ex) -> {
@@ -189,7 +189,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             return true;
         }, sagaService.getExecutorService()).exceptionally(ex -> {
             LOG.warn("Exception thrown during " + description + " at " + endpoint.getEndpointUri()
-                    + ". Attempt " + (doneAttempts + 1) + " of " + sagaService.getMaxRetryAttempts(), ex);
+                     + ". Attempt " + (doneAttempts + 1) + " of " + sagaService.getMaxRetryAttempts(),
+                    ex);
             return false;
         }).thenCompose(executed -> {
             int currentAttempt = doneAttempts + 1;

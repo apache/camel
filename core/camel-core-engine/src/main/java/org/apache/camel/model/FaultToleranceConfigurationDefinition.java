@@ -47,9 +47,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     // -------------------------------------------------------------------------
 
     /**
-     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance
-     * to lookup and use from the registry. When using this, then any other circuit breaker options
-     * are not in use.
+     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
+     * registry. When using this, then any other circuit breaker options are not in use.
      */
     public FaultToleranceConfigurationDefinition circuitBreakerRef(String circuitBreakerRef) {
         setCircuitBreakerRef(circuitBreakerRef);
@@ -81,8 +80,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Configures the failure rate threshold in percentage.
-     * If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls.
+     * Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold
+     * the CircuitBreaker transitions to open and starts short-circuiting calls.
      * <p>
      * The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.
      */
@@ -92,8 +91,7 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Whether timeout is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether timeout is enabled or not on the circuit breaker. Default is false.
      */
     public FaultToleranceConfigurationDefinition timeoutEnabled(boolean timeoutEnabled) {
         setTimeoutEnabled(Boolean.toString(timeoutEnabled));
@@ -101,8 +99,7 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Configures the thread execution timeout (millis).
-     * Default value is 1000 millis (1 second).
+     * Configures the thread execution timeout (millis). Default value is 1000 millis (1 second).
      */
     public FaultToleranceConfigurationDefinition timeoutDuration(long timeoutDuration) {
         setTimeoutDuration(Long.toString(timeoutDuration));
@@ -110,8 +107,7 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Configures the pool size of the thread pool when timeout is enabled.
-     * Default value is 10.
+     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
      */
     public FaultToleranceConfigurationDefinition timeoutPoolSize(int poolSize) {
         setTimeoutPoolSize(Integer.toString(poolSize));
@@ -127,8 +123,7 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Whether bulkhead is enabled or not on the circuit breaker.
-     * Default is false.
+     * Whether bulkhead is enabled or not on the circuit breaker. Default is false.
      */
     public FaultToleranceConfigurationDefinition bulkheadEnabled(boolean bulkheadEnabled) {
         setBulkheadEnabled(Boolean.toString(bulkheadEnabled));

@@ -85,7 +85,7 @@ public class IgniteEventsConsumer extends DefaultConsumer {
         }
 
         events.localListen(predicate, eventTypes);
-        
+
         LOG.info("Started local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
     }
 
@@ -94,7 +94,7 @@ public class IgniteEventsConsumer extends DefaultConsumer {
         super.doStop();
 
         events.stopLocalListen(predicate, eventTypes);
-        
+
         LOG.info("Stopped local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
     }
 

@@ -29,9 +29,9 @@ public class SqlProducerInSimpleExpressionTest extends SqlProducerInTest {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql:classpath:sql/selectProjectsInSimpleExpression.sql")
-                    .to("log:query")
-                    .to("mock:query");
+                        .to("sql:classpath:sql/selectProjectsInSimpleExpression.sql")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

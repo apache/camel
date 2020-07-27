@@ -33,7 +33,8 @@ public class DefaultTwitterConsumer extends ScheduledPollConsumer implements Twi
     private final AbstractTwitterEndpoint endpoint;
     private final AbstractTwitterConsumerHandler handler;
 
-    public DefaultTwitterConsumer(AbstractTwitterEndpoint endpoint, Processor processor, AbstractTwitterConsumerHandler handler) {
+    public DefaultTwitterConsumer(AbstractTwitterEndpoint endpoint, Processor processor,
+                                  AbstractTwitterConsumerHandler handler) {
         super(endpoint, processor);
         setDelay(DEFAULT_CONSUMER_DELAY);
         this.endpoint = endpoint;
@@ -86,7 +87,8 @@ public class DefaultTwitterConsumer extends ScheduledPollConsumer implements Twi
         }
 
         if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange on status update", exchange, exchange.getException());
+            getExceptionHandler().handleException("Error processing exchange on status update", exchange,
+                    exchange.getException());
         }
     }
 

@@ -27,8 +27,8 @@ import org.apache.camel.jsonpath.JsonPathAdapter;
 import org.apache.camel.spi.Registry;
 
 /**
- * A Jackson {@link JsonPathAdapter} which is using Jackson to convert the message
- * body to {@link Map}. This allows us to support POJO classes with camel-jsonpath.
+ * A Jackson {@link JsonPathAdapter} which is using Jackson to convert the message body to {@link Map}. This allows us
+ * to support POJO classes with camel-jsonpath.
  */
 public class JacksonJsonAdapter implements JsonPathAdapter {
 
@@ -89,4 +89,3 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
     }
 
 }
-

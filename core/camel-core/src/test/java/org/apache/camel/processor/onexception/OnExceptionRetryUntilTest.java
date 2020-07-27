@@ -60,7 +60,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
                 // where we defined at most 1 redelivery attempt. Here we will
                 // continue until
                 // the predicate returns false
-                onException(MyFunctionalException.class).retryWhile(method("myRetryHandler")).handled(true).transform().constant("Sorry");
+                onException(MyFunctionalException.class).retryWhile(method("myRetryHandler")).handled(true).transform()
+                        .constant("Sorry");
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {
@@ -81,7 +82,9 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
 
         // using bean binding we can bind the information from the exchange to
         // the types we have in our method signature
-        public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
+        public boolean retry(
+                @Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body,
+                @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked++;
 

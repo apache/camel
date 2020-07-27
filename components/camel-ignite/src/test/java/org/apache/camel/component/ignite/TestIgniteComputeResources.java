@@ -142,8 +142,8 @@ public final class TestIgniteComputeResources {
             return answer;
         }
     };
-    
+
     private TestIgniteComputeResources() {
-        
+
     }
 }

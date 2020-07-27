@@ -36,7 +36,7 @@ public class TestOriginatorInformationProvider implements OriginatorInformationP
         try {
             KeyStoreParameters keyStorePas = KeystoreUtil.getKeyStoreParameters("test.jks");
             assertNotNull(keyStorePas);
-            X509Certificate cert = (X509Certificate)keyStorePas.createKeyStore().getCertificate("test user keystore test");
+            X509Certificate cert = (X509Certificate) keyStorePas.createKeyStore().getCertificate("test user keystore test");
             assertNotNull(cert);
             X509CertificateHolder origCert = new X509CertificateHolder(cert.getEncoded());
             return new OriginatorInfoGenerator(origCert).generate();

@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class SchematronComponentTest extends CamelTestSupport {
 
-
     /**
      * @throws Exception
      */
@@ -60,7 +59,6 @@ public class SchematronComponentTest extends CamelTestSupport {
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
-
 
         // should throw two assertions because of the missing chapters in the XML.
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert[1]/svrl:text", result));

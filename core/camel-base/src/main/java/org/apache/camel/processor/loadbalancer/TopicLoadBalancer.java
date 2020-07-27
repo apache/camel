@@ -23,18 +23,18 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 
 /**
- * A {@link LoadBalancer} implementations which sends to all destinations
- * (rather like JMS Topics).
+ * A {@link LoadBalancer} implementations which sends to all destinations (rather like JMS Topics).
  * <p/>
- * The {@link org.apache.camel.processor.MulticastProcessor} is more powerful as it offers
- * option to run in parallel and decide whether or not to stop on failure etc.
+ * The {@link org.apache.camel.processor.MulticastProcessor} is more powerful as it offers option to run in parallel and
+ * decide whether or not to stop on failure etc.
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
-        exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor().schedule(new State(exchange, callback, processors)::run);
+        exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor()
+                .schedule(new State(exchange, callback, processors)::run);
         return false;
     }
 
@@ -71,14 +71,13 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
     }
 
     /**
-     * Strategy method to copy the exchange before sending to another endpoint.
-     * Derived classes such as the {@link org.apache.camel.processor.Pipeline Pipeline}
-     * will not clone the exchange
+     * Strategy method to copy the exchange before sending to another endpoint. Derived classes such as the
+     * {@link org.apache.camel.processor.Pipeline Pipeline} will not clone the exchange
      *
-     * @param processor the processor that will send the exchange
-     * @param exchange  the exchange
-     * @return the current exchange if no copying is required such as for a
-     *         pipeline otherwise a new copy of the exchange is returned.
+     * @param  processor the processor that will send the exchange
+     * @param  exchange  the exchange
+     * @return           the current exchange if no copying is required such as for a pipeline otherwise a new copy of
+     *                   the exchange is returned.
      */
     protected Exchange copyExchangeStrategy(Processor processor, Exchange exchange) {
         return exchange.copy();

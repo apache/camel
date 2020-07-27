@@ -39,7 +39,8 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 completed();
             }
         });
-        addOption(new ParameterOption("r", "routers",
+        addOption(new ParameterOption(
+                "r", "routers",
                 "Sets the router builder classes which will be loaded while starting the camel context",
                 "routerBuilderClasses") {
             @Override
@@ -47,7 +48,8 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 configure().setRoutesBuilderClasses(parameter);
             }
         });
-        addOption(new ParameterOption("d", "duration",
+        addOption(new ParameterOption(
+                "d", "duration",
                 "Sets the time duration (seconds) that the application will run for before terminating.",
                 "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
@@ -58,14 +60,16 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 configure().setDurationMaxSeconds(Integer.parseInt(parameter));
             }
         });
-        addOption(new ParameterOption("dm", "durationMaxMessages",
+        addOption(new ParameterOption(
+                "dm", "durationMaxMessages",
                 "Sets the duration of maximum number of messages that the application will process before terminating.",
                 "durationMaxMessages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 configure().setDurationMaxMessages(Integer.parseInt(parameter));
             }
         });
-        addOption(new ParameterOption("di", "durationIdle",
+        addOption(new ParameterOption(
+                "di", "durationIdle",
                 "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
                 "durationIdle") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
@@ -81,14 +85,16 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 enableTrace();
             }
         });
-        addOption(new ParameterOption("e", "exitcode",
+        addOption(new ParameterOption(
+                "e", "exitcode",
                 "Sets the exit code if duration was hit",
                 "exitcode") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 configure().setDurationHitExitCode(Integer.parseInt(parameter));
             }
         });
-        addOption(new ParameterOption("pl", "propertiesLocation",
+        addOption(new ParameterOption(
+                "pl", "propertiesLocation",
                 "Sets location(s) to load properties, such as from classpath or file system.",
                 "propertiesLocation") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {

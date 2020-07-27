@@ -48,13 +48,13 @@ public class VersionTest {
     @Test
     public void shouldObserveApiLimitsOnMajorVersions() {
         assertThrows(UnsupportedOperationException.class,
-            () -> V35_0.requireAtLeast(36, 0));
+                () -> V35_0.requireAtLeast(36, 0));
     }
 
     @Test
     public void shouldObserveApiLimitsOnMinorVersions() {
         assertThrows(UnsupportedOperationException.class,
-            () -> V35_0.requireAtLeast(35, 1));
+                () -> V35_0.requireAtLeast(35, 1));
     }
 
     @Test

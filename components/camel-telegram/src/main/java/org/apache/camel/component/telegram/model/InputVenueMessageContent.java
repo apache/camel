@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents the content of a venue message to be sent as the result of an inline query.
  *
  * @see <a href="https://core.telegram.org/bots/api#inputvenuemessagecontent">
- *     https://core.telegram.org/bots/api#inputvenuemessagecontent</a>
+ *      https://core.telegram.org/bots/api#inputvenuemessagecontent</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InputVenueMessageContent implements InputMessageContent {

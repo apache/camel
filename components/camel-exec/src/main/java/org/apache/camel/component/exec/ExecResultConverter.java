@@ -33,10 +33,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 /**
- * Default converters for {@link ExecResult}. For details how to extend the
- * converters check out <a
- * href="http://camel.apache.org/type-converter.html">the Camel docs for type
- * converters.</a>
+ * Default converters for {@link ExecResult}. For details how to extend the converters check out
+ * <a href="http://camel.apache.org/type-converter.html">the Camel docs for type converters.</a>
  */
 @Converter(generateLoader = true)
 public final class ExecResultConverter {
@@ -78,14 +76,12 @@ public final class ExecResultConverter {
     /**
      * Converts <code>ExecResult</code> to the type <code>T</code>.
      *
-     * @param <T>      The type to convert to
-     * @param type     Class instance of the type to which to convert
-     * @param exchange a Camel exchange. If exchange is <code>null</code>, no
-     *                 conversion will be made
-     * @param result   the exec result
-     * @return the converted {@link ExecResult}
-     * @throws FileNotFoundException if there is a file in the execResult, and
-     *                               the file can not be found
+     * @param  <T>                   The type to convert to
+     * @param  type                  Class instance of the type to which to convert
+     * @param  exchange              a Camel exchange. If exchange is <code>null</code>, no conversion will be made
+     * @param  result                the exec result
+     * @return                       the converted {@link ExecResult}
+     * @throws FileNotFoundException if there is a file in the execResult, and the file can not be found
      */
     @SuppressWarnings("unchecked")
     private static <T> T convertTo(Class<T> type, Exchange exchange, ExecResult result) throws FileNotFoundException {
@@ -100,22 +96,18 @@ public final class ExecResultConverter {
     }
 
     /**
-     * Returns <code>InputStream</code> object with the <i>output</i> of the
-     * executable. If there is {@link ExecCommand#getOutFile()}, its content is
-     * preferred to {@link ExecResult#getStdout()}. If no out file is set, and
-     * the stdout of the exec result is <code>null</code> returns the stderr of
-     * the exec result. <br>
-     * If the output stream is of type <code>ByteArrayInputStream</code>, its
-     * <code>reset()</code> method is called.
+     * Returns <code>InputStream</code> object with the <i>output</i> of the executable. If there is
+     * {@link ExecCommand#getOutFile()}, its content is preferred to {@link ExecResult#getStdout()}. If no out file is
+     * set, and the stdout of the exec result is <code>null</code> returns the stderr of the exec result. <br>
+     * If the output stream is of type <code>ByteArrayInputStream</code>, its <code>reset()</code> method is called.
      *
-     * @param execResult ExecResult object to convert to InputStream.
-     * @return InputStream object with the <i>output</i> of the executable.
-     * Returns <code>null</code> if both {@link ExecResult#getStdout()}
-     * and {@link ExecResult#getStderr()} are <code>null</code> , or if
-     * the <code>execResult</code> is <code>null</code>.
-     * @throws FileNotFoundException if the {@link ExecCommand#getOutFile()} can
-     *                               not be opened. In this case the out file must have had a not
-     *                               <code>null</code> value
+     * @param  execResult            ExecResult object to convert to InputStream.
+     * @return                       InputStream object with the <i>output</i> of the executable. Returns
+     *                               <code>null</code> if both {@link ExecResult#getStdout()} and
+     *                               {@link ExecResult#getStderr()} are <code>null</code> , or if the
+     *                               <code>execResult</code> is <code>null</code>.
+     * @throws FileNotFoundException if the {@link ExecCommand#getOutFile()} can not be opened. In this case the out
+     *                               file must have had a not <code>null</code> value
      */
     private static InputStream toInputStream(ExecResult execResult) throws FileNotFoundException {
         if (execResult == null) {

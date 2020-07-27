@@ -30,11 +30,11 @@ public class ProducerTest extends CamelTestSupport {
     private String host = "192.168.0.254";
     private String port = "161";
     private String oids = "1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1";
-    
+
     @Test
     public void testSnmpProducer() throws Exception {
         template.sendBody("direct:in", "");
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
@@ -53,4 +53,3 @@ public class ProducerTest extends CamelTestSupport {
         };
     }
 }
-

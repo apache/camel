@@ -74,7 +74,9 @@ public abstract class AbstractTwitterComponent extends DefaultComponent {
         return doCreateEndpoint(properties, uri, remaining, parameters);
     }
 
-    protected abstract Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception;
+    protected abstract Endpoint doCreateEndpoint(
+            TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters)
+            throws Exception;
 
     public String getAccessToken() {
         return accessToken;
@@ -168,6 +170,7 @@ public abstract class AbstractTwitterComponent extends DefaultComponent {
      * Get a verifier for the component.
      */
     public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
+                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

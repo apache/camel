@@ -25,5 +25,5 @@ public enum QueueServiceOperations {
     peekMessage,
     updateMessage,
     deleteMessage
-    
+
 }

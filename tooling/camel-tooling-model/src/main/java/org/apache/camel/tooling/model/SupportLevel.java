@@ -22,8 +22,8 @@ package org.apache.camel.tooling.model;
 public enum SupportLevel {
 
     /**
-     * An experimental entity (not feature complete) that will change API, configuration,
-     * or functionality, or even be removed in the future.
+     * An experimental entity (not feature complete) that will change API, configuration, or functionality, or even be
+     * removed in the future.
      *
      * Intended to be matured over time and become preview or stable.
      *

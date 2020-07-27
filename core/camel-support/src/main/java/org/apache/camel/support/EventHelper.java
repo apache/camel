@@ -104,7 +104,8 @@ public final class EventHelper {
         return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStopFailureEvent(ctx, cause));
     }
 
-    private static boolean notifyCamelContext(CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier) {
+    private static boolean notifyCamelContext(
+            CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -515,8 +516,9 @@ public final class EventHelper {
         return answer;
     }
 
-    public static boolean notifyExchangeFailureHandling(CamelContext context, Exchange exchange, Processor failureHandler,
-                                                        boolean deadLetterChannel, String deadLetterUri) {
+    public static boolean notifyExchangeFailureHandling(
+            CamelContext context, Exchange exchange, Processor failureHandler,
+            boolean deadLetterChannel, String deadLetterUri) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -562,8 +564,9 @@ public final class EventHelper {
         return answer;
     }
 
-    public static boolean notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
-                                                       boolean deadLetterChannel, String deadLetterUri) {
+    public static boolean notifyExchangeFailureHandled(
+            CamelContext context, Exchange exchange, Processor failureHandler,
+            boolean deadLetterChannel, String deadLetterUri) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;

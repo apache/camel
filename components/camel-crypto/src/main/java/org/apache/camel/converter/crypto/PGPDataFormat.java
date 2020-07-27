@@ -31,15 +31,14 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 
 /**
- * <code>PGPDataFormat</code> uses the <a
- * href="http://www.bouncycastle.org/java.htm">bouncy castle</a> libraries to
+ * <code>PGPDataFormat</code> uses the <a href="http://www.bouncycastle.org/java.htm">bouncy castle</a> libraries to
  * enable encryption and decryption in the PGP format.
  * <p>
  * See also {@link PGPKeyAccessDataFormat}.
  */
 @Dataformat("pgp")
 public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccessor, PGPSecretKeyAccessor {
-    
+
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
     public static final String ENCRYPTION_KEY_RING = "CamelPGPDataFormatEncryptionKeyRing";
     public static final String KEY_PASSWORD = "CamelPGPDataFormatKeyPassword";
@@ -104,8 +103,10 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
         }
     }
 
-    public List<PGPSecretKeyAndPrivateKeyAndUserId> determineSecretKeysWithPrivateKeyAndUserId(Exchange exchange, String sigKeyFileName,
-            List<String> sigKeyUserids, String sigKeyPassword, byte[] sigKeyRing) throws IOException, PGPException, NoSuchProviderException {
+    public List<PGPSecretKeyAndPrivateKeyAndUserId> determineSecretKeysWithPrivateKeyAndUserId(
+            Exchange exchange, String sigKeyFileName,
+            List<String> sigKeyUserids, String sigKeyPassword, byte[] sigKeyRing)
+            throws IOException, PGPException, NoSuchProviderException {
 
         Map<String, String> sigKeyUserId2Password = determineSignatureKeyUserId2Password(sigKeyUserids, sigKeyPassword);
 
@@ -141,9 +142,8 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     }
 
     /**
-     * Filename of the keyring that will be used for the encryption/decryption,
-     * classpathResource. Alternatively you can provide the keyring also as byte
-     * array; see method {@link #setEncryptionKeyRing(byte[])}.
+     * Filename of the keyring that will be used for the encryption/decryption, classpathResource. Alternatively you can
+     * provide the keyring also as byte array; see method {@link #setEncryptionKeyRing(byte[])}.
      */
     public void setKeyFileName(String keyFileName) {
         this.keyFileName = keyFileName;
@@ -154,8 +154,7 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     }
 
     /**
-     * Password used to open the private key in secret keyring for decryption
-     * (unmarshaling). See also
+     * Password used to open the private key in secret keyring for decryption (unmarshaling). See also
      * {@link #setPassphraseAccessor(PGPPassphraseAccessor)}.
      */
     public void setPassword(String password) {
@@ -193,9 +192,8 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     }
 
     /**
-     * Keyring used for encryption/decryption as byte array. Alternatively you
-     * can also provide the keyring as a file; see method
-     * {@link #setKeyFileName(String)}.
+     * Keyring used for encryption/decryption as byte array. Alternatively you can also provide the keyring as a file;
+     * see method {@link #setKeyFileName(String)}.
      */
     public void setEncryptionKeyRing(byte[] encryptionKeyRing) {
         this.encryptionKeyRing = encryptionKeyRing;
@@ -206,9 +204,8 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     }
 
     /**
-     * Keyring used for signing/verifying as byte array. Alternatively you can
-     * also provide the keyring as a file; see method
-     * {@link #setSignatureKeyFileName(String)}.
+     * Keyring used for signing/verifying as byte array. Alternatively you can also provide the keyring as a file; see
+     * method {@link #setSignatureKeyFileName(String)}.
      */
     public void setSignatureKeyRing(byte[] signatureKeyRing) {
         this.signatureKeyRing = signatureKeyRing;
@@ -219,13 +216,11 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     }
 
     /**
-     * Alternative way to provide the passphrases. Especially useful for the
-     * unmarshal (decryption) case . If no passphrase can be found from the
-     * parameter <tt>password</tt> or <tt>signaturePassword</tt> or from the
-     * header {@link #SIGNATURE_KEY_PASSWORD} or {@link #KEY_PASSWORD} then we
-     * try to get the password from the passphrase accessor. This is especially
-     * useful in the decrypt case, where we chose the private key according to
-     * the key Id stored in the encrypted data.
+     * Alternative way to provide the passphrases. Especially useful for the unmarshal (decryption) case . If no
+     * passphrase can be found from the parameter <tt>password</tt> or <tt>signaturePassword</tt> or from the header
+     * {@link #SIGNATURE_KEY_PASSWORD} or {@link #KEY_PASSWORD} then we try to get the password from the passphrase
+     * accessor. This is especially useful in the decrypt case, where we chose the private key according to the key Id
+     * stored in the encrypted data.
      */
     public void setPassphraseAccessor(PGPPassphraseAccessor passphraseAccessor) {
         this.passphraseAccessor = passphraseAccessor;
@@ -233,12 +228,14 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     @Override
     public List<PGPPublicKey> getEncryptionKeys(Exchange exchange, List<String> useridParts) throws Exception {
-        return PGPDataFormatUtil.findPublicKeys(exchange.getContext(), findKeyFileName(exchange), findEncryptionKeyRing(exchange),
+        return PGPDataFormatUtil.findPublicKeys(exchange.getContext(), findKeyFileName(exchange),
+                findEncryptionKeyRing(exchange),
                 useridParts, true);
     }
 
     @Override
-    public List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts) throws Exception {
+    public List<PGPSecretKeyAndPrivateKeyAndUserId> getSignerKeys(Exchange exchange, List<String> useridParts)
+            throws Exception {
         String sigKeyFileName = findSignatureKeyFileName(exchange);
 
         String sigKeyPassword = findSignatureKeyPassword(exchange);
@@ -253,17 +250,16 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     @Override
     public PGPPrivateKey getPrivateKey(Exchange exchange, long keyId) throws Exception {
-        return PGPDataFormatUtil.findPrivateKeyWithKeyId(exchange.getContext(), findKeyFileName(exchange), findEncryptionKeyRing(exchange),
+        return PGPDataFormatUtil.findPrivateKeyWithKeyId(exchange.getContext(), findKeyFileName(exchange),
+                findEncryptionKeyRing(exchange),
                 keyId, findKeyPassword(exchange), getPassphraseAccessor(), getProvider());
     }
 
-
-   
     @Override
     public PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> userIdParts) throws Exception {
-        PGPPublicKeyRingCollection publicKeyringCollection = PGPDataFormatUtil.getPublicKeyRingCollection(exchange.getContext(), 
+        PGPPublicKeyRingCollection publicKeyringCollection = PGPDataFormatUtil.getPublicKeyRingCollection(exchange.getContext(),
                 findSignatureKeyFileName(exchange), findSignatureKeyRing(exchange), false);
-        return PGPDataFormatUtil.getPublicKeyWithKeyIdAndUserID(keyId, userIdParts, publicKeyringCollection);      
+        return PGPDataFormatUtil.getPublicKeyWithKeyIdAndUserID(keyId, userIdParts, publicKeyringCollection);
     }
 
     @Override
@@ -275,5 +271,5 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     public void setSecretKeyAccessor(PGPSecretKeyAccessor secretKeyAccessor) {
         throw new UnsupportedOperationException("Use PGPKeyAccessDataFormat if you want to set the secret key access");
     }
-    
+
 }

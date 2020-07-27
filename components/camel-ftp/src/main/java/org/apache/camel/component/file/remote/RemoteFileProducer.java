@@ -67,18 +67,17 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     }
 
     protected RemoteFileOperations<T> getOperations() {
-        return (RemoteFileOperations<T>)operations;
+        return (RemoteFileOperations<T>) operations;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public RemoteFileEndpoint<T> getEndpoint() {
-        return (RemoteFileEndpoint<T>)super.getEndpoint();
+        return (RemoteFileEndpoint<T>) super.getEndpoint();
     }
 
     /**
-     * The file could not be written. We need to disconnect from the remote
-     * server.
+     * The file could not be written. We need to disconnect from the remote server.
      */
     @Override
     public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {

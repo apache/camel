@@ -59,13 +59,11 @@ public class HttpProxyServerTest extends BaseHttpTest {
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Proxy-Connection", "Keep-Alive");
-        proxy = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("*", new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders)).create();
+        proxy = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).registerHandler("*",
+                        new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders))
+                .create();
         proxy.start();
 
         super.setUp();
@@ -93,13 +91,17 @@ public class HttpProxyServerTest extends BaseHttpTest {
 
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
-        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("http://www.google.com?test=parameter&proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
+        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234",
+                HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint(
+                "http://www.google.com?test=parameter&proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
         // HttpClientBuilder doesn't support get the configuration here
 
         //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
-        assertEquals("http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", URISupport.normalizeUri(http1.getEndpointUri()), "Get a wrong endpoint uri of http1");
-        assertEquals("http://www.google.com?proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()), "Get a wrong endpoint uri of http2");
+        assertEquals("http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234",
+                URISupport.normalizeUri(http1.getEndpointUri()), "Get a wrong endpoint uri of http1");
+        assertEquals("http://www.google.com?proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345&test=parameter",
+                URISupport.normalizeUri(http2.getEndpointUri()), "Get a wrong endpoint uri of http2");
 
         assertEquals(http1.getEndpointKey(), http2.getEndpointKey(), "Should get the same EndpointKey");
     }
@@ -107,8 +109,10 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyAndWithoutUser() throws Exception {
 
-        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), exchange1 -> {
-        });
+        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost="
+                                             + getProxyHost() + "&proxyAuthPort=" + getProxyPort(),
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }

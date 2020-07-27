@@ -31,8 +31,8 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor
- * information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
+ * Camel.
  */
 @Mojo(name = "generate-components-list", threadSafe = true)
 public class PackageComponentMojo extends AbstractGeneratorMojo {
@@ -65,9 +65,8 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws MojoExecutionException execution of the main class or one of the
-     *             threads it generated failed.
-     * @throws MojoFailureException something bad happened...
+     * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -83,7 +82,8 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         // can stop the build before the end and eclipse always needs to know
         // about that directory
         if (projectHelper != null) {
-            projectHelper.addResource(project, componentOutDir.getPath(), Collections.singletonList("**/component.properties"), Collections.emptyList());
+            projectHelper.addResource(project, componentOutDir.getPath(), Collections.singletonList("**/component.properties"),
+                    Collections.emptyList());
         }
 
         if (!haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")) {
@@ -120,9 +120,11 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
             String names = Stream.of(buffer.toString().split(" ")).sorted().collect(Collectors.joining(" "));
             String properties = createProperties(project, "components", names);
             updateResource(camelMetaDir.toPath(), "component.properties", properties);
-            log.info("Generated " + "components" + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
+            log.info("Generated " + "components" + " containing " + count + " Camel "
+                     + (count > 1 ? "components: " : "component: ") + names);
         } else {
-            log.debug("No META-INF/services/org/apache/camel/component directory found. Are you sure you have created a Camel component?");
+            log.debug(
+                    "No META-INF/services/org/apache/camel/component directory found. Are you sure you have created a Camel component?");
         }
 
         return count;

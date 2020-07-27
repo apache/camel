@@ -30,7 +30,8 @@ public final class QueueTestUtils {
         final Properties properties = new Properties();
         final String fileName = "azure_key.properties";
 
-        final InputStream inputStream = Objects.requireNonNull(QueueTestUtils.class.getClassLoader().getResourceAsStream(fileName));
+        final InputStream inputStream
+                = Objects.requireNonNull(QueueTestUtils.class.getClassLoader().getResourceAsStream(fileName));
 
         properties.load(inputStream);
 
@@ -40,7 +41,8 @@ public final class QueueTestUtils {
     public static Properties loadAzureAccessFromJvmEnv() throws Exception {
         final Properties properties = new Properties();
         if (System.getProperty("accountName") == null || System.getProperty("accessKey") == null) {
-            throw new Exception("Make sure to supply azure accessKey or accountName, e.g:  mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey");
+            throw new Exception(
+                    "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey");
         }
         properties.setProperty("account_name", System.getProperty("accountName"));
         properties.setProperty("access_key", System.getProperty("accessKey"));

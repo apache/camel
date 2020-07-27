@@ -41,9 +41,11 @@ public class BlobConfiguration implements Cloneable {
     private BlobServiceClient serviceClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer", enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
-            + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
-            + "clearPageBlob,getPageBlobRanges", defaultValue = "listBlobContainers")
+    @UriParam(label = "producer",
+              enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
+                      + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
+                      + "clearPageBlob,getPageBlobRanges",
+              defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
     @UriParam(label = "common")
     private String blobName;
@@ -82,7 +84,6 @@ public class BlobConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "COMMITTED")
     private BlockListType blockListType = BlockListType.COMMITTED;
 
-
     /**
      * Azure account name to be used for authentication with azure blob services
      */
@@ -106,7 +107,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information
+     * StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication
+     * information
      */
     public StorageSharedKeyCredential getCredentials() {
         return credentials;
@@ -117,13 +119,13 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * Client to a storage account. This client does not hold any state about a particular storage account
-     * but is instead a convenient way of sending off appropriate requests to the resource on the service.
-     * It may also be used to construct URLs to blobs and containers.
+     * Client to a storage account. This client does not hold any state about a particular storage account but is
+     * instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used
+     * to construct URLs to blobs and containers.
      *
-     * This client contains operations on a service account. Operations on a container are available on {@link BlobContainerClient}
-     * through {@link #getBlobContainerClient(String)}, and operations on a blob are available on {@link BlobClient} through
-     * {@link #getBlobContainerClient(String).getBlobClient(String)}.
+     * This client contains operations on a service account. Operations on a container are available on
+     * {@link BlobContainerClient} through {@link #getBlobContainerClient(String)}, and operations on a blob are
+     * available on {@link BlobClient} through {@link #getBlobContainerClient(String).getBlobClient(String)}.
      */
     public BlobServiceClient getServiceClient() {
         return serviceClient;
@@ -211,7 +213,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body.
+     * Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a
+     * response body.
      */
     public int getMaxRetryRequests() {
         return maxRetryRequests;
@@ -233,7 +236,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.
+     * Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all
+     * blobs.
      */
     public String getPrefix() {
         return prefix;
@@ -244,7 +248,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items.
+     * Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not
+     * specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items.
      */
     public Integer getMaxResultsPerPage() {
         return maxResultsPerPage;
@@ -277,7 +282,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte boundary.
+     * Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte
+     * boundary.
      */
     public Long getPageBlobSize() {
         return pageBlobSize;
@@ -332,7 +338,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 2^63 - 1.The default value is 0.
+     * A user-controlled value that you can use to track requests. The value of the sequence number must be between 0
+     * and 2^63 - 1.The default value is 0.
      */
     public Long getBlobSequenceNumber() {
         return blobSequenceNumber;
@@ -343,7 +350,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     *  Specifies which type of blocks to return.
+     * Specifies which type of blocks to return.
      */
     public BlockListType getBlockListType() {
         return blockListType;

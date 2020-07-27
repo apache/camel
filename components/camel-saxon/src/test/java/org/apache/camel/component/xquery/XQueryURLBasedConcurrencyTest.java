@@ -81,9 +81,9 @@ public class XQueryURLBasedConcurrencyTest extends CamelTestSupport {
                 from("direct:start").to("seda:foo?concurrentConsumers=5");
 
                 from("seda:foo?concurrentConsumers=5")
-                    .to("xquery:org/apache/camel/component/xquery/transform.xquery")
-                    .to("log:result?groupSize=100")
-                    .to("mock:result");
+                        .to("xquery:org/apache/camel/component/xquery/transform.xquery")
+                        .to("log:result?groupSize=100")
+                        .to("mock:result");
             }
         };
     }

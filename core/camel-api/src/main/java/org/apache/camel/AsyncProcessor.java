@@ -19,26 +19,26 @@ package org.apache.camel;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * An <b>asynchronous</b> processor which can process an {@link Exchange} in an asynchronous fashion
- * and signal completion by invoking the {@link AsyncCallback}.
+ * An <b>asynchronous</b> processor which can process an {@link Exchange} in an asynchronous fashion and signal
+ * completion by invoking the {@link AsyncCallback}.
  * <p/>
  * Any processor can be coerced to have an {@link AsyncProcessor} interface by using the
- * {@link org.apache.camel.support.AsyncProcessorConverterHelper#convert AsyncProcessorConverterHelper.convert}
- * method.
+ * {@link org.apache.camel.support.AsyncProcessorConverterHelper#convert AsyncProcessorConverterHelper.convert} method.
  */
 public interface AsyncProcessor extends Processor {
 
     /**
-     * Processes the message exchange.
-     * Similar to {@link Processor#process}, but the caller supports having the exchange asynchronously processed.
+     * Processes the message exchange. Similar to {@link Processor#process}, but the caller supports having the exchange
+     * asynchronously processed.
      * <p/>
      * If there was a failure processing then the caused {@link Exception} would be set on the {@link Exchange}.
      *
-     * @param exchange the message exchange
-     * @param callback the {@link AsyncCallback} will be invoked when the processing of the exchange is completed.
-     *                 If the exchange is completed synchronously, then the callback is also invoked synchronously.
-     *                 The callback should therefore be careful of starting recursive loop.
-     * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
+     * @param  exchange the message exchange
+     * @param  callback the {@link AsyncCallback} will be invoked when the processing of the exchange is completed. If
+     *                  the exchange is completed synchronously, then the callback is also invoked synchronously. The
+     *                  callback should therefore be careful of starting recursive loop.
+     * @return          (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being
+     *                  executed asynchronously
      */
     boolean process(Exchange exchange, AsyncCallback callback);
 

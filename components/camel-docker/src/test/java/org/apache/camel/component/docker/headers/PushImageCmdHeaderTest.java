@@ -40,7 +40,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
 
     @Mock
     private PushImageResultCallback callback;
-    
+
     private String userName = "jdoe";
     private String password = "password";
     private String email = "jdoe@example.com";
@@ -51,7 +51,6 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     @Test
     void pushImageHeaderTest() {
 
-
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_USERNAME, userName);
         headers.put(DockerConstants.DOCKER_PASSWORD, password);
@@ -60,12 +59,10 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         headers.put(DockerConstants.DOCKER_NAME, name);
         headers.put(DockerConstants.DOCKER_TAG, tag);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd(name);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
-
 
     }
 
@@ -96,6 +93,5 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         return clientProfile;
 
     }
-
 
 }

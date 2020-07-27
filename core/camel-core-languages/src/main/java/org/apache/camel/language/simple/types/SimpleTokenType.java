@@ -123,7 +123,7 @@ public final class SimpleTokenType {
     public boolean isNullValue() {
         return type == TokenType.nullValue;
     }
-    
+
     /**
      * Whether the type is a minus operator
      */

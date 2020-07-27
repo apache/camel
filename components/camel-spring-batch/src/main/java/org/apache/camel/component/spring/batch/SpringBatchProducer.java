@@ -42,7 +42,7 @@ public class SpringBatchProducer extends DefaultProducer {
     private final JobLauncher jobLauncher;
 
     private final Job job;
-    
+
     private final JobRegistry jobRegistry;
 
     public SpringBatchProducer(SpringBatchEndpoint endpoint, JobLauncher jobLauncher, Job job, JobRegistry jobRegistry) {
@@ -69,8 +69,11 @@ public class SpringBatchProducer extends DefaultProducer {
         }
 
         if (job2run == null) {
-            exchange.setException(new CamelExchangeException("jobName was not specified in the endpoint construction "
-                    + " and header " + SpringBatchConstants.JOB_NAME + " could not be found", exchange));
+            exchange.setException(new CamelExchangeException(
+                    "jobName was not specified in the endpoint construction "
+                                                             + " and header " + SpringBatchConstants.JOB_NAME
+                                                             + " could not be found",
+                    exchange));
             return;
         }
 
@@ -84,8 +87,8 @@ public class SpringBatchProducer extends DefaultProducer {
      * header values are converted to the appropriate types. All the other header values are converted to string
      * representation.
      *
-     * @param headers Camel message header to be converted
-     * @return Camel message headers converted into the Spring Batch parameters map
+     * @param  headers Camel message header to be converted
+     * @return         Camel message headers converted into the Spring Batch parameters map
      */
     protected JobParameters prepareJobParameters(Map<String, Object> headers) {
         JobParametersBuilder parametersBuilder = new JobParametersBuilder();

@@ -44,7 +44,7 @@ public interface JettyContentExchange {
     void setRequestContent(String data, String charset) throws UnsupportedEncodingException;
 
     void setRequestContent(InputStream ins);
-    
+
     void setRequestContent(InputStream ins, int contentLength);
 
     void addRequestHeader(String key, String s);
@@ -57,7 +57,7 @@ public interface JettyContentExchange {
     void send(HttpClient client) throws IOException;
 
     // Methods to retrieve the response
-    
+
     byte[] getBody();
 
     String getUrl();

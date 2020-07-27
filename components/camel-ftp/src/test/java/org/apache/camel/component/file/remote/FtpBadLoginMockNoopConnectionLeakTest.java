@@ -38,16 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test which checks leaking connections when FTP server returns correct status
- * for NOOP operation.
+ * Test which checks leaking connections when FTP server returns correct status for NOOP operation.
  */
 public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FtpBadLoginMockNoopConnectionLeakTest.class);
 
     /**
-     * Mapping of socket hashcode to two element tab ([connect() called, close()
-     * called])
+     * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
     private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
@@ -102,8 +100,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
     }
 
     /**
-     * {@link SocketFactory} which creates {@link Socket}s that expose
-     * statistics about
+     * {@link SocketFactory} which creates {@link Socket}s that expose statistics about
      * {@link Socket#connect(SocketAddress)}/{@link Socket#close()} invocations
      */
     private class AuditingSocketFactory extends SocketFactory {
@@ -126,7 +123,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
         @Override
         public Socket createSocket() throws IOException {
             AuditingSocket socket = new AuditingSocket();
-            socketAudits.put(System.identityHashCode(socket), new boolean[] {false, false});
+            socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
             return socket;
         }
 

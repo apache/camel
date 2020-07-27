@@ -34,13 +34,13 @@ public class SolrAddBeansTest extends SolrComponentTestSupport {
         //add bean1
         Item item1 = new Item();
         item1.id = TEST_ID;
-        item1.categories =  new String[] {"aaa", "bbb", "ccc"};
+        item1.categories = new String[] { "aaa", "bbb", "ccc" };
         beans.add(item1);
 
         //add bean2
         Item item2 = new Item();
         item2.id = TEST_ID2;
-        item2.categories =  new String[] {"aaa", "bbb", "ccc"};
+        item2.categories = new String[] { "aaa", "bbb", "ccc" };
         beans.add(item2);
 
         template.sendBodyAndHeader("direct:start", beans, SolrConstants.OPERATION, SolrConstants.OPERATION_ADD_BEANS);

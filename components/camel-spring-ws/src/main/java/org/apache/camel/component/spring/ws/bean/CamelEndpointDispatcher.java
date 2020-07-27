@@ -22,12 +22,12 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.server.endpoint.mapping.AbstractMapBasedEndpointMapping;
 
 /**
- * Spring {@link MessageEndpoint} for dispatching messages received by Spring-WS to a Camel
- * endpoint. This class needs to be registered in the Spring <tt>ApplicationContext</tt>
- * when consuming messages using the <tt>spring-ws:beanname:</tt> URI scheme.
+ * Spring {@link MessageEndpoint} for dispatching messages received by Spring-WS to a Camel endpoint. This class needs
+ * to be registered in the Spring <tt>ApplicationContext</tt> when consuming messages using the
+ * <tt>spring-ws:beanname:</tt> URI scheme.
  * <p/>
- * For example, when using a route such as <tt>from("spring-ws:beanname:stockQuote").to("...");</tt>
- * the following bean definition needs to be present in the <tt>ApplicationContext</tt>:
+ * For example, when using a route such as <tt>from("spring-ws:beanname:stockQuote").to("...");</tt> the following bean
+ * definition needs to be present in the <tt>ApplicationContext</tt>:
  * <p/>
  * {@code
  * <bean id="stockQuote" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />

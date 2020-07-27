@@ -36,7 +36,8 @@ public class AtomPollingUnthrottledTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&throttleEntries=false&initialDelay=0").to("mock:result");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&throttleEntries=false&initialDelay=0")
+                        .to("mock:result");
             }
         };
     }

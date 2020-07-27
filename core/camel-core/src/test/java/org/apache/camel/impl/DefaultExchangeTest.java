@@ -68,7 +68,8 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
     @Test
     public void testExceptionAsType() throws Exception {
-        exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
+        exchange.setException(
+                RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
 
         ConnectException ce = exchange.getException(ConnectException.class);
         assertNotNull(ce);

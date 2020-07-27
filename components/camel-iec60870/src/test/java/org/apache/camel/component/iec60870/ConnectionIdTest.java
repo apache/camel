@@ -47,7 +47,7 @@ public class ConnectionIdTest {
     @Test
     public void testIllegal1() {
         assertThrows(IllegalArgumentException.class,
-            () -> new ConnectionId("host", -1, "id"));
+                () -> new ConnectionId("host", -1, "id"));
     }
 
     @Test

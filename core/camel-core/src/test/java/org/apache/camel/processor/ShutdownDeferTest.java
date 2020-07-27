@@ -77,13 +77,14 @@ public class ShutdownDeferTest extends ContextTestSupport {
                 // will normally suspend, but by deferring this we can let route
                 // 1
                 // complete while shutting down
-                MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
+                MyDeferFileEndpoint defer = new MyDeferFileEndpoint(
+                        "file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
                 defer.setFile(new File("target/data/deferred"));
 
                 from(defer)
-                    // defer shutting down this route as the 1st route depends
-                    // upon it
-                    .startupOrder(2).shutdownRoute(Defer).to("mock:bar");
+                        // defer shutting down this route as the 1st route depends
+                        // upon it
+                        .startupOrder(2).shutdownRoute(Defer).to("mock:bar");
             }
             // END SNIPPET: e1
         };

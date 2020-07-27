@@ -60,7 +60,7 @@ public class KinesisFirehoseProducer extends DefaultProducer {
         putRecordRequest.setRecord(record);
         return putRecordRequest;
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

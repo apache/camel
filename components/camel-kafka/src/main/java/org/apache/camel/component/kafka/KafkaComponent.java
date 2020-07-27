@@ -78,8 +78,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * Allows to pre-configure the Kafka component with common options that the
-     * endpoints will reuse.
+     * Allows to pre-configure the Kafka component with common options that the endpoints will reuse.
      */
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
@@ -103,11 +102,9 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * Factory to use for creating {@link KafkaManualCommit} instances. This
-     * allows to plugin a custom factory to create custom
-     * {@link KafkaManualCommit} instances in case special logic is needed when
-     * doing manual commits that deviates from the default implementation that
-     * comes out of the box.
+     * Factory to use for creating {@link KafkaManualCommit} instances. This allows to plugin a custom factory to create
+     * custom {@link KafkaManualCommit} instances in case special logic is needed when doing manual commits that
+     * deviates from the default implementation that comes out of the box.
      */
     public void setKafkaManualCommitFactory(KafkaManualCommitFactory kafkaManualCommitFactory) {
         this.kafkaManualCommitFactory = kafkaManualCommitFactory;

@@ -64,8 +64,9 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
     @Test
     public void testHttpProxyFormHeader() throws Exception {
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password", Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded",
-                                                   String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password",
+                Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded",
+                String.class);
         assertEquals("username=abc&pass=password", out, "Get a wrong response message");
     }
 
@@ -73,14 +74,16 @@ public class HttpProxyRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://http://localhost:{{port}}").to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty://http://localhost:{{port}}")
+                        .to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port}}/proxy?matchOnUriPrefix=true")
-                    .to("http://localhost:{{port}}/otherEndpoint?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .to("http://localhost:{{port}}/otherEndpoint?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port}}/bye").transform(header("foo").prepend("Bye "));
 
-                from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true").transform(header(Exchange.HTTP_URI));
+                from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true")
+                        .transform(header(Exchange.HTTP_URI));
 
                 from("jetty://http://localhost:{{port}}/proxyServer").to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
 

@@ -29,8 +29,8 @@ import org.infinispan.client.hotrod.event.ClientCacheEntryRemovedEvent;
 import org.infinispan.client.hotrod.event.ClientEvent;
 
 /**
- * This class is supposed to be extended by users and annotated with @ClientListener
- * and passed to the consumer endpoint through the 'customListener' parameter.
+ * This class is supposed to be extended by users and annotated with @ClientListener and passed to the consumer endpoint
+ * through the 'customListener' parameter.
  */
 public abstract class InfinispanRemoteCustomListener extends InfinispanCustomListener {
     public InfinispanRemoteCustomListener() {

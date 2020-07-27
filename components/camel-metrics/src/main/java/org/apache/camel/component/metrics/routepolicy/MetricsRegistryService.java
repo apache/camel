@@ -40,7 +40,8 @@ import org.apache.camel.support.service.ServiceSupport;
  * Service holding the {@link MetricRegistry} which registers all metrics.
  */
 @ManagedResource(description = "MetricsRegistry")
-public final class MetricsRegistryService extends ServiceSupport implements CamelContextAware, StaticService, MetricsRegistryMBean {
+public final class MetricsRegistryService extends ServiceSupport
+        implements CamelContextAware, StaticService, MetricsRegistryMBean {
 
     private CamelContext camelContext;
     private MetricRegistry metricsRegistry;
@@ -128,7 +129,8 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             // they both use same units so reuse
             this.secondsMapper = this.mapper;
         } else {
-            this.secondsMapper = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
+            this.secondsMapper
+                    = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
         }
     }
 

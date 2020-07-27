@@ -45,7 +45,7 @@ public class RoutesConfigurer {
     /**
      * Creates a new routes configurer
      *
-     * @param routesCollector  routes collector
+     * @param routesCollector routes collector
      */
     public RoutesConfigurer(RoutesCollector routesCollector) {
         this(routesCollector, new ArrayList<>());
@@ -54,8 +54,8 @@ public class RoutesConfigurer {
     /**
      * Creates a new routes configurer
      *
-     * @param routesCollector  routes collector
-     * @param routesBuilders   existing route builders
+     * @param routesCollector routes collector
+     * @param routesBuilders  existing route builders
      */
     public RoutesConfigurer(RoutesCollector routesCollector, List<RoutesBuilder> routesBuilders) {
         this.routesCollector = routesCollector;
@@ -70,11 +70,11 @@ public class RoutesConfigurer {
     }
 
     /**
-     * Collects routes and rests from the various sources (like registry or opinionated
-     * classpath locations) and injects (adds) these into the Camel context.
+     * Collects routes and rests from the various sources (like registry or opinionated classpath locations) and injects
+     * (adds) these into the Camel context.
      *
-     * @param camelContext  the Camel context
-     * @param config        the configuration
+     * @param camelContext the Camel context
+     * @param config       the configuration
      */
     public void configureRoutes(CamelContext camelContext, DefaultConfigurationProperties config) {
         if (config.isRoutesCollectorEnabled()) {
@@ -96,7 +96,8 @@ public class RoutesConfigurer {
 
                 boolean scan = !config.getXmlRoutes().equals("false");
                 if (scan) {
-                    List<RoutesDefinition> defs = routesCollector.collectXmlRoutesFromDirectory(camelContext, config.getXmlRoutes());
+                    List<RoutesDefinition> defs
+                            = routesCollector.collectXmlRoutesFromDirectory(camelContext, config.getXmlRoutes());
                     for (RoutesDefinition def : defs) {
                         LOG.debug("Adding routes into CamelContext from XML files: {}", config.getXmlRoutes());
                         camelContext.getExtension(Model.class).addRouteDefinitions(def.getRoutes());
@@ -105,7 +106,8 @@ public class RoutesConfigurer {
 
                 boolean scanTemplates = !config.getXmlRouteTemplates().equals("false");
                 if (scanTemplates) {
-                    List<RouteTemplatesDefinition> defs = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext, config.getXmlRouteTemplates());
+                    List<RouteTemplatesDefinition> defs = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext,
+                            config.getXmlRouteTemplates());
                     for (RouteTemplatesDefinition def : defs) {
                         LOG.debug("Adding route templates into CamelContext from XML files: {}", config.getXmlRouteTemplates());
                         camelContext.getExtension(Model.class).addRouteTemplateDefinitions(def.getRouteTemplates());
@@ -114,7 +116,8 @@ public class RoutesConfigurer {
 
                 boolean scanRests = !config.getXmlRests().equals("false");
                 if (scanRests) {
-                    List<RestsDefinition> defs = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
+                    List<RestsDefinition> defs
+                            = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
                     for (RestsDefinition def : defs) {
                         LOG.debug("Adding rests into CamelContext from XML files: {}", config.getXmlRests());
                         camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), addRestsToRoutes);

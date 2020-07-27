@@ -72,8 +72,8 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
                         return oldExchange;
                     }
                 }).parallelProcessing().streaming().to("direct:a", "direct:b")
-                    // use end to indicate end of multicast route
-                    .end().to("mock:result");
+                        // use end to indicate end of multicast route
+                        .end().to("mock:result");
 
                 from("direct:a").delay(250).asyncDelayed().setBody(constant("A"));
 

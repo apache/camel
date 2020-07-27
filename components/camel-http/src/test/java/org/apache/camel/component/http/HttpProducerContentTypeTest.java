@@ -43,13 +43,10 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/content", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/content", (request, response, context) -> {
                     String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
 
                     assertEquals(CONTENT_TYPE, contentType);

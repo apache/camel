@@ -44,13 +44,10 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
@@ -96,7 +93,9 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     @Test
     public void httpGetWhichReturnsHttp501WithIgnoreResponseBody() throws Exception {
-        Exchange exchange = template.request(baseUrl + "/XXX?throwExceptionOnFailure=false&ignoreResponseBody=true", exchange1 -> { });
+        Exchange exchange
+                = template.request(baseUrl + "/XXX?throwExceptionOnFailure=false&ignoreResponseBody=true", exchange1 -> {
+                });
 
         assertNotNull(exchange);
 
@@ -111,7 +110,8 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     @Test
     public void httpGetWhichReturnsHttp501ShouldThrowAnExceptionWithIgnoreResponseBody() throws Exception {
-        Exchange reply = template.request(baseUrl + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", exchange -> { });
+        Exchange reply = template.request(baseUrl + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", exchange -> {
+        });
 
         Exception e = reply.getException();
         assertNotNull(e, "Should have thrown an exception");

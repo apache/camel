@@ -32,13 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ASN1MessageIterator implements Iterator<Message>, Closeable {
-    
+
     static final Logger LOGGER = LoggerFactory.getLogger(ASN1MessageIterator.class);
-    
+
     private final Exchange exchange;
     private volatile ASN1InputStream asn1InputStream;
     private volatile Message parent;
-    
+
     public ASN1MessageIterator(Exchange exchange, InputStream inputStream) {
         this.exchange = exchange;
         if (inputStream instanceof ASN1InputStream) {
@@ -71,7 +71,7 @@ public class ASN1MessageIterator implements Iterator<Message>, Closeable {
             throw new RuntimeCamelException(exception);
         }
     }
-    
+
     private Message getNextElement() {
         if (asn1InputStream == null) {
             return null;
@@ -93,11 +93,11 @@ public class ASN1MessageIterator implements Iterator<Message>, Closeable {
             throw new RuntimeCamelException(exception);
         }
     }
-    
+
     private ASN1Primitive getNextEntry() throws IOException {
         return asn1InputStream.readObject();
     }
-    
+
     @Override
     public void remove() {
         throw new UnsupportedOperationException();
@@ -114,7 +114,7 @@ public class ASN1MessageIterator implements Iterator<Message>, Closeable {
 
         return answer;
     }
-    
+
     private void checkNullAnswer(Message answer) {
         if (answer == null && asn1InputStream != null) {
             IOHelper.close(asn1InputStream);

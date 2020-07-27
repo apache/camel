@@ -41,11 +41,12 @@ public class RestNettyHttpGetTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use netty-http on localhost with the given port
-                restConfiguration().component("netty-http").host("localhost").port(getPort()).endpointProperty("nettyHttpBinding", "#mybinding");
+                restConfiguration().component("netty-http").host("localhost").port(getPort())
+                        .endpointProperty("nettyHttpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("{id}/basic")
+                        .get("{id}/basic")
                         .route()
                         .to("mock:input")
                         .process(exchange -> {

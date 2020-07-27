@@ -39,7 +39,8 @@ import org.springframework.context.ApplicationContextAware;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelConsumerTemplateFactoryBean extends AbstractCamelConsumerTemplateFactoryBean implements FactoryBean<ConsumerTemplate>, InitializingBean, DisposableBean, ApplicationContextAware {
+public class CamelConsumerTemplateFactoryBean extends AbstractCamelConsumerTemplateFactoryBean
+        implements FactoryBean<ConsumerTemplate>, InitializingBean, DisposableBean, ApplicationContextAware {
 
     @XmlTransient
     private ApplicationContext applicationContext;

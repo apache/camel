@@ -40,7 +40,7 @@ public class PgReplicationSlotIntegrationTest extends CamelTestSupport {
     private MockEndpoint mockEndpoint;
 
     @EndpointInject("pg-replication-slot://{{host}}:{{port}}/{{database}}/camel_test_slot:test_decoding?"
-            + "user={{username}}&password={{password}}&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false")
+                    + "user={{username}}&password={{password}}&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false")
     private Endpoint pgReplicationSlotEndpoint;
 
     @PropertyInject("host")

@@ -41,7 +41,7 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
         userids.add(getKeyUserId());
         return userids;
     }
-    
+
     // setup a wrong signature userids
     @Override
     protected List<String> getSignatureKeyUserIds() {

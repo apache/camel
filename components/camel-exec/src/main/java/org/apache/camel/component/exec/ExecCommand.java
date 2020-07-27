@@ -121,7 +121,8 @@ public class ExecCommand implements Serializable {
         String dirToPrint = workingDir == null ? "null" : workingDir;
         String outFileToPrint = outFile == null ? "null" : outFile.getPath();
         return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout + ", outFile="
-                + outFileToPrint + ", workingDir=" + dirToPrint + ", commandLogLevel=" + commandLogLevel + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
+               + outFileToPrint + ", workingDir=" + dirToPrint + ", commandLogLevel=" + commandLogLevel
+               + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
     }
 
     private <T> List<T> unmodifiableOrEmptyList(List<T> list) {

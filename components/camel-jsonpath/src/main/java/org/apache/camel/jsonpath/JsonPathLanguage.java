@@ -50,7 +50,7 @@ public class JsonPathLanguage extends LanguageSupport {
     }
 
     public void setOption(Option option) {
-        this.options = new Option[]{option};
+        this.options = new Option[] { option };
     }
 
     public void setOptions(Option[] options) {

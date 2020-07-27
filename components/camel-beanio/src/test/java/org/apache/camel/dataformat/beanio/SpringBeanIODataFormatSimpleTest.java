@@ -30,8 +30,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringBeanIODataFormatSimpleTest extends CamelSpringTestSupport {
 
     private static final String FIXED_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
-            + "Jane,Doe,Architect,80000,01152008" + Constants.LS
-            + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
+                                             + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+                                             + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

@@ -48,10 +48,10 @@ public class Jms1TopicDurableTest extends BaseJms2TestSupport {
             @Override
             public void configure() {
                 from("jms:topic:foo?clientId=123&durableSubscriptionName=bar")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("jms:topic:foo?clientId=456&durableSubscriptionName=bar")
-                    .to("mock:result2");
+                        .to("mock:result2");
             }
         };
     }

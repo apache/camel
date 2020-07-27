@@ -35,9 +35,11 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     public void createProducerMinimalConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:commonAPI:/workers?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&reportFormat=json");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint("workday:commonAPI:/workers?" + "host=impl.workday.com" + "&tenant=camel"
+                                + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&reportFormat=json");
 
         WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
 
@@ -56,9 +58,11 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
         try {
 
-            WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-                .createEndpoint("workday:commonAPI:/workers?" + "tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
+            WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                    .createEndpoint(
+                            "workday:commonAPI:/workers?" + "tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                    + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                    + "&format=json");
         } catch (Exception exception) {
 
             assertEquals(exception.getClass(), IllegalArgumentException.class);
@@ -73,10 +77,11 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     public void createProducerInvalidAPIConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:commonAPI:/worker?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint("workday:commonAPI:/worker?" + "host=impl.workday.com" + "&tenant=camel"
+                                + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&format=json");
 
         WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
@@ -97,10 +102,11 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     public void createProducerWorkersValidAPIConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:commonAPI:/workers?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint("workday:commonAPI:/workers?" + "host=impl.workday.com" + "&tenant=camel"
+                                + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&format=json");
 
         WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
@@ -113,26 +119,30 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     public void createProducerPayslipByIDValidAPIConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:commonAPI:/workers/4ab56f4b34c4b4a2be3e4f5a732c2343/paySlips/4ab56f4c39c4b4a2bf3e4f5a732c2343?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint(
+                        "workday:commonAPI:/workers/4ab56f4b34c4b4a2be3e4f5a732c2343/paySlips/4ab56f4c39c4b4a2bf3e4f5a732c2343?"
+                                + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&format=json");
 
         WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
         String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
 
-        assertEquals(workdayUri, "https://impl.workday.com/ccx/api/v1/camel/workers/4ab56f4b34c4b4a2be3e4f5a732c2343/paySlips/4ab56f4c39c4b4a2bf3e4f5a732c2343");
+        assertEquals(workdayUri,
+                "https://impl.workday.com/ccx/api/v1/camel/workers/4ab56f4b34c4b4a2be3e4f5a732c2343/paySlips/4ab56f4c39c4b4a2bf3e4f5a732c2343");
     }
 
     @Test
     public void createProducerCurrenciesValidConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:commonAPI:/currencies?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint("workday:commonAPI:/currencies?" + "host=impl.workday.com" + "&tenant=camel"
+                                + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&format=json");
 
         WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
@@ -143,15 +153,15 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     public void createProducerCurrenciesInvalidIDConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday:commonAPI:/currencies/4ab56f4b34c4b4a2be3g4f5a732c2343?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                            + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                .createEndpoint("workday:commonAPI:/currencies/4ab56f4b34c4b4a2be3g4f5a732c2343?" + "host=impl.workday.com"
+                                + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                + "&format=json");
 
         WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
         assertThrows(MalformedURLException.class,
-            () -> workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration()));
+                () -> workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration()));
     }
 }
-

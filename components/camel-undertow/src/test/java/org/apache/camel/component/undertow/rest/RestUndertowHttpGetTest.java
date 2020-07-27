@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestUndertowHttpGetTest extends BaseUndertowTest {
-    
+
     @Test
     public void testProducerGet() throws Exception {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/123/basic", null, String.class);
@@ -40,7 +40,7 @@ public class RestUndertowHttpGetTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("{id}/basic")
+                        .get("{id}/basic")
                         .route()
                         .to("mock:input")
                         .process(exchange -> {

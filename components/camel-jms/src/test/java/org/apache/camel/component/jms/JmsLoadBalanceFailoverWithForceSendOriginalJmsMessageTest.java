@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends CamelTestSupport {
     private boolean forceSendOriginalMessage = true;
-    
+
     @Test
     public void testFailover() throws Exception {
         MockEndpoint oneMock = getMockEndpoint("mock:one");
@@ -44,48 +44,48 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
         oneMock.expectedMessageCount(1);
         oneMock.expectedHeaderReceived("foo", "bar");
         twoMock.expectedMessageCount(1);
-        twoMock.expectedHeaderReceived("foo", "bar");           
+        twoMock.expectedHeaderReceived("foo", "bar");
         threeMock.expectedMessageCount(0);
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
 
         String out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
         assertEquals("Hello Back", out);
-        
+
         assertMockEndpointsSatisfied();
-        
+
         // we should get an ActiveMQTextMessage with the body and custom header intact
         assertEquals(ActiveMQTextMessage.class, oneMock.getExchanges().get(0).getIn().getBody().getClass());
         assertEquals("Hello World", ((ActiveMQTextMessage) oneMock.getExchanges().get(0).getIn().getBody()).getText());
-        assertEquals("bar", ((ActiveMQTextMessage) oneMock.getExchanges().get(0).getIn().getBody()).getStringProperty("foo"));        
-        
+        assertEquals("bar", ((ActiveMQTextMessage) oneMock.getExchanges().get(0).getIn().getBody()).getStringProperty("foo"));
+
         assertEquals(ActiveMQTextMessage.class, twoMock.getExchanges().get(0).getIn().getBody().getClass());
         assertEquals("Hello World", ((ActiveMQTextMessage) twoMock.getExchanges().get(0).getIn().getBody()).getText());
-        assertEquals("bar", ((ActiveMQTextMessage) twoMock.getExchanges().get(0).getIn().getBody()).getStringProperty("foo"));     
-        
+        assertEquals("bar", ((ActiveMQTextMessage) twoMock.getExchanges().get(0).getIn().getBody()).getStringProperty("foo"));
+
         // reset mocks
         oneMock.reset();
-        twoMock.reset();                   
+        twoMock.reset();
         threeMock.reset();
         resultMock.reset();
-        
+
         // the round robin should now be at three so one and two should be skipped
-        
+
         oneMock.expectedMessageCount(0);
-        twoMock.expectedMessageCount(0);          
+        twoMock.expectedMessageCount(0);
         threeMock.expectedMessageCount(1);
         threeMock.expectedHeaderReceived("foo", "bar");
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
-        
+
         out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
-        
+
         assertEquals(ActiveMQTextMessage.class, threeMock.getExchanges().get(0).getIn().getBody().getClass());
         assertEquals("Hello World", ((ActiveMQTextMessage) threeMock.getExchanges().get(0).getIn().getBody()).getText());
-        assertEquals("bar", ((ActiveMQTextMessage) threeMock.getExchanges().get(0).getIn().getBody()).getStringProperty("foo"));         
+        assertEquals("bar", ((ActiveMQTextMessage) threeMock.getExchanges().get(0).getIn().getBody()).getStringProperty("foo"));
     }
 
     @Override
@@ -94,24 +94,24 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
             @Override
             public void configure() throws Exception {
                 from("jms:queue:start?mapJmsMessage=false")
-                    .loadBalance().failover(-1, false, true)
+                        .loadBalance().failover(-1, false, true)
                         .to("jms:queue:one?forceSendOriginalMessage=" + forceSendOriginalMessage)
                         .to("jms:queue:two?forceSendOriginalMessage=" + forceSendOriginalMessage)
                         .to("jms:queue:three?forceSendOriginalMessage=" + forceSendOriginalMessage)
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("jms:queue:one?mapJmsMessage=false")
-                    .to("mock:one")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .to("mock:one")
+                        .throwException(new IllegalArgumentException("Damn"));
 
                 from("jms:queue:two?mapJmsMessage=false")
-                    .to("mock:two")
-                    .transform().simple("Hello Back");
-                
+                        .to("mock:two")
+                        .transform().simple("Hello Back");
+
                 from("jms:queue:three?mapJmsMessage=false")
-                    .to("mock:three")
-                    .transform().simple("Bye World");
+                        .to("mock:three")
+                        .transform().simple("Bye World");
             }
         };
     }

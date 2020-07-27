@@ -22,5 +22,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsService;
 
 @ManagedResource(description = "MicroProfileMetricsMessageHistory")
-public final class MicroProfileMetricsMessageHistoryService extends MicroProfileMetricsService implements CamelContextAware, StaticService {
+public final class MicroProfileMetricsMessageHistoryService extends MicroProfileMetricsService
+        implements CamelContextAware, StaticService {
 }

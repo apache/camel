@@ -39,17 +39,20 @@ public class PulsarTestSupport extends ContainerAwareTestSupport {
     }
 
     public static GenericContainer pulsarContainer() {
-        return new GenericContainer(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME).withExposedPorts(BROKER_PORT, BROKER_HTTP_PORT)
-            .withCommand("/pulsar/bin/pulsar", "standalone", "--no-functions-worker", "-nss")
-            .waitingFor(Wait.forHttp(WAIT_FOR_ENDPOINT).forStatusCode(200).forPort(BROKER_HTTP_PORT));
+        return new GenericContainer(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME)
+                .withExposedPorts(BROKER_PORT, BROKER_HTTP_PORT)
+                .withCommand("/pulsar/bin/pulsar", "standalone", "--no-functions-worker", "-nss")
+                .waitingFor(Wait.forHttp(WAIT_FOR_ENDPOINT).forStatusCode(200).forPort(BROKER_HTTP_PORT));
     }
 
     public String getPulsarBrokerUrl() {
-        return String.format("pulsar://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_PORT));
+        return String.format("pulsar://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(),
+                getContainer(CONTAINER_NAME).getMappedPort(BROKER_PORT));
     }
 
     public String getPulsarAdminUrl() {
-        return String.format("http://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_HTTP_PORT));
+        return String.format("http://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(),
+                getContainer(CONTAINER_NAME).getMappedPort(BROKER_HTTP_PORT));
     }
 
     protected long containerShutdownTimeout() {

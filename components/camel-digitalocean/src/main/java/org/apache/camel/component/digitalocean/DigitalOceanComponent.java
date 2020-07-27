@@ -42,7 +42,8 @@ public class DigitalOceanComponent extends DefaultComponent {
         DigitalOceanEndpoint endpoint = new DigitalOceanEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        if (ObjectHelper.isEmpty(configuration.getOAuthToken()) && ObjectHelper.isEmpty(configuration.getDigitalOceanClient())) {
+        if (ObjectHelper.isEmpty(configuration.getOAuthToken())
+                && ObjectHelper.isEmpty(configuration.getDigitalOceanClient())) {
             throw new DigitalOceanException("oAuthToken or digitalOceanClient must be specified");
         }
 

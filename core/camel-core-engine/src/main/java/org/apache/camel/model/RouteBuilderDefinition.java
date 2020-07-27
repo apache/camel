@@ -29,8 +29,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to
- * use.
+ * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to use.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeBuilder")

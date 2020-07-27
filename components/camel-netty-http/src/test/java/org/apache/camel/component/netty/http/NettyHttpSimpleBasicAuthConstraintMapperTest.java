@@ -58,7 +58,8 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello Public", "Hello World");
 
         // we dont need auth for the public page
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo/public/hello.txt", "Hello Public", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo/public/hello.txt", "Hello Public",
+                String.class);
         assertEquals("Bye World", out);
 
         try {
@@ -71,7 +72,8 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+        out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth,
+                String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -83,9 +85,9 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true"
-                        + "&securityConfiguration.realm=karaf&securityConfiguration.securityConstraint=#myConstraint")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                     + "&securityConfiguration.realm=karaf&securityConfiguration.securityConstraint=#myConstraint")
+                             .to("mock:input")
+                             .transform().constant("Bye World");
             }
         };
     }

@@ -48,8 +48,8 @@ public final class URISupport {
     /**
      * Normalizes the URI so unsafe characters is encoded
      *
-     * @param uri the input uri
-     * @return as URI instance
+     * @param  uri                the input uri
+     * @return                    as URI instance
      * @throws URISyntaxException is thrown if syntax error in the input uri
      */
     public static URI normalizeUri(String uri) throws URISyntaxException {
@@ -76,8 +76,8 @@ public final class URISupport {
     /**
      * Strips the query parameters from the uri
      *
-     * @param uri  the uri
-     * @return the uri without the query parameter
+     * @param  uri the uri
+     * @return     the uri without the query parameter
      */
     public static String stripQuery(String uri) {
         int idx = uri.indexOf('?');
@@ -90,8 +90,8 @@ public final class URISupport {
     /**
      * Parses the query parameters of the uri (eg the query part).
      *
-     * @param uri the uri
-     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @param  uri                the uri
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     public static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
@@ -116,9 +116,9 @@ public final class URISupport {
      * <p/>
      * Returns the value as-is if not starting with the prefix.
      *
-     * @param value  the value
-     * @param prefix the prefix to remove from value
-     * @return the value without the prefix
+     * @param  value  the value
+     * @param  prefix the prefix to remove from value
+     * @return        the value without the prefix
      */
     public static String stripPrefix(String value, String prefix) {
         if (value != null && value.startsWith(prefix)) {
@@ -130,15 +130,15 @@ public final class URISupport {
     /**
      * Parses the query part of the uri (eg the parameters).
      * <p/>
-     * The URI parameters will by default be URI encoded. However you can define a parameter
-     * values with the syntax: <tt>key=RAW(value)</tt> which tells Camel to not encode the value,
-     * and use the value as is (eg key=value) and the value has <b>not</b> been encoded.
+     * The URI parameters will by default be URI encoded. However you can define a parameter values with the syntax:
+     * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
+     * value has <b>not</b> been encoded.
      *
-     * @param uri the uri
-     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @param  uri                the uri
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @see                       #RAW_TOKEN_START
+     * @see                       #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
         return parseQuery(uri, false);
@@ -147,16 +147,16 @@ public final class URISupport {
     /**
      * Parses the query part of the uri (eg the parameters).
      * <p/>
-     * The URI parameters will by default be URI encoded. However you can define a parameter
-     * values with the syntax: <tt>key=RAW(value)</tt> which tells Camel to not encode the value,
-     * and use the value as is (eg key=value) and the value has <b>not</b> been encoded.
+     * The URI parameters will by default be URI encoded. However you can define a parameter values with the syntax:
+     * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
+     * value has <b>not</b> been encoded.
      *
-     * @param uri the uri
-     * @param useRaw whether to force using raw values
-     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @param  uri                the uri
+     * @param  useRaw             whether to force using raw values
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @see                       #RAW_TOKEN_START
+     * @see                       #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
         if (isEmpty(uri)) {
@@ -166,8 +166,9 @@ public final class URISupport {
 
         // must check for trailing & as the uri.split("&") will ignore those
         if (uri.endsWith("&")) {
-            throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
-                    + "Check the uri and remove the trailing & marker.");
+            throw new URISyntaxException(
+                    uri, "Invalid uri syntax: Trailing & marker found. "
+                         + "Check the uri and remove the trailing & marker.");
         }
 
         // need to parse the uri query parameters manually as we cannot rely on splitting by &,
@@ -284,7 +285,8 @@ public final class URISupport {
     }
 
     @SuppressWarnings("unchecked")
-    private static void addParameter(String name, String value, Map<String, Object> map, boolean isRaw) throws UnsupportedEncodingException {
+    private static void addParameter(String name, String value, Map<String, Object> map, boolean isRaw)
+            throws UnsupportedEncodingException {
         name = URLDecoder.decode(name, CHARSET);
         if (!isRaw) {
             // need to replace % with %25
@@ -337,8 +339,9 @@ public final class URISupport {
         return answer;
     }
 
-    private static int scanRawToEnd(String str, int start, String tokenStart, char tokenEnd,
-                                    List<Pair<Integer>> answer) {
+    private static int scanRawToEnd(
+            String str, int start, String tokenStart, char tokenEnd,
+            List<Pair<Integer>> answer) {
         // we search the first end bracket to close the RAW token
         // as opposed to parsing query, this doesn't allow the occurrences of end brackets
         // inbetween because this may be used on the host/path parts of URI
@@ -382,12 +385,14 @@ public final class URISupport {
     /**
      * Assembles a query from the given map.
      *
-     * @param options  the map with the options (eg key/value pairs)
-     * @param ampersand to use & for Java code, and &amp; for XML
-     * @return a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no options.
+     * @param  options            the map with the options (eg key/value pairs)
+     * @param  ampersand          to use & for Java code, and &amp; for XML
+     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
+     *                            is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    public static String createQueryString(Map<String, String> options, String ampersand, boolean encode) throws URISyntaxException {
+    public static String createQueryString(Map<String, String> options, String ampersand, boolean encode)
+            throws URISyntaxException {
         try {
             if (options.size() > 0) {
                 StringBuilder rc = new StringBuilder();
@@ -417,7 +422,8 @@ public final class URISupport {
         }
     }
 
-    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode) throws UnsupportedEncodingException {
+    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode)
+            throws UnsupportedEncodingException {
         if (encode) {
             rc.append(URLEncoder.encode(key, CHARSET));
         } else {
@@ -444,8 +450,8 @@ public final class URISupport {
     /**
      * Tests whether the value is <tt>null</tt> or an empty string.
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @return true if empty
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if empty
      */
     public static boolean isEmpty(Object value) {
         return !isNotEmpty(value);
@@ -454,8 +460,8 @@ public final class URISupport {
     /**
      * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @return true if <b>not</b> empty
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Object value) {
         if (value == null) {

@@ -39,7 +39,8 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
         assertEquals(200, response.getResponseCode());
@@ -66,9 +67,9 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
                 restConfiguration().component("servlet").bindingMode(RestBindingMode.json);
 
                 rest("/users/")
-                    // REST binding converts from JSON to UserPojo
-                    .post("new").type(UserPojo.class)
-                    .route()
+                        // REST binding converts from JSON to UserPojo
+                        .post("new").type(UserPojo.class)
+                        .route()
                         // then contract advice converts from UserPojo to UserPojoEx
                         .inputType(UserPojoEx.class)
                         .to("mock:input");

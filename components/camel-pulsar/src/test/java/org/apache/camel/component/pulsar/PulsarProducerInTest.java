@@ -40,7 +40,8 @@ public class PulsarProducerInTest extends PulsarTestSupport {
     @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive" + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1"
                     + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from;
 

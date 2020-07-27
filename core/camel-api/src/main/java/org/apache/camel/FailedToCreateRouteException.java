@@ -26,19 +26,21 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
     private final String routeId;
 
     public FailedToCreateRouteException(String routeId, String route, Throwable cause) {
-        super("Failed to create route " + routeId + ": " + getRouteMessage(route) + " because of " + getExceptionMessage(cause), cause);
+        super("Failed to create route " + routeId + ": " + getRouteMessage(route) + " because of " + getExceptionMessage(cause),
+              cause);
         this.routeId = routeId;
     }
 
     public FailedToCreateRouteException(String routeId, String route, String at, Throwable cause) {
-        super("Failed to create route " + routeId + " at: >>> " + at + " <<< in route: " + getRouteMessage(route) + " because of " + getExceptionMessage(cause), cause);
+        super("Failed to create route " + routeId + " at: >>> " + at + " <<< in route: " + getRouteMessage(route)
+              + " because of " + getExceptionMessage(cause), cause);
         this.routeId = routeId;
     }
 
     public String getRouteId() {
         return routeId;
     }
-    
+
     protected static String getExceptionMessage(Throwable cause) {
         return cause.getMessage() != null ? cause.getMessage() : cause.getClass().getSimpleName();
     }

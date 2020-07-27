@@ -29,7 +29,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Expose gRPC endpoints and access external gRPC endpoints.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service", category = {Category.RPC})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service",
+             category = { Category.RPC })
 public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;

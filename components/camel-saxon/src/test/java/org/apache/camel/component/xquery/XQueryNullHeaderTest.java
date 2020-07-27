@@ -30,7 +30,8 @@ public class XQueryNullHeaderTest extends CamelSpringTestSupport {
                                     + "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
 
         template.sendBodyAndHeader("direct:start", "<person user='James'><firstName>James</firstName>"
-                          + "<lastName>Strachan</lastName><city>London</city></person>", "foo", "123");
+                                                   + "<lastName>Strachan</lastName><city>London</city></person>",
+                "foo", "123");
 
         assertMockEndpointsSatisfied();
     }
@@ -42,7 +43,8 @@ public class XQueryNullHeaderTest extends CamelSpringTestSupport {
                                     + "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
 
         template.sendBodyAndHeader("direct:start", "<person user='James'><firstName>James</firstName>"
-                          + "<lastName>Strachan</lastName><city>London</city></person>", "foo", null);
+                                                   + "<lastName>Strachan</lastName><city>London</city></person>",
+                "foo", null);
 
         assertMockEndpointsSatisfied();
     }

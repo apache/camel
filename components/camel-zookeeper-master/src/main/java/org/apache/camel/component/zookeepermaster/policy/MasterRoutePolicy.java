@@ -42,9 +42,8 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link org.apache.camel.spi.RoutePolicy} to run the route in master/slave mode.
  * <p/>
- * <b>Important:</b> Make sure to set the route to autoStartup=false as the route lifecycle
- * is controlled by this route policy which will start/stop the route accordingly to being
- * the master in the zookeeper cluster group.
+ * <b>Important:</b> Make sure to set the route to autoStartup=false as the route lifecycle is controlled by this route
+ * policy which will start/stop the route accordingly to being the master in the zookeeper cluster group.
  */
 @ManagedResource(description = "Managed MasterRoutePolicy")
 public class MasterRoutePolicy extends RoutePolicySupport implements CamelContextAware {
@@ -82,8 +81,8 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
     }
 
     /**
-     * The root path to use in zookeeper where information is stored which nodes are master/slave etc.
-     * Will by default use: /camel/zookeepermaster/clusters/master
+     * The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default
+     * use: /camel/zookeepermaster/clusters/master
      */
     public void setZkRoot(String zkRoot) {
         this.zkRoot = zkRoot;
@@ -181,9 +180,9 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         }
         try {
             return new ObjectMapper()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .writeValueAsString(groupListener.getGroup().slaves());
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .writeValueAsString(groupListener.getGroup().slaves());
         } catch (Exception e) {
             return null;
         }
@@ -225,7 +224,8 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         this.groupListener.setZooKeeperPassword(zooKeeperPassword);
         ServiceHelper.startService(groupListener);
 
-        LOG.info("Attempting to become master for endpoint: " + route.getEndpoint() + " in " + getCamelContext() + " with singletonID: " + getGroupName());
+        LOG.info("Attempting to become master for endpoint: " + route.getEndpoint() + " in " + getCamelContext()
+                 + " with singletonID: " + getGroupName());
         thisNodeState = createNodeState();
         groupListener.updateState(thisNodeState);
     }

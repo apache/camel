@@ -33,19 +33,16 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A {@link org.apache.camel.Expression} which can be used to split a {@link MailMessage}
- * per attachment. For example if a mail message has 5 attachments, then this
- * expression will return a <tt>List&lt;Message&gt;</tt> that contains 5 {@link Message}.
- * The message is split:
+ * A {@link org.apache.camel.Expression} which can be used to split a {@link MailMessage} per attachment. For example if
+ * a mail message has 5 attachments, then this expression will return a <tt>List&lt;Message&gt;</tt> that contains 5
+ * {@link Message}. The message is split:
  * <table>
- *   <tr>
- *     <td>As a byte[] or String</td>
- *     <td>
- *       The attachments are split into new messages as the body. This allows the split messages to be easily used by
- *       other processors / routes, as many other camel components can work on the byte[] or String, e.g. it can be written to disk
- *       using camel-file.
- *     </td>
- *   </tr>
+ * <tr>
+ * <td>As a byte[] or String</td>
+ * <td>The attachments are split into new messages as the body. This allows the split messages to be easily used by
+ * other processors / routes, as many other camel components can work on the byte[] or String, e.g. it can be written to
+ * disk using camel-file.</td>
+ * </tr>
  * </table>
  *
  * In both cases the attachment name is written to a the camel header &quot;CamelSplitAttachmentId&quot;
@@ -83,7 +80,8 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         }
     }
 
-    private Message extractAttachment(Attachment attachment, String attachmentName, CamelContext camelContext) throws Exception {
+    private Message extractAttachment(Attachment attachment, String attachmentName, CamelContext camelContext)
+            throws Exception {
         final Message outMessage = new DefaultMessage(camelContext);
         outMessage.setHeader(HEADER_NAME, attachmentName);
         Object obj = attachment.getDataHandler().getContent();

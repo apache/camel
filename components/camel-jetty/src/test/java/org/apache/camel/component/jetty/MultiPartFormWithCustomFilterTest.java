@@ -51,9 +51,10 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
     private static class MyMultipartFilter extends MultiPartFilter {
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
             // set a marker attribute to show that this filter class was used
-            ((HttpServletResponse)response).addHeader("MyMultipartFilter", "true");
+            ((HttpServletResponse) response).addHeader("MyMultipartFilter", "true");
 
             super.doFilter(request, response, chain);
         }
@@ -66,7 +67,8 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         File file = new File("src/test/resources/log4j2.properties");
         HttpPost httppost = new HttpPost("http://localhost:" + getPort() + "/test");
 
-        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind").addBinaryBody(file.getName(), file).build();
+        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind")
+                .addBinaryBody(file.getName(), file).build();
         httppost.setEntity(entity);
 
         HttpResponse response = client.execute(httppost);
@@ -86,7 +88,8 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         File file = new File("src/test/resources/log4j2.properties");
 
         HttpPost httppost = new HttpPost("http://localhost:" + getPort() + "/test2");
-        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind").addBinaryBody(file.getName(), file).build();
+        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind")
+                .addBinaryBody(file.getName(), file).build();
         httppost.setEntity(entity);
 
         HttpResponse response = client.execute(httppost);
@@ -125,7 +128,8 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue(data.getDataSource().getInputStream().available() > 0, "We should get the data from the DataHandle");
+                        assertTrue(data.getDataSource().getInputStream().available() > 0,
+                                "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message
                         // header
@@ -136,18 +140,19 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
                 // Test to ensure that setting a multipartFilterRef overrides
                 // the enableMultipartFilter=false parameter
-                from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
-                        assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
-                        DataHandler data = in.getAttachment("log4j2.properties");
+                from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
+                                assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
+                                DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull(data, "Should get the DataHandle log4j2.properties");
-                        // The other form date can be get from the message
-                        // header
-                        exchange.getOut().setBody(in.getHeader("comment"));
-                    }
-                });
+                                assertNotNull(data, "Should get the DataHandle log4j2.properties");
+                                // The other form date can be get from the message
+                                // header
+                                exchange.getOut().setBody(in.getHeader("comment"));
+                            }
+                        });
             }
         };
     }

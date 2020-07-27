@@ -47,7 +47,6 @@ public class RecursiveTreeWalker {
     int processFolderRecursively(Folder folder) throws Exception {
         processFolderNode(folder);
 
-        
         OperationContext operationContext = cmisConsumer.createOperationContext();
         operationContext.setMaxItemsPerPage(pageSize);
 
@@ -60,7 +59,7 @@ public class RecursiveTreeWalker {
             LOG.debug("Processing page {}", pageNumber);
             for (CmisObject child : currentPage) {
                 if (CMISHelper.isFolder(child)) {
-                    Folder childFolder = (Folder)child;
+                    Folder childFolder = (Folder) child;
                     processFolderRecursively(childFolder);
                 } else {
                     processNonFolderNode(child, folder);
@@ -86,7 +85,7 @@ public class RecursiveTreeWalker {
         Map<String, Object> properties = CMISHelper.objectProperties(cmisObject);
         properties.put(CamelCMISConstants.CMIS_FOLDER_PATH, parentFolder.getPath());
         if (CMISHelper.isDocument(cmisObject) && readContent) {
-            ContentStream contentStream = ((Document)cmisObject).getContentStream();
+            ContentStream contentStream = ((Document) cmisObject).getContentStream();
             if (contentStream != null) {
                 inputStream = contentStream.getStream();
             }

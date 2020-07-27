@@ -121,15 +121,18 @@ public class HBaseProducer extends DefaultProducer {
             put.addColumn(
                     HBaseHelper.getHBaseFieldAsBytes(family),
                     HBaseHelper.getHBaseFieldAsBytes(column),
-                    endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value)
-            );
+                    endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value));
         }
         return put;
     }
 
     /**
-     * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
-     * The result is <p>the most recent entry</p> for each column.
+     * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs). The
+     * result is
+     * <p>
+     * the most recent entry
+     * </p>
+     * for each column.
      */
     private HBaseRow getCells(Table table, HBaseRow hRow) throws Exception {
         HBaseRow resultRow = new HBaseRow();
@@ -162,10 +165,12 @@ public class HBaseProducer extends DefaultProducer {
             resultCell.setFamily(family);
             resultCell.setQualifier(column);
 
-            List<Cell> kvs = result.getColumnCells(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column));
+            List<Cell> kvs
+                    = result.getColumnCells(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column));
             if (kvs != null && !kvs.isEmpty()) {
                 //Return the most recent entry.
-                resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(), CellUtil.cloneValue(kvs.get(0))));
+                resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(),
+                        CellUtil.cloneValue(kvs.get(0))));
                 resultCell.setTimestamp(kvs.get(0).getTimestamp());
             }
             resultRow.getCells().add(resultCell);
@@ -183,10 +188,15 @@ public class HBaseProducer extends DefaultProducer {
     }
 
     /**
-     * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
-     * The result is <p>the most recent entry</p> for each column.
+     * Performs an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs). The
+     * result is
+     * <p>
+     * the most recent entry
+     * </p>
+     * for each column.
      */
-    private List<HBaseRow> scanCells(Table table, HBaseRow model, String start, String stop, Integer maxRowScan, List<Filter> filters)
+    private List<HBaseRow> scanCells(
+            Table table, HBaseRow model, String start, String stop, Integer maxRowScan, List<Filter> filters)
             throws Exception {
         List<HBaseRow> rowSet = new LinkedList<>();
 
@@ -204,7 +214,8 @@ public class HBaseProducer extends DefaultProducer {
         if (filters != null && !filters.isEmpty()) {
             for (int i = 0; i < filters.size(); i++) {
                 ((ModelAwareFilter<?>) filters.get(i)).apply(endpoint.getCamelContext(), model);
-                scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, ((ModelAwareFilter<?>) filters.get(i)).getFilteredList()));
+                scan.setFilter(new FilterList(
+                        FilterList.Operator.MUST_PASS_ALL, ((ModelAwareFilter<?>) filters.get(i)).getFilteredList()));
             }
         }
 
@@ -235,17 +246,16 @@ public class HBaseProducer extends DefaultProducer {
 
                 resultRow.setId(endpoint.getCamelContext().getTypeConverter().convertTo(
                         model.getRowType(),
-                        result.getRow())
-                );
+                        result.getRow()));
                 resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(
                         modelCell.getValueType(),
-                        result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)))
-                );
+                        result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column))));
 
                 resultCell.setFamily(modelCell.getFamily());
                 resultCell.setQualifier(modelCell.getQualifier());
 
-                Cell cell = result.getColumnLatestCell(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column));
+                Cell cell = result.getColumnLatestCell(HBaseHelper.getHBaseFieldAsBytes(family),
+                        HBaseHelper.getHBaseFieldAsBytes(column));
                 if (cell != null) {
                     resultCell.setTimestamp(cell.getTimestamp());
                 }
@@ -266,13 +276,15 @@ public class HBaseProducer extends DefaultProducer {
             if (endpoint.getMaxResults() != 0 && exchange.getIn().getHeader(HBaseConstants.HBASE_MAX_SCAN_RESULTS) == null) {
                 exchange.getIn().setHeader(HBaseConstants.HBASE_MAX_SCAN_RESULTS, endpoint.getMaxResults());
             }
-            if (endpoint.getMappingStrategyName() != null && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY) == null) {
+            if (endpoint.getMappingStrategyName() != null
+                    && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY) == null) {
                 exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, endpoint.getMappingStrategyName());
             }
 
             if (endpoint.getMappingStrategyName() != null
                     && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME) == null) {
-                exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME, endpoint.getMappingStrategyClassName());
+                exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME,
+                        endpoint.getMappingStrategyClassName());
             }
 
             if (endpoint.getOperation() != null && exchange.getIn().getHeader(HBaseConstants.OPERATION) == null) {

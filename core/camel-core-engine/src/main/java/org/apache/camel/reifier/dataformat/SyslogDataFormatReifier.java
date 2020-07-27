@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.SyslogDataFormat;
 public class SyslogDataFormatReifier extends DataFormatReifier<SyslogDataFormat> {
 
     public SyslogDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (SyslogDataFormat)definition);
+        super(camelContext, (SyslogDataFormat) definition);
     }
 
     protected void prepareDataFormatConfig(Map<String, Object> properties) {

@@ -27,7 +27,8 @@ public class SpringHystrixRouteConfigMaximumSizeTest extends CamelSpringTestSupp
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixRouteConfigMaximumSizeTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/hystrix/processor/SpringHystrixRouteConfigMaximumSizeTest.xml");
     }
 
     @Test

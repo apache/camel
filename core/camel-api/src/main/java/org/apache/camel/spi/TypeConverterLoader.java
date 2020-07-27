@@ -19,15 +19,14 @@ package org.apache.camel.spi;
 import org.apache.camel.TypeConverterLoaderException;
 
 /**
- * A pluggable strategy to load type converters into a
- * {@link TypeConverterRegistry} from some kind of mechanism.
+ * A pluggable strategy to load type converters into a {@link TypeConverterRegistry} from some kind of mechanism.
  */
 public interface TypeConverterLoader {
 
     /**
      * A pluggable strategy to load type converters into a registry from some kind of mechanism
      *
-     * @param registry the registry to load the type converters into
+     * @param  registry                                      the registry to load the type converters into
      * @throws org.apache.camel.TypeConverterLoaderException if the type converters could not be loaded
      */
     void load(TypeConverterRegistry registry) throws TypeConverterLoaderException;

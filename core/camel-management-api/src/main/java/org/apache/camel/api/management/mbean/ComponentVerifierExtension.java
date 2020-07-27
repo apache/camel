@@ -29,8 +29,9 @@ import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Verifica
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.VerificationError.StandardCode;
 
 /**
- * Defines the interface used for validating component/endpoint parameters. The central method of this
- * interface is {@link ManagedComponentMBean#verify(String, Map)} which takes a scope and a set of parameters which should be verified.
+ * Defines the interface used for validating component/endpoint parameters. The central method of this interface is
+ * {@link ManagedComponentMBean#verify(String, Map)} which takes a scope and a set of parameters which should be
+ * verified.
  * <p/>
  * The return value is a {@link ComponentVerifierExtension.Result} of the verification
  */
@@ -60,16 +61,15 @@ public final class ComponentVerifierExtension {
         }
 
         /**
-         * Scope of the verification. This is the scope given to the call to {@link ManagedComponentMBean#verify(String, Map)}  and
-         * can be used for correlation.
+         * Scope of the verification. This is the scope given to the call to
+         * {@link ManagedComponentMBean#verify(String, Map)} and can be used for correlation.
          *
          * @return the scope against which the parameters have been validated.
          */
         Scope getScope();
 
         /**
-         * Result of the validation as status. This should be the first datum to check after a verification
-         * happened.
+         * Result of the validation as status. This should be the first datum to check after a verification happened.
          *
          * @return the status
          */
@@ -90,22 +90,22 @@ public final class ComponentVerifierExtension {
     public enum Scope {
 
         /**
-         * Only validate the parameters for their <em>syntactic</em> soundness. Verifications in this scope should
-         * be as fast as possible
+         * Only validate the parameters for their <em>syntactic</em> soundness. Verifications in this scope should be as
+         * fast as possible
          */
         PARAMETERS,
 
         /**
-         * Reach out to the backend and verify that a connection can be established. This means, if the verification
-         * in this scope succeeds, then it can safely be assumed that the component can be used.
+         * Reach out to the backend and verify that a connection can be established. This means, if the verification in
+         * this scope succeeds, then it can safely be assumed that the component can be used.
          */
         CONNECTIVITY;
 
         /**
          * Get an instance of this scope from a string representation
          *
-         * @param scope the scope as string, which can be in any case
-         * @return the scope enum represented by this string
+         * @param  scope the scope as string, which can be in any case
+         * @return       the scope enum represented by this string
          */
         public static Scope fromString(String scope) {
             return Scope.valueOf(scope != null ? scope.toUpperCase() : null);
@@ -120,8 +120,8 @@ public final class ComponentVerifierExtension {
     public interface VerificationError extends Serializable {
 
         /**
-         * The overall error code, which can be either a {@link StandardCode} or a custom code. It is
-         * recommended to stick to the predefined standard codes
+         * The overall error code, which can be either a {@link StandardCode} or a custom code. It is recommended to
+         * stick to the predefined standard codes
          *
          * @return the general error code.
          */
@@ -135,19 +135,18 @@ public final class ComponentVerifierExtension {
         String getDescription();
 
         /**
-         * A set of input parameter names which fails the verification. These are keys to the parameter provided
-         * to {@link ManagedComponentMBean#verify(String, Map)}.
+         * A set of input parameter names which fails the verification. These are keys to the parameter provided to
+         * {@link ManagedComponentMBean#verify(String, Map)}.
          *
          * @return the parameter names which are malformed and caused the failure of the validation
          */
         Set<String> getParameterKeys();
 
         /**
-         * Details about the failed verification. The keys can be either predefined values
-         * ({@link ExceptionAttribute}, {@link HttpAttribute}, {@link GroupAttribute}) or it can be free-form
-         * custom keys specific to a component. The standard attributes are defined as enums in all uppercase (with
-         * underscore as separator), custom attributes are supposed to be in all lower case (also with underscores
-         * as separators)
+         * Details about the failed verification. The keys can be either predefined values ({@link ExceptionAttribute},
+         * {@link HttpAttribute}, {@link GroupAttribute}) or it can be free-form custom keys specific to a component.
+         * The standard attributes are defined as enums in all uppercase (with underscore as separator), custom
+         * attributes are supposed to be in all lower case (also with underscores as separators)
          *
          * @return a number of key/value pair with additional information related to the verification.
          */
@@ -156,8 +155,8 @@ public final class ComponentVerifierExtension {
         /**
          * Get a single detail for a given attribute
          *
-         * @param attribute the attribute to lookup
-         * @return the detail value or null if no such attribute exists
+         * @param  attribute the attribute to lookup
+         * @return           the detail value or null if no such attribute exists
          */
         default Object getDetail(Attribute attribute) {
             Map<Attribute, Object> details = getDetails();
@@ -170,8 +169,8 @@ public final class ComponentVerifierExtension {
         /**
          * Get a single detail for a given attribute
          *
-         * @param attribute the attribute to lookup
-         * @return the detail value or null if no such attribute exists
+         * @param  attribute the attribute to lookup
+         * @return           the detail value or null if no such attribute exists
          */
         default Object getDetail(String attribute) {
             return getDetail(asAttribute(attribute));
@@ -180,9 +179,9 @@ public final class ComponentVerifierExtension {
         /**
          * Convert a string to an {@link Code}
          *
-         * @param code the code to convert. It should be in all lower case (with
-         *             underscore as a separator) to avoid overlap with {@link StandardCode}
-         * @return error code
+         * @param  code the code to convert. It should be in all lower case (with underscore as a separator) to avoid
+         *              overlap with {@link StandardCode}
+         * @return      error code
          */
         static Code asCode(String code) {
             return new ErrorCode(code);
@@ -191,32 +190,32 @@ public final class ComponentVerifierExtension {
         /**
          * Convert a string to an {@link Attribute}
          *
-         * @param attribute the string representation of an attribute to convert. It should be in all lower case (with
-         *                  underscore as a separator) to avoid overlap with standard attributes like {@link ExceptionAttribute},
-         *                  {@link HttpAttribute} or {@link GroupAttribute}
-         * @return generated attribute
+         * @param  attribute the string representation of an attribute to convert. It should be in all lower case (with
+         *                   underscore as a separator) to avoid overlap with standard attributes like
+         *                   {@link ExceptionAttribute}, {@link HttpAttribute} or {@link GroupAttribute}
+         * @return           generated attribute
          */
         static Attribute asAttribute(String attribute) {
             return new ErrorAttribute(attribute);
         }
 
         /**
-         * Interface defining an error code. This is implemented by the {@link StandardCode} but also
-         * own code can be generated by implementing this interface. This is best done via {@link #asCode(String)}
-         * If possible, the standard codes should be reused
+         * Interface defining an error code. This is implemented by the {@link StandardCode} but also own code can be
+         * generated by implementing this interface. This is best done via {@link #asCode(String)} If possible, the
+         * standard codes should be reused
          */
         interface Code extends Serializable {
             /**
-             * Name of the code. All uppercase for standard codes, all lower case for custom codes.
-             * Separator between two words is an underscore.
+             * Name of the code. All uppercase for standard codes, all lower case for custom codes. Separator between
+             * two words is an underscore.
              *
              * @return code name
              */
             String name();
 
             /**
-             * Bean style accessor to name.
-             * This is required for framework like Jackson using bean convention for object serialization.
+             * Bean style accessor to name. This is required for framework like Jackson using bean convention for object
+             * serialization.
              *
              * @return code name
              */
@@ -254,8 +253,8 @@ public final class ComponentVerifierExtension {
              */
             StandardCode ILLEGAL_PARAMETER = new StandardErrorCode("ILLEGAL_PARAMETER");
             /**
-             * A combination of parameters is illegal. See {@link VerificationError#getParameterKeys()} for the set
-             * of affected parameters
+             * A combination of parameters is illegal. See {@link VerificationError#getParameterKeys()} for the set of
+             * affected parameters
              */
             StandardCode ILLEGAL_PARAMETER_GROUP_COMBINATION = new StandardErrorCode("ILLEGAL_PARAMETER_GROUP_COMBINATION");
             /**
@@ -298,8 +297,8 @@ public final class ComponentVerifierExtension {
             String name();
 
             /**
-             * Bean style accessor to name;
-             * This is required for framework like Jackson using bean convention for object serialization.
+             * Bean style accessor to name; This is required for framework like Jackson using bean convention for object
+             * serialization.
              *
              * @return attribute name
              */
@@ -314,8 +313,8 @@ public final class ComponentVerifierExtension {
         interface ExceptionAttribute extends Attribute {
 
             /**
-             * The exception object that has been thrown. Note that this can be a complex
-             * object and can cause large content when e.g. serialized as JSON
+             * The exception object that has been thrown. Note that this can be a complex object and can cause large
+             * content when e.g. serialized as JSON
              */
             ExceptionAttribute EXCEPTION_INSTANCE = new ExceptionErrorAttribute("EXCEPTION_INSTANCE");
 
@@ -341,8 +340,8 @@ public final class ComponentVerifierExtension {
             HttpAttribute HTTP_TEXT = new HttpErrorAttribute("HTTP_TEXT");
 
             /**
-             * If given as details, specifies that a redirect happened and the
-             * content of this detail is the redirect URL
+             * If given as details, specifies that a redirect happened and the content of this detail is the redirect
+             * URL
              */
             HttpAttribute HTTP_REDIRECT = new HttpErrorAttribute("HTTP_REDIRECT");
         }
@@ -423,7 +422,6 @@ public final class ComponentVerifierExtension {
         public String name() {
             return name;
         }
-
 
         @Override
         public boolean equals(Object o) {

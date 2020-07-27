@@ -67,5 +67,3 @@ public class PojoSenderTest extends SpringTestSupport {
     }
 
 }
-
-

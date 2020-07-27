@@ -53,10 +53,10 @@ public class GroovySetHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setHeader("drink").groovy("request.headers.beer")
-                    // shows how to access the camelContext value
-                    .setHeader("camelId").groovy("camelContext.name")
-                    .to("mock:result");
+                        .setHeader("drink").groovy("request.headers.beer")
+                        // shows how to access the camelContext value
+                        .setHeader("camelId").groovy("camelContext.name")
+                        .to("mock:result");
             }
         };
     }

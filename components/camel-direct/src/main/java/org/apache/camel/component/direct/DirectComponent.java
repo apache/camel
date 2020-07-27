@@ -26,7 +26,8 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the list of named direct endpoints.
+ * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the
+ * list of named direct endpoints.
  */
 @Component("direct")
 public class DirectComponent extends DefaultComponent {
@@ -64,8 +65,8 @@ public class DirectComponent extends DefaultComponent {
     }
 
     /**
-     * If sending a message to a direct endpoint which has no active consumer,
-     * then we can tell the producer to block and wait for the consumer to become active.
+     * If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block
+     * and wait for the consumer to become active.
      */
     public void setBlock(boolean block) {
         this.block = block;

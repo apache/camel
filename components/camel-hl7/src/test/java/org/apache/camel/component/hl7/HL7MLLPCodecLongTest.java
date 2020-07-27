@@ -47,7 +47,7 @@ public class HL7MLLPCodecLongTest extends HL7TestSupport {
             public void configure() throws Exception {
                 from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(exchange -> {
                     assertEquals(70010, exchange.getIn().getBody(byte[].class).length);
-                    MDM_T02 input = (MDM_T02)exchange.getIn().getBody(Message.class);
+                    MDM_T02 input = (MDM_T02) exchange.getIn().getBody(Message.class);
                     assertEquals("2.5", input.getVersion());
                     MSH msh = input.getMSH();
                     assertEquals("20071129144629", msh.getDateTimeOfMessage().getTime().getValue());
@@ -70,7 +70,8 @@ public class HL7MLLPCodecLongTest extends HL7TestSupport {
         }
         message = message.substring(0, message.length() - 1);
         assertEquals(70010, message.length());
-        String out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message, String.class);
+        String out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message,
+                String.class);
         assertEquals("some response", out);
         // END SNIPPET: e2
     }

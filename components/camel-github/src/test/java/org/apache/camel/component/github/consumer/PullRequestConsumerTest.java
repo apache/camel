@@ -45,7 +45,6 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
         };
     }
 
-
     @Test
     public void pullRequestTest() throws Exception {
         PullRequest pr1 = pullRequestService.addPullRequest("First add");
@@ -68,7 +67,8 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
             pullRequest.getHtmlUrl();
             pullRequest.getUser().getLogin();
             pullRequest.getUser().getHtmlUrl();
-            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From " + pullRequestUser.getLogin());
+            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From "
+                      + pullRequestUser.getLogin());
         }
     }
 }

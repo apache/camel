@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
 public @interface Metadata {
 
     /**
@@ -71,8 +71,8 @@ public @interface Metadata {
     /**
      * Allows to define enums this options accepts.
      * <p/>
-     * If the type is already an enum, then this option should not be used; instead you can use
-     * this option when the type is a String that only accept certain values.
+     * If the type is already an enum, then this option should not be used; instead you can use this option when the
+     * type is a String that only accept certain values.
      * <p/>
      * Multiple values is separated by comma.
      */
@@ -86,7 +86,8 @@ public @interface Metadata {
     /**
      * To re-associate the preferred Java type of this parameter.
      * <p/>
-     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as
+     * from a String.
      */
     String javaType() default "";
 
@@ -108,16 +109,16 @@ public @interface Metadata {
     /**
      * To exclude one or more properties.
      * <p/>
-     * This is for example used when a Camel component extend another component, and then may need to not use some of the properties from
-     * the parent component. Multiple properties can be separated by comma.
+     * This is for example used when a Camel component extend another component, and then may need to not use some of
+     * the properties from the parent component. Multiple properties can be separated by comma.
      */
     String excludeProperties() default "";
 
     /**
      * To include one or more properties.
      *
-     * Some dataformats share same base but individually they have some specific options, then this
-     * can be used to specify which options each implementation only supports.
+     * Some dataformats share same base but individually they have some specific options, then this can be used to
+     * specify which options each implementation only supports.
      */
     String includeProperties() default "";
 

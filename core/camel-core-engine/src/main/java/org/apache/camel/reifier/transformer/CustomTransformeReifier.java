@@ -24,7 +24,7 @@ import org.apache.camel.spi.Transformer;
 public class CustomTransformeReifier extends TransformerReifier<CustomTransformerDefinition> {
 
     public CustomTransformeReifier(CamelContext camelContext, TransformerDefinition definition) {
-        super(camelContext, (CustomTransformerDefinition)definition);
+        super(camelContext, (CustomTransformerDefinition) definition);
     }
 
     @Override
@@ -39,10 +39,13 @@ public class CustomTransformeReifier extends TransformerReifier<CustomTransforme
                 throw new IllegalArgumentException("Cannot find transformer with ref:" + definition.getRef());
             }
             if (transformer.getModel() != null || transformer.getFrom() != null || transformer.getTo() != null) {
-                throw new IllegalArgumentException(String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.", definition.getRef()));
+                throw new IllegalArgumentException(
+                        String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.",
+                                definition.getRef()));
             }
         } else {
-            Class<Transformer> transformerClass = camelContext.getClassResolver().resolveClass(definition.getClassName(), Transformer.class);
+            Class<Transformer> transformerClass
+                    = camelContext.getClassResolver().resolveClass(definition.getClassName(), Transformer.class);
             if (transformerClass == null) {
                 throw new IllegalArgumentException("Cannot find transformer class: " + definition.getClassName());
             }

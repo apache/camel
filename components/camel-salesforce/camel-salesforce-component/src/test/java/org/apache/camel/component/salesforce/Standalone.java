@@ -19,8 +19,7 @@ package org.apache.camel.component.salesforce;
 import org.junit.jupiter.api.Tag;
 
 /**
- * JUnit group tag interface for tests that need to be run standalone, i.e. not
- * in parallel with other tests.
+ * JUnit group tag interface for tests that need to be run standalone, i.e. not in parallel with other tests.
  */
 @Tag("standalone")
 public @interface Standalone {

@@ -51,7 +51,6 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         headers.put(DockerConstants.DOCKER_SINCE, since);
         headers.put(DockerConstants.DOCKER_BEFORE, before);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).listContainersCmd();

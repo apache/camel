@@ -43,18 +43,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
     protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:"
-        + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
+                                                          + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";
+                                                      + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfMtomConsumerTest.class);
 
     private final QName serviceName = new QName("http://apache.org/camel/cxf/mtom_feature", "HelloService");
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        
+
         return new RouteBuilder() {
             public void configure() {
                 from(MTOM_ENDPOINT_URI).process(new Processor() {
@@ -66,22 +65,22 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
                         // Get the operation name
-                        Holder<byte[]> photo = (Holder<byte[]>)parameter.get(0);
+                        Holder<byte[]> photo = (Holder<byte[]>) parameter.get(0);
                         assertNotNull(photo.value, "The photo should not be null");
                         assertEquals("Should get the right request", new String(photo.value, "UTF-8"),
-                                     "RequestFromCXF");
+                                "RequestFromCXF");
                         photo.value = "ResponseFromCamel".getBytes("UTF-8");
-                        Holder<Image> image = (Holder<Image>)parameter.get(1);
+                        Holder<Image> image = (Holder<Image>) parameter.get(1);
                         assertNotNull(image.value, "We should get the image here");
                         // set the holder message back    
-                        exchange.getOut().setBody(new Object[] {null, photo, image});
+                        exchange.getOut().setBody(new Object[] { null, photo, image });
 
                     }
-                });                
+                });
             }
         };
     }
-    
+
     private Hello getPort() {
         URL wsdl = getClass().getResource("/mtom.wsdl");
         assertNotNull(wsdl, "WSDL is null");
@@ -89,19 +88,19 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
         HelloService service = new HelloService(wsdl, serviceName);
         assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
-        
-        ((BindingProvider)port).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 MTOM_ENDPOINT_ADDRESS);
+
+        ((BindingProvider) port).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        MTOM_ENDPOINT_ADDRESS);
         return port;
     }
-    
+
     protected Image getImage(String name) throws Exception {
         return ImageIO.read(getClass().getResource(name));
     }
-    
+
     @Test
-    public void testInvokingService() throws Exception {        
+    public void testInvokingService() throws Exception {
         if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
@@ -111,14 +110,14 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
 
         Hello port = getPort();
 
-        SOAPBinding binding = (SOAPBinding) ((BindingProvider)port).getBinding();
+        SOAPBinding binding = (SOAPBinding) ((BindingProvider) port).getBinding();
         binding.setMTOMEnabled(true);
 
         port.detail(photo, image);
 
         assertEquals("ResponseFromCamel", new String(photo.value, "UTF-8"));
         assertNotNull(image.value);
-        
+
     }
 
 }

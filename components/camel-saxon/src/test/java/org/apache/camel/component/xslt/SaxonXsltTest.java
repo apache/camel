@@ -34,7 +34,7 @@ public class SaxonXsltTest extends CamelSpringTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/xslt/camelXsltContext.xml");
     }
-    
+
     @Test
     public void testSendMessageAndHaveItTransformed() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
@@ -55,7 +55,7 @@ public class SaxonXsltTest extends CamelSpringTestSupport {
         assertTrue(xml.contains("cheese"));
         assertTrue(xml.contains("<subject>Hey</subject>"));
         assertTrue(xml.contains("<body>Hello world!</body>"));
-        
+
     }
 
 }

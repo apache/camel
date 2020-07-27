@@ -24,10 +24,8 @@ public interface PGPPassphraseAccessor {
     /**
      * Returns the passphrase for a user Id
      * 
-     * @param userId
-     *            user Id, can be <code>null</code>
-     * @return the passphrase for the user Id, or <code>null</code> if the
-     *         passphrase cannot be found
+     * @param  userId user Id, can be <code>null</code>
+     * @return        the passphrase for the user Id, or <code>null</code> if the passphrase cannot be found
      */
     String getPassphrase(String userId);
 }

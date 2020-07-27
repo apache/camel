@@ -17,8 +17,7 @@
 package org.apache.camel;
 
 /**
- * An interface to represent an object which wishes to be injected with
- * a {@link Component}.
+ * An interface to represent an object which wishes to be injected with a {@link Component}.
  */
 public interface ComponentAware {
 
@@ -39,8 +38,8 @@ public interface ComponentAware {
     /**
      * Get the {@link Component} as the specified type.
      *
-     * @param type the proprietary class or interface of the underlying concrete Component.
-     * @return an instance of the underlying concrete Component as the required type.
+     * @param  type                     the proprietary class or interface of the underlying concrete Component.
+     * @return                          an instance of the underlying concrete Component as the required type.
      * @throws IllegalArgumentException if the component class can't be cast to required type,
      */
     default <T extends Component> T getComponent(Class<T> type) {
@@ -55,7 +54,6 @@ public interface ComponentAware {
         }
 
         throw new IllegalArgumentException(
-            "Unable to unwrap the Component type (" + component.getClass() + ") to the required type (" + type + ")"
-        );
+                "Unable to unwrap the Component type (" + component.getClass() + ") to the required type (" + type + ")");
     }
 }

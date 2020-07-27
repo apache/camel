@@ -20,5 +20,7 @@ package org.apache.camel.component.jms;
  * Types for replyTo queues
  */
 public enum ReplyToType {
-    Temporary, Shared, Exclusive
+    Temporary,
+    Shared,
+    Exclusive
 }

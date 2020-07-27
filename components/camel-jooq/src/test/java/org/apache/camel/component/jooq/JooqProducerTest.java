@@ -39,7 +39,8 @@ public class JooqProducerTest extends BaseJooqTest {
         BookStoreRecord bookStoreRecord = new BookStoreRecord("test");
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
         ResultQuery querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq("test"));
-        Result actual = (Result)producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        Result actual
+                = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
         assertEquals(1, actual.size());
         assertEquals(bookStoreRecord, actual.get(0));
 
@@ -48,15 +49,15 @@ public class JooqProducerTest extends BaseJooqTest {
         Query query = create.update(BOOK_STORE).set(BOOK_STORE.NAME, newName).where(BOOK_STORE.NAME.eq("test"));
         producerTemplate.sendBody(context.getEndpoint("direct:update"), ExchangePattern.InOut, query);
         querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
-        actual = (Result)producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
         assertEquals(1, actual.size());
-        assertEquals(newName, ((BookStoreRecord)actual.get(0)).getName());
+        assertEquals(newName, ((BookStoreRecord) actual.get(0)).getName());
 
         // Delete and select
         query = create.delete(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
         producerTemplate.sendBody(context.getEndpoint("direct:delete"), ExchangePattern.InOut, query);
         querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
-        actual = (Result)producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
         assertEquals(0, actual.size());
     }
 

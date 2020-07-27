@@ -23,11 +23,12 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelJaxbSpringTest extends CamelJaxbTest {
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         setUseRouteBuilder(false);
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/jaxb/CamelJaxbTest.xml");
+        final AbstractXmlApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/jaxb/CamelJaxbTest.xml");
         setCamelContextService(new Service() {
             public void start() {
                 applicationContext.start();
@@ -39,9 +40,7 @@ public class CamelJaxbSpringTest extends CamelJaxbTest {
         });
 
         return SpringCamelContext.springCamelContext(applicationContext, true);
-        
+
     }
-    
-   
 
 }

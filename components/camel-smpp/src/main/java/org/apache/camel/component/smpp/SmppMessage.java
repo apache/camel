@@ -51,19 +51,19 @@ public class SmppMessage extends DefaultMessage {
         SmppMessage answer = new SmppMessage(getCamelContext(), null, this.configuration);
         return answer;
     }
-    
+
     public boolean isAlertNotification() {
         return command instanceof AlertNotification;
     }
-    
+
     public boolean isDataSm() {
         return command instanceof DataSm;
     }
-    
+
     public boolean isDeliverSm() {
         return command instanceof DeliverSm && !((DeliverSm) command).isSmscDeliveryReceipt();
     }
-    
+
     public boolean isDeliveryReceipt() {
         return command instanceof DeliverSm && ((DeliverSm) command).isSmscDeliveryReceipt();
     }
@@ -71,7 +71,7 @@ public class SmppMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         if (command instanceof MessageRequest) {
-            MessageRequest msgRequest = (MessageRequest)command;
+            MessageRequest msgRequest = (MessageRequest) command;
             byte[] shortMessage = msgRequest.getShortMessage();
             if (shortMessage == null || shortMessage.length == 0) {
                 return null;
@@ -80,7 +80,7 @@ public class SmppMessage extends DefaultMessage {
             if (SmppUtils.is8Bit(alphabet)) {
                 return shortMessage;
             }
-            
+
             String encoding = ExchangeHelper.getCharsetName(getExchange(), false);
             if (ObjectHelper.isEmpty(encoding) || !Charset.isSupported(encoding)) {
                 encoding = configuration.getEncoding();

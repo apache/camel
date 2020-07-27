@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 public class JCachePolicyProcessor extends DelegateAsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessor.class);
 
-
     private Cache cache;
     private Expression keyExpression;
 
@@ -48,10 +47,10 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
             return super.process(exchange, callback);
         }
 
-
         try {
             //Get key by the expression or use message body
-            Object key = keyExpression != null ? keyExpression.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+            Object key
+                    = keyExpression != null ? keyExpression.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
 
             if (key == null) {
                 return super.process(exchange, callback);
@@ -69,7 +68,6 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
                 return true;
             }
 
-
             //Not found in cache. Continue route.
             LOG.debug("No cached object is found, continue route - key:{}, exchange:{}", key, exchange.getExchangeId());
 
@@ -82,7 +80,8 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
                             Object value = exchange.getMessage().getBody();
 
                             if (value != null) {
-                                LOG.debug("Saving in cache - key:{}, value:{}, exchange:{}", key, value, exchange.getExchangeId());
+                                LOG.debug("Saving in cache - key:{}, value:{}, exchange:{}", key, value,
+                                        exchange.getExchangeId());
                                 cache.put(key, value);
                             }
                         }

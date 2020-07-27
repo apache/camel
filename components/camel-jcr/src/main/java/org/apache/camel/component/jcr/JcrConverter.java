@@ -29,7 +29,7 @@ import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.StringValue;
 
 /**
- * A helper class to transform Object into JCR {@link Value} implementations 
+ * A helper class to transform Object into JCR {@link Value} implementations
  */
 @Converter(generateLoader = true)
 public final class JcrConverter {

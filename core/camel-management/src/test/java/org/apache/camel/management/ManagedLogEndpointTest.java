@@ -49,7 +49,7 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
 
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"log-foo\"");
         mbeanServer.isRegistered(name);
-        
+
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");
         assertEquals(10, total.intValue());
 
@@ -95,8 +95,8 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .to("log:foo?groupSize=10").id("log-foo")
-                    .to("mock:a");
+                        .to("log:foo?groupSize=10").id("log-foo")
+                        .to("mock:a");
             }
         };
     }

@@ -27,8 +27,7 @@ import org.springframework.util.Assert;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
- * Builds a SimpleRoute to send a message to CM GW and CM Uri is built based on
- * properties in a file.
+ * Builds a SimpleRoute to send a message to CM GW and CM Uri is built based on properties in a file.
  */
 @Configuration("cmConfig")
 @PropertySource("classpath:/cm-smsgw.properties")

@@ -23,7 +23,8 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.annotations.JdkService;
 
 /**
- * A faster {@link HeadersMapFactory} which is using the {@link com.cedarsoftware.util.CaseInsensitiveMap} map implementation.
+ * A faster {@link HeadersMapFactory} which is using the {@link com.cedarsoftware.util.CaseInsensitiveMap} map
+ * implementation.
  */
 @JdkService(HeadersMapFactory.FACTORY)
 public class FastHeadersMapFactory implements HeadersMapFactory {

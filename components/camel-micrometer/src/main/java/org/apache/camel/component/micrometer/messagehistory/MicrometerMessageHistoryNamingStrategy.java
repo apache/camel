@@ -34,7 +34,8 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_
  */
 public interface MicrometerMessageHistoryNamingStrategy {
 
-    Predicate<Meter.Id> MESSAGE_HISTORIES = id -> MicrometerMessageHistoryService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+    Predicate<Meter.Id> MESSAGE_HISTORIES
+            = id -> MicrometerMessageHistoryService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
     MicrometerMessageHistoryNamingStrategy DEFAULT = (route, node) -> DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
 
     String getName(Route route, NamedNode node);
@@ -44,8 +45,7 @@ public interface MicrometerMessageHistoryNamingStrategy {
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
                 SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName(),
                 ROUTE_ID_TAG, route.getId(),
-                NODE_ID_TAG, node.getId()
-        );
+                NODE_ID_TAG, node.getId());
     }
 
 }

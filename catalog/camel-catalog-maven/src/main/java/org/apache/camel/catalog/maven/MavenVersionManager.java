@@ -30,8 +30,8 @@ import org.apache.camel.catalog.VersionManager;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
- * A {@link VersionManager} that can load the resources using Maven to download needed artifacts from
- * a local or remote Maven repository.
+ * A {@link VersionManager} that can load the resources using Maven to download needed artifacts from a local or remote
+ * Maven repository.
  * <p/>
  * This implementation uses Groovy Grape to download the Maven JARs.
  */
@@ -56,8 +56,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
     }
 
     /**
-     * Sets whether to log errors and warnings to System.out.
-     * By default nothing is logged.
+     * Sets whether to log errors and warnings to System.out. By default nothing is logged.
      */
     public void setLog(boolean log) {
         this.log = log;

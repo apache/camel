@@ -49,8 +49,8 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
                 BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat(Order.class);
 
                 from("direct:start")
-                    .marshal(bindy)
-                    .to("mock:result");
+                        .marshal(bindy)
+                        .to("mock:result");
             }
         };
     }
@@ -127,7 +127,6 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
 
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
-
 
         public int getOrderNr() {
             return orderNr;
@@ -219,11 +218,12 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
-                    + String.valueOf(this.orderDate);
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
+                   + String.valueOf(this.orderDate);
         }
     }
-
 
 }

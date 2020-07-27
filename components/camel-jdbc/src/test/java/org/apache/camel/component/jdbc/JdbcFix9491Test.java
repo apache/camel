@@ -53,8 +53,7 @@ public class JdbcFix9491Test extends AbstractJdbcTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").
-                to("jdbc:testdb?statement.maxRows=2").to("mock:result");
+                from("direct:start").to("jdbc:testdb?statement.maxRows=2").to("mock:result");
             }
         };
     }

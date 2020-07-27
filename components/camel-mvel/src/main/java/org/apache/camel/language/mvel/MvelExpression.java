@@ -62,7 +62,7 @@ public class MvelExpression extends ExpressionSupport {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
     }
-    
+
     public Class<?> getType() {
         return type;
     }

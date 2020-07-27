@@ -33,7 +33,8 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName) throws GenericFileOperationFailedException {
+    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+            throws GenericFileOperationFailedException {
 
         // need to evaluate using a dummy and simulate the file first, to have
         // access to all the file attributes
@@ -52,7 +53,8 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
         // confuses java.io.File)
         to = FileUtil.normalizePath(to);
         if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+            throw new GenericFileOperationFailedException(
+                    "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
 
         // ensure any paths is created before we rename as the renamed file may
@@ -75,7 +77,9 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
                     throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                 }
             } else {
-                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException(
+                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
+                                                              + to);
             }
         }
 

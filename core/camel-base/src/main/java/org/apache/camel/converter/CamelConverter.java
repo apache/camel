@@ -23,8 +23,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 
 /**
- * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression}
- * to a {@link Processor}
+ * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression} to a
+ * {@link Processor}
  */
 @Converter(generateLoader = true)
 public final class CamelConverter {

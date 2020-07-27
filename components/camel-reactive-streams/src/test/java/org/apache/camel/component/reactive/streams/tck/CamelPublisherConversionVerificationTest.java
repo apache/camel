@@ -34,7 +34,6 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
         super(new TestEnvironment(2000L));
     }
 
-
     @Override
     public Publisher<Long> createPublisher(long l) {
         init();

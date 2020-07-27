@@ -46,7 +46,8 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForRouteController(CamelContext context, RouteController controller) throws MalformedObjectNameException;
+    ObjectName getObjectNameForRouteController(CamelContext context, RouteController controller)
+            throws MalformedObjectNameException;
 
     ObjectName getObjectNameForComponent(Component component, String name) throws MalformedObjectNameException;
 
@@ -54,11 +55,14 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat endpoint) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException;
+    ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder)
+            throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException;
+    ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition)
+            throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForStep(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException;
+    ObjectName getObjectNameForStep(CamelContext context, Processor processor, NamedNode definition)
+            throws MalformedObjectNameException;
 
     ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException;
 
@@ -70,9 +74,12 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForClusterService(CamelContext context, CamelClusterService service) throws MalformedObjectNameException;
+    ObjectName getObjectNameForClusterService(CamelContext context, CamelClusterService service)
+            throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId) throws MalformedObjectNameException;
+    ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId)
+            throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier) throws MalformedObjectNameException;
+    ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier)
+            throws MalformedObjectNameException;
 }

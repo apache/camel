@@ -103,7 +103,7 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jira://newIssues?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=5000")
-                    .to(mockResult);
+                        .to(mockResult);
             }
         };
     }

@@ -43,18 +43,18 @@ public final class FopHelper {
 
     public static String decorateTextWithXSLFO(String text) {
         return "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
-                + "  <fo:layout-master-set>\n"
-                + "    <fo:simple-page-master master-name=\"only\">\n"
-                + "      <fo:region-body region-name=\"xsl-region-body\" margin=\"0.7in\"  padding=\"0\" />\n"
-                + "      <fo:region-before region-name=\"xsl-region-before\" extent=\"0.7in\" />\n"
-                + "        <fo:region-after region-name=\"xsl-region-after\" extent=\"0.7in\" />\n"
-                + "      </fo:simple-page-master>\n"
-                + "    </fo:layout-master-set>\n"
-                + "    <fo:page-sequence master-reference=\"only\">\n"
-                + "      <fo:flow flow-name=\"xsl-region-body\">\n"
-                + "      <fo:block>" + text + "</fo:block>\n"
-                + "    </fo:flow>\n"
-                + "  </fo:page-sequence>\n"
-                + "</fo:root>";
+               + "  <fo:layout-master-set>\n"
+               + "    <fo:simple-page-master master-name=\"only\">\n"
+               + "      <fo:region-body region-name=\"xsl-region-body\" margin=\"0.7in\"  padding=\"0\" />\n"
+               + "      <fo:region-before region-name=\"xsl-region-before\" extent=\"0.7in\" />\n"
+               + "        <fo:region-after region-name=\"xsl-region-after\" extent=\"0.7in\" />\n"
+               + "      </fo:simple-page-master>\n"
+               + "    </fo:layout-master-set>\n"
+               + "    <fo:page-sequence master-reference=\"only\">\n"
+               + "      <fo:flow flow-name=\"xsl-region-body\">\n"
+               + "      <fo:block>" + text + "</fo:block>\n"
+               + "    </fo:flow>\n"
+               + "  </fo:page-sequence>\n"
+               + "</fo:root>";
     }
 }

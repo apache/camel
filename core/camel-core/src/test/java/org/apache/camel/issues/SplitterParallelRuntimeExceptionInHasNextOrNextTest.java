@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends ContextTestSupport {
 
     /**
-     * Tests that only one aggregator thread is created if a RuntimeException in
-     * the hasNext method of a custom iterator occurs.
+     * Tests that only one aggregator thread is created if a RuntimeException in the hasNext method of a custom iterator
+     * occurs.
      */
     @Test
     public void testSplitErrorInHasNext() throws Exception {
@@ -40,8 +40,8 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
     }
 
     /**
-     * Tests that only one aggregator thread is created if a RuntimeException in
-     * the next method of a custom iterator occurs.
+     * Tests that only one aggregator thread is created if a RuntimeException in the next method of a custom iterator
+     * occurs.
      */
     @Test
     public void testSplitErrorInNext() throws Exception {
@@ -65,9 +65,11 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:errorInHasNext").split().method(SplitterImpl.class, "errorInHasNext").streaming().parallelProcessing(true).to("mock:split1");
+                from("direct:errorInHasNext").split().method(SplitterImpl.class, "errorInHasNext").streaming()
+                        .parallelProcessing(true).to("mock:split1");
 
-                from("direct:errorInNext").split().method(SplitterImpl.class, "errorInNext").streaming().parallelProcessing(true).to("mock:split2");
+                from("direct:errorInNext").split().method(SplitterImpl.class, "errorInNext").streaming()
+                        .parallelProcessing(true).to("mock:split2");
             }
         };
     }

@@ -29,9 +29,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test for issue CAMEL-3193. Camel should support reconnects in case of
- * connection loss to jms server. After reconnect Temporary destinations have to
- * be recreated as they may become invalid
+ * Test for issue CAMEL-3193. Camel should support reconnects in case of connection loss to jms server. After reconnect
+ * Temporary destinations have to be recreated as they may become invalid
  */
 public class JmsReconnectTest {
 
@@ -52,8 +51,9 @@ public class JmsReconnectTest {
     MyService proxy;
 
     /**
-     * This test is disabled as the problem can currently not be reproduced using ActiveMQ.
-     * TODO Find a way to recreate the problem with ActiveMQ and fully automate the test
+     * This test is disabled as the problem can currently not be reproduced using ActiveMQ. TODO Find a way to recreate
+     * the problem with ActiveMQ and fully automate the test
+     * 
      * @throws Exception
      */
     @Disabled
@@ -75,8 +75,8 @@ public class JmsReconnectTest {
         connectionFactory.setBrokerURL("failover://(tcp://localhost:61616)?maxReconnectAttempts=1");
 
         /**
-         * When using Tibco EMS the problem can be recreated. As the broker is
-         * external it has to be stopped and started by hand.
+         * When using Tibco EMS the problem can be recreated. As the broker is external it has to be stopped and started
+         * by hand.
          */
         // TibjmsConnectionFactory connectionFactory = new TibjmsConnectionFactory();
         // connectionFactory.setReconnAttemptCount(1);
@@ -103,9 +103,8 @@ public class JmsReconnectTest {
 
         broker.stop();
         /**
-         * Wait long enough for the jms client to do a full reconnect. In the
-         * Tibco EMS case this means that a Temporary Destination created before
-         * is invalid now
+         * Wait long enough for the jms client to do a full reconnect. In the Tibco EMS case this means that a Temporary
+         * Destination created before is invalid now
          */
         Thread.sleep(5000);
 
@@ -113,8 +112,8 @@ public class JmsReconnectTest {
         broker.start(true);
 
         /**
-         * Before the fix to this issue this call will throw a spring UncategorizedJmsException
-         * which contains an InvalidJmsDestination
+         * Before the fix to this issue this call will throw a spring UncategorizedJmsException which contains an
+         * InvalidJmsDestination
          */
         String ret2 = proxy.echo("test");
         assertEquals("test", ret2);

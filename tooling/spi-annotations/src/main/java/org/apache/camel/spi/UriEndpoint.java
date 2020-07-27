@@ -25,13 +25,12 @@ import java.lang.annotation.Target;
 import org.apache.camel.Category;
 
 /**
- * Represents an annotated Camel <a href="http://camel.apache.org/endpoint.html">Endpoint</a>
- * which can have its properties (and the properties on its consumer) injected from the
- * Camel URI path and its query parameters
+ * Represents an annotated Camel <a href="http://camel.apache.org/endpoint.html">Endpoint</a> which can have its
+ * properties (and the properties on its consumer) injected from the Camel URI path and its query parameters
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface UriEndpoint {
 
     /**
@@ -42,8 +41,8 @@ public @interface UriEndpoint {
     /**
      * Represents the URI scheme name of this endpoint.
      * <p/>
-     * Multiple scheme names can be defined as a comma separated value.
-     * For example to associate <tt>http</tt> and <tt>https</tt> to the same endpoint implementation.
+     * Multiple scheme names can be defined as a comma separated value. For example to associate <tt>http</tt> and
+     * <tt>https</tt> to the same endpoint implementation.
      * <p/>
      * The order of the scheme names here should be the same order as in {@link #extendsScheme()} so their are paired.
      * <p/>
@@ -54,9 +53,9 @@ public @interface UriEndpoint {
     /**
      * Used when an endpoint is extending another endpoint
      * <p/>
-     * Multiple scheme names can be defined as a comma separated value.
-     * For example to associate <tt>ftp</tt> and <tt>ftps</tt> to the same endpoint implementation.
-     * The order of the scheme names here should be the same order as in {@link #scheme()} so their are paired.
+     * Multiple scheme names can be defined as a comma separated value. For example to associate <tt>ftp</tt> and
+     * <tt>ftps</tt> to the same endpoint implementation. The order of the scheme names here should be the same order as
+     * in {@link #scheme()} so their are paired.
      */
     String extendsScheme() default "";
 
@@ -65,19 +64,19 @@ public @interface UriEndpoint {
      * <p/>
      * The syntax follows the patterns such as:
      * <ul>
-     *     <li>scheme:host:port</li>
-     *     <li>scheme:host:port/path</li>
-     *     <li>scheme:path</li>
-     *     <li>scheme:path/path2</li>
+     * <li>scheme:host:port</li>
+     * <li>scheme:host:port/path</li>
+     * <li>scheme:path</li>
+     * <li>scheme:path/path2</li>
      * </ul>
-     * Where each path maps to the name of the endpoint {@link org.apache.camel.spi.UriPath} option.
-     * The query parameters is implied and should not be included in the syntax.
+     * Where each path maps to the name of the endpoint {@link org.apache.camel.spi.UriPath} option. The query
+     * parameters is implied and should not be included in the syntax.
      * <p/>
      * Some examples:
      * <ul>
-     *     <li>file:directoryName</li>
-     *     <li>ftp:host:port/directoryName</li>
-     *     <li>jms:destinationType:destinationName</li>
+     * <li>file:directoryName</li>
+     * <li>ftp:host:port/directoryName</li>
+     * <li>jms:destinationType:destinationName</li>
      * </ul>
      */
     String syntax();
@@ -86,8 +85,8 @@ public @interface UriEndpoint {
      * If the endpoint supports specifying username and/or password in the UserInfo part of the URI, then the
      * alternative syntax can represent this such as:
      * <ul>
-     *     <li>ftp:userName:password@host:port/directoryName</li>
-     *     <li>ssh:username:password@host:port</li>
+     * <li>ftp:userName:password@host:port/directoryName</li>
+     * <li>ssh:username:password@host:port</li>
      * </ul>
      */
     String alternativeSyntax() default "";
@@ -99,8 +98,8 @@ public @interface UriEndpoint {
     Class<?> consumerClass() default Object.class;
 
     /**
-     * The configuration parameter name prefix used on parameter names to separate the endpoint
-     * properties from the consumer properties
+     * The configuration parameter name prefix used on parameter names to separate the endpoint properties from the
+     * consumer properties
      */
     String consumerPrefix() default "";
 
@@ -116,7 +115,8 @@ public @interface UriEndpoint {
      * <p/>
      * Multiple labels can be defined as a comma separated value.
      * <p/>
-     * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>, <tt>database</tt>, etc.
+     * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>,
+     * <tt>database</tt>, etc.
      * <p/>
      * Deprecated: Use the category field instead
      */
@@ -126,8 +126,8 @@ public @interface UriEndpoint {
     /**
      * To associate this endpoint with category(ies).
      * <p/>
-     * This category is intended for grouping the endpoints, such as <tt>Category.CORE</tt>, <tt>Category.FILE</tt>, <tt>Category.DATABASE</tt>, etc, but supplied with
-     * as array of {@link Category} enums.
+     * This category is intended for grouping the endpoints, such as <tt>Category.CORE</tt>, <tt>Category.FILE</tt>,
+     * <tt>Category.DATABASE</tt>, etc, but supplied with as array of {@link Category} enums.
      * </p>
      * For example: @UriEndpoint(category = {Category.CORE, Category.DATABASE})
      */
@@ -150,23 +150,21 @@ public @interface UriEndpoint {
     /**
      * Should all properties be known or does the endpoint allow unknown options?
      * <p/>
-     * <tt>lenient = false</tt> means that the endpoint should validate that all
-     * given options is known and configured properly.
-     * <tt>lenient = true</tt> means that the endpoint allows additional unknown options to
-     * be passed to it but does not throw a ResolveEndpointFailedException when creating
-     * the endpoint.
+     * <tt>lenient = false</tt> means that the endpoint should validate that all given options is known and configured
+     * properly. <tt>lenient = true</tt> means that the endpoint allows additional unknown options to be passed to it
+     * but does not throw a ResolveEndpointFailedException when creating the endpoint.
      * <p/>
-     * This options is used by a few components for instance the HTTP based that can have
-     * dynamic URI options appended that is targeted for an external system.
+     * This options is used by a few components for instance the HTTP based that can have dynamic URI options appended
+     * that is targeted for an external system.
      * <p/>
      * Most endpoints is configured to be <b>not</b> lenient.
      */
     boolean lenientProperties() default false;
 
     /**
-     * Generates source code for fast configuring of the endpoint properties which
-     * uses direct method invocation of getter/setters.
-     * Setting this to false will fallback to use reflection based introspection as Camel does in Camel 2.x.
+     * Generates source code for fast configuring of the endpoint properties which uses direct method invocation of
+     * getter/setters. Setting this to false will fallback to use reflection based introspection as Camel does in Camel
+     * 2.x.
      */
     boolean generateConfigurer() default true;
 

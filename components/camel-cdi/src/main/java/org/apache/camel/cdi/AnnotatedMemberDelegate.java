@@ -26,7 +26,7 @@ import javax.enterprise.inject.spi.AnnotatedType;
 class AnnotatedMemberDelegate<T> extends AnnotatedDelegate implements AnnotatedMember<T> {
 
     private final AnnotatedMember<T> delegate;
-    
+
     AnnotatedMemberDelegate(AnnotatedMember<T> delegate, Set<Annotation> annotations) {
         super(delegate, annotations);
         this.delegate = delegate;

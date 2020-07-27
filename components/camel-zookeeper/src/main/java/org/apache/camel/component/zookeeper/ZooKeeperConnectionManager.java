@@ -21,8 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <code>ZookeeperConnectionManager</code> is a simple class to manage
- * {@link ZooKeeper} connections.
+ * <code>ZookeeperConnectionManager</code> is a simple class to manage {@link ZooKeeper} connections.
  */
 public class ZooKeeperConnectionManager {
 

@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 
 /**
  * Access to a repository to store aggregated exchanges to support pluggable implementations.
- *  
+ * 
  */
 public interface AggregationRepository {
 
@@ -32,13 +32,13 @@ public interface AggregationRepository {
      * <p/>
      * Will replace any existing exchange.
      * <p/>
-     * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore
-     * the exchange does not need to be added to a repository, as its completed immediately.
+     * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore the
+     * exchange does not need to be added to a repository, as its completed immediately.
      *
-     * @param camelContext   the current CamelContext
-     * @param key            the correlation key
-     * @param exchange       the aggregated exchange
-     * @return the old exchange if any existed
+     * @param  camelContext the current CamelContext
+     * @param  key          the correlation key
+     * @param  exchange     the aggregated exchange
+     * @return              the old exchange if any existed
      */
     Exchange add(CamelContext camelContext, String key, Exchange exchange);
 
@@ -47,22 +47,21 @@ public interface AggregationRepository {
      * <p/>
      * This method is always invoked for any incoming exchange in the aggregator.
      *
-     * @param camelContext   the current CamelContext
-     * @param key            the correlation key
-     * @return the exchange, or <tt>null</tt> if no exchange was previously added
+     * @param  camelContext the current CamelContext
+     * @param  key          the correlation key
+     * @return              the exchange, or <tt>null</tt> if no exchange was previously added
      */
     Exchange get(CamelContext camelContext, String key);
 
     /**
-     * Removes the exchange with the given correlation key, which should happen
-     * when an {@link Exchange} is completed
+     * Removes the exchange with the given correlation key, which should happen when an {@link Exchange} is completed
      * <p/>
-     * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore
-     * the exchange does not need to be added to a repository, as its completed immediately.
+     * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore the
+     * exchange does not need to be added to a repository, as its completed immediately.
      *
-     * @param camelContext   the current CamelContext
-     * @param key            the correlation key
-     * @param exchange       the exchange to remove
+     * @param camelContext the current CamelContext
+     * @param key          the correlation key
+     * @param exchange     the exchange to remove
      */
     void remove(CamelContext camelContext, String key, Exchange exchange);
 
@@ -71,8 +70,8 @@ public interface AggregationRepository {
      * <p/>
      * This method is always invoked.
      *
-     * @param camelContext  the current CamelContext
-     * @param exchangeId    exchange id to confirm
+     * @param camelContext the current CamelContext
+     * @param exchangeId   exchange id to confirm
      */
     void confirm(CamelContext camelContext, String exchangeId);
 

@@ -58,9 +58,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.swagger.SwaggerHelper.clearVendorExtensions;
 
 /**
- * A support class for that allows SPI to plugin
- * and offer Swagger API service listings as part of the Camel component. This allows rest-dsl components
- * such as servlet/jetty/netty-http to offer Swagger API listings with minimal effort.
+ * A support class for that allows SPI to plugin and offer Swagger API service listings as part of the Camel component.
+ * This allows rest-dsl components such as servlet/jetty/netty-http to offer Swagger API listings with minimal effort.
  */
 public class RestSwaggerSupport {
 
@@ -101,7 +100,7 @@ public class RestSwaggerSupport {
             swaggerConfig.setSchemes(schemes);
         } else {
             // assume http by default
-            swaggerConfig.setSchemes(new String[]{"http"});
+            swaggerConfig.setSchemes(new String[] { "http" });
         }
 
         String version = (String) config.get("api.version");
@@ -181,12 +180,13 @@ public class RestSwaggerSupport {
         }
 
         if (found != null) {
-            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[]{true}, new String[]{"boolean"});
+            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[] { true }, new String[] { "boolean" });
             if (xml != null) {
                 LOG.debug("DumpRestAsXml:\n{}", xml);
                 InputStream isxml = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
                 ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-                RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, isxml);
+                RestsDefinition rests
+                        = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, isxml);
                 if (rests != null) {
                     return rests.getRests();
                 }
@@ -212,10 +212,13 @@ public class RestSwaggerSupport {
         return answer;
     }
 
-    public void renderResourceListing(CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
-                                      Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
+    public void renderResourceListing(
+            CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId,
+            String route, boolean json, boolean yaml,
+            Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration)
+            throws Exception {
         LOG.trace("renderResourceListing");
-        
+
         ObjectMapper mapper = Json.mapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -232,9 +235,11 @@ public class RestSwaggerSupport {
         }
 
         if (rests != null) {
-            final Map<String, Object> apiProperties = configuration.getApiProperties() != null ? configuration.getApiProperties() : new HashMap<>();
+            final Map<String, Object> apiProperties
+                    = configuration.getApiProperties() != null ? configuration.getApiProperties() : new HashMap<>();
             if (json) {
-                response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault("api.specification.contentType.json", "application/json"));
+                response.setHeader(Exchange.CONTENT_TYPE,
+                        (String) apiProperties.getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
@@ -245,7 +250,7 @@ public class RestSwaggerSupport {
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(swagger);
                 }
-                
+
                 byte[] bytes = mapper.writeValueAsBytes(swagger);
 
                 int len = bytes.length;
@@ -253,7 +258,8 @@ public class RestSwaggerSupport {
 
                 response.writeBytes(bytes);
             } else {
-                response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault("api.specification.contentType.yaml", "text/yaml"));
+                response.setHeader(Exchange.CONTENT_TYPE,
+                        (String) apiProperties.getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
@@ -284,8 +290,10 @@ public class RestSwaggerSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(RestApiResponseAdapter response, String contextId, String contextIdPattern, boolean json, boolean yaml,
-                                    RestConfiguration configuration) throws Exception {
+    public void renderCamelContexts(
+            RestApiResponseAdapter response, String contextId, String contextIdPattern, boolean json, boolean yaml,
+            RestConfiguration configuration)
+            throws Exception {
         LOG.trace("renderCamelContexts");
 
         if (cors) {

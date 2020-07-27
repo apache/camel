@@ -26,8 +26,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 public class UTPasswordCallback implements CallbackHandler {
 
-    private Map<String, String> passwords =
-        new HashMap<>();
+    private Map<String, String> passwords = new HashMap<>();
 
     public UTPasswordCallback() {
         passwords.put("Alice", "ecilA");
@@ -37,14 +36,13 @@ public class UTPasswordCallback implements CallbackHandler {
     }
 
     /**
-     * Here, we attempt to get the password from the private
-     * alias/passwords map.
+     * Here, we attempt to get the password from the private alias/passwords map.
      */
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (Callback callback : callbacks) {
             try {
-                String id = (String)callback.getClass().getMethod("getIdentifier").invoke(callback);
+                String id = (String) callback.getClass().getMethod("getIdentifier").invoke(callback);
                 String pass = passwords.get(id);
                 if (pass != null) {
                     callback.getClass().getMethod("setPassword", String.class).invoke(callback, pass);

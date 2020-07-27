@@ -41,17 +41,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Checks for interoperability between a CXF client that is attached using the
- * Camel transport for CXF and the SOAP data format
+ * Checks for interoperability between a CXF client that is attached using the Camel transport for CXF and the SOAP data
+ * format
  */
 @CamelSpringTest
 @ContextConfiguration
 public class SoapCxfClientTest extends RouteBuilder {
     private static CustomerServiceImpl serverBean;
-    
+
     @Resource(name = "customerServiceCxfProxy")
     protected CustomerService customerService;
-
 
     @BeforeAll
     public static void initServerBean() {

@@ -44,7 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SaxonConverterTest extends CamelTestSupport {
-    private static final String CONTENT = "<a xmlns=\"http://www.apache.org/test\"><b foo=\"bar\">test</b><c><d>foobar</d></c></a>";
+    private static final String CONTENT
+            = "<a xmlns=\"http://www.apache.org/test\"><b foo=\"bar\">test</b><c><d>foobar</d></c></a>";
     private static final String CONTENT_B = "<b xmlns=\"http://www.apache.org/test\" foo=\"bar\">test</b>";
     private static final NamespaceContext NS_CONTEXT = new DefaultNamespaceContext().add("ns1", "http://www.apache.org/test");
 

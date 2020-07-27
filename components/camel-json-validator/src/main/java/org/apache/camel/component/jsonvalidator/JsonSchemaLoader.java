@@ -25,13 +25,13 @@ import org.apache.camel.CamelContext;
  * Can be used to create custom schema for the JSON validator endpoint.
  */
 public interface JsonSchemaLoader {
-    
+
     /**
      * Create a new Schema based on the schema input stream.
      *
-     * @param camelContext camel context
-     * @param inputStream the resource input stream
-     * @return a Schema to be used when validating incoming requests
+     * @param  camelContext camel context
+     * @param  inputStream  the resource input stream
+     * @return              a Schema to be used when validating incoming requests
      */
     JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception;
 

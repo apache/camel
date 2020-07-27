@@ -195,7 +195,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         if (outputs == null) {
             outputs = new HashMap<>();
         }
-        if (getCamelContext().getManagementStrategy() != null && getCamelContext().getManagementStrategy().getManagementAgent() != null) {
+        if (getCamelContext().getManagementStrategy() != null
+                && getCamelContext().getManagementStrategy().getManagementAgent() != null) {
             extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         }
         if (extended) {
@@ -203,9 +204,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputUtilization = new DefaultEndpointUtilizationStatistics(limit);
         }
         if (extended) {
-            LOG.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
+            LOG.info(
+                    "Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})",
+                    limit);
         } else {
-            LOG.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
+            LOG.info(
+                    "Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})",
+                    limit);
         }
         ServiceHelper.initService(inputUtilization, outputUtilization);
     }

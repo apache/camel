@@ -29,26 +29,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Flexible Aggregation Strategy is a highly customizable, fluently
- * configurable aggregation strategy. It allows you to quickly whip up an
- * {@link AggregationStrategy} that is capable of performing the most typical
- * aggregation duties, with zero Java code.
+ * The Flexible Aggregation Strategy is a highly customizable, fluently configurable aggregation strategy. It allows you
+ * to quickly whip up an {@link AggregationStrategy} that is capable of performing the most typical aggregation duties,
+ * with zero Java code.
  * <p/>
  * It can perform the following logic:
  * <ul>
- * <li>Filtering results based on a defined {@link Predicate} written in any
- * language, such as XPath, OGNL, Groovy, Simple, etc.</li>
+ * <li>Filtering results based on a defined {@link Predicate} written in any language, such as XPath, OGNL, Groovy,
+ * Simple, etc.</li>
  * <li>Picking specific data elements for aggregation.</li>
- * <li>Accumulating results in any designated {@link Collection} type, e.g. in a
- * HashSet, LinkedList, ArrayList, etc.</li>
- * <li>Storing the output in a specific place in the Exchange: a property, a
- * header or in the body.</li>
+ * <li>Accumulating results in any designated {@link Collection} type, e.g. in a HashSet, LinkedList, ArrayList,
+ * etc.</li>
+ * <li>Storing the output in a specific place in the Exchange: a property, a header or in the body.</li>
  * </ul>
- * It also includes the ability to specify both aggregation batch completion
- * actions and timeout actions, in an abbreviated manner.
+ * It also includes the ability to specify both aggregation batch completion actions and timeout actions, in an
+ * abbreviated manner.
  * <p/>
- * This Aggregation Strategy is suitable for usage in aggregate, split,
- * multicast, enrich and recipient list EIPs.
+ * This Aggregation Strategy is suitable for usage in aggregate, split, multicast, enrich and recipient list EIPs.
  */
 public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
@@ -59,7 +56,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     @SuppressWarnings("rawtypes")
     private Class<? extends Collection> collectionType;
     @SuppressWarnings("unchecked")
-    private Class<E> castAs = (Class<E>)Object.class;
+    private Class<E> castAs = (Class<E>) Object.class;
     private boolean storeNulls;
     private boolean ignoreInvalidCasts; // = false
     private FlexibleAggregationStrategyInjector injector = new BodyInjector(castAs);
@@ -67,15 +64,13 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     private CompletionAwareMixin completionMixin;
 
     /**
-     * Initializes a new instance with {@link Object} as the
-     * {@link FlexibleAggregationStrategy#castAs} type.
+     * Initializes a new instance with {@link Object} as the {@link FlexibleAggregationStrategy#castAs} type.
      */
     public FlexibleAggregationStrategy() {
     }
 
     /**
-     * Initializes a new instance with the specified type as the
-     * {@link FlexibleAggregationStrategy#castAs} type.
+     * Initializes a new instance with the specified type as the {@link FlexibleAggregationStrategy#castAs} type.
      * 
      * @param type The castAs type.
      */
@@ -84,15 +79,13 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Set an expression to extract the element to be aggregated from the
-     * incoming {@link Exchange}. All results are cast to the
-     * {@link FlexibleAggregationStrategy#castAs} type (or the type specified in
-     * the constructor).
+     * Set an expression to extract the element to be aggregated from the incoming {@link Exchange}. All results are
+     * cast to the {@link FlexibleAggregationStrategy#castAs} type (or the type specified in the constructor).
      * <p/>
      * By default, it picks the full IN message body of the incoming exchange.
      * 
-     * @param expression The picking expression.
-     * @return This instance.
+     * @param  expression The picking expression.
+     * @return            This instance.
      */
     public FlexibleAggregationStrategy<E> pick(Expression expression) {
         this.pickExpression = expression;
@@ -100,11 +93,11 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Set a filter condition such as only results satisfying it will be
-     * aggregated. By default, all picked values will be processed.
+     * Set a filter condition such as only results satisfying it will be aggregated. By default, all picked values will
+     * be processed.
      * 
-     * @param predicate The condition.
-     * @return This instance.
+     * @param  predicate The condition.
+     * @return           This instance.
      */
     public FlexibleAggregationStrategy<E> condition(Predicate predicate) {
         this.conditionPredicate = predicate;
@@ -112,12 +105,11 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Accumulate the result of the <i>pick expression</i> in a collection of
-     * the designated type. No <tt>null</tt>s will stored unless the
-     * {@link FlexibleAggregationStrategy#storeNulls()} option is enabled.
+     * Accumulate the result of the <i>pick expression</i> in a collection of the designated type. No <tt>null</tt>s
+     * will stored unless the {@link FlexibleAggregationStrategy#storeNulls()} option is enabled.
      * 
-     * @param collectionType The type of the Collection to aggregate into.
-     * @return This instance.
+     * @param  collectionType The type of the Collection to aggregate into.
+     * @return                This instance.
      */
     @SuppressWarnings("rawtypes")
     public FlexibleAggregationStrategy<E> accumulateInCollection(Class<? extends Collection> collectionType) {
@@ -126,11 +118,11 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Store the result of this Aggregation Strategy (whether an atomic element
-     * or a Collection) in a property with the designated name.
+     * Store the result of this Aggregation Strategy (whether an atomic element or a Collection) in a property with the
+     * designated name.
      * 
-     * @param propertyName The property name.
-     * @return This instance.
+     * @param  propertyName The property name.
+     * @return              This instance.
      */
     public FlexibleAggregationStrategy<E> storeInProperty(String propertyName) {
         this.injector = new PropertyInjector(castAs, propertyName);
@@ -138,11 +130,11 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Store the result of this Aggregation Strategy (whether an atomic element
-     * or a Collection) in an IN message header with the designated name.
+     * Store the result of this Aggregation Strategy (whether an atomic element or a Collection) in an IN message header
+     * with the designated name.
      * 
-     * @param headerName The header name.
-     * @return This instance.
+     * @param  headerName The header name.
+     * @return            This instance.
      */
     public FlexibleAggregationStrategy<E> storeInHeader(String headerName) {
         this.injector = new HeaderInjector(castAs, headerName);
@@ -150,8 +142,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Store the result of this Aggregation Strategy (whether an atomic element
-     * or a Collection) in the body of the IN message.
+     * Store the result of this Aggregation Strategy (whether an atomic element or a Collection) in the body of the IN
+     * message.
      * 
      * @return This instance.
      */
@@ -163,8 +155,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Cast the result of the <i>pick expression</i> to this type.
      * 
-     * @param castAs Type for the cast.
-     * @return This instance.
+     * @param  castAs Type for the cast.
+     * @return        This instance.
      */
     public FlexibleAggregationStrategy<E> castAs(Class<E> castAs) {
         this.castAs = castAs;
@@ -173,8 +165,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Enables storing null values in the resulting collection. By default, this
-     * aggregation strategy will drop null values.
+     * Enables storing null values in the resulting collection. By default, this aggregation strategy will drop null
+     * values.
      * 
      * @return This instance.
      */
@@ -184,10 +176,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     /**
-     * Ignores invalid casts instead of throwing an exception if the <i>pick
-     * expression</i> result cannot be casted to the specified type. By default,
-     * this aggregation strategy will throw an exception if an invalid cast
-     * occurs.
+     * Ignores invalid casts instead of throwing an exception if the <i>pick expression</i> result cannot be casted to
+     * the specified type. By default, this aggregation strategy will throw an exception if an invalid cast occurs.
      * 
      * @return This instance.
      */
@@ -199,8 +189,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Plugs in logic to execute when a timeout occurs.
      * 
-     * @param timeoutMixin
-     * @return This instance.
+     * @param  timeoutMixin
+     * @return              This instance.
      */
     public FlexibleAggregationStrategy<E> timeoutAware(TimeoutAwareMixin timeoutMixin) {
         this.timeoutMixin = timeoutMixin;
@@ -210,8 +200,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Plugs in logic to execute when an aggregation batch completes.
      * 
-     * @param completionMixin
-     * @return This instance.
+     * @param  completionMixin
+     * @return                 This instance.
      */
     public FlexibleAggregationStrategy<E> completionAware(CompletionAwareMixin completionMixin) {
         this.completionMixin = completionMixin;
@@ -245,7 +235,8 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
         }
 
         if (picked == null && !storeNulls) {
-            LOG.trace("Dropped exchange {} from aggregation as pick expression returned null and storing nulls is not enabled", newExchange);
+            LOG.trace("Dropped exchange {} from aggregation as pick expression returned null and storing nulls is not enabled",
+                    newExchange);
             return exchange;
         }
 

@@ -56,12 +56,12 @@ public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=queue:bar")
-                    .to("mock:done");
+                        .to("activemq:queue:foo?replyTo=queue:bar")
+                        .to("mock:done");
 
                 from("activemq:queue:foo")
-                    .to("log:foo?showAll=true", "mock:foo")
-                    .transform(body().prepend("Bye "));
+                        .to("log:foo?showAll=true", "mock:foo")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

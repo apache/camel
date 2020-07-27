@@ -25,8 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.decorators.AbstractSpanDecorator;
 
 /**
- * This interface represents a decorator specific to the component/endpoint
- * being instrumented.
+ * This interface represents a decorator specific to the component/endpoint being instrumented.
  */
 public interface SpanDecorator {
 
@@ -48,8 +47,8 @@ public interface SpanDecorator {
     };
 
     /**
-     * This method indicates whether the component associated with the SpanDecorator
-     * should result in a new span being created.
+     * This method indicates whether the component associated with the SpanDecorator should result in a new span being
+     * created.
      *
      * @return Whether a new span should be created
      */
@@ -70,68 +69,63 @@ public interface SpanDecorator {
     String getComponentClassName();
 
     /**
-     * This method returns the operation name to use with the Span representing
-     * this exchange and endpoint.
+     * This method returns the operation name to use with the Span representing this exchange and endpoint.
      *
-     * @param exchange The exchange
-     * @param endpoint The endpoint
-     * @return The operation name
+     * @param  exchange The exchange
+     * @param  endpoint The endpoint
+     * @return          The operation name
      */
     String getOperationName(Exchange exchange, Endpoint endpoint);
 
     /**
-     * This method adds appropriate details (tags/logs) to the supplied span
-     * based on the pre processing of the exchange.
+     * This method adds appropriate details (tags/logs) to the supplied span based on the pre processing of the
+     * exchange.
      *
-     * @param span The span
+     * @param span     The span
      * @param exchange The exchange
      * @param endpoint The endpoint
      */
     void pre(Span span, Exchange exchange, Endpoint endpoint);
 
     /**
-     * This method adds appropriate details (tags/logs) to the supplied span
-     * based on the post processing of the exchange.
+     * This method adds appropriate details (tags/logs) to the supplied span based on the post processing of the
+     * exchange.
      *
-     * @param span The span
+     * @param span     The span
      * @param exchange The exchange
      * @param endpoint The endpoint
      */
     void post(Span span, Exchange exchange, Endpoint endpoint);
 
     /**
-     * This method returns the 'span.kind' value for use when the component
-     * is initiating a communication.
+     * This method returns the 'span.kind' value for use when the component is initiating a communication.
      *
      * @return The kind
      */
     String getInitiatorSpanKind();
 
     /**
-     * This method returns the 'span.kind' value for use when the component
-     * is receiving a communication.
+     * This method returns the 'span.kind' value for use when the component is receiving a communication.
      *
      * @return The kind
      */
     String getReceiverSpanKind();
 
     /**
-     * This method returns the map to be used for headers extraction
-     * when the component is receiving a communication.
+     * This method returns the map to be used for headers extraction when the component is receiving a communication.
      *
-     * @param map a map containing the objects
-     * @param encoding whether the headers are encoded
-     * @return The extraction map
+     * @param  map      a map containing the objects
+     * @param  encoding whether the headers are encoded
+     * @return          The extraction map
      */
     TextMap getExtractAdapter(Map<String, Object> map, boolean encoding);
 
     /**
-     * This method returns the map to be used for headers injection
-     *  when the component is receiving a communication.
+     * This method returns the map to be used for headers injection when the component is receiving a communication.
      *
-     * @param map a map containing the objects
-     * @param encoding whether the headers are encoded
-     * @return The injection map
+     * @param  map      a map containing the objects
+     * @param  encoding whether the headers are encoded
+     * @return          The injection map
      */
     TextMap getInjectAdapter(Map<String, Object> map, boolean encoding);
 

@@ -47,39 +47,32 @@ public class BoxEventLogsManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create event logs manager to manage the event logs of Box connection's
-     * authenticated user.
+     * Create event logs manager to manage the event logs of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxEventLogsManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
     }
 
     /**
-     * Create an event stream with optional starting initial position and add
-     * listener that will be notified when an event is received.
+     * Create an event stream with optional starting initial position and add listener that will be notified when an
+     * event is received.
      * 
-     * @param position
-     *            - the starting position of the event stream. May be
-     *            <code>null</code> in which case all events within bounds
-     *            returned.
-     * @param after
-     *            - the lower bound on the timestamp of the events returned.
-     * @param before
-     *            - the upper bound on the timestamp of the events returned.
-     * @param types
-     *            - an optional list of event types to filter by.
+     * @param  position - the starting position of the event stream. May be <code>null</code> in which case all events
+     *                  within bounds returned.
+     * @param  after    - the lower bound on the timestamp of the events returned.
+     * @param  before   - the upper bound on the timestamp of the events returned.
+     * @param  types    - an optional list of event types to filter by.
      * 
-     * @return A list of all the events that met the given criteria.
+     * @return          A list of all the events that met the given criteria.
      */
     public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.Type... types) {
         try {
             LOG.debug("Getting all enterprise events occuring between "
-                    + (after == null ? after : DateFormat.getDateTimeInstance().format(after)) + " and "
-                    + (before == null ? before : DateFormat.getDateTimeInstance().format(before))
-                    + (position == null ? position : (" starting at " + position)));
+                      + (after == null ? after : DateFormat.getDateTimeInstance().format(after)) + " and "
+                      + (before == null ? before : DateFormat.getDateTimeInstance().format(before))
+                      + (position == null ? position : (" starting at " + position)));
 
             if (after == null) {
                 throw new IllegalArgumentException("Parameter 'after' can not be null");

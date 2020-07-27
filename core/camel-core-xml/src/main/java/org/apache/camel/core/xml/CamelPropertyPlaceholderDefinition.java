@@ -39,11 +39,13 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String location;
     @XmlAttribute
     private String encoding;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private Boolean ignoreMissingLocation;
     @XmlAttribute
     private String propertiesParserRef;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean defaultFallbackEnabled;
     @XmlElement(name = "propertiesFunction")
     private List<CamelPropertyPlaceholderFunctionDefinition> functions;
@@ -55,8 +57,8 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     }
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. You can use comma to separate multiple locations. This option will
+     * override any default locations and only use the locations from this option.
      */
     public void setLocation(String location) {
         this.location = location;
@@ -69,8 +71,8 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     /**
      * Encoding to use when loading properties file from the file system or classpath.
      * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
-     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * documented by {@link java.util.Properties#load(java.io.InputStream)}
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;

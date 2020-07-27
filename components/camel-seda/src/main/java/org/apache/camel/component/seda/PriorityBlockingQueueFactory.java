@@ -39,16 +39,16 @@ public class PriorityBlockingQueueFactory<E> implements BlockingQueueFactory<E> 
 
     @Override
     public PriorityBlockingQueue<E> create() {
-        return comparator == null 
-            ? new PriorityBlockingQueue<>()
-            // PriorityQueue as a default capacity of 11
-            : new PriorityBlockingQueue<>(11, comparator);
+        return comparator == null
+                ? new PriorityBlockingQueue<>()
+                // PriorityQueue as a default capacity of 11
+                : new PriorityBlockingQueue<>(11, comparator);
     }
 
     @Override
     public PriorityBlockingQueue<E> create(int capacity) {
         return comparator == null
-            ? new PriorityBlockingQueue<>(capacity)
-            : new PriorityBlockingQueue<>(capacity, comparator);
+                ? new PriorityBlockingQueue<>(capacity)
+                : new PriorityBlockingQueue<>(capacity, comparator);
     }
 }

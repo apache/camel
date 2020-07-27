@@ -24,7 +24,8 @@ public class VelocityFileLetterTest extends VelocityLetterTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("velocity:file:src/test/resources/org/apache/camel/component/velocity/letter.vm").to("mock:result");
+                from("direct:a").to("velocity:file:src/test/resources/org/apache/camel/component/velocity/letter.vm")
+                        .to("mock:result");
             }
         };
     }

@@ -62,8 +62,9 @@ public class TryCatchNestedChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().to("direct:bar").choice().when().simple("${header.foo} == 123").to("mock:foo").otherwise().to("mock:other").endDoTry()
-                    .doCatch(Exception.class).to("mock:catch").end();
+                from("direct:start").doTry().to("direct:bar").choice().when().simple("${header.foo} == 123").to("mock:foo")
+                        .otherwise().to("mock:other").endDoTry()
+                        .doCatch(Exception.class).to("mock:catch").end();
 
                 from("direct:bar").process(new Processor() {
                     @Override

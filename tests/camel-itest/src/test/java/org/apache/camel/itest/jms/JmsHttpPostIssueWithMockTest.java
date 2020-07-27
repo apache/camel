@@ -67,24 +67,24 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jms:queue:in")
-                    .setBody().simple("name=${body}")
-                    .setHeader(CONTENT_TYPE).constant("application/x-www-form-urlencoded")
-                    .setHeader(HTTP_METHOD).constant("POST")
-                    .to("http://localhost:" + port + "/myservice")
-                    .to("mock:result");
+                        .setBody().simple("name=${body}")
+                        .setHeader(CONTENT_TYPE).constant("application/x-www-form-urlencoded")
+                        .setHeader(HTTP_METHOD).constant("POST")
+                        .to("http://localhost:" + port + "/myservice")
+                        .to("mock:result");
 
                 from("jetty:http://0.0.0.0:" + port + "/myservice")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) {
-                            String body = exchange.getIn().getBody(String.class);
-                            assertEquals("name=Hello World", body);
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                assertEquals("name=Hello World", body);
 
-                            exchange.getMessage().setBody("OK");
-                            exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
-                            exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
-                        }
-                    });
+                                exchange.getMessage().setBody("OK");
+                                exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
+                                exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
+                            }
+                        });
             }
         };
     }

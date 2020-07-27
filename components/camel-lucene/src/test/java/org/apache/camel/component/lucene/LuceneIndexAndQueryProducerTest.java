@@ -41,13 +41,13 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
 
     private String[] humorousQuotes = {
-        "I think, therefore I am. I think - George Carlin",
-        "I have as much authority as the Pope. I just don't have as many people who believe it. - George Carlin",
-        "There`s no present. There`s only the immediate future and the recent past - George Carlin",
-        "Politics doesn't make strange bedfellows - marriage does. - Groucho Marx",
-        "I refuse to join any club that would have me as a member. - Groucho Marx",
-        "I tell ya when I was a kid, all I knew was rejection. My yo-yo, it never came back. - Rodney Dangerfield",
-        "I worked in a pet store and people kept asking how big I'd get. - Rodney Dangerfield"
+            "I think, therefore I am. I think - George Carlin",
+            "I have as much authority as the Pope. I just don't have as many people who believe it. - George Carlin",
+            "There`s no present. There`s only the immediate future and the recent past - George Carlin",
+            "Politics doesn't make strange bedfellows - marriage does. - Groucho Marx",
+            "I refuse to join any club that would have me as a member. - Groucho Marx",
+            "I tell ya when I was a kid, all I knew was rejection. My yo-yo, it never came back. - Rodney Dangerfield",
+            "I worked in a pet store and people kept asking how big I'd get. - Rodney Dangerfield"
     };
 
     @Override
@@ -60,7 +60,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         registry.bind("whitespace", new File("target/whitespaceindexDir"));
         registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
     }
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -69,28 +69,28 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     private void sendRequest(final String quote) throws Exception {
 
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {                
-                    
+            public void process(Exchange exchange) throws Exception {
+
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(quote, String.class);
-            }            
+            }
         });
     }
- 
+
     private void sendQuery() throws Exception {
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {                
-                    
+            public void process(Exchange exchange) throws Exception {
+
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setHeader("QUERY", "");
-            }            
+            }
         });
     }
-    
+
     @Test
     public void testLuceneIndexProducer() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
@@ -98,39 +98,37 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         context.stop();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                    to("lucene:stdQuotesIndex:insert?analyzer=#stdAnalyzer&indexDir=#std&srcDir=#load_dir").
-                    to("lucene:simpleQuotesIndex:insert?analyzer=#simpleAnalyzer&indexDir=#simple&srcDir=#load_dir").
-                    to("lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir").
-                    to("mock:result");
+                from("direct:start").to("lucene:stdQuotesIndex:insert?analyzer=#stdAnalyzer&indexDir=#std&srcDir=#load_dir")
+                        .to("lucene:simpleQuotesIndex:insert?analyzer=#simpleAnalyzer&indexDir=#simple&srcDir=#load_dir")
+                        .to("lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir")
+                        .to("mock:result");
 
             }
         });
         context.start();
-        
+
         LOG.debug("------------Beginning LuceneIndexProducer Test---------------");
         for (String quote : humorousQuotes) {
             sendRequest(quote);
         }
-        
+
         mockEndpoint.assertIsSatisfied();
         LOG.debug("------------Completed LuceneIndexProducer Test---------------");
         context.stop();
-    }    
+    }
 
     @Test
     public void testLucenePhraseQueryProducer() throws Exception {
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
-        
+
         context.stop();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                
-                from("direct:start").
-                    setHeader("QUERY", constant("Seinfeld")).
-                    to("lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20").
-                    to("direct:next");
-                
+
+                from("direct:start").setHeader("QUERY", constant("Seinfeld"))
+                        .to("lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20")
+                        .to("direct:next");
+
                 from("direct:next").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Hits hits = exchange.getIn().getBody(Hits.class);
@@ -150,32 +148,30 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         });
         context.start();
         LOG.debug("------------Beginning LuceneQueryProducer Phrase Test---------------");
-        
+
         sendQuery();
         mockSearchEndpoint.assertIsSatisfied();
         LOG.debug("------------Completed LuceneQueryProducer Phrase Test---------------");
         context.stop();
-    }    
-    
+    }
+
     @Test
     public void testLuceneWildcardQueryProducer() throws Exception {
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
-        
+
         context.stop();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                
-                from("direct:start").
-                    setHeader("QUERY", constant("Grouc?? Marx")).
-                    to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").
-                    to("direct:next");
-                
+
+                from("direct:start").setHeader("QUERY", constant("Grouc?? Marx"))
+                        .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").to("direct:next");
+
                 from("direct:next").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Hits hits = exchange.getIn().getBody(Hits.class);
                         printResults(hits);
                     }
-                    
+
                     private void printResults(Hits hits) {
                         LOG.debug("Number of hits: " + hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
@@ -189,7 +185,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         });
         context.start();
         LOG.debug("------------Beginning  LuceneQueryProducer Wildcard Test---------------");
-        
+
         sendQuery();
         mockSearchEndpoint.assertIsSatisfied();
         LOG.debug("------------Completed LuceneQueryProducer Wildcard Test---------------");
@@ -203,11 +199,9 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:start").
-                        setHeader("QUERY", constant("Grouc?? Marx")).
-                        setHeader("RETURN_LUCENE_DOCS", constant("true")).
-                        to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").
-                        to("direct:next");
+                from("direct:start").setHeader("QUERY", constant("Grouc?? Marx"))
+                        .setHeader("RETURN_LUCENE_DOCS", constant("true"))
+                        .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").to("direct:next");
 
                 from("direct:next").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

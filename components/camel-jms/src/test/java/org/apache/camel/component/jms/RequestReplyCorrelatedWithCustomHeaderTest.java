@@ -36,9 +36,13 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
 
     private ConnectionFactory connectionFactory;
 
-    public static void processRequest(@Body final String body,
-            @Header("CustomCorrelation") final String customCorrelation,
-            @Header("JMSCorrelationId") final String jmsCorrelationId, final Exchange exchange) throws Exception {
+    public static void processRequest(@Body
+    final String body,
+            @Header("CustomCorrelation")
+            final String customCorrelation,
+            @Header("JMSCorrelationId")
+            final String jmsCorrelationId, final Exchange exchange)
+            throws Exception {
         assertNotNull(customCorrelation);
         assertNull(jmsCorrelationId);
         exchange.getIn().setBody("Hi, " + body + ", " + customCorrelation);

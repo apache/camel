@@ -72,6 +72,7 @@ public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvMarshalPipeDelimiterSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvMarshalPipeDelimiterSpringTest-context.xml");
     }
 }

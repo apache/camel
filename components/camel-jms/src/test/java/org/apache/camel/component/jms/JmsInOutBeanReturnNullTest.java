@@ -82,7 +82,7 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
+                        .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
             }
         };
     }

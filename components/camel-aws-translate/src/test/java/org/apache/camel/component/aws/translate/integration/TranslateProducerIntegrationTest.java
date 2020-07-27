@@ -52,7 +52,7 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String resultGet = (String)exchange.getIn().getBody();
+        String resultGet = (String) exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
 
@@ -71,7 +71,7 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String resultGet = (String)exchange.getIn().getBody();
+        String resultGet = (String) exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
 
@@ -80,9 +80,12 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:translateText").to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText").to("mock:result");
+                from("direct:translateText").to(
+                        "aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText")
+                        .to("mock:result");
                 from("direct:translateTextAuto")
-                    .to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText&autodetectSourceLanguage=true").to("mock:result");
+                        .to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText&autodetectSourceLanguage=true")
+                        .to("mock:result");
             }
         };
     }

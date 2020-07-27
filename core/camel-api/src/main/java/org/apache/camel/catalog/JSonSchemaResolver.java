@@ -29,40 +29,40 @@ public interface JSonSchemaResolver {
     /**
      * Returns the component information as JSON format.
      *
-     * @param name the component name
-     * @return component details in JSon
+     * @param  name the component name
+     * @return      component details in JSon
      */
     String getComponentJSonSchema(String name);
 
     /**
      * Returns the data format information as JSON format.
      *
-     * @param name the data format name
-     * @return data format details in JSon
+     * @param  name the data format name
+     * @return      data format details in JSon
      */
     String getDataFormatJSonSchema(String name);
 
     /**
      * Returns the language information as JSON format.
      *
-     * @param name the language name
-     * @return language details in JSon
+     * @param  name the language name
+     * @return      language details in JSon
      */
     String getLanguageJSonSchema(String name);
 
     /**
      * Returns the other (miscellaneous) information as JSON format.
      *
-     * @param name the other (miscellaneous) name
-     * @return other (miscellaneous) details in JSon
+     * @param  name the other (miscellaneous) name
+     * @return      other (miscellaneous) details in JSon
      */
     String getOtherJSonSchema(String name);
 
     /**
      * Returns the model information as JSON format.
      *
-     * @param name the model name
-     * @return model details in JSon
+     * @param  name the model name
+     * @return      model details in JSon
      */
     String getModelJSonSchema(String name);
 

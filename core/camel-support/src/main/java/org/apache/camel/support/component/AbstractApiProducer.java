@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
  * Base class for API based Producers
  */
 public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
-    extends DefaultAsyncProducer implements PropertiesInterceptor, ResultInterceptor {
+        extends DefaultAsyncProducer
+        implements PropertiesInterceptor, ResultInterceptor {
 
     // API Endpoint
     protected final AbstractApiEndpoint<E, T> endpoint;
@@ -108,9 +109,10 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
     /**
      * Invoke the API method. Derived classes can override, but MUST call super.doInvokeMethod().
-     * @param method API method to invoke.
-     * @param properties method arguments from endpoint properties and exchange In headers.
-     * @return API method invocation result.
+     * 
+     * @param  method                API method to invoke.
+     * @param  properties            method arguments from endpoint properties and exchange In headers.
+     * @return                       API method invocation result.
      * @throws RuntimeCamelException on error. Exceptions thrown by API method are wrapped.
      */
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
@@ -137,16 +139,16 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
             // filter candidates based on endpoint and exchange properties
             final Set<String> argNames = properties.keySet();
             final List<ApiMethod> filteredMethods = methodHelper.filterMethods(
-                candidates,
-                ApiMethodHelper.MatchType.SUPER_SET,
-                argNames);
+                    candidates,
+                    ApiMethodHelper.MatchType.SUPER_SET,
+                    argNames);
 
             // get the method to call
             if (filteredMethods.isEmpty()) {
-                throw new RuntimeCamelException(String.format("Missing properties for %s, need one or more from %s",
-                    endpoint.getMethodName(),
-                    methodHelper.getMissingProperties(endpoint.getMethodName(), argNames))
-                );
+                throw new RuntimeCamelException(
+                        String.format("Missing properties for %s, need one or more from %s",
+                                endpoint.getMethodName(),
+                                methodHelper.getMissingProperties(endpoint.getMethodName(), argNames)));
             } else if (filteredMethods.size() == 1) {
                 // found an exact match
                 method = filteredMethods.get(0);
@@ -168,11 +170,13 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
             if (value != null) {
                 try {
                     value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
-                        endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
-                        exchange, value);
+                            endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
+                            exchange, value);
                 } catch (Exception e) {
-                    exchange.setException(new RuntimeCamelException(String.format(
-                            "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()), e));
+                    exchange.setException(new RuntimeCamelException(
+                            String.format(
+                                    "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()),
+                            e));
 
                     return false;
                 }

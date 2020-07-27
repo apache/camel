@@ -33,10 +33,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"/SpringTest.xml"})
+@ContextConfiguration(locations = { "/SpringTest.xml" })
 public class UndertowHttpsSpringTest {
 
     private Integer port;
@@ -62,7 +60,8 @@ public class UndertowHttpsSpringTest {
     public void testSSLConsumer() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("undertow:https://localhost:" + port + "/spring?sslContextParameters=#sslClient", "Hello World", String.class);
+        String out = template.requestBody("undertow:https://localhost:" + port + "/spring?sslContextParameters=#sslClient",
+                "Hello World", String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
@@ -78,4 +77,3 @@ public class UndertowHttpsSpringTest {
     }
 
 }
-

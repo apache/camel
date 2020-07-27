@@ -27,7 +27,7 @@ public final class CamelContextResolverHelper {
     private CamelContextResolverHelper() {
         // The helper class
     }
-    
+
     public static CamelContext getCamelContextWithId(ApplicationContext context, String contextId) {
         try {
             return context.getBean(contextId, CamelContext.class);

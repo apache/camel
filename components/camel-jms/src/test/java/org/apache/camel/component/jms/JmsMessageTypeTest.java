@@ -238,14 +238,14 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
             if (type.isAssignableFrom(String.class)) {
-                return (T) ("Hello " + ((MyFooBean)value).getName());
+                return (T) ("Hello " + ((MyFooBean) value).getName());
             }
             if (type.isAssignableFrom(byte[].class)) {
-                return (T) ("Bye " + ((MyFooBean)value).getName()).getBytes();
+                return (T) ("Bye " + ((MyFooBean) value).getName()).getBytes();
             }
             if (type.isAssignableFrom(Map.class)) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("name", ((MyFooBean)value).getName());
+                map.put("name", ((MyFooBean) value).getName());
                 return (T) map;
             }
             return null;

@@ -42,15 +42,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages}
- * APIs.
+ * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages} APIs.
  */
 public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSupport {
 
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
 
     @Test
     public void testMessages() throws Exception {
@@ -133,7 +133,8 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
     }
 
     private Message createTestEmail() throws MessagingException, IOException {
-        com.google.api.services.gmail.model.Profile profile = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
+        com.google.api.services.gmail.model.Profile profile
+                = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage mm = new MimeMessage(session);

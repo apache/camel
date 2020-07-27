@@ -17,5 +17,7 @@
 package org.apache.camel.component.telegram;
 
 public enum TelegramProxyType {
-    HTTP, SOCKS4, SOCKS5
+    HTTP,
+    SOCKS4,
+    SOCKS5
 }

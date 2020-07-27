@@ -72,16 +72,16 @@ public class BindyDatePatternCsvUnmarshallTest {
         @Override
         public void configure() {
             from(URI_DIRECT_START)
-                .unmarshal(camelDataFormat)
-                .marshal(camelDataFormat)
-                .convertBodyTo(String.class) // because the marshaler will return an OutputStream
-                .to(URI_MOCK_RESULT);
+                    .unmarshal(camelDataFormat)
+                    .marshal(camelDataFormat)
+                    .convertBodyTo(String.class) // because the marshaler will return an OutputStream
+                    .to(URI_MOCK_RESULT);
         }
 
     }
 
     @CsvRecord(separator = ",")
-    @FormatFactories({OrderNumberFormatFactory.class})
+    @FormatFactories({ OrderNumberFormatFactory.class })
     public static class Order {
 
         @DataField(pos = 1)
@@ -145,7 +145,8 @@ public class BindyDatePatternCsvUnmarshallTest {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", " + this.lastName + ", "  + String.valueOf(this.orderDate);
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", " + this.lastName
+                   + ", " + String.valueOf(this.orderDate);
         }
 
         public LocalDate getDeliveryDate() {

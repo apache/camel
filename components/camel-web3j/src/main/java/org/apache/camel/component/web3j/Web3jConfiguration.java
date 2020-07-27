@@ -130,23 +130,23 @@ public class Web3jConfiguration implements Cloneable {
     @UriParam(label = "common")
     private List<String> privateFor;
 
-
     public List<String> getPrivateFor() {
         return privateFor;
     }
+
     /**
-     *  A transaction privateFor nodes with public keys in a Quorum network
+     * A transaction privateFor nodes with public keys in a Quorum network
      */
     public void setPrivateFor(List<String> privateFor) {
         this.privateFor = privateFor;
     }
 
-
     public boolean isQuorumAPI() {
         return quorumAPI;
     }
+
     /**
-     *  If true, this will support Quorum API.
+     * If true, this will support Quorum API.
      */
     public void setQuorumAPI(boolean quorumAPI) {
         this.quorumAPI = quorumAPI;
@@ -421,14 +421,16 @@ public class Web3jConfiguration implements Cloneable {
     }
 
     /**
-     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined
+     * transactions.
      */
     public void setFromBlock(String fromBlock) {
         this.fromBlock = fromBlock;
     }
 
     /**
-     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined
+     * transactions.
      */
     public void setToBlock(String toBlock) {
         this.toBlock = toBlock;
@@ -443,7 +445,8 @@ public class Web3jConfiguration implements Cloneable {
     }
 
     /**
-     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined
+     * transactions.
      */
     public void setAtBlock(String atBlock) {
         this.atBlock = atBlock;
@@ -465,8 +468,7 @@ public class Web3jConfiguration implements Cloneable {
     }
 
     /**
-     * Topics are order-dependent. Each topic can also be a list of topics.
-     * Specify multiple topics separated by comma.
+     * Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma.
      */
     public void setTopics(List<String> topics) {
         this.topics = topics;
@@ -493,7 +495,7 @@ public class Web3jConfiguration implements Cloneable {
     }
 
     /**
-     *  If true it returns the full transaction objects, if false only the hashes of the transactions.
+     * If true it returns the full transaction objects, if false only the hashes of the transactions.
      */
     public void setFullTransactionObjects(boolean fullTransactionObjects) {
         this.fullTransactionObjects = fullTransactionObjects;
@@ -516,7 +518,7 @@ public class Web3jConfiguration implements Cloneable {
 
     public Web3jConfiguration copy() {
         try {
-            return (Web3jConfiguration)super.clone();
+            return (Web3jConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

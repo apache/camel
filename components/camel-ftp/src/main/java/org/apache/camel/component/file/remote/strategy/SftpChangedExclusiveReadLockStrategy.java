@@ -41,13 +41,17 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     private boolean fastExistsCheck;
 
     @Override
-    public void prepareOnStartup(GenericFileOperations<ChannelSftp.LsEntry> tGenericFileOperations, GenericFileEndpoint<ChannelSftp.LsEntry> tGenericFileEndpoint)
-        throws Exception {
+    public void prepareOnStartup(
+            GenericFileOperations<ChannelSftp.LsEntry> tGenericFileOperations,
+            GenericFileEndpoint<ChannelSftp.LsEntry> tGenericFileEndpoint)
+            throws Exception {
         // noop
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            throws Exception {
         boolean exclusive = false;
 
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
@@ -62,7 +66,8 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so
                     // return false
                     return false;
@@ -72,7 +77,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             long newLastModified = 0;
             long newLength = 0;
             List files; // operations.listFiles returns List<SftpRemoteFile> so
-                        // do not use generic in the List files
+                       // do not use generic in the List files
             if (fastExistsCheck) {
                 // use the absolute file path to only pickup the file we want to
                 // check, this avoids expensive
@@ -90,20 +95,24 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
                 String path = file.getParent();
                 if (path.equals("/") || path.equals("\\")) {
                     // special for root (= home) directory
-                    LOG.trace("Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
+                    LOG.trace(
+                            "Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
                     files = operations.listFiles();
                 } else {
-                    LOG.trace("Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.", path);
+                    LOG.trace(
+                            "Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.",
+                            path);
                     files = operations.listFiles(path);
                 }
             }
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (Object f : files) {
-                SftpRemoteFile rf = (SftpRemoteFile)f;
+                SftpRemoteFile rf = (SftpRemoteFile) f;
                 boolean match;
                 if (fastExistsCheck) {
                     // uses the absolute file path as well
-                    match = rf.getFilename().equals(file.getAbsoluteFilePath()) || rf.getFilename().equals(file.getFileNameOnly());
+                    match = rf.getFilename().equals(file.getAbsoluteFilePath())
+                            || rf.getFilename().equals(file.getFileNameOnly());
                 } else {
                     match = rf.getFilename().equals(file.getFileNameOnly());
                 }
@@ -118,7 +127,8 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             long newOlderThan = startTime + watch.taken() - minAge;
             LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length) || (minAge != 0 && newLastModified < newOlderThan))) {
+            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
+                    || (minAge != 0 && newLastModified < newOlderThan))) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -150,18 +160,23 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            throws Exception {
         // noop
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
-        throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            throws Exception {
         // noop
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+            throws Exception {
         // noop
     }
 

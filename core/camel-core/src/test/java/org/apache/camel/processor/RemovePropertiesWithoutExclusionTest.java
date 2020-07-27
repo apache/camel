@@ -75,8 +75,9 @@ public class RemovePropertiesWithoutExclusionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setProperty(propertyName).constant(expectedPropertyValue).setProperty(propertyName1).constant(expectedPropertyValue1).to("mock:mid")
-                    .removeProperties(pattern).to("mock:end");
+                from("direct:start").setProperty(propertyName).constant(expectedPropertyValue).setProperty(propertyName1)
+                        .constant(expectedPropertyValue1).to("mock:mid")
+                        .removeProperties(pattern).to("mock:end");
             }
         };
     }

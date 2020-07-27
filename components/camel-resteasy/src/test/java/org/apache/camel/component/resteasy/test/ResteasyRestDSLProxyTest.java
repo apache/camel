@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @WebTest
 public class ResteasyRestDSLProxyTest {
 
@@ -45,7 +44,7 @@ public class ResteasyRestDSLProxyTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-        
+
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(ProxyServiceInterface.class, Customer.class)
                 .addPackage("org.apache.camel.component.resteasy")

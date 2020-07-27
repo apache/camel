@@ -25,9 +25,11 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.OrderedProperties;
 
 /**
- * Base class for {@link LoadablePropertiesSource} which can load properties from a source such as classpath or file system.
+ * Base class for {@link LoadablePropertiesSource} which can load properties from a source such as classpath or file
+ * system.
  */
-public abstract class AbstractLocationPropertiesSource extends ServiceSupport implements LoadablePropertiesSource, LocationPropertiesSource {
+public abstract class AbstractLocationPropertiesSource extends ServiceSupport
+        implements LoadablePropertiesSource, LocationPropertiesSource {
 
     private final Properties properties = new OrderedProperties();
     private final PropertiesComponent propertiesComponent;
@@ -54,7 +56,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
     public Properties loadProperties(Predicate<String> filter) {
         Properties answer = new Properties();
 
-        for (String name: properties.stringPropertyNames()) {
+        for (String name : properties.stringPropertyNames()) {
             if (filter.test(name)) {
                 answer.put(name, properties.get(name));
             }
@@ -82,12 +84,11 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
     /**
      * Strategy to prepare loaded properties before being used by Camel.
      * <p/>
-     * This implementation will ensure values are trimmed, as loading properties from
-     * a file with values having trailing spaces is not automatic trimmed by the Properties API
-     * from the JDK.
+     * This implementation will ensure values are trimmed, as loading properties from a file with values having trailing
+     * spaces is not automatic trimmed by the Properties API from the JDK.
      *
-     * @param properties  the properties
-     * @return the prepared properties
+     * @param  properties the properties
+     * @return            the prepared properties
      */
     protected static Properties prepareLoadedProperties(Properties properties) {
         Properties answer = new OrderedProperties();

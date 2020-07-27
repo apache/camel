@@ -51,13 +51,13 @@ public class CMISConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         return getSessionFacade().poll(this);
     }
-    
+
     public OperationContext createOperationContext() throws Exception {
         return getSessionFacade().createOperationContext();
     }
 
     int sendExchangeWithPropsAndBody(Map<String, Object> properties, InputStream inputStream)
-        throws Exception {
+            throws Exception {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeaders(properties);
         exchange.getIn().setBody(inputStream);

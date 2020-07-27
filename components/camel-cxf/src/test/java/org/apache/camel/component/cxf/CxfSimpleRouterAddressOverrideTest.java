@@ -19,20 +19,19 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
-public class CxfSimpleRouterAddressOverrideTest extends CxfSimpleRouterTest {    
+public class CxfSimpleRouterAddressOverrideTest extends CxfSimpleRouterTest {
 
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     private String serviceEndpointURI = "cxf://http://localhost:9002/badAddress" + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
                 from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG")
-                .setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()))
-                .to(serviceEndpointURI);
+                        .setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()))
+                        .to(serviceEndpointURI);
             }
         };
     }

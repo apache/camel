@@ -60,7 +60,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         // Validate that the headers were preserved.
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        String replyTo = (String)exchange.getIn().getHeader("reply-to");
+        String replyTo = (String) exchange.getIn().getHeader("reply-to");
         assertEquals("route-test-reply@localhost", replyTo);
 
         assertMailboxReceivedMessages("route-test-copy@localhost");
@@ -126,11 +126,11 @@ public class MailRouteTest extends CamelTestSupport {
                 // plain string with semi colon
                 // to seperate the mail addresses
                 from("direct:a")
-                    .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
-                    .to("smtp://localhost");
+                        .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
+                        .to("smtp://localhost");
 
                 from("pop3://route-test-result@localhost?initialDelay=100&delay=100").convertBodyTo(String.class)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

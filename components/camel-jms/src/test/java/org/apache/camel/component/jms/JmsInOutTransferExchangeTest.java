@@ -76,30 +76,30 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         Exchange transferExchange = transfer.getExchanges().get(0);
         Exchange exchange = createExchangeWithBody(null);
         assertTrue(transferExchange.getIn() instanceof JmsMessage);
-        
-        JmsMessage transferMessage = (JmsMessage)transferExchange.getIn();
-        ActiveMQObjectMessage transferActiveMQMessage = (ActiveMQObjectMessage)transferMessage.getJmsMessage();
-        
+
+        JmsMessage transferMessage = (JmsMessage) transferExchange.getIn();
+        ActiveMQObjectMessage transferActiveMQMessage = (ActiveMQObjectMessage) transferMessage.getJmsMessage();
+
         assertTrue(transferActiveMQMessage.getObject() instanceof DefaultExchangeHolder);
-        DefaultExchangeHolder exchangeHolder = (DefaultExchangeHolder)transferActiveMQMessage.getObject();
+        DefaultExchangeHolder exchangeHolder = (DefaultExchangeHolder) transferActiveMQMessage.getObject();
         DefaultExchangeHolder.unmarshal(exchange, exchangeHolder);
-        
+
         assertNotNull(exchange.getIn().getBody(SerializableRequestDto.class));
         assertEquals(Boolean.TRUE, exchange.getIn().getHeader("boolean", Boolean.class));
         assertEquals((Long) 123L, exchange.getIn().getHeader("long", Long.class));
         assertEquals((Double) 1.23, exchange.getIn().getHeader("double", Double.class));
         assertEquals("hello", exchange.getIn().getHeader("string", String.class));
         assertEquals("PropertyValue", exchange.getProperty("PropertyName"));
-        
+
         Exchange resultExchange = result.getExchanges().get(0);
         assertTrue(resultExchange.getIn() instanceof JmsMessage);
-        
-        JmsMessage resultMessage = (JmsMessage)resultExchange.getIn();
-        ActiveMQObjectMessage resultActiveMQMessage = (ActiveMQObjectMessage)resultMessage.getJmsMessage();
-        exchangeHolder = (DefaultExchangeHolder)resultActiveMQMessage.getObject();
+
+        JmsMessage resultMessage = (JmsMessage) resultExchange.getIn();
+        ActiveMQObjectMessage resultActiveMQMessage = (ActiveMQObjectMessage) resultMessage.getJmsMessage();
+        exchangeHolder = (DefaultExchangeHolder) resultActiveMQMessage.getObject();
         exchange = createExchangeWithBody(null);
         DefaultExchangeHolder.unmarshal(exchange, exchangeHolder);
-        
+
         assertNotNull(exchange.getIn().getBody(SerializableResponseDto.class));
         assertEquals(Boolean.TRUE, exchange.getIn().getHeader("boolean", Boolean.class));
         assertEquals((Long) 123L, exchange.getIn().getHeader("long", Long.class));
@@ -113,16 +113,14 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .inOut("activemq:responseGenerator?transferExchange=true")
-                    .to("mock:result");
+                        .inOut("activemq:responseGenerator?transferExchange=true")
+                        .to("mock:result");
 
                 from("activemq:responseGenerator?transferExchange=true")
-                    .to("mock:transfer")
-                    .process(exchange -> exchange.getIn().setBody(new SerializableResponseDto(true)));
+                        .to("mock:transfer")
+                        .process(exchange -> exchange.getIn().setBody(new SerializableResponseDto(true)));
             }
         };
     }
-   
-   
-    
+
 }

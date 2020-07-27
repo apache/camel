@@ -40,24 +40,24 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
 
     private int port;
     private String uri;
-    
+
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters addSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.p12");
         ksp.setPassword("changeit");
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword("changeit");
         kmp.setKeyStore(ksp);
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
-        
+
         return sslContextParameters;
     }
 
@@ -79,7 +79,7 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+              + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
         super.setUp();
     }
 
@@ -90,7 +90,8 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
             public void configure() {
                 // setup SSL on the component
                 CometdComponent cometds = context.getComponent("cometds", CometdComponent.class);
-                cometds.setSslContextParameters(context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
+                cometds.setSslContextParameters(
+                        context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
 
                 from("direct:input").to(uri);
 

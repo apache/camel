@@ -234,15 +234,16 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                IdempotentRepository repository = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
+                IdempotentRepository repository
+                        = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
 
                 from("activemq2:queue:inbox")
-                    .transacted("required")
-                    .to("mock:a")
-                    .idempotentConsumer(header("uid"), repository)
-                    .to("mock:b")
-                    .transform(simple("DONE-${body}"))
-                    .to("activemq2:queue:outbox");
+                        .transacted("required")
+                        .to("mock:a")
+                        .idempotentConsumer(header("uid"), repository)
+                        .to("mock:b")
+                        .transform(simple("DONE-${body}"))
+                        .to("activemq2:queue:outbox");
             }
         };
     }

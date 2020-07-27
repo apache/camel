@@ -30,7 +30,8 @@ public class DescribeTableCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        DescribeTableResponse result = ddbClient.describeTable(DescribeTableRequest.builder().tableName(determineTableName()).build());
+        DescribeTableResponse result
+                = ddbClient.describeTable(DescribeTableRequest.builder().tableName(determineTableName()).build());
 
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(Ddb2Constants.TABLE_NAME, result.table().tableName());

@@ -41,10 +41,11 @@ public class RouteContextProcessorTest extends ContextTestSupport {
     public static final int SAFETY_CAPACITY = 10;
 
     // Resequencer time-out
-    public static final long TIMEOUT = SAFETY_TIMEOUT + (RandomSleepProcessor.MAX_PROCESS_TIME - RandomSleepProcessor.MIN_PROCESS_TIME);
+    public static final long TIMEOUT
+            = SAFETY_TIMEOUT + (RandomSleepProcessor.MAX_PROCESS_TIME - RandomSleepProcessor.MIN_PROCESS_TIME);
 
     // Resequencer capacity
-    public static final int CAPACITY = SAFETY_CAPACITY + (int)(CONCURRENCY * TIMEOUT / RandomSleepProcessor.MIN_PROCESS_TIME);
+    public static final int CAPACITY = SAFETY_CAPACITY + (int) (CONCURRENCY * TIMEOUT / RandomSleepProcessor.MIN_PROCESS_TIME);
 
     private static final int NUMBER_OF_MESSAGES = 10000;
 
@@ -62,7 +63,8 @@ public class RouteContextProcessorTest extends ContextTestSupport {
             template.sendBodyAndHeader("seda:fork", "Test Message: " + i, "seqnum", new Long(i));
         }
 
-        long expectedTime = NUMBER_OF_MESSAGES * (RandomSleepProcessor.MAX_PROCESS_TIME + RandomSleepProcessor.MIN_PROCESS_TIME) / 2 / CONCURRENCY + TIMEOUT;
+        long expectedTime = NUMBER_OF_MESSAGES * (RandomSleepProcessor.MAX_PROCESS_TIME + RandomSleepProcessor.MIN_PROCESS_TIME)
+                            / 2 / CONCURRENCY + TIMEOUT;
         Thread.sleep(expectedTime);
 
         assertMockEndpointsSatisfied();
@@ -82,8 +84,7 @@ public class RouteContextProcessorTest extends ContextTestSupport {
     }
 
     /**
-     * Simulation processor that sleeps a random time between MIN_PROCESS_TIME
-     * and MAX_PROCESS_TIME milliseconds.
+     * Simulation processor that sleeps a random time between MIN_PROCESS_TIME and MAX_PROCESS_TIME milliseconds.
      */
     public static class RandomSleepProcessor implements Processor {
         public static final long MIN_PROCESS_TIME = 5;
@@ -91,7 +92,7 @@ public class RouteContextProcessorTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange arg0) throws Exception {
-            long processTime = (long)(MIN_PROCESS_TIME + Math.random() * (MAX_PROCESS_TIME - MIN_PROCESS_TIME));
+            long processTime = (long) (MIN_PROCESS_TIME + Math.random() * (MAX_PROCESS_TIME - MIN_PROCESS_TIME));
             Thread.sleep(processTime);
         }
     }

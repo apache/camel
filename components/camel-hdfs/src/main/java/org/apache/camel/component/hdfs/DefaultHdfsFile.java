@@ -65,7 +65,8 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
 
     protected final Writable getWritable(Object obj, Exchange exchange, Holder<Integer> size) {
         Class<?> objCls = Optional.ofNullable(obj).orElse(new UnknownType()).getClass();
-        HdfsWritableFactories.HdfsWritableFactory objWritableFactory = WritableCache.writables.getOrDefault(objCls, new HdfsWritableFactories.HdfsObjectWritableFactory());
+        HdfsWritableFactories.HdfsWritableFactory objWritableFactory
+                = WritableCache.writables.getOrDefault(objCls, new HdfsWritableFactories.HdfsObjectWritableFactory());
         return objWritableFactory.create(obj, exchange.getContext().getTypeConverter(), size);
     }
 
@@ -78,7 +79,7 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
         return writableObjectFactory.read(writable, size);
     }
 
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({ "rawtypes" })
     private static final class WritableCache {
         private static Map<Class, HdfsWritableFactories.HdfsWritableFactory> writables = new HashMap<>();
         private static Map<Class, HdfsWritableFactories.HdfsWritableFactory> readables = new HashMap<>();

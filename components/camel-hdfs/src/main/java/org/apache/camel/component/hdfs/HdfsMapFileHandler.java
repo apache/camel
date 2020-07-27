@@ -43,9 +43,10 @@ class HdfsMapFileHandler extends DefaultHdfsFile<MapFile.Writer, MapFile.Reader>
                     new Path(hdfsPath),
                     MapFile.Writer.keyClass(keyWritableClass),
                     MapFile.Writer.valueClass(valueWritableClass),
-                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    MapFile.Writer.progressable(() -> { })
-            );
+                    MapFile.Writer.compression(endpointConfig.getCompressionType(),
+                            endpointConfig.getCompressionCodec().getCodec()),
+                    MapFile.Writer.progressable(() -> {
+                    }));
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
@@ -83,7 +84,8 @@ class HdfsMapFileHandler extends DefaultHdfsFile<MapFile.Writer, MapFile.Reader>
         try {
             MapFile.Reader reader = (MapFile.Reader) hdfsInputStream.getIn();
             Holder<Integer> keySize = new Holder<>();
-            WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
+            WritableComparable<?> keyWritable
+                    = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
             if (reader.next(keyWritable, valueWritable)) {

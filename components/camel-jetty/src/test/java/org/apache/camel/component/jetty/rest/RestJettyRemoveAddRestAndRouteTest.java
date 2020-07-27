@@ -56,7 +56,9 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 rest("/").get("/issues/{isin}/{sedol}").route().id("issues")
-                    .process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin") + ":" + e.getIn().getHeader("sedol"))).endRest();
+                        .process(e -> e.getOut().setBody(
+                                "Here's your issue " + e.getIn().getHeader("isin") + ":" + e.getIn().getHeader("sedol")))
+                        .endRest();
             }
         }.addRoutesToCamelContext(context);
         // exception here since we have 2 rest configurations
@@ -76,8 +78,10 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
             public void configure() throws Exception {
                 restConfiguration().host("localhost").port(getPort());
 
-                rest("/").get("/issues/{isin}").route().id("issues").process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin"))).endRest().get("/listings")
-                    .route().id("listings").process(e -> e.getOut().setBody("some listings"));
+                rest("/").get("/issues/{isin}").route().id("issues")
+                        .process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin"))).endRest()
+                        .get("/listings")
+                        .route().id("listings").process(e -> e.getOut().setBody("some listings"));
             }
         };
     }

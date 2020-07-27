@@ -33,18 +33,16 @@ public class CXFGreeterEnrichTest extends AbstractCXFGreeterRouterTest {
         }
     }
 
-
     @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1() + "/CXFGreeterEnrichTest/SoapContext/SoapPort"; 
-        endpoint = Endpoint.publish(address, implementor); 
+        String address = "http://localhost:" + getPort1() + "/CXFGreeterEnrichTest/SoapContext/SoapPort";
+        endpoint = Endpoint.publish(address, implementor);
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEnrichRouterContext.xml");
     }
-
 
 }

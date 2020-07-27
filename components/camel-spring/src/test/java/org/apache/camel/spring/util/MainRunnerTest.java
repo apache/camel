@@ -27,7 +27,7 @@ public class MainRunnerTest extends TestSupport {
     public void testMainRunner() throws Exception {
         MainRunner runner = new MainRunner();
         runner.setDelay(10);
-        runner.setArgs(new String[]{"Hello", "World"});
+        runner.setArgs(new String[] { "Hello", "World" });
         runner.setMain(MainRunnerTest.class);
         runner.afterPropertiesSet();
         runner.run();

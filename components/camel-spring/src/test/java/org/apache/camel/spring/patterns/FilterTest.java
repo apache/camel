@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Tests filtering using Spring Test and XML Config
-  */
+ */
 // START SNIPPET: example
 // tag::example[]
 @ContextConfiguration

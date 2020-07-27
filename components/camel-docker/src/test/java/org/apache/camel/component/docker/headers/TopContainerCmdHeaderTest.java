@@ -46,7 +46,6 @@ public class TopContainerCmdHeaderTest extends BaseDockerHeaderTest<TopContainer
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_PS_ARGS, psArgs);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).topContainerCmd(containerId);

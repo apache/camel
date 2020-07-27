@@ -33,7 +33,7 @@ public class SipComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SipConfiguration config = new SipConfiguration();
         config.initialize(new URI(uri), parameters, this);
-        
+
         SipEndpoint sipEndpoint = new SipEndpoint(uri, this, config);
         setProperties(sipEndpoint, parameters);
         return sipEndpoint;

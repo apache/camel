@@ -56,7 +56,7 @@ public class ProducerBodyArrayTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        Integer[] numbers = new Integer[]{1, 2};
+        Integer[] numbers = new Integer[] { 1, 2 };
         template.requestBody("direct:query", numbers);
 
         assertMockEndpointsSatisfied();
@@ -75,7 +75,8 @@ public class ProducerBodyArrayTest extends CamelTestSupport {
                 // required for the sql component
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
-                from("direct:query").to("sql-stored:SUBNUMBERS(INTEGER ${body[0]},INTEGER ${body[1]},OUT INTEGER resultofsub)").to("mock:query");
+                from("direct:query").to("sql-stored:SUBNUMBERS(INTEGER ${body[0]},INTEGER ${body[1]},OUT INTEGER resultofsub)")
+                        .to("mock:query");
             }
         };
     }

@@ -52,14 +52,16 @@ public class Translate2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Translate2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Translate2Configuration();
+        Translate2Configuration configuration
+                = this.configuration != null ? this.configuration.copy() : new Translate2Configuration();
 
         Translate2Endpoint endpoint = new Translate2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getTranslateClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon translate client or accessKey and secretKey must be specified");
         }
         return endpoint;

@@ -102,10 +102,11 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
                 from("jms:queue:point2").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:point3").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:reply").aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionSize(3)
-                    .to("mock:reply");
+                        .to("mock:reply");
             }
         };
     }
+
     private static class MyProcessor implements Processor {
 
         @Override

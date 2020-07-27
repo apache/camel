@@ -55,8 +55,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a>
- * which can reorder messages within a batch.
+ * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a> which can reorder
+ * messages within a batch.
  */
 public class Resequencer extends AsyncProcessorSupport implements Navigate<Processor>, IdAware, RouteIdAware, Traceable {
 
@@ -122,7 +122,6 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     // Properties
     // -------------------------------------------------------------------------
 
-
     public Expression getExpression() {
         return expression;
     }
@@ -140,8 +139,8 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     }
 
     /**
-     * Sets the <b>in</b> batch size. This is the number of incoming exchanges that this batch processor will
-     * process before its completed. The default value is {@link #DEFAULT_BATCH_SIZE}.
+     * Sets the <b>in</b> batch size. This is the number of incoming exchanges that this batch processor will process
+     * before its completed. The default value is {@link #DEFAULT_BATCH_SIZE}.
      *
      * @param batchSize the size
      */
@@ -162,8 +161,8 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
 
     /**
      * Sets the <b>out</b> batch size. If the batch processor holds more exchanges than this out size then the
-     * completion is triggered. Can for instance be used to ensure that this batch is completed when a certain
-     * number of exchanges has been collected. By default this feature is <b>not</b> enabled.
+     * completion is triggered. Can for instance be used to ensure that this batch is completed when a certain number of
+     * exchanges has been collected. By default this feature is <b>not</b> enabled.
      *
      * @param outBatchSize the size
      */
@@ -273,7 +272,8 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         return createSet(new ExpressionComparator(expression), allowDuplicates, reverse);
     }
 
-    protected static Set<Exchange> createSet(final Comparator<? super Exchange> comparator, boolean allowDuplicates, boolean reverse) {
+    protected static Set<Exchange> createSet(
+            final Comparator<? super Exchange> comparator, boolean allowDuplicates, boolean reverse) {
         Comparator<? super Exchange> answer = comparator;
 
         if (reverse) {
@@ -291,16 +291,16 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     }
 
     /**
-     * A strategy method to decide if the "in" batch is completed. That is, whether the resulting exchanges in
-     * the in queue should be drained to the "out" collection.
+     * A strategy method to decide if the "in" batch is completed. That is, whether the resulting exchanges in the in
+     * queue should be drained to the "out" collection.
      */
     private boolean isInBatchCompleted(int num) {
         return num >= batchSize;
     }
 
     /**
-     * A strategy method to decide if the "out" batch is completed. That is, whether the resulting exchange in
-     * the out collection should be sent.
+     * A strategy method to decide if the "out" batch is completed. That is, whether the resulting exchange in the out
+     * collection should be sent.
      */
     private boolean isOutBatchCompleted() {
         if (outBatchSize == 0) {
@@ -311,8 +311,8 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     }
 
     /**
-     * Strategy Method to process an exchange in the batch. This method allows derived classes to perform
-     * custom processing before or after an individual exchange is processed
+     * Strategy Method to process an exchange in the batch. This method allows derived classes to perform custom
+     * processing before or after an individual exchange is processed
      */
     protected void processExchange(Exchange exchange) {
         processor.process(exchange, sync -> postProcess(exchange));
@@ -374,8 +374,8 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     /**
      * Is the given exchange valid to be used.
      *
-     * @param exchange the given exchange
-     * @return <tt>true</tt> if valid, <tt>false</tt> otherwise
+     * @param  exchange the given exchange
+     * @return          <tt>true</tt> if valid, <tt>false</tt> otherwise
      */
     private boolean isValid(Exchange exchange) {
         Object result = null;

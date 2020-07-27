@@ -79,7 +79,7 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
                 while (cont && (response = inputStream.read()) >= 0) {
                     if (response == 28) {
                         response = inputStream.read(); // read second end
-                                                       // byte
+                                                      // byte
                         if (response == 13) {
                             // Responses must arrive in same order
                             cont = s.toString().contains(String.format("X%dX", i++));
@@ -87,7 +87,7 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
                             latch.countDown();
                         }
                     } else {
-                        s.append((char)response);
+                        s.append((char) response);
                     }
                 }
             } catch (IOException ignored) {
@@ -95,7 +95,8 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
         });
         t.start();
 
-        String in = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|X%dX|P|2.4\r" + "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
+        String in = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|X%dX|P|2.4\r"
+                    + "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
         for (int i = 0; i < messageCount; i++) {
             String msg = String.format(in, i);
             outputStream.write(11);

@@ -20,9 +20,9 @@ package org.apache.camel.component.cxf.jaxrs;
  * We can get and set the BeanId through this interface
  */
 public interface BeanIdAware {
-    
+
     String getBeanId();
-    
+
     void setBeanId(String id);
 
 }

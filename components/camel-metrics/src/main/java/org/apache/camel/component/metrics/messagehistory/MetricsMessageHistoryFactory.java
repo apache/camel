@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A factory to setup and use {@link MetricsMessageHistory} as message history implementation.
  */
-public class MetricsMessageHistoryFactory extends ServiceSupport implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
+public class MetricsMessageHistoryFactory extends ServiceSupport
+        implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
     private MetricsMessageHistoryService messageHistoryService;

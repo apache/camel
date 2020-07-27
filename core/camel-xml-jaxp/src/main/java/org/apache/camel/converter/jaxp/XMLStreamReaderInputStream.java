@@ -104,13 +104,15 @@ class XMLStreamReaderInputStream extends InputStream {
                             writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
                                 String namespaceUri = reader.getAttributeNamespace(i);
-                                writer.writeAttribute(reader.getAttributePrefix(i), namespaceUri == null ? "" : namespaceUri, reader.getAttributeLocalName(i),
+                                writer.writeAttribute(reader.getAttributePrefix(i), namespaceUri == null ? "" : namespaceUri,
+                                        reader.getAttributeLocalName(i),
                                         reader.getAttributeValue(i));
                             }
                             for (int i = 0; i < reader.getNamespaceCount(); i++) {
                                 String namespacePrefix = reader.getNamespacePrefix(i);
                                 String namespaceURI = reader.getNamespaceURI(i);
-                                writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix, namespaceURI == null ? "" : namespaceURI);
+                                writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix,
+                                        namespaceURI == null ? "" : namespaceURI);
                             }
                             break;
                         case XMLStreamConstants.END_ELEMENT:

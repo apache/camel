@@ -36,7 +36,8 @@ public class ElasticsearchRestComponentVerifierExtensionTest extends CamelTestSu
     public void testParameters() throws Exception {
         Component component = context().getComponent("elasticsearch-rest");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("hostAddresses", "http://localhost:9000");
@@ -50,7 +51,8 @@ public class ElasticsearchRestComponentVerifierExtensionTest extends CamelTestSu
     @Test
     public void testConnectivity() throws Exception {
         Component component = context().getComponent("elasticsearch-rest");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("hostAddresses", "http://localhost:9000");

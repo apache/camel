@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test about retrying deleting processed file, that can be a bit more
- * tricky on some OS as java.io.delete can return wrong answer
+ * Unit test about retrying deleting processed file, that can be a bit more tricky on some OS as java.io.delete can
+ * return wrong answer
  */
 public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 

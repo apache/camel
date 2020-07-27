@@ -35,8 +35,8 @@ public final class RouteTemplateParameterBuilder {
     }
 
     /**
-     * Sets the id of the route.
-     * If no route id is configured, then Camel will auto assign a route id, which is returned from the build method.
+     * Sets the id of the route. If no route id is configured, then Camel will auto assign a route id, which is returned
+     * from the build method.
      *
      * @param routeId the route id
      */

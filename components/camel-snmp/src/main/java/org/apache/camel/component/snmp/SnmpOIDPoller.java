@@ -63,7 +63,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     private Address targetAddress;
     private TransportMapping<? extends Address> transport;
     private Snmp snmp;
-    
+
     private Target target;
     private PDU pdu;
     private SnmpEndpoint endpoint;
@@ -92,53 +92,54 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
         if (SnmpConstants.version3 == endpoint.getSnmpVersion()) {
             UserTarget userTarget = new UserTarget();
-            
+
             userTarget.setSecurityLevel(endpoint.getSecurityLevel());
             userTarget.setSecurityName(convertToOctetString(endpoint.getSecurityName()));
             userTarget.setAddress(targetAddress);
             userTarget.setRetries(endpoint.getRetries());
             userTarget.setTimeout(endpoint.getTimeout());
             userTarget.setVersion(endpoint.getSnmpVersion());
-            
+
             this.target = userTarget;
-            
+
             USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
             SecurityModels.getInstance().addSecurityModel(usm);
-            
+
             OID authProtocol = convertAuthenticationProtocol(endpoint.getAuthenticationProtocol());
-            
+
             OctetString authPwd = convertToOctetString(endpoint.getAuthenticationPassphrase());
-            
+
             OID privProtocol = convertPrivacyProtocol(endpoint.getPrivacyProtocol());
-            
+
             OctetString privPwd = convertToOctetString(endpoint.getPrivacyPassphrase());
-            
-            UsmUser user = new UsmUser(convertToOctetString(endpoint.getSecurityName()), authProtocol, authPwd, privProtocol, privPwd);
-            
+
+            UsmUser user = new UsmUser(
+                    convertToOctetString(endpoint.getSecurityName()), authProtocol, authPwd, privProtocol, privPwd);
+
             usm.addUser(convertToOctetString(endpoint.getSecurityName()), user);
-            
+
             ScopedPDU scopedPDU = new ScopedPDU();
-            
+
             if (endpoint.getSnmpContextEngineId() != null) {
                 scopedPDU.setContextEngineID(new OctetString(endpoint.getSnmpContextEngineId()));
             }
-            
+
             if (endpoint.getSnmpContextName() != null) {
                 scopedPDU.setContextName(new OctetString(endpoint.getSnmpContextName()));
             }
-            
+
             this.pdu = scopedPDU;
         } else {
             CommunityTarget communityTarget = new CommunityTarget();
-            
+
             communityTarget.setCommunity(convertToOctetString(endpoint.getSnmpCommunity()));
             communityTarget.setAddress(targetAddress);
             communityTarget.setRetries(endpoint.getRetries());
             communityTarget.setTimeout(endpoint.getTimeout());
             communityTarget.setVersion(endpoint.getSnmpVersion());
-            
+
             this.target = communityTarget;
-            
+
             this.pdu = new PDU();
         }
 
@@ -167,9 +168,9 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     @Override
     protected int poll() throws Exception {
         this.pdu.clear();
-        
+
         int type = this.getPduType(this.endpoint.getType());
-        
+
         this.pdu.setType(type);
 
         if (!endpoint.isTreeList()) {
@@ -216,7 +217,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         // Always cancel async request when response has been received
         // otherwise a memory leak is created! Not canceling a request
         // immediately can be useful when sending a request to a broadcast address.
-        ((Snmp)event.getSource()).cancel(event.getRequest(), this);
+        ((Snmp) event.getSource()).cancel(event.getRequest(), this);
 
         // check for valid response
         if (event.getRequest() == null || event.getResponse() == null) {
@@ -224,7 +225,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
             LOG.debug("Received invalid SNMP event. Request: " + event.getRequest() + " / Response: " + event.getResponse());
             return;
         }
-        
+
         PDU pdu = event.getResponse();
         processPDU(pdu);
     }
@@ -246,7 +247,8 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         }
     }
 
-    /** * @return Returns the target.
+    /**
+     * * @return Returns the target.
      */
     public Target getTarget() {
         return this.target;
@@ -269,7 +271,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     private OID convertAuthenticationProtocol(String authenticationProtocol) {
         if (authenticationProtocol == null) {
             return null;
-        }    
+        }
         if ("MD5".equals(authenticationProtocol)) {
             return AuthMD5.ID;
         } else if ("SHA1".equals(authenticationProtocol)) {
@@ -282,7 +284,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     private OID convertPrivacyProtocol(String privacyProtocol) {
         if (privacyProtocol == null) {
             return null;
-        }    
+        }
         if ("DES".equals(privacyProtocol)) {
             return PrivDES.ID;
         } else if ("TRIDES".equals(privacyProtocol)) {
@@ -297,7 +299,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
             throw new IllegalArgumentException("Unknown privacy protocol: " + privacyProtocol);
         }
     }
-    
+
     private int getPduType(SnmpActionType type) {
         if (SnmpActionType.GET_NEXT == type) {
             return PDU.GETNEXT;
@@ -305,5 +307,5 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
             return PDU.GET;
         }
     }
-    
+
 }

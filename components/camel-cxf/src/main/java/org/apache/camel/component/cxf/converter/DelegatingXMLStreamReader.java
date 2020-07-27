@@ -176,7 +176,8 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     @Override
     public String getNamespaceURI(int index) {
         if (depth == 1) {
-            return index < xprefixes.length ? getNamespaceURI(xprefixes[index]) : reader.getNamespaceURI(index - xprefixes.length);
+            return index < xprefixes.length
+                    ? getNamespaceURI(xprefixes[index]) : reader.getNamespaceURI(index - xprefixes.length);
         } else {
             return reader.getNamespaceURI(index);
         }

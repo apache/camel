@@ -41,11 +41,9 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         mock.expectedMinimumMessageCount(2);
 
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1")
-        );
+                Document.createDocument("key1", "value1"));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key2", "value2")
-        );
+                Document.createDocument("key2", "value2"));
 
         mock.assertIsSatisfied();
 
@@ -71,11 +69,9 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
         mock.expectedMinimumMessageCount(2);
 
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1").put("_id", 123L)
-        );
+                Document.createDocument("key1", "value1").put("_id", 123L));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key2", "value2").put("_id", 123L)
-        );
+                Document.createDocument("key2", "value2").put("_id", 123L));
         mock.assertIsSatisfied();
 
         List<Exchange> sorted = sortByChangeTimestamp(mock.getExchanges());
@@ -101,8 +97,7 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
 
         template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1"),
-                NitriteConstants.OPERATION, new InsertOperation()
-        );
+                NitriteConstants.OPERATION, new InsertOperation());
 
         mock.assertIsSatisfied();
 
@@ -123,17 +118,14 @@ public class NitriteConsumerCollectionTest extends AbstractNitriteTest {
 
         template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
                 Document.createDocument("key1", "value1"),
-                NitriteConstants.OPERATION, new InsertOperation()
-        );
+                NitriteConstants.OPERATION, new InsertOperation());
         template.sendBodyAndHeader(String.format("nitrite://%s?collection=collection", tempDb()),
                 null,
-                NitriteConstants.OPERATION, new RemoveCollectionOperation(Filters.eq("key1", "value1"))
-        );
+                NitriteConstants.OPERATION, new RemoveCollectionOperation(Filters.eq("key1", "value1")));
 
         assertEquals(
                 0,
-                template.requestBody("direct:listAll", null, List.class).size()
-        );
+                template.requestBody("direct:listAll", null, List.class).size());
 
         mock.assertIsSatisfied();
 

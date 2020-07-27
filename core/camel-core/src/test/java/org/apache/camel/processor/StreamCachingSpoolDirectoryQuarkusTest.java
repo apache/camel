@@ -103,17 +103,18 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);
 
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo")).to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // check if spool file exists
-                            if (spoolRule.isSpool()) {
-                                String[] names = new File("target/cachedir").list();
-                                assertEquals(1, names.length, "There should be a cached spool file");
+                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // check if spool file exists
+                                if (spoolRule.isSpool()) {
+                                    String[] names = new File("target/cachedir").list();
+                                    assertEquals(1, names.length, "There should be a cached spool file");
+                                }
                             }
-                        }
-                    });
+                        });
 
             }
         };

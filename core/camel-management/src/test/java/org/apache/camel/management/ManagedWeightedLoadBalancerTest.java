@@ -85,7 +85,7 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().weighted(true, "1,2").id("mysend")
+                        .loadBalance().weighted(true, "1,2").id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };

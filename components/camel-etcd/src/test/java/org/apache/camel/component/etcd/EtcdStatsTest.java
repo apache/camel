@@ -34,9 +34,12 @@ public class EtcdStatsTest extends EtcdTestSupport {
         testStatsConsumer("mock:stats-self-consumer", EtcdConstants.ETCD_SELF_STATS_PATH, EtcdSelfStatsResponse.class);
         testStatsConsumer("mock:stats-store-consumer", EtcdConstants.ETCD_STORE_STATS_PATH, EtcdStoreStatsResponse.class);
 
-        testStatsProducer("direct:stats-leader", "mock:stats-leader-producer", EtcdConstants.ETCD_LEADER_STATS_PATH, EtcdLeaderStatsResponse.class);
-        testStatsProducer("direct:stats-self", "mock:stats-self-producer", EtcdConstants.ETCD_SELF_STATS_PATH, EtcdSelfStatsResponse.class);
-        testStatsProducer("direct:stats-store", "mock:stats-store-producer", EtcdConstants.ETCD_STORE_STATS_PATH, EtcdStoreStatsResponse.class);
+        testStatsProducer("direct:stats-leader", "mock:stats-leader-producer", EtcdConstants.ETCD_LEADER_STATS_PATH,
+                EtcdLeaderStatsResponse.class);
+        testStatsProducer("direct:stats-self", "mock:stats-self-producer", EtcdConstants.ETCD_SELF_STATS_PATH,
+                EtcdSelfStatsResponse.class);
+        testStatsProducer("direct:stats-store", "mock:stats-store-producer", EtcdConstants.ETCD_STORE_STATS_PATH,
+                EtcdStoreStatsResponse.class);
     }
 
     protected void testStatsConsumer(String mockEnpoint, String expectedPath, final Class<?> expectedType) throws Exception {
@@ -54,7 +57,9 @@ public class EtcdStatsTest extends EtcdTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void testStatsProducer(String producerEnpoint, String mockEnpoint, String expectedPath, final Class<?> expectedType) throws Exception {
+    protected void testStatsProducer(
+            String producerEnpoint, String mockEnpoint, String expectedPath, final Class<?> expectedType)
+            throws Exception {
         sendBody(producerEnpoint, "");
 
         testStatsConsumer(mockEnpoint, expectedPath, expectedType);
@@ -66,21 +71,21 @@ public class EtcdStatsTest extends EtcdTestSupport {
             public void configure() {
                 // CONSUMER
                 from("etcd-stats:leader?delay=50&initialDelay=0")
-                    .to("mock:stats-leader-consumer");
+                        .to("mock:stats-leader-consumer");
                 from("etcd-stats:self?delay=50&initialDelay=0")
-                    .to("mock:stats-self-consumer");
+                        .to("mock:stats-self-consumer");
                 from("etcd-stats:store?delay=50&initialDelay=0")
-                    .to("mock:stats-store-consumer");
+                        .to("mock:stats-store-consumer");
 
                 // PRODUCER
                 from("direct:stats-leader")
-                    .to("etcd-stats:leader")
+                        .to("etcd-stats:leader")
                         .to("mock:stats-leader-producer");
                 from("direct:stats-self")
-                    .to("etcd-stats:self")
+                        .to("etcd-stats:self")
                         .to("mock:stats-self-producer");
                 from("direct:stats-store")
-                    .to("etcd-stats:store")
+                        .to("etcd-stats:store")
                         .to("mock:stats-store-producer");
             }
         };

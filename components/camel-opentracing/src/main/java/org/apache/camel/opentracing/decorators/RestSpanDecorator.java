@@ -55,15 +55,15 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
             Object value = exchange.getIn().getHeader(param);
             if (value != null) {
                 if (value instanceof String) {
-                    span.setTag(param, (String)value);
+                    span.setTag(param, (String) value);
                 } else if (value instanceof Number) {
-                    span.setTag(param, (Number)value);
+                    span.setTag(param, (Number) value);
                 } else if (value instanceof Boolean) {
-                    span.setTag(param, (Boolean)value);
+                    span.setTag(param, (Boolean) value);
                 }
             }
         });
-        
+
     }
 
     protected static String getPath(String uri) {

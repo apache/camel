@@ -26,19 +26,19 @@ public class RestOpenApiHelperTest {
     @Test
     public void emptyHostParamsAreNotAllowed() {
         assertThrows(IllegalArgumentException.class,
-            () -> RestOpenApiHelper.isHostParam(""));
+                () -> RestOpenApiHelper.isHostParam(""));
     }
 
     @Test
     public void nonUriHostParametersAreNotAllowed() {
         assertThrows(IllegalArgumentException.class,
-            () -> RestOpenApiHelper.isHostParam("carrot"));
+                () -> RestOpenApiHelper.isHostParam("carrot"));
     }
 
     @Test
     public void nullHostParamsAreNotAllowed() {
         assertThrows(IllegalArgumentException.class,
-            () -> RestOpenApiHelper.isHostParam(null));
+                () -> RestOpenApiHelper.isHostParam(null));
     }
 
     @Test

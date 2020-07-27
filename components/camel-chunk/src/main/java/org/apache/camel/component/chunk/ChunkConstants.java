@@ -35,7 +35,7 @@ public final class ChunkConstants {
      * Chunk endpoint URI prefix
      */
     public static final String CHUNK_ENDPOINT_URI_PREFIX = "chunk:";
-    
+
     /**
      * Chunk Template extension
      */

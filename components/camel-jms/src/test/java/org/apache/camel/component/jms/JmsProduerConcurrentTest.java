@@ -79,5 +79,5 @@ public class JmsProduerConcurrentTest extends CamelTestSupport {
             }
         };
     }
-    
+
 }

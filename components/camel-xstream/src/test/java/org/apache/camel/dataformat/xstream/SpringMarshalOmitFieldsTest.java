@@ -29,7 +29,7 @@ public class SpringMarshalOmitFieldsTest extends XStreamDataFormatOmitFieldsTest
         setUseRouteBuilder(false);
 
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-            "org/apache/camel/dataformat/xstream/SpringMarshalOmitFieldsTest.xml");
+                "org/apache/camel/dataformat/xstream/SpringMarshalOmitFieldsTest.xml");
 
         setCamelContextService(new Service() {
             public void start() {
@@ -43,5 +43,5 @@ public class SpringMarshalOmitFieldsTest extends XStreamDataFormatOmitFieldsTest
 
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
-   
+
 }

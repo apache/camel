@@ -125,7 +125,8 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                RestConfigurationDefinition restConfig = restConfiguration().scheme(getProtocol()).host("localhost").port(coapport);
+                RestConfigurationDefinition restConfig
+                        = restConfiguration().scheme(getProtocol()).host("localhost").port(coapport);
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");

@@ -35,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
+        return "ftp://admin@localhost:" + getPort()
+               + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
     }
 
     @Override

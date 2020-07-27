@@ -44,11 +44,12 @@ public class IrcConfiguration implements Cloneable {
     private boolean usingSSL;
     private List<IrcChannel> channelList = new ArrayList<>();
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String hostname;
     @UriPath
     private int port;
-    private int[] ports = {6667, 6668, 6669};
+    private int[] ports = { 6667, 6668, 6669 };
     @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "common")
@@ -104,7 +105,8 @@ public class IrcConfiguration implements Cloneable {
         this(hostname, null, null, nickname, displayname, channels);
     }
 
-    public IrcConfiguration(String hostname, String username, String password, String nickname, String displayname, String channels) {
+    public IrcConfiguration(String hostname, String username, String password, String nickname, String displayname,
+                            String channels) {
         this.channels = channels;
         this.hostname = hostname;
         this.username = username;
@@ -136,7 +138,7 @@ public class IrcConfiguration implements Cloneable {
         return retval.toString();
     }
 
-    public void configure(String uriStr) throws URISyntaxException, UnsupportedEncodingException  {
+    public void configure(String uriStr) throws URISyntaxException, UnsupportedEncodingException {
         // fix provided URI and handle that we can use # to indicate the IRC room
         if (uriStr.startsWith("ircs")) {
             setUsingSSL(true);
@@ -168,12 +170,12 @@ public class IrcConfiguration implements Cloneable {
                 username = userInfo;
             }
         }
-        
+
         if (uri.getPort() != -1) {
-            setPorts(new int[] {uri.getPort()});
+            setPorts(new int[] { uri.getPort() });
             setPort(uri.getPort());
         }
-        
+
         setNickname(username);
         setUsername(username);
         setRealname(username);
@@ -189,7 +191,7 @@ public class IrcConfiguration implements Cloneable {
     public List<IrcChannel> getChannelList() {
         return channelList;
     }
-    
+
     public IrcChannel findChannel(String name) {
         for (IrcChannel channel : channelList) {
             if (channel.getName().equals(name)) {
@@ -337,7 +339,8 @@ public class IrcConfiguration implements Cloneable {
     }
 
     /**
-     * Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is used.
+     * Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is
+     * used.
      */
     public void setPort(int port) {
         this.port = port;
@@ -349,6 +352,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Use persistent messages.
+     * 
      * @deprecated not in use
      */
     @Deprecated
@@ -476,16 +480,15 @@ public class IrcConfiguration implements Cloneable {
     public void setAutoRejoin(boolean autoRejoin) {
         this.autoRejoin = autoRejoin;
     }
-    
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
     /**
-     * Used for configuring security using SSL.
-     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
-     * This reference overrides any configured SSLContextParameters at the component level.
-     * Note that this setting overrides the trustManager option.
+     * Used for configuring security using SSL. Reference to a org.apache.camel.support.jsse.SSLContextParameters in the
+     * Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this
+     * setting overrides the trustManager option.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -504,6 +507,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Delay in milliseconds before sending commands after the connection is established.
+     * 
      * @param timeout timeout value in milliseconds
      */
     public void setCommandTimeout(long timeout) {
@@ -520,8 +524,8 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Sends <code>NAMES</code> command to channel after joining it.<br>
-     * {@link #onReply} has to be <code>true</code> in order to process the
-     * result which will have the header value <code>irc.num = '353'</code>.
+     * {@link #onReply} has to be <code>true</code> in order to process the result which will have the header value
+     * <code>irc.num = '353'</code>.
      */
     public void setNamesOnJoin(boolean namesOnJoin) {
         this.namesOnJoin = namesOnJoin;
@@ -530,9 +534,9 @@ public class IrcConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
-                + "]";
+               + "]";
     }
-    
+
     private static IrcChannel createChannel(String channelInfo) {
         String[] pair = channelInfo.split("!");
         return new IrcChannel(pair[0], pair.length > 1 ? pair[1] : null);
@@ -552,7 +556,7 @@ public class IrcConfiguration implements Cloneable {
             Object value = pair.getValue();
             // the value may be a list since the same key has multiple values
             if (value instanceof List) {
-                List<?> list = (List<?>)value;
+                List<?> list = (List<?>) value;
                 for (Object s : list) {
                     addQueryParameter(result, pair.getKey(), s);
                 }
@@ -562,7 +566,7 @@ public class IrcConfiguration implements Cloneable {
         }
         return result.toString();
     }
-    
+
     private static void addQueryParameter(StringBuilder sb, String key, Object value) {
         sb.append(sb.length() == 0 ? "" : "&");
         sb.append(key);

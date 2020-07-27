@@ -37,7 +37,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -61,17 +60,17 @@ public class XmlRouteTemplateContextImportTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-routeContextTemplateRef-import.xml").toFile(),
-                "imported-context.xml")
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-routeTemplateContext.xml").toFile(),
-                "imported-routetemplate-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-routeContextTemplateRef-import.xml").toFile(),
+                        "imported-context.xml")
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-routeTemplateContext.xml").toFile(),
+                        "imported-routetemplate-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

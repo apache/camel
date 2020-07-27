@@ -105,7 +105,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         repo.clear();
         assertEquals(0, cache.size());
     }
-    
+
     @Test
     public void testClear() throws Exception {
         // ADD key to remove
@@ -143,8 +143,8 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct://in")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock://out");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock://out");
             }
         };
     }

@@ -39,7 +39,8 @@ public class FloatFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new FloatFormat(formattingOptions.isImpliedDecimalSeparator(),
+        return new FloatFormat(
+                formattingOptions.isImpliedDecimalSeparator(),
                 formattingOptions.getPrecision(),
                 formattingOptions.getLocale());
     }

@@ -32,9 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Unit test to verify that we can route a JMS message and do header lookup by name
- * without mutating it and that it can handle the default keyFormatStrategy with _HYPHEN_
- * in the key name 
+ * Unit test to verify that we can route a JMS message and do header lookup by name without mutating it and that it can
+ * handle the default keyFormatStrategy with _HYPHEN_ in the key name
  */
 public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTestSupport {
 
@@ -71,14 +70,14 @@ public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTe
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(exchange -> {
-                        assertEquals("text/plain", exchange.getIn().getHeader("Content-Type"));
+                        .process(exchange -> {
+                            assertEquals("text/plain", exchange.getIn().getHeader("Content-Type"));
 
-                        // do not mutate it
-                        JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                        assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
-                    })
-                    .to("activemq:queue:copy", "mock:result");
+                            // do not mutate it
+                            JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
+                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                        })
+                        .to("activemq:queue:copy", "mock:result");
 
                 from("activemq:queue:copy").to("mock:copy");
             }

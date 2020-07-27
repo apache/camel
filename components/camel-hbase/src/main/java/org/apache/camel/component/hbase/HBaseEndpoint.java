@@ -41,10 +41,12 @@ import org.apache.hadoop.security.UserGroupInformation;
 /**
  * Reading and write from/to an HBase store (Hadoop database).
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "hbase", title = "HBase", syntax = "hbase:tableName", category = {Category.BIGDATA, Category.DATABASE, Category.HADOOP})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "hbase", title = "HBase", syntax = "hbase:tableName",
+             category = { Category.BIGDATA, Category.DATABASE, Category.HADOOP })
 public class HBaseEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "The name of the table") @Metadata(required = true)
+    @UriPath(description = "The name of the table")
+    @Metadata(required = true)
     private final String tableName;
     private transient TableName tableNameObj;
     @UriParam(label = "producer", defaultValue = "100")
@@ -231,12 +233,13 @@ public class HBaseEndpoint extends DefaultEndpoint {
      * <p/>
      * The following keys is supported:
      * <ul>
-     *     <li>rowId - The id of the row. This has limited use as the row usually changes per Exchange.</li>
-     *     <li>rowType - The type to covert row id to. Supported operations: CamelHBaseScan.</li>
-     *     <li>family - The column family. Supports a number suffix for referring to more than one columns.</li>
-     *     <li>qualifier - The column qualifier. Supports a number suffix for referring to more than one columns.</li>
-     *     <li>value - The value. Supports a number suffix for referring to more than one columns</li>
-     *     <li>valueType - The value type. Supports a number suffix for referring to more than one columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.</li>
+     * <li>rowId - The id of the row. This has limited use as the row usually changes per Exchange.</li>
+     * <li>rowType - The type to covert row id to. Supported operations: CamelHBaseScan.</li>
+     * <li>family - The column family. Supports a number suffix for referring to more than one columns.</li>
+     * <li>qualifier - The column qualifier. Supports a number suffix for referring to more than one columns.</li>
+     * <li>value - The value. Supports a number suffix for referring to more than one columns</li>
+     * <li>valueType - The value type. Supports a number suffix for referring to more than one columns. Supported
+     * operations: CamelHBaseGet, and CamelHBaseScan.</li>
      * </ul>
      */
     public void setRowMapping(Map<String, Object> rowMapping) {
@@ -258,8 +261,9 @@ public class HBaseEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets connection to the table (secured or not, depends on the object initialization)
-     * please remember to close the table after use
+     * Gets connection to the table (secured or not, depends on the object initialization) please remember to close the
+     * table after use
+     * 
      * @return table, remember to close!
      */
     public Table getTable() throws IOException {
@@ -290,8 +294,10 @@ public class HBaseEndpoint extends DefaultEndpoint {
                 rowModel.setRowType(getCamelContext().getClassResolver().resolveClass(rowType));
             }
         }
-        for (int i = 1; parameters.get(HBaseAttribute.HBASE_FAMILY.asOption(i)) != null
-                && parameters.get(HBaseAttribute.HBASE_QUALIFIER.asOption(i)) != null; i++) {
+        for (int i = 1;
+             parameters.get(HBaseAttribute.HBASE_FAMILY.asOption(i)) != null
+                     && parameters.get(HBaseAttribute.HBASE_QUALIFIER.asOption(i)) != null;
+             i++) {
             HBaseCell cellModel = new HBaseCell();
             cellModel.setFamily(String.valueOf(parameters.remove(HBaseAttribute.HBASE_FAMILY.asOption(i))));
             cellModel.setQualifier(String.valueOf(parameters.remove(HBaseAttribute.HBASE_QUALIFIER.asOption(i))));

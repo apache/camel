@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
-    
+
     @Test
     public void testMarshalWithNoNamespaceSchemaLocation() throws Exception {
         PersonType person = new PersonType();
@@ -39,7 +39,8 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue(body.contains("noNamespaceSchemaLocation=\"person-no-namespace.xsd\""), "We should get the noNamespaceSchemaLocation here");
+        assertTrue(body.contains("noNamespaceSchemaLocation=\"person-no-namespace.xsd\""),
+                "We should get the noNamespaceSchemaLocation here");
     }
 
     @Override
@@ -51,13 +52,12 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
                 dataFormat.setNoNamespaceSchemaLocation("person-no-namespace.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
 
-
                 from("direct:marshal")
-                    .marshal(dataFormat)
-                    .to("mock:result");
+                        .marshal(dataFormat)
+                        .to("mock:result");
 
             }
         };
     }
-    
+
 }

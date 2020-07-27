@@ -29,15 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <code>SamplingThrottler</code> is a special kind of throttler. It also
- * limits the number of exchanges sent to a downstream endpoint. It differs from
- * a normal throttler in that it will not queue exchanges above the threshold
- * for a given period. Instead these exchanges will be stopped, precluding them
- * from being processed at all by downstream consumers.
+ * A <code>SamplingThrottler</code> is a special kind of throttler. It also limits the number of exchanges sent to a
+ * downstream endpoint. It differs from a normal throttler in that it will not queue exchanges above the threshold for a
+ * given period. Instead these exchanges will be stopped, precluding them from being processed at all by downstream
+ * consumers.
  * <p/>
- * This kind of throttling can be useful for taking a sample from
- * an exchange stream, rough consolidation of noisy and bursty exchange traffic
- * or where queuing of throttled exchanges is undesirable.
+ * This kind of throttling can be useful for taking a sample from an exchange stream, rough consolidation of noisy and
+ * bursty exchange traffic or where queuing of throttled exchanges is undesirable.
  */
 public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
@@ -104,7 +102,8 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
         if (messageFrequency > 0) {
             return "samplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
         } else {
-            return "samplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH) + "]";
+            return "samplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH)
+                   + "]";
         }
     }
 
@@ -125,7 +124,7 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
         boolean doSend = false;
 
         synchronized (calculationLock) {
-            
+
             if (messageFrequency > 0) {
                 currentMessageCount++;
                 if (currentMessageCount % messageFrequency == 0) {
@@ -187,7 +186,7 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
 
         String getDroppedLog() {
             return String.format("Dropped %d of %d exchanges in this period, totalling %d dropped of %d exchanges overall.",
-                droppedThisPeriod, totalThisPeriod, totalDropped, totalSampled + totalDropped);
+                    droppedThisPeriod, totalThisPeriod, totalDropped, totalSampled + totalDropped);
         }
     }
 

@@ -68,7 +68,6 @@ public class ClassLoadingAwareObjectInputStreamTest {
 
 }
 
-
 class MyObject implements Serializable {
     final String name;
     final byte[] content;

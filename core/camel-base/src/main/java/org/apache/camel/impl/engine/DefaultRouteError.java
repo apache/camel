@@ -61,7 +61,8 @@ public class DefaultRouteError implements RouteError {
         }
     }
 
-    public static void set(CamelContext context, String routeId, RouteError.Phase phase, Throwable throwable, boolean unhealthy) {
+    public static void set(
+            CamelContext context, String routeId, RouteError.Phase phase, Throwable throwable, boolean unhealthy) {
         Route route = context.getRoute(routeId);
         if (route != null) {
             route.setLastError(new DefaultRouteError(phase, throwable, unhealthy));

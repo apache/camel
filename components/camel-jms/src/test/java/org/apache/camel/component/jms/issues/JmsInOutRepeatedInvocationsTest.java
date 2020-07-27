@@ -52,17 +52,17 @@ public class JmsInOutRepeatedInvocationsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-            
+
                 from("direct:test")
-                    .inOut("activemq:queue:test1?requestTimeout=200")
-                    .inOut("activemq:queue:test1?requestTimeout=200")
-                    .inOut("activemq:queue:test1?requestTimeout=200")
-                    .to("mock:finished");
-                
+                        .inOut("activemq:queue:test1?requestTimeout=200")
+                        .inOut("activemq:queue:test1?requestTimeout=200")
+                        .inOut("activemq:queue:test1?requestTimeout=200")
+                        .to("mock:finished");
+
                 from("activemq:queue:test1")
-                    .log("Received on queue test1")
-                    .setBody().constant("Some reply");
-                
+                        .log("Received on queue test1")
+                        .setBody().constant("Some reply");
+
             }
         };
     }

@@ -20,5 +20,8 @@ package org.apache.camel.component.salesforce.api.dto.analytics.reports;
  * Report status enumeration.
  */
 public enum ReportStatusEnum {
-    New, Success, Running, Error
+    New,
+    Success,
+    Running,
+    Error
 }

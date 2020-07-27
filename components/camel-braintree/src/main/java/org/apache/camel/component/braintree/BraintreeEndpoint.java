@@ -38,7 +38,8 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Process payments using Braintree Payments.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName", category = {Category.CLOUD, Category.PAYMENT})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName",
+             category = { Category.CLOUD, Category.PAYMENT })
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
     @UriParam
@@ -47,12 +48,11 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
     private Object apiProxy;
 
     public BraintreeEndpoint(
-            String uri,
-            BraintreeComponent component,
-            BraintreeApiName apiName,
-            String methodName,
-            BraintreeConfiguration configuration
-    ) {
+                             String uri,
+                             BraintreeComponent component,
+                             BraintreeApiName apiName,
+                             String methodName,
+                             BraintreeConfiguration configuration) {
         super(uri, component, apiName, methodName, BraintreeApiCollection.getCollection().getHelper(apiName), configuration);
         this.configuration = configuration;
     }

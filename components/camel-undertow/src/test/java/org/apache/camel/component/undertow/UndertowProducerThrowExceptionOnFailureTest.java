@@ -32,7 +32,8 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
 
     @Test
     public void testFailWithoutException() throws Exception {
-        String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null, String.class);
+        String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null,
+                String.class);
         assertEquals("Fail", out);
     }
 

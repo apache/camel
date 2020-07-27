@@ -175,7 +175,9 @@ public class VertxComponent extends DefaultComponent {
                     @Override
                     public void handle(AsyncResult<Vertx> event) {
                         if (event.cause() != null) {
-                            LOG.warn("Error creating Clustered Vertx " + host + ":" + port + " due " + event.cause().getMessage(), event.cause());
+                            LOG.warn("Error creating Clustered Vertx " + host + ":" + port + " due "
+                                     + event.cause().getMessage(),
+                                    event.cause());
                         } else if (event.succeeded()) {
                             vertx = event.result();
                             LOG.info("EventBus is ready: {}", vertx);

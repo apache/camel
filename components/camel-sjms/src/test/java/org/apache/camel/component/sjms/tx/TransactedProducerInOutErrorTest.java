@@ -54,12 +54,12 @@ public class TransactedProducerInOutErrorTest {
             public void configure() throws Exception {
 
                 from("direct:start")
-                    .to("sjms:queue:test-in?namedReplyTo=test-out&exchangePattern=InOut&transacted=true")
-                    .to("mock:result");
+                        .to("sjms:queue:test-in?namedReplyTo=test-out&exchangePattern=InOut&transacted=true")
+                        .to("mock:result");
 
                 from("sjms:queue:test-in?exchangePattern=InOut")
-                    .log("Using ${threadName} to process ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

@@ -19,8 +19,7 @@ package org.apache.camel.dataformat.soap.name;
 import javax.xml.namespace.QName;
 
 /**
- * Simply ElementNameStrategy that returns one preset QName. This can be handy
- * for simple asynchronous calls
+ * Simply ElementNameStrategy that returns one preset QName. This can be handy for simple asynchronous calls
  */
 public class QNameStrategy implements ElementNameStrategy {
     private QName elementName;
@@ -28,8 +27,7 @@ public class QNameStrategy implements ElementNameStrategy {
     /**
      * Initialize with one QName
      * 
-     * @param elmentName
-     *            QName to be used for all finds
+     * @param elmentName QName to be used for all finds
      */
     public QNameStrategy(QName elmentName) {
         this.elementName = elmentName;

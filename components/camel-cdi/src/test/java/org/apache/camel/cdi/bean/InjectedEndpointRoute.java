@@ -27,7 +27,7 @@ public class InjectedEndpointRoute extends RouteBuilder {
     @Inject
     @Uri("direct:inbound")
     private Endpoint inbound;
-    
+
     @Override
     public void configure() {
         from(inbound).to("mock:outbound");

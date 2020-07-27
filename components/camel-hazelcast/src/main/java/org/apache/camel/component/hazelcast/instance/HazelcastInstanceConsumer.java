@@ -67,7 +67,9 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
             }
 
             if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange for Hazelcast consumer on your Hazelcast cluster.", exchange, exchange.getException());
+                getExceptionHandler().handleException(
+                        "Error processing exchange for Hazelcast consumer on your Hazelcast cluster.", exchange,
+                        exchange.getException());
             }
         }
 

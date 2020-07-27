@@ -47,7 +47,8 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).threadName("foo").to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).threadName("foo")
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {
@@ -115,7 +116,8 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).keepAliveTime(1).to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).keepAliveTime(1)
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {
@@ -134,7 +136,8 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).maxQueueSize(1).to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).maxQueueSize(1)
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {
@@ -153,7 +156,8 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).rejectedPolicy(Abort).to("mock:test");
+                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).rejectedPolicy(Abort)
+                            .to("mock:test");
                 }
             });
         } catch (Exception e) {

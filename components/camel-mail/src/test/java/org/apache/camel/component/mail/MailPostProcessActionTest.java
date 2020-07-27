@@ -98,7 +98,8 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction&initialDelay=100&delay=100").to("mock:result");
+                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

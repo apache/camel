@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class JettyMulticastJmsFileTest {
-    
+
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/test";
     static {

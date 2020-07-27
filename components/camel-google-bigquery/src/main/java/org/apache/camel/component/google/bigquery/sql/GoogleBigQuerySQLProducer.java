@@ -48,24 +48,22 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
     private String query;
     private Set<String> queryParameterNames;
 
-    public GoogleBigQuerySQLProducer(Bigquery bigquery, GoogleBigQuerySQLEndpoint endpoint, GoogleBigQuerySQLConfiguration configuration) {
+    public GoogleBigQuerySQLProducer(Bigquery bigquery, GoogleBigQuerySQLEndpoint endpoint,
+                                     GoogleBigQuerySQLConfiguration configuration) {
         super(endpoint);
         this.bigquery = bigquery;
         this.configuration = configuration;
     }
 
     /**
-     * Process the exchange The incoming exchange can be a grouped exchange in
-     * which case all the exchanges will be combined. The incoming can be
+     * Process the exchange The incoming exchange can be a grouped exchange in which case all the exchanges will be
+     * combined. The incoming can be
      * <ul>
-     * <li>A map where all map keys will map to field records. One map object
-     * maps to one bigquery row</li>
-     * <li>A list of maps. Each entry in the list will map to one bigquery
-     * row</li>
+     * <li>A map where all map keys will map to field records. One map object maps to one bigquery row</li>
+     * <li>A list of maps. Each entry in the list will map to one bigquery row</li>
      * </ul>
-     * The incoming message is expected to be a List of Maps The assumptions: -
-     * All incoming records go into the same table - Incoming records sorted by
-     * the timestamp
+     * The incoming message is expected to be a List of Maps The assumptions: - All incoming records go into the same
+     * table - Incoming records sorted by the timestamp
      */
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -120,7 +118,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         queryParameterNames.forEach(s -> {
             Object value = headers.get(s);
             if (value == null) {
-                throw new RuntimeExchangeException("SQL parameter with name '" + s + "' not found in the message headers", exchange);
+                throw new RuntimeExchangeException(
+                        "SQL parameter with name '" + s + "' not found in the message headers", exchange);
             }
 
             result.put(s, headers.get(s));
@@ -137,7 +136,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         List<QueryParameter> list = new ArrayList<>();
         params.forEach((key, value) -> {
             QueryParameter param = new QueryParameter();
-            param.setName(key).setParameterType(new QueryParameterType().setType("STRING")).setParameterValue(new QueryParameterValue().setValue(value.toString()));
+            param.setName(key).setParameterType(new QueryParameterType().setType("STRING"))
+                    .setParameterValue(new QueryParameterValue().setValue(value.toString()));
             list.add(param);
         });
         apiQueryRequest.setQueryParameters(list);
@@ -145,7 +145,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
 
     @Override
     public GoogleBigQuerySQLEndpoint getEndpoint() {
-        return (GoogleBigQuerySQLEndpoint)super.getEndpoint();
+        return (GoogleBigQuerySQLEndpoint) super.getEndpoint();
     }
 
     @Override

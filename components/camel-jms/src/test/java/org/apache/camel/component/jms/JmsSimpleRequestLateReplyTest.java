@@ -47,12 +47,12 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
     protected String expectedBody = "Late Reply";
     protected JmsComponent activeMQComponent;
     private final CountDownLatch latch = new CountDownLatch(1);
-    
+
     @Test
     public void testRequestLateReplyUsingCustomDestinationHeaderForReply() throws Exception {
         doTest(new SendLateReply());
     }
-    
+
     protected void doTest(Runnable runnable) throws InterruptedException {
         // use another thread to send the late reply to simulate that we do it later, not
         // from the original route anyway
@@ -108,25 +108,25 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(getQueueEndpointName())
-                    .process(exchange -> {
-                        // set the MEP to InOnly as we are not able to send a reply right now but will do it later
-                        // from that other thread
-                        exchange.setPattern(ExchangePattern.InOnly);
+                        .process(exchange -> {
+                            // set the MEP to InOnly as we are not able to send a reply right now but will do it later
+                            // from that other thread
+                            exchange.setPattern(ExchangePattern.InOnly);
 
-                        Message in = exchange.getIn();
-                        assertEquals("Hello World", in.getBody());
+                            Message in = exchange.getIn();
+                            assertEquals("Hello World", in.getBody());
 
-                        replyDestination = in.getHeader("JMSReplyTo", Destination.class);
-                        cid = in.getHeader("JMSCorrelationID", String.class);
+                            replyDestination = in.getHeader("JMSReplyTo", Destination.class);
+                            cid = in.getHeader("JMSCorrelationID", String.class);
 
-                        LOG.info("ReplyDestination: " + replyDestination);
-                        LOG.info("JMSCorrelationID: " + cid);
+                            LOG.info("ReplyDestination: " + replyDestination);
+                            LOG.info("JMSCorrelationID: " + cid);
 
-                        LOG.info("Ahh I cannot send a reply. Someone else must do it.");
-                        // signal to the other thread to send back the reply message
-                        latch.countDown();
-                    })
-                    .to("mock:result");
+                            LOG.info("Ahh I cannot send a reply. Someone else must do it.");
+                            // signal to the other thread to send back the reply message
+                            latch.countDown();
+                        })
+                        .to("mock:result");
             }
         };
     }

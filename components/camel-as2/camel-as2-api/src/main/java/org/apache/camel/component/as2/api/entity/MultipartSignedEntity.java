@@ -36,11 +36,13 @@ import org.bouncycastle.util.Store;
 
 public class MultipartSignedEntity extends MultipartMimeEntity {
 
-    public MultipartSignedEntity(MimeEntity data, AS2SignedDataGenerator signer, String signatureCharSet, String signatureTransferEncoding, boolean isMainBody, String boundary) throws HttpException {
+    public MultipartSignedEntity(MimeEntity data, AS2SignedDataGenerator signer, String signatureCharSet,
+                                 String signatureTransferEncoding, boolean isMainBody, String boundary) throws HttpException {
         super(null, isMainBody, boundary);
         setContentType(signer.createMultipartSignedContentType(this.boundary));
         addPart(data);
-        ApplicationPkcs7SignatureEntity signature = new ApplicationPkcs7SignatureEntity(data, signer, signatureCharSet, signatureTransferEncoding, false);
+        ApplicationPkcs7SignatureEntity signature
+                = new ApplicationPkcs7SignatureEntity(data, signer, signatureCharSet, signatureTransferEncoding, false);
         addPart(signature);
     }
 
@@ -97,7 +99,7 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
 
     public ApplicationPkcs7SignatureEntity getSignatureEntity() {
         if (getPartCount() > 1 && getPart(1) instanceof ApplicationPkcs7SignatureEntity) {
-            return (ApplicationPkcs7SignatureEntity)  getPart(1);
+            return (ApplicationPkcs7SignatureEntity) getPart(1);
         }
 
         return null;

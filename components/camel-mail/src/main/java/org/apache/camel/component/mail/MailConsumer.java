@@ -127,8 +127,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         ensureIsConnected();
 
         if (store == null || folder == null) {
-            throw new IllegalStateException("MailConsumer did not connect properly to the MailStore: "
-                    + getEndpoint().getConfiguration().getMailStoreLogInformation());
+            throw new IllegalStateException(
+                    "MailConsumer did not connect properly to the MailStore: "
+                                            + getEndpoint().getConfiguration().getMailStoreLogInformation());
         }
 
         if (LOG.isDebugEnabled()) {
@@ -136,7 +137,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
 
         if (getEndpoint().getConfiguration().getFetchSize() == 0) {
-            LOG.warn("Fetch size is 0 meaning the configuration is set to poll no new messages at all. Camel will skip this poll.");
+            LOG.warn(
+                    "Fetch size is 0 meaning the configuration is set to poll no new messages at all. Camel will skip this poll.");
             return 0;
         }
 
@@ -173,7 +175,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // need to ensure we release resources, but only if closeFolder or disconnect = true
             if (getEndpoint().getConfiguration().isCloseFolder() || getEndpoint().getConfiguration().isDisconnect()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Close mailbox folder {} from {}", folder.getName(), getEndpoint().getConfiguration().getMailStoreLogInformation());
+                    LOG.debug("Close mailbox folder {} from {}", folder.getName(),
+                            getEndpoint().getConfiguration().getMailStoreLogInformation());
                 }
                 try {
                     if (folder.isOpen()) {
@@ -195,7 +198,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             try {
                 store.close();
             } catch (Exception e) {
-                LOG.debug("Could not disconnect from {}. This exception is ignored.", getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
+                LOG.debug("Could not disconnect from {}. This exception is ignored.",
+                        getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
             }
             store = null;
             folder = null;
@@ -256,7 +260,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         if (mail.getClass().getSimpleName().startsWith("IMAP")) {
             try {
                 LOG.trace("Calling setPeek(true) on mail message {}", mail);
-                BeanIntrospection beanIntrospection = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+                BeanIntrospection beanIntrospection
+                        = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), mail, "peek", true);
             } catch (Throwable e) {
                 // ignore
@@ -266,7 +271,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * @return Messages from input folder according to the search and sort criteria stored in the endpoint
+     * @return                    Messages from input folder according to the search and sort criteria stored in the
+     *                            endpoint
      * @throws MessagingException If message retrieval fails
      */
     private List<KeyValueHolder<String, Message>> retrieveMessages() throws MessagingException {
@@ -342,7 +348,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
         if (getEndpoint().getIdempotentRepository() != null) {
             if (!getEndpoint().getIdempotentRepository().add(key)) {
-                LOG.trace("This consumer is idempotent and the mail message has been consumed before matching idempotentKey: {}. Will skip this message: {}", key, msg);
+                LOG.trace(
+                        "This consumer is idempotent and the mail message has been consumed before matching idempotentKey: {}. Will skip this message: {}",
+                        key, msg);
                 answer = false;
             }
         }
@@ -502,8 +510,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-
-    private void copyOrMoveMessageIfRequired(MailConfiguration config, Message mail, String destinationFolder, boolean moveMessage) throws MessagingException {
+    private void copyOrMoveMessageIfRequired(
+            MailConfiguration config, Message mail, String destinationFolder, boolean moveMessage)
+            throws MessagingException {
         if (config.getProtocol().equals(MailUtils.PROTOCOL_IMAP) || config.getProtocol().equals(MailUtils.PROTOCOL_IMAPS)) {
             if (destinationFolder != null) {
                 LOG.trace("IMAP message needs to be {} to {}", moveMessage ? "moved" : "copied", destinationFolder);
@@ -511,7 +520,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 if (!destFolder.exists()) {
                     destFolder.create(Folder.HOLDS_MESSAGES);
                 }
-                folder.copyMessages(new Message[]{mail}, destFolder);
+                folder.copyMessages(new Message[] { mail }, destFolder);
                 if (moveMessage) {
                     mail.setFlag(Flags.Flag.DELETED, true);
                 }
@@ -553,8 +562,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             }
         } catch (Exception e) {
             LOG.debug("Exception while testing for is connected to MailStore: "
-                    + getEndpoint().getConfiguration().getMailStoreLogInformation()
-                    + ". Caused by: " + e.getMessage(), e);
+                      + getEndpoint().getConfiguration().getMailStoreLogInformation()
+                      + ". Caused by: " + e.getMessage(),
+                    e);
         }
 
         if (!connected) {
@@ -586,8 +596,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Check whether the email store has the sort capability or not.
      *
-     * @param store Email store
-     * @return true if the store is an IMAP store and it has the store capability
+     * @param  store              Email store
+     * @return                    true if the store is an IMAP store and it has the store capability
      * @throws MessagingException In case capability check fails
      */
     private static boolean hasSortCapability(Store store) throws MessagingException {

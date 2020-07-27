@@ -49,7 +49,8 @@ import org.apache.http.message.BasicHeader;
 /**
  * Send GraphQL queries and mutations to external systems.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri", category = {Category.API}, producerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
+             category = { Category.API }, producerOnly = true)
 public class GraphqlEndpoint extends DefaultEndpoint {
 
     @UriPath

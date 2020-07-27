@@ -54,7 +54,7 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
         // use VelocityEngine javadoc
         mojo.proxyClass = VelocityContext.class.getCanonicalName();
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
-        mojo.substitutions = new Substitution[] {substitution};
+        mojo.substitutions = new Substitution[] { substitution };
         mojo.extraOptions = new ExtraOption[1];
         mojo.extraOptions[0] = new ExtraOption("java.util.Map<String, String>", "extraMap");
 

@@ -30,12 +30,12 @@ public class JsonPathTransformResultTypeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().jsonpath("$.store.book[0].price", Float.class)
-                    .to("mock:price");
+                        .transform().jsonpath("$.store.book[0].price", Float.class)
+                        .to("mock:price");
 
                 from("direct:second")
-                    .transform().jsonpath("$.store.book[0].price", Double.class)
-                    .to("mock:price");
+                        .transform().jsonpath("$.store.book[0].price", Double.class)
+                        .to("mock:price");
             }
         };
     }

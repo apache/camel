@@ -46,8 +46,9 @@ public class ElasticsearchRestComponentVerifierExtension extends DefaultComponen
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("clusterName", parameters))
-            .error(ResultErrorHelper.requiresOption("hostAddresses", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("clusterName", parameters))
+                .error(ResultErrorHelper.requiresOption("hostAddresses", parameters));
         // Validate using the catalog
 
         super.verifyParametersAgainstCatalog(builder, parameters);
@@ -69,9 +70,11 @@ public class ElasticsearchRestComponentVerifierExtension extends DefaultComponen
             RestHighLevelClient restHighLevelClient = new RestHighLevelClient(clientBuilder);
             restHighLevelClient.ping(RequestOptions.DEFAULT);
         } catch (IOException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("elasticsearch_rest_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("elasticsearch_rest_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

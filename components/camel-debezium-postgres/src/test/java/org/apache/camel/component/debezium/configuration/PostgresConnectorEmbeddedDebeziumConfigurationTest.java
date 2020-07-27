@@ -32,7 +32,8 @@ public class PostgresConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testIfCreatesConfig() {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                = new PostgresConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_user");
         configuration.setMaxQueueSize(1212);
@@ -49,7 +50,8 @@ public class PostgresConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testIfValidatesConfigurationCorrectly() {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                = new PostgresConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
@@ -67,7 +69,8 @@ public class PostgresConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testValidateConfigurationsForAllRequiredFields() {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                = new PostgresConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseHostname("localhost");

@@ -40,7 +40,7 @@ public class QuartzAddDynamicRouteTest extends BaseQuartzTest {
             @Override
             public void configure() throws Exception {
                 from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
-                    .to("direct:foo");
+                        .to("direct:foo");
             }
         });
 

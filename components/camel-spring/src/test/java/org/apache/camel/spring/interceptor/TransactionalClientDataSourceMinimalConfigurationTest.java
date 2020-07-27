@@ -40,7 +40,7 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml");
+                "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml");
     }
 
     @Override

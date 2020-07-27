@@ -45,6 +45,7 @@ public class SpringOnExceptionNotNormalizedClassNameTest extends ContextTestSupp
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/onExceptionNotNormalizedClassNameTest.xml");
+        return createSpringCamelContext(this,
+                "/org/apache/camel/spring/processor/onexception/onExceptionNotNormalizedClassNameTest.xml");
     }
 }

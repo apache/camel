@@ -30,7 +30,8 @@ public class StreamCachingRoutingSlipTest extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("<hello/>");
         getMockEndpoint("mock:baz").expectedBodiesReceived("<hello/>");
 
-        template.sendBodyAndHeader("direct:a", new ByteArrayInputStream("<hello/>".getBytes()), "mySlip", "mock:foo,mock:bar,mock:baz");
+        template.sendBodyAndHeader("direct:a", new ByteArrayInputStream("<hello/>".getBytes()), "mySlip",
+                "mock:foo,mock:bar,mock:baz");
 
         assertMockEndpointsSatisfied();
     }

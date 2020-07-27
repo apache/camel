@@ -32,7 +32,7 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic");
+        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
     }
@@ -42,28 +42,29 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic");
+            Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic");
         });
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        Sns2Endpoint endpoint = (Sns2Endpoint) component
+                .createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(awsSNSClient, endpoint.getConfiguration().getAmazonSNSClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy");
+        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy");
 
         assertSame(awsSNSClient, endpoint.getConfiguration().getAmazonSNSClient());
     }

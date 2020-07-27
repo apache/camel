@@ -22,4 +22,3 @@ import javax.jws.WebService;
 public interface HelloWorld {
     String sayHi(String text);
 }
-

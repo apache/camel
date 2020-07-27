@@ -36,7 +36,7 @@ public class PubNubFireTest extends PubNubTestBase {
     @Test
     public void testFire() throws Exception {
         stubFor(get(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0/%22Hi%22"))
-            .willReturn(aResponse().withBody("[1,\"Sent\",\"14598111595318003\"]")));
+                .willReturn(aResponse().withBody("[1,\"Sent\",\"14598111595318003\"]")));
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
 

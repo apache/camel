@@ -56,12 +56,12 @@ public class JmsInOutNonPersistentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=queue:bar&deliveryPersistent=false")
-                    .to("log:done?showAll=true", "mock:done");
+                        .to("activemq:queue:foo?replyTo=queue:bar&deliveryPersistent=false")
+                        .to("log:done?showAll=true", "mock:done");
 
                 from("activemq:queue:foo?replyToDeliveryPersistent=false&preserveMessageQos=true")
-                    .to("log:foo?showAll=true", "mock:foo")
-                    .transform(body().prepend("Bye "));
+                        .to("log:foo?showAll=true", "mock:foo")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

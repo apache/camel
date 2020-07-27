@@ -53,7 +53,7 @@ public class OwbWildcardTypeImpl implements WildcardType {
                 }
                 buffer.append(' ');
                 if (upperBound instanceof Class) {
-                    buffer.append(((Class<?>)upperBound).getSimpleName());
+                    buffer.append(((Class<?>) upperBound).getSimpleName());
                 } else {
                     buffer.append(upperBound);
                 }
@@ -70,7 +70,7 @@ public class OwbWildcardTypeImpl implements WildcardType {
                 }
                 buffer.append(' ');
                 if (lowerBound instanceof Class) {
-                    buffer.append(((Class<?>)lowerBound).getSimpleName());
+                    buffer.append(((Class<?>) lowerBound).getSimpleName());
                 } else {
                     buffer.append(lowerBound);
                 }

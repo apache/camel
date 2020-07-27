@@ -106,13 +106,13 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     void setBodyMaxChars(int bodyMaxChars);
-    
+
     @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
     long getFallbackTimeout();
-    
+
     @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
     void setFallbackTimeout(long fallbackTimeout);
-    
+
     @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
     boolean isBodyIncludeStreams();
 

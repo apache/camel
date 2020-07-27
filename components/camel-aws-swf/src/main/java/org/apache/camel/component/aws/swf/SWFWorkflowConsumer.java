@@ -33,7 +33,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     private SWFEndpoint endpoint;
     private final SWFConfiguration configuration;
     private GenericWorkflowWorker genericWorker;
-    
+
     private transient String swfWorkflowConsumerToString;
 
     public SWFWorkflowConsumer(SWFEndpoint endpoint, Processor processor, SWFConfiguration configuration) {
@@ -71,7 +71,8 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         CamelWorkflowDefinitionFactoryFactory factoryFactory = new CamelWorkflowDefinitionFactoryFactory(this, configuration);
-        genericWorker = new GenericWorkflowWorker(endpoint.getSWClient(), configuration.getDomainName(), configuration.getWorkflowList());
+        genericWorker = new GenericWorkflowWorker(
+                endpoint.getSWClient(), configuration.getDomainName(), configuration.getWorkflowList());
         genericWorker.setWorkflowDefinitionFactoryFactory(factoryFactory);
         genericWorker.start();
         super.doStart();

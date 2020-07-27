@@ -54,11 +54,11 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Creates a <a href="http://camel.apache.org/processor.html">Processor</a>
- * which performs an XSLT transformation of the IN message body.
+ * Creates a <a href="http://camel.apache.org/processor.html">Processor</a> which performs an XSLT transformation of the
+ * IN message body.
  * <p/>
- * Will by default output the result as a String. You can chose which kind of output
- * you want using the <tt>outputXXX</tt> methods.
+ * Will by default output the result as a String. You can chose which kind of output you want using the
+ * <tt>outputXXX</tt> methods.
  */
 public class XsltBuilder implements Processor {
 
@@ -206,8 +206,8 @@ public class XsltBuilder implements Processor {
     }
 
     /**
-     * Sets the output as being a File where the filename
-     * must be provided in the {@link Exchange#XSLT_FILE_NAME} header.
+     * Sets the output as being a File where the filename must be provided in the {@link Exchange#XSLT_FILE_NAME}
+     * header.
      */
     public XsltBuilder outputFile() {
         setResultHandlerFactory(new FileResultHandlerFactory());
@@ -242,7 +242,7 @@ public class XsltBuilder implements Processor {
      * <p/>
      * By default no caching is in use.
      *
-     * @param numberToCache  the maximum number of transformers to cache
+     * @param numberToCache the maximum number of transformers to cache
      */
     public XsltBuilder transformerCacheSize(int numberToCache) {
         if (numberToCache > 0) {
@@ -278,7 +278,7 @@ public class XsltBuilder implements Processor {
             transformers.clear();
         }
     }
-    
+
     public Templates getTemplate() {
         return template;
     }
@@ -324,7 +324,7 @@ public class XsltBuilder implements Processor {
     /**
      * Sets the XSLT transformer from a Source
      *
-     * @param source  the source
+     * @param  source                            the source
      * @throws TransformerConfigurationException is thrown if creating a XSLT transformer failed.
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
@@ -346,9 +346,10 @@ public class XsltBuilder implements Processor {
         if (templates != null) {
             setTemplate(templates);
         } else {
-            throw new TransformerConfigurationException("Error creating XSLT template. "
-                    + "This is most likely be caused by a XML parse error. "
-                    + "Please verify your XSLT file configured.");
+            throw new TransformerConfigurationException(
+                    "Error creating XSLT template. "
+                                                        + "This is most likely be caused by a XML parse error. "
+                                                        + "Please verify your XSLT file configured.");
         }
     }
 
@@ -417,7 +418,7 @@ public class XsltBuilder implements Processor {
     }
 
     private Transformer getTransformer() throws Exception {
-        Transformer t = null; 
+        Transformer t = null;
         if (transformers != null) {
             t = transformers.poll();
         }

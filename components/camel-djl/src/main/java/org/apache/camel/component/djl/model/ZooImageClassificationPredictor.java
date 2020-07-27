@@ -45,13 +45,12 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
     private final ZooModel<BufferedImage, Classifications> model;
 
     public ZooImageClassificationPredictor(String artifactId) throws Exception {
-        Criteria<BufferedImage, Classifications> criteria =
-                Criteria.builder()
-                        .optApplication(Application.CV.IMAGE_CLASSIFICATION)
-                        .setTypes(BufferedImage.class, Classifications.class)
-                        .optArtifactId(artifactId)
-                        .optProgress(new ProgressBar())
-                        .build();
+        Criteria<BufferedImage, Classifications> criteria = Criteria.builder()
+                .optApplication(Application.CV.IMAGE_CLASSIFICATION)
+                .setTypes(BufferedImage.class, Classifications.class)
+                .optArtifactId(artifactId)
+                .optProgress(new ProgressBar())
+                .build();
         this.model = ModelZoo.loadModel(criteria);
     }
 
@@ -94,7 +93,8 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
         try (Predictor<BufferedImage, Classifications> predictor = model.newPredictor()) {
             Classifications classifications = predictor.predict(input);
             List<Classifications.Classification> list = classifications.items();
-            return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
+            return list.stream()
+                    .collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
             throw new RuntimeException("Could not process input or output", e);

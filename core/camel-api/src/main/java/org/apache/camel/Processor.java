@@ -18,20 +18,20 @@ package org.apache.camel;
 
 /**
  * A <a href="http://camel.apache.org/processor.html">processor</a> is used to implement the
- * <a href="http://camel.apache.org/event-driven-consumer.html"> Event Driven Consumer</a>
- * and <a href="http://camel.apache.org/message-translator.html"> Message Translator</a>
- * patterns and to process message exchanges.
+ * <a href="http://camel.apache.org/event-driven-consumer.html"> Event Driven Consumer</a> and
+ * <a href="http://camel.apache.org/message-translator.html"> Message Translator</a> patterns and to process message
+ * exchanges.
  * <p/>
- * Notice if you use a {@link Processor} in a Camel route, then make sure to write the {@link Processor}
- * in a thread-safe way, as the Camel routes can potentially be executed by concurrent threads, and therefore
- * multiple threads can call the same {@link Processor} instance.
+ * Notice if you use a {@link Processor} in a Camel route, then make sure to write the {@link Processor} in a
+ * thread-safe way, as the Camel routes can potentially be executed by concurrent threads, and therefore multiple
+ * threads can call the same {@link Processor} instance.
  */
 public interface Processor {
 
     /**
      * Processes the message exchange
      * 
-     * @param exchange the message exchange
+     * @param  exchange  the message exchange
      * @throws Exception if an internal processing error has occurred.
      */
     void process(Exchange exchange) throws Exception;

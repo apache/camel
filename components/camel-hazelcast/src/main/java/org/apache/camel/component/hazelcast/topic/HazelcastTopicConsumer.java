@@ -28,7 +28,8 @@ import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
  */
 public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName, boolean reliable) {
+    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
+                                  boolean reliable) {
         super(hazelcastInstance, endpoint, processor, cacheName);
         ITopic<Object> topic;
         if (!reliable) {

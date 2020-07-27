@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
-    
+
     @Test
     public void testMarshalAndUnmarshalWithPrettyPrint() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
@@ -41,9 +41,9 @@ public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         // the line-separator used by JsonWriter is "\n", even on windows
         String expected = "{\"org.apache.camel.dataformat.xstream.PurchaseOrder\": {\n"
-                          + "  \"name\": \"pretty printed Camel\",\n" 
+                          + "  \"name\": \"pretty printed Camel\",\n"
                           + "  \"price\": 7.91,\n"
-                          + "  \"amount\": 1.0\n" 
+                          + "  \"amount\": 1.0\n"
                           + "}}";
         assertEquals(expected, marshalledAsString);
 

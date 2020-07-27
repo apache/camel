@@ -81,7 +81,9 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
         private AtomicInteger counter = new AtomicInteger();
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
 
             // use DelegateAsyncProcessor to ensure the interceptor works well
             // with the asynchronous routing

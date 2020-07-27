@@ -141,7 +141,8 @@ public class OnExceptionRouteTest extends ContextTestSupport {
                 onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
 
                 // here we route message to our service bean
-                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
+                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

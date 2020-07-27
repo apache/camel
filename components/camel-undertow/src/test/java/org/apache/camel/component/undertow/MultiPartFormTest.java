@@ -61,7 +61,8 @@ public class MultiPartFormTest extends BaseUndertowTest {
 
     @Test
     public void testSendMultiPartFormFromCamelHttpComponnent() throws Exception {
-        String result = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
+        String result
+                = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
         assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
@@ -78,7 +79,8 @@ public class MultiPartFormTest extends BaseUndertowTest {
                     assertNotNull(data, "Should get the DataHandler log4j2.properties");
                     assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                    assertTrue(data.getDataSource().getInputStream().available() > 0, "We should get the data from the DataHandler");
+                    assertTrue(data.getDataSource().getInputStream().available() > 0,
+                            "We should get the data from the DataHandler");
 
                     // form data should also be available as a body
                     Map body = in.getBody(Map.class);

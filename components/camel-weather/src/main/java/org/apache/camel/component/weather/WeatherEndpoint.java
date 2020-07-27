@@ -28,36 +28,37 @@ import org.apache.http.client.utils.HttpClientUtils;
 /**
  * Poll the weather information from Open Weather Map.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name", category = {Category.API})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name",
+             category = { Category.API })
 public class WeatherEndpoint extends DefaultPollingEndpoint {
-    
+
     @UriParam
     private WeatherConfiguration configuration;
-    
+
     private WeatherQuery weatherQuery;
-    
+
     public WeatherEndpoint(String uri, WeatherComponent component, WeatherConfiguration properties) {
         super(uri, component);
         this.configuration = properties;
         this.weatherQuery = new WeatherQuery(getConfiguration());
     }
- 
+
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         WeatherConsumer answer = new WeatherConsumer(this, processor, getWeatherQuery().getQuery());
-        
+
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed, so we override
         // with a new default value. End user can override this value by providing a consumer.delay parameter
         answer.setDelay(WeatherConsumer.DEFAULT_CONSUMER_DELAY);
         configureConsumer(answer);
         return answer;
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         return new WeatherProducer(this, getWeatherQuery().getQuery());
     }
-    
+
     public WeatherConfiguration getConfiguration() {
         return configuration;
     }
@@ -65,11 +66,11 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
     public WeatherQuery getWeatherQuery() {
         return this.weatherQuery;
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        
+
         HttpClientUtils.closeQuietly(getConfiguration().getHttpClient());
     }
 

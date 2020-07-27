@@ -59,7 +59,7 @@ public class AsyncEndpointJmsTXTryCatchFinallyTest extends CamelSpringTestSuppor
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")
-                    .transacted()
+                        .transacted()
                         .to("mock:before")
                         .to("log:before")
                         .process(exchange -> {
@@ -67,11 +67,11 @@ public class AsyncEndpointJmsTXTryCatchFinallyTest extends CamelSpringTestSuppor
                             assertTrue(exchange.isTransacted(), "Exchange should be transacted");
                         })
                         .doTry()
-                            .to("direct:foo")
+                        .to("direct:foo")
                         .doCatch(Exception.class)
-                            .to("mock:catch")
+                        .to("mock:catch")
                         .doFinally()
-                            .to("mock:finally")
+                        .to("mock:finally")
                         .end()
                         .to("mock:result");
 

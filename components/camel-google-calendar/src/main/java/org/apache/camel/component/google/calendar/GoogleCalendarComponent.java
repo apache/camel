@@ -32,7 +32,8 @@ import org.apache.camel.support.component.AbstractApiComponent;
  * Represents the component that manages {@link GoogleCalendarEndpoint}.
  */
 @Component("google-calendar")
-public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
+public class GoogleCalendarComponent
+        extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
 
     @Metadata
     GoogleCalendarConfiguration configuration;
@@ -97,16 +98,17 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
     }
 
     /**
-     * To use the GoogleCalendarClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleCalendarClientFactory}
+     * To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleCalendarClientFactory}
      */
     public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, GoogleCalendarApiName apiName,
-                                      GoogleCalendarConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, GoogleCalendarApiName apiName,
+            GoogleCalendarConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleCalendarEndpoint(uri, this, apiName, methodName, endpointConfiguration);

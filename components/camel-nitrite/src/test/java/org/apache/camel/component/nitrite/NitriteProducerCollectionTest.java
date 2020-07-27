@@ -56,14 +56,11 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
     @BeforeEach
     public void insertData() {
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1-a").put("key2", "value2-a").put("key3", "value3-a").put("_id", 1L)
-        );
+                Document.createDocument("key1", "value1-a").put("key2", "value2-a").put("key3", "value3-a").put("_id", 1L));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1-b").put("key2", "value2-b").put("key3", "value3-b").put("_id", 2L)
-        );
+                Document.createDocument("key1", "value1-b").put("key2", "value2-b").put("key3", "value3-b").put("_id", 2L));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb()),
-                Document.createDocument("key1", "value1-c").put("key2", "value2-c").put("key3", "value3-c").put("_id", 3L)
-        );
+                Document.createDocument("key1", "value1-c").put("key2", "value2-c").put("key3", "value3-c").put("_id", 3L));
     }
 
     @Test
@@ -72,8 +69,7 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
                 String.format("nitrite://%s?collection=collection", tempDb()),
                 null,
                 NitriteConstants.OPERATION, new FindCollectionOperation(Filters.eq("key1", "value1-a")),
-                List.class
-        );
+                List.class);
 
         assertEquals(1, result.size());
         assertEquals("value1-a", result.get(0).get("key1"));
@@ -84,32 +80,33 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
     @Test
     public void removeCollectionOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new RemoveCollectionOperation(Filters.eq("key2", "value2-b")));
+        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
+                new RemoveCollectionOperation(Filters.eq("key2", "value2-b")));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
     public void updateCollectionOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpdateCollectionOperation(Filters.eq("key2", "value2-b")));
+        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
+                new UpdateCollectionOperation(Filters.eq("key2", "value2-b")));
         exchange.getMessage().setBody(Document.createDocument("key3", "updatedValue"));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
     public void createIndexOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(NitriteConstants.OPERATION, new CreateIndexOperation("key3", IndexOptions.indexOptions(IndexType.Unique)));
+        exchange.getMessage().setHeader(NitriteConstants.OPERATION,
+                new CreateIndexOperation("key3", IndexOptions.indexOptions(IndexType.Unique)));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
 
@@ -157,14 +154,12 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
     public void insertOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new InsertOperation(
-                Document.createDocument("a", "b")
-        ));
+                Document.createDocument("a", "b")));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
@@ -183,8 +178,7 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
         createIndexOperation();
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new RebuildIndexOperation(
-                "key3"
-        ));
+                "key3"));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
 
@@ -194,28 +188,24 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
     public void updateOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpdateOperation(
-                Document.createDocument("a", "b").put("_id", 1L)
-        ));
+                Document.createDocument("a", "b").put("_id", 1L)));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
     public void upsertOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpsertOperation(
-                Document.createDocument("a", "b").put("_id", 1L)
-        ));
+                Document.createDocument("a", "b").put("_id", 1L)));
 
         template.send(String.format("nitrite://%s?collection=collection", tempDb()), exchange);
         assertEquals(
                 1,
-                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
-        );
+                exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount());
     }
 
     @Test
@@ -225,25 +215,21 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
                 String.format("nitrite://%s?collection=collection", tempDb()),
                 null,
                 NitriteConstants.OPERATION, new ExportDatabaseOperation(),
-                byte[].class
-        );
+                byte[].class);
 
         assertNotNull(ddl);
 
         template.sendBodyAndHeader(
                 String.format("nitrite://%s?collection=collection", tempDb() + "clone"),
                 ddl,
-                NitriteConstants.OPERATION, new ImportDatabaseOperation()
-        );
+                NitriteConstants.OPERATION, new ImportDatabaseOperation());
 
         assertEquals(3,
                 template.requestBodyAndHeader(
                         String.format("nitrite://%s?collection=collection", tempDb() + "clone"),
                         null,
                         NitriteConstants.OPERATION, new FindCollectionOperation(),
-                        List.class
-                        ).size()
-        );
+                        List.class).size());
     }
 
     @Test
@@ -255,7 +241,6 @@ public class NitriteProducerCollectionTest extends AbstractNitriteTest {
 
         assertTrue(
                 exchange.getException() instanceof IllegalArgumentException,
-                String.format("Expected exception of type IllegalArgumentException, %s given", exchange.getException())
-        );
+                String.format("Expected exception of type IllegalArgumentException, %s given", exchange.getException()));
     }
 }

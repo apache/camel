@@ -23,13 +23,13 @@ import org.apache.camel.support.DefaultProducer;
 public class LuceneIndexProducer extends DefaultProducer {
     LuceneConfiguration config;
     LuceneIndexer indexer;
-    
+
     public LuceneIndexProducer(Endpoint endpoint, LuceneConfiguration config, LuceneIndexer indexer) throws Exception {
         super(endpoint);
         this.config = config;
         this.indexer = indexer;
     }
-    
+
     @Override
     public void doStop() throws Exception {
         this.indexer.getNiofsDirectory().close();
@@ -55,6 +55,6 @@ public class LuceneIndexProducer extends DefaultProducer {
 
     public void setIndexer(LuceneIndexer indexer) {
         this.indexer = indexer;
-    }   
+    }
 
 }

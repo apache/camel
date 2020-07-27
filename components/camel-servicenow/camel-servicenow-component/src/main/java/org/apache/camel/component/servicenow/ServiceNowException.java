@@ -62,8 +62,8 @@ public class ServiceNowException extends CamelException {
     @Override
     public String toString() {
         return getMessage() != null
-            ? "" + this.status + ": " + getMessage()
-            : super.toString();
+                ? "" + this.status + ": " + getMessage()
+                : super.toString();
     }
 
 }

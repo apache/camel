@@ -73,11 +73,11 @@ public class ZipkinABCRouteTest extends CamelTestSupport {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .to("seda:b")
-                    .delay(2000)
-                    .to("seda:c")
-                    .log("End of routing");
+                        .log("routing at ${routeId}")
+                        .to("seda:b")
+                        .delay(2000)
+                        .to("seda:c")
+                        .log("End of routing");
 
                 from("seda:b").routeId("b")
                         .log("routing at ${routeId}")

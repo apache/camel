@@ -80,8 +80,8 @@ public final class BackOff {
     }
 
     /**
-     * The maximum elapsed time after which the back-off should be considered
-     * exhausted and no more attempts should be made.
+     * The maximum elapsed time after which the back-off should be considered exhausted and no more attempts should be
+     * made.
      */
     public void setMaxElapsedTime(Duration maxElapsedTime) {
         this.maxElapsedTime = maxElapsedTime;
@@ -92,8 +92,8 @@ public final class BackOff {
     }
 
     /**
-     * The maximum number of attempts after which the back-off should be considered
-     * exhausted and no more attempts should be made.
+     * The maximum number of attempts after which the back-off should be considered exhausted and no more attempts
+     * should be made.
      */
     public void setMaxAttempts(Long maxAttempts) {
         this.maxAttempts = maxAttempts;
@@ -113,12 +113,12 @@ public final class BackOff {
     @Override
     public String toString() {
         return "BackOff["
-            + "delay=" + delay.toMillis()
-            + ", maxDelay=" + (maxDelay != MAX_DURATION ? maxDelay.toMillis() : "")
-            + ", maxElapsedTime=" + (maxElapsedTime != MAX_DURATION ? maxElapsedTime.toMillis() : "")
-            + ", maxAttempts=" + maxAttempts
-            + ", multiplier=" + multiplier
-            + ']';
+               + "delay=" + delay.toMillis()
+               + ", maxDelay=" + (maxDelay != MAX_DURATION ? maxDelay.toMillis() : "")
+               + ", maxElapsedTime=" + (maxElapsedTime != MAX_DURATION ? maxElapsedTime.toMillis() : "")
+               + ", maxAttempts=" + maxAttempts
+               + ", multiplier=" + multiplier
+               + ']';
     }
 
     // *****************************************

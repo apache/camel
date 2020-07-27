@@ -127,9 +127,8 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
     @Override
     public Publisher<Exchange> toStream(String name, Object data) {
         return doRequest(
-            name,
-            ReactiveStreamsHelper.convertToExchange(context, data)
-        );
+                name,
+                ReactiveStreamsHelper.convertToExchange(context, data));
     }
 
     @Override
@@ -153,8 +152,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
 
-                RouteBuilder.addRoutes(context, rb ->
-                        rb.from(camelUri).to("reactive-streams:" + uuid));
+                RouteBuilder.addRoutes(context, rb -> rb.from(camelUri).to("reactive-streams:" + uuid));
 
                 return uuid;
             } catch (Exception e) {
@@ -180,8 +178,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
     public Subscriber<Exchange> subscriber(String uri) {
         try {
             String uuid = context.getUuidGenerator().generateUuid();
-            RouteBuilder.addRoutes(context, rb ->
-                    rb.from("reactive-streams:" + uuid).to(uri));
+            RouteBuilder.addRoutes(context, rb -> rb.from("reactive-streams:" + uuid).to(uri));
 
             return streamSubscriber(uuid);
         } catch (Exception e) {
@@ -199,8 +196,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
         String streamName = requestedUriToStream.computeIfAbsent(uri, camelUri -> {
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
-                RouteBuilder.addRoutes(context, rb ->
-                        rb.from("reactive-streams:" + uuid).to(camelUri));
+                RouteBuilder.addRoutes(context, rb -> rb.from("reactive-streams:" + uuid).to(camelUri));
 
                 return uuid;
             } catch (Exception e) {
@@ -235,12 +231,12 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
                 @Override
                 public void configure() throws Exception {
                     from(uri)
-                        .process(exchange -> {
-                            Exchange copy = exchange.copy();
-                            Object result = processor.apply(Flowable.just(copy));
-                            exchange.getIn().setBody(result);
-                        })
-                        .process(unwrapStreamProcessorSupplier.get());
+                            .process(exchange -> {
+                                Exchange copy = exchange.copy();
+                                Object result = processor.apply(Flowable.just(copy));
+                                exchange.getIn().setBody(result);
+                            })
+                            .process(unwrapStreamProcessorSupplier.get());
                 }
             });
         } catch (Exception e) {
@@ -251,11 +247,9 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
     @Override
     public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
         process(
-            uri,
-            publisher -> processor.apply(
-                Flowable.fromPublisher(publisher).map(BodyConverter.forType(type)::apply)
-            )
-        );
+                uri,
+                publisher -> processor.apply(
+                        Flowable.fromPublisher(publisher).map(BodyConverter.forType(type)::apply)));
     }
 
     // ******************************************
@@ -309,26 +303,24 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
             throw new IllegalStateException("No consumers attached to the stream " + name);
         }
 
-        Single<Exchange> source = Single.<Exchange>create(
-            emitter -> data.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
-                @Override
-                public void onComplete(Exchange exchange) {
-                    emitter.onSuccess(exchange);
-                }
-
-                @Override
-                public void onFailure(Exchange exchange) {
-                    Throwable throwable = exchange.getException();
-                    if (throwable == null) {
-                        throwable = new IllegalStateException("Unknown Exception");
+        Single<Exchange> source = Single.<Exchange> create(
+                emitter -> data.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                    @Override
+                    public void onComplete(Exchange exchange) {
+                        emitter.onSuccess(exchange);
                     }
 
-                    emitter.onError(throwable);
-                }
-            })
-        ).doOnSubscribe(
-            subs -> consumer.process(data, RxJavaStreamsConstants.EMPTY_ASYNC_CALLBACK)
-        );
+                    @Override
+                    public void onFailure(Exchange exchange) {
+                        Throwable throwable = exchange.getException();
+                        if (throwable == null) {
+                            throwable = new IllegalStateException("Unknown Exception");
+                        }
+
+                        emitter.onError(throwable);
+                    }
+                })).doOnSubscribe(
+                        subs -> consumer.process(data, RxJavaStreamsConstants.EMPTY_ASYNC_CALLBACK));
 
         return source.toFlowable();
     }

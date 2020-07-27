@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpPreMoveFilePrefixTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&delay=5000" + "&preMove=done/${file:name}";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&delay=5000"
+               + "&preMove=done/${file:name}";
     }
 
     @Override

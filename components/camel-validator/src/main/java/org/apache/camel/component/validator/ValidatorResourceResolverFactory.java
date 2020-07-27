@@ -21,10 +21,9 @@ import org.w3c.dom.ls.LSResourceResolver;
 import org.apache.camel.CamelContext;
 
 /**
- * Can be used to create custom resource resolver for the validator endpoint.
- * This interface is useful, if the custom resource resolver depends on the
- * resource URI specified in the validator endpoint. The resource URI of the
- * endpoint can be even dynamic, like in the following example:
+ * Can be used to create custom resource resolver for the validator endpoint. This interface is useful, if the custom
+ * resource resolver depends on the resource URI specified in the validator endpoint. The resource URI of the endpoint
+ * can be even dynamic, like in the following example:
  * 
  * <pre>
  * {@code <camel:recipientList>} 
@@ -32,8 +31,7 @@ import org.apache.camel.CamelContext;
  * {@code </camel:recipientList>}
  * </pre>
  * 
- * The dynamic resource URI given in ${header.XSD_FILE} will be past as
- * rootResourceUri parameter in the method
+ * The dynamic resource URI given in ${header.XSD_FILE} will be past as rootResourceUri parameter in the method
  * {@link #createResourceResolver(CamelContext, String)}
  */
 public interface ValidatorResourceResolverFactory {
@@ -41,9 +39,9 @@ public interface ValidatorResourceResolverFactory {
     /**
      * Method is called during the creation of a validator endpoint.
      * 
-     * @param camelContext camel context
-     * @param rootResourceUri resource URI specified in the endpoint URI
-     * @return resource resolver
+     * @param  camelContext    camel context
+     * @param  rootResourceUri resource URI specified in the endpoint URI
+     * @return                 resource resolver
      */
     LSResourceResolver createResourceResolver(CamelContext camelContext, String rootResourceUri);
 

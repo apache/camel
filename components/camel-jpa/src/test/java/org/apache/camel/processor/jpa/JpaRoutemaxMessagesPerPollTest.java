@@ -44,7 +44,8 @@ public class JpaRoutemaxMessagesPerPollTest extends AbstractJpaTest {
             public void configure() {
                 from("direct:start").to("jpa://" + SendEmail.class.getName());
 
-                from("jpa://" + SendEmail.class.getName() + "?maxMessagesPerPoll=2&consumeDelete=false&delay=5000").to("mock:result");
+                from("jpa://" + SendEmail.class.getName() + "?maxMessagesPerPoll=2&consumeDelete=false&delay=5000")
+                        .to("mock:result");
             }
         };
     }

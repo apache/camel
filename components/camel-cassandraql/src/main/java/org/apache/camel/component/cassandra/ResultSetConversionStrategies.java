@@ -84,8 +84,7 @@ public final class ResultSetConversionStrategies {
     }
 
     /**
-     * Retrieve a limited list of rows. Message body contains a list of
-     * {@link Row} containing at most rowMax rows.
+     * Retrieve a limited list of rows. Message body contains a list of {@link Row} containing at most rowMax rows.
      */
     public static ResultSetConversionStrategy limit(int rowMax) {
         return new LimitResultSetConversionStrategy(rowMax);

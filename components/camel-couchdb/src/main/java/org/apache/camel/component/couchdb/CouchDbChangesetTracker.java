@@ -76,7 +76,8 @@ public class CouchDbChangesetTracker implements Runnable {
 
                         Exchange exchange = endpoint.createExchange(lastSequence, feed.getId(), doc, feed.isDeleted());
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}", new Object[]{exchange, feed.getId(), lastSequence});
+                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}",
+                                    new Object[] { exchange, feed.getId(), lastSequence });
                         }
 
                         try {
@@ -92,7 +93,7 @@ public class CouchDbChangesetTracker implements Runnable {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("CouchDb Exception encountered waiting for changes!  Attempting to recover...", e);
                     }
-                    if (!waitForStability(lastSequence)) { 
+                    if (!waitForStability(lastSequence)) {
                         throw e;
                     }
                 }
@@ -129,7 +130,9 @@ public class CouchDbChangesetTracker implements Runnable {
 
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: " + repeatDbErrorCount, e);
+                    LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: "
+                              + repeatDbErrorCount,
+                            e);
                 }
             }
         }

@@ -56,8 +56,7 @@ public abstract class AbstractRabbitMQIntTest extends ContainerAwareTestSupport 
     }
 
     /**
-     * Helper method for creating a RabbitMQ connection to the test instance of
-     * the RabbitMQ server.
+     * Helper method for creating a RabbitMQ connection to the test instance of the RabbitMQ server.
      *
      * @return
      * @throws IOException
@@ -74,8 +73,7 @@ public abstract class AbstractRabbitMQIntTest extends ContainerAwareTestSupport 
     }
 
     /**
-     * Helper method for creating a Qpid Broker-J system configuration for the
-     * initiate of the local AMQP server.
+     * Helper method for creating a Qpid Broker-J system configuration for the initiate of the local AMQP server.
      */
     protected static Map<String, Object> createQpidSystemConfig() {
         Map<String, Object> attributes = new HashMap<>();
@@ -90,7 +88,7 @@ public abstract class AbstractRabbitMQIntTest extends ContainerAwareTestSupport 
     @Override
     protected GenericContainer<?> createContainer() {
         container = isStartDocker() ? DockerTestUtils.rabbitMQContainer() : null;
-        return (GenericContainer<?>)container;
+        return (GenericContainer<?>) container;
     }
 
     @Override

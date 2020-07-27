@@ -56,10 +56,8 @@ public final class ServiceNowClient {
                 configuration.getApiUrl(),
                 Arrays.asList(
                         new AuthenticationRequestFilter(configuration),
-                        new JacksonJsonProvider(configuration.getOrCreateMapper())
-                ),
-                true
-        );
+                        new JacksonJsonProvider(configuration.getOrCreateMapper())),
+                true);
 
         configureRequestContext(camelContext, configuration, client);
         configureTls(camelContext, configuration, client);
@@ -179,7 +177,7 @@ public final class ServiceNowClient {
 
         // Only ServiceNow known error status codes are mapped
         // See http://wiki.servicenow.com/index.php?title=REST_API#REST_Response_HTTP_Status_Codes
-        switch(code) {
+        switch (code) {
             case 200:
             case 201:
             case 204:
@@ -197,13 +195,11 @@ public final class ServiceNowClient {
                         code,
                         model.getStatus(),
                         model.getError().get("message"),
-                        model.getError().get("detail")
-                );
+                        model.getError().get("detail"));
             default:
                 throw new ServiceNowException(
                         code,
-                        response.readEntity(Map.class)
-                );
+                        response.readEntity(Map.class));
         }
 
         return response;

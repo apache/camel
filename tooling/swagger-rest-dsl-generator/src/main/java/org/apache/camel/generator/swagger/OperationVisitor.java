@@ -39,7 +39,8 @@ class OperationVisitor<T> {
 
     private final String path;
 
-    OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path, final DestinationGenerator destinationGenerator) {
+    OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path,
+                     final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
         this.filter = filter;
         this.path = path;
@@ -96,7 +97,7 @@ class OperationVisitor<T> {
             return emitter;
         }
 
-        return emitter.emit(method, new Object[] {values.toArray(new String[values.size()])});
+        return emitter.emit(method, new Object[] { values.toArray(new String[values.size()]) });
     }
 
     CodeEmitter<T> emit(final String method, final Object value) {

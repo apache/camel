@@ -70,7 +70,8 @@ public class SqsProducerBatchTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws-sqs://camel-1?amazonSQSClient=#client&operation=sendBatchMessage").to("mock:result");
+                from("direct:start").to("aws-sqs://camel-1?amazonSQSClient=#client&operation=sendBatchMessage")
+                        .to("mock:result");
             }
         };
     }

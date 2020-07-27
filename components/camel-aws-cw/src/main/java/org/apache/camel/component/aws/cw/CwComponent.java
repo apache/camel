@@ -31,7 +31,7 @@ public class CwComponent extends DefaultComponent {
 
     @Metadata
     private CwConfiguration configuration = new CwConfiguration();
-    
+
     public CwComponent() {
         this(null);
     }
@@ -52,11 +52,12 @@ public class CwComponent extends DefaultComponent {
 
         CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        
+
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonCwClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonCwClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
         }
 

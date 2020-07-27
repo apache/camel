@@ -28,7 +28,8 @@ import org.apache.camel.spi.RestConsumerFactory;
  */
 public final class WebhookUtils {
 
-    private static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "jetty", "servlet", "undertow"};
+    private static final String[] DEFAULT_REST_CONSUMER_COMPONENTS
+            = new String[] { "coap", "netty-http", "jetty", "servlet", "undertow" };
 
     private WebhookUtils() {
     }
@@ -51,7 +52,8 @@ public final class WebhookUtils {
 
             if (factory == null) {
                 if (comp != null) {
-                    throw new IllegalArgumentException("Component " + configuration.getWebhookComponentName() + " is not a RestConsumerFactory");
+                    throw new IllegalArgumentException(
+                            "Component " + configuration.getWebhookComponentName() + " is not a RestConsumerFactory");
                 } else {
                     throw new NoSuchBeanException(configuration.getWebhookComponentName(), RestConsumerFactory.class.getName());
                 }
@@ -87,7 +89,8 @@ public final class WebhookUtils {
                     if (found == null) {
                         found = (RestConsumerFactory) comp;
                     } else {
-                        throw new IllegalArgumentException("Multiple RestConsumerFactory found on classpath. Configure explicit which component to use");
+                        throw new IllegalArgumentException(
+                                "Multiple RestConsumerFactory found on classpath. Configure explicit which component to use");
                     }
                 }
             }

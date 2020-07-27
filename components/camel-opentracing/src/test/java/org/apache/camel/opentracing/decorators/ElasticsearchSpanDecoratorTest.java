@@ -36,7 +36,7 @@ public class ElasticsearchSpanDecoratorTest {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("elasticsearch://local?operation="
-                + opName + "&indexName=twitter&indexType=tweet");
+                                                           + opName + "&indexName=twitter&indexType=tweet");
 
         SpanDecorator decorator = new ElasticsearchSpanDecorator();
 
@@ -53,7 +53,7 @@ public class ElasticsearchSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("elasticsearch://" + cluster
-                + "?operation=INDEX&indexName=" + indexName + "&indexType=tweet");
+                                                           + "?operation=INDEX&indexName=" + indexName + "&indexType=tweet");
         Mockito.when(exchange.getIn()).thenReturn(message);
 
         SpanDecorator decorator = new ElasticsearchSpanDecorator();

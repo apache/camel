@@ -22,11 +22,9 @@ import java.net.CookiePolicy;
 import org.apache.camel.Exchange;
 
 /**
- * This implementation of the
- * {@link org.apache.camel.http.base.cookie.CookieHandler} interface keeps the
- * cookies with the {@link org.apache.camel.Exchange}. As this implementation
- * does not keep any state you can share it between different endpoints without
- * limitation.
+ * This implementation of the {@link org.apache.camel.http.base.cookie.CookieHandler} interface keeps the cookies with
+ * the {@link org.apache.camel.Exchange}. As this implementation does not keep any state you can share it between
+ * different endpoints without limitation.
  */
 public class ExchangeCookieHandler extends BaseCookieHandler {
     private CookiePolicy cookiePolicy = CookiePolicy.ACCEPT_ORIGINAL_SERVER;
@@ -35,7 +33,7 @@ public class ExchangeCookieHandler extends BaseCookieHandler {
     protected CookieManager getCookieManager(Exchange exchange) {
         Object handlerObj = exchange.getProperty(Exchange.COOKIE_HANDLER);
         if (handlerObj instanceof java.net.CookieManager) {
-            return (CookieManager)handlerObj;
+            return (CookieManager) handlerObj;
         } else {
             CookieManager handler = new CookieManager();
             handler.setCookiePolicy(cookiePolicy);

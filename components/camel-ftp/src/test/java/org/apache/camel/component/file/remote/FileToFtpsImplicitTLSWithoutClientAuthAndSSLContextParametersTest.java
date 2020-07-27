@@ -21,7 +21,8 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
-public class FileToFtpsImplicitTLSWithoutClientAuthAndSSLContextParametersTest extends FileToFtpsImplicitTLSWithoutClientAuthTest {
+public class FileToFtpsImplicitTLSWithoutClientAuthAndSSLContextParametersTest
+        extends FileToFtpsImplicitTLSWithoutClientAuthTest {
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters createSslContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
@@ -40,7 +41,8 @@ public class FileToFtpsImplicitTLSWithoutClientAuthAndSSLContextParametersTest e
 
     @Override
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
+        return "ftps://admin@localhost:" + getPort()
+               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&implicit=true&sslContextParameters=#sslContextParameters&delete=true";
     }
 }

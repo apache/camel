@@ -42,16 +42,13 @@ public final class FacebookMethodsTypeHelper {
     private static final Logger LOG = LoggerFactory.getLogger(FacebookMethodsTypeHelper.class);
 
     // maps method name to FacebookMethodsType
-    private static final Map<String, List<FacebookMethodsType>> METHOD_MAP =
-            new HashMap<>();
+    private static final Map<String, List<FacebookMethodsType>> METHOD_MAP = new HashMap<>();
 
     // maps method name to method arguments of the form Class type1, String name1, Class type2, String name2,...
-    private static final Map<String, List<Object>> ARGUMENTS_MAP =
-            new HashMap<>();
+    private static final Map<String, List<Object>> ARGUMENTS_MAP = new HashMap<>();
 
     // maps argument name to argument type
-    private static final Map<String, Class<?>> VALID_ARGUMENTS =
-            new HashMap<>();
+    private static final Map<String, Class<?>> VALID_ARGUMENTS = new HashMap<>();
 
     static {
         final FacebookMethodsType[] methods = FacebookMethodsType.values();
@@ -89,9 +86,10 @@ public final class FacebookMethodsTypeHelper {
                 // also collect argument names for all methods, also detect clashes here
                 final Class<?> previousType = VALID_ARGUMENTS.get(argName);
                 if (previousType != null && previousType != argType) {
-                    throw new ExceptionInInitializerError(String.format(
-                            "Argument %s has ambiguous types (%s, %s) across methods!",
-                            name, previousType, argType));
+                    throw new ExceptionInInitializerError(
+                            String.format(
+                                    "Argument %s has ambiguous types (%s, %s) across methods!",
+                                    name, previousType, argType));
                 } else if (previousType == null) {
                     VALID_ARGUMENTS.put(argName, argType);
                 }
@@ -107,11 +105,14 @@ public final class FacebookMethodsTypeHelper {
     }
 
     /**
-     * Gets methods that match the given name and arguments.<p/>
+     * Gets methods that match the given name and arguments.
+     * <p/>
      * Note that the args list is a required subset of arguments for returned methods.
-     * @param name case sensitive full method name to lookup
-     * @param argNames unordered required argument names
-     * @return non-null unmodifiable list of methods that take all of the given arguments, empty if there is no match
+     * 
+     * @param  name     case sensitive full method name to lookup
+     * @param  argNames unordered required argument names
+     * @return          non-null unmodifiable list of methods that take all of the given arguments, empty if there is no
+     *                  match
      */
     public static List<FacebookMethodsType> getCandidateMethods(String name, String... argNames) {
         final List<FacebookMethodsType> methods = METHOD_MAP.get(name);
@@ -136,14 +137,17 @@ public final class FacebookMethodsTypeHelper {
     /**
      * Filters a list of methods to those that take the given set of arguments.
      *
-     * @param methods list of methods to filter
-     * @param matchType whether the arguments are an exact match, a subset or a super set of method args
-     * @param argNames argument names to filter the list
-     * @return methods with arguments that satisfy the match type.<p/>
-     * For SUPER_SET match, if methods with exact match are found, methods that take a subset are ignored
+     * @param  methods   list of methods to filter
+     * @param  matchType whether the arguments are an exact match, a subset or a super set of method args
+     * @param  argNames  argument names to filter the list
+     * @return           methods with arguments that satisfy the match type.
+     *                   <p/>
+     *                   For SUPER_SET match, if methods with exact match are found, methods that take a subset are
+     *                   ignored
      */
-    public static List<FacebookMethodsType> filterMethods(List<FacebookMethodsType> methods, MatchType matchType,
-                                                          String... argNames) {
+    public static List<FacebookMethodsType> filterMethods(
+            List<FacebookMethodsType> methods, MatchType matchType,
+            String... argNames) {
         List<String> argsList = Arrays.asList(argNames);
         // list of methods that have all args in the given names
         final List<FacebookMethodsType> result = new ArrayList<>();
@@ -185,8 +189,9 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Gets argument types and names for all overloaded methods with the given name.
-     * @param name method name, must be a long form (i.e. get*, or search*)
-     * @return list of arguments of the form Class type1, String name1, Class type2, String name2,...
+     * 
+     * @param  name method name, must be a long form (i.e. get*, or search*)
+     * @return      list of arguments of the form Class type1, String name1, Class type2, String name2,...
      */
     public static List<Object> getArguments(String name) throws IllegalArgumentException {
         final List<Object> arguments = ARGUMENTS_MAP.get(name);
@@ -198,9 +203,10 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Gets argument types and names for all overloaded methods with the given short form name.
-     * @param name method name, may be a short form
-     * @param style name style
-     * @return list of arguments of the form Class type1, String name1, Class type2, String name2,...
+     * 
+     * @param  name  method name, may be a short form
+     * @param  style name style
+     * @return       list of arguments of the form Class type1, String name1, Class type2, String name2,...
      */
     public static List<Object> getArgumentsForNameStyle(String name, FacebookNameStyle style) throws IllegalArgumentException {
         if (style == null) {
@@ -224,10 +230,11 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Get missing properties.
-     * @param methodName method name
-     * @param nameStyle method name style
-     * @param argNames available arguments
-     * @return Set of missing argument names
+     * 
+     * @param  methodName method name
+     * @param  nameStyle  method name style
+     * @param  argNames   available arguments
+     * @return            Set of missing argument names
      */
     public static Set<String> getMissingProperties(String methodName, FacebookNameStyle nameStyle, Set<String> argNames) {
         final List<Object> argsWithTypes = getArgumentsForNameStyle(methodName, nameStyle);
@@ -245,6 +252,7 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Get argument types and names used by all methods.
+     * 
      * @return map with argument names as keys, and types as values
      */
     public static Map<String, Class<?>> allArguments() {
@@ -253,8 +261,9 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Get the type for the given argument name.
-     * @param argName argument name
-     * @return argument type
+     * 
+     * @param  argName argument name
+     * @return         argument type
      */
     public static Class<?> getType(String argName) throws IllegalArgumentException {
         final Class<?> type = VALID_ARGUMENTS.get(argName);
@@ -291,10 +300,10 @@ public final class FacebookMethodsTypeHelper {
     /**
      * Invokes given method with argument values from given properties.
      *
-     * @param facebook Facebook4J target object for invoke
-     * @param method method to invoke
-     * @param properties Map of arguments
-     * @return result of method invocation
+     * @param  facebook              Facebook4J target object for invoke
+     * @param  method                method to invoke
+     * @param  properties            Map of arguments
+     * @return                       result of method invocation
      * @throws RuntimeCamelException on errors
      */
     public static Object invokeMethod(Facebook facebook, FacebookMethodsType method, Map<String, Object> properties)
@@ -352,7 +361,7 @@ public final class FacebookMethodsTypeHelper {
             String msg;
             if (e.getCause() instanceof FacebookException) {
                 e = e.getCause();
-                msg = ((FacebookException)e).getErrorMessage();
+                msg = ((FacebookException) e).getErrorMessage();
             } else {
                 msg = e.getMessage();
             }
@@ -362,7 +371,9 @@ public final class FacebookMethodsTypeHelper {
     }
 
     public enum MatchType {
-        EXACT, SUBSET, SUPER_SET
+        EXACT,
+        SUBSET,
+        SUPER_SET
     }
 
 }

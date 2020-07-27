@@ -24,7 +24,8 @@ public class SpringPropertiesAfterTransactedDSL2Test extends SpringPropertiesAft
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         // instead of the propertyPlaceholder here we make use of the bridgePropertyPlaceholder
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesAfterTransactedDSL2Test.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringPropertiesAfterTransactedDSL2Test.xml");
     }
 
 }

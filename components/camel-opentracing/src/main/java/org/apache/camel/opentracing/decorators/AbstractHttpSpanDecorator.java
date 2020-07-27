@@ -37,7 +37,7 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
         // 1. Use method provided in header.
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
         if (method instanceof String) {
-            return (String)method;
+            return (String) method;
         }
 
         // 2. GET if query string is provided in header.

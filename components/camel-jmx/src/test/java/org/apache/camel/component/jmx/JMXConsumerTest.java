@@ -24,8 +24,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests that trigger notification events on our simple bean without
- * requiring any special setup.
+ * Tests that trigger notification events on our simple bean without requiring any special setup.
  */
 public class JMXConsumerTest extends SimpleBeanFixture {
 

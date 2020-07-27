@@ -26,21 +26,29 @@ import org.apache.camel.util.StringHelper;
 /**
  * A {@link PropertiesFunction} that reserves network ports and place them in a cache for reuse.
  * <p/>
- * The first time the function is invoked for a given name, an unused network port is determined and cached
- * in an hash map with the given name as key so each time this function is invoked for the same name, the
- * previously discovered port will be returned.
+ * The first time the function is invoked for a given name, an unused network port is determined and cached in an hash
+ * map with the given name as key so each time this function is invoked for the same name, the previously discovered
+ * port will be returned.
  * <p/>
  * This is useful for testing purpose where you can write a route like:
- * <pre>{@code
+ * 
+ * <pre>
+ * {@code
  * from("undertow:http://0.0.0.0:{{available-port:server-port}}")
  *     .to("mock:result");
- * }</pre>
+ * }
+ * </pre>
+ * 
  * And then you can invoke with {@link org.apache.camel.ProducerTemplate} like:
- * <pre>{@code
+ * 
+ * <pre>
+ * {@code
  * template.sendBody("undertow:http://0.0.0.0:{{available-port:server-port}}", "the body");
- * }</pre>
- * Doing so avoid the need to compute the port and pass it to the various method or store it as a global
- * variable in the test class.
+ * }
+ * </pre>
+ * 
+ * Doing so avoid the need to compute the port and pass it to the various method or store it as a global variable in the
+ * test class.
  *
  * @see AvailablePortFinder
  */
@@ -75,12 +83,14 @@ public class AvailablePortFinderPropertiesFunction implements PropertiesFunction
         if (range != null) {
             String f = StringHelper.before(range, "-");
             if (ObjectHelper.isEmpty(f)) {
-                throw new IllegalArgumentException("Unable to parse from range, range should be defined in the as from-to, got: " + range);
+                throw new IllegalArgumentException(
+                        "Unable to parse from range, range should be defined in the as from-to, got: " + range);
             }
 
             String t = StringHelper.after(range, "-");
             if (ObjectHelper.isEmpty(t)) {
-                throw new IllegalArgumentException("Unable to parse to range, range should be defined in the as from-to, got: " + range);
+                throw new IllegalArgumentException(
+                        "Unable to parse to range, range should be defined in the as from-to, got: " + range);
             }
 
             from = Integer.parseInt(f);

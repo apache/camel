@@ -49,7 +49,8 @@ public class PulsarUtilsTest {
     }
 
     @Test
-    public void givenConsumerQueueIsNotEmptywhenIStopConsumersverifyCallToCloseAndUnsubscribeConsumer() throws PulsarClientException {
+    public void givenConsumerQueueIsNotEmptywhenIStopConsumersverifyCallToCloseAndUnsubscribeConsumer()
+            throws PulsarClientException {
         Consumer<byte[]> consumer = mock(Consumer.class);
 
         Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
@@ -61,13 +62,14 @@ public class PulsarUtilsTest {
     }
 
     @Test
-    public void givenConsumerThrowsPulsarClientExceptionwhenIStopConsumersverifyExceptionIsThrown() throws PulsarClientException {
+    public void givenConsumerThrowsPulsarClientExceptionwhenIStopConsumersverifyExceptionIsThrown()
+            throws PulsarClientException {
         Consumer<byte[]> consumer = mock(Consumer.class);
 
         doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
 
         assertThrows(PulsarClientException.class,
-            () -> consumer.close());
+                () -> consumer.close());
 
         verify(consumer).close();
     }

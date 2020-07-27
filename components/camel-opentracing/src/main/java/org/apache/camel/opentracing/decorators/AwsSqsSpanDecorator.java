@@ -34,7 +34,7 @@ public class AwsSqsSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     protected String getMessageId(Exchange exchange) {
-        return (String)exchange.getIn().getHeader(CAMEL_AWS_SQS_MESSAGE_ID);
+        return (String) exchange.getIn().getHeader(CAMEL_AWS_SQS_MESSAGE_ID);
     }
 
 }

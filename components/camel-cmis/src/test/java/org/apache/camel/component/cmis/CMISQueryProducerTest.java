@@ -98,7 +98,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
 
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
-        InputStream content = (InputStream)documents.get(0).get("CamelCMISContent");
+        InputStream content = (InputStream) documents.get(0).get("CamelCMISContent");
         assertEquals("This is the first Camel test content.", readFromStream(content));
     }
 

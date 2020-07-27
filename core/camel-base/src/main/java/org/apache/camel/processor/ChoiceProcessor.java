@@ -37,9 +37,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
- * Implements a Choice structure where one or more predicates are used which if
- * they are true their processors are used, with a default otherwise clause used
- * if none match.
+ * Implements a Choice structure where one or more predicates are used which if they are true their processors are used,
+ * with a default otherwise clause used if none match.
  */
 public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 

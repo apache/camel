@@ -54,7 +54,8 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         mock.expectedBodiesReceived(body);
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
@@ -72,7 +73,8 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         mock.expectedHeaderReceived("id", "1");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "PUT");
 
-        WebRequest req = new PutMethodWebRequest(contextUrl + "/services/users/1",
+        WebRequest req = new PutMethodWebRequest(
+                contextUrl + "/services/users/1",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
@@ -109,11 +111,13 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
                         .endpointProperty("eagerCheckContentAvailable", "true");
 
                 rest()
-                    .get("/users").route().transform().constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
-                    .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }").endRest()
-                    .post("/users").to("mock:create")
-                    .put("/users/{id}").to("mock:update")
-                    .delete("/users/{id}").to("mock:delete");
+                        .get("/users").route().transform()
+                        .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
+                        .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }")
+                        .endRest()
+                        .post("/users").to("mock:create")
+                        .put("/users/{id}").to("mock:update")
+                        .delete("/users/{id}").to("mock:delete");
             }
         };
     }

@@ -51,8 +51,11 @@ public class XmppPubSubProducer extends DefaultProducer {
                 connection.connect();
             }
         } catch (XMPPException e) {
-            throw new RuntimeExchangeException("Cannot connect to XMPP Server: "
-                    + ((connection != null) ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()), exchange, e);
+            throw new RuntimeExchangeException(
+                    "Cannot connect to XMPP Server: "
+                                               + ((connection != null)
+                                                       ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()),
+                    exchange, e);
         }
 
         try {
@@ -66,8 +69,10 @@ public class XmppPubSubProducer extends DefaultProducer {
                 throw new Exception("Message does not contain a pubsub packet");
             }
         } catch (XMPPException xmppe) {
-            throw new RuntimeExchangeException("Cannot send XMPP pubsub: from " + endpoint.getUser()
-                    + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
+            throw new RuntimeExchangeException(
+                    "Cannot send XMPP pubsub: from " + endpoint.getUser()
+                                               + " to: " + XmppEndpoint.getConnectionMessage(connection),
+                    exchange, xmppe);
         }
     }
 

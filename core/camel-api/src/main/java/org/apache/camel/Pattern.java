@@ -25,19 +25,19 @@ import java.lang.annotation.Target;
 /**
  * Marks a method as having a specific kind of {@link ExchangePattern} for use with
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> or
- * <a href="http://camel.apache.org/spring-remoting.html">Spring Remoting</a>
- * to overload the default value which is {@link ExchangePattern#InOut} for request/reply if no annotations are used.
+ * <a href="http://camel.apache.org/spring-remoting.html">Spring Remoting</a> to overload the default value which is
+ * {@link ExchangePattern#InOut} for request/reply if no annotations are used.
  *
- * There are abbreviation annotations like {@link InOnly} or {@link InOut} which are typically used for
- * the common message exchange patterns. You could also add this annotation onto your own custom annotation to default
- * the message exchange pattern when your own annotation is added to a method
- * <a href="using-exchange-pattern-annotations.html">as in this example</a>.
+ * There are abbreviation annotations like {@link InOnly} or {@link InOut} which are typically used for the common
+ * message exchange patterns. You could also add this annotation onto your own custom annotation to default the message
+ * exchange pattern when your own annotation is added to a method <a href="using-exchange-pattern-annotations.html">as
+ * in this example</a>.
  *
- * This annotation can be added to individual methods or added to a class or interface to act as a default for all methods
- * within the class or interface.
+ * This annotation can be added to individual methods or added to a class or interface to act as a default for all
+ * methods within the class or interface.
  *
- * See the <a href="using-exchange-pattern-annotations.html">using exchange pattern annotations</a>
- * for more details on how the overloading rules work.
+ * See the <a href="using-exchange-pattern-annotations.html">using exchange pattern annotations</a> for more details on
+ * how the overloading rules work.
  *
  * @see InOut
  * @see InOnly
@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Pattern {
 
     /**

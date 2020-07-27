@@ -42,28 +42,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Shared (thread safe) internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
+ * A Shared (thread safe) internal {@link Processor} that Camel routing engine used during routing for cross cutting
+ * functionality such as:
  * <ul>
- *     <li>Execute {@link UnitOfWork}</li>
- *     <li>Keeping track which route currently is being routed</li>
- *     <li>Execute {@link RoutePolicy}</li>
- *     <li>Gather JMX performance statics</li>
- *     <li>Tracing</li>
- *     <li>Debugging</li>
- *     <li>Message History</li>
- *     <li>Stream Caching</li>
- *     <li>{@link Transformer}</li>
+ * <li>Execute {@link UnitOfWork}</li>
+ * <li>Keeping track which route currently is being routed</li>
+ * <li>Execute {@link RoutePolicy}</li>
+ * <li>Gather JMX performance statics</li>
+ * <li>Tracing</li>
+ * <li>Debugging</li>
+ * <li>Message History</li>
+ * <li>Stream Caching</li>
+ * <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
  * <p/>
- * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorAdvice} advice (before and after advice)
- * by executing the {@link CamelInternalProcessorAdvice#before(Exchange)} and
- * {@link CamelInternalProcessorAdvice#after(Exchange, Object)} callbacks in correct order during routing.
- * This reduces number of stack frames needed during routing, and reduce the number of lines in stacktraces, as well
- * makes debugging the routing engine easier for end users.
+ * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorAdvice} advice
+ * (before and after advice) by executing the {@link CamelInternalProcessorAdvice#before(Exchange)} and
+ * {@link CamelInternalProcessorAdvice#after(Exchange, Object)} callbacks in correct order during routing. This reduces
+ * number of stack frames needed during routing, and reduce the number of lines in stacktraces, as well makes debugging
+ * the routing engine easier for end users.
  * <p/>
- * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then make sure to
- * read the source code of this class about the debugging tips, which you can find in the
+ * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then
+ * make sure to read the source code of this class about the debugging tips, which you can find in the
  * {@link #process(Exchange, AsyncCallback, AsyncProcessor, Processor)} method.
  * <p/>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
@@ -112,7 +113,8 @@ public class SharedCamelInternalProcessor {
 
             @Override
             public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-                AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                        = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
                 process(exchange, callback);
                 return callback.getFuture();
             }
@@ -127,7 +129,8 @@ public class SharedCamelInternalProcessor {
     /**
      * Asynchronous API
      */
-    public boolean process(Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor, Processor resultProcessor) {
+    public boolean process(
+            Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor, Processor resultProcessor) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
         // ----------------------------------------------------------
@@ -174,9 +177,11 @@ public class SharedCamelInternalProcessor {
             // must be synchronized for transacted exchanges
             if (LOG.isTraceEnabled()) {
                 if (exchange.isTransacted()) {
-                    LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                    LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}",
+                            exchange.getExchangeId(), exchange);
                 } else {
-                    LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                    LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}",
+                            exchange.getExchangeId(), exchange);
                 }
             }
             // ----------------------------------------------------------
@@ -304,7 +309,8 @@ public class SharedCamelInternalProcessor {
         if (processor instanceof Service) {
             boolean forceShutdown = shutdownStrategy.forceShutdown((Service) processor);
             if (forceShutdown) {
-                String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
+                String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
+                             + exchange;
                 LOG.debug(msg);
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException(msg));

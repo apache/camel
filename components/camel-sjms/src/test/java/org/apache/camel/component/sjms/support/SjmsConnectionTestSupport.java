@@ -31,7 +31,7 @@ public abstract class SjmsConnectionTestSupport {
     static {
         System.setProperty("org.apache.activemq.default.directory.prefix", "target/activemq/");
     }
-    
+
     public static final String VM_BROKER_CONNECT_STRING = "vm://broker";
     public static final String TCP_BROKER_CONNECT_STRING = "tcp://localhost:61616";
     protected Logger logger = LoggerFactory.getLogger(getClass());

@@ -52,10 +52,11 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed PropertiesComponent")
 @JdkService(org.apache.camel.spi.PropertiesComponent.FACTORY)
-public class PropertiesComponent extends ServiceSupport implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
+public class PropertiesComponent extends ServiceSupport
+        implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 
     /**
-     *  Never check system properties.
+     * Never check system properties.
      */
     public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
 
@@ -65,16 +66,15 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
 
     /**
-     * Check system properties variables) first, before trying the specified properties.
-     * This allows system properties to override any other property source
-     * (environment variable and then system properties takes precedence).
+     * Check system properties variables) first, before trying the specified properties. This allows system properties
+     * to override any other property source (environment variable and then system properties takes precedence).
      * <p/>
      * This is the default.
      */
     public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
 
     /**
-     *  Never check OS environment variables.
+     * Never check OS environment variables.
      */
     public static final int ENVIRONMENT_VARIABLES_MODE_NEVER = 0;
 
@@ -86,15 +86,13 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     public static final int ENVIRONMENT_VARIABLES_MODE_FALLBACK = 1;
 
     /**
-     * Check OS environment variables first, before trying the specified properties.
-     * This allows environment variables to override any other property source
-     * (environment variable and then system properties takes precedence).
+     * Check OS environment variables first, before trying the specified properties. This allows environment variables
+     * to override any other property source (environment variable and then system properties takes precedence).
      */
     public static final int ENVIRONMENT_VARIABLES_MODE_OVERRIDE = 2;
 
     /**
-     * Key for stores special override properties that containers such as OSGi can store
-     * in the OSGi service registry
+     * Key for stores special override properties that containers such as OSGi can store in the OSGi service registry
      */
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
 
@@ -212,7 +210,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
         // use initial properties
         if (initialProperties != null) {
-            for (String name: initialProperties.stringPropertyNames()) {
+            for (String name : initialProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
                     prop.put(name, initialProperties.get(name));
                 }
@@ -235,7 +233,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
         // use override properties
         if (overrideProperties != null) {
-            for (String name: overrideProperties.stringPropertyNames()) {
+            for (String name : overrideProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
                     prop.put(name, overrideProperties.get(name));
                 }
@@ -269,8 +267,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. This option will override any default locations and only use the
+     * locations from this option.
      */
     public void setLocations(List<PropertiesLocation> locations) {
         // reset locations
@@ -285,8 +283,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. This option will override any default locations and only use the
+     * locations from this option.
      */
     public void setLocations(String[] locationStrings) {
         List<PropertiesLocation> locations = new ArrayList<>();
@@ -300,8 +298,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. This option will override any default locations and only use the
+     * locations from this option.
      */
     public void setLocations(Collection<String> locationStrings) {
         List<PropertiesLocation> locations = new ArrayList<>();
@@ -334,8 +332,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. You can use comma to separate multiple locations. This option will
+     * override any default locations and only use the locations from this option.
      */
     @Override
     public void setLocation(String location) {
@@ -357,8 +355,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     /**
      * Encoding to use when loading properties file from the file system or classpath.
      * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
-     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * documented by {@link java.util.Properties#load(java.io.InputStream)}
      */
     @Override
     public void setEncoding(String encoding) {
@@ -432,8 +430,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * Sets a special list of override properties that take precedence
-     * and will use first, if a property exist.
+     * Sets a special list of override properties that take precedence and will use first, if a property exist.
      */
     @Override
     public void setOverrideProperties(Properties overrideProperties) {
@@ -441,8 +438,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * Sets a special list of local properties (ie thread local) that take precedence
-     * and will use first, if a property exist.
+     * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property
+     * exist.
      */
     @Override
     public void setLocalProperties(Properties localProperties) {
@@ -489,8 +486,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     /**
      * Sets the JVM system property mode (0 = never, 1 = fallback, 2 = override).
      *
-     * The default mode (override) is to use system properties if present,
-     * and override any existing properties.
+     * The default mode (override) is to use system properties if present, and override any existing properties.
      *
      * OS environment variable mode is checked before JVM system property mode
      *
@@ -510,8 +506,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     /**
      * Sets the OS environment variables mode (0 = never, 1 = fallback, 2 = override).
      *
-     * The default mode (override) is to use OS environment variables if present,
-     * and override any existing properties.
+     * The default mode (override) is to use OS environment variables if present, and override any existing properties.
      *
      * OS environment variable mode is checked before JVM system property mode
      *
@@ -585,7 +580,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
                     LOG.info("PropertiesComponent added custom PropertiesSource (registry): {}", source);
                 }
 
-                FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/");
+                FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class)
+                        .getFactoryFinder("META-INF/services/org/apache/camel/");
                 Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
                 if (type != null) {
                     Object obj = getCamelContext().getInjector().newInstance(type, false);
@@ -594,11 +590,15 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
                         addPropertiesSource(ps);
                         LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
                     } else if (obj != null) {
-                        LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
+                        LOG.warn(
+                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: "
+                                 + type.getName());
                     }
                 }
             } catch (Exception e) {
-                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
+                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage()
+                          + ". This exception is ignored",
+                        e);
             }
         }
 
@@ -630,6 +630,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
             addPropertiesSource(new ClasspathPropertiesSource(this, location));
         }
     }
+
     private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
         List<PropertiesLocation> answer = new ArrayList<>();
 
@@ -641,10 +642,9 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
                 LOG.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
-                        location.getResolver(),
-                        path,
-                        location.isOptional())
-                    );
+                            location.getResolver(),
+                            path,
+                            location.isOptional()));
                 }
             } catch (IllegalArgumentException e) {
                 if (!ignoreMissingLocation && !location.isOptional()) {

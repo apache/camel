@@ -77,8 +77,8 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
 
     @Override
     public void copyFromPopulateAdditional(GenericFile<T> source, GenericFile<T> result) {
-        RemoteFile<?> remoteSource = (RemoteFile<?>)source;
-        RemoteFile<?> remoteResult = (RemoteFile<?>)result;
+        RemoteFile<?> remoteSource = (RemoteFile<?>) source;
+        RemoteFile<?> remoteResult = (RemoteFile<?>) result;
 
         remoteResult.setHostname(remoteSource.getHostname());
     }

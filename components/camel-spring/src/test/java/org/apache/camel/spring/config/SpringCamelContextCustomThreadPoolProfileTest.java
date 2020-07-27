@@ -30,7 +30,8 @@ public class SpringCamelContextCustomThreadPoolProfileTest extends SpringTestSup
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextCustomThreadPoolProfileTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/SpringCamelContextCustomThreadPoolProfileTest.xml");
     }
 
     @Test

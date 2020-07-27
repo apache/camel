@@ -29,9 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo"),
-        new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
-            .setParentId(0)
+            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo"),
+            new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
+                    .setParentId(0)
     };
 
     public RouteConcurrentTest() {
@@ -68,13 +68,13 @@ public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo?concurrentConsumers=5").routeId("foo")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"))
-                    .to("seda:bar");
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"))
+                        .to("seda:bar");
 
                 from("seda:bar?concurrentConsumers=5").routeId("bar")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(0,500)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(0,500)}"));
             }
         };
     }

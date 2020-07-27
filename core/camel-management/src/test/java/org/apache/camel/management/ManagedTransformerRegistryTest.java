@@ -84,16 +84,15 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         assertTrue(source.startsWith("TransformerRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
 
-        
         TabularData data = (TabularData) mbeanServer.invoke(on, "listTransformers", null, null);
         for (Object row : data.values()) {
-            CompositeData composite = (CompositeData)row;
-            String scheme = (String)composite.get("scheme");
-            String from = (String)composite.get("from");
-            String to = (String)composite.get("to");
-            String description = (String)composite.get("description");
-            boolean isStatic = (boolean)composite.get("static");
-            boolean isDynamic = (boolean)composite.get("dynamic");
+            CompositeData composite = (CompositeData) row;
+            String scheme = (String) composite.get("scheme");
+            String from = (String) composite.get("from");
+            String to = (String) composite.get("to");
+            String description = (String) composite.get("description");
+            boolean isStatic = (boolean) composite.get("static");
+            boolean isDynamic = (boolean) composite.get("dynamic");
             LOG.info("[{}][{}][{}][{}][{}][{}]", scheme, from, to, isStatic, isDynamic, description);
             if (description.startsWith("ProcessorTransformer")) {
                 assertEquals(null, scheme);
@@ -120,13 +119,13 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 transformer()
-                    .fromType("xml:foo")
-                    .toType("json:bar")
-                    .withUri("direct:transformer");
+                        .fromType("xml:foo")
+                        .toType("json:bar")
+                        .withUri("direct:transformer");
                 transformer()
-                    .scheme("custom")
-                    .withJava(MyTransformer.class);
-                
+                        .scheme("custom")
+                        .withJava(MyTransformer.class);
+
                 from("direct:start").to("mock:result");
             }
         };

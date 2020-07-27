@@ -39,7 +39,7 @@ public class GoogleSheetsVerifierExtensionTest extends CamelTestSupport {
         Component component = context().getComponent("google-sheets");
 
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class)
-                                                       .orElseThrow(IllegalStateException::new);
+                .orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("clientId", "l");
@@ -54,7 +54,7 @@ public class GoogleSheetsVerifierExtensionTest extends CamelTestSupport {
     public void testVerifyConnectivity() {
         Component component = context().getComponent("google-sheets");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class)
-                                                       .orElseThrow(IllegalStateException::new);
+                .orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("clientId", "l");

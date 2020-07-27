@@ -53,15 +53,15 @@ class HelsinkiServiceNowServiceCatalogCategoriesProcessor extends AbstractServic
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("categories")
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .query(ServiceNowParams.SYSPARM_VIEW, in)
-            .query(responseModel)
-            .invoke(HttpMethod.GET);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("categories")
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
+                .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
     }

@@ -43,8 +43,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
- * Creates a Pipeline pattern where the output of the previous step is sent as
- * input to the next step, reusing the same message exchanges
+ * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
+ * message exchanges
  */
 public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 

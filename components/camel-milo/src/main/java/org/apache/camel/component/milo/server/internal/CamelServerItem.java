@@ -49,7 +49,8 @@ public class CamelServerItem {
     private final Set<Consumer<DataValue>> listeners = new CopyOnWriteArraySet<>();
     private DataValue value = new DataValue(StatusCode.BAD);
 
-    public CamelServerItem(final String itemId, final UaNodeContext nodeContext, final UShort namespaceIndex, final UaObjectNode baseNode) {
+    public CamelServerItem(final String itemId, final UaNodeContext nodeContext, final UShort namespaceIndex,
+                           final UaObjectNode baseNode) {
 
         this.itemId = itemId;
         this.baseNode = baseNode;
@@ -103,13 +104,12 @@ public class CamelServerItem {
     /**
      * Run through a list, aggregating errors
      * <p>
-     * The consumer is called for each list item, regardless if the consumer did
-     * through an exception. All exceptions are caught and thrown in one
-     * RuntimeException. The first exception being wrapped directly while the
-     * latter ones, if any, are added as suppressed exceptions.
+     * The consumer is called for each list item, regardless if the consumer did through an exception. All exceptions
+     * are caught and thrown in one RuntimeException. The first exception being wrapped directly while the latter ones,
+     * if any, are added as suppressed exceptions.
      * </p>
      *
-     * @param list the list to run through
+     * @param list     the list to run through
      * @param consumer the consumer processing list elements
      */
     protected <T> void runThrough(final Collection<Consumer<T>> list, final Consumer<Consumer<T>> consumer) {
@@ -141,9 +141,9 @@ public class CamelServerItem {
 
     public void update(final Object value) {
         if (value instanceof DataValue) {
-            this.value = (DataValue)value;
+            this.value = (DataValue) value;
         } else if (value instanceof Variant) {
-            this.value = new DataValue((Variant)value, StatusCode.GOOD, DateTime.now());
+            this.value = new DataValue((Variant) value, StatusCode.GOOD, DateTime.now());
         } else {
             this.value = new DataValue(new Variant(value), StatusCode.GOOD, DateTime.now());
         }

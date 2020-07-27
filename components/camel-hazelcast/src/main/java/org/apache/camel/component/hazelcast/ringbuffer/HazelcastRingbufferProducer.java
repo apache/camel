@@ -29,7 +29,8 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
 
     private final Ringbuffer<Object> ringbuffer;
 
-    public HazelcastRingbufferProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
+    public HazelcastRingbufferProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
+                                       String cacheName) {
         super(endpoint);
         this.ringbuffer = hazelcastInstance.getRingbuffer(cacheName);
     }
@@ -62,7 +63,9 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the RINGBUFFER.", operation, HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the RINGBUFFER.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

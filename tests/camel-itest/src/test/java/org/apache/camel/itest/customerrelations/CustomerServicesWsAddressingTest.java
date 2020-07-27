@@ -30,13 +30,14 @@ public class CustomerServicesWsAddressingTest {
         ClassPathXmlApplicationContext clientContext = null;
         try {
             serverContext = new ClassPathXmlApplicationContext(
-                new String[] {"spring-config/server-WsAddressingContext.xml"});
+                    new String[] { "spring-config/server-WsAddressingContext.xml" });
             Object server = serverContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
             assertNotNull(server, "We should get server here");
 
-            clientContext =  new ClassPathXmlApplicationContext(
-                new String[] {"spring-config/client-WsAddressingContext.xml"});
-            CustomerServiceV1 customerService = clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
+            clientContext = new ClassPathXmlApplicationContext(
+                    new String[] { "spring-config/client-WsAddressingContext.xml" });
+            CustomerServiceV1 customerService = clientContext
+                    .getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
 
             Customer customer = customerService.getCustomer("12345");
             assertNotNull(customer, "We should get Customer here");

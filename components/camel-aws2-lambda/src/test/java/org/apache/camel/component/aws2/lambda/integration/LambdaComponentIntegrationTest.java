@@ -69,10 +69,10 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:listFunctions")
-                    .to("aws2-lambda://myFunction?operation=listFunctions&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                        .to("aws2-lambda://myFunction?operation=listFunctions&accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
                 from("direct:getFunction")
-                    .to("aws2-lambda://twitterTrends?operation=getFunction&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                        .to("aws2-lambda://twitterTrends?operation=getFunction&accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
             }
         };

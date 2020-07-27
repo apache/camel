@@ -74,7 +74,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean enabled = context.getManagementStrategy().getManagementAgent() != null && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+        boolean enabled = context.getManagementStrategy().getManagementAgent() != null
+                && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
@@ -499,16 +500,19 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (server != null) {
             // gather all the routes for this CamelContext, which requires JMX
             String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
             Set<ObjectName> routes = server.queryNames(query, null);
 
             List<ManagedProcessorMBean> processors = new ArrayList<>();
             if (includeProcessors) {
                 // gather all the processors for this CamelContext, which requires JMX
-                query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+                query = ObjectName.getInstance(
+                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
+                            ManagedProcessorMBean.class);
                     processors.add(processor);
                 }
             }
@@ -517,8 +521,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");
             for (ObjectName on : routes) {
-                ManagedRouteMBean route = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
-                sb.append("    <routeStat").append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
+                ManagedRouteMBean route
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                sb.append("    <routeStat")
+                        .append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
@@ -530,7 +536,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     for (ManagedProcessorMBean processor : processors) {
                         // the processor must belong to this route
                         if (route.getRouteId().equals(processor.getRouteId())) {
-                            sb.append("        <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", processor.getProcessorId(), processor.getIndex(), processor.getState()));
+                            sb.append("        <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"",
+                                    processor.getProcessorId(), processor.getIndex(), processor.getState()));
                             // use substring as we only want the attributes
                             stat = processor.dumpStatsAsXml(fullStats);
                             sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
@@ -561,15 +568,18 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (server != null) {
             // gather all the routes for this CamelContext, which requires JMX
             String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
             Set<ObjectName> routes = server.queryNames(query, null);
 
             List<ManagedProcessorMBean> steps = new ArrayList<>();
             // gather all the steps for this CamelContext, which requires JMX
-            query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
+            query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
             Set<ObjectName> names = server.queryNames(query, null);
             for (ObjectName on : names) {
-                ManagedStepMBean step = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
+                ManagedStepMBean step
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
                 steps.add(step);
             }
             steps.sort(new OrderProcessorMBeans());
@@ -577,8 +587,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");
             for (ObjectName on : routes) {
-                ManagedRouteMBean route = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
-                sb.append("    <routeStat").append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
+                ManagedRouteMBean route
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                sb.append("    <routeStat")
+                        .append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
@@ -589,7 +601,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 for (ManagedProcessorMBean processor : steps) {
                     // the step must belong to this route
                     if (route.getRouteId().equals(processor.getRouteId())) {
-                        sb.append("        <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", processor.getProcessorId(), processor.getIndex(), processor.getState()));
+                        sb.append("        <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"",
+                                processor.getProcessorId(), processor.getIndex(), processor.getState()));
                         // use substring as we only want the attributes
                         stat = processor.dumpStatsAsXml(fullStats);
                         sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
@@ -610,7 +623,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     public String dumpRoutesCoverageAsXml() throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("<camelContextRouteCoverage")
-                .append(String.format(" id=\"%s\" exchangesTotal=\"%s\" totalProcessingTime=\"%s\"", getCamelId(), getExchangesTotal(), getTotalProcessingTime()))
+                .append(String.format(" id=\"%s\" exchangesTotal=\"%s\" totalProcessingTime=\"%s\"", getCamelId(),
+                        getExchangesTotal(), getTotalProcessingTime()))
                 .append(">\n");
 
         String xml = dumpRoutesAsXml();
@@ -637,10 +651,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (endpoint != null) {
             // ensure endpoint is registered, as the management strategy could have been configured to not always
             // register new endpoints in JMX, so we need to check if its registered, and if not register it manually
-            ObjectName on = context.getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForEndpoint(endpoint);
+            ObjectName on
+                    = context.getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForEndpoint(endpoint);
             if (on != null && !context.getManagementStrategy().getManagementAgent().isRegistered(on)) {
                 // register endpoint as mbean
-                Object me = context.getManagementStrategy().getManagementObjectStrategy().getManagedObjectForEndpoint(context, endpoint);
+                Object me = context.getManagementStrategy().getManagementObjectStrategy().getManagedObjectForEndpoint(context,
+                        endpoint);
                 context.getManagementStrategy().getManagementAgent().register(me, on);
             }
             return true;
@@ -685,10 +701,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
+                ObjectName query = ObjectName
+                        .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 for (ObjectName name : names) {
-                    server.invoke(name, "reset", new Object[]{true}, new String[]{"boolean"});
+                    server.invoke(name, "reset", new Object[] { true }, new String[] { "boolean" });
                 }
             }
         }

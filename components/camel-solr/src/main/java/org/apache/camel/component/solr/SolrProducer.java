@@ -45,7 +45,7 @@ public class SolrProducer extends DefaultProducer {
     private SolrClient cloudSolrServer;
 
     public SolrProducer(SolrEndpoint endpoint, SolrClient solrServer, SolrClient concSolrServer,
-            SolrClient cloudSolrServer) {
+                        SolrClient cloudSolrServer) {
         super(endpoint);
         this.httpServer = solrServer;
         this.concSolrServer = concSolrServer;
@@ -231,7 +231,8 @@ public class SolrProducer extends DefaultProducer {
         }
 
         if (invalid) {
-            throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+            throw new SolrException(
+                    SolrException.ErrorCode.BAD_REQUEST,
                     "unable to find data in Exchange to update Solr");
         }
     }

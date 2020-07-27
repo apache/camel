@@ -33,8 +33,8 @@ public class PurchaseOrder {
         if (o instanceof PurchaseOrder) {
             PurchaseOrder that = (PurchaseOrder) o;
             return ObjectHelper.equal(this.name, that.name)
-                && ObjectHelper.equal(this.amount, that.amount)
-                && ObjectHelper.equal(this.price, that.price);
+                    && ObjectHelper.equal(this.amount, that.amount)
+                    && ObjectHelper.equal(this.price, that.price);
         }
         return false;
     }

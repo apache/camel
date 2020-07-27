@@ -31,16 +31,16 @@ import quickfix.Session;
 import quickfix.SessionID;
 
 public class QuickfixjMessageJsonTransformer {
-   
+
     public String transform(Message message) throws FieldNotFound, ConfigError {
         SessionID sessionID = MessageUtils.getSessionID(message);
         Session session = Session.lookupSession(sessionID);
         DataDictionary dataDictionary = session.getDataDictionary();
-        
+
         if (dataDictionary == null) {
             throw new IllegalStateException("No Data Dictionary. Exchange must reference an existing session");
         }
-        
+
         return transform(message, dataDictionary);
     }
 
@@ -56,21 +56,21 @@ public class QuickfixjMessageJsonTransformer {
         } else {
             sb.append("{\n");
             String contentIndent = indent + "  ";
-            
+
             transform("header", message.getHeader(), sb, contentIndent, dd);
             sb.append("\n");
-            
+
             transform("body", message, sb, contentIndent, dd);
             sb.append("\n");
 
             transform("trailer", message.getTrailer(), sb, contentIndent, dd);
             sb.append("\n");
-            
+
             sb.append(indent).append("}");
         }
         return sb.toString();
     }
-    
+
     private void transform(String name, FieldMap fieldMap, StringBuilder sb, String indent, DataDictionary dd) {
         sb.append(indent).append("\"").append(name).append("\": {\n");
         int fieldCount = 0;
@@ -83,9 +83,8 @@ public class QuickfixjMessageJsonTransformer {
             sb.append(indent).append("  \"").append(dd.getFieldName(field.getField())).append("\": ");
             if (dd.hasFieldValue(field.getField())) {
                 int tag = field.getField();
-                sb.append("[ \"").append(field.getObject().toString()).append("\", \"").
-                append(dd.getValueName(tag, field.getObject().toString())).
-                append("\" ]");
+                sb.append("[ \"").append(field.getObject().toString()).append("\", \"")
+                        .append(dd.getValueName(tag, field.getObject().toString())).append("\" ]");
             } else {
                 FieldType fieldType = dd.getFieldType(field.getField());
                 if (Number.class.isAssignableFrom(fieldType.getJavaType())) {
@@ -96,9 +95,9 @@ public class QuickfixjMessageJsonTransformer {
             }
             fieldCount++;
         }
-        
+
         sb.append("\n");
-        
+
         Iterator<Integer> groupKeys = fieldMap.groupKeyIterator();
         while (groupKeys.hasNext()) {
             int groupTag = groupKeys.next();
@@ -107,7 +106,7 @@ public class QuickfixjMessageJsonTransformer {
                 transform(groupName, group, sb, indent + "  ", dd);
             }
         }
-        
+
         sb.append(indent).append("}").append("\n");
     }
 }

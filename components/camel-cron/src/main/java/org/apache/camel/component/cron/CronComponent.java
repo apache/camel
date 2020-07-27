@@ -71,11 +71,11 @@ public class CronComponent extends DefaultComponent {
         if (this.service == null) {
             this.service = CronHelper.resolveCamelCronService(
                     getCamelContext(),
-                    this.cronService
-            );
+                    this.cronService);
 
             if (this.service == null) {
-                throw new RuntimeCamelException("Cannot find any CamelCronService: please add a valid implementation, such as 'camel-quartz', in order to use the 'camel-cron' component");
+                throw new RuntimeCamelException(
+                        "Cannot find any CamelCronService: please add a valid implementation, such as 'camel-quartz', in order to use the 'camel-cron' component");
             }
 
             try {
@@ -95,8 +95,7 @@ public class CronComponent extends DefaultComponent {
     }
 
     /**
-     * The id of the CamelCronService to use when multiple implementations
-     * are provided
+     * The id of the CamelCronService to use when multiple implementations are provided
      */
     public void setCronService(String cronService) {
         this.cronService = cronService;
@@ -109,7 +108,8 @@ public class CronComponent extends DefaultComponent {
 
         String[] parts = configuration.getSchedule().split("\\s");
         if (parts.length < 5 || parts.length > 7) {
-            throw new IllegalArgumentException("Invalid number of parts in cron expression. Expected 5 to 7, got: " + parts.length);
+            throw new IllegalArgumentException(
+                    "Invalid number of parts in cron expression. Expected 5 to 7, got: " + parts.length);
         }
     }
 

@@ -46,12 +46,14 @@ public class JiraVerifierExtension extends DefaultComponentVerifierExtension {
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .error(ResultErrorHelper.requiresOption(JIRA_URL, parameters))
-            .errors(ResultErrorHelper.requiresAny(parameters,
-                OptionsGroup.withName("basic_authentication")
-                    .options("username", "password", "!requestToken", "!privateKey", "!consumerKey", "!verificationCode", "!accessToken"),
-                OptionsGroup.withName("oauth_authentication")
-                    .options("requestToken", "privateKey", "consumerKey", "verificationCode", "accessToken", "!username", "!password")));
+                .error(ResultErrorHelper.requiresOption(JIRA_URL, parameters))
+                .errors(ResultErrorHelper.requiresAny(parameters,
+                        OptionsGroup.withName("basic_authentication")
+                                .options("username", "password", "!requestToken", "!privateKey", "!consumerKey",
+                                        "!verificationCode", "!accessToken"),
+                        OptionsGroup.withName("oauth_authentication")
+                                .options("requestToken", "privateKey", "consumerKey", "verificationCode", "accessToken",
+                                        "!username", "!password")));
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, parameters);
@@ -71,10 +73,11 @@ public class JiraVerifierExtension extends DefaultComponentVerifierExtension {
             JiraRestClient client;
             if (conf.getUsername() != null) {
                 client = factory.createWithBasicHttpAuthentication(jiraServerUri, conf.getUsername(),
-                    conf.getPassword());
+                        conf.getPassword());
             } else {
-                JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(conf.getConsumerKey(), conf.getVerificationCode(),
-                    conf.getPrivateKey(), conf.getAccessToken(), conf.getJiraUrl());
+                JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
+                        conf.getConsumerKey(), conf.getVerificationCode(),
+                        conf.getPrivateKey(), conf.getAccessToken(), conf.getJiraUrl());
                 client = factory.create(jiraServerUri, oAuthHandler);
             }
             // test the connection to the jira server
@@ -82,18 +85,20 @@ public class JiraVerifierExtension extends DefaultComponentVerifierExtension {
             LOG.info("Verify connectivity to jira server OK: {}", serverInfo);
 
         } catch (RestClientException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("jira_exception_message", e.getMessage())
-                .detail("jira_status_code", e.getStatusCode())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("jira_exception_message", e.getMessage())
+                            .detail("jira_status_code", e.getStatusCode())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("jira_exception_message", e.getMessage())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("jira_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         }

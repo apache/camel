@@ -131,7 +131,8 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
 
                 from("direct:foo").to("http://localhost:{{port}}/foo");
 
-                from("jetty:http://localhost:{{port}}/foobar").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200)).setBody().constant("");
+                from("jetty:http://localhost:{{port}}/foobar").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200)).setBody()
+                        .constant("");
 
                 from("direct:foobar").to("http://localhost:{{port}}/foobar");
 

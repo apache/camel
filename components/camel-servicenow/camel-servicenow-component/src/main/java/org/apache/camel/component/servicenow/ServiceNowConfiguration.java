@@ -222,14 +222,14 @@ public class ServiceNowConfiguration implements Cloneable {
 
     public boolean hasBasicAuthentication() {
         return ObjectHelper.isNotEmpty(userName)
-            && ObjectHelper.isNotEmpty(password);
+                && ObjectHelper.isNotEmpty(password);
     }
 
     public boolean hasOAuthAuthentication() {
         return ObjectHelper.isNotEmpty(userName)
-            && ObjectHelper.isNotEmpty(password)
-            && ObjectHelper.isNotEmpty(oauthClientId)
-            && ObjectHelper.isNotEmpty(oauthClientSecret);
+                && ObjectHelper.isNotEmpty(password)
+                && ObjectHelper.isNotEmpty(oauthClientId)
+                && ObjectHelper.isNotEmpty(oauthClientSecret);
     }
 
     public String getResource() {
@@ -281,9 +281,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this value to true to remove the Link header from the response. The
-     * Link header allows you to request additional pages of data when the number
-     * of records matching your query exceeds the query limit
+     * Set this value to true to remove the Link header from the response. The Link header allows you to request
+     * additional pages of data when the number of records matching your query exceeds the query limit
      */
     public void setSuppressPaginationHeader(Boolean suppressPaginationHeader) {
         this.suppressPaginationHeader = suppressPaginationHeader;
@@ -294,9 +293,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to return all scores for a scorecard. If a value
-     * is not specified, this parameter defaults to false and returns only the most
-     * recent score value.
+     * Set this parameter to true to return all scores for a scorecard. If a value is not specified, this parameter
+     * defaults to false and returns only the most recent score value.
      */
     public void setIncludeScores(Boolean includeScores) {
         this.includeScores = includeScores;
@@ -307,9 +305,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to always return all available aggregates for
-     * an indicator, including when an aggregate has already been applied. If a
-     * value is not specified, this parameter defaults to false and returns no
+     * Set this parameter to true to always return all available aggregates for an indicator, including when an
+     * aggregate has already been applied. If a value is not specified, this parameter defaults to false and returns no
      * aggregates.
      */
     public void setIncludeAggregates(Boolean includeAggregates) {
@@ -321,9 +318,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to return all available breakdowns for an indicator.
-     * If a value is not specified, this parameter defaults to false and returns
-     * no breakdowns.
+     * Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified, this
+     * parameter defaults to false and returns no breakdowns.
      */
     public void setIncludeAvailableBreakdowns(Boolean includeAvailableBreakdowns) {
         this.includeAvailableBreakdowns = includeAvailableBreakdowns;
@@ -334,9 +330,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to return all available aggregates for an indicator
-     * when no aggregate has been applied. If a value is not specified, this parameter
-     * defaults to false and returns no aggregates.
+     * Set this parameter to true to return all available aggregates for an indicator when no aggregate has been
+     * applied. If a value is not specified, this parameter defaults to false and returns no aggregates.
      */
     public void setIncludeAvailableAggregates(Boolean includeAvailableAggregates) {
         this.includeAvailableAggregates = includeAvailableAggregates;
@@ -347,9 +342,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to return all notes associated with the score.
-     * The note element contains the note text as well as the author and timestamp
-     * when the note was added.
+     * Set this parameter to true to return all notes associated with the score. The note element contains the note text
+     * as well as the author and timestamp when the note was added.
      */
     public void setIncludeScoreNotes(Boolean includeScoreNotes) {
         this.includeScoreNotes = includeScoreNotes;
@@ -360,8 +354,7 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to return only scorecards that are favorites of
-     * the querying user.
+     * Set this parameter to true to return only scorecards that are favorites of the querying user.
      */
     public void setFavorites(Boolean favorites) {
         this.favorites = favorites;
@@ -372,8 +365,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to retrieve the target record when using import
-     * set api. The import set result is then replaced by the target record
+     * Set this parameter to true to retrieve the target record when using import set api. The import set result is then
+     * replaced by the target record
      */
     public void setRetrieveTargetRecordOnImport(Boolean retrieveTargetRecordOnImport) {
         this.retrieveTargetRecordOnImport = retrieveTargetRecordOnImport;
@@ -406,9 +399,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Set this parameter to true to return only scorecards where the indicator
-     * Display field is selected. Set this parameter to all to return scorecards
-     * with any Display field value. This parameter is true by default.
+     * Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this
+     * parameter to all to return scorecards with any Display field value. This parameter is true by default.
      */
     public void setDisplay(String display) {
         this.display = display;
@@ -419,8 +411,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Enter the maximum number of scorecards each query can return. By default
-     * this value is 10, and the maximum is 100.
+     * Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is
+     * 100.
      */
     public void setPerPage(Integer perPage) {
         this.perPage = perPage;
@@ -431,8 +423,7 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Specify the value to use when sorting results. By default, queries sort
-     * records by value.
+     * Specify the value to use when sorting results. By default, queries sort records by value.
      */
     public void setSortBy(String sortBy) {
         this.sortBy = sortBy;
@@ -443,9 +434,8 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Specify the sort direction, ascending or descending. By default, queries
-     * sort records in descending order. Use sysparm_sortdir=asc to sort in
-     * ascending order.
+     * Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use
+     * sysparm_sortdir=asc to sort in ascending order.
      */
     public void setSortDir(String sortDir) {
         this.sortDir = sortDir;
@@ -456,8 +446,7 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     /**
-     * Return the display value (true), actual value (false), or both (all) for
-     * reference fields (default: false)
+     * Return the display value (true), actual value (false), or both (all) for reference fields (default: false)
      */
     public void setDisplayValue(String displayValue) {
         this.displayValue = displayValue;
@@ -496,24 +485,22 @@ public class ServiceNowConfiguration implements Cloneable {
             final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern(getDateTimeFormat());
 
             this.mapper = new ObjectMapper()
-                .registerModule(new Jdk8Module())
-                .registerModule(new JavaTimeModule()
-                    .addSerializer(LocalDate.class, new LocalDateSerializer(dateFormat))
-                    .addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormat))
-                    .addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormat))
-                    .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormat))
-                    .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormat))
-                    .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormat))
-                )
-                .configure(
-                    SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                    false)
-                .configure(
-                    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                    false)
-                .setSerializationInclusion(
-                    JsonInclude.Include.NON_NULL
-                );
+                    .registerModule(new Jdk8Module())
+                    .registerModule(new JavaTimeModule()
+                            .addSerializer(LocalDate.class, new LocalDateSerializer(dateFormat))
+                            .addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormat))
+                            .addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormat))
+                            .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormat))
+                            .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormat))
+                            .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormat)))
+                    .configure(
+                            SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                            false)
+                    .configure(
+                            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                            false)
+                    .setSerializationInclusion(
+                            JsonInclude.Include.NON_NULL);
         }
 
         return mapper;
@@ -761,7 +748,7 @@ public class ServiceNowConfiguration implements Cloneable {
 
     public ServiceNowConfiguration copy() {
         try {
-            return (ServiceNowConfiguration)super.clone();
+            return (ServiceNowConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

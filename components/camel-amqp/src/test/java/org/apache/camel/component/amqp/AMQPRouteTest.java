@@ -113,14 +113,14 @@ public class AMQPRouteTest extends CamelTestSupport {
         // default doesn't map annotations to headers
         resultEndpoint.message(0).header("JMS_AMQP_MA_cheese").isNull();
         sendAmqpMessage(context.getComponent("amqp-customized", AMQPComponent.class),
-            "ping", expectedBody, facade -> {
-                try {
-                    facade.setApplicationProperty("cheese", 123);
-                    facade.setTracingAnnotation("cheese", 456);
-                } catch (JMSException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+                "ping", expectedBody, facade -> {
+                    try {
+                        facade.setApplicationProperty("cheese", 123);
+                        facade.setTracingAnnotation("cheese", 456);
+                    } catch (JMSException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -130,19 +130,21 @@ public class AMQPRouteTest extends CamelTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         resultEndpoint.message(0).header("JMS_AMQP_MA_cheese").isEqualTo(456);
         sendAmqpMessage(context.getComponent("amqp-customized2", AMQPComponent.class),
-            "ping2", expectedBody, facade -> {
-                try {
-                    facade.setApplicationProperty("cheese", 123);
-                    facade.setTracingAnnotation("cheese", 456);
-                } catch (JMSException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+                "ping2", expectedBody, facade -> {
+                    try {
+                        facade.setApplicationProperty("cheese", 123);
+                        facade.setTracingAnnotation("cheese", 456);
+                    } catch (JMSException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         resultEndpoint.assertIsSatisfied();
     }
 
-    private void sendAmqpMessage(AMQPComponent component, String queue, String body,
-                                 Consumer<AmqpJmsMessageFacade> messageCustomizer) throws JMSException {
+    private void sendAmqpMessage(
+            AMQPComponent component, String queue, String body,
+            Consumer<AmqpJmsMessageFacade> messageCustomizer)
+            throws JMSException {
         ConnectionFactory factory = component.getConfiguration().getConnectionFactory();
         try (Connection connection = factory.createConnection();
              Session session = connection.createSession();
@@ -170,31 +172,31 @@ public class AMQPRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("amqp-customized:queue:ping")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
 
                 from("amqp-customized2:queue:ping2")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
 
                 from("amqp-customized:queue:inOut")
-                    .setBody().constant("response");
+                        .setBody().constant("response");
 
                 from("amqp-customized:topic:ping")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
 
                 from("amqp-customized:topic:ping")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
 
                 from("amqp-customized:queue:wildcard.>")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
 
                 from("amqp:queue:uriEndpoint")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
             }
         };
     }

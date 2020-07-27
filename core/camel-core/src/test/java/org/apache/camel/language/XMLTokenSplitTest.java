@@ -85,15 +85,15 @@ public class XMLTokenSplitTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file:target/data/xtokenizer?initialDelay=0&delay=10")
-                    // split the order child tags, and inherit namespaces from
-                    // the orders root tag
-                    .split().xtokenize("//orders/order", ns).to("mock:split");
+                        // split the order child tags, and inherit namespaces from
+                        // the orders root tag
+                        .split().xtokenize("//orders/order", ns).to("mock:split");
                 // END SNIPPET: e1
 
                 from("file:target/data/xtokenizer2?initialDelay=0&delay=10")
-                    // split the order child tags, and inherit namespaces from
-                    // the orders root tag
-                    .split(body().xtokenize("//orders/order", ns)).to("mock:split");
+                        // split the order child tags, and inherit namespaces from
+                        // the orders root tag
+                        .split(body().xtokenize("//orders/order", ns)).to("mock:split");
             }
         };
     }

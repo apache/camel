@@ -26,8 +26,8 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
- * A debugger which allows tooling to attach breakpoints which is is being invoked
- * when {@link Exchange}s is being routed.
+ * A debugger which allows tooling to attach breakpoints which is is being invoked when {@link Exchange}s is being
+ * routed.
  */
 public interface Debugger extends Service, CamelContextAware {
 
@@ -92,52 +92,53 @@ public interface Debugger extends Service, CamelContextAware {
     /**
      * Starts the single step debug mode for the given exchange
      *
-     * @param exchangeId the exchange id
-     * @param breakpoint the breakpoint
-     * @return <tt>true</tt> if the debugger will single step the given exchange, <tt>false</tt> if the debugger is already
-     * single stepping another, and thus cannot simultaneously single step another exchange
+     * @param  exchangeId the exchange id
+     * @param  breakpoint the breakpoint
+     * @return            <tt>true</tt> if the debugger will single step the given exchange, <tt>false</tt> if the
+     *                    debugger is already single stepping another, and thus cannot simultaneously single step
+     *                    another exchange
      */
     boolean startSingleStepExchange(String exchangeId, Breakpoint breakpoint);
 
     /**
      * Stops the single step debug mode for the given exchange.
      * <p/>
-     * <b>Notice:</b> The default implementation of the debugger is capable of auto stopping when the exchange is complete.
+     * <b>Notice:</b> The default implementation of the debugger is capable of auto stopping when the exchange is
+     * complete.
      *
      * @param exchangeId the exchange id
      */
     void stopSingleStepExchange(String exchangeId);
 
     /**
-     * Callback invoked when an {@link Exchange} is about to be processed which allows implementators
-     * to notify breakpoints.
+     * Callback invoked when an {@link Exchange} is about to be processed which allows implementators to notify
+     * breakpoints.
      *
-     * @param exchange   the exchange
-     * @param processor  the {@link Processor} about to be processed
-     * @param definition the definition of the processor
-     * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     * @param  exchange   the exchange
+     * @param  processor  the {@link Processor} about to be processed
+     * @param  definition the definition of the processor
+     * @return            <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
      */
     boolean beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**
-     * Callback invoked when an {@link Exchange} has been processed which allows implementators
-     * to notify breakpoints.
+     * Callback invoked when an {@link Exchange} has been processed which allows implementators to notify breakpoints.
      *
-     * @param exchange   the exchange
-     * @param processor  the {@link Processor} which was processed
-     * @param definition the definition of the processor
-     * @param timeTaken  time in millis it took to process the {@link Exchange} - time spend in breakpoint callbacks may affect this time
-     * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     * @param  exchange   the exchange
+     * @param  processor  the {@link Processor} which was processed
+     * @param  definition the definition of the processor
+     * @param  timeTaken  time in millis it took to process the {@link Exchange} - time spend in breakpoint callbacks
+     *                    may affect this time
+     * @return            <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
      */
     boolean afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken);
 
     /**
-     * Callback invoked when an {@link Exchange} is being processed which allows implementators
-     * to notify breakpoints.
+     * Callback invoked when an {@link Exchange} is being processed which allows implementators to notify breakpoints.
      *
-     * @param exchange the exchange
-     * @param event    the event (instance of {@link ExchangeEvent}
-     * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     * @param  exchange the exchange
+     * @param  event    the event (instance of {@link ExchangeEvent}
+     * @return          <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
      */
     boolean onEvent(Exchange exchange, ExchangeEvent event);
 

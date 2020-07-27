@@ -42,8 +42,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class JaxpTest {
     private static final Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
-                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
+    protected TypeConverter converter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(),
+            new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -53,7 +54,8 @@ public class JaxpTest {
 
     @Test
     public void testConvertToDocument() throws Exception {
-        Document document = converter.convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+        Document document
+                = converter.convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         assertNotNull(document);
 
         LOG.debug("Found document: " + document);

@@ -23,18 +23,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation used to mark classes to indicate code capable
- * of configuring its options via a getter/setters that can be called
- * via Camels {@link org.apache.camel.spi.PropertyConfigurer}.
+ * An annotation used to mark classes to indicate code capable of configuring its options via a getter/setters that can
+ * be called via Camels {@link org.apache.camel.spi.PropertyConfigurer}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface Configurer {
 
     /**
-     * Whether to let the Camel compiler plugin to generate java source code
-     * for fast configuration.
+     * Whether to let the Camel compiler plugin to generate java source code for fast configuration.
      */
     boolean generateConfigurer() default true;
 

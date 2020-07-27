@@ -150,7 +150,8 @@ public class AmazonKMSClientMock extends AbstractAWSKMS {
     }
 
     @Override
-    public DeleteImportedKeyMaterialResult deleteImportedKeyMaterial(DeleteImportedKeyMaterialRequest deleteImportedKeyMaterialRequest) {
+    public DeleteImportedKeyMaterialResult deleteImportedKeyMaterial(
+            DeleteImportedKeyMaterialRequest deleteImportedKeyMaterialRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -198,7 +199,8 @@ public class AmazonKMSClientMock extends AbstractAWSKMS {
     }
 
     @Override
-    public GenerateDataKeyWithoutPlaintextResult generateDataKeyWithoutPlaintext(GenerateDataKeyWithoutPlaintextRequest generateDataKeyWithoutPlaintextRequest) {
+    public GenerateDataKeyWithoutPlaintextResult generateDataKeyWithoutPlaintext(
+            GenerateDataKeyWithoutPlaintextRequest generateDataKeyWithoutPlaintextRequest) {
         throw new UnsupportedOperationException();
     }
 

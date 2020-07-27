@@ -41,7 +41,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
 
     private static volatile int port;
 
-    private final MockFilter mockFilter =  new MockFilter();
+    private final MockFilter mockFilter = new MockFilter();
 
     public MockFilter getMockFilter() {
         return mockFilter;

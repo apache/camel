@@ -74,8 +74,8 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
                 onException(Exception.class).to("mock:exception");
 
                 from("activemq:queue:start")
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                        .process(new MyProcessor())
+                        .to("mock:result");
             }
         };
     }

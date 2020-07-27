@@ -61,8 +61,8 @@ public class JmsInOnlyWithReplyToHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "))
-                    .to("mock:result");
+                        .transform(body().prepend("Hello "))
+                        .to("mock:result");
             }
         };
     }

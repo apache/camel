@@ -46,9 +46,11 @@ public class Kinesis2ComponentVerifierExtension extends DefaultComponentVerifier
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
-            .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters))
-            .error(ResultErrorHelper.requiresOption("streamName", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("accessKey", parameters))
+                .error(ResultErrorHelper.requiresOption("secretKey", parameters))
+                .error(ResultErrorHelper.requiresOption("region", parameters))
+                .error(ResultErrorHelper.requiresOption("streamName", parameters));
 
         // Validate using the catalog
 
@@ -68,17 +70,21 @@ public class Kinesis2ComponentVerifierExtension extends DefaultComponentVerifier
         try {
             Kinesis2Configuration configuration = setProperties(new Kinesis2Configuration(), parameters);
             if (!KinesisClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
+                        VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
                 return builder.error(errorBuilder.build()).build();
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             KinesisClientBuilder clientBuilder = KinesisClient.builder();
-            KinesisClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
+            KinesisClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build();
             client.listStreams();
         } catch (SdkClientException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("aws_kinesis_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("aws_kinesis_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

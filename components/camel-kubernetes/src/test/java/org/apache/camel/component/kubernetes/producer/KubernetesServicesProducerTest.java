@@ -50,7 +50,9 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/api/v1/services").andReturn(200, new ServiceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/api/v1/services")
+                .andReturn(200, new ServiceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         List<Service> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
@@ -59,7 +61,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/services?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("key1", "value1");
@@ -108,9 +110,12 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServices");
-                from("direct:listByLabels").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels");
-                from("direct:getServices").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=getService");
-                from("direct:deleteService").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=deleteService");
+                from("direct:listByLabels")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels");
+                from("direct:getServices")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=getService");
+                from("direct:deleteService")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=deleteService");
             }
         };
     }

@@ -66,18 +66,18 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         Text tn = doc.createTextNode(DETAIL_TEXT);
         detail.appendChild(tn);
         // END SNIPPET: FaultDefine
-    }    
-    
-    protected String routerAddress = "http://localhost:" + CXFTestSupport.getPort1() 
-        + "/" + getClass().getSimpleName() + "/router";
+    }
+
+    protected String routerAddress = "http://localhost:" + CXFTestSupport.getPort1()
+                                     + "/" + getClass().getSimpleName() + "/router";
     protected String routerEndpointURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;
     protected String serviceURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;
 
     private Bus bus;
-    
+
     @Override
     @BeforeEach
-    public void setUp() throws Exception {       
+    public void setUp() throws Exception {
         bus = BusFactory.getDefaultBus();
         super.setUp();
 
@@ -87,28 +87,27 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         //TODO need to shutdown the server
-        super.tearDown();       
+        super.tearDown();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: onException
                 from("direct:start")
-                    .onException(SoapFault.class)
+                        .onException(SoapFault.class)
                         .maximumRedeliveries(0)
                         .handled(true)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                SoapFault fault =
-                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
+                                SoapFault fault = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
                                 exchange.getOut().setBody(fault);
                             }
-                            
-                        })                
-                        .end() 
-                    .to(serviceURI);
+
+                        })
+                        .end()
+                        .to(serviceURI);
                 // END SNIPPET: onException
                 // START SNIPPET: ThrowFault
                 from(routerEndpointURI).process(new Processor() {
@@ -121,19 +120,20 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
             }
         };
     }
-    
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }
-    
+
     @Test
     public void testInvokingServiceFromCamel() throws Exception {
-        Object result = template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world", CxfConstants.OPERATION_NAME, "echo");
+        Object result = template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world",
+                CxfConstants.OPERATION_NAME, "echo");
         assertTrue(result instanceof SoapFault, "Exception is not instance of SoapFault");
-        assertEquals(DETAIL_TEXT, ((SoapFault)result).getDetail().getTextContent(), "Expect to get right detail message");
-        assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)result).getFaultCode().toString(), "Expect to get right fault-code");
+        assertEquals(DETAIL_TEXT, ((SoapFault) result).getDetail().getTextContent(), "Expect to get right detail message");
+        assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault) result).getFaultCode().toString(),
+                "Expect to get right fault-code");
     }
 
     @Test
@@ -152,13 +152,14 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         } catch (Exception e) {
             assertEquals(EXCEPTION_MESSAGE, e.getMessage(), "Expect to get right exception message");
             assertTrue(e instanceof SoapFault, "Exception is not instance of SoapFault");
-            assertEquals(DETAIL_TEXT, ((SoapFault)e).getDetail().getTextContent(), "Expect to get right detail message");
+            assertEquals(DETAIL_TEXT, ((SoapFault) e).getDetail().getTextContent(), "Expect to get right detail message");
             //In CXF 2.1.2 , the fault code is per spec , the below fault-code is for SOAP 1.1
-            assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)e).getFaultCode().toString(), "Expect to get right fault-code");
+            assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault) e).getFaultCode().toString(),
+                    "Expect to get right fault-code");
         }
 
     }
-    
+
     @Test
     public void testInvokingServiceFromHTTPURL() throws Exception {
         URL url = new URL(routerAddress);
@@ -176,14 +177,13 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         out.flush();
         is.close();
         // check the response code        
-        try {          
-            urlConnection.getInputStream(); 
+        try {
+            urlConnection.getInputStream();
             fail("We except an IOException here");
         } catch (IOException exception) {
             assertTrue(exception.getMessage().contains("500"));
         }
-            
-    }
 
+    }
 
 }

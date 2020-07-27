@@ -51,8 +51,7 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
     }
 
     /**
-     * URLs to one or more NAT servers. Use comma to separate URLs when
-     * specifying multiple servers.
+     * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
      */
     public String getServers() {
         return servers;

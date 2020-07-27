@@ -37,7 +37,6 @@ public class ReconnectInOutProducerTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
 
-    
     @Override
     protected boolean useJmx() {
         return false;
@@ -74,10 +73,10 @@ public class ReconnectInOutProducerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
-                    .inOut("sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
+                        .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
+                        .inOut("sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
                                + TEST_DESTINATION_NAME + ".response")
-                    .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
+                        .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
             }
         };
     }
@@ -101,7 +100,7 @@ public class ReconnectInOutProducerTest extends JmsTestSupport {
         @Override
         public void onMessage(Message message) {
             try {
-                TextMessage request = (TextMessage)message;
+                TextMessage request = (TextMessage) message;
                 assertNotNull(request);
                 String text = request.getText();
                 assertEquals(requestText, text);

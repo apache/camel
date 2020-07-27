@@ -41,7 +41,6 @@ public class UpdateTableCommand extends AbstractDdbCommand {
         return readCapacity != null ? readCapacity : configuration.getReadCapacity();
     }
 
-
     private Long determineWriteCapacity() {
         Long writeCapacity = exchange.getIn().getHeader(DdbConstants.WRITE_CAPACITY, Long.class);
         return writeCapacity != null ? writeCapacity : configuration.getWriteCapacity();

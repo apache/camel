@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with <a href="http://www.servicenow.com/">ServiceNow</a> via its REST API.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", producerOnly = true, category = {Category.API, Category.CLOUD, Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName",
+             producerOnly = true, category = { Category.API, Category.CLOUD, Category.MANAGEMENT })
 public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 
@@ -42,7 +43,8 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     @UriParam
     private final ServiceNowConfiguration configuration;
 
-    public ServiceNowEndpoint(String uri, ServiceNowComponent component, ServiceNowConfiguration configuration, String instanceName) throws Exception {
+    public ServiceNowEndpoint(String uri, ServiceNowComponent component, ServiceNowConfiguration configuration,
+                              String instanceName) throws Exception {
         super(uri, component);
 
         this.configuration = configuration;
@@ -53,10 +55,9 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         ServiceNowProducer producer = configuration.getRelease().get(this);
         LOGGER.info("Producer for ServiceNow Rel. {} = {}/{}",
-            configuration.getRelease().name(),
-            producer.getRelease().name(),
-            producer.getClass().getName()
-        );
+                configuration.getRelease().name(),
+                producer.getRelease().name(),
+                producer.getClass().getName());
 
         return producer;
     }

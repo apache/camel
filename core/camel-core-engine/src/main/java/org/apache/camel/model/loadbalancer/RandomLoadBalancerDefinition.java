@@ -24,8 +24,7 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Random load balancer The random load balancer selects a random endpoint for
- * each exchange.
+ * Random load balancer The random load balancer selects a random endpoint for each exchange.
  */
 @Metadata(label = "eip,routing,loadbalance")
 @XmlRootElement(name = "random")

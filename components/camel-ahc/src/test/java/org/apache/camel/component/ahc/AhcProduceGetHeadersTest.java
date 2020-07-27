@@ -49,8 +49,8 @@ public class AhcProduceGetHeadersTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         // Remove the message header here

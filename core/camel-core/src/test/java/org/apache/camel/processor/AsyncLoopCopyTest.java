@@ -54,26 +54,26 @@ public class AsyncLoopCopyTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").to("mock:before") // Should receive Hello
-                                                       // Camel
-                    .to("log:before").process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    }).loop(header("NumberIterations")).copy().to("mock:loopIterationStart") // Should
-                                                                                             // receive
-                                                                                             // 2x
-                                                                                             // Hello
-                                                                                             // Camel
-                    .to("async:bye:camel") // Will transform the body to Bye
-                                           // Camel
-                    .to("mock:loopIterationEnd") // Should receive 2x Bye Camel
-                    .end().process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("log:after").to("mock:result"); // Should receive 1x
-                                                          // Hello Camel
-                                                          // (original message)
+                        // Camel
+                        .to("log:before").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        }).loop(header("NumberIterations")).copy().to("mock:loopIterationStart") // Should
+                        // receive
+                        // 2x
+                        // Hello
+                        // Camel
+                        .to("async:bye:camel") // Will transform the body to Bye
+                        // Camel
+                        .to("mock:loopIterationEnd") // Should receive 2x Bye Camel
+                        .end().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:result"); // Should receive 1x
+                                                             // Hello Camel
+                                                             // (original message)
             }
         };
     }

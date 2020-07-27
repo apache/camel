@@ -25,13 +25,17 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class YammerConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private YammerFunctionType function;
-    @UriParam(label = "security") @Metadata(required = true, secret = true)
+    @UriParam(label = "security")
+    @Metadata(required = true, secret = true)
     private String consumerKey;
-    @UriParam(label = "security") @Metadata(required = true, secret = true)
+    @UriParam(label = "security")
+    @Metadata(required = true, secret = true)
     private String consumerSecret;
-    @UriParam(label = "security") @Metadata(required = true)
+    @UriParam(label = "security")
+    @Metadata(required = true)
     private String accessToken;
     @UriParam
     private boolean useJson;
@@ -55,7 +59,7 @@ public class YammerConfiguration implements Cloneable {
      */
     public YammerConfiguration copy() {
         try {
-            YammerConfiguration copy = (YammerConfiguration)clone();
+            YammerConfiguration copy = (YammerConfiguration) clone();
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -144,9 +148,9 @@ public class YammerConfiguration implements Cloneable {
     }
 
     /**
-     * Returns messages older than the message ID specified as a numeric string.
-     * This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912,
-     * you could append olderThan equals to 2912 to your request to get the 20 messages prior to those you're seeing.
+     * Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages.
+     * For example, if you're currently viewing 20 messages and the oldest is number 2912, you could append olderThan
+     * equals to 2912 to your request to get the 20 messages prior to those you're seeing.
      */
     public void setOlderThan(long olderThan) {
         this.olderThan = olderThan;
@@ -157,9 +161,10 @@ public class YammerConfiguration implements Cloneable {
     }
 
     /**
-     * Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages.
-     * If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter newerThan equals to 3516
-     * to ensure that you do not get duplicate copies of messages already on your page.
+     * Returns messages newer than the message ID specified as a numeric string. This should be used when polling for
+     * new messages. If you're looking at messages, and the most recent message returned is 3516, you can make a request
+     * with the parameter newerThan equals to 3516 to ensure that you do not get duplicate copies of messages already on
+     * your page.
      */
     public void setNewerThan(long newerThan) {
         this.newerThan = newerThan;
@@ -170,10 +175,10 @@ public class YammerConfiguration implements Cloneable {
     }
 
     /**
-     * threaded equals to true will only return the first message in each thread.
-     * This parameter is intended for apps which display message threads collapsed.
-     * threaded equals to extended will return the thread starter messages in order of most recently active as well as the
-     * two most recent messages, as they are viewed in the default view on the Yammer web interface.
+     * threaded equals to true will only return the first message in each thread. This parameter is intended for apps
+     * which display message threads collapsed. threaded equals to extended will return the thread starter messages in
+     * order of most recently active as well as the two most recent messages, as they are viewed in the default view on
+     * the Yammer web interface.
      */
     public void setThreaded(String threaded) {
         this.threaded = threaded;

@@ -104,7 +104,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
 
-    @XmlAttribute(name = "depends-on") @Metadata(displayName = "Depends On")
+    @XmlAttribute(name = "depends-on")
+    @Metadata(displayName = "Depends On")
     private String dependsOn;
     @XmlAttribute
     private String trace;
@@ -114,9 +115,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String tracePattern;
     @XmlAttribute
     private String debug;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String messageHistory;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String logMask;
     @XmlAttribute
     private String logExhaustedMessageBody;
@@ -126,13 +129,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String delayer;
     @XmlAttribute
     private String errorHandlerRef;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String autoStartup;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String shutdownEager;
-    @XmlAttribute @Metadata(displayName = "Use MDC Logging")
+    @XmlAttribute
+    @Metadata(displayName = "Use MDC Logging")
     private String useMDCLogging;
-    @XmlAttribute @Metadata(displayName = "MDC Logging Keys Pattern")
+    @XmlAttribute
+    @Metadata(displayName = "MDC Logging Keys Pattern")
     private String mdcLoggingKeysPattern;
     @XmlAttribute
     private String useDataType;
@@ -144,23 +151,30 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String caseInsensitiveHeaders;
     @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
-    @XmlAttribute @Metadata(defaultValue = "#name#")
+    @XmlAttribute
+    @Metadata(defaultValue = "#name#")
     private String managementNamePattern;
-    @XmlAttribute @Metadata(defaultValue = "Camel (#camelId#) thread ##counter# - #name#")
+    @XmlAttribute
+    @Metadata(defaultValue = "Camel (#camelId#) thread ##counter# - #name#")
     private String threadNamePattern;
-    @XmlAttribute @Metadata(defaultValue = "Default")
+    @XmlAttribute
+    @Metadata(defaultValue = "Default")
     private ShutdownRoute shutdownRoute;
-    @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
+    @XmlAttribute
+    @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     private ShutdownRunningTask shutdownRunningTask;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String loadTypeConverters;
     @XmlAttribute
     private String typeConverterStatisticsEnabled;
     @XmlAttribute
     private String inflightRepositoryBrowseEnabled;
-    @XmlAttribute @Metadata(defaultValue = "Override")
+    @XmlAttribute
+    @Metadata(defaultValue = "Override")
     private TypeConverterExists typeConverterExists;
-    @XmlAttribute @Metadata(defaultValue = "WARN")
+    @XmlAttribute
+    @Metadata(defaultValue = "WARN")
     private LoggingLevel typeConverterExistsLoggingLevel;
     @XmlElement(name = "globalOptions")
     private GlobalOptionsDefinition globalOptions;
@@ -174,19 +188,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private ContextScanDefinition contextScan;
     @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class)
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
-    @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class) @Metadata(displayName = "JMX Agent")
+    @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class)
+    @Metadata(displayName = "JMX Agent")
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElement(name = "routeController", type = CamelRouteControllerDefinition.class)
     private CamelRouteControllerDefinition camelRouteController;
     @XmlElements({
             @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class),
             @XmlElement(name = "fluentTemplate", type = CamelFluentProducerTemplateFactoryBean.class),
-            @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class)})
+            @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class) })
     private List<AbstractCamelFactoryBean<?>> beansFactory;
     @XmlElements({
-        @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class),
-        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
-        @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class) })
+            @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class),
+            @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
+            @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class) })
     private List<?> beans;
     @XmlElement(name = "defaultServiceCallConfiguration")
     private ServiceCallConfigurationDefinition defaultServiceCallConfiguration;
@@ -280,12 +295,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
-    protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+    protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders)
+            throws Exception {
         // add filter to class resolver which then will filter
         getContext().getPackageScanClassResolver().addFilter(filter);
 
-        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, getContextClassLoaderOnStart(),
-                                                                                 getBeanPostProcessor(), getContext().getPackageScanClassResolver());
+        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(
+                getContext(), packages, getContextClassLoaderOnStart(),
+                getBeanPostProcessor(), getContext().getPackageScanClassResolver());
         finder.appendBuilders(builders);
 
         // and remove the filter
@@ -293,7 +310,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
-    protected void findRouteBuildersByContextScan(PackageScanFilter filter, boolean includeNonSingletons, List<RoutesBuilder> builders) throws Exception {
+    protected void findRouteBuildersByContextScan(
+            PackageScanFilter filter, boolean includeNonSingletons, List<RoutesBuilder> builders)
+            throws Exception {
         ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(getContext(), filter, includeNonSingletons);
         finder.appendBuilders(builders);
     }
@@ -350,7 +369,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     protected void initPropertyPlaceholder() throws Exception {
         super.initPropertyPlaceholder();
 
-        Map<String, BridgePropertyPlaceholderConfigurer> beans = applicationContext.getBeansOfType(BridgePropertyPlaceholderConfigurer.class);
+        Map<String, BridgePropertyPlaceholderConfigurer> beans
+                = applicationContext.getBeansOfType(BridgePropertyPlaceholderConfigurer.class);
         if (beans.size() == 1) {
             // setup properties component that uses this beans
             BridgePropertyPlaceholderConfigurer configurer = beans.values().iterator().next();
@@ -370,8 +390,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             pc.addPropertiesSource(configurer);
 
         } else if (beans.size() > 1) {
-            LOG.warn("Cannot bridge Camel and Spring property placeholders, as exact only 1 bean of type BridgePropertyPlaceholderConfigurer"
-                    + " must be defined, was {} beans defined.", beans.size());
+            LOG.warn(
+                    "Cannot bridge Camel and Spring property placeholders, as exact only 1 bean of type BridgePropertyPlaceholderConfigurer"
+                     + " must be defined, was {} beans defined.",
+                    beans.size());
         }
     }
 
@@ -477,7 +499,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         try {
             // allow any custom configuration, such as when running in camel-spring-boot
             if (applicationContext.containsBean("xmlCamelContextConfigurer")) {
-                XmlCamelContextConfigurer configurer = applicationContext.getBean("xmlCamelContextConfigurer", XmlCamelContextConfigurer.class);
+                XmlCamelContextConfigurer configurer
+                        = applicationContext.getBean("xmlCamelContextConfigurer", XmlCamelContextConfigurer.class);
                 if (configurer != null) {
                     configurer.configure(applicationContext, ctx);
                 }
@@ -614,8 +637,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Configuration of CamelContext properties such as limit of debug logging
-     * and other general options.
+     * Configuration of CamelContext properties such as limit of debug logging and other general options.
      */
     public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {
         this.globalOptions = globalOptions;
@@ -627,15 +649,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets the package names to be recursively searched for Java classes which
-     * extend {@link org.apache.camel.builder.RouteBuilder} to be auto-wired up to the
-     * {@link CamelContext} as a route. Note that classes are excluded if
-     * they are specifically configured in the spring.xml
+     * Sets the package names to be recursively searched for Java classes which extend
+     * {@link org.apache.camel.builder.RouteBuilder} to be auto-wired up to the {@link CamelContext} as a route. Note
+     * that classes are excluded if they are specifically configured in the spring.xml
      * <p/>
-     * A more advanced configuration can be done using {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
+     * A more advanced configuration can be done using
+     * {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
      *
      * @param packages the package names which are recursively searched
-     * @see #setPackageScan(org.apache.camel.model.PackageScanDefinition)
+     * @see            #setPackageScan(org.apache.camel.model.PackageScanDefinition)
      */
     public void setPackages(String[] packages) {
         this.packages = packages;
@@ -647,9 +669,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets the package scanning information. Package scanning allows for the
-     * automatic discovery of certain camel classes at runtime for inclusion
-     * e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
+     * Sets the package scanning information. Package scanning allows for the automatic discovery of certain camel
+     * classes at runtime for inclusion e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
      *
      * @param packageScan the package scan
      */
@@ -664,9 +685,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets the context scanning (eg Spring's ApplicationContext) information.
-     * Context scanning allows for the automatic discovery of Camel routes runtime for inclusion
-     * e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
+     * Sets the context scanning (eg Spring's ApplicationContext) information. Context scanning allows for the automatic
+     * discovery of Camel routes runtime for inclusion e.g. {@link org.apache.camel.builder.RouteBuilder}
+     * implementations
      *
      * @param contextScan the context scan
      */
@@ -766,10 +787,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Tracing pattern to match which node EIPs to trace.
-     * For example to match all To EIP nodes, use to*.
-     * The pattern matches by node and route id's
-     * Multiple patterns can be separated by comma.
+     * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
+     * matches by node and route id's Multiple patterns can be separated by comma.
      */
     public void setTracePattern(String tracePattern) {
         this.tracePattern = tracePattern;
@@ -829,8 +848,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets a delay value in millis that a message is delayed at every step it takes in the route path,
-     * slowing the process down to better observe what is occurring
+     * Sets a delay value in millis that a message is delayed at every step it takes in the route path, slowing the
+     * process down to better observe what is occurring
      */
     public void setDelayer(String delayer) {
         this.delayer = delayer;
@@ -844,12 +863,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * Sets whether the object should automatically start when Camel starts.
      * <p/>
-     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started.
-     * <br/>
-     * <b>Note:</b> When setting auto startup <tt>false</tt> on {@link CamelContext} then that takes precedence
-     * and <i>no</i> routes is started. You would need to start {@link CamelContext} explicit using
-     * the {@link org.apache.camel.CamelContext#start()} method, to start the context, and then
-     * you would need to start the routes manually using {@link org.apache.camel.spi.RouteController#startRoute(String)}.
+     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started. <br/>
+     * <b>Note:</b> When setting auto startup <tt>false</tt> on {@link CamelContext} then that takes precedence and
+     * <i>no</i> routes is started. You would need to start {@link CamelContext} explicit using the
+     * {@link org.apache.camel.CamelContext#start()} method, to start the context, and then you would need to start the
+     * routes manually using {@link org.apache.camel.spi.RouteController#startRoute(String)}.
      */
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
@@ -860,9 +878,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Whether to shutdown CamelContext eager when Spring is shutting down.
-     * This ensure a cleaner shutdown of Camel, as dependent bean's are not shutdown at this moment.
-     * The bean's will then be shutdown after camelContext.
+     * Whether to shutdown CamelContext eager when Spring is shutting down. This ensure a cleaner shutdown of Camel, as
+     * dependent bean's are not shutdown at this moment. The bean's will then be shutdown after camelContext.
      */
     public void setShutdownEager(String shutdownEager) {
         this.shutdownEager = shutdownEager;
@@ -885,18 +902,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets the pattern used for determine which custom MDC keys to propagate during message routing when
-     * the routing engine continues routing asynchronously for the given message. Setting this pattern to * will
-     * propagate all custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with
-     * either foo or bar.
-     * Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name.
+     * Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing
+     * engine continues routing asynchronously for the given message. Setting this pattern to * will propagate all
+     * custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with either foo or bar. Notice
+     * that a set of standard Camel MDC keys are always propagated which starts with camel. as key name.
      *
      * The match rules are applied in this order (case insensitive):
      *
-     * 1. exact match, returns true
-     * 2. wildcard match (pattern ends with a * and the name starts with the pattern), returns true
-     * 3. regular expression match, returns true
-     * 4. otherwise returns false
+     * 1. exact match, returns true 2. wildcard match (pattern ends with a * and the name starts with the pattern),
+     * returns true 3. regular expression match, returns true 4. otherwise returns false
      */
     public void setMDCLoggingKeysPattern(String mdcLoggingKeysPattern) {
         this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
@@ -912,8 +926,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * <p/>
      * Data type are automatic turned on if:
      * <ul>
-     *   <li>one ore more routes has been explicit configured with input and output types</li>
-     *   <li>when using rest-dsl with binding turned on</li>
+     * <li>one ore more routes has been explicit configured with input and output types</li>
+     * <li>when using rest-dsl with binding turned on</li>
      * </ul>
      * Otherwise data type is default off.
      */
@@ -939,8 +953,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets whether to allow access to the original message from Camel's error handler,
-     * or from {@link org.apache.camel.spi.UnitOfWork#getOriginalInMessage()}.
+     * Sets whether to allow access to the original message from Camel's error handler, or from
+     * {@link org.apache.camel.spi.UnitOfWork#getOriginalInMessage()}.
      * <p/>
      * Turning this off can optimize performance, as defensive copy of the original message is not needed.
      */
@@ -956,10 +970,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * Whether to use case sensitive or insensitive headers.
      *
-     * Important: When using case sensitive (this is set to false).
-     * Then the map is case sensitive which means headers such as content-type and Content-Type are
-     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
-     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     * Important: When using case sensitive (this is set to false). Then the map is case sensitive which means headers
+     * such as content-type and Content-Type are two different keys which can be a problem for some protocols such as
+     * HTTP based, which rely on case insensitive headers. However case sensitive implementations can yield faster
+     * performance. Therefore use case sensitive implementation with care.
      *
      * Default is true.
      */
@@ -1015,10 +1029,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * <p/>
      * The default pattern is: <tt>Camel (#camelId#) thread ##counter# - #name#</tt>
      * <p/>
-     * Where <tt>#camelId#</tt> is the name of the {@link org.apache.camel.CamelContext}
-     * <br/>and <tt>#counter#</tt> is a unique incrementing counter.
-     * <br/>and <tt>#name#</tt> is the regular thread name.
-     * <br/>You can also use <tt>#longName#</tt> is the long thread name which can includes endpoint parameters etc.
+     * Where <tt>#camelId#</tt> is the name of the {@link org.apache.camel.CamelContext} <br/>
+     * and <tt>#counter#</tt> is a unique incrementing counter. <br/>
+     * and <tt>#name#</tt> is the regular thread name. <br/>
+     * You can also use <tt>#longName#</tt> is the long thread name which can includes endpoint parameters etc.
      */
     public void setThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
@@ -1030,11 +1044,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * Sets whether to load custom type converters by scanning classpath.
-     * This can be turned off if you are only using Camel components
-     * that does not provide type converters which is needed at runtime.
-     * In such situations setting this option to false, can speedup starting
-     * Camel.
+     * Sets whether to load custom type converters by scanning classpath. This can be turned off if you are only using
+     * Camel components that does not provide type converters which is needed at runtime. In such situations setting
+     * this option to false, can speedup starting Camel.
      *
      * @param loadTypeConverters whether to load custom type converters.
      */
@@ -1050,12 +1062,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * Sets whether or not type converter statistics is enabled.
      * <p/>
-     * By default the type converter utilization statistics is disabled.
-     * <b>Notice:</b> If enabled then there is a slight performance impact under very heavy load.
+     * By default the type converter utilization statistics is disabled. <b>Notice:</b> If enabled then there is a
+     * slight performance impact under very heavy load.
      * <p/>
      * You can enable/disable the statistics at runtime using the
-     * {@link org.apache.camel.spi.TypeConverterRegistry#getStatistics()#setTypeConverterStatisticsEnabled(Boolean)} method,
-     * or from JMX on the {@link org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean} mbean.
+     * {@link org.apache.camel.spi.TypeConverterRegistry#getStatistics()#setTypeConverterStatisticsEnabled(Boolean)}
+     * method, or from JMX on the {@link org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean} mbean.
      */
     public void setTypeConverterStatisticsEnabled(String typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
@@ -1081,7 +1093,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * The logging level to use when logging that a type converter already exists when attempting to add a duplicate type converter.
+     * The logging level to use when logging that a type converter already exists when attempting to add a duplicate
+     * type converter.
      * <p/>
      * The default logging level is <tt>WARN</tt>
      */
@@ -1301,7 +1314,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * MicroProfile Fault Tolerance EIP default configuration
      */
-    public void setDefaultFaultToleranceConfiguration(FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration) {
+    public void setDefaultFaultToleranceConfiguration(
+            FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration) {
         this.defaultFaultToleranceConfiguration = defaultFaultToleranceConfiguration;
     }
 
@@ -1399,11 +1413,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     public void setDependsOn(String dependsOn) {
         this.dependsOn = dependsOn;
     }
-    
+
     public boolean isImplicitId() {
         return implicitId;
     }
-    
+
     public void setImplicitId(boolean flag) {
         implicitId = flag;
     }

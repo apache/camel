@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Transform messages using a Velocity template.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri",
+             producerOnly = true, category = { Category.TRANSFORMATION })
 public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;
@@ -94,7 +95,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
             // load the velocity properties from property file which may overrides the default ones
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
+                InputStream reader
+                        = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 try {
                     properties.load(reader);
                     log.info("Loaded the velocity configuration file {}", getPropertiesFile());
@@ -128,8 +130,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
@@ -184,7 +186,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
 
-                log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI, newResourceUri);
+                log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI,
+                        newResourceUri);
                 VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
                 return;
@@ -200,15 +203,19 @@ public class VelocityEndpoint extends ResourceEndpoint {
             // use content from header
             reader = new StringReader(content);
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from header {} for endpoint {}", VelocityConstants.VELOCITY_TEMPLATE, getEndpointUri());
+                log.debug("Velocity content read from header {} for endpoint {}", VelocityConstants.VELOCITY_TEMPLATE,
+                        getEndpointUri());
             }
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
+                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                        getEndpointUri());
             }
-            reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
+            reader = getEncoding() != null
+                    ? new InputStreamReader(getResourceAsInputStream(), getEncoding())
+                    : new InputStreamReader(getResourceAsInputStream());
         }
 
         // getResourceAsInputStream also considers the content cache
@@ -222,7 +229,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
             Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
             if (allowTemplateFromHeader) {
                 @SuppressWarnings("unchecked")
-                Map<String, Object> supplementalMap = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
+                Map<String, Object> supplementalMap
+                        = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
                 if (supplementalMap != null) {
                     variableMap.putAll(supplementalMap);
                 }

@@ -44,7 +44,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     @Test
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
@@ -55,7 +55,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     @Test
     public void testCreateTempFileNameUsingComplexName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "foo/claus.txt");
 
@@ -66,7 +66,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     @Test
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        GenericFileProducer<?> producer = (GenericFileProducer<?>)endpoint.createProducer();
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 

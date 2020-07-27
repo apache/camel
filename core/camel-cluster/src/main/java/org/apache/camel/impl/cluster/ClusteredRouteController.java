@@ -117,8 +117,8 @@ public class ClusteredRouteController extends DefaultRouteController {
     }
 
     /**
-     * Set the amount of time the route controller should wait before to start
-     * the routes after the camel context is started.
+     * Set the amount of time the route controller should wait before to start the routes after the camel context is
+     * started.
      *
      * @param initialDelay the initial delay.
      */
@@ -186,7 +186,8 @@ public class ClusteredRouteController extends DefaultRouteController {
             clusterService = ClusterServiceHelper.mandatoryLookupService(context, clusterServiceSelector);
         }
 
-        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(), clusterService.getClass().getName());
+        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(),
+                clusterService.getClass().getName());
 
         if (!ServiceHelper.isStarted(clusterService)) {
             // Start the cluster service if not yet started.
@@ -292,7 +293,7 @@ public class ClusteredRouteController extends DefaultRouteController {
     private final class PolicyFactory implements RoutePolicyFactory {
         @Override
         public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode node) {
-            RouteDefinition route = (RouteDefinition)node;
+            RouteDefinition route = (RouteDefinition) node;
             // All the filter have to be match to include the route in the
             // clustering set-up
             if (filters.stream().allMatch(filter -> filter.test(camelContext, routeId, route))) {
@@ -307,9 +308,12 @@ public class ClusteredRouteController extends DefaultRouteController {
                 }
 
                 try {
-                    final ClusteredRouteConfiguration configuration = configurations.getOrDefault(routeId, defaultConfiguration);
-                    final String namespace = ObjectHelper.supplyIfEmpty(configuration.getNamespace(), defaultConfiguration::getNamespace);
-                    final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(), defaultConfiguration::getInitialDelay);
+                    final ClusteredRouteConfiguration configuration
+                            = configurations.getOrDefault(routeId, defaultConfiguration);
+                    final String namespace
+                            = ObjectHelper.supplyIfEmpty(configuration.getNamespace(), defaultConfiguration::getNamespace);
+                    final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(),
+                            defaultConfiguration::getInitialDelay);
 
                     ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace(clusterService, namespace);
                     policy.setCamelContext(getCamelContext());

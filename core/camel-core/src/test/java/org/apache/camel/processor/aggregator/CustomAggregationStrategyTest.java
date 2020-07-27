@@ -55,11 +55,11 @@ public class CustomAggregationStrategyTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending
                 // the response to the mock
                 from("direct:start")
-                    // aggregated by header id and use our own strategy how to
-                    // aggregate
-                    .aggregate(new MyAggregationStrategy()).header("id")
-                    // wait for 1 seconds to aggregate
-                    .completionTimeout(1000L).to("mock:result");
+                        // aggregated by header id and use our own strategy how to
+                        // aggregate
+                        .aggregate(new MyAggregationStrategy()).header("id")
+                        // wait for 1 seconds to aggregate
+                        .completionTimeout(1000L).to("mock:result");
                 // END SNIPPET: e1
             }
         };

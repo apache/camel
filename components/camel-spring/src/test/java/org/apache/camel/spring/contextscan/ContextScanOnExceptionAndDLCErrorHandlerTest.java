@@ -49,6 +49,7 @@ public class ContextScanOnExceptionAndDLCErrorHandlerTest extends SpringTestSupp
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/contextscan/ContextScanOnExceptionAndDLCErrorHandler.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/contextscan/ContextScanOnExceptionAndDLCErrorHandler.xml");
     }
 }

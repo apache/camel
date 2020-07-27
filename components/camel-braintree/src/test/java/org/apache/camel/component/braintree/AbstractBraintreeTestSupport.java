@@ -143,17 +143,19 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException {
-        return (T)template().requestBodyAndHeaders(endpointUri, body, headers);
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
+            throws CamelExecutionException {
+        return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 
-    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) throws CamelExecutionException {
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type)
+            throws CamelExecutionException {
         return template().requestBodyAndHeaders(endpointUri, body, headers, type);
     }
 
     @SuppressWarnings("unchecked")
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
-        return (T)template().requestBody(endpoint, body);
+        return (T) template().requestBody(endpoint, body);
     }
 
     protected <T> T requestBody(String endpoint, Object body, Class<T> type) throws CamelExecutionException {
@@ -169,7 +171,7 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
     }
 
     protected final BraintreeComponent getBraintreeComponent() {
-        return (BraintreeComponent)context().getComponent("braintree");
+        return (BraintreeComponent) context().getComponent("braintree");
     }
 
     protected final synchronized BraintreeGateway getGateway() {

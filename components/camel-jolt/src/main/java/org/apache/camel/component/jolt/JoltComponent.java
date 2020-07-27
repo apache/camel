@@ -72,12 +72,11 @@ public class JoltComponent extends DefaultComponent {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
-
 
 }

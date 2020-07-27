@@ -31,10 +31,10 @@ public class CipherPair {
     private final String transformation;
     private final Cipher enccipher;
     private final Cipher deccipher;
-    
+
     public CipherPair(String transformation) throws GeneralSecurityException {
         this.transformation = transformation;
-        
+
         int d = transformation.indexOf('/');
         String a;
         if (d > 0) {
@@ -52,15 +52,15 @@ public class CipherPair {
         final byte[] ivp = enccipher.getIV();
         deccipher.init(Cipher.DECRYPT_MODE, key, ivp == null ? null : new IvParameterSpec(ivp));
     }
-    
+
     public String getTransformation() {
         return transformation;
     }
-    
+
     public Cipher getEncryptor() {
         return enccipher;
     }
-    
+
     public Cipher getDecryptor() {
         return deccipher;
     }

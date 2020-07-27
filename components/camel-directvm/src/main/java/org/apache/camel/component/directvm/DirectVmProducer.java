@@ -42,37 +42,41 @@ public class DirectVmProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // send to consumer
         DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
-        
+
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
-                exchange.setException(new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
+                exchange.setException(
+                        new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
             } else {
                 LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
             callback.done(true);
             return true;
         }
-        
+
         final HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
 
         // Only clone the Exchange if we actually need to filter out properties or headers.
-        final Exchange submitted = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy() : exchange;
+        final Exchange submitted
+                = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy() : exchange;
 
         // Clear properties in the copy if we are not propagating them.
         if (!endpoint.isPropagateProperties()) {
             submitted.getProperties().clear();
         }
-        
+
         // Filter headers by Header Filter Strategy if there is one set.
         if (headerFilterStrategy != null) {
-            submitted.getIn().getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToCamelHeaders(e.getKey(), e.getValue(), submitted));
+            submitted.getIn().getHeaders().entrySet()
+                    .removeIf(e -> headerFilterStrategy.applyFilterToCamelHeaders(e.getKey(), e.getValue(), submitted));
         }
-        
+
         return consumer.getAsyncProcessor().process(submitted, done -> {
             Message msg = submitted.getMessage();
 
             if (headerFilterStrategy != null) {
-                msg.getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
+                msg.getHeaders().entrySet()
+                        .removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
             }
 
             if (exchange != submitted) {
@@ -88,5 +92,5 @@ public class DirectVmProducer extends DefaultAsyncProducer {
             callback.done(done);
         });
     }
-    
+
 }

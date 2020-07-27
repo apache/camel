@@ -32,12 +32,12 @@ public final class RestContextRefDefinitionHelper {
     }
 
     /**
-     * Lookup the rests from the
-     * {@link org.apache.camel.model.RestContextRefDefinition}.
+     * Lookup the rests from the {@link org.apache.camel.model.RestContextRefDefinition}.
      *
-     * @param camelContext the CamelContext
-     * @param ref the id of the {@link org.apache.camel.model.RestContextRefDefinition} to lookup and get the routes.
-     * @return the rests.
+     * @param  camelContext the CamelContext
+     * @param  ref          the id of the {@link org.apache.camel.model.RestContextRefDefinition} to lookup and get the
+     *                      routes.
+     * @return              the rests.
      */
     public static List<RestDefinition> lookupRests(CamelContext camelContext, String ref) {
         ObjectHelper.notNull(camelContext, "camelContext");

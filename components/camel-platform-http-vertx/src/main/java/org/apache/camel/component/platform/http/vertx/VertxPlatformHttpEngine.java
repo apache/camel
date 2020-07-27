@@ -32,7 +32,6 @@ import org.apache.camel.component.platform.http.spi.UploadAttacher;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 
-
 /**
  * Implementation of the {@link PlatformHttpEngine} based on Vert.x Web.
  */
@@ -77,9 +76,9 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
     @Override
     public Consumer createConsumer(PlatformHttpEndpoint endpoint, Processor processor) {
         return new VertxPlatformHttpConsumer(
-            endpoint,
-            processor,
-            handlers,
-            uploadAttacher);
+                endpoint,
+                processor,
+                handlers,
+                uploadAttacher);
     }
 }

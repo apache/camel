@@ -53,7 +53,8 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
     private void assertCoAPMethodRestrictResponse(String path, String methodRestrict, String expectedResponse) {
         for (String method : CoAPConstants.METHOD_RESTRICT_ALL.split(",")) {
-            String result = template.requestBodyAndHeader("coap://localhost:" + PORT + path, null, CoAPConstants.COAP_METHOD, method, String.class);
+            String result = template.requestBodyAndHeader("coap://localhost:" + PORT + path, null, CoAPConstants.COAP_METHOD,
+                    method, String.class);
             if (methodRestrict.contains(method)) {
                 assertEquals(expectedResponse, result);
             } else {
@@ -73,7 +74,8 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
                 fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/a/b"));
 
-                fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT).setBody(constant("DELETE & GET: /test/a/b/c"));
+                fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT)
+                        .setBody(constant("DELETE & GET: /test/a/b/c"));
 
                 fromF("coap://localhost:%d/test/b?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/b"));
             }

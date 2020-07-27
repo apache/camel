@@ -72,8 +72,7 @@ public class MultiQueueWithTopicThreadPoolTest {
         Integer[] results = new Integer[totalJobs];
         for (int i = 0; i < totalJobs / 3; i++) {
             /**
-              0 1 2 3 4 5 6 7 8
-              0 3 6 1 4 7 2 5 8 <- start order should be this
+             * 0 1 2 3 4 5 6 7 8 0 3 6 1 4 7 2 5 8 <- start order should be this
              */
             results[i] = i * 3;
             results[i + 3] = 3 * i + 1;

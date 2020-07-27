@@ -26,9 +26,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no
- * results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
 
@@ -52,7 +51,8 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://admin@localhost:" + getPort() + "/polling?password=admin&delay=50" + "&sendEmptyMessageWhenIdle=true").to("mock:result");
+                from("ftp://admin@localhost:" + getPort() + "/polling?password=admin&delay=50"
+                     + "&sendEmptyMessageWhenIdle=true").to("mock:result");
             }
         };
     }

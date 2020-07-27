@@ -49,7 +49,9 @@ public class GenerateConnectorConfigMojoTest {
         generateConnectorConfigMojo.execute();
 
         // check if we created the file correctly
-        final File connectorConfigFile = new File(connectorConfigFolder, "org/apache/camel/component/debezium/configuration/MySqlConnectorEmbeddedDebeziumConfiguration.java");
+        final File connectorConfigFile = new File(
+                connectorConfigFolder,
+                "org/apache/camel/component/debezium/configuration/MySqlConnectorEmbeddedDebeziumConfiguration.java");
         assertTrue(connectorConfigFile.exists());
 
         // we check the file content

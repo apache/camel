@@ -139,16 +139,16 @@ public class CamelEndpointDetails {
     @Override
     public String toString() {
         return "CamelEndpointDetails["
-                + "fileName='" + fileName + '\''
-                + ", lineNumber='" + lineNumber + '\''
-                + ", lineNumberEnd='" + lineNumberEnd + '\''
-                + ", className='" + className + '\''
-                + ", methodName='" + methodName + '\''
-                + ", endpointComponentName='" + endpointComponentName + '\''
-                + ", endpointInstance='" + endpointInstance + '\''
-                + ", endpointUri='" + endpointUri + '\''
-                + ", consumerOnly=" + consumerOnly
-                + ", producerOnly=" + producerOnly
-                + ']';
+               + "fileName='" + fileName + '\''
+               + ", lineNumber='" + lineNumber + '\''
+               + ", lineNumberEnd='" + lineNumberEnd + '\''
+               + ", className='" + className + '\''
+               + ", methodName='" + methodName + '\''
+               + ", endpointComponentName='" + endpointComponentName + '\''
+               + ", endpointInstance='" + endpointInstance + '\''
+               + ", endpointUri='" + endpointUri + '\''
+               + ", consumerOnly=" + consumerOnly
+               + ", producerOnly=" + producerOnly
+               + ']';
     }
 }

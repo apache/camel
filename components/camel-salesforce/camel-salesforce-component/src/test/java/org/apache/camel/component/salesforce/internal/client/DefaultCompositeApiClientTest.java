@@ -40,7 +40,7 @@ public class DefaultCompositeApiClientTest {
         final SObjectBatch batch = new SObjectBatch(V35_0);
 
         assertThrows(SalesforceException.class,
-            () -> DefaultCompositeApiClient.checkCompositeBatchVersion(V34_0, batch.getVersion()));
+                () -> DefaultCompositeApiClient.checkCompositeBatchVersion(V34_0, batch.getVersion()));
     }
 
     @Test

@@ -29,7 +29,7 @@ public class RecordableReaderTest {
         DATA = new byte[512];
         final int radix = 0x7f - 0x20;
         for (int i = 0; i < 512; i++) {
-            DATA[i] = (byte)(i % radix + 0x20);
+            DATA[i] = (byte) (i % radix + 0x20);
         }
     }
 

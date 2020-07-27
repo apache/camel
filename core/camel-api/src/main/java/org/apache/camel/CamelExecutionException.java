@@ -19,8 +19,7 @@ package org.apache.camel;
 /**
  * Exception occurred during execution/processing of an {@link Exchange}.
  * <p/>
- * Is usually thrown to the caller when using the {@link org.apache.camel.ProducerTemplate}
- * to send messages to Camel.
+ * Is usually thrown to the caller when using the {@link org.apache.camel.ProducerTemplate} to send messages to Camel.
  */
 public class CamelExecutionException extends RuntimeExchangeException {
 
@@ -33,11 +32,10 @@ public class CamelExecutionException extends RuntimeExchangeException {
     }
 
     /**
-     * Wraps the caused exception in a {@link CamelExecutionException} if its not
-     * already such an exception.
+     * Wraps the caused exception in a {@link CamelExecutionException} if its not already such an exception.
      *
-     * @param e the caused exception
-     * @return the wrapper exception
+     * @param  e the caused exception
+     * @return   the wrapper exception
      */
     public static CamelExecutionException wrapCamelExecutionException(Exchange exchange, Throwable e) {
         if (e instanceof CamelExecutionException) {

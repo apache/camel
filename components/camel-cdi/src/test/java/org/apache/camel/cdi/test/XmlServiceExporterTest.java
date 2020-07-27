@@ -44,28 +44,28 @@ public class XmlServiceExporterTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-export.xml").toFile(),
-                "imported-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-export.xml").toFile(),
+                        "imported-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     public void sendMessageToService(ProducerTemplate service) {
         String response = service.requestBody("direct:service", "request", String.class);
         assertThat("Response is incorrect!", response,
-            is(equalTo("test response to [request]")));
+                is(equalTo("test response to [request]")));
     }
 
     @Test
     public void invokeService(@Named("service") Service service) {
         String response = service.service("request");
         assertThat("Response is incorrect!", response,
-            is(equalTo("test response to [request]")));
+                is(equalTo("test response to [request]")));
     }
 
     @Named("implementation")

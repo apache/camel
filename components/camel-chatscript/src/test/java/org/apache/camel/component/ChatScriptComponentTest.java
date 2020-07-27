@@ -54,16 +54,16 @@ public class ChatScriptComponentTest extends CamelTestSupport {
                     e.printStackTrace();
                 }
                 from("timer://foo?repeatCount=1")
-                    .setBody(new SimpleExpression(rq))
-                    .to("chatscript://localhost:1024/Harry?resetchat=true")
-                    .log("Response 2 = ${body}")
-                    .setBody(new SimpleExpression(rq2))
-                    .to("chatscript://localhost:1024/Harry")
-                    .log("Response 3 = ${body}")
-                    .setBody(new SimpleExpression(rq3))
-                    .to("chatscript://localhost:1024/Harry")
-                    .log("Response 4 = ${body}")
-                    .to("mock:result");
+                        .setBody(new SimpleExpression(rq))
+                        .to("chatscript://localhost:1024/Harry?resetchat=true")
+                        .log("Response 2 = ${body}")
+                        .setBody(new SimpleExpression(rq2))
+                        .to("chatscript://localhost:1024/Harry")
+                        .log("Response 3 = ${body}")
+                        .setBody(new SimpleExpression(rq3))
+                        .to("chatscript://localhost:1024/Harry")
+                        .log("Response 4 = ${body}")
+                        .to("mock:result");
             }
         };
     }

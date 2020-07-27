@@ -60,14 +60,15 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
             ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
             // create the thread pool using a builder
             ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name)
-                .poolSize(definition.getPoolSize() != null ? parseInt(definition.getPoolSize()) : null)
-                .maxPoolSize(definition.getMaxPoolSize() != null ? parseInt(definition.getMaxPoolSize()) : null)
-                .keepAliveTime(definition.getKeepAliveTime() != null ? parseDuration(definition.getKeepAliveTime()) : null,
-                               definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null)
-                .maxQueueSize(definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null)
-                .rejectedPolicy(policy)
-                .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null ? parseBoolean(definition.getAllowCoreThreadTimeOut(), false) : null)
-                .build();
+                    .poolSize(definition.getPoolSize() != null ? parseInt(definition.getPoolSize()) : null)
+                    .maxPoolSize(definition.getMaxPoolSize() != null ? parseInt(definition.getMaxPoolSize()) : null)
+                    .keepAliveTime(definition.getKeepAliveTime() != null ? parseDuration(definition.getKeepAliveTime()) : null,
+                            definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null)
+                    .maxQueueSize(definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null)
+                    .rejectedPolicy(policy)
+                    .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null
+                            ? parseBoolean(definition.getAllowCoreThreadTimeOut(), false) : null)
+                    .build();
             threadPool = manager.newThreadPool(definition, name, profile);
             shutdownThreadPool = true;
         } else {
@@ -93,7 +94,8 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
                 throw new IllegalArgumentException("RejectedPolicy and executorServiceRef options cannot be used together.");
             }
             if (definition.getAllowCoreThreadTimeOut() != null) {
-                throw new IllegalArgumentException("AllowCoreThreadTimeOut and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException(
+                        "AllowCoreThreadTimeOut and executorServiceRef options cannot be used together.");
             }
         }
 
@@ -102,7 +104,8 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {
         if (definition.getExecutorServiceRef() != null && definition.getRejectedPolicy() == null) {
-            ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager().getThreadPoolProfile(parseString(definition.getExecutorServiceRef()));
+            ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager()
+                    .getThreadPoolProfile(parseString(definition.getExecutorServiceRef()));
             if (threadPoolProfile != null) {
                 return threadPoolProfile.getRejectedPolicy();
             }

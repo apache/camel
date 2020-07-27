@@ -42,5 +42,4 @@ public class MockEndpointsAndSkipTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
 }

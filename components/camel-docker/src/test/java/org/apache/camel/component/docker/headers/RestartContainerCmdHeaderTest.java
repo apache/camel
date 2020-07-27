@@ -46,7 +46,6 @@ public class RestartContainerCmdHeaderTest extends BaseDockerHeaderTest<RestartC
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_TIMEOUT, timeout);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).restartContainerCmd(containerId);

@@ -74,8 +74,6 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
-
-
     @Override
     protected void bindToRegistry(Registry registry) {
         registry.bind(JIRA_REST_CLIENT_FACTORY, jiraRestClientFactory);
@@ -137,7 +135,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         Promise<Issue> promiseIssue = Promises.promise(issue);
         when(issueRestClient.getIssue(anyString())).thenReturn(promiseIssue);
         List<Comment> comments = new ArrayList<>();
-        for (Comment c: issue.getComments()) {
+        for (Comment c : issue.getComments()) {
             comments.add(c);
         }
         // reverse the order, from oldest comment to recent
@@ -173,8 +171,8 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
             return Promises.promise(issue);
         });
         List<Comment> comments = new ArrayList<>();
-        for (Issue issue: newIssues) {
-            for (Comment c: issue.getComments()) {
+        for (Issue issue : newIssues) {
+            for (Comment c : issue.getComments()) {
                 comments.add(c);
             }
         }

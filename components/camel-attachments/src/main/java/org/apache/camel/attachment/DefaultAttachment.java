@@ -49,9 +49,9 @@ public class DefaultAttachment implements Attachment {
         if (headers != null) {
             Object headerObject = headers.get(name);
             if (headerObject instanceof String) {
-                return (String)headerObject;
+                return (String) headerObject;
             } else if (headerObject instanceof Collection<?>) {
-                return CollectionHelper.collectionAsCommaDelimitedString((Collection<?>)headerObject);
+                return CollectionHelper.collectionAsCommaDelimitedString((Collection<?>) headerObject);
             }
         }
         return null;
@@ -63,9 +63,9 @@ public class DefaultAttachment implements Attachment {
         if (headers != null) {
             Object headerObject = headers.get(name);
             if (headerObject instanceof List<?>) {
-                return (List<String>)headerObject;
+                return (List<String>) headerObject;
             } else if (headerObject instanceof String) {
-                return Collections.singletonList((String)headerObject);
+                return Collections.singletonList((String) headerObject);
             }
         }
         return null;
@@ -113,7 +113,7 @@ public class DefaultAttachment implements Attachment {
     @Override
     public boolean equals(Object other) {
         if (other instanceof Attachment) {
-            DataHandler otherDh = ((Attachment)other).getDataHandler();
+            DataHandler otherDh = ((Attachment) other).getDataHandler();
             return dataHandler.equals(otherDh);
         }
         return false;

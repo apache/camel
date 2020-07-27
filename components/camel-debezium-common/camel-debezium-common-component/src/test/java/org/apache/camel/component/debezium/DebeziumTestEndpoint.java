@@ -24,7 +24,8 @@ public final class DebeziumTestEndpoint extends DebeziumEndpoint<FileConnectorEm
     @UriParam
     private FileConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumTestEndpoint(final String uri, final DebeziumTestComponent component, final FileConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumTestEndpoint(final String uri, final DebeziumTestComponent component,
+                                final FileConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

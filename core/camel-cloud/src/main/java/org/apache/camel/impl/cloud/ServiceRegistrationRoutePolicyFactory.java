@@ -38,7 +38,8 @@ public class ServiceRegistrationRoutePolicyFactory implements RoutePolicyFactory
         this(null, serviceRegistrySelector);
     }
 
-    public ServiceRegistrationRoutePolicyFactory(ServiceRegistry serviceRegistry, ServiceRegistry.Selector serviceRegistrySelector) {
+    public ServiceRegistrationRoutePolicyFactory(ServiceRegistry serviceRegistry,
+                                                 ServiceRegistry.Selector serviceRegistrySelector) {
         this.serviceRegistry = serviceRegistry;
         this.serviceRegistrySelector = serviceRegistrySelector;
     }

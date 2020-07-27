@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AddressGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(AddressGatewayApiMethod.class).getName();
-
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(AddressGatewayApiMethod.class).getName();
 
     private BraintreeGateway gateway;
     private Customer customer;
@@ -60,10 +60,10 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
     protected void doPostSetup() throws Exception {
         this.gateway = getGateway();
         this.customer = gateway.customer().create(
-            new CustomerRequest()
-                .firstName("user")
-                .lastName(UUID.randomUUID().toString())
-        ).getTarget();
+                new CustomerRequest()
+                        .firstName("user")
+                        .lastName(UUID.randomUUID().toString()))
+                .getTarget();
 
         if (customer != null) {
             LOG.info("Customer created - id={}", this.customer.getId());
@@ -95,12 +95,11 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
     private Address createAddress() {
         // Create address
         final Result<Address> result = gateway.address().create(
-            this.customer.getId(),
-            new AddressRequest()
-                .company("Apache")
-                .streetAddress("1901 Munsey Drive")
-                .locality("Forest Hill")
-        );
+                this.customer.getId(),
+                new AddressRequest()
+                        .company("Apache")
+                        .streetAddress("1901 Munsey Drive")
+                        .locality("Forest Hill"));
 
         assertNotNull(result, "create");
         assertTrue(result.isSuccess());
@@ -120,17 +119,16 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         assertNotNull(this.customer, "Customer can't be null");
 
         final Result<Address> address = requestBodyAndHeaders(
-            "direct://CREATE",
-            null,
-            new BraintreeHeaderBuilder()
-                .add("customerId", customer.getId())
-                .add("request", new AddressRequest()
-                    .company("Apache")
-                    .streetAddress("1901 Munsey Drive")
-                    .locality("Forest Hill"))
-                .build(),
-                Result.class
-             );
+                "direct://CREATE",
+                null,
+                new BraintreeHeaderBuilder()
+                        .add("customerId", customer.getId())
+                        .add("request", new AddressRequest()
+                                .company("Apache")
+                                .streetAddress("1901 Munsey Drive")
+                                .locality("Forest Hill"))
+                        .build(),
+                Result.class);
 
         assertNotNull(address, "create");
         assertTrue(address.isSuccess());
@@ -146,14 +144,13 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
         final Address address = createAddress();
         final Result<Address> result = requestBodyAndHeaders(
-            "direct://DELETE",
-            null,
-            new BraintreeHeaderBuilder()
-                .add("customerId", customer.getId())
-                .add("id", address.getId())
-                .build(),
-            Result.class
-        );
+                "direct://DELETE",
+                null,
+                new BraintreeHeaderBuilder()
+                        .add("customerId", customer.getId())
+                        .add("id", address.getId())
+                        .build(),
+                Result.class);
 
         assertNotNull(address, "delete");
         assertTrue(result.isSuccess());
@@ -170,13 +167,12 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         this.addressIds.add(addressRef.getId());
 
         final Address address = requestBodyAndHeaders(
-            "direct://FIND", null,
+                "direct://FIND", null,
                 new BraintreeHeaderBuilder()
-                    .add("customerId", customer.getId())
-                    .add("id", addressRef.getId())
-                    .build(),
-            Address.class
-        );
+                        .add("customerId", customer.getId())
+                        .add("id", addressRef.getId())
+                        .build(),
+                Address.class);
 
         assertNotNull(address, "find");
         LOG.info("Address found - customer={}, id={}", customer.getId(), address.getId());
@@ -191,16 +187,16 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         this.addressIds.add(addressRef.getId());
 
         final Result<Address> result = requestBodyAndHeaders(
-            "direct://UPDATE", null,
-            new BraintreeHeaderBuilder()
-                .add("customerId", customer.getId())
-                .add("id", addressRef.getId())
-                .add("request", new AddressRequest()
-                    .company("Apache")
-                    .streetAddress(customer.getId())
-                    .locality(customer.getId()))
-                .build(),
-            Result.class);
+                "direct://UPDATE", null,
+                new BraintreeHeaderBuilder()
+                        .add("customerId", customer.getId())
+                        .add("id", addressRef.getId())
+                        .add("request", new AddressRequest()
+                                .company("Apache")
+                                .streetAddress(customer.getId())
+                                .locality(customer.getId()))
+                        .build(),
+                Result.class);
 
         assertNotNull(result, "update");
         assertTrue(result.isSuccess());
@@ -218,16 +214,16 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create");
+                        .to("braintree://" + PATH_PREFIX + "/create");
                 // test route for delete
                 from("direct://DELETE")
-                    .to("braintree://" + PATH_PREFIX + "/delete");
+                        .to("braintree://" + PATH_PREFIX + "/delete");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find");
+                        .to("braintree://" + PATH_PREFIX + "/find");
                 // test route for update
                 from("direct://UPDATE")
-                    .to("braintree://" + PATH_PREFIX + "/update");
+                        .to("braintree://" + PATH_PREFIX + "/update");
             }
         };
     }

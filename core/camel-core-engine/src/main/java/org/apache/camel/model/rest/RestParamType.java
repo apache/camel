@@ -29,6 +29,10 @@ import org.apache.camel.spi.Metadata;
 @XmlEnum(String.class)
 public enum RestParamType {
 
-    body, formData, header, path, query
+    body,
+    formData,
+    header,
+    path,
+    query
 
 }
