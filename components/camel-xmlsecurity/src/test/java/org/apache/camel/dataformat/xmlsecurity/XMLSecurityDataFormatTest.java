@@ -32,12 +32,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.codec.Charsets;
 import org.apache.xml.security.encryption.XMLCipher;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test of the encryptXML data format.
@@ -56,7 +57,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
@@ -208,7 +209,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         Document doc = xmlsecTestHelper.testEncryption(TestHelper.XML_FRAGMENT, context);
         NodeList nodeList =
             doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "RSAKeyValue");
-        Assert.assertTrue(nodeList.getLength() > 0);
+        assertTrue(nodeList.getLength() > 0);
     }
 
     @Test
@@ -232,7 +233,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         Document doc = xmlsecTestHelper.testEncryption(TestHelper.XML_FRAGMENT, context);
         NodeList nodeList =
             doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "RSAKeyValue");
-        Assert.assertTrue(nodeList.getLength() == 0);
+        assertTrue(nodeList.getLength() == 0);
     }
 
     /*

@@ -25,8 +25,12 @@ import java.util.concurrent.Executors;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
@@ -61,7 +65,7 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
         String secure = getMockEndpoint("mock:secure").getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(secure);
-        assertTrue("Should not be readable", secure.indexOf("read") == -1);
+        assertTrue(secure.indexOf("read") == -1, "Should not be readable");
         executor.shutdownNow();
     }
 

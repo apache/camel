@@ -73,10 +73,10 @@ import org.apache.camel.component.xmlsecurity.util.XmlSignature2Message2MessageW
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test signing using all available signature methods, apart from EC-algorithms which are
@@ -462,7 +462,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpKeys("RSA", 2048);
         disableJMX();
