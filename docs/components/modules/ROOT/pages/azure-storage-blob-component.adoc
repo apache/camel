@@ -88,7 +88,7 @@ The Azure Storage Blob Service component supports 26 options, which are listed b
 | *timeout* (common) | An optional timeout value beyond which a RuntimeException will be raised. |  | Duration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *blobSequenceNumber* (producer) | A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 263 - 1.The default value is 0. | 0 | Long
-| *blockListType* (producer) | Specifies which type of blocks to return. The value can be one of: committed, uncommitted, all | committed | BlockListType
+| *blockListType* (producer) | Specifies which type of blocks to return. The value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
 | *commitBlockListLater* (producer) | When is set to true, the staged blocks will not be committed directly. | true | boolean
 | *createAppendBlob* (producer) | When is set to true, the append blocks will be created when committing append blocks. | true | boolean
@@ -145,7 +145,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *blobSequenceNumber* (producer) | A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 263 - 1.The default value is 0. | 0 | Long
-| *blockListType* (producer) | Specifies which type of blocks to return. The value can be one of: committed, uncommitted, all | committed | BlockListType
+| *blockListType* (producer) | Specifies which type of blocks to return. The value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
 | *commitBlockListLater* (producer) | When is set to true, the staged blocks will not be committed directly. | true | boolean
 | *createAppendBlob* (producer) | When is set to true, the append blocks will be created when committing append blocks. | true | boolean
