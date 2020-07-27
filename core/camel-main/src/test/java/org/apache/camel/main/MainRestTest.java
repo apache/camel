@@ -18,8 +18,11 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainRestTest {
 
@@ -40,17 +43,17 @@ public class MainRestTest {
         main.start();
 
         CamelContext context = main.getCamelContext();
-        Assert.assertNotNull(context);
+        assertNotNull(context);
 
         RestConfiguration def = context.getRestConfiguration();
-        Assert.assertNotNull(def);
+        assertNotNull(def);
 
-        Assert.assertEquals(1234, def.getPort());
-        Assert.assertTrue(def.isUseXForwardHeaders());
-        Assert.assertEquals("foo", def.getContextPath());
-        Assert.assertEquals("bar", def.getApiContextPath());
-        Assert.assertEquals("servlet", def.getComponent());
-        Assert.assertEquals(RestConfiguration.RestBindingMode.json, def.getBindingMode());
+        assertEquals(1234, def.getPort());
+        assertTrue(def.isUseXForwardHeaders());
+        assertEquals("foo", def.getContextPath());
+        assertEquals("bar", def.getApiContextPath());
+        assertEquals("servlet", def.getComponent());
+        assertEquals(RestConfiguration.RestBindingMode.json, def.getBindingMode());
 
         main.stop();
     }
