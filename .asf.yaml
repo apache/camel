@@ -15,7 +15,8 @@
 # limitations under the License.
 #
 
-description: "Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data."
+github:
+  description: "Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data."
   homepage: https://camel.apache.org
   labels:
     - camel
