@@ -22,13 +22,13 @@ import java.util.UUID;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.producer.NetworkProducer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.networking.NetworkService;
 import org.openstack4j.model.common.ActionResponse;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NetworkProducerTest extends NeutronProducerTestSupport {
 
     private Network dummyNetwork;
@@ -61,7 +61,7 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
     @Captor
     private ArgumentCaptor<String> networkIdCaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(networkingService.network()).thenReturn(networkService);
 
