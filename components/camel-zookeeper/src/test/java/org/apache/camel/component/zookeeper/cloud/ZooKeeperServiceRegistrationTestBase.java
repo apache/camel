@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -34,8 +34,11 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupport {
     protected static final String SERVICE_ID = UUID.randomUUID().toString();
@@ -75,7 +78,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 

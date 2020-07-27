@@ -22,9 +22,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.component.zookeeper.NaturalSortComparator.Order;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NaturalSortComparatorTest {
 

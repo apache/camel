@@ -22,7 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.Watcher.Event.EventType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumeDataTest extends ZooKeeperTestSupport {
 
@@ -69,7 +72,7 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
             if (!EventType.NodeDeleted.equals(expectedEventTypes[i])) {
                 // As a delete event does not carry statistics, ignore it in the version check.
                 int version = ZooKeeperMessage.getStatistics(mock.getExchanges().get(i).getIn()).getVersion();
-                assertTrue("Version did not increase", lastVersion < version);
+                assertTrue(lastVersion < version, "Version did not increase");
                 lastVersion = version;
             }
         }
