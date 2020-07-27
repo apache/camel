@@ -22,7 +22,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.*; import static org.junit.jupiter.api.Assertions.*;
 
 public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";

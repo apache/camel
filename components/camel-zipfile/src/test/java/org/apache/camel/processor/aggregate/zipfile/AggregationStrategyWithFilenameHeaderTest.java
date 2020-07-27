@@ -26,10 +26,13 @@ import java.util.zip.ZipFile;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {
 
@@ -37,7 +40,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
     private static final String TEST_DIR = "target/out_AggregationStrategyWithFilenameHeaderTest";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
@@ -55,7 +58,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
-        assertTrue("Should be a file in " + TEST_DIR + " directory", files.length > 0);
+        assertTrue(files.length > 0, "Should be a file in " + TEST_DIR + " directory");
 
         File resultFile = files[0];
 
@@ -66,9 +69,9 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
             while (entries.hasMoreElements()) {
                 fileCount++;
                 final ZipEntry entry = entries.nextElement();
-                assertTrue("Zip entry file name should be on of: " + FILE_NAMES, FILE_NAMES.contains(entry.getName()));
+                assertTrue(FILE_NAMES.contains(entry.getName()), "Zip entry file name should be on of: " + FILE_NAMES);
             }
-            assertEquals("Zip file should contain " + FILE_NAMES.size() + " files", FILE_NAMES.size(), fileCount);
+            assertEquals(FILE_NAMES.size(), fileCount, "Zip file should contain " + FILE_NAMES.size() + " files");
         } finally {
             IOHelper.close(file);
         }
