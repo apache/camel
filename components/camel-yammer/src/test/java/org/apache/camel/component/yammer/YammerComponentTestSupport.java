@@ -19,7 +19,7 @@ package org.apache.camel.component.yammer;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 public abstract class YammerComponentTestSupport extends CamelTestSupport {
 

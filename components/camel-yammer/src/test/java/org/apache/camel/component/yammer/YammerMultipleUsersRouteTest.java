@@ -22,10 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.User;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Online access to yammer and fails with 401 authentication error")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("Online access to yammer and fails with 401 authentication error")
 public class YammerMultipleUsersRouteTest extends YammerComponentTestSupport {
 
     @SuppressWarnings("unchecked")
