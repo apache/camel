@@ -12,6 +12,32 @@
 *{component-header}*
 
 
+
+The oaipmh component is used for harvest  OAI-PMH data providers. It allows do request to OAI-PMH endpoint using all verbs supported by the protocol.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-oaipmh</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,text]
+----------------------------------------------------
+oaipmh:url[?options]
+----------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
 == Options
 
 // component options: START
@@ -89,4 +115,53 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-include::camel-spring-boot::page$oaipmh-starter.adoc[]
+
+
+
+
+== Message Headers
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Name |Description
+|`CamelOaimphResumptionToken` | This header is obtained when onlyFirst option is enable. Return resumptiontoken of the request when data is still available.
+
+
+|=======================================================================
+
+== Usage
+
+The OAIPMH component supports both consumer and producer endpoints.
+
+
+== Producer Example
+
+The following is a basic example of how to send a message to a Telegram chat through the
+Telegram Bot API.
+
+in Java DSL
+
+[source,java]
+---------------------------------------------------------
+from("direct:start").to("oaipmh:baseUrlRepository/oai/request");
+---------------------------------------------------------
+
+
+The result is a set of pages in XML format with all the records of the consulted repository.
+
+
+
+== Consumer Example
+
+The following is a basic example of how to receive all messages that telegram users are sending to the configured Bot.
+In Java DSL
+
+[source,java]
+---------------------------------------------------------
+from("oaipmh:baseUrlRepository/oai/request")
+.to(mock:result)
+---------------------------------------------------------
+
+For more details about OAI-PMH see the documentation: http://www.openarchives.org/pmh/
+
+

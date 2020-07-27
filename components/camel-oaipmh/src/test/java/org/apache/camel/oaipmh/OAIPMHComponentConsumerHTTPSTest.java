@@ -18,6 +18,7 @@ package org.apache.camel.oaipmh;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.oaipmh.utils.JettyTestServer;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
@@ -39,7 +40,7 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("oaipmh://repositorio.cepal.org/oai/request?"
+                from("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request?"
                         + "ssl=true&"
                         + "delay=1000&"
                         + "from=2020-06-01T00:00:00Z&"
