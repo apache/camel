@@ -67,12 +67,17 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.component.xmlsecurity.util.TestKeystore;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xmlsecurity.XmlSignatureTest.checkThrownException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
@@ -90,7 +95,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         disableJMX();
         super.setUp();
@@ -623,104 +628,124 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
                         + " The correct namespace is 'http://uri.etsi.org/01903/v1.3.2#'.", null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void namespaceNull() throws Exception {
-        new XAdESSignatureProperties().setNamespace(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setNamespace(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void signingCertificateURIsNull() throws Exception {
-        new XAdESSignatureProperties().setSigningCertificateURIs(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSigningCertificateURIs(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void sigPolicyInvalid() throws Exception {
-        new XAdESSignatureProperties().setSignaturePolicy("invalid");
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSignaturePolicy("invalid"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void sigPolicyIdDocumentationReferencesNull() throws Exception {
-        new XAdESSignatureProperties().setSigPolicyIdDocumentationReferences(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSigPolicyIdDocumentationReferences(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void sigPolicyIdDocumentationReferencesNullEntry() throws Exception {
-        new XAdESSignatureProperties().setSigPolicyIdDocumentationReferences(Collections.<String> singletonList(null));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSigPolicyIdDocumentationReferences(Collections.<String> singletonList(null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void sigPolicyIdDocumentationReferencesEmptyEntry() throws Exception {
-        new XAdESSignatureProperties().setSigPolicyIdDocumentationReferences(Collections.<String> singletonList(""));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSigPolicyIdDocumentationReferences(Collections.<String> singletonList("")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void dataObjectFormatIdentifierDocumentationReferencesNull() throws Exception {
-        new XAdESSignatureProperties().setDataObjectFormatIdentifierDocumentationReferences(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setDataObjectFormatIdentifierDocumentationReferences(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void dataObjectFormatIdentifierDocumentationReferencesNullEntry() throws Exception {
-        new XAdESSignatureProperties().setDataObjectFormatIdentifierDocumentationReferences(Collections.<String> singletonList(null));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setDataObjectFormatIdentifierDocumentationReferences(Collections.<String> singletonList(null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void dataObjectFormatIdentifierDocumentationReferencesEmptyEntry() throws Exception {
-        new XAdESSignatureProperties().setDataObjectFormatIdentifierDocumentationReferences(Collections.<String> singletonList(""));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setDataObjectFormatIdentifierDocumentationReferences(Collections.<String> singletonList("")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void signerClaimedRolesNull() throws Exception {
-        new XAdESSignatureProperties().setSignerClaimedRoles(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSignerClaimedRoles(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void signerClaimedRolesNullEntry() throws Exception {
-        new XAdESSignatureProperties().setSignerClaimedRoles(Collections.<String> singletonList(null));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSignerClaimedRoles(Collections.<String> singletonList(null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void signerClaimedRolesEmptyEntry() throws Exception {
-        new XAdESSignatureProperties().setSignerClaimedRoles(Collections.<String> singletonList(""));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSignerClaimedRoles(Collections.<String> singletonList("")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void signerCertifiedRolesNull() throws Exception {
-        new XAdESSignatureProperties().setSignerCertifiedRoles(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSignerCertifiedRoles(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void signerCertifiedRolesNullEntry() throws Exception {
-        new XAdESSignatureProperties().setSignerCertifiedRoles(Collections.<XAdESEncapsulatedPKIData> singletonList(null));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setSignerCertifiedRoles(Collections.<XAdESEncapsulatedPKIData> singletonList(null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void commitmentTypeIdDocumentationReferencesNull() throws Exception {
-        new XAdESSignatureProperties().setCommitmentTypeIdDocumentationReferences(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setCommitmentTypeIdDocumentationReferences(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void commitmentTypeIdDocumentationReferencesNullEntry() throws Exception {
-        new XAdESSignatureProperties().setCommitmentTypeIdDocumentationReferences(Collections.<String> singletonList(null));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setCommitmentTypeIdDocumentationReferences(Collections.<String> singletonList(null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void commitmentTypeIdDocumentationReferencesEmptyEntry() throws Exception {
-        new XAdESSignatureProperties().setCommitmentTypeIdDocumentationReferences(Collections.<String> singletonList(""));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setCommitmentTypeIdDocumentationReferences(Collections.<String> singletonList("")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void commitmentTypeQualifiersNull() throws Exception {
-        new XAdESSignatureProperties().setCommitmentTypeQualifiers(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setCommitmentTypeQualifiers(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void commitmentTypeQualifiersNullEntry() throws Exception {
-        new XAdESSignatureProperties().setCommitmentTypeQualifiers(Collections.<String> singletonList(null));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setCommitmentTypeQualifiers(Collections.<String> singletonList(null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void commitmentTypeQualifiersEmptyEntry() throws Exception {
-        new XAdESSignatureProperties().setCommitmentTypeQualifiers(Collections.<String> singletonList(""));
+        assertThrows(IllegalArgumentException.class,
+            () -> new XAdESSignatureProperties().setCommitmentTypeQualifiers(Collections.<String> singletonList("")));
     }
 
     //
@@ -850,7 +875,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         if (startsWith) {
             assertTrue(result.startsWith(expectedResult));
         } else if (NOT_EMPTY.equals(expectedResult)) {
-            assertTrue("Not empty result for xpath " + xpathString + " expected", !result.isEmpty());
+            assertTrue(!result.isEmpty(), "Not empty result for xpath " + xpathString + " expected");
         } else {
             assertEquals(expectedResult, result);
         }
@@ -862,9 +887,9 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XPathExpression expr = getXpath(xpathString, prefix2Namespace);
         Object result = expr.evaluate(doc, XPathConstants.NODE);
         if (exists) {
-            assertNotNull("The xpath " + xpathString + " returned null, expected was a node", result);
+            assertNotNull(result, "The xpath " + xpathString + " returned null, expected was a node");
         } else {
-            assertNull("The xpath " + xpathString + " returned a node, expected was none: ", result);
+            assertNull(result, "The xpath " + xpathString + " returned a node, expected was none: ");
         }
     }
 

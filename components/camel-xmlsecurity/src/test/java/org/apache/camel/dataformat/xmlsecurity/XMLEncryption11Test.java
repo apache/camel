@@ -26,11 +26,11 @@ import javax.xml.transform.OutputKeys;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.utils.EncryptionConstants;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Some unit tests for XML Encryption 1.1 functionality
@@ -59,7 +59,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
