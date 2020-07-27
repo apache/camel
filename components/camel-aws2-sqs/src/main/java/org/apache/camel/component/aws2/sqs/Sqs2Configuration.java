@@ -49,6 +49,8 @@ public class Sqs2Configuration implements Cloneable {
     private boolean autoCreateQueue = true;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -570,6 +572,19 @@ public class Sqs2Configuration implements Cloneable {
      */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
+    }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************

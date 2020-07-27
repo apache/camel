@@ -20,6 +20,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SqsComponentClientRegistryTest extends CamelTestSupport {
@@ -42,5 +44,27 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
         assertThrows(IllegalArgumentException.class, () -> {
             Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue");
         });
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoveryClientFalse() throws Exception {
+
+        AmazonSQSClientMock awsSQSClient = new AmazonSQSClientMock();
+        context.getRegistry().bind("awsSQSClient", awsSQSClient);
+        Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
+        Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+
+        assertNotSame(awsSQSClient, endpoint.getConfiguration().getAmazonSQSClient());
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoveryClientTrue() throws Exception {
+
+        AmazonSQSClientMock awsSQSClient = new AmazonSQSClientMock();
+        context.getRegistry().bind("awsSQSClient", awsSQSClient);
+        Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
+        Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
+
+        assertSame(awsSQSClient, endpoint.getConfiguration().getAmazonSQSClient());
     }
 }
