@@ -19,9 +19,10 @@ package org.apache.camel.reactive;
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitParallelLookupVertxTest extends CamelTestSupport {
 
@@ -57,7 +58,7 @@ public class SplitParallelLookupVertxTest extends CamelTestSupport {
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();
-                            Assert.assertTrue("Should use vertx thread", name.startsWith("vert.x-worker-thread"));
+                            assertTrue(name.startsWith("vert.x-worker-thread"), "Should use vertx thread");
                         })
                         .to("mock:split")
                     .end()
