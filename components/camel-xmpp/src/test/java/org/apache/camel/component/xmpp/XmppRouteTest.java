@@ -19,9 +19,6 @@ package org.apache.camel.component.xmpp;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -31,13 +28,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.jivesoftware.smack.packet.Message;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ignore("Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target")
-public class XmppRouteTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target")
+public class XmppRouteTest {
     protected static boolean enabled;
     protected static String xmppUrl;
     private static final Logger LOG = LoggerFactory.getLogger(XmppRouteTest.class);
@@ -48,21 +51,13 @@ public class XmppRouteTest extends TestCase {
     protected ProducerTemplate client;
     private EmbeddedXmppTestServer embeddedXmppTestServer;
 
-    public static void main(String[] args) {
-        enabled = true;
-        if (args.length > 0) {
-            xmppUrl = args[0];
-        }
-        TestRunner.run(XmppRouteTest.class);
-    }
-
     @Test
     public void testXmppRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
         sendExchange(expectedBody);
 
         Object body = assertReceivedValidExchange();
-        assertEquals("body", expectedBody, body);
+        assertEquals(expectedBody, body, "body");
     }
     
     protected void sendExchange(final Object expectedBody) {
@@ -82,7 +77,7 @@ public class XmppRouteTest extends TestCase {
         assertNotNull(receivedExchange);
         XmppMessage receivedMessage = (XmppMessage)receivedExchange.getIn();
 
-        assertEquals("cheese header", 123, receivedMessage.getHeader("cheese"));
+        assertEquals(123, receivedMessage.getHeader("cheese"), "cheese header");
         Object body = receivedMessage.getBody();
         XmppRouteTest.LOG.debug("Received body: " + body);
         Message xmppMessage = receivedMessage.getXmppMessage();
@@ -92,8 +87,8 @@ public class XmppRouteTest extends TestCase {
         return body;
     }
 
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         client = new DefaultProducerTemplate(context);
 
         String uriPrefix = getUriPrefix();
@@ -103,7 +98,7 @@ public class XmppRouteTest extends TestCase {
         LOG.info("Using URI " + uri1 + " and " + uri2);
 
         endpoint = context.getEndpoint(uri1);
-        assertNotNull("No endpoint found!", endpoint);
+        assertNotNull(endpoint, "No endpoint found!");
 
         // lets add some routes
         context.addRoutes(new RouteBuilder() {
@@ -127,8 +122,8 @@ public class XmppRouteTest extends TestCase {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort() + "/camel?login=false&room=camel-anon";
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         client.stop();
         context.stop();
         embeddedXmppTestServer.stop();
