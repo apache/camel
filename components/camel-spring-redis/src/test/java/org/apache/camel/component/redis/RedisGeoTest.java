@@ -17,11 +17,12 @@
 package org.apache.camel.component.redis;
 
 import org.apache.camel.BindToRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.geo.Circle;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
@@ -34,7 +35,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class RedisGeoTest extends RedisTestSupport {
 
     @Mock
@@ -44,7 +45,7 @@ public class RedisGeoTest extends RedisTestSupport {
     @Mock
     private GeoOperations<String, String> geoOperations;
 
-    @Before
+    @BeforeEach
     public void setupTests() {
         when(redisTemplate.opsForGeo()).thenReturn(geoOperations);
     }
