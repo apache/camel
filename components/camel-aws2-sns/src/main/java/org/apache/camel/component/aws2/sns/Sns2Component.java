@@ -67,7 +67,9 @@ public class Sns2Component extends DefaultComponent {
         }
         Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration, endpoint);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration, endpoint);
+        }
         if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }

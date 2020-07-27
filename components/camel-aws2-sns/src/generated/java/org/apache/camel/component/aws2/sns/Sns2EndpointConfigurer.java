@@ -25,6 +25,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": target.getConfiguration().setAmazonSNSClient(property(camelContext, software.amazon.awssdk.services.sns.SnsClient.class, value)); return true;
         case "autocreatetopic":
         case "autoCreateTopic": target.getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -65,6 +67,7 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonSNSClient", software.amazon.awssdk.services.sns.SnsClient.class);
         answer.put("autoCreateTopic", boolean.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         answer.put("kmsMasterKeyId", java.lang.String.class);
@@ -95,6 +98,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": return target.getConfiguration().getAmazonSNSClient();
         case "autocreatetopic":
         case "autoCreateTopic": return target.getConfiguration().isAutoCreateTopic();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "headerfilterstrategy":
