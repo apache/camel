@@ -20,13 +20,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
-@Ignore
+@Disabled
 public class RedisConsumerIntegrationTest extends RedisTestSupport {
     private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
     private static final RedisMessageListenerContainer LISTENER_CONTAINER = new RedisMessageListenerContainer();
