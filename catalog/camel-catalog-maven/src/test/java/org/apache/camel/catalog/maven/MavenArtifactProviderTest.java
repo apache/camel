@@ -20,12 +20,14 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Cannot run on CI servers so run manually")
-public class MavenArtifactProviderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Cannot run on CI servers so run manually")
+public class MavenArtifactProviderTest {
 
     @Test
     public void testAddComponent() {
@@ -40,7 +42,7 @@ public class MavenArtifactProviderTest extends Assert {
 
         int after = camelCatalog.findComponentNames().size();
 
-        assertTrue("Should find 1 new component", after - before == 1);
+        assertEquals(1, after - before, "Should find 1 new component");
     }
 
 }
