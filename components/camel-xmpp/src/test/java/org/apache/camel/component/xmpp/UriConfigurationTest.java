@@ -19,16 +19,18 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UriConfigurationTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class UriConfigurationTest {
     protected CamelContext context = new DefaultCamelContext();
 
     @Test
     public void testPrivateChatConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
-        assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
+        assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
 
@@ -43,7 +45,7 @@ public class UriConfigurationTest extends Assert {
     @Test
     public void testGroupChatConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
-        assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
+        assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
 
@@ -61,7 +63,7 @@ public class UriConfigurationTest extends Assert {
     @Test
     public void testDefaultResource() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com?password=secret");
-        assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
+        assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
         assertEquals("Camel", xmppEndpoint.getResource());
@@ -70,7 +72,7 @@ public class UriConfigurationTest extends Assert {
     @Test
     public void testPubSubConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123?password=secret&pubsub=true");
-        assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
+        assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
         assertEquals("localhost", xmppEndpoint.getHost());

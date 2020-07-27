@@ -20,17 +20,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test to verify that the XMPP producer and consumer will create deferred / lazy connections
  * to the XMPP server when the server is not available upon route initialization. Also verify that
  * these endpoints will then deliver messages as expected.
  */
-@Ignore("This test is not working at the moment")
+@Disabled("This test is not working at the moment")
 public class XmppDeferredConnectionTest extends CamelTestSupport {
 
     private EmbeddedXmppTestServer embeddedXmppTestServer;
@@ -119,7 +119,7 @@ public class XmppDeferredConnectionTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         embeddedXmppTestServer.stop();
