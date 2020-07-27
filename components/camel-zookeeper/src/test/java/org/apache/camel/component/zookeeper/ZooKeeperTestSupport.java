@@ -23,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -35,6 +35,10 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ZooKeeperTestSupport extends ContainerAwareTestSupport {
     protected String testPayload = "This is a test";
@@ -161,7 +165,7 @@ public class ZooKeeperTestSupport extends ContainerAwareTestSupport {
         for (int x = 0; x < received.size(); x++) {
             Message zkm = mock.getReceivedExchanges().get(x).getIn();
             int version = ZooKeeperMessage.getStatistics(zkm).getVersion();
-            assertTrue("Version did not increase", lastVersion < version);
+            assertTrue(lastVersion < version, "Version did not increase");
             lastVersion = version;
         }
     }

@@ -28,7 +28,10 @@ import org.apache.camel.component.zookeeper.NaturalSortComparator.Order;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class ConsumeChildrenTest extends ZooKeeperTestSupport {
 
@@ -82,7 +85,7 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
         for (int x = 0; x < received.size(); x++) {
             Message zkm = mock.getReceivedExchanges().get(x).getIn();
             int childCount = ((Stat)zkm.getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS)).getNumChildren();
-            assertNotSame("Num of children did not change", lastChildCount, childCount);
+            assertNotSame(lastChildCount, childCount, "Num of children did not change");
             lastChildCount = childCount;
         }
     }

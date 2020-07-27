@@ -18,7 +18,10 @@ package org.apache.camel.component.zookeeper.operations;
 
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.zookeeper.ZooKeeper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DataChangedOperationTest extends ZooKeeperTestSupport {
 
@@ -43,6 +46,6 @@ public class DataChangedOperationTest extends ZooKeeperTestSupport {
         connection.getData("/existedButWasDeleted", future, null);
 
         client.delete("/existedButWasDeleted");
-        assertEquals(null, future.get().getResult());
+        assertNull(future.get().getResult());
     }
 }

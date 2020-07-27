@@ -29,11 +29,10 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ZooKeeperServiceDiscoveryTest {
 
@@ -84,7 +83,7 @@ public class ZooKeeperServiceDiscoveryTest {
             assertEquals(3, services.size());
 
             for (ServiceDefinition service : services) {
-                Assert.assertEquals(
+                assertEquals(
                     1,
                     instances.stream()
                         .filter(

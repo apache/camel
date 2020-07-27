@@ -18,7 +18,9 @@ package org.apache.camel.component.zookeeper;
 
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooKeeper.States;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ZookeeperConnectionManagerTest extends ZooKeeperTestSupport {
 
