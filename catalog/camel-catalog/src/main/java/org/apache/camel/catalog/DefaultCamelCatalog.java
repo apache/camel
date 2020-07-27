@@ -348,6 +348,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         return cache("main", "main", k -> super.mainJSonSchema());
     }
 
+    @Override
     public MainModel mainModel() {
         return cache("main-model", "main-model", k -> super.mainModel());
     }
