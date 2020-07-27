@@ -25,9 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.curator.framework.CuratorFramework;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public class MasterEndpointFailoverTest {
     protected ZKContainer zkContainer = new ZKContainer();
     protected CuratorFactoryBean zkClientBean = new CuratorFactoryBean();
 
-    @Before
+    @BeforeEach
     public void beforeRun() throws Exception {
         zkContainer.start();
 
@@ -93,7 +93,7 @@ public class MasterEndpointFailoverTest {
         result2Endpoint = consumerContext2.getEndpoint("mock:result2", MockEndpoint.class);
     }
 
-    @After
+    @AfterEach
     public void afterRun() throws Exception {
         consumerContext1.stop();
         consumerContext2.stop();

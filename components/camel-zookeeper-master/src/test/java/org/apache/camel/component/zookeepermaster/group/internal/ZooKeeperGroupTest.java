@@ -29,13 +29,13 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.zookeeper.data.Stat;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ZooKeeperGroupTest {
 
@@ -48,7 +48,7 @@ public class ZooKeeperGroupTest {
         return AvailablePortFinder.getNextAvailable();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         int port = findFreePort();
         curator = CuratorFrameworkFactory.builder()
@@ -61,7 +61,7 @@ public class ZooKeeperGroupTest {
         // Starting curator and group is not necessary for the current tests.
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         group.close();
         curator.close();
