@@ -18,12 +18,11 @@ package org.apache.camel.dataformat.xmlsecurity;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 @ContextConfiguration
 public class SpringXmlSecurityDataFormatTest implements CamelContextAware {
     

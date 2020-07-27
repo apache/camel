@@ -35,11 +35,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Diff;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestHelper {
     
@@ -134,7 +136,7 @@ public class TestHelper {
         if (log.isDebugEnabled()) {
             logMessage(exchange, inDoc);
         }
-        Assert.assertTrue("The XML message has no encrypted data.", hasEncryptedData(inDoc));
+        assertTrue(hasEncryptedData(inDoc), "The XML message has no encrypted data.");
         return inDoc;
     }
     
@@ -155,12 +157,12 @@ public class TestHelper {
         if (log.isDebugEnabled()) {
             logMessage(exchange, inDoc);
         }
-        Assert.assertFalse("The XML message has encrypted data.", hasEncryptedData(inDoc));
+        assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
         
         // verify that the decrypted message matches what was sent
         Diff xmlDiff = DiffBuilder.compare(fragment).withTest(inDoc).checkForIdentical().build();
         
-        Assert.assertFalse("The decrypted document does not match the control document:\n" + xmlDiff.toString(), xmlDiff.hasDifferences());
+        assertFalse(xmlDiff.hasDifferences(), "The decrypted document does not match the control document:\n" + xmlDiff.toString());
     }
     
     protected void testDecryption(CamelContext context) throws Exception {
@@ -177,7 +179,7 @@ public class TestHelper {
         XmlConverter converter = new XmlConverter();
         String xmlStr = converter.toString(inDoc, exchange);
         log.info(xmlStr);
-        Assert.assertFalse("The XML message has encrypted data.", hasEncryptedData(inDoc));
+        assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
     }
     
     private boolean hasEncryptedData(Document doc) throws Exception {

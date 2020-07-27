@@ -33,7 +33,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringXmlSignatureTest extends XmlSignatureTest {

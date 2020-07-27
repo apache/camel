@@ -38,17 +38,22 @@ import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 import org.apache.camel.component.xmlsecurity.util.SameDocumentUriDereferencer;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 
 /**
  * Test for the ECDSA algorithms
  */
 public class ECDSASignatureTest extends CamelTestSupport {
-    
+
     private static String payload;
+    private Logger log = LoggerFactory.getLogger(getClass());
     private boolean canTest = true;
     
     static {
@@ -241,7 +246,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         disableJMX();
         try {
