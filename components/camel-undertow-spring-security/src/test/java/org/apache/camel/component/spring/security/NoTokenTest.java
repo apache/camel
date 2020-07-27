@@ -20,8 +20,11 @@ import io.undertow.util.StatusCodes;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NoTokenTest extends AbstractSpringSecurityBearerTokenTest {
 
@@ -35,7 +38,7 @@ public class NoTokenTest extends AbstractSpringSecurityBearerTokenTest {
             template.requestBody("undertow:http://localhost:{{port}}/myapp",
                     "empty body",
                     String.class);
-            Assert.fail("Access has to be denied");
+            fail("Access has to be denied");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(StatusCodes.FORBIDDEN, he.getStatusCode());
