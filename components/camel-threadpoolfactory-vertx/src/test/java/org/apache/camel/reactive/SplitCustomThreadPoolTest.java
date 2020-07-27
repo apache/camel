@@ -21,9 +21,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.reactive.vertx.VertXThreadPoolFactory;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitCustomThreadPoolTest extends CamelTestSupport {
 
@@ -67,7 +68,7 @@ public class SplitCustomThreadPoolTest extends CamelTestSupport {
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();
-                            Assert.assertTrue("Should use Camel thread", name.startsWith("Camel"));
+                            assertTrue(name.startsWith("Camel"), "Should use Camel thread");
                         })
                         .to("mock:split")
                     .end()
