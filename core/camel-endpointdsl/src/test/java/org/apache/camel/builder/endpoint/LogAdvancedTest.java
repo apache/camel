@@ -26,7 +26,7 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogAdvancedTest extends ContextTestSupport {
 

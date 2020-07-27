@@ -22,8 +22,8 @@ import org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory;
 import org.apache.camel.component.paho.PahoEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PahoTest extends ContextTestSupport {
 

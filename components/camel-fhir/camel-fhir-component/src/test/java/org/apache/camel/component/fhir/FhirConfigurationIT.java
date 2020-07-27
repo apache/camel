@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,7 +81,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
         assertEquals(5, interceptors.size());
 
         long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
-        Assert.assertEquals("Should not use reflection", 0, counter);
+        assertEquals(0, counter, "Should not use reflection");
     }
 
     @Override
