@@ -19,8 +19,8 @@ package org.apache.camel.component.kafka.serde;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class DefaultKafkaHeaderDeserializerTest {
 

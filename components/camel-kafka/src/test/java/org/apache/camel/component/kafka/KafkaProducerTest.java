@@ -47,11 +47,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -401,15 +401,15 @@ public class KafkaProducerTest {
 
     private void assertRecordMetadataExists() {
         List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>)in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
-        assertTrue(recordMetaData1 != null);
-        assertEquals("Expected one recordMetaData", recordMetaData1.size(), 1);
-        assertTrue(recordMetaData1.get(0) != null);
+        assertNotNull(recordMetaData1);
+        assertEquals(recordMetaData1.size(), 1, "Expected one recordMetaData");
+        assertNotNull(recordMetaData1.get(0));
     }
 
     private void assertRecordMetadataExists(final int numMetadata) {
         List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>)in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
-        assertTrue(recordMetaData1 != null);
-        assertEquals("Expected one recordMetaData", recordMetaData1.size(), numMetadata);
+        assertNotNull(recordMetaData1);
+        assertEquals(recordMetaData1.size(), numMetadata, "Expected one recordMetaData");
         assertTrue(recordMetaData1.get(0) != null);
     }
 
@@ -417,9 +417,9 @@ public class KafkaProducerTest {
         List<Exchange> exchanges = (List<Exchange>)in.getBody();
         for (Exchange ex : exchanges) {
             List<RecordMetadata> recordMetaData = (List<RecordMetadata>)ex.getMessage().getHeader(KafkaConstants.KAFKA_RECORDMETA);
-            assertTrue(recordMetaData != null);
-            assertEquals("Expected one recordMetaData", recordMetaData.size(), 1);
-            assertTrue(recordMetaData.get(0) != null);
+            assertNotNull(recordMetaData);
+            assertEquals(recordMetaData.size(), 1, "Expected one recordMetaData");
+            assertNotNull(recordMetaData.get(0));
         }
     }
 
@@ -427,9 +427,9 @@ public class KafkaProducerTest {
         List<Message> messages = (List<Message>)in.getBody();
         for (Message msg : messages) {
             List<RecordMetadata> recordMetaData = (List<RecordMetadata>)msg.getHeader(KafkaConstants.KAFKA_RECORDMETA);
-            assertTrue(recordMetaData != null);
-            assertEquals("Expected one recordMetaData", recordMetaData.size(), 1);
-            assertTrue(recordMetaData.get(0) != null);
+            assertNotNull(recordMetaData);
+            assertEquals(recordMetaData.size(), 1, "Expected one recordMetaData");
+            assertNotNull(recordMetaData.get(0));
         }
     }
 
