@@ -32,7 +32,7 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,9 @@ public class PulsarConcurrentConsumerInTest extends PulsarTestSupport {
             producer.send("Hello World!");
         }
 
+        System.out.println(NUMBER_OF_CONSUMERS + " messages sent, waiting for receival");
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+        System.out.println("Messages received");
 
         producer.close();
     }

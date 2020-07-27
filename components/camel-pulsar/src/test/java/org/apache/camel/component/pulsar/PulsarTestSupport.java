@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.pulsar;
 
-import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.Wait;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.junit5.Wait;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.GenericContainer;
 
 public class PulsarTestSupport extends ContainerAwareTestSupport {
@@ -45,5 +50,19 @@ public class PulsarTestSupport extends ContainerAwareTestSupport {
 
     public String getPulsarAdminUrl() {
         return String.format("http://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_HTTP_PORT));
+    }
+
+    protected long containerShutdownTimeout() {
+        return TimeUnit.SECONDS.toSeconds(10);
+    }
+
+    protected void cleanupResources() throws Exception {
+        System.out.println("Cleaning up resources");
+        Instant t0 = Instant.now();
+        try {
+            super.cleanupResources();
+        } finally {
+            System.out.println("Resources clean up in " + Duration.between(t0, Instant.now()));
+        }
     }
 }
