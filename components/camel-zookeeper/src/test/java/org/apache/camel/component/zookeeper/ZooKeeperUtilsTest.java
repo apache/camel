@@ -21,12 +21,11 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.zookeeper.CreateMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
-import static org.junit.Assert.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ZooKeeperUtilsTest {
 
     private CamelContext camelContext = new DefaultCamelContext();

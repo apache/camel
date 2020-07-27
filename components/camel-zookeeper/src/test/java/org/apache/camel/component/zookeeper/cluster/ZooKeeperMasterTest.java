@@ -29,10 +29,12 @@ import java.util.stream.IntStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class ZooKeeperMasterTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperMasterTest.class);
@@ -61,8 +63,8 @@ public final class ZooKeeperMasterTest {
             LATCH.await(1, TimeUnit.MINUTES);
             SCHEDULER.shutdownNow();
 
-            Assert.assertEquals(CLIENTS.size(), RESULTS.size());
-            Assert.assertTrue(RESULTS.containsAll(CLIENTS));
+            assertEquals(CLIENTS.size(), RESULTS.size());
+            assertTrue(RESULTS.containsAll(CLIENTS));
         } finally {
             if (container != null) {
                 container.stop();

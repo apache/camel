@@ -23,8 +23,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.jmx.support.JmxUtils;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
 public class ZooKeeperManagedEndpointTest extends ZooKeeperTestSupport {
@@ -40,7 +42,7 @@ public class ZooKeeperManagedEndpointTest extends ZooKeeperTestSupport {
     @Test
     public void testEnpointConfigurationCanBeSetViaJMX() throws Exception {
         Set s = getMBeanServer().queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"zookeeper:*\",*"), null);
-        assertEquals("Could not find zookeper endpoint: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find zookeper endpoint: " + s);
         ObjectName zepName = new ArrayList<ObjectName>(s).get(0);
 
         verifyManagedAttribute(zepName, "Path", "/node");
