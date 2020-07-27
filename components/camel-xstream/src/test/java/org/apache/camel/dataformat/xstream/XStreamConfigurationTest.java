@@ -31,9 +31,11 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Marshal tests with domain objects.
@@ -44,7 +46,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
     private static volatile boolean methodInjected;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         constructorInjected = false;
@@ -124,7 +126,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         mock.assertIsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getBody(String.class);
         // make sure the result is start with "{"
-        assertTrue("Should get a json result", result.startsWith("{"));
+        assertTrue(result.startsWith("{"), "Should get a json result");
     }
 
     @Override
