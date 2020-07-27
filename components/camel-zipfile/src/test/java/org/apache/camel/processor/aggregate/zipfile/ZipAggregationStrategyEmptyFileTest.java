@@ -23,10 +23,13 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
 
@@ -35,7 +38,7 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
 
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/foo");
         deleteDirectory(TEST_DIR);
@@ -57,7 +60,7 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
-        assertTrue("Should be a file in " + TEST_DIR + " directory", files.length > 0);
+        assertTrue(files.length > 0, "Should be a file in " + TEST_DIR + " directory");
 
         File resultFile = files[0];
 
@@ -67,7 +70,8 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
                 fileCount++;
             }
-            assertEquals("Zip file should contains " + ZipAggregationStrategyEmptyFileTest.EXPECTED_NO_FILES + " files", ZipAggregationStrategyEmptyFileTest.EXPECTED_NO_FILES, fileCount);
+            assertEquals(ZipAggregationStrategyEmptyFileTest.EXPECTED_NO_FILES, fileCount,
+                    "Zip file should contains " + ZipAggregationStrategyEmptyFileTest.EXPECTED_NO_FILES + " files");
         } finally {
             IOHelper.close(zin);
         }

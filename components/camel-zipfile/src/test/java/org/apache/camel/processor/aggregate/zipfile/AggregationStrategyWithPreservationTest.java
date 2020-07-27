@@ -26,10 +26,13 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
@@ -37,7 +40,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     private static final String TEST_DIR = "target/out_AggregationStrategyWithPreservationTest";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
@@ -51,7 +54,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
-        assertTrue("Should be a file in " + TEST_DIR + " directory", files.length > 0);
+        assertTrue(files.length > 0, "Should be a file in " + TEST_DIR + " directory");
         
         File resultFile = files[0];
         Set<String> expectedZipFiles = new HashSet<>(Arrays.asList("another/hello.txt",
@@ -62,14 +65,15 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
             int fileCount = 0;
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
                 if (!ze.isDirectory()) {
-                    assertTrue("Found unexpected entry " + ze + " in zipfile", expectedZipFiles.remove(ze.toString()));
+                    assertTrue(expectedZipFiles.remove(ze.toString()), "Found unexpected entry " + ze + " in zipfile");
                     fileCount++;
                 }
             }
 
-            assertTrue(String.format("Zip file should contains %d files, got %d files", AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount),
-                       fileCount == AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES);
-            assertEquals("Should have found all of the zip files in the file. Remaining: " + expectedZipFiles, 0, expectedZipFiles.size());
+            assertEquals(fileCount, AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES,
+                    String.format("Zip file should contains %d files, got %d files", AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount));
+            assertEquals(0, expectedZipFiles.size(),
+                    "Should have found all of the zip files in the file. Remaining: " + expectedZipFiles);
         } finally {
             IOHelper.close(zin);
         }

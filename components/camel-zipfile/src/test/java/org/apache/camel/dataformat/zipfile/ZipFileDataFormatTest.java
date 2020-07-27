@@ -39,10 +39,14 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.Exchange.FILE_NAME;
 
@@ -157,13 +161,12 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         deleteDirectory(new File("hello_out"));
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testUnzipWithCorruptedZipFile() throws Exception {
         deleteDirectory(new File("hello_out"));
 
-        template.sendBody("direct:corruptUnzip", new File("src/test/resources/corrupt.zip"));
-
-        deleteDirectory(new File("hello_out"));
+        assertThrows(CamelExecutionException.class,
+            () -> template.sendBody("direct:corruptUnzip", new File("src/test/resources/corrupt.zip")));
     }
 
     @Test
@@ -195,12 +198,12 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // use builder to ensure the exchange is fully done before we check for file exists
-        assertTrue("The exchange is not done in time.", notify.matches(5, TimeUnit.SECONDS));
+        assertTrue(notify.matches(5, TimeUnit.SECONDS), "The exchange is not done in time.");
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".zip");
-        assertTrue("The file should exist.", file.exists());
-        assertArrayEquals("Get a wrong message content.", getZippedText(exchange.getIn().getMessageId()), getBytes(file));
+        assertTrue(file.exists(), "The file should exist.");
+        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), getBytes(file), "Get a wrong message content.");
     }
 
     @Test
@@ -211,7 +214,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         
         File file = new File(TEST_DIR, "poem.txt.zip");
-        assertFalse("The zip should not exit.", file.exists());
+        assertFalse(file.exists(), "The zip should not exit.");
 
         template.sendBodyAndHeader("direct:zipToFile", TEXT, FILE_NAME, "poem.txt");
 
@@ -219,10 +222,10 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // use builder to ensure the exchange is fully done before we check for file exists
-        assertTrue("The exchange is not done in time.", notify.matches(5, TimeUnit.SECONDS));
+        assertTrue(notify.matches(5, TimeUnit.SECONDS), "The exchange is not done in time.");
 
-        assertTrue("The file should exist.", file.exists());
-        assertArrayEquals("Get a wrong message content.", getZippedText("poem.txt"), getBytes(file));
+        assertTrue(file.exists(), "The file should exist.");
+        assertArrayEquals(getZippedText("poem.txt"), getBytes(file), "Get a wrong message content.");
     }
 
     @Test
@@ -246,7 +249,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
