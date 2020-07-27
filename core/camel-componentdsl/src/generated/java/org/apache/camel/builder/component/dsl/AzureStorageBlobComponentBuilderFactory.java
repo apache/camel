@@ -272,7 +272,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * The option is a:
          * <code>com.azure.storage.blob.models.BlockListType</code> type.
          * 
-         * Default: committed
+         * Default: COMMITTED
          * Group: producer
          */
         default AzureStorageBlobComponentBuilder blockListType(
