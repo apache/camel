@@ -32,7 +32,7 @@ import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @Disabled("Fails on CI server sometimes")
 public class QuickfixjLazyProducerTest {

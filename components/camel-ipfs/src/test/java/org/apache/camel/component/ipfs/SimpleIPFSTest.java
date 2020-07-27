@@ -29,11 +29,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assume;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /*
 
@@ -77,7 +77,7 @@ public class SimpleIPFSTest {
                 assertTrue(resA.startsWith("0.4"), "Expecting 0.4 in: " + resA);
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-                Assume.assumeFalse("IPFS is running", notRunning);
+                assumeFalse(notRunning, "IPFS is running");
             }
         }
     }
@@ -103,7 +103,7 @@ public class SimpleIPFSTest {
                 assertEquals(SINGLE_HASH, res);
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-                Assume.assumeFalse("IPFS is running", notRunning);
+                assumeFalse(notRunning, "IPFS is running");
             }
         }
     }
@@ -131,7 +131,7 @@ public class SimpleIPFSTest {
                 assertEquals(RECURSIVE_HASH, res.get(9));
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-                Assume.assumeFalse("IPFS is running", notRunning);
+                assumeFalse(notRunning, "IPFS is running");
             }
         }
     }
@@ -156,7 +156,7 @@ public class SimpleIPFSTest {
                 verifyFileContent(res);
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-                Assume.assumeFalse("IPFS is running", notRunning);
+                assumeFalse(notRunning, "IPFS is running");
             }
         }
     }
@@ -182,7 +182,7 @@ public class SimpleIPFSTest {
                 verifyFileContent(new FileInputStream(res.toFile()));
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-                Assume.assumeFalse("IPFS is running", notRunning);
+                assumeFalse(notRunning, "IPFS is running");
             }
         }
     }
@@ -209,7 +209,7 @@ public class SimpleIPFSTest {
                 assertTrue(res.resolve("index.html").toFile().exists());
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-                Assume.assumeFalse("IPFS is running", notRunning);
+                assumeFalse(notRunning, "IPFS is running");
             }
         }
     }

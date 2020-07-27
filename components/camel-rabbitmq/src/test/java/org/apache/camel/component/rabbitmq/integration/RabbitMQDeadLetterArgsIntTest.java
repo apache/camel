@@ -31,8 +31,10 @@ import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
     private static final String LOCAL_RABBITMQ_PARAMS = "hostname=localhost&portNumber=5672&username=cameltest&password=cameltest";
@@ -107,8 +109,8 @@ public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
         receivedEndpoint.assertIsSatisfied();
 
         RabbitMQEndpoint endpoint = (RabbitMQEndpoint) context.getRoute("consumer").getEndpoint();
-        Assert.assertNotNull(endpoint.getDlqArgs());
-        Assert.assertEquals(10, endpoint.getDlqArgs().get("x-max-priority"));
+        assertNotNull(endpoint.getDlqArgs());
+        assertEquals(10, endpoint.getDlqArgs().get("x-max-priority"));
 
         String rabbitApiResponse = template.requestBody(
                 String.format("http://localhost:%s/api/queues?authUsername=cameltest&authPassword=cameltest&authMethod=Basic&httpMethod=GET", DockerTestUtils.EXPOSE_PORT_MANAGEMENT),
@@ -120,15 +122,15 @@ public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
         JsonObject queueSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(QUEUE_SKIP_DECLARE)).findAny().orElse(null);
         JsonObject dlqSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(DLQ_SKIP_DECLARE)).findAny().orElse(null);
 
-        Assert.assertNotNull(String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ, rabbitApiResponse), dlqObject);
-        Assert.assertNotNull(String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE, rabbitApiResponse), queueObject);
-        Assert.assertNotNull(String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE_SKIP_DECLARE, rabbitApiResponse), queueObject);
-        Assert.assertNotNull(String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ_SKIP_DECLARE, rabbitApiResponse), dlqSkipDeclareObject);
+        assertNotNull(dlqObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ, rabbitApiResponse));
+        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE, rabbitApiResponse));
+        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE_SKIP_DECLARE, rabbitApiResponse));
+        assertNotNull(dlqSkipDeclareObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ_SKIP_DECLARE, rabbitApiResponse));
 
-        Assert.assertEquals(BigDecimal.valueOf(10), dlqObject.getMap("arguments").get("x-max-priority"));
-        Assert.assertEquals(BigDecimal.valueOf(5), dlqSkipDeclareObject.getMap("arguments").get("x-max-priority"));
-        Assert.assertEquals("dlqexchange", queueObject.getMap("arguments").get("x-dead-letter-exchange"));
-        Assert.assertEquals("anotherExchange", queueSkipDeclareObject.getMap("arguments").get("x-dead-letter-exchange"));
+        assertEquals(BigDecimal.valueOf(10), dlqObject.getMap("arguments").get("x-max-priority"));
+        assertEquals(BigDecimal.valueOf(5), dlqSkipDeclareObject.getMap("arguments").get("x-max-priority"));
+        assertEquals("dlqexchange", queueObject.getMap("arguments").get("x-dead-letter-exchange"));
+        assertEquals("anotherExchange", queueSkipDeclareObject.getMap("arguments").get("x-dead-letter-exchange"));
     }
 
     private Predicate<Object> jsonQueueFilter(String name) {
