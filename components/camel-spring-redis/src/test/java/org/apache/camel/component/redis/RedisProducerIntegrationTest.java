@@ -18,12 +18,14 @@ package org.apache.camel.component.redis;
 
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-@Ignore
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled
 public class RedisProducerIntegrationTest extends RedisTestSupport {
     private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
 
