@@ -21,6 +21,6 @@ github:
   labels:
     - camel
     - integration
-    - java%
+    - java
 notifications:
   pullrequests: commits@camel.apache.org
