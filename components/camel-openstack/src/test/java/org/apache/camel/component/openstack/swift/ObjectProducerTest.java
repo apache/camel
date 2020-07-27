@@ -26,13 +26,13 @@ import java.util.UUID;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.producer.ObjectProducer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.storage.ObjectStorageObjectService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ObjectProducerTest extends SwiftProducerTestSupport {
 
     private static final String CONTAINER_NAME = "containerName";
@@ -75,7 +75,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
     @Captor
     private ArgumentCaptor<Map<String, String>> dataCaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(objectStorageService.objects()).thenReturn(objectService);
 

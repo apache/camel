@@ -20,13 +20,13 @@ import java.util.UUID;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.ServerProducer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.compute.ServerService;
 import org.openstack4j.model.common.ActionResponse;
@@ -43,7 +43,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ServerProducerTest extends NovaProducerTestSupport {
 
     @Mock(lenient = true)
@@ -66,7 +66,7 @@ public class ServerProducerTest extends NovaProducerTestSupport {
 
     private ServerCreate dummyServer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(computeService.servers()).thenReturn(serverService);
 
