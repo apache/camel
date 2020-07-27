@@ -38,12 +38,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -52,7 +55,7 @@ import static org.mockito.Mockito.when;
 
 public class PrinterPrintTest extends CamelTestSupport {
 
-    @Before
+    @BeforeEach
     public void setup() {
         setupJavaPrint();
     }
@@ -132,7 +135,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendingFileToPrinter() throws Exception {
         if (isAwtHeadless()) {
             return;
@@ -149,7 +152,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendingGIFToPrinter() throws Exception {
         if (isAwtHeadless()) {
             return;
@@ -166,7 +169,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendingJPEGToPrinter() throws Exception {
         if (isAwtHeadless()) {
             return;
@@ -183,7 +186,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendingJPEGToPrinterWithLandscapePageOrientation() throws Exception {
         if (isAwtHeadless()) {
             return;
@@ -205,7 +208,7 @@ public class PrinterPrintTest extends CamelTestSupport {
      * default values when starting the route.
      */
     @Test
-    @Ignore
+    @Disabled
     public void testDefaultPrinterConfiguration() throws Exception {
         if (isAwtHeadless()) {
             return;
@@ -234,11 +237,11 @@ public class PrinterPrintTest extends CamelTestSupport {
         PrintService ps2 = mock(PrintService.class);
         when(ps2.getName()).thenReturn("printer2");
         boolean res1 = PrintServiceLookup.registerService(ps1);
-        assertTrue("PrintService #1 should be registered.", res1);
+        assertTrue(res1, "PrintService #1 should be registered.");
         boolean res2 = PrintServiceLookup.registerService(ps2);
-        assertTrue("PrintService #2 should be registered.", res2);
+        assertTrue(res2, "PrintService #2 should be registered.");
         PrintService[] pss = PrintServiceLookup.lookupPrintServices(null, null);
-        assertEquals("lookup should report two PrintServices.", numberOfPrintservicesBefore + 2, pss.length);
+        assertEquals(numberOfPrintservicesBefore + 2, pss.length, "lookup should report two PrintServices.");
 
         DocPrintJob job1 = mock(DocPrintJob.class);
         when(ps1.createPrintJob()).thenReturn(job1);
@@ -254,7 +257,7 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         // Are there two different PrintConfigurations?
         Map<String, Endpoint> epm = context().getEndpointMap();
-        assertEquals("Four endpoints", 4, epm.size());
+        assertEquals(4, epm.size(), "Four endpoints");
         Endpoint lp1 = null;
         Endpoint lp2 = null;
         for (Map.Entry<String, Endpoint> ep : epm.entrySet()) {
@@ -287,7 +290,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         when(ps1.getName()).thenReturn("MyPrinter\\\\remote\\printer1");
         when(ps1.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
         boolean res1 = PrintServiceLookup.registerService(ps1);
-        assertTrue("The Remote PrintService #1 should be registered.", res1);
+        assertTrue(res1, "The Remote PrintService #1 should be registered.");
         DocPrintJob job1 = mock(DocPrintJob.class);
         when(ps1.createPrintJob()).thenReturn(job1);
 
@@ -317,7 +320,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         when(ps1.getName()).thenReturn("printer1");
         when(ps1.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
         boolean res1 = PrintServiceLookup.registerService(ps1);
-        assertTrue("The Remote PrintService #1 should be registered.", res1);
+        assertTrue(res1, "The Remote PrintService #1 should be registered.");
         DocPrintJob job1 = mock(DocPrintJob.class);
         when(ps1.createPrintJob()).thenReturn(job1);
 
