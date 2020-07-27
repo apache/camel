@@ -21,8 +21,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainRouteTemplateTest {
 
@@ -44,8 +45,8 @@ public class MainRouteTemplateTest {
         main.start();
 
         CamelContext context = main.getCamelContext();
-        Assert.assertEquals(1, context.adapt(ModelCamelContext.class).getRouteTemplateDefinitions().size());
-        Assert.assertEquals("mytemplate", context.adapt(ModelCamelContext.class).getRouteTemplateDefinitions().get(0).getId());
+        assertEquals(1, context.adapt(ModelCamelContext.class).getRouteTemplateDefinitions().size());
+        assertEquals("mytemplate", context.adapt(ModelCamelContext.class).getRouteTemplateDefinitions().get(0).getId());
 
         MockEndpoint mock = context.getEndpoint("mock:cheese", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello Camel", "Hello World");

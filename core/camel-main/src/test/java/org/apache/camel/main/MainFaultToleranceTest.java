@@ -19,8 +19,10 @@ package org.apache.camel.main;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainFaultToleranceTest {
 
@@ -41,17 +43,17 @@ public class MainFaultToleranceTest {
         main.start();
 
         CamelContext context = main.getCamelContext();
-        Assert.assertNotNull(context);
+        assertNotNull(context);
 
         ModelCamelContext mcc = context.adapt(ModelCamelContext.class);
         FaultToleranceConfigurationDefinition def = mcc.getFaultToleranceConfiguration(null);
-        Assert.assertNotNull(def);
+        assertNotNull(def);
 
-        Assert.assertEquals("500", def.getDelay());
-        Assert.assertEquals("123", def.getSuccessThreshold());
-        Assert.assertEquals("20", def.getTimeoutPoolSize());
-        Assert.assertEquals("555", def.getFailureRatio());
-        Assert.assertEquals("true", def.getBulkheadEnabled());
+        assertEquals("500", def.getDelay());
+        assertEquals("123", def.getSuccessThreshold());
+        assertEquals("20", def.getTimeoutPoolSize());
+        assertEquals("555", def.getFailureRatio());
+        assertEquals("true", def.getBulkheadEnabled());
 
         main.stop();
     }

@@ -21,7 +21,6 @@ import org.apache.camel.main.Main;
 import org.apache.camel.model.ModelCamelContext;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
