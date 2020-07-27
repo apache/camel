@@ -54,17 +54,6 @@ pipeline {
             }
         }
 
-        stage('Website update') {
-            when {
-                branch 'master'
-                changeset 'docs/**/*'
-            }
-
-            steps {
-                build job: 'Camel.website/master', wait: false
-            }
-        }
-
         stage('Checks') {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
