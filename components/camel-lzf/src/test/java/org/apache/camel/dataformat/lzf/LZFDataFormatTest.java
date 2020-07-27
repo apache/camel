@@ -24,8 +24,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LZFDataFormatTest extends CamelTestSupport {
     private static final String TEXT = "Hamlet by William Shakespeare\n"
@@ -41,7 +43,7 @@ public class LZFDataFormatTest extends CamelTestSupport {
 
         InputStream stream = new LZFInputStream(new ByteArrayInputStream(output));
         String result = IOConverter.toString(stream, null);
-        assertEquals("Uncompressed something different than compressed", TEXT, result);
+        assertEquals(TEXT, result, "Uncompressed something different than compressed");
     }
 
     @Test
