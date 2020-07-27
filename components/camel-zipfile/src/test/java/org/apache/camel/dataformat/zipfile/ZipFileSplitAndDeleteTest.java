@@ -27,15 +27,18 @@ import java.util.Iterator;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
 
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/testDeleteZipFileWhenUnmarshalWithDataFormat");
         deleteDirectory("target/testDeleteZipFileWhenUnmarshalWithSplitter");
@@ -53,7 +56,7 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
         notify.matchesMockWaitTime();
 
         // the original file should have been deleted
-        assertFalse("File should been deleted", new File(zipFile).exists());
+        assertFalse(new File(zipFile).exists(), "File should been deleted");
     }
 
     @Test
@@ -67,7 +70,7 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
         notify.matchesMockWaitTime();
 
         // the original file should have been deleted,
-        assertFalse("File should been deleted", new File(zipFile).exists());
+        assertFalse(new File(zipFile).exists(), "File should been deleted");
     }
 
 
