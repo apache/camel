@@ -27,12 +27,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class SlackConsumerTest extends CamelTestSupport {
 
@@ -62,8 +61,8 @@ public class SlackConsumerTest extends CamelTestSupport {
     }
 
     private void assumeCredentials() {
-        Assume.assumeThat("Please specify a Slack access token", token, CoreMatchers.notNullValue());
-        Assume.assumeThat("Please specify a Slack application webhook URL", hook, CoreMatchers.notNullValue());
+        assumeTrue(token != null, "Please specify a Slack access token");
+        assumeTrue(hook != null, "Please specify a Slack application webhook URL");
     }
 
     private void sendMessage(String message) throws IOException {

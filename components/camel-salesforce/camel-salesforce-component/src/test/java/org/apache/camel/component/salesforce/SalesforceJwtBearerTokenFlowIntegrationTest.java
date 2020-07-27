@@ -21,7 +21,7 @@ import org.apache.camel.component.salesforce.api.dto.Limits;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assume.assumeNotNull;
+import static org.junit.jupiter.api.Assumptions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SalesforceJwtBearerTokenFlowIntegrationTest extends CamelTestSupport {
@@ -40,8 +40,8 @@ public class SalesforceJwtBearerTokenFlowIntegrationTest extends CamelTestSuppor
         final SalesforceComponent salesforce = new SalesforceComponent();
         final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
-        assumeNotNull(loginConfig.getKeystore());
-        assumeNotNull(loginConfig.getKeystore().getResource());
+        assumeTrue(loginConfig.getKeystore() != null);
+        assumeTrue(loginConfig.getKeystore().getResource() != null);
         // force authentication type to JWT
         loginConfig.setType(AuthenticationType.JWT);
 

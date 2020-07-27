@@ -67,8 +67,8 @@ import quickfix.mina.ProtocolFactory;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuickfixjComponentTest {
     private File settingsFile;
@@ -349,7 +349,7 @@ public class QuickfixjComponentTest {
         // will start the component
         camelContext.start();
 
-        assertTrue("Session not created", latch.await(5000, TimeUnit.MILLISECONDS));
+        assertTrue(latch.await(5000, TimeUnit.MILLISECONDS), "Session not created");
         
         component.stop();
         
@@ -406,7 +406,7 @@ public class QuickfixjComponentTest {
         // will start the component
         camelContext.start();
 
-        assertTrue("Session not created", logonLatch.await(5000, TimeUnit.MILLISECONDS));
+        assertTrue(logonLatch.await(5000, TimeUnit.MILLISECONDS), "Session not created");
        
         Endpoint producerEndpoint = component.createEndpoint(getEndpointUri(settingsFile.getName(), acceptorSessionID));
         Producer producer = producerEndpoint.createProducer();
@@ -426,7 +426,7 @@ public class QuickfixjComponentTest {
 
         producer2.process(exchange);
        
-        assertTrue("Messages not received", messageLatch.await(5000, TimeUnit.MILLISECONDS));
+        assertTrue(messageLatch.await(5000, TimeUnit.MILLISECONDS), "Messages not received");
     }
 
     @Test

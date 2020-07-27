@@ -22,9 +22,8 @@ import org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory;
 import org.apache.camel.component.quartz.QuartzEndpoint;
 import org.junit.jupiter.api.Test;
 
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class QuartzTest extends ContextTestSupport {
 
