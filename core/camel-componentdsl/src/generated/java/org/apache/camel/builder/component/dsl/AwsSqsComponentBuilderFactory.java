@@ -85,6 +85,21 @@ public interface AwsSqsComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsSqsComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -590,6 +605,7 @@ public interface AwsSqsComponentBuilderFactory {
             case "amazonAWSHost": getOrCreateConfiguration((SqsComponent) component).setAmazonAWSHost((java.lang.String) value); return true;
             case "amazonSQSClient": getOrCreateConfiguration((SqsComponent) component).setAmazonSQSClient((com.amazonaws.services.sqs.AmazonSQS) value); return true;
             case "autoCreateQueue": getOrCreateConfiguration((SqsComponent) component).setAutoCreateQueue((boolean) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((SqsComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((SqsComponent) component).setConfiguration((org.apache.camel.component.aws.sqs.SqsConfiguration) value); return true;
             case "protocol": getOrCreateConfiguration((SqsComponent) component).setProtocol((java.lang.String) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((SqsComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
