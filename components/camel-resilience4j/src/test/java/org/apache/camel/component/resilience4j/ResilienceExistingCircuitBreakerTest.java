@@ -20,8 +20,11 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CircuitBreakerConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
 
