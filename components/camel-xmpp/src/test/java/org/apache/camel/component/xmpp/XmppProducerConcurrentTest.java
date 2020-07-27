@@ -23,12 +23,14 @@ import java.util.concurrent.Executors;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("This test is not working at the moment")
+import static org.apache.camel.test.junit5.TestSupport.body;
+
+@Disabled("This test is not working at the moment")
 public class XmppProducerConcurrentTest extends CamelTestSupport {
 
     private EmbeddedXmppTestServer embeddedXmppTestServer;
@@ -90,7 +92,7 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         embeddedXmppTestServer.stop();
