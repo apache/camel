@@ -21,9 +21,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -59,13 +60,14 @@ public class PulsarUtilsTest {
         verify(consumer).close();
     }
 
-    @Test(expected = PulsarClientException.class)
+    @Test
     public void givenConsumerThrowsPulsarClientExceptionwhenIStopConsumersverifyExceptionIsThrown() throws PulsarClientException {
         Consumer<byte[]> consumer = mock(Consumer.class);
 
         doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
 
-        consumer.close();
+        assertThrows(PulsarClientException.class,
+            () -> consumer.close());
 
         verify(consumer).close();
     }
