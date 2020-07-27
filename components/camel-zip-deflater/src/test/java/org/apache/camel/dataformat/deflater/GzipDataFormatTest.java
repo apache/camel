@@ -23,8 +23,10 @@ import java.util.zip.GZIPInputStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test of the gzip data format.
@@ -59,7 +61,7 @@ public class GzipDataFormatTest extends CamelTestSupport {
 
         GZIPInputStream stream = new GZIPInputStream(new ByteArrayInputStream(output));
         String result = IOConverter.toString(stream, null);
-        assertEquals("Uncompressed something different than compressed", TEXT, result);
+        assertEquals(TEXT, result, "Uncompressed something different than compressed");
     }
 
     @Test

@@ -21,15 +21,17 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class GzipDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/gzip");
         super.setUp();
@@ -47,10 +49,10 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
         notify.matchesMockWaitTime();
 
         File in = new File("target/gzip/hello.txt");
-        Assert.assertFalse("Should have been deleted " + in, in.exists());
+        assertFalse(in.exists(), "Should have been deleted " + in);
 
         File out = new File("target/gzip/out/hello.txt.gz");
-        Assert.assertFalse("Should have been deleted " + out, out.exists());
+        assertFalse(out.exists(), "Should have been deleted " + out);
     }
 
     @Override
