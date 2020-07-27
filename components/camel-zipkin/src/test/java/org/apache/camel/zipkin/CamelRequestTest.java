@@ -18,7 +18,7 @@ package org.apache.camel.zipkin;
 
 import brave.Span;
 import org.apache.camel.Message;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
