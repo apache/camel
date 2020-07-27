@@ -26,15 +26,16 @@ import org.apache.camel.Route;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@CamelSpringTest
 @ContextConfiguration
-public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
+public class MasterEndpointTest {
     @Autowired
     protected CamelContext camelContext;
 
@@ -48,9 +49,9 @@ public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
     public void testEndpoint() throws Exception {
         // check the endpoint configuration
         List<Route> registeredRoutes = camelContext.getRoutes();
-        assertEquals("number of routes", 1, registeredRoutes.size());
+        assertEquals(1, registeredRoutes.size(), "number of routes");
         MasterEndpoint endpoint = (MasterEndpoint) registeredRoutes.get(0).getEndpoint();
-        assertEquals("wrong endpoint uri", "seda:bar", endpoint.getConsumerEndpointUri());
+        assertEquals("seda:bar", endpoint.getConsumerEndpointUri(), "wrong endpoint uri");
 
         String expectedBody = "<matched/>";
 

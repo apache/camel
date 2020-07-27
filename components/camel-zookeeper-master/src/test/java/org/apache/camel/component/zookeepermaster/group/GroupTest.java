@@ -28,22 +28,21 @@ import org.apache.camel.component.zookeepermaster.ZKContainer;
 import org.apache.camel.component.zookeepermaster.group.internal.ChildData;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.SelinuxContext;
 
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.util.AssertionErrors.assertNotEquals;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GroupTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupTest.class);
@@ -99,13 +98,13 @@ public class GroupTest {
         return container;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         // workaround macos issue with docker/testcontainers expecting to use /tmp/ folder
         beforeTmpdir = System.setProperty("java.io.tmpdir", "/tmp/");
     }
 
-    @AfterClass
+    @AfterAll
     public static void after() {
         if (beforeTmpdir != null) {
             System.setProperty("java.io.tmpdir", beforeTmpdir);
@@ -164,13 +163,13 @@ public class GroupTest {
             }
             curator.close();
 
-            assertTrue("first started is master", firsStartedIsMaster);
+            assertTrue(firsStartedIsMaster, "first started is master");
         } finally {
             if (container != null) {
                 container.stop();
             }
 
-            CamelTestSupport.deleteDirectory(dataDir.toFile());
+            deleteDirectory(dataDir.toFile());
         }
 
     }
@@ -218,7 +217,7 @@ public class GroupTest {
             }
 
             try {
-                CamelTestSupport.deleteDirectory(dataDir.toFile());
+                deleteDirectory(dataDir.toFile());
             } catch (Throwable e) {
                 // ignore
             }
@@ -264,7 +263,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            CamelTestSupport.deleteDirectory(dataDir.toFile());
+            deleteDirectory(dataDir.toFile());
         }
     }
 
@@ -320,7 +319,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            CamelTestSupport.deleteDirectory(dataDir.toFile());
+            deleteDirectory(dataDir.toFile());
         }
     }
 
@@ -369,7 +368,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            CamelTestSupport.deleteDirectory(dataDir.toFile());
+            deleteDirectory(dataDir.toFile());
         }
     }
 
@@ -423,7 +422,7 @@ public class GroupTest {
                 TimeUnit.SECONDS.sleep(1);
             }
 
-            assertNotEquals("We see the updated version", version, group.getCurrentData().get(0).getStat().getVersion());
+            assertNotEquals(version, group.getCurrentData().get(0).getStat().getVersion(), "We see the updated version");
 
             LOGGER.info("CurrentData:" + group.getCurrentData());
 
@@ -434,7 +433,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            CamelTestSupport.deleteDirectory(dataDir.toFile());
+            deleteDirectory(dataDir.toFile());
         }
     }
 
