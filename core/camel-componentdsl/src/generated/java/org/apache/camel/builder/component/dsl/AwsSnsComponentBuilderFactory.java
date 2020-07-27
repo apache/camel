@@ -85,6 +85,21 @@ public interface AwsSnsComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsSnsComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -317,6 +332,7 @@ public interface AwsSnsComponentBuilderFactory {
             case "amazonSNSClient": getOrCreateConfiguration((SnsComponent) component).setAmazonSNSClient((com.amazonaws.services.sns.AmazonSNS) value); return true;
             case "amazonSQSClient": getOrCreateConfiguration((SnsComponent) component).setAmazonSQSClient((com.amazonaws.services.sqs.AmazonSQS) value); return true;
             case "autoCreateTopic": getOrCreateConfiguration((SnsComponent) component).setAutoCreateTopic((boolean) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((SnsComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((SnsComponent) component).setConfiguration((org.apache.camel.component.aws.sns.SnsConfiguration) value); return true;
             case "kmsMasterKeyId": getOrCreateConfiguration((SnsComponent) component).setKmsMasterKeyId((java.lang.String) value); return true;
             case "lazyStartProducer": ((SnsComponent) component).setLazyStartProducer((boolean) value); return true;

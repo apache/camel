@@ -64,6 +64,8 @@ public class SnsConfiguration implements Cloneable {
     private String messageStructure;
     @UriParam
     private String region;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public String getSubject() {
         return subject;
@@ -265,6 +267,20 @@ public class SnsConfiguration implements Cloneable {
     public void setAutoCreateTopic(boolean autoCreateTopic) {
         this.autoCreateTopic = autoCreateTopic;
     }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
 
     // *************************************************
     //

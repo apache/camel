@@ -34,6 +34,8 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         case "amazonSQSClient": getOrCreateConfiguration(target).setAmazonSQSClient(property(camelContext, com.amazonaws.services.sqs.AmazonSQS.class, value)); return true;
         case "autocreatetopic":
         case "autoCreateTopic": getOrCreateConfiguration(target).setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.sns.SnsConfiguration.class, value)); return true;
@@ -71,6 +73,7 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         answer.put("amazonSNSClient", com.amazonaws.services.sns.AmazonSNS.class);
         answer.put("amazonSQSClient", com.amazonaws.services.sqs.AmazonSQS.class);
         answer.put("autoCreateTopic", boolean.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("configuration", org.apache.camel.component.aws.sns.SnsConfiguration.class);
         answer.put("kmsMasterKeyId", java.lang.String.class);
@@ -101,6 +104,8 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         case "amazonSQSClient": return getOrCreateConfiguration(target).getAmazonSQSClient();
         case "autocreatetopic":
         case "autoCreateTopic": return getOrCreateConfiguration(target).isAutoCreateTopic();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "configuration": return target.getConfiguration();
