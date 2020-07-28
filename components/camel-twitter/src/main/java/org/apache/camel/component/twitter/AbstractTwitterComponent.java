@@ -71,7 +71,10 @@ public abstract class AbstractTwitterComponent extends DefaultComponent {
 
         // and then override from parameters
         setProperties(properties, parameters);
-        return doCreateEndpoint(properties, uri, remaining, parameters);
+        Endpoint answer = doCreateEndpoint(properties, uri, remaining, parameters);
+        // ensure properties have been configured with required options
+        properties.checkComplete();
+        return answer;
     }
 
     protected abstract Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception;
