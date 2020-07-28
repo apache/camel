@@ -103,6 +103,20 @@ public interface AzureStorageQueueComponentBuilderFactory {
             return this;
         }
         /**
+         * When is set to true, the queue will be automatically created when
+         * sending messages to the queue.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default AzureStorageQueueComponentBuilder createQueue(
+                boolean createQueue) {
+            doSetProperty("createQueue", createQueue);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -164,6 +178,31 @@ public interface AzureStorageQueueComponentBuilderFactory {
         default AzureStorageQueueComponentBuilder maxMessages(
                 java.lang.Integer maxMessages) {
             doSetProperty("maxMessages", maxMessages);
+            return this;
+        }
+        /**
+         * The ID of the message to be deleted or updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default AzureStorageQueueComponentBuilder messageId(
+                java.lang.String messageId) {
+            doSetProperty("messageId", messageId);
+            return this;
+        }
+        /**
+         * Unique identifier that must match for the message to be deleted or
+         * updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default AzureStorageQueueComponentBuilder popReceipt(
+                java.lang.String popReceipt) {
+            doSetProperty("popReceipt", popReceipt);
             return this;
         }
         /**
@@ -270,10 +309,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
             case "configuration": ((QueueComponent) component).setConfiguration((org.apache.camel.component.azure.storage.queue.QueueConfiguration) value); return true;
             case "serviceClient": getOrCreateConfiguration((QueueComponent) component).setServiceClient((com.azure.storage.queue.QueueServiceClient) value); return true;
             case "bridgeErrorHandler": ((QueueComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "createQueue": getOrCreateConfiguration((QueueComponent) component).setCreateQueue((boolean) value); return true;
             case "lazyStartProducer": ((QueueComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((QueueComponent) component).setOperation((org.apache.camel.component.azure.storage.queue.QueueOperationDefinition) value); return true;
             case "basicPropertyBinding": ((QueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "maxMessages": getOrCreateConfiguration((QueueComponent) component).setMaxMessages((java.lang.Integer) value); return true;
+            case "messageId": getOrCreateConfiguration((QueueComponent) component).setMessageId((java.lang.String) value); return true;
+            case "popReceipt": getOrCreateConfiguration((QueueComponent) component).setPopReceipt((java.lang.String) value); return true;
             case "timeout": getOrCreateConfiguration((QueueComponent) component).setTimeout((java.time.Duration) value); return true;
             case "timeToLive": getOrCreateConfiguration((QueueComponent) component).setTimeToLive((java.time.Duration) value); return true;
             case "visibilityTimeout": getOrCreateConfiguration((QueueComponent) component).setVisibilityTimeout((java.time.Duration) value); return true;

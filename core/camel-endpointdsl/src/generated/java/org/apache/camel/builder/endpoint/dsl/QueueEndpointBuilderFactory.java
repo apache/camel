@@ -152,6 +152,29 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
+         * The ID of the message to be deleted or updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default QueueEndpointConsumerBuilder messageId(String messageId) {
+            doSetProperty("messageId", messageId);
+            return this;
+        }
+        /**
+         * Unique identifier that must match for the message to be deleted or
+         * updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default QueueEndpointConsumerBuilder popReceipt(String popReceipt) {
+            doSetProperty("popReceipt", popReceipt);
+            return this;
+        }
+        /**
          * An optional timeout applied to the operation. If a response is not
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
@@ -464,6 +487,32 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
+         * When is set to true, the queue will be automatically created when
+         * sending messages to the queue.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default QueueEndpointProducerBuilder createQueue(boolean createQueue) {
+            doSetProperty("createQueue", createQueue);
+            return this;
+        }
+        /**
+         * When is set to true, the queue will be automatically created when
+         * sending messages to the queue.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default QueueEndpointProducerBuilder createQueue(String createQueue) {
+            doSetProperty("createQueue", createQueue);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -559,6 +608,29 @@ public interface QueueEndpointBuilderFactory {
          */
         default QueueEndpointProducerBuilder maxMessages(String maxMessages) {
             doSetProperty("maxMessages", maxMessages);
+            return this;
+        }
+        /**
+         * The ID of the message to be deleted or updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default QueueEndpointProducerBuilder messageId(String messageId) {
+            doSetProperty("messageId", messageId);
+            return this;
+        }
+        /**
+         * Unique identifier that must match for the message to be deleted or
+         * updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default QueueEndpointProducerBuilder popReceipt(String popReceipt) {
+            doSetProperty("popReceipt", popReceipt);
             return this;
         }
         /**
@@ -845,6 +917,29 @@ public interface QueueEndpointBuilderFactory {
          */
         default QueueEndpointBuilder maxMessages(String maxMessages) {
             doSetProperty("maxMessages", maxMessages);
+            return this;
+        }
+        /**
+         * The ID of the message to be deleted or updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default QueueEndpointBuilder messageId(String messageId) {
+            doSetProperty("messageId", messageId);
+            return this;
+        }
+        /**
+         * Unique identifier that must match for the message to be deleted or
+         * updated.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default QueueEndpointBuilder popReceipt(String popReceipt) {
+            doSetProperty("popReceipt", popReceipt);
             return this;
         }
         /**
