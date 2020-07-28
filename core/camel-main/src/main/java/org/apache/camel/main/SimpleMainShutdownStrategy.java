@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     protected static final Logger LOG = LoggerFactory.getLogger(SimpleMainShutdownStrategy.class);
 
+    private final Set<ShutdownEventListener> listeners = new LinkedHashSet<>();
     private final AtomicBoolean completed;
     private final CountDownLatch latch;
 
@@ -40,9 +43,24 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     }
 
     @Override
+    public void addShutdownListener(ShutdownEventListener listener) {
+        listeners.add(listener);
+    }
+
+    @Override
     public boolean shutdown() {
         if (completed.compareAndSet(false, true)) {
+            LOG.debug("Setting shutdown completed state from false to true");
             latch.countDown();
+            for (ShutdownEventListener l : listeners) {
+                try {
+                    LOG.trace("ShutdownEventListener: {}", l);
+                    l.onShutdown();
+                } catch (Throwable e) {
+                    // ignore as we must continue
+                    LOG.debug("Error during ShutdownEventListener: {}. This exception is ignored.", l, e);
+                }
+            }
             return true;
         }
 
@@ -51,11 +69,13 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
 
     @Override
     public void await() throws InterruptedException {
+        LOG.debug("Await shutdown to complete");
         latch.await();
     }
 
     @Override
     public void await(long timeout, TimeUnit unit) throws InterruptedException {
+        LOG.debug("Await shutdown to complete with timeout: {} {}", timeout, unit);
         latch.await(timeout, unit);
     }
 }
