@@ -54,7 +54,9 @@ public class Athena2Component extends DefaultComponent {
         Athena2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
         Athena2Endpoint endpoint = new Athena2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration, endpoint);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration, endpoint);
+        }
         if (configuration.getAmazonAthenaClient() == null && (configuration.getAccessKey() == null
             || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or amazonAthenaClient must be specified");

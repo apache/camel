@@ -74,6 +74,21 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2AthenaComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -473,6 +488,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             switch (name) {
             case "accessKey": getOrCreateConfiguration((Athena2Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonAthenaClient": getOrCreateConfiguration((Athena2Component) component).setAmazonAthenaClient((software.amazon.awssdk.services.athena.AthenaClient) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((Athena2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Athena2Component) component).setConfiguration((org.apache.camel.component.aws2.athena.Athena2Configuration) value); return true;
             case "database": getOrCreateConfiguration((Athena2Component) component).setDatabase((java.lang.String) value); return true;
             case "delay": getOrCreateConfiguration((Athena2Component) component).setDelay((long) value); return true;

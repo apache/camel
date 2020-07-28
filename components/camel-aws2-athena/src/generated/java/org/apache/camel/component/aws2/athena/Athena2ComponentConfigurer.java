@@ -30,6 +30,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonathenaclient":
         case "amazonAthenaClient": getOrCreateConfiguration(target).setAmazonAthenaClient(property(camelContext, software.amazon.awssdk.services.athena.AthenaClient.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientrequesttoken":
@@ -87,6 +89,7 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonAthenaClient", software.amazon.awssdk.services.athena.AthenaClient.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("clientRequestToken", java.lang.String.class);
         answer.put("configuration", org.apache.camel.component.aws2.athena.Athena2Configuration.class);
@@ -125,6 +128,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonathenaclient":
         case "amazonAthenaClient": return getOrCreateConfiguration(target).getAmazonAthenaClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientrequesttoken":
