@@ -23,18 +23,25 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
 import org.apache.camel.xml.io.XmlPullParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseParser.class);
 
     protected final MXParser parser;
     protected String namespace;
@@ -63,6 +70,16 @@ public class BaseParser {
 
     protected <T> T doParse(T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
         throws IOException, XmlPullParserException {
+        if (definition instanceof NamespaceAware) {
+            final Map<String, String> namespaces = new LinkedHashMap<>();
+            for (int i = 0; i < parser.getNamespaceCount(parser.getDepth()); i++) {
+                final String prefix = parser.getNamespacePrefix(i);
+                if (prefix != null) {
+                    namespaces.put(prefix, parser.getNamespaceUri(i));
+                }
+            }
+            ((NamespaceAware) definition).setNamespaces(namespaces);
+        }
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             String name = parser.getAttributeName(i);
             String ns = parser.getAttributeNamespace(i);

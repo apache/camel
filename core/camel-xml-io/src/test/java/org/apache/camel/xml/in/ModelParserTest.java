@@ -22,12 +22,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.SetBodyDefinition;
+import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ModelParserTest {
@@ -57,6 +61,28 @@ public class ModelParserTest {
         RoutesDefinition routes = new ModelParser(new StringReader("<routes>" + "  <route id='foo'>" + "    <from uri='my:bar'/>" + "    <to uri='mock:res'/>" + "  </route>"
                                                                    + "</routes>")).parseRoutesDefinition();
         assertNotNull(routes);
+    }
+
+    @Test
+    public void namespaces() throws Exception {
+        final String routesXml = "<routes xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                + "       xmlns:foo=\"http://camel.apache.org/foo\">\n"
+                + "   <route id=\"xpath-route\">\n"
+                + "      <from uri=\"direct:test\"/>\n"
+                + "      <setBody>\n"
+                + "         <xpath resultType=\"java.lang.String\">\n"
+                + "            /foo:orders/order[1]/country/text()\n"
+                + "         </xpath>\n"
+                + "      </setBody>\n"
+                + "   </route>\n"
+                + "</routes>";
+        final RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition();
+        final RouteDefinition route0 = routes.getRoutes().get(0);
+        final SetBodyDefinition setBody = (SetBodyDefinition) route0.getOutputs().get(0);
+        final XPathExpression xPath = (XPathExpression) setBody.getExpression();
+        final Map<String, String> namespaces = xPath.getNamespaces();
+        assertNotNull(namespaces);
+        assertEquals("http://camel.apache.org/foo", namespaces.get("foo"));
     }
 
     private Path getResourceFolder() {
