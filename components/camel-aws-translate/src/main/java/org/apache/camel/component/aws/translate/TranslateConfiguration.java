@@ -53,6 +53,8 @@ public class TranslateConfiguration implements Cloneable {
     private String region;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean autodetectSourceLanguage;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public AmazonTranslate getTranslateClient() {
         return translateClient;
@@ -176,6 +178,19 @@ public class TranslateConfiguration implements Cloneable {
      */
     public void setTargetLanguage(String targetLanguage) {
         this.targetLanguage = targetLanguage;
+    }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************

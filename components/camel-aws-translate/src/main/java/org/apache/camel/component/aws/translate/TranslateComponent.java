@@ -51,7 +51,9 @@ public class TranslateComponent extends DefaultComponent {
 
         TranslateEndpoint endpoint = new TranslateEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon translate client or accessKey and secretKey must be specified");
         }

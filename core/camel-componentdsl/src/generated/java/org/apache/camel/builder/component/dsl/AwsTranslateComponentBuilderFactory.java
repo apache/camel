@@ -49,6 +49,21 @@ public interface AwsTranslateComponentBuilderFactory {
             extends
                 ComponentBuilder<TranslateComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsTranslateComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -259,6 +274,7 @@ public interface AwsTranslateComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((TranslateComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((TranslateComponent) component).setAccessKey((java.lang.String) value); return true;
             case "autodetectSourceLanguage": getOrCreateConfiguration((TranslateComponent) component).setAutodetectSourceLanguage((boolean) value); return true;
             case "configuration": ((TranslateComponent) component).setConfiguration((org.apache.camel.component.aws.translate.TranslateConfiguration) value); return true;

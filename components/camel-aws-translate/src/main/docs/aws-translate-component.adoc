@@ -36,13 +36,14 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Translate component supports 14 options, which are listed below.
+The AWS Translate component supports 15 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *autodetectSourceLanguage* (producer) | Being able to autodetect the source language | false | boolean
 | *configuration* (producer) | The component configuration |  | TranslateConfiguration
@@ -82,12 +83,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *autodetectSourceLanguage* (producer) | Being able to autodetect the source language | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
