@@ -18,16 +18,11 @@ package org.apache.camel.processor.aggregate.cassandra;
 
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cassandra.BaseCassandraTest;
-import org.apache.camel.component.cassandra.CassandraCQLUnit;
-import org.apache.camel.component.cassandra.CassandraUnitUtils;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -40,28 +35,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
 
-    @RegisterExtension
-    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit("AggregationDataSet.cql");
-
     private CassandraAggregationRepository aggregationRepository;
-    private CamelContext camelContext;
 
     @Override
     protected void doPreSetup() throws Exception {
-        camelContext = new DefaultCamelContext();
-        aggregationRepository = new CassandraAggregationRepository(cassandra.session);
+        aggregationRepository = new CassandraAggregationRepository(getSession());
         aggregationRepository.start();
         super.doPreSetup();
     }
 
-//    @Override
-//    @AfterEach
-//    public void tearDown() throws Exception {
-//        aggregationRepository.stop();
-//    }
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+        aggregationRepository.stop();
+    }
 
     private boolean exists(String key) {
-        return cassandra.session.execute(String.format("select KEY from CAMEL_AGGREGATION where KEY='%s'", key)).one() != null;
+        return getSession().execute(String.format("select KEY from CAMEL_AGGREGATION where KEY='%s'", key)).one() != null;
     }
 
     @Test
@@ -69,9 +60,9 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
         // Given
         String key = "Add";
         assertFalse(exists(key));
-        Exchange exchange = new DefaultExchange(camelContext);
+        Exchange exchange = new DefaultExchange(context);
         // When
-        aggregationRepository.add(camelContext, key, exchange);
+        aggregationRepository.add(context, key, exchange);
         // Then
         assertTrue(exists(key));
     }
@@ -80,11 +71,11 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
     public void testGetExists() {
         // Given
         String key = "Get_Exists";
-        Exchange exchange = new DefaultExchange(camelContext);
-        aggregationRepository.add(camelContext, key, exchange);
+        Exchange exchange = new DefaultExchange(context);
+        aggregationRepository.add(context, key, exchange);
         assertTrue(exists(key));
         // When
-        Exchange exchange2 = aggregationRepository.get(camelContext, key);
+        Exchange exchange2 = aggregationRepository.get(context, key);
         // Then
         assertNotNull(exchange2);
         assertEquals(exchange.getExchangeId(), exchange2.getExchangeId());
@@ -96,7 +87,7 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
         String key = "Get_NotExists";
         assertFalse(exists(key));
         // When
-        Exchange exchange2 = aggregationRepository.get(camelContext, key);
+        Exchange exchange2 = aggregationRepository.get(context, key);
         // Then
         assertNull(exchange2);
     }
@@ -105,11 +96,11 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
     public void testRemoveExists() {
         // Given
         String key = "Remove_Exists";
-        Exchange exchange = new DefaultExchange(camelContext);
-        aggregationRepository.add(camelContext, key, exchange);
+        Exchange exchange = new DefaultExchange(context);
+        aggregationRepository.add(context, key, exchange);
         assertTrue(exists(key));
         // When
-        aggregationRepository.remove(camelContext, key, exchange);
+        aggregationRepository.remove(context, key, exchange);
         // Then
         assertFalse(exists(key));
     }
@@ -118,10 +109,10 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
     public void testRemoveNotExists() {
         // Given
         String key = "RemoveNotExists";
-        Exchange exchange = new DefaultExchange(camelContext);
+        Exchange exchange = new DefaultExchange(context);
         assertFalse(exists(key));
         // When
-        aggregationRepository.remove(camelContext, key, exchange);
+        aggregationRepository.remove(context, key, exchange);
         // Then
         assertFalse(exists(key));
     }
@@ -144,13 +135,13 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
         // Given
         for (int i = 1; i < 4; i++) {
             String key = "Confirm_" + i;
-            Exchange exchange = new DefaultExchange(camelContext);
+            Exchange exchange = new DefaultExchange(context);
             exchange.setExchangeId("Exchange_" + i);
-            aggregationRepository.add(camelContext, key, exchange);
+            aggregationRepository.add(context, key, exchange);
             assertTrue(exists(key));
         }
         // When
-        aggregationRepository.confirm(camelContext, "Exchange_2");
+        aggregationRepository.confirm(context, "Exchange_2");
         // Then
         assertTrue(exists("Confirm_1"));
         assertFalse(exists("Confirm_2"));
@@ -169,7 +160,7 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
             assertTrue(exists(key));
         }
         // When
-        aggregationRepository.confirm(camelContext, "Exchange-Confirm5");
+        aggregationRepository.confirm(context, "Exchange-Confirm5");
         // Then
         for (String key : keys) {
             assertTrue(exists(key));
@@ -178,9 +169,9 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
 
     private void addExchanges(String... keys) {
         for (String key : keys) {
-            Exchange exchange = new DefaultExchange(camelContext);
+            Exchange exchange = new DefaultExchange(context);
             exchange.setExchangeId("Exchange-" + key);
-            aggregationRepository.add(camelContext, key, exchange);
+            aggregationRepository.add(context, key, exchange);
         }
     }
 
@@ -190,7 +181,7 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
         String[] keys = {"Scan1", "Scan2"};
         addExchanges(keys);
         // When
-        Set<String> exchangeIdSet = aggregationRepository.scan(camelContext);
+        Set<String> exchangeIdSet = aggregationRepository.scan(context);
         // Then
         for (String key : keys) {
             assertTrue(exchangeIdSet.contains("Exchange-" + key));
@@ -203,8 +194,8 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
         String[] keys = {"Recover1", "Recover2"};
         addExchanges(keys);
         // When
-        Exchange exchange2 = aggregationRepository.recover(camelContext, "Exchange-Recover2");
-        Exchange exchange3 = aggregationRepository.recover(camelContext, "Exchange-Recover3");
+        Exchange exchange2 = aggregationRepository.recover(context, "Exchange-Recover2");
+        Exchange exchange3 = aggregationRepository.recover(context, "Exchange-Recover3");
         // Then
         assertNotNull(exchange2);
         assertNull(exchange3);

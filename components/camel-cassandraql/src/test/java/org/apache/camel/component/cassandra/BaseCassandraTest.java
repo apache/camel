@@ -16,23 +16,98 @@
  */
 package org.apache.camel.component.cassandra;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.time.Duration;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.testcontainers.containers.CassandraContainer;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 public abstract class BaseCassandraTest extends CamelTestSupport {
 
-    public static boolean canTest() {
-        // we cannot test on CI
-        return System.getenv("BUILD_ID") == null;
+    public static final String KEYSPACE_NAME = "camel_ks";
+    public static final String DATACENTER_NAME = "datacenter1";
+    private static final int ORIGINAL_PORT = 9042;
+
+    private static GenericContainer<?>  container;
+    private CqlSession session;
+
+
+    @BeforeAll
+    public static void beforeAll() {
+        container = new CassandraContainer().withInitScript("initScript.cql").withNetworkAliases("cassandra").withExposedPorts(ORIGINAL_PORT);
+        container.start();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        try {
+            if (container != null) {
+                container.stop();
+            }
+        } catch (Exception e) {
+            // ignored
+        }
     }
 
     @Override
-    public void afterAll(ExtensionContext context) {
-        super.afterAll(context);
-        try {
-            CassandraUnitUtils.cleanEmbeddedCassandra();
-        } catch (Throwable e) {
-            // ignore shutdown errors
+    public void beforeEach(ExtensionContext context) throws Exception {
+        super.beforeEach(context);
+
+        executeScript("BasicDataSet.cql");
+    }
+
+    public void executeScript(String pathToScript) throws IOException {
+        String s = IOUtils.toString(getClass().getResourceAsStream("/" + pathToScript), "UTF-8");
+        String[] statements = s.split(";");
+        for (int i = 0; i < statements.length; i++) {
+            if (!statements[i].isEmpty()) {
+                executeCql(statements[i]);
+            }
         }
+    }
+
+    public void executeCql(String cql) {
+        getSession().execute(cql);
+    }
+
+    @Override
+    protected void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
+        try {
+            if (session != null) {
+                session.close();
+                session = null;
+            }
+        } catch (Exception e) {
+            // ignored
+        }
+    }
+
+    public CqlSession getSession() {
+        if (session == null) {
+            InetSocketAddress endpoint = new InetSocketAddress(container.getContainerIpAddress(),  container.getMappedPort(ORIGINAL_PORT));
+            //create a new session
+            session = CqlSession.builder()
+                    .withLocalDatacenter(DATACENTER_NAME)
+                    .withKeyspace(KEYSPACE_NAME)
+                    .withConfigLoader(DriverConfigLoader.programmaticBuilder()
+                                     .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5)).build())
+                    .addContactPoint(endpoint).build();
+        }
+        return session;
+    }
+
+    public String getUrl() {
+        return container.getContainerIpAddress() + ":" + container.getMappedPort(ORIGINAL_PORT);
     }
 }

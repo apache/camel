@@ -17,12 +17,9 @@
 package org.apache.camel.processor.idempotent.cassandra;
 
 import org.apache.camel.component.cassandra.BaseCassandraTest;
-import org.apache.camel.component.cassandra.CassandraCQLUnit;
-import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,18 +29,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
 
-    @RegisterExtension
-    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit("NamedIdempotentDataSet.cql");
-
     private CassandraIdempotentRepository idempotentRepository;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        idempotentRepository = new NamedCassandraIdempotentRepository(cassandra.session, "ID");
+    protected void doPreSetup() throws Exception {
+        idempotentRepository = new NamedCassandraIdempotentRepository(getSession(), "ID");
         idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
-        super.setUp();
+
+        super.doPreSetup();
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        super.beforeEach(context);
+
+        executeScript("NamedIdempotentDataSet.cql");
     }
 
     @Override
@@ -54,7 +55,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return cassandra.session.execute(String.format("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME='ID' and KEY='%s'", key)).one() != null;
+        return getSession().execute(String.format("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME='ID' and KEY='%s'", key)).one() != null;
     }
 
     @Test

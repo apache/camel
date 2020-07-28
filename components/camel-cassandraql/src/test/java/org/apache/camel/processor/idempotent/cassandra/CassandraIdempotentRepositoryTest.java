@@ -17,12 +17,9 @@
 package org.apache.camel.processor.idempotent.cassandra;
 
 import org.apache.camel.component.cassandra.BaseCassandraTest;
-import org.apache.camel.component.cassandra.CassandraCQLUnit;
-import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,29 +29,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
 
-    @RegisterExtension
-    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit("IdempotentDataSet.cql");
-
     private CassandraIdempotentRepository idempotentRepository;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        idempotentRepository = new CassandraIdempotentRepository(cassandra.session);
-
+    protected void doPreSetup() throws Exception {
+        idempotentRepository = new CassandraIdempotentRepository(getSession());
         idempotentRepository.start();
-        super.setUp();
+
+        super.doPreSetup();
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        super.beforeEach(context);
+
+        executeScript("IdempotentDataSet.cql");
     }
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        idempotentRepository.stop();
         super.tearDown();
+        idempotentRepository.stop();
     }
 
     private boolean exists(String key) {
-        return cassandra.session.execute(String.format("select KEY from CAMEL_IDEMPOTENT where KEY='%s'", key)).one() != null;
+        return getSession().execute(String.format("select KEY from CAMEL_IDEMPOTENT where KEY='%s'", key)).one() != null;
     }
 
     @Test
