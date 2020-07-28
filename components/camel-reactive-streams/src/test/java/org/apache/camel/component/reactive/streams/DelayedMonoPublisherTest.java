@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Flowable;
 import org.apache.camel.component.reactive.streams.engine.DelayedMonoPublisher;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,12 +40,12 @@ public class DelayedMonoPublisherTest {
 
     private ExecutorService service;
 
-    @Before
+    @BeforeEach
     public void init() {
         service = new ScheduledThreadPoolExecutor(3);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         service.shutdown();
         service.awaitTermination(1, TimeUnit.SECONDS);

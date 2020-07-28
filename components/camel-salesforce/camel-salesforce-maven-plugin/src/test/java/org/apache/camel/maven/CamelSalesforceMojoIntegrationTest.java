@@ -30,17 +30,16 @@ import com.google.testing.compile.Compilation.Status;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.maven.AbstractSalesforceMojoIntegrationTest.setup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CamelSalesforceMojoIntegrationTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
+    @TempDir
+    public Path temp;
 
     @Test
     public void testExecute() throws Exception {
@@ -50,7 +49,7 @@ public class CamelSalesforceMojoIntegrationTest {
         mojo.execute();
 
         // validate generated code check that it was generated
-        final Path packagePath = temp.getRoot().toPath().resolve("test").resolve("dto");
+        final Path packagePath = temp.resolve("test").resolve("dto");
         assertThat(packagePath).as("Package directory was not created").exists();
 
         // test that the generated sources can be compiled
@@ -73,7 +72,7 @@ public class CamelSalesforceMojoIntegrationTest {
 
         // set defaults
         mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
-        mojo.outputDirectory = temp.getRoot();
+        mojo.outputDirectory = temp.toFile();
         mojo.packageName = "test.dto";
 
         // set code generation properties

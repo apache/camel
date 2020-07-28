@@ -17,8 +17,12 @@
 package org.apache.camel.test.perf;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.TestInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractBasePerformanceTest extends CamelTestSupport {
 
     protected static final String BODY_1KB_PAYLOAD = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -35,6 +39,8 @@ public abstract class AbstractBasePerformanceTest extends CamelTestSupport {
         + "</m:buyStocks>"
         + "</soapenv:Body>"
         + "</soapenv:Envelope>";
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected String getPayload() {
         return BODY_1KB_PAYLOAD;
@@ -54,8 +60,4 @@ public abstract class AbstractBasePerformanceTest extends CamelTestSupport {
         }
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 }
