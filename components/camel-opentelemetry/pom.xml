@@ -81,7 +81,7 @@
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-exporters-inmemory</artifactId>
-      <version>0.6.0</version>
+      <version>${opentelemetry-version}</version>
     </dependency>
 
   </dependencies>

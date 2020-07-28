@@ -82,7 +82,6 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
 
     @Override public void log(Map<String, String> fields) {
         span.addEvent(getEventNameFromFields(fields), convertToAttributes(fields));
-
     }
 
     String getEventNameFromFields(Map<String, ?> fields) {

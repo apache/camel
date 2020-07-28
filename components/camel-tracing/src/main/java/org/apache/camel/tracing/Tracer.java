@@ -95,7 +95,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
     }
 
     /**
-     * Specifies the instance responsible for tracking invoked EIP and beans with OpenTracing.
+     * Specifies the instance responsible for tracking invoked EIP and beans with Tracing.
      *
      * @param tracingStrategy The instance which tracks invoked EIP and beans
      */
@@ -245,7 +245,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     inject(span, sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding));
                     ActiveSpanManager.activate(ese.getExchange(), span);
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: start client span={}", span);
+                        LOG.trace("Tracing: start client span={}", span);
                     }
                 } else if (event instanceof CamelEvent.ExchangeSentEvent) {
                     CamelEvent.ExchangeSentEvent ese = (CamelEvent.ExchangeSentEvent) event;
@@ -256,7 +256,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     SpanAdapter span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("OpenTracing: start client span={}", span);
+                            LOG.trace("Tracing: start client span={}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         finishSpan(span);
@@ -267,7 +267,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data", t);
             }
         }
     }
@@ -291,11 +291,11 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("OpenTracing: start server span={}", span);
+                    LOG.trace("Tracing: start server span={}", span);
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data", t);
             }
         }
 
@@ -308,18 +308,18 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 SpanAdapter span = ActiveSpanManager.getSpan(exchange);
                 if (span != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: finish server span={}", span);
+                        LOG.trace("Tracing: finish server span={}", span);
                     }
                     SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                     sd.post(span, exchange, route.getEndpoint());
                     finishSpan(span);
                     ActiveSpanManager.deactivate(exchange);
                 } else {
-                    LOG.warn("OpenTracing: could not find managed span for exchange={}", exchange);
+                    LOG.warn("Tracing: could not find managed span for exchange={}", exchange);
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data", t);
             }
         }
     }
@@ -337,7 +337,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data", t);
             }
             return message;
         }

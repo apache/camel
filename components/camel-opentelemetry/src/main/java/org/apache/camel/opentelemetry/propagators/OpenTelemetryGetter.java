@@ -16,14 +16,12 @@
  */
 package org.apache.camel.opentelemetry.propagators;
 
-import javax.annotation.Nullable;
-
 import io.opentelemetry.context.propagation.HttpTextFormat;
 import org.apache.camel.tracing.ExtractAdapter;
 
 public class OpenTelemetryGetter implements HttpTextFormat.Getter<ExtractAdapter> {
 
-    @Nullable @Override public String get(ExtractAdapter adapter, String key) {
+    @Override public String get(ExtractAdapter adapter, String key) {
         return (String) adapter.get(key);
     }
 }

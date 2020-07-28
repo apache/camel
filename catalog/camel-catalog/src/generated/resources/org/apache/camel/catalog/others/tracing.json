@@ -5,8 +5,8 @@
     "title": "Tracing",
     "description": "Distributed tracing common interfaces",
     "deprecated": false,
-    "firstVersion": "2.9.0",
-    "supportLevel": "Stable",
+    "firstVersion": "3.5.0",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tracing",
     "version": "3.5.0-SNAPSHOT"
