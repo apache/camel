@@ -25,6 +25,8 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "createqueue":
+        case "createQueue": target.getConfiguration().setCreateQueue(property(camelContext, boolean.class, value)); return true;
         case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -34,7 +36,11 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxmessages":
         case "maxMessages": target.getConfiguration().setMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "messageid":
+        case "messageId": target.getConfiguration().setMessageId(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class, value)); return true;
+        case "popreceipt":
+        case "popReceipt": target.getConfiguration().setPopReceipt(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.queue.QueueServiceClient.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -53,12 +59,15 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("accessKey", java.lang.String.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("createQueue", boolean.class);
         answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxMessages", java.lang.Integer.class);
+        answer.put("messageId", java.lang.String.class);
         answer.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
+        answer.put("popReceipt", java.lang.String.class);
         answer.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
         answer.put("synchronous", boolean.class);
         answer.put("timeToLive", java.time.Duration.class);
@@ -77,6 +86,8 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "createqueue":
+        case "createQueue": return target.getConfiguration().isCreateQueue();
         case "credentials": return target.getConfiguration().getCredentials();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
@@ -86,7 +97,11 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxmessages":
         case "maxMessages": return target.getConfiguration().getMaxMessages();
+        case "messageid":
+        case "messageId": return target.getConfiguration().getMessageId();
         case "operation": return target.getConfiguration().getOperation();
+        case "popreceipt":
+        case "popReceipt": return target.getConfiguration().getPopReceipt();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
         case "synchronous": return target.isSynchronous();

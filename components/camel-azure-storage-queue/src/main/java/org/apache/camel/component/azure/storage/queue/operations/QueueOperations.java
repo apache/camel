@@ -24,6 +24,7 @@ import com.azure.storage.queue.models.SendMessageResult;
 import com.azure.storage.queue.models.UpdateMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
+import org.apache.camel.component.azure.storage.queue.QueueConfigurationOptionsProxy;
 import org.apache.camel.component.azure.storage.queue.QueueConstants;
 import org.apache.camel.component.azure.storage.queue.QueueExchangeHeaders;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
@@ -34,43 +35,43 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class QueueOperations {
 
-    private final QueueConfiguration configuration;
+    private final QueueConfigurationOptionsProxy configurationOptionsProxy;
     private final QueueClientWrapper client;
 
     public QueueOperations(final QueueConfiguration configuration, final QueueClientWrapper client) {
         ObjectHelper.notNull(client, "client can not be null.");
 
-        this.configuration = configuration;
         this.client = client;
+        this.configurationOptionsProxy = new QueueConfigurationOptionsProxy(configuration);
     }
 
     public QueueOperationResponse createQueue(final Exchange exchange) {
         if (exchange == null) {
-            return buildResponseWithEmptyBody(client.create(null, configuration.getTimeout()));
+            return buildResponseWithEmptyBody(client.create(null, configurationOptionsProxy.getTimeout(null)));
         }
 
-        final Map<String, String> metadata = QueueExchangeHeaders.getMetadataFromHeaders(exchange);
-        final Duration timeout = getTimeout(exchange);
+        final Map<String, String> metadata = configurationOptionsProxy.getMetadata(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         return buildResponseWithEmptyBody(client.create(metadata, timeout));
     }
 
     public QueueOperationResponse clearQueue(final Exchange exchange) {
         if (exchange == null) {
-            return buildResponseWithEmptyBody(client.clearMessages(configuration.getTimeout()));
+            return buildResponseWithEmptyBody(client.clearMessages(configurationOptionsProxy.getTimeout(null)));
         }
 
-        final Duration timeout = getTimeout(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         return buildResponseWithEmptyBody(client.clearMessages(timeout));
     }
 
     public QueueOperationResponse deleteQueue(final Exchange exchange) {
         if (exchange == null) {
-            return buildResponseWithEmptyBody(client.delete(configuration.getTimeout()));
+            return buildResponseWithEmptyBody(client.delete(configurationOptionsProxy.getTimeout(null)));
         }
 
-        final Duration timeout = getTimeout(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         return buildResponseWithEmptyBody(client.delete(timeout));
     }
@@ -78,16 +79,16 @@ public class QueueOperations {
     public QueueOperationResponse sendMessage(final Exchange exchange) {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 
-        final boolean queueCreated = QueueExchangeHeaders.getQueueCreatedFlagFromHeaders(exchange);
+        final boolean queueCreated = configurationOptionsProxy.isCreateQueue(exchange);
 
-        if (!queueCreated) {
+        if (queueCreated) {
             createQueue(exchange);
         }
 
-        final String text = QueueExchangeHeaders.getMessageTextFromHeaders(exchange);
-        final Duration visibilityTimeout = getVisibilityTimeout(exchange);
-        final Duration timeToLive = getTimeToLive(exchange);
-        final Duration timeout = getTimeout(exchange);
+        final String text = exchange.getIn().getBody(String.class);
+        final Duration visibilityTimeout = configurationOptionsProxy.getVisibilityTimeout(exchange);
+        final Duration timeToLive = configurationOptionsProxy.getTimeToLive(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         return buildResponseWithEmptyBody(client.sendMessage(text, visibilityTimeout, timeToLive, timeout));
     }
@@ -95,9 +96,9 @@ public class QueueOperations {
     public QueueOperationResponse deleteMessage(final Exchange exchange) {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 
-        final String messageId = QueueExchangeHeaders.getMessageIdFromHeaders(exchange);
-        final String popReceipt = QueueExchangeHeaders.getPopReceiptFromHeaders(exchange);
-        final Duration timeout = getTimeout(exchange);
+        final String messageId = configurationOptionsProxy.getMessageId(exchange);
+        final String popReceipt = configurationOptionsProxy.getPopReceipt(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         if (ObjectHelper.isEmpty(messageId)) {
             throw new IllegalArgumentException(String.format("Message ID must be specified in camel headers '%s' for deleteMessage "
@@ -114,23 +115,26 @@ public class QueueOperations {
 
     public QueueOperationResponse receiveMessages(final Exchange exchange) {
         if (exchange == null) {
-            return new QueueOperationResponse(client.receiveMessages(configuration.getMaxMessages(), configuration.getVisibilityTimeout(), configuration.getTimeout()));
+            return new QueueOperationResponse(client.receiveMessages(configurationOptionsProxy.getMaxMessages(null),
+                    configurationOptionsProxy.getVisibilityTimeout(null),
+                    configurationOptionsProxy.getTimeout(null)));
         }
 
-        final Integer maxMessages = getMaxMessages(exchange);
-        final Duration visibilityTimeout = getVisibilityTimeout(exchange);
-        final Duration timeout = getTimeout(exchange);
+        final Integer maxMessages = configurationOptionsProxy.getMaxMessages(exchange);
+        final Duration visibilityTimeout = configurationOptionsProxy.getVisibilityTimeout(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         return new QueueOperationResponse(client.receiveMessages(maxMessages, visibilityTimeout, timeout));
     }
 
     public QueueOperationResponse peekMessages(final Exchange exchange) {
         if (exchange == null) {
-            return new QueueOperationResponse(client.peekMessages(configuration.getMaxMessages(), configuration.getTimeout()));
+            return new QueueOperationResponse(client.peekMessages(configurationOptionsProxy.getMaxMessages(null),
+                    configurationOptionsProxy.getTimeout(null)));
         }
 
-        final Integer maxMessages = getMaxMessages(exchange);
-        final Duration timeout = getTimeout(exchange);
+        final Integer maxMessages = configurationOptionsProxy.getMaxMessages(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         return new QueueOperationResponse(client.peekMessages(maxMessages, timeout));
     }
@@ -138,11 +142,11 @@ public class QueueOperations {
     public QueueOperationResponse updateMessage(final Exchange exchange) {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 
-        final String updatedText = QueueExchangeHeaders.getMessageTextFromHeaders(exchange);
-        final String messageId = QueueExchangeHeaders.getMessageIdFromHeaders(exchange);
-        final String popReceipt = QueueExchangeHeaders.getPopReceiptFromHeaders(exchange);
-        final Duration visibilityTimeout = getVisibilityTimeout(exchange);
-        final Duration timeout = getTimeout(exchange);
+        final String updatedText = exchange.getIn().getBody(String.class);
+        final String messageId = configurationOptionsProxy.getMessageId(exchange);
+        final String popReceipt = configurationOptionsProxy.getPopReceipt(exchange);
+        final Duration visibilityTimeout = configurationOptionsProxy.getVisibilityTimeout(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         if (ObjectHelper.isEmpty(messageId)) {
             throw new IllegalArgumentException(String.format("Message ID must be specified in camel headers '%s' for updateMessage "
@@ -188,25 +192,4 @@ public class QueueOperations {
 
         return new QueueOperationResponse(body, exchangeHeaders.toMap());
     }
-
-    private Duration getVisibilityTimeout(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getVisibilityTimeout(exchange)) ? configuration.getVisibilityTimeout()
-                : QueueExchangeHeaders.getVisibilityTimeout(exchange);
-    }
-
-    private Duration getTimeToLive(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getTimeToLiveFromHeaders(exchange)) ? configuration.getTimeToLive()
-                : QueueExchangeHeaders.getTimeToLiveFromHeaders(exchange);
-    }
-
-    private Duration getTimeout(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getTimeoutFromHeaders(exchange)) ? configuration.getTimeout()
-                : QueueExchangeHeaders.getTimeoutFromHeaders(exchange);
-    }
-
-    private Integer getMaxMessages(final Exchange exchange) {
-        return ObjectHelper.isEmpty(QueueExchangeHeaders.getMaxMessagesFromHeaders(exchange)) ? configuration.getMaxMessages()
-                : QueueExchangeHeaders.getMaxMessagesFromHeaders(exchange);
-    }
-
 }
