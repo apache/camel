@@ -23,6 +23,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonathenaclient":
         case "amazonAthenaClient": target.getConfiguration().setAmazonAthenaClient(property(camelContext, software.amazon.awssdk.services.athena.AthenaClient.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientrequesttoken":
@@ -80,6 +82,7 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonAthenaClient", software.amazon.awssdk.services.athena.AthenaClient.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("clientRequestToken", java.lang.String.class);
         answer.put("database", java.lang.String.class);
@@ -118,6 +121,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonathenaclient":
         case "amazonAthenaClient": return target.getConfiguration().getAmazonAthenaClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientrequesttoken":

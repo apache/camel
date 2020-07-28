@@ -59,7 +59,7 @@ from("direct:start")
 
 
 // component options: START
-The AWS 2 Athena component supports 29 options, which are listed below.
+The AWS 2 Athena component supports 30 options, which are listed below.
 
 
 
@@ -68,6 +68,7 @@ The AWS 2 Athena component supports 29 options, which are listed below.
 | Name | Description | Default | Type
 | *accessKey* (producer) | Amazon AWS Access Key. |  | String
 | *amazonAthenaClient* (producer) | The AmazonAthena instance to use as the client. |  | AthenaClient
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
 | *configuration* (producer) | The component configuration. |  | Athena2Configuration
 | *database* (producer) | The Athena database to use. |  | String
 | *delay* (producer) | Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 2000 | long
@@ -127,12 +128,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (29 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
 | *accessKey* (producer) | Amazon AWS Access Key. |  | String
 | *amazonAthenaClient* (producer) | The AmazonAthena instance to use as the client. |  | AthenaClient
 | *database* (producer) | The Athena database to use. |  | String
