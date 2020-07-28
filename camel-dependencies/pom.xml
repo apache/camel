@@ -55,7 +55,7 @@
     <arquillian-version>1.6.0.Final</arquillian-version>
     <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
     <asm-version>8.0.1</asm-version>
-    <aspectj-version>1.9.5</aspectj-version>
+    <aspectj-version>1.9.6</aspectj-version>
     <assertj-version>3.16.1</assertj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
