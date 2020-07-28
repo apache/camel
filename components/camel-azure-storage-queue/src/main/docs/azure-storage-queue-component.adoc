@@ -61,7 +61,7 @@ to("file://queuedirectory");
 == URI Options
 
 // component options: START
-The Azure Storage Queue Service component supports 12 options, which are listed below.
+The Azure Storage Queue Service component supports 15 options, which are listed below.
 
 
 
@@ -71,10 +71,13 @@ The Azure Storage Queue Service component supports 12 options, which are listed 
 | *configuration* (common) | The component configurations |  | QueueConfiguration
 | *serviceClient* (common) | Service client to a storage account to interact with the queue service. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. This client contains all the operations for interacting with a queue account in Azure Storage. Operations allowed by the client are creating, listing, and deleting queues, retrieving and updating properties of the account, and retrieving statistics of the account. |  | QueueServiceClient
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *createQueue* (producer) | When is set to true, the queue will be automatically created when sending messages to the queue. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | Queue service operation hint to the producer. The value can be one of: listQueues, createQueue, deleteQueue, clearQueue, sendMessage, deleteMessage, receiveMessages, peekMessages, updateMessage |  | QueueOperationDefinition
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *maxMessages* (queue) | Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages. | 1 | Integer
+| *messageId* (queue) | The ID of the message to be deleted or updated. |  | String
+| *popReceipt* (queue) | Unique identifier that must match for the message to be deleted or updated. |  | String
 | *timeout* (queue) | An optional timeout applied to the operation. If a response is not returned before the timeout concludes a RuntimeException will be thrown. |  | Duration
 | *timeToLive* (queue) | How long the message will stay alive in the queue. If unset the value will default to 7 days, if -1 is passed the message will not expire. The time to live must be -1 or any positive number. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
 | *visibilityTimeout* (queue) | The timeout period for how long the message is invisible in the queue. The timeout must be between 1 seconds and 7 days. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
@@ -103,7 +106,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,11 +116,14 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *createQueue* (producer) | When is set to true, the queue will be automatically created when sending messages to the queue. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | Queue service operation hint to the producer. The value can be one of: listQueues, createQueue, deleteQueue, clearQueue, sendMessage, deleteMessage, receiveMessages, peekMessages, updateMessage |  | QueueOperationDefinition
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *maxMessages* (queue) | Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages. | 1 | Integer
+| *messageId* (queue) | The ID of the message to be deleted or updated. |  | String
+| *popReceipt* (queue) | Unique identifier that must match for the message to be deleted or updated. |  | String
 | *timeout* (queue) | An optional timeout applied to the operation. If a response is not returned before the timeout concludes a RuntimeException will be thrown. |  | Duration
 | *timeToLive* (queue) | How long the message will stay alive in the queue. If unset the value will default to 7 days, if -1 is passed the message will not expire. The time to live must be -1 or any positive number. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
 | *visibilityTimeout* (queue) | The timeout period for how long the message is invisible in the queue. The timeout must be between 1 seconds and 7 days. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
@@ -156,10 +162,9 @@ aggregate this number of messages.
 |`CamelAzureStorageQueueSegmentOptions`| `QueueConstants.QUEUES_SEGMENT_OPTIONS`|`QueuesSegmentOptions`|`listQueues`|Options for listing queues
 |`CamelAzureStorageQueueTimeout`|`QueueConstants.TIMEOUT`|`Duration`|All|An optional timeout value beyond which a {@link RuntimeException} will be raised.
 |`CamelAzureStorageQueueMetadata`|`QueueConstants.METADATA`|`Map<String,String>`|`createQueue`|Metadata to associate with the queue
-|`CamelAzureStorageQueueMessageText`|`QueueConstants.MESSAGE_TEXT`|`String`|`sendMessage`, `updateMessage`| Message text to be sent or update existing message
 |`CamelAzureStorageQueueTimeToLive`|`QueueConstants.TIME_TO_LIVE`|`Duration`|`sendMessage`|How long the message will stay alive in the queue. If unset the value will default to 7 days, if -1 is passed the message will not expire. The time to live must be -1 or any positive number.
 |`CamelAzureStorageQueueVisibilityTimeout`|`QueueConstants.VISIBILITY_TIMEOUT`|`Duration`|`sendMessage`, `receiveMessages`, `updateMessage`| The timeout period for how long the message is invisible in the queue. If unset the value will default to 0 and the message will be instantly visible. The timeout must be between 0 seconds and 7 days.
-|`CamelAzureStorageQueueQueueCreated`|`QueueConstants.QUEUE_CREATED`|`boolean`|`sendMessage`| When is set to `true`, the queue will not be automatically created when sending messages to the queue.
+|`CamelAzureStorageQueueCreateQueue`|`QueueConstants.CREATE_QUEUE`|`boolean`|`sendMessage`| When is set to `true`, the queue will be automatically created when sending messages to the queue.
 |`CamelAzureStorageQueuePopReceipt`|`QueueConstants.POP_RECEIPT`|`String`|`deleteMessage`, `updateMessage`|Unique identifier that must match for the message to be deleted or updated.
 |`CamelAzureStorageQueueMessageId`|`QueueConstants.MESSAGE_ID`|`String`|`deleteMessage`, `updateMessage`| The ID of the message to be deleted or updated.
 |`CamelAzureStorageQueueMaxMessages`|`QueueConstants.MAX_MESSAGES`|`Integer`|`receiveMessages`, `peekMessages`|  Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages.
@@ -235,11 +240,12 @@ For these operations, `accountName` and `queueName` are *required*.
 |`createQueue` | Creates a new queue.
 |`deleteQueue` | Permanently deletes the queue.
 |`clearQueue`| Deletes all messages in the queue..
-|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and a timeout period where the message is invisible in the queue.
+|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and a timeout period where the message is invisible in the queue. The message text is evaluated from the exchange message body.
+                By default, if the queue doesn`t exist, it will create an empty queue first. If you want to disable this, set the config `createQueue` or header `CamelAzureStorageQueueCreateQueue` to `false`.
 |`deleteMessage`| Deletes the specified message in the queue.
 |`receiveMessages`|  Retrieves up to the maximum number of messages from the queue and hides them from other operations for the timeout period. However it will not dequeue the message from the queue due to reliability reasons.
 |`peekMessages`| Peek messages from the front of the queue up to the maximum number of messages.
-|`updateMessage`| Updates the specific message in the queue with a new message and resets the visibility timeout.
+|`updateMessage`| Updates the specific message in the queue with a new message and resets the visibility timeout. The message text is evaluated from the exchange message body.
 |===
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
@@ -321,7 +327,7 @@ from("direct:start")
       // set the header you want the producer to evaluate, refer to the previous
       // section to learn about the headers that can be set
       // e.g:
-      exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "message to send");
+      exchange.getIn().setBody("message to send");
       // we set a visibility of 1min
       exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
      })
@@ -380,7 +386,7 @@ from("direct:start")
        // set the header you want the producer to evaluate, refer to the previous
        // section to learn about the headers that can be set
        // e.g:
-       exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "new message text");
+       exchange.getIn().setBody("new message text");
        // Mandatory header:
        exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
        // Mandatory header:

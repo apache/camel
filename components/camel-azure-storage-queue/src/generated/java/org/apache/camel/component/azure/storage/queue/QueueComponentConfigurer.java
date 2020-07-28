@@ -33,12 +33,18 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.queue.QueueConfiguration.class, value)); return true;
+        case "createqueue":
+        case "createQueue": getOrCreateConfiguration(target).setCreateQueue(property(camelContext, boolean.class, value)); return true;
         case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxmessages":
         case "maxMessages": getOrCreateConfiguration(target).setMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "messageid":
+        case "messageId": getOrCreateConfiguration(target).setMessageId(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class, value)); return true;
+        case "popreceipt":
+        case "popReceipt": getOrCreateConfiguration(target).setPopReceipt(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.queue.QueueServiceClient.class, value)); return true;
         case "timetolive":
@@ -57,10 +63,13 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("configuration", org.apache.camel.component.azure.storage.queue.QueueConfiguration.class);
+        answer.put("createQueue", boolean.class);
         answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxMessages", java.lang.Integer.class);
+        answer.put("messageId", java.lang.String.class);
         answer.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
+        answer.put("popReceipt", java.lang.String.class);
         answer.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
         answer.put("timeToLive", java.time.Duration.class);
         answer.put("timeout", java.time.Duration.class);
@@ -79,12 +88,18 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
+        case "createqueue":
+        case "createQueue": return getOrCreateConfiguration(target).isCreateQueue();
         case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxmessages":
         case "maxMessages": return getOrCreateConfiguration(target).getMaxMessages();
+        case "messageid":
+        case "messageId": return getOrCreateConfiguration(target).getMessageId();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "popreceipt":
+        case "popReceipt": return getOrCreateConfiguration(target).getPopReceipt();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
         case "timetolive":

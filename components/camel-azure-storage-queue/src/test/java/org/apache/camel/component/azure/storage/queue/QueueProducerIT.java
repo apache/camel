@@ -96,9 +96,24 @@ class QueueProducerIT extends CamelTestSupport {
     public void testSendAndDeleteMessage() throws InterruptedException {
         final String queueName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
+        // first test if queue is not created
         template.send("direct:sendMessage", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, queueName);
-            exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "test-message-1");
+            exchange.getIn().setBody("test-message-1");
+            exchange.getIn().setHeader(QueueConstants.CREATE_QUEUE, false);
+        });
+
+        result.assertIsSatisfied();
+
+        // queue not created because of the flag
+        assertTrue(result.getExchanges().isEmpty());
+
+        result.reset();
+
+        // test the rest
+        template.send("direct:sendMessage", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, queueName);
+            exchange.getIn().setBody("test-message-1");
         });
 
         result.assertIsSatisfied();

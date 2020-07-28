@@ -40,8 +40,8 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueueConsumer.class);
 
-    private QueueClientWrapper clientWrapper;
-    private QueueOperations queueOperations;
+    private final QueueClientWrapper clientWrapper;
+    private final QueueOperations queueOperations;
 
     public QueueConsumer(final QueueEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);

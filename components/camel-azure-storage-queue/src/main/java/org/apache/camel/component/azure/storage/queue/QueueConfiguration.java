@@ -40,6 +40,8 @@ public class QueueConfiguration implements Cloneable {
     private QueueServiceClient serviceClient;
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean createQueue = true;
     // queue properties
     @UriParam(label = "queue")
     private Duration timeToLive;
@@ -49,6 +51,10 @@ public class QueueConfiguration implements Cloneable {
     private Integer maxMessages = 1;
     @UriParam(label = "queue")
     private Duration timeout;
+    @UriParam(label = "queue")
+    private String messageId;
+    @UriParam(label = "queue")
+    private String popReceipt;
 
     /**
      * Azure account name to be used for authentication with azure queue services
@@ -154,6 +160,17 @@ public class QueueConfiguration implements Cloneable {
     }
 
     /**
+     * When is set to `true`, the queue will be automatically created when sending messages to the queue.
+     */
+    public boolean isCreateQueue() {
+        return createQueue;
+    }
+
+    public void setCreateQueue(boolean createQueue) {
+        this.createQueue = createQueue;
+    }
+
+    /**
      * Maximum number of messages to get, if there are less messages exist in the queue
      * than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed
      * range is 1 to 32 messages.
@@ -176,6 +193,28 @@ public class QueueConfiguration implements Cloneable {
 
     public void setTimeout(Duration timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * The ID of the message to be deleted or updated.
+     */
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    /**
+     * Unique identifier that must match for the message to be deleted or updated.
+     */
+    public String getPopReceipt() {
+        return popReceipt;
+    }
+
+    public void setPopReceipt(String popReceipt) {
+        this.popReceipt = popReceipt;
     }
 
     // *************************************************
