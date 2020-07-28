@@ -62,6 +62,21 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2TranslateComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Component configuration.
          * 
          * The option is a:
@@ -287,6 +302,7 @@ public interface Aws2TranslateComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "autodetectSourceLanguage": getOrCreateConfiguration((Translate2Component) component).setAutodetectSourceLanguage((boolean) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((Translate2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Translate2Component) component).setConfiguration((org.apache.camel.component.aws2.translate.Translate2Configuration) value); return true;
             case "lazyStartProducer": ((Translate2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Translate2Component) component).setOperation((org.apache.camel.component.aws2.translate.Translate2Operations) value); return true;
