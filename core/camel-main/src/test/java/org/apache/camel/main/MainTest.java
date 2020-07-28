@@ -58,11 +58,12 @@ public class MainTest {
 
     @Test
     public void testDisableHangupSupport() throws Exception {
-        DefaultMainShutdownStrategy shutdownStrategy = new DefaultMainShutdownStrategy();
-        shutdownStrategy.disableHangupSupport();
-
         // lets make a simple route
         Main main = new Main();
+
+        DefaultMainShutdownStrategy shutdownStrategy = new DefaultMainShutdownStrategy(main);
+        shutdownStrategy.disableHangupSupport();
+
         main.setShutdownStrategy(shutdownStrategy);
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.enableTrace();
@@ -149,6 +150,22 @@ public class MainTest {
         assertTrue(strategy.getEventNotifiers().stream().anyMatch(n -> n instanceof MainDurationEventNotifier));
 
         main.stop();
+    }
+
+    @Test
+    public void testDurationIdleSeconds() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.configure().withDurationMaxIdleSeconds(2);
+        main.run();
+    }
+
+    @Test
+    public void testDurationMaxSeconds() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.configure().withDurationMaxSeconds(2);
+        main.run();
     }
 
     public static class MyRouteBuilder extends RouteBuilder {
