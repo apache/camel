@@ -223,6 +223,7 @@ class BlobOperationsIT extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(blocks);
+        exchange.getIn().setHeader(BlobConstants.COMMIT_BLOCK_LIST_LATER, false);
 
         final BlobOperationResponse response = operations.stageBlockBlobList(exchange);
 
