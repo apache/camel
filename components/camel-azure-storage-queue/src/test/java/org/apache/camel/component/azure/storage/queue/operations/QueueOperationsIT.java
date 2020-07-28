@@ -103,7 +103,7 @@ class QueueOperationsIT extends CamelTestSupport {
         final QueueOperations operations = new QueueOperations(configuration, clientWrapper);
 
         final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message");
+        exchange.getIn().setBody("testing message");
 
         final QueueOperationResponse response = operations.sendMessage(exchange);
 
@@ -133,13 +133,13 @@ class QueueOperationsIT extends CamelTestSupport {
         final QueueOperations operations = getQueueOperations();
 
         final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-1");
+        exchange.getIn().setBody("testing message-1");
         operations.sendMessage(exchange);
 
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-2");
+        exchange.getIn().setBody("testing message-2");
         operations.sendMessage(exchange);
 
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-3");
+        exchange.getIn().setBody("testing message-3");
         operations.sendMessage(exchange);
 
         // test peek messages
@@ -171,10 +171,10 @@ class QueueOperationsIT extends CamelTestSupport {
         final QueueOperations operations = getQueueOperations();
 
         final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-1");
+        exchange.getIn().setBody("testing message-1");
         final QueueOperationResponse sentMessage1 = operations.sendMessage(exchange);
 
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-2");
+        exchange.getIn().setBody("testing message-2");
         final QueueOperationResponse sentMessage2 = operations.sendMessage(exchange);
 
         // test delete message
@@ -202,11 +202,11 @@ class QueueOperationsIT extends CamelTestSupport {
         final QueueOperations operations = getQueueOperations();
 
         final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-1");
+        exchange.getIn().setBody("testing message-1");
         final QueueOperationResponse sentMessage = operations.sendMessage(exchange);
 
         // let's do our update
-        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "updated message-1");
+        exchange.getIn().setBody("updated message-1");
         exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, sentMessage.getHeaders().get(QueueConstants.POP_RECEIPT));
         exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, sentMessage.getHeaders().get(QueueConstants.MESSAGE_ID));
         exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMillis(10));

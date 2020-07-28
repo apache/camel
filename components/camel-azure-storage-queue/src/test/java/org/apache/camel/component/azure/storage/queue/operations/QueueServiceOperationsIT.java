@@ -69,7 +69,7 @@ class QueueServiceOperationsIT {
 
     @Test
     public void testListQueues() {
-        final QueueServiceOperations operations = new QueueServiceOperations(clientWrapper);
+        final QueueServiceOperations operations = new QueueServiceOperations(configuration, clientWrapper);
 
         // test
         final QueueOperationResponse queuesResponse = operations.listQueues(null);

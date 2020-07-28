@@ -30,15 +30,15 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class QueueProducer extends DefaultProducer {
 
-    private final QueueConfiguration configuration;
+    private final QueueConfigurationOptionsProxy configurationOptionsProxy;
     private final QueueServiceClientWrapper queueServiceClientWrapper;
     private final QueueServiceOperations queueServiceOperations;
 
     public QueueProducer(final Endpoint endpoint) {
         super(endpoint);
-        this.configuration = getEndpoint().getConfiguration();
         this.queueServiceClientWrapper = new QueueServiceClientWrapper(getEndpoint().getQueueServiceClient());
-        this.queueServiceOperations = new QueueServiceOperations(queueServiceClientWrapper);
+        this.queueServiceOperations = new QueueServiceOperations(getEndpoint().getConfiguration(), queueServiceClientWrapper);
+        this.configurationOptionsProxy = new QueueConfigurationOptionsProxy(getEndpoint().getConfiguration());
     }
 
     @Override
@@ -95,20 +95,15 @@ public class QueueProducer extends DefaultProducer {
     }
 
     private QueueOperationDefinition determineOperation(final Exchange exchange) {
-        final QueueOperationDefinition operation = QueueExchangeHeaders.getQueueOperationsDefinitionFromHeaders(exchange);
-        if (operation != null) {
-            return operation;
-        }
-        return configuration.getOperation();
+        return configurationOptionsProxy.getQueueOperation(exchange);
     }
 
     private QueueOperations getQueueOperations(final Exchange exchange) {
-        return new QueueOperations(configuration, queueServiceClientWrapper.getQueueClientWrapper(determineQueueName(exchange)));
+        return new QueueOperations(getEndpoint().getConfiguration(), queueServiceClientWrapper.getQueueClientWrapper(determineQueueName(exchange)));
     }
 
     private String determineQueueName(final Exchange exchange) {
-        final String queueName = ObjectHelper.isEmpty(QueueExchangeHeaders.getQueueNameFromHeaders(exchange)) ? configuration.getQueueName()
-                : QueueExchangeHeaders.getQueueNameFromHeaders(exchange);
+        final String queueName = configurationOptionsProxy.getQueueName(exchange);
 
         if (ObjectHelper.isEmpty(queueName)) {
             throw new IllegalArgumentException("Queue name must be specified");

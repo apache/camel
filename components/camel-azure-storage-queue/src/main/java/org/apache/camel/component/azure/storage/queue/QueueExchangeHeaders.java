@@ -67,10 +67,6 @@ public class QueueExchangeHeaders {
         return getObjectFromHeaders(exchange, QueueConstants.METADATA, Map.class);
     }
 
-    public static String getMessageTextFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, QueueConstants.MESSAGE_TEXT, String.class);
-    }
-
     public static Duration getTimeToLiveFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, QueueConstants.TIME_TO_LIVE, Duration.class);
     }
@@ -79,8 +75,8 @@ public class QueueExchangeHeaders {
         return getObjectFromHeaders(exchange, QueueConstants.VISIBILITY_TIMEOUT, Duration.class);
     }
 
-    public static boolean getQueueCreatedFlagFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, QueueConstants.QUEUE_CREATED, boolean.class);
+    public static Boolean getCreateQueueFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, QueueConstants.CREATE_QUEUE, Boolean.class);
     }
 
     public static String getPopReceiptFromHeaders(final Exchange exchange) {

@@ -20,7 +20,8 @@ import java.time.Duration;
 
 import com.azure.storage.queue.models.QueuesSegmentOptions;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.azure.storage.queue.QueueExchangeHeaders;
+import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
+import org.apache.camel.component.azure.storage.queue.QueueConfigurationOptionsProxy;
 import org.apache.camel.component.azure.storage.queue.client.QueueServiceClientWrapper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -29,20 +30,22 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class QueueServiceOperations {
 
-    private QueueServiceClientWrapper client;
+    private final QueueConfigurationOptionsProxy configurationOptionsProxy;
+    private final QueueServiceClientWrapper client;
 
-    public QueueServiceOperations(final QueueServiceClientWrapper client) {
+    public QueueServiceOperations(final QueueConfiguration configuration, final QueueServiceClientWrapper client) {
         ObjectHelper.notNull(client, "client can not be null.");
 
         this.client = client;
+        this.configurationOptionsProxy = new QueueConfigurationOptionsProxy(configuration);
     }
 
     public QueueOperationResponse listQueues(final Exchange exchange) {
         if (exchange == null) {
             return new QueueOperationResponse(client.listQueues(null, null));
         }
-        final QueuesSegmentOptions segmentOptions = QueueExchangeHeaders.getQueuesSegmentOptionsFromHeaders(exchange);
-        final Duration timeout = QueueExchangeHeaders.getTimeoutFromHeaders(exchange);
+        final QueuesSegmentOptions segmentOptions = configurationOptionsProxy.getQueuesSegmentOptions(exchange);
+        final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         return new QueueOperationResponse(client.listQueues(segmentOptions, timeout));
     }
