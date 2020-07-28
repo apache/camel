@@ -47,7 +47,7 @@ public class UriConfigurationTest {
     
     @Test
     public void testPageSetting() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter-search:foo?count=50&numberOfPages=2");
+        Endpoint endpoint = context.getEndpoint("twitter-search:foo?count=50&numberOfPages=2&" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
 
@@ -57,7 +57,7 @@ public class UriConfigurationTest {
     
     @Test
     public void testHttpProxySetting() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter-search:foo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
+        Endpoint endpoint = context.getEndpoint("twitter-search:foo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd&" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
         
@@ -69,18 +69,25 @@ public class UriConfigurationTest {
 
     @Test
     public void testDirectMessageEndpoint() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter-directmessage:foo");
+        Endpoint endpoint = context.getEndpoint("twitter-directmessage:foo?" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterDirectMessageEndpoint, "Endpoint not a TwitterDirectMessageEndpoint: " + endpoint);
     }
 
     @Test
     public void testSearchEndpoint() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter-search:foo");
+        Endpoint endpoint = context.getEndpoint("twitter-search:foo?" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
     }
 
     @Test
     public void testTimelineEndpoint() throws Exception {
+        // set on component level instead
+        AbstractTwitterComponent twitter = context.getComponent("twitter-timeline", AbstractTwitterComponent.class);
+        twitter.setAccessToken(support.accessToken);
+        twitter.setAccessTokenSecret(support.accessTokenSecret);
+        twitter.setConsumerKey(support.consumerKey);
+        twitter.setConsumerSecret(support.consumerSecret);
+
         Endpoint endpoint = context.getEndpoint("twitter-timeline:home");
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         TwitterTimelineEndpoint timelineEndpoint = (TwitterTimelineEndpoint)endpoint;

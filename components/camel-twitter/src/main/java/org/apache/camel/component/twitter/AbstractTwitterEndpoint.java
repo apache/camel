@@ -53,7 +53,6 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
     }
 
     @Override
-    @ManagedAttribute
     public TwitterConfiguration getProperties() {
         return properties;
     }
