@@ -16,9 +16,14 @@
  */
 package org.apache.camel.main;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.CamelContextTracker;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +36,12 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultMainShutdownStrategy.class);
 
     private final AtomicBoolean hangupIntercepted;
+    private final BaseMainSupport main;
 
     private volatile boolean hangupInterceptorEnabled;
 
-    public DefaultMainShutdownStrategy() {
+    public DefaultMainShutdownStrategy(BaseMainSupport main) {
+        this.main = main;
         this.hangupIntercepted = new AtomicBoolean();
     }
 
@@ -67,6 +74,47 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
 
     private void handleHangup() {
         LOG.info("Received hang up - stopping the main instance.");
+        // and shutdown listener to allow camel context to graceful shutdown if JVM shutdown hook is triggered
+        // as otherwise the JVM terminates before Camel is graceful shutdown
+        addShutdownListener(() -> {
+            LOG.trace("OnShutdown");
+            // attempt to wait for main to complete its shutdown of camel context
+            if (main.getCamelContext() != null) {
+                final CountDownLatch latch = new CountDownLatch(1);
+                // use tracker to know when camel context is destroyed so we can complete this listener quickly
+                CamelContextTracker tracker = new CamelContextTracker() {
+                    @Override
+                    public void contextDestroyed(CamelContext camelContext) {
+                        latch.countDown();
+                    }
+                };
+                tracker.open();
+
+                // use timeout from camel shutdown strategy and add 5 second extra to allow camel to shutdown graceful
+                long max = 5000 + main.getCamelContext().getShutdownStrategy().getTimeUnit().toMillis(main.getCamelContext().getShutdownStrategy().getTimeout());
+                int waits = 0;
+                boolean done = false;
+                StopWatch watch = new StopWatch();
+                while (!main.getCamelContext().isStopped() && !done && watch.taken() < max) {
+                    String msg = "Waiting for CamelContext to graceful shutdown, elapsed: " + TimeUtils.printDuration(watch.taken());
+                    if (waits % 5 == 0) {
+                        // do some info logging every 5th time
+                        LOG.info(msg);
+                    } else {
+                        LOG.trace(msg);
+                    }
+                    waits++;
+                    try {
+                        // wait 1 sec and loop and log activity so we can see we are waiting
+                        done = latch.await(1000, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                }
+                tracker.close();
+            }
+            LOG.trace("OnShutdown complete");
+        });
         shutdown();
     }
 
