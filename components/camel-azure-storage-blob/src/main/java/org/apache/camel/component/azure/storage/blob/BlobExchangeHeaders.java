@@ -185,16 +185,16 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.PAGE_BLOB_RANGE, PageRange.class);
     }
 
-    public static boolean getCommitBlockListFlagFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, BlobConstants.COMMIT_BLOCK_LIST_LATER, boolean.class);
+    public static Boolean getCommitBlockListFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.COMMIT_BLOCK_LIST_LATER, Boolean.class);
     }
 
-    public static boolean getCreateAppendBlobFlagFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, BlobConstants.CREATE_APPEND_BLOB, boolean.class);
+    public static Boolean getCreateAppendBlobFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.CREATE_APPEND_BLOB, Boolean.class);
     }
 
-    public static boolean getCreatePageBlobFlagFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, BlobConstants.CREATE_PAGE_BLOB, boolean.class);
+    public static Boolean getCreatePageBlobFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.CREATE_PAGE_BLOB, Boolean.class);
     }
 
     public static BlockListType getBlockListTypeFromHeaders(final Exchange exchange) {

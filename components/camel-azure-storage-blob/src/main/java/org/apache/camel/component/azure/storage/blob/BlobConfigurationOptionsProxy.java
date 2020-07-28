@@ -195,7 +195,7 @@ public class BlobConfigurationOptionsProxy {
 
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
-        return ObjectHelper.isEmpty(exchangeFn.apply(exchange)) ? fallbackFn.get()
+        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange)) ? fallbackFn.get()
                 : exchangeFn.apply(exchange);
     }
 }

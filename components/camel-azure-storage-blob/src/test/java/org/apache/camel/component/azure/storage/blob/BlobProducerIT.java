@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BlobProducerIT extends CamelTestSupport {
@@ -98,6 +99,7 @@ public class BlobProducerIT extends CamelTestSupport {
 
         template.send("direct:stageBlockBlobList", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
+            exchange.getIn().setHeader(BlobConstants.COMMIT_BLOCK_LIST_LATER, false);
 
             final List<BlobBlock> blocks = new LinkedList<>();
             blocks.add(BlobBlock.createBlobBlock(new ByteArrayInputStream("Hello".getBytes())));
@@ -113,6 +115,27 @@ public class BlobProducerIT extends CamelTestSupport {
     }
 
     @Test
+    public void testCommitAppendBlobWithError() throws InterruptedException {
+        final String blobName = RandomStringUtils.randomAlphabetic(10);
+
+        template.send("direct:commitAppendBlobWithError", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
+            exchange.getIn().setHeader(BlobConstants.CREATE_APPEND_BLOB, false);
+
+            final String data = "Hello world from my awesome tests!";
+            final InputStream dataStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+
+            exchange.getIn().setBody(dataStream);
+        });
+
+        result.assertIsSatisfied();
+
+
+        // append blob not created because of the flag
+        assertTrue(result.getExchanges().isEmpty());
+    }
+
+    @Test
     public void testCreateAndUpdateAppendBlob() throws InterruptedException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
@@ -122,7 +145,6 @@ public class BlobProducerIT extends CamelTestSupport {
 
         template.send("direct:commitAppendBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
-            exchange.getIn().setHeader(BlobConstants.CREATE_APPEND_BLOB, true);
 
             final String data = "Hello world from my awesome tests!";
             final InputStream dataStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
@@ -146,7 +168,6 @@ public class BlobProducerIT extends CamelTestSupport {
 
         template.send("direct:uploadPageBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
-            exchange.getIn().setHeader(BlobConstants.CREATE_PAGE_BLOB, true);
 
             byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
             new Random().nextBytes(dataBytes);
@@ -199,6 +220,10 @@ public class BlobProducerIT extends CamelTestSupport {
                         .to(resultName);
 
                 from("direct:commitAppendBlob")
+                        .to(componentUri("commitAppendBlob"))
+                        .to(resultName);
+
+                from("direct:commitAppendBlobWithError")
                         .to(componentUri("commitAppendBlob"))
                         .to(resultName);
 
