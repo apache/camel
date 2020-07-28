@@ -119,7 +119,7 @@
         <maven-surefire-plugin-version>3.0.0-M4</maven-surefire-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
-        <formatter-maven-plugin.version>2.11.0</formatter-maven-plugin.version>
+        <formatter-maven-plugin.version>2.12.1</formatter-maven-plugin.version>
         <impsort-maven-plugin.version>1.3.2</impsort-maven-plugin.version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->

@@ -81,37 +81,43 @@ public class XMLTokenExpressionIteratorTest {
                                                          + "</grandparent>"
                                                          + "</g:greatgrandparent>").getBytes();
 
+    private static final String RESULTS_CW1 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                              + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='a' anotherAttr='a'></c:child>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CW2 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                              + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='b' anotherAttr='b'/>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CW3 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                              + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='c' anotherAttr='c'></c:child>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CW4 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                              + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='d' anotherAttr='d'/>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CW5 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
+                                              + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='e' anotherAttr='e'></c:child>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CW6 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
+                                              + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='f' anotherAttr='f'/>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
     private static final String[] RESULTS_CHILD_WRAPPED = {
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                            + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-                                                            + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                            + "<c:child some_attr='a' anotherAttr='a'></c:child>"
-                                                            + "</c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                                + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-                                                                                                                + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                + "<c:child some_attr='b' anotherAttr='b'/>"
-                                                                                                                + "</c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                                                                                    + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-                                                                                                                                                                    + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                                                                    + "<c:child some_attr='c' anotherAttr='c'></c:child>"
-                                                                                                                                                                    + "</c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                                                                                                                                        + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-                                                                                                                                                                                                                        + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                                                                                                                        + "<c:child some_attr='d' anotherAttr='d'/>"
-                                                                                                                                                                                                                        + "</c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                                                                                                                                                                                            + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
-                                                                                                                                                                                                                                                                            + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                                                                                                                                                                            + "<c:child some_attr='e' anotherAttr='e'></c:child>"
-                                                                                                                                                                                                                                                                            + "</c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                                                                                                                                                                                                                                                + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
-                                                                                                                                                                                                                                                                                                                                + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                                                                                                                                                                                                                                + "<c:child some_attr='f' anotherAttr='f'/>"
-                                                                                                                                                                                                                                                                                                                                + "</c:parent></grandparent></g:greatgrandparent>"
+            RESULTS_CW1,
+            RESULTS_CW2,
+            RESULTS_CW3,
+            RESULTS_CW4,
+            RESULTS_CW5,
+            RESULTS_CW6
     };
 
     private static final String[] RESULTS_CHILD_MIXED = {
@@ -121,19 +127,27 @@ public class XMLTokenExpressionIteratorTest {
             "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
     };
 
+    private static final String RESULTS_CMW1
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+              + "<child some_attr='a' anotherAttr='a'></child></parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CMW2
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+              + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/></parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CMW3
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+              + "<child some_attr='c' anotherAttr='c' xmlns='urn:c'></child></c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CMW4
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+              + "<c:child some_attr='d' anotherAttr='d'/></c:parent></grandparent></g:greatgrandparent>";
     private static final String[] RESULTS_CHILD_MIXED_WRAPPED = {
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                  + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
-                                                                  + "<child some_attr='a' anotherAttr='a'></child></parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                                                                                                                 + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
-                                                                                                                                                                 + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/></parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                                                                                                                                                                                                                           + "<c:parent some_attr='2' xmlns:c='urn:c'>"
-                                                                                                                                                                                                                                                                           + "<child some_attr='c' anotherAttr='c' xmlns='urn:c'></child></c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                                                                                                                                                                                                                                                                                                                                          + "<c:parent some_attr='2' xmlns:c='urn:c'>"
-                                                                                                                                                                                                                                                                                                                                                                                          + "<c:child some_attr='d' anotherAttr='d'/></c:parent></grandparent></g:greatgrandparent>"
+            RESULTS_CMW1,
+            RESULTS_CMW2,
+            RESULTS_CMW3,
+            RESULTS_CMW4
     };
 
     private static final String[] RESULTS_CHILD = {
@@ -150,14 +164,18 @@ public class XMLTokenExpressionIteratorTest {
             "<child some_attr='c' anotherAttr='c' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"></child>",
     };
 
+    private static final String RESULT_CNNMW1
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+              + "<child some_attr='a' anotherAttr='a' xmlns=''></child></parent></grandparent></g:greatgrandparent>";
+    private static final String RESULT_CNNMW2
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+              + "<child some_attr='c' anotherAttr='c'></child></c:parent></grandparent></g:greatgrandparent>";
     // note that there is no preceding sibling to the extracted child
     private static final String[] RESULTS_CHILD_NO_NS_MIXED_WRAPPED = {
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                        + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
-                                                                        + "<child some_attr='a' anotherAttr='a' xmlns=''></child></parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                                                                                                                                + "<c:parent some_attr='2' xmlns:c='urn:c'>"
-                                                                                                                                                                                + "<child some_attr='c' anotherAttr='c'></child></c:parent></grandparent></g:greatgrandparent>",
+            RESULT_CNNMW1,
+            RESULT_CNNMW2,
     };
 
     private static final String[] RESULTS_CHILD_NS_MIXED = {
@@ -165,61 +183,73 @@ public class XMLTokenExpressionIteratorTest {
             "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
     };
 
+    private static final String RESULTS_CNMW1
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+              + "<child some_attr='a' anotherAttr='a' xmlns=''></child>"
+              + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/></parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_CNMW2
+            = "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+              + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+              + "<child some_attr='c' anotherAttr='c'></child>"
+              + "<c:child some_attr='d' anotherAttr='d'/></c:parent></grandparent></g:greatgrandparent>";
     // note that there is a preceding sibling to the extracted child
     private static final String[] RESULTS_CHILD_NS_MIXED_WRAPPED = {
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                     + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
-                                                                     + "<child some_attr='a' anotherAttr='a' xmlns=''></child>"
-                                                                     + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/></parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-                                                                                                                                                                               + "<c:parent some_attr='2' xmlns:c='urn:c'>"
-                                                                                                                                                                               + "<child some_attr='c' anotherAttr='c'></child>"
-                                                                                                                                                                               + "<c:child some_attr='d' anotherAttr='d'/></c:parent></grandparent></g:greatgrandparent>"
+            RESULTS_CNMW1,
+            RESULTS_CNMW2
     };
 
+    private static final String RESULTS_PW1 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                              + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='a' anotherAttr='a'></c:child>"
+                                              + "<c:child some_attr='b' anotherAttr='b'/>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_PW2 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                              + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='c' anotherAttr='c'></c:child>"
+                                              + "<c:child some_attr='d' anotherAttr='d'/>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
+    private static final String RESULTS_PW3 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
+                                              + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                              + "<c:child some_attr='e' anotherAttr='e'></c:child>"
+                                              + "<c:child some_attr='f' anotherAttr='f'/>"
+                                              + "</c:parent></grandparent></g:greatgrandparent>";
     private static final String[] RESULTS_PARENT_WRAPPED = {
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                             + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-                                                             + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                             + "<c:child some_attr='a' anotherAttr='a'></c:child>"
-                                                             + "<c:child some_attr='b' anotherAttr='b'/>"
-                                                             + "</c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                                 + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-                                                                                                                 + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                 + "<c:child some_attr='c' anotherAttr='c'></c:child>"
-                                                                                                                 + "<c:child some_attr='d' anotherAttr='d'/>"
-                                                                                                                 + "</c:parent></grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                                                                                     + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
-                                                                                                                                                                     + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-                                                                                                                                                                     + "<c:child some_attr='e' anotherAttr='e'></c:child>"
-                                                                                                                                                                     + "<c:child some_attr='f' anotherAttr='f'/>"
-                                                                                                                                                                     + "</c:parent></grandparent></g:greatgrandparent>",
+            RESULTS_PW1,
+            RESULTS_PW2,
+            RESULTS_PW3,
     };
 
+    private static final String RESULTS_P1 = "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\" xmlns:g='urn:g'>"
+                                             + "<c:child some_attr='a' anotherAttr='a'></c:child>"
+                                             + "<c:child some_attr='b' anotherAttr='b'/>"
+                                             + "</c:parent>";
+    private static final String RESULTS_P2 = "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\" xmlns:g='urn:g'>"
+                                             + "<c:child some_attr='c' anotherAttr='c'></c:child>"
+                                             + "<c:child some_attr='d' anotherAttr='d'/>"
+                                             + "</c:parent>";
+    private static final String RESULTS_P3 = "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\" xmlns:g='urn:g'>"
+                                             + "<c:child some_attr='e' anotherAttr='e'></c:child>"
+                                             + "<c:child some_attr='f' anotherAttr='f'/>"
+                                             + "</c:parent>";
     private static final String[] RESULTS_PARENT = {
-            "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\" xmlns:g='urn:g'>"
-                                                     + "<c:child some_attr='a' anotherAttr='a'></c:child>"
-                                                     + "<c:child some_attr='b' anotherAttr='b'/>"
-                                                     + "</c:parent>",
-            "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\" xmlns:g='urn:g'>"
-                                                                      + "<c:child some_attr='c' anotherAttr='c'></c:child>"
-                                                                      + "<c:child some_attr='d' anotherAttr='d'/>"
-                                                                      + "</c:parent>",
-            "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\" xmlns:g='urn:g'>"
-                                                                                       + "<c:child some_attr='e' anotherAttr='e'></c:child>"
-                                                                                       + "<c:child some_attr='f' anotherAttr='f'/>"
-                                                                                       + "</c:parent>",
+            RESULTS_P1,
+            RESULTS_P2,
+            RESULTS_P3,
     };
 
+    private static final String RESULTS_AW1 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                              + "</grandparent></g:greatgrandparent>";
+    private static final String RESULTS_AW2 = "<?xml version='1.0' encoding='UTF-8'?>"
+                                              + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
+                                              + "</grandparent></g:greatgrandparent>";
     private static final String[] RESULTS_AUNT_WRAPPED = {
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                           + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-                                                           + "</grandparent></g:greatgrandparent>",
-            "<?xml version='1.0' encoding='UTF-8'?>"
-                                                                                                    + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle>ben</uncle><aunt/>"
-                                                                                                    + "</grandparent></g:greatgrandparent>"
+            RESULTS_AW1,
+            RESULTS_AW2
     };
 
     private static final String[] RESULTS_AUNT = {
