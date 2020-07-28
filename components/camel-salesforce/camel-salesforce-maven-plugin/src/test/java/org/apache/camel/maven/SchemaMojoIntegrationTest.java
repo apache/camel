@@ -17,22 +17,22 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.maven.AbstractSalesforceMojoIntegrationTest.setup;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SchemaMojoIntegrationTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
+    @TempDir
+    public Path temp;
 
     @Test
     public void testExecuteJsonSchema() throws Exception {

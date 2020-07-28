@@ -19,13 +19,13 @@ package org.apache.camel.component.reactive.streams.support;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class ReactiveStreamsTestSupport extends CamelTestSupport {
 
     protected CamelReactiveStreamsService camel;
 
-    @Before
+    @BeforeEach
     public void initReactiveStreamService() {
         this.camel = CamelReactiveStreams.get(context);
     }

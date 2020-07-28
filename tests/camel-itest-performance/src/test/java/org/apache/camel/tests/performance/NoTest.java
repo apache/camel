@@ -16,11 +16,10 @@
  */
 package org.apache.camel.tests.performance;
 
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.Test;
 
-
-public class NoTest extends TestSupport {
+public class NoTest {
 
     @Test
     public void testNothing() throws Exception {

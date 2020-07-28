@@ -42,14 +42,14 @@ import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableOb
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     public static final String ROUTING_KEY = "rk5";
