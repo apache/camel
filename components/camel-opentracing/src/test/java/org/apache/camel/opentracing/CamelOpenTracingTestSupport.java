@@ -162,7 +162,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
         if (!td.getTags().isEmpty()) {
             for (Map.Entry<String, String> entry : td.getTags().entrySet()) {
-                assertEquals(entry.getValue(), span.tags().get(entry.getKey()));
+                assertEquals(entry.getValue(), String.valueOf(span.tags().get(entry.getKey())));
             }
         }
 

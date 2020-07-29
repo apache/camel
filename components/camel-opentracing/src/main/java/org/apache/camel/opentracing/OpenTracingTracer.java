@@ -18,6 +18,8 @@ package org.apache.camel.opentracing;
 
 import java.util.Set;
 
+import io.opentracing.Span;
+import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.contrib.tracerresolver.TracerResolver;
@@ -29,7 +31,9 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.SpanKind;
+import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,10 +59,13 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
     }
 
     private String mapToSpanKind(SpanKind kind) {
-        if (kind == SpanKind.SPAN_KIND_CLIENT) {
-            return Tags.SPAN_KIND_CLIENT;
+        switch (kind) {
+            case SPAN_KIND_CLIENT: return Tags.SPAN_KIND_CLIENT;
+            case SPAN_KIND_SERVER: return Tags.SPAN_KIND_SERVER;
+            case CONSUMER: return Tags.SPAN_KIND_CONSUMER;
+            case PRODUCER: return Tags.SPAN_KIND_PRODUCER;
+            default: return null;
         }
-        return Tags.SPAN_KIND_SERVER;
     }
 
 
@@ -97,12 +104,27 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
         return new OpenTracingSpanAdapter(spanBuilder.start());
     }
 
-    @Override protected SpanAdapter startExchangeBeginSpan(String operationName, SpanKind kind, SpanAdapter parent) {
-        SpanBuilder spanBuilder = tracer.buildSpan(operationName);
+    @Override protected SpanAdapter startExchangeBeginSpan(Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent) {
+        SpanBuilder builder = tracer.buildSpan(operationName);
         if (parent != null) {
-            spanBuilder.asChildOf(((OpenTracingSpanAdapter) parent).getOpenTracingSpan());
+            // we found a Span already associated with this exchange, use it as parent
+            Span parentFromExchange = ((OpenTracingSpanAdapter) parent).getOpenTracingSpan();
+            builder.asChildOf(parentFromExchange);
+        } else {
+            SpanContext parentFromHeaders = tracer.extract(Format.Builtin.TEXT_MAP, new OpenTracingExtractAdapter(sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding)));
+
+            if (parentFromHeaders != null) {
+                // this means it's an inter-process request or the context was manually injected into the headers
+                // we add the server tag
+                builder.asChildOf(parentFromHeaders).withTag(Tags.SPAN_KIND.getKey(), mapToSpanKind(sd.getReceiverSpanKind()));
+            } else if (!(sd instanceof AbstractInternalSpanDecorator)) {
+                // no parent found anywhere and it's not an internal endpoint
+                // we add the server tag
+                builder.withTag(Tags.SPAN_KIND.getKey(), mapToSpanKind(sd.getReceiverSpanKind()));
+            }
         }
-        return new OpenTracingSpanAdapter(spanBuilder.start());
+
+        return new OpenTracingSpanAdapter(builder.start());
     }
 
     public Tracer getTracer() {

@@ -23,10 +23,12 @@ import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.trace.DefaultTracer;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
+import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.opentelemetry.propagators.OpenTelemetrySetter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.SpanKind;
 
 @ManagedResource(description = "OpenTelemetryTracer")
@@ -76,7 +78,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     }
 
     @Override
-    protected SpanAdapter startExchangeBeginSpan(String operationName, SpanKind kind, SpanAdapter parent) {
+    protected SpanAdapter startExchangeBeginSpan(Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent) {
         Span.Builder builder = tracer.spanBuilder(operationName);
         if (parent != null) {
             OpenTelemetrySpanAdapter oTelSpanWrapper = (OpenTelemetrySpanAdapter) parent;
