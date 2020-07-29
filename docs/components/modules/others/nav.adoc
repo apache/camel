@@ -39,5 +39,6 @@
 ** xref:testcontainers-spring.adoc[Testcontainers Spring]
 ** xref:testcontainers-spring-junit5.adoc[Testcontainers Spring Junit5]
 ** xref:reactive-threadpoolfactory-vertx.adoc[ThreadPoolFactory Vert.x]
+** xref:tracing.adoc[Tracing]
 ** xref:undertow-spring-security.adoc[Undertow Spring Security]
 ** xref:zipkin.adoc[Zipkin]
