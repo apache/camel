@@ -18,6 +18,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.language.CML;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
@@ -123,10 +124,14 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
                 expression = metaExpression.evaluate(exchange, String.class);
             }
 
+            // set exchange and variable resolver as thread locals for concurrency
+            CML.exchange().set(exchange);
             Object value = processMapping(exchange);
             return exchange.getContext().getTypeConverter().convertTo(type, value);
         } catch (Exception e) {
             throw new RuntimeExpressionException("Unable to evaluate DataSonnet expression : " + expression, e);
+        } finally {
+            CML.exchange().remove();
         }
     }
 
@@ -189,7 +194,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
 
         DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
         Mapper mapper = language.getMapperFromCache(expression).orElseGet(() -> {
-            Mapper answer = new Mapper(expression, jsonnetVars.keySet(), resolveImports(), true, true);
+            Mapper answer = new Mapper(expression, jsonnetVars.keySet(), resolveImports(), true, true, CML.asAdditionalLib());
             language.addScriptToCache(expression, answer);
             return answer;
         });

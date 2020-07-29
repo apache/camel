@@ -2642,6 +2642,11 @@
 				<artifactId>camel-zookeeper</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-datasonnet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 			<!-- camel components: END -->
 
             <!-- NOTE: auto-generated list of starter components when building camel catalog -->
