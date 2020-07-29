@@ -235,6 +235,7 @@
         <module>camel-jbpm</module>
         <module>camel-jcache</module>
         <module>camel-jclouds</module>
+        <module>camel-tracing</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>
         <module>camel-jgroups-raft</module>
@@ -291,6 +292,7 @@
         <module>camel-olingo4</module>
         <module>camel-openstack</module>
         <module>camel-opentracing</module>
+        <module>camel-opentelemetry</module>
         <module>camel-optaplanner</module>
         <module>camel-paho</module>
         <module>camel-pdf</module>

@@ -18,7 +18,6 @@ package org.apache.camel.opentracing;
 
 import java.util.concurrent.TimeUnit;
 
-import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;

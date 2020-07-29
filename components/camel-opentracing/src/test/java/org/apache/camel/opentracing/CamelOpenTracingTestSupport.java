@@ -34,6 +34,7 @@ import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.tracing.SpanDecorator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -64,9 +65,8 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
         ottracer.setTracingStrategy(getTracingStrategy());
-
+        ottracer.addDecorator(new TestSEDASpanDecorator());
         ottracer.init(context);
-
         return context;
     }
 
@@ -139,7 +139,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         }
         assertEquals(td.getUri(), span.tags().get("camel.uri"), td.getLabel());
 
-        // If span associated with TestSEDASpanDecorator, check that pre/post tags have been defined
+        // If span associated with org.apache.camel.opentracing.TestSEDASpanDecorator, check that pre/post tags have been defined
         if ("camel-seda".equals(component)) {
             assertTrue(span.tags().containsKey("pre"));
             assertTrue(span.tags().containsKey("post"));

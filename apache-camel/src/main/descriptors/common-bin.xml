@@ -284,6 +284,7 @@
         <include>org.apache.camel:camel-olingo4-api</include>
         <include>org.apache.camel:camel-openapi-java</include>
         <include>org.apache.camel:camel-openstack</include>
+        <include>org.apache.camel:camel-opentelemetry</include>
         <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
@@ -370,6 +371,7 @@
         <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>
         <include>org.apache.camel:camel-timer</include>
+        <include>org.apache.camel:camel-tracing</include>
         <include>org.apache.camel:camel-twilio</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-undertow</include>
