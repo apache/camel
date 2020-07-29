@@ -67,11 +67,11 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         });
     }
 
+    protected boolean encoding;
     private final TracingLogListener logListener = new TracingLogListener();
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private Set<String> excludePatterns = new HashSet<>(0);
     private InterceptStrategy tracingStrategy;
-    protected boolean encoding;
     private CamelContext camelContext;
 
     protected abstract void initTracer();
