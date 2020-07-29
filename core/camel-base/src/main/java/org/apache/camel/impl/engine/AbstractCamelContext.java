@@ -131,6 +131,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError.Phase;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -2604,6 +2605,24 @@ public abstract class AbstractCamelContext extends BaseService
 
         // start components
         ServiceHelper.initService(components.values());
+
+        // create routes from route templates if we have any sources
+        for (RouteTemplateParameterSource source : getRegistry().findByType(RouteTemplateParameterSource.class)) {
+            for (String routeId : source.routeIds()) {
+                // do a defensive copy of the parameters
+                Map<String, Object> map = new HashMap<>(source.parameters(routeId));
+                Object templateId = map.remove(RouteTemplateParameterSource.TEMPLATE_ID);
+                if (templateId == null) {
+                    // use alternative style as well
+                    templateId = map.remove("template-id");
+                }
+                final String id = templateId != null ? templateId.toString() : null;
+                if (id == null) {
+                    throw new IllegalArgumentException("RouteTemplateParameterSource with routeId: " + routeId + " has no templateId defined");
+                }
+                addRouteFromTemplate(routeId, id, map);
+            }
+        }
 
         // start the route definitions before the routes is started
         startRouteDefinitions();
