@@ -20,9 +20,11 @@ import java.util.Set;
 
 import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
-import io.opentelemetry.context.propagation.ContextPropagators;
-import io.opentelemetry.context.propagation.DefaultContextPropagators;
-import io.opentelemetry.trace.*;
+import io.opentelemetry.trace.DefaultTracer;
+import io.opentelemetry.trace.Span;
+import io.opentelemetry.trace.SpanContext;
+import io.opentelemetry.trace.Tracer;
+import io.opentelemetry.trace.TracingContextUtils;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.opentelemetry.propagators.OpenTelemetryGetter;
@@ -87,7 +89,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         Span.Builder builder = tracer.spanBuilder(operationName);
         if (parent != null) {
             OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) parent;
-            builder = builder.setParent((spanFromExchange).getOpenTelemetrySpan());
+            builder = builder.setParent(spanFromExchange.getOpenTelemetrySpan());
         } else {
             Context ctx = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding), new OpenTelemetryGetter());
             Span span = TracingContextUtils.getSpan(ctx);
