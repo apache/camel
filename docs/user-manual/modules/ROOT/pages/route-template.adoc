@@ -166,6 +166,16 @@ camel.route-template[1].input=bar
 camel.route-template[1].result=cheese
 ----
 
+== Creating routes from custom sources of template parameters
+
+The SPI interface `org.apache.camel.spi.RouteTemplateParameterSource` can be used to implement custom sources that
+are used during startup of Camel to create routes via the templates with parameters from the custom source(s).
+
+For example a custom source can be implemented that reads parameters from a shared database that Camel uses during staring
+by creating routes. This allows to externalize these parameters and as well to easily add more routes with varying parameters.
+
+To let Camel discover custom sources then register the source into the Camel registry.
+
 == See Also
 
 See the example https://github.com/apache/camel-examples/tree/master/examples/camel-example-routetemplate[camel-example-routetemplate].

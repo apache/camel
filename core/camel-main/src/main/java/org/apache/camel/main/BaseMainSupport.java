@@ -22,9 +22,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -35,7 +33,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -67,7 +64,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
-import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -1042,13 +1039,14 @@ public abstract class BaseMainSupport extends BaseService {
     private void setRouteTemplateProperties(CamelContext camelContext, Map<String, Object> routeTemplateProperties,
                                             boolean failIfNotSet, Map<String, String> autoConfiguredProperties) throws Exception {
 
-        Map<String, Map<String, String>> rtConfigs = new HashMap<>();
+        // store the route template parameters as a source and register it on the camel context
+        PropertiesRouteTemplateParametersSource source = new PropertiesRouteTemplateParametersSource();
         for (Map.Entry<String, Object> entry : routeTemplateProperties.entrySet()) {
             String id = StringHelper.between(entry.getKey(), "[", "]");
             String key = StringHelper.after(entry.getKey(), "].");
-            Map<String, String> map = rtConfigs.computeIfAbsent(id, k -> new HashMap<>());
-            map.put(key, entry.getValue().toString());
+            source.addParameter(id, key, entry.getValue());
         }
+        camelContext.getRegistry().bind("CamelMainRouteTemplateParametersSource", RouteTemplateParameterSource.class, source);
 
         // lets sort by keys
         Map<String, Object> sorted = new TreeMap<>(routeTemplateProperties);
@@ -1056,24 +1054,6 @@ public abstract class BaseMainSupport extends BaseService {
             autoConfiguredProperties.put("camel.route-template" + k, v.toString());
         });
         routeTemplateProperties.clear();
-
-        // create route templates
-        for (Map<String, String> map : rtConfigs.values()) {
-            String templateId = map.remove("templateId");
-            if (templateId == null) {
-                templateId = map.remove("template-id");
-            }
-            // need to add route templates after configure as the templates must be present first
-            final String id = templateId;
-            addMainListener(new MainListenerSupport() {
-                @Override
-                public void afterConfigure(BaseMainSupport main) {
-                    RouteTemplateParameterBuilder builder = camelContext.addRouteFromTemplate(id);
-                    map.forEach(builder::parameter);
-                    builder.build();
-                }
-            });
-        }
     }
 
     private void setHealthCheckProperties(CamelContext camelContext, Map<String, Object> healthCheckProperties,

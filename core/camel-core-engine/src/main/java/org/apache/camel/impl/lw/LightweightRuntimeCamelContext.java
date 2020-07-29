@@ -39,6 +39,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExchangeConstantProvider;
+import org.apache.camel.Experimental;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
@@ -140,6 +141,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Experimental
 public class LightweightRuntimeCamelContext implements ExtendedCamelContext, CatalogCamelContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(LightweightRuntimeCamelContext.class);
