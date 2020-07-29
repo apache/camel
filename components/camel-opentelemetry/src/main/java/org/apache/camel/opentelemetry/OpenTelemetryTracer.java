@@ -22,12 +22,18 @@ import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.trace.DefaultTracer;
 import io.opentelemetry.trace.Span;
+import io.opentelemetry.trace.SpanContext;
 import io.opentelemetry.trace.Tracer;
+import io.opentelemetry.trace.TracingContextUtils;
+import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.opentelemetry.propagators.OpenTelemetryGetter;
 import org.apache.camel.opentelemetry.propagators.OpenTelemetrySetter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.SpanKind;
+import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 
 @ManagedResource(description = "OpenTelemetryTracer")
 public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
@@ -43,10 +49,13 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     }
 
     private Span.Kind mapToSpanKind(SpanKind kind) {
-        if (kind == SpanKind.SPAN_KIND_CLIENT) {
-            return Span.Kind.CLIENT;
+        switch (kind) {
+            case SPAN_KIND_CLIENT: return Span.Kind.CLIENT;
+            case SPAN_KIND_SERVER: return Span.Kind.SERVER;
+            case CONSUMER: return Span.Kind.CONSUMER;
+            case PRODUCER: return Span.Kind.PRODUCER;
+            default: return Span.Kind.SERVER;
         }
-        return Span.Kind.SERVER;
     }
 
     @Override
@@ -76,11 +85,21 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     }
 
     @Override
-    protected SpanAdapter startExchangeBeginSpan(String operationName, SpanKind kind, SpanAdapter parent) {
+    protected SpanAdapter startExchangeBeginSpan(Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent) {
         Span.Builder builder = tracer.spanBuilder(operationName);
         if (parent != null) {
-            OpenTelemetrySpanAdapter oTelSpanWrapper = (OpenTelemetrySpanAdapter) parent;
-            builder = builder.setParent(((OpenTelemetrySpanAdapter) parent).getOpenTelemetrySpan());
+            OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) parent;
+            builder = builder.setParent(spanFromExchange.getOpenTelemetrySpan());
+        } else {
+            Context ctx = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding), new OpenTelemetryGetter());
+            Span span = TracingContextUtils.getSpan(ctx);
+            SpanContext parentFromHeaders = span.getContext();
+
+            if (parentFromHeaders != null && parentFromHeaders.isValid()) {
+                builder.setParent(parentFromHeaders).setSpanKind(mapToSpanKind(sd.getReceiverSpanKind()));
+            } else if (!(sd instanceof AbstractInternalSpanDecorator)) {
+                builder.setSpanKind(mapToSpanKind(sd.getReceiverSpanKind()));
+            }
         }
 
         return new OpenTelemetrySpanAdapter(builder.startSpan());
