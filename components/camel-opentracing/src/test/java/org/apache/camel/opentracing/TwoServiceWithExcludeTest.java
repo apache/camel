@@ -19,7 +19,6 @@ package org.apache.camel.opentracing;
 import java.util.Collections;
 import java.util.Set;
 
-import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;

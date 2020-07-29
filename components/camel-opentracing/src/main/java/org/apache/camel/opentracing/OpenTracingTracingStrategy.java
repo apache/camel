@@ -30,6 +30,8 @@ import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.tracing.ActiveSpanManager;
+import org.apache.camel.tracing.SpanDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +54,8 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
         }
 
         return new DelegateAsyncProcessor((Exchange exchange) -> {
-            Span span = ActiveSpanManager.getSpan(exchange);
+            OpenTracingSpanAdapter spanWrapper = (OpenTracingSpanAdapter) ActiveSpanManager.getSpan(exchange);
+            Span span = spanWrapper.getOpenTracingSpan();
             if (span == null) {
                 target.process(exchange);
                 return;
@@ -69,7 +72,7 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
                     || target instanceof SetBaggageProcessor);
 
             if (activateExchange) {
-                ActiveSpanManager.activate(exchange, processorSpan);
+                ActiveSpanManager.activate(exchange, new OpenTracingSpanAdapter(processorSpan));
             }
 
             try (final Scope inScope = tracer.getTracer().activateSpan(processorSpan)) {

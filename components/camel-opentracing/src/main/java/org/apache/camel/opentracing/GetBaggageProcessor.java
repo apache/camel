@@ -19,11 +19,11 @@ package org.apache.camel.opentracing;
 import io.opentracing.Span;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,8 @@ public class GetBaggageProcessor extends AsyncProcessorSupport implements Tracea
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            Span span = ActiveSpanManager.getSpan(exchange);
+            OpenTracingSpanAdapter camelSpan = (OpenTracingSpanAdapter) ActiveSpanManager.getSpan(exchange);
+            Span span = camelSpan.getOpenTracingSpan();
             if (span != null) {
                 String item = span.getBaggageItem(baggageName);
                 exchange.getMessage().setHeader(headerName, item);

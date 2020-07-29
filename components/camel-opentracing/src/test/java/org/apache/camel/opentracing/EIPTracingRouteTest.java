@@ -16,11 +16,6 @@
  */
 package org.apache.camel.opentracing;
 
-import io.opentracing.Span;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
