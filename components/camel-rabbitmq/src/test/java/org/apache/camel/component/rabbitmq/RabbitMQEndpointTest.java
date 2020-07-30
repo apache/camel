@@ -38,6 +38,7 @@ import org.apache.camel.component.rabbitmq.integration.RabbitMQDeadLetterRouting
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -300,4 +301,19 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?passive=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isPassive());
     }
+
+    @Test
+    public void testEndpointArgsIssue() throws Exception {
+        RabbitMQEndpoint endpoint1 = context.getEndpoint("rabbitmq://localhost:5672/mydirectdelayed?queue=testQ4"
+                + "&routingKey=testKey&username=me&password=mypwd&threadPoolSize=1&concurrentConsumers=1&autoDelete=false"
+                + "&vhost=myvhost&arg.queue.x-single-active-consumer=true&arg.exchange.x-delayed-type=direct&exchangeType=x-delayed-message", RabbitMQEndpoint.class);
+
+        Assert.assertNotNull(endpoint1.getArgs());
+        Assert.assertEquals(2, endpoint1.getArgs().size());
+        Assert.assertNotNull(endpoint1.getExchangeArgs());
+        Assert.assertEquals(1, endpoint1.getExchangeArgs().size());
+        Assert.assertNotNull(endpoint1.getQueueArgs());
+        Assert.assertEquals(1, endpoint1.getQueueArgs().size());
+    }
+
 }

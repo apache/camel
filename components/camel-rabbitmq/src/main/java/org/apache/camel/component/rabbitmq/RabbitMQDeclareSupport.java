@@ -86,6 +86,11 @@ public class RabbitMQDeclareSupport {
         if (queueExpiration instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String)queueExpiration));
         }
+
+        Object singleConsumer = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY);
+        if (singleConsumer instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY, Boolean.parseBoolean((String)singleConsumer));
+        }
     }
 
     private void populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {
