@@ -3799,7 +3799,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path beanId:address
      */
-    static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
+    public static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder("cxf", path);
     }
@@ -3824,7 +3824,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path beanId:address
      */
-    static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
+    public static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder(componentName, path);
