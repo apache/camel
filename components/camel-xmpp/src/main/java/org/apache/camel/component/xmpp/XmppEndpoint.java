@@ -234,6 +234,20 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return new XMPPTCPConnection(conf);
     }
 
+    /**
+     * If there is no "@" symbol in the participant, find the service domain
+     * JID and return the fully qualified JID for the participant as user@server.domain
+     */
+	public String resolveParticipant(XMPPConnection connection) {
+		String participant = getParticipant();
+
+		if (participant.indexOf('@', 0) != -1) {
+			return participant;
+		}
+
+		return participant + "@" + connection.getXMPPServiceDomain().toString();
+	}
+
     /*
      * If there is no "@" symbol in the room, find the chat service JID and
      * return fully qualified JID for the room as room@conference.server.domain
