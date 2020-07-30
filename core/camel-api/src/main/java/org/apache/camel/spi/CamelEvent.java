@@ -28,6 +28,8 @@ import org.apache.camel.Route;
 public interface CamelEvent {
 
     enum Type {
+        CamelContextInitializing,
+        CamelContextInitialized,
         CamelContextResumed,
         CamelContextResumeFailure,
         CamelContextResuming,
@@ -86,6 +88,20 @@ public interface CamelEvent {
             return getContext();
         }
 
+    }
+
+    interface CamelContextInitializingEvent extends CamelContextEvent {
+        @Override
+        default Type getType() {
+            return Type.CamelContextInitializing;
+        }
+    }
+
+    interface CamelContextInitializedEvent extends CamelContextEvent {
+        @Override
+        default Type getType() {
+            return Type.CamelContextInitialized;
+        }
     }
 
     interface CamelContextResumedEvent extends CamelContextEvent {
