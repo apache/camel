@@ -1,0 +1,17 @@
+[[opentelemetry-component]]
+= OpenTelemetry Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-opentelemetry/src/main/docs/opentelemetry.adoc
+:docTitle: OpenTelemetry
+:artifactId: camel-opentelemetry
+:description: Distributed tracing using OpenTelemetry
+:since: 3.5
+:supportLevel: Preview
+
+*Since Camel {since}*
+
+The OpenTelemetry component is used for tracing and timing incoming and
+outgoing Camel messages using https://opentelemetry.io/[OpenTelemetry].
+
+Events (spans) are captured for incoming and outgoing messages being sent
+to/from Camel.
