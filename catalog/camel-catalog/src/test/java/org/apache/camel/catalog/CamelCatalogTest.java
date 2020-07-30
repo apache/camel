@@ -1069,6 +1069,10 @@ public class CamelCatalogTest {
         result = catalog.validateLanguagePredicate(null, "foobar", "bar");
         assertFalse(result.isSuccess());
         assertEquals("Unknown language foobar", result.getError());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${body.length} =!= 12");
+        assertFalse(result.isSuccess());
+        assertEquals("Unexpected token =", result.getShortError());
     }
 
     @Test
