@@ -473,7 +473,8 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Setting the autocreation of the bucket
+     * Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option enabled and 
+     * it will create the destinationBucket if it doesn't exist already.
      */
     public void setAutoCreateBucket(boolean autoCreateBucket) {
         this.autoCreateBucket = autoCreateBucket;
