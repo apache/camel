@@ -351,7 +351,7 @@ from("direct:start")
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
 ------------------------------------------------------------------------------------------------------
 
-As result you'll get an exchange containing a `SendMessageBatchResult` instance, that you can examinate to check what messages were successfull and what not.
+As result you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examinate to check what messages were successfull and what not.
 The id set on each message of the batch will be a Random UUID.
 
 == Delete single Message
@@ -365,7 +365,7 @@ from("direct:start")
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
 ------------------------------------------------------------------------------------------------------
 
-As result you'll get an exchange containing a `DeleteMessageResult` instance, that you can use to check if the message was deleted or not.
+As result you'll get an exchange containing a `DeleteMessageResponse` instance, that you can use to check if the message was deleted or not.
 
 == List Queues
 
@@ -376,7 +376,18 @@ from("direct:start")
   .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues")).to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
 ------------------------------------------------------------------------------------------------------
 
-As result you'll get an exchange containing a `ListQueuesResult` instance, that you can examinate to check the actual queues.
+As result you'll get an exchange containing a `ListQueuesResponse` instance, that you can examinate to check the actual queues.
+
+== Purge Queue
+
+Use purgeQueue operation to purge queue.
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("purgeQueue")).to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `PurgeQueueResponse` instance.
 
 == Queue Autocreation
 
