@@ -64,7 +64,9 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autocreation of the bucket.
+         * Setting the autocreation of the S3 bucket bucketName. This will apply
+         * also in case of moveAfterRead option enabled and it will create the
+         * destinationBucket if it doesn't exist already.
          * 
          * The option is a: <code>boolean</code> type.
          * 
