@@ -40,6 +40,7 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest.Builder;
@@ -61,6 +62,40 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
     public AWS2S3Consumer(AWS2S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+       super.doStart();
+       
+       if (getConfiguration().isMoveAfterRead()) {
+       try {
+           ListObjectsRequest.Builder builder = ListObjectsRequest.builder();
+           builder.bucket(getConfiguration().getDestinationBucket());
+           builder.maxKeys(maxMessagesPerPoll);
+           getAmazonS3Client().listObjects(builder.build());
+           LOG.trace("Bucket [{}] already exists", getConfiguration().getDestinationBucket());
+           return;
+       } catch (AwsServiceException ase) {
+           /* 404 means the bucket doesn't exist */
+           if (ase.awsErrorDetails().errorCode().equalsIgnoreCase("404")) {
+               throw ase;
+           }
+       }
+
+       LOG.trace("Destination Bucket [{}] doesn't exist yet", getConfiguration().getDestinationBucket());
+
+       if (getConfiguration().isAutoCreateBucket()) {
+           // creates the new bucket because it doesn't exist yet
+           CreateBucketRequest createBucketRequest = CreateBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build();
+
+           LOG.trace("Creating Destination bucket [{}] in region [{}] with request [{}]...", getConfiguration().getDestinationBucket(), getConfiguration().getRegion(), createBucketRequest);
+
+           getAmazonS3Client().createBucket(createBucketRequest);
+
+           LOG.trace("Destination Bucket created");
+       }
+       }
     }
 
     @Override
