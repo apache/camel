@@ -63,39 +63,40 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     public AWS2S3Consumer(AWS2S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
     }
-    
+
     @Override
     protected void doStart() throws Exception {
-       super.doStart();
-       
-       if (getConfiguration().isMoveAfterRead()) {
-       try {
-           ListObjectsRequest.Builder builder = ListObjectsRequest.builder();
-           builder.bucket(getConfiguration().getDestinationBucket());
-           builder.maxKeys(maxMessagesPerPoll);
-           getAmazonS3Client().listObjects(builder.build());
-           LOG.trace("Bucket [{}] already exists", getConfiguration().getDestinationBucket());
-           return;
-       } catch (AwsServiceException ase) {
-           /* 404 means the bucket doesn't exist */
-           if (ase.awsErrorDetails().errorCode().equalsIgnoreCase("404")) {
-               throw ase;
-           }
-       }
+        super.doStart();
 
-       LOG.trace("Destination Bucket [{}] doesn't exist yet", getConfiguration().getDestinationBucket());
+        if (getConfiguration().isMoveAfterRead()) {
+            try {
+                ListObjectsRequest.Builder builder = ListObjectsRequest.builder();
+                builder.bucket(getConfiguration().getDestinationBucket());
+                builder.maxKeys(maxMessagesPerPoll);
+                getAmazonS3Client().listObjects(builder.build());
+                LOG.trace("Bucket [{}] already exists", getConfiguration().getDestinationBucket());
+                return;
+            } catch (AwsServiceException ase) {
+                /* 404 means the bucket doesn't exist */
+                if (ase.awsErrorDetails().errorCode().equalsIgnoreCase("404")) {
+                    throw ase;
+                }
+            }
 
-       if (getConfiguration().isAutoCreateBucket()) {
-           // creates the new bucket because it doesn't exist yet
-           CreateBucketRequest createBucketRequest = CreateBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build();
+            LOG.trace("Destination Bucket [{}] doesn't exist yet", getConfiguration().getDestinationBucket());
 
-           LOG.trace("Creating Destination bucket [{}] in region [{}] with request [{}]...", getConfiguration().getDestinationBucket(), getConfiguration().getRegion(), createBucketRequest);
+            if (getConfiguration().isAutoCreateBucket()) {
+                // creates the new bucket because it doesn't exist yet
+                CreateBucketRequest createBucketRequest = CreateBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build();
 
-           getAmazonS3Client().createBucket(createBucketRequest);
+                LOG.trace("Creating Destination bucket [{}] in region [{}] with request [{}]...", getConfiguration().getDestinationBucket(), getConfiguration().getRegion(),
+                          createBucketRequest);
 
-           LOG.trace("Destination Bucket created");
-       }
-       }
+                getAmazonS3Client().createBucket(createBucketRequest);
+
+                LOG.trace("Destination Bucket created");
+            }
+        }
     }
 
     @Override
@@ -177,8 +178,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                         getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                     }
                 }
-                ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client()
-                    .getObject(getRequest.build(), ResponseTransformer.toInputStream());
+                ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client().getObject(getRequest.build(), ResponseTransformer.toInputStream());
 
                 if (includeS3Object(s3Object)) {
                     s3Objects.add(s3Object);
@@ -208,7 +208,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         if (getConfiguration().isIncludeFolders()) {
             return true;
         } else {
-            //Config says to ignore folders/directories
+            // Config says to ignore folders/directories
             return !"application/x-directory".equalsIgnoreCase(s3Object.response().contentType());
         }
     }
@@ -269,7 +269,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 LOG.trace("Moving object from bucket {} with key {} to bucket {}...", bucketName, key, getConfiguration().getDestinationBucket());
 
-                getAmazonS3Client().copyObject(CopyObjectRequest.builder().destinationKey(key).destinationBucket(getConfiguration().getDestinationBucket()).copySource(bucketName + "/" + key).build());
+                getAmazonS3Client().copyObject(CopyObjectRequest.builder().destinationKey(key).destinationBucket(getConfiguration().getDestinationBucket())
+                    .copySource(bucketName + "/" + key).build());
 
                 LOG.trace("Moved object from bucket {} with key {} to bucket {}...", bucketName, key, getConfiguration().getDestinationBucket());
             }
