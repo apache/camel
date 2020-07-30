@@ -38,7 +38,6 @@ import org.apache.camel.component.rabbitmq.integration.RabbitMQDeadLetterRouting
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -48,6 +47,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RabbitMQEndpointTest extends CamelTestSupport {
@@ -61,15 +61,15 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
 
-        HashMap<String, Object> args = new HashMap<>();
+        Map<String, Object> args = new HashMap<>();
         args.put("foo", "bar");
         registry.bind("args", args);
 
-        HashMap<String, Object> moreArgs = new HashMap<>();
+        Map<String, Object> moreArgs = new HashMap<>();
         moreArgs.put("fizz", "buzz");
         registry.bind("moreArgs", moreArgs);
 
-        HashMap<String, Object> evenMoreArgs = new HashMap<>();
+        Map<String, Object> evenMoreArgs = new HashMap<>();
         evenMoreArgs.put("ping", "pong");
         registry.bind("evenMoreArgs", evenMoreArgs);
 
@@ -308,12 +308,12 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
                 + "&routingKey=testKey&username=me&password=mypwd&threadPoolSize=1&concurrentConsumers=1&autoDelete=false"
                 + "&vhost=myvhost&arg.queue.x-single-active-consumer=true&arg.exchange.x-delayed-type=direct&exchangeType=x-delayed-message", RabbitMQEndpoint.class);
 
-        Assert.assertNotNull(endpoint1.getArgs());
-        Assert.assertEquals(2, endpoint1.getArgs().size());
-        Assert.assertNotNull(endpoint1.getExchangeArgs());
-        Assert.assertEquals(1, endpoint1.getExchangeArgs().size());
-        Assert.assertNotNull(endpoint1.getQueueArgs());
-        Assert.assertEquals(1, endpoint1.getQueueArgs().size());
+        assertNotNull(endpoint1.getArgs());
+        assertEquals(2, endpoint1.getArgs().size());
+        assertNotNull(endpoint1.getExchangeArgs());
+        assertEquals(1, endpoint1.getExchangeArgs().size());
+        assertNotNull(endpoint1.getQueueArgs());
+        assertEquals(1, endpoint1.getQueueArgs().size());
     }
 
 }

@@ -79,7 +79,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry reg = new SimpleRegistry();
 
-        HashMap<String, Object> args = new HashMap<>();
+        Map<String, Object> args = new HashMap<>();
         args.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, 60000);
         reg.bind("args", args);
 
