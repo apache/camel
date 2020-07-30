@@ -512,7 +512,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         List<PropertyDefinition> properties = definition.getRouteProperties();
         if (properties != null) {
-
             for (PropertyDefinition prop : properties) {
                 try {
                     final String key = parseString(prop.getKey());
