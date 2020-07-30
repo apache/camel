@@ -378,6 +378,17 @@ from("direct:start")
 
 As result you'll get an exchange containing a `ListQueuesResult` instance, that you can examinate to check the actual queues.
 
+== Purge Queue
+
+Use purgeQueue operation to purge queue.
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("purgeQueue")).to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `PurgeQueueResponse` instance.
+
 == Queue Autocreation
 
 With the option `autoCreateQueue` users are able to avoid the autocreation of an SQS Queue in case it doesn't exist. The default for this option is `true`.
