@@ -16,41 +16,49 @@
  */
 package org.apache.camel.oaipmh;
 
+import java.io.IOException;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.oaipmh.utils.JettyTestServer;
-import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
 
     @Test
-    @Ignore
     public void testOAIPMH() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(103);
+        mock.expectedMessageCount(1);
         mock.assertIsSatisfied(5 * 1000);
     }
-    
+
+    @BeforeClass
+    public static void startServer() throws IOException {
+        //Mocked data  taken from https://repositorio.cepal.org/oai/request - July 21, 2020
+        JettyTestServer.getInstance().context = "test4";
+        JettyTestServer.getInstance().https = true;
+        JettyTestServer.getInstance().startServer();
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        JettyTestServer.getInstance().stopServer();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
 
-                from("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request?"
+                from("oaipmh://localhost:" + JettyTestServer.getInstance().portssl + "/oai/request?"
                         + "ssl=true&"
+                        + "ignoreSSLWarnings=true&"
                         + "delay=1000&"
-                        + "from=2020-06-01T00:00:00Z&"
+                        + "verb=Identify&"
                         + "initialDelay=1000")
-                        .split(xpath("/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
-                                new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
-                                        .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
-                                        .add("dc", "http://purl.org/dc/elements/1.1/")))
-                        //Log the titles of the records
-                        .to("log:titles")
                         .to("mock:result");
 
             }

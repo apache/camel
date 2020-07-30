@@ -39,6 +39,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "from": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "identitier": target.setIdentitier(property(camelContext, java.lang.String.class, value)); return true;
+        case "ignoresslwarnings":
+        case "ignoreSSLWarnings": target.setIgnoreSSLWarnings(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -90,6 +92,7 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("from", java.lang.String.class);
         answer.put("greedy", boolean.class);
         answer.put("identitier", java.lang.String.class);
+        answer.put("ignoreSSLWarnings", boolean.class);
         answer.put("initialDelay", long.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("metadataPrefix", java.lang.String.class);
@@ -136,6 +139,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "from": return target.getFrom();
         case "greedy": return target.isGreedy();
         case "identitier": return target.getIdentitier();
+        case "ignoresslwarnings":
+        case "ignoreSSLWarnings": return target.isIgnoreSSLWarnings();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":

@@ -52,6 +52,9 @@ public class OAIPMHProducer extends DefaultProducer {
                 endpoint.getSet(),
                 endpoint.getIdentitier());
         overrideHarvesterConfigs(exchange.getIn(), harvester);
+        if (endpoint.isIgnoreSSLWarnings()) {
+            harvester.getHttpClient().setIgnoreSSLWarnings(true);
+        }
         List<String> synHarvest = harvester.synHarvest(endpoint.isOnlyFirst());
         exchange.getMessage().setBody(synHarvest);
         if (endpoint.isOnlyFirst() && harvester.getResumptionToken() != null) {
@@ -103,6 +106,10 @@ public class OAIPMHProducer extends DefaultProducer {
         Boolean headerBoolean = msg.getHeader("CamelOaimphOnlyFirst", Boolean.class);
         if (headerBoolean != null) {
             endpoint.setOnlyFirst(headerBoolean);
+        }
+        headerBoolean = msg.getHeader("CamelOaimphIgnoreSSLWarnings", Boolean.class);
+        if (headerBoolean != null) {
+            endpoint.setIgnoreSSLWarnings(headerBoolean);
         }
     }
 

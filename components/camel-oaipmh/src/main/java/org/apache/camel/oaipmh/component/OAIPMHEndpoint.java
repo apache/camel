@@ -17,6 +17,7 @@
 package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -27,6 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultPollingEndpoint;
+import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
@@ -60,6 +62,9 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
     @UriParam(description = "Causes the defined url to make an https request", defaultValue = "false")
     private boolean ssl;
 
+    @UriParam(description = "Ignore SSL certificate warnings", defaultValue = "false")
+    private boolean ignoreSSLWarnings;
+
     @UriParam(description = "Identifier of the requested resources. Applicable only with certain verbs ")
     private String identitier;
 
@@ -85,18 +90,24 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
         this.endpointUrl = endpointUrl;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
+        validateParameters();
         return new OAIPMHProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        OAIPMHConsumer consumer = new OAIPMHConsumer(this, processor);
         validateParameters();
+        OAIPMHConsumer consumer = new OAIPMHConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
 
-    private void validateParameters() {
+    private void validateParameters() throws URISyntaxException {
+        //Update url if SSL is set to true
+        this.url = new URIBuilder(this.url).setScheme(this.ssl ? "https" : "http").build();
+
         // From parameter in ISO 8601 format
         if (from != null) {
             ISODateTimeFormat.dateTimeNoMillis().parseDateTime(from);
@@ -104,6 +115,14 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
         if (until != null) {
             ISODateTimeFormat.dateTimeNoMillis().parseDateTime(until);
         }
+    }
+
+    public boolean isIgnoreSSLWarnings() {
+        return ignoreSSLWarnings;
+    }
+
+    public void setIgnoreSSLWarnings(boolean ignoreSSLWarnings) {
+        this.ignoreSSLWarnings = ignoreSSLWarnings;
     }
 
     public boolean isSsl() {

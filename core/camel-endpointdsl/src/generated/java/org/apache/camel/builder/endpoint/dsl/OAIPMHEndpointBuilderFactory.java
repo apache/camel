@@ -83,6 +83,32 @@ public interface OAIPMHEndpointBuilderFactory {
             return this;
         }
         /**
+         * Ignore SSL certificate warnings.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OAIPMHEndpointConsumerBuilder ignoreSSLWarnings(
+                boolean ignoreSSLWarnings) {
+            doSetProperty("ignoreSSLWarnings", ignoreSSLWarnings);
+            return this;
+        }
+        /**
+         * Ignore SSL certificate warnings.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OAIPMHEndpointConsumerBuilder ignoreSSLWarnings(
+                String ignoreSSLWarnings) {
+            doSetProperty("ignoreSSLWarnings", ignoreSSLWarnings);
+            return this;
+        }
+        /**
          * Specifies the metadataPrefix of the format that should be included in
          * the metadata part of the returned records.
          * 
@@ -824,6 +850,32 @@ public interface OAIPMHEndpointBuilderFactory {
             return this;
         }
         /**
+         * Ignore SSL certificate warnings.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OAIPMHEndpointProducerBuilder ignoreSSLWarnings(
+                boolean ignoreSSLWarnings) {
+            doSetProperty("ignoreSSLWarnings", ignoreSSLWarnings);
+            return this;
+        }
+        /**
+         * Ignore SSL certificate warnings.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OAIPMHEndpointProducerBuilder ignoreSSLWarnings(
+                String ignoreSSLWarnings) {
+            doSetProperty("ignoreSSLWarnings", ignoreSSLWarnings);
+            return this;
+        }
+        /**
          * Specifies the metadataPrefix of the format that should be included in
          * the metadata part of the returned records.
          * 
@@ -1078,6 +1130,31 @@ public interface OAIPMHEndpointBuilderFactory {
          */
         default OAIPMHEndpointBuilder identitier(String identitier) {
             doSetProperty("identitier", identitier);
+            return this;
+        }
+        /**
+         * Ignore SSL certificate warnings.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OAIPMHEndpointBuilder ignoreSSLWarnings(
+                boolean ignoreSSLWarnings) {
+            doSetProperty("ignoreSSLWarnings", ignoreSSLWarnings);
+            return this;
+        }
+        /**
+         * Ignore SSL certificate warnings.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OAIPMHEndpointBuilder ignoreSSLWarnings(String ignoreSSLWarnings) {
+            doSetProperty("ignoreSSLWarnings", ignoreSSLWarnings);
             return this;
         }
         /**

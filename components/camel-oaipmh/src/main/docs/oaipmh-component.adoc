@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (31 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,6 +84,7 @@ with the following path and query parameters:
 | *endpointUrl* (common) | Base URL of the repository to which the request is made through the OAI-PMH protocol. (Parameter) |  | String
 | *from* (common) | Specifies a lower bound for datestamp-based selective harvesting. UTC DateTime value |  | String
 | *identitier* (common) | Identifier of the requested resources. Applicable only with certain verbs |  | String
+| *ignoreSSLWarnings* (common) | Ignore SSL certificate warnings | false | boolean
 | *metadataPrefix* (common) | Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records. | oai_dc | String
 | *onlyFirst* (common) | Returns the response of a single request. Otherwise it will make requests until there is no more data to return. | False | boolean
 | *set* (common) | Specifies membership as a criteria for set-based selective harvesting. |  | String

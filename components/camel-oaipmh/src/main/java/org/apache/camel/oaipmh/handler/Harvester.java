@@ -19,6 +19,9 @@ package org.apache.camel.oaipmh.handler;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import org.apache.camel.oaipmh.component.model.OAIPMHVerb;
 import org.apache.camel.oaipmh.model.OAIPMHResponse;
 import org.apache.camel.oaipmh.utils.OAIPMHHttpClient;
 
@@ -43,6 +47,8 @@ public class Harvester {
     private OAIPMHHttpClient httpClient;
     private ResponseHandler oaipmhResponseHandler;
 
+    private boolean empty;
+
     public Harvester(ResponseHandler oaipmhResponseHandler, URI baseURI, String verb, String metadata, String until, String from, String set, String identifier) {
         this.baseURI = baseURI;
         this.verb = verb;
@@ -53,35 +59,55 @@ public class Harvester {
         this.identifier = identifier;
         this.httpClient = new OAIPMHHttpClient();
         this.oaipmhResponseHandler = oaipmhResponseHandler;
+
+        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
+            this.metadata = null;
+            this.until = null;
+            this.from = null;
+            this.set = null;
+            this.identifier = null;
+        }
+
     }
 
-    private boolean harvest() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+    private boolean harvest() throws IOException, URISyntaxException, ParserConfigurationException, SAXException, Exception {
         boolean hasNext = false;
-        String responseXML = httpClient.doRequest(this.baseURI, this.verb, this.set, this.from, this.until, this.metadata, this.resumptionToken, this.identifier);
-        OAIPMHResponse oaipmhResponse = new OAIPMHResponse(responseXML);
-        this.oaipmhResponseHandler.process(oaipmhResponse);
-        Optional<String> resumptionToken = oaipmhResponse.getResumptionToken();
-        if (resumptionToken.isPresent()) {
-            this.resumptionToken = resumptionToken.get();
-            hasNext = true;
-        } else {
-            this.resumptionToken = null;
+        if (!this.empty) {
+            String responseXML = httpClient.doRequest(this.baseURI, this.verb, this.set, this.from, this.until, this.metadata, this.resumptionToken, this.identifier);
+            OAIPMHResponse oaipmhResponse = new OAIPMHResponse(responseXML);
+            this.oaipmhResponseHandler.process(oaipmhResponse);
+            Optional<String> resumptionToken = oaipmhResponse.getResumptionToken();
+            if (resumptionToken.isPresent()) {
+                this.resumptionToken = resumptionToken.get();
+                hasNext = true;
+            } else {
+                this.resumptionToken = null;
+                this.empty = true;
+            }
         }
         return hasNext;
     }
 
-    public void asynHarvest() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+    public void asynHarvest() throws IOException, URISyntaxException, ParserConfigurationException, SAXException, Exception {
         this.harvest();
 
     }
 
-    public List<String> synHarvest(boolean onlyFirst) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+    public List<String> synHarvest(boolean onlyFirst) throws IOException, URISyntaxException, ParserConfigurationException, SAXException, Exception {
         while (this.harvest()) {
             if (onlyFirst) {
                 break;
             }
         }
         return this.oaipmhResponseHandler.flush();
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public void setEmpty(boolean empty) {
+        this.empty = empty;
     }
 
     public String getResumptionToken() {

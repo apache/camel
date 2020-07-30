@@ -37,9 +37,16 @@ import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +56,14 @@ public final class JettyTestServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyTestServer.class);
     private static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static final int PORT_SSL = AvailablePortFinder.getNextAvailable();
+    private static final String PASSWORD = "changeit";
     private static JettyTestServer instance;
 
     public int port;
+    public int portssl;
     public String context;
+    public boolean https;
 
     private Server server;
 
@@ -84,6 +95,25 @@ public final class JettyTestServer {
         unzip();
         server = new Server(PORT);
         port = PORT;
+
+        if (https) {
+            portssl = PORT_SSL;
+            ServerConnector connector = new ServerConnector(server);
+            connector.setPort(PORT);
+            HttpConfiguration https = new HttpConfiguration();
+            https.addCustomizer(new SecureRequestCustomizer());
+            SslContextFactory sslContextFactory = new SslContextFactory();
+            sslContextFactory.setKeyStorePath(JettyTestServer.class.getResource(
+                    "/jettyKS/localhost.p12").toExternalForm());
+            sslContextFactory.setKeyStorePassword(PASSWORD);
+            sslContextFactory.setKeyManagerPassword(PASSWORD);
+            ServerConnector sslConnector = new ServerConnector(server,
+                    new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                    new HttpConnectionFactory(https));
+
+            sslConnector.setPort(PORT_SSL);
+            server.setConnectors(new Connector[]{connector, sslConnector});
+        }
 
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContext.setContextPath("/");

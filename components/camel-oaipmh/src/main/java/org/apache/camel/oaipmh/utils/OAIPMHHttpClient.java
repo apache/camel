@@ -28,6 +28,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -38,7 +41,9 @@ public class OAIPMHHttpClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(OAIPMHHttpClient.class);
 
-    public String doRequest(URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token, String identifier) throws IOException, URISyntaxException {
+    private boolean ignoreSSLWarnings;
+
+    public String doRequest(URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token, String identifier) throws IOException, URISyntaxException, Exception {
         CloseableHttpClient httpclient = getCloseableHttpClient();
         try {
 
@@ -62,7 +67,9 @@ public class OAIPMHHttpClient {
             if (token != null) {
                 builder.addParameter("resumptionToken", token);
             } else {
-                builder.addParameter("metadataPrefix", metadataPrefix);
+                if (metadataPrefix != null) {
+                    builder.addParameter("metadataPrefix", metadataPrefix);
+                }
                 if (set != null) {
                     builder.addParameter("set", set);
                 }
@@ -100,23 +107,44 @@ public class OAIPMHHttpClient {
             };
             String responseBody = httpclient.execute(httpget, responseHandler);
 
-           /* String uri = requestLine.getUri();
-            System.out.println(uri);
-            String sha256Hex = DigestUtils.sha256Hex(uri.split("edu.ec")[1]);
-            System.out.println ("File:"+sha256Hex);
-            BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/tests/test3/" + sha256Hex + ".xml"));
-            writer.write(responseBody);
-            writer.close();*/
+//            String uri = requestLine.getUri();
+//            System.out.println(uri);
+//            String sha256Hex = DigestUtils.sha256Hex(uri.split(".org")[1]);
+//            System.out.println ("File:"+sha256Hex);
+//            BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/tests/test4/" + sha256Hex + ".xml"));
+//            writer.write(responseBody);
+//            writer.close();
             LOG.debug("Response received: {}", responseBody);
-            
+
             return responseBody;
         } finally {
             httpclient.close();
         }
     }
 
-    protected CloseableHttpClient getCloseableHttpClient() {
-        return HttpClients.createDefault();
+    protected CloseableHttpClient getCloseableHttpClient() throws Exception {
+        if (isIgnoreSSLWarnings()) {
+            try {
+                SSLContextBuilder builder = new SSLContextBuilder();
+                builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                        builder.build());
+                return HttpClients.custom().setSSLSocketFactory(
+                        sslsf).build();
+            } catch (Exception ex) {
+                throw ex;
+            }
+        } else {
+            return HttpClients.createDefault();
+        }
+    }
+
+    public boolean isIgnoreSSLWarnings() {
+        return ignoreSSLWarnings;
+    }
+
+    public void setIgnoreSSLWarnings(boolean ignoreSSLWarnings) {
+        this.ignoreSSLWarnings = ignoreSSLWarnings;
     }
 
 }

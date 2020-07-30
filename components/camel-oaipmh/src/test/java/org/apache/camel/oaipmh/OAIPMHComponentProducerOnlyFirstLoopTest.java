@@ -27,43 +27,45 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class OAIPMHComponentConsumerParticularCase extends CamelTestSupport {
-    
+public class OAIPMHComponentProducerOnlyFirstLoopTest extends CamelTestSupport {
+
     @Test
     public void testOAIPMH() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(360);
-        mock.assertIsSatisfied(10 * 1000);
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        template.sendBody("direct:start", "foo");
+        resultEndpoint.expectedMessageCount(532);
+        resultEndpoint.assertIsSatisfied(3 * 1000);
     }
-    
+
     @BeforeClass
     public static void startServer() throws IOException {
-        //Mocked data  taken from https://revista.uisrael.edu.ec/index.php?page=oai - July 21, 2020
-        JettyTestServer.getInstance().context = "test3";
+        //Mocked data  taken from https://dspace.ucuenca.edu.ec/oai/request - July 21, 2020
+        JettyTestServer.getInstance().context = "test1";
         JettyTestServer.getInstance().startServer();
     }
-    
+
     @AfterClass
     public static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+
         return new RouteBuilder() {
             public void configure() {
-                from("oaipmh:?endpointUrl=http://localhost:" + JettyTestServer.getInstance().port + "/index.php?page=oai&"
-                        + "delay=1000&"
-                        + "from=2020-02-01T00:00:00Z&"
-                        + "initialDelay=1000")
-                        .split(xpath("/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
-                                new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
-                                        .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
-                                        .add("dc", "http://purl.org/dc/elements/1.1/")))
-                        //Log the titles of the records
-                        .to("log:titles")
-                        .to("mock:result");
-                
+                from("direct:start")
+                        .setHeader("CamelOaimphFrom", constant("2020-06-01T00:00:00Z"))
+                        .setHeader("CamelOaimphOnlyFirst", constant("true"))
+                        .loopDoWhile(simple("${in.header.CamelOaimphResumptionToken} || ${body} == 'foo'"))
+                            .to("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request")
+                            .split(body())
+                            .split(xpath("/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
+                                    new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
+                                            .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
+                                            .add("dc", "http://purl.org/dc/elements/1.1/")))
+                            .to("mock:result")
+                        .end();
             }
         };
     }
