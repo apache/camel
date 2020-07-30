@@ -93,3 +93,5 @@ with the following path and query parameters:
 | *user* (security) | user if user and/or password different from default |  | String
 |===
 // endpoint options: END
+
+include::camel-spring-boot::page$arangodb-starter.adoc[]
