@@ -62,7 +62,6 @@ public class ArangoDbProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());
         ArangoDbOperation operation = endpoint.getConfiguration().getOperation();
         invokeOperation(operation, exchange);
     }
