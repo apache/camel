@@ -67,8 +67,7 @@ project based on Camel 3.4.0-SNAPSHOT. He'd need to use the following command
 mvn archetype:generate \
   -DarchetypeGroupId=org.apache.camel.archetypes \
   -DarchetypeArtifactId=camel-archetype-java \
-  -DarchetypeVersion=3.4.0-SNAPSHOT \
-  -DarchetypeRepository=https://repository.apache.org/content/groups/snapshots-group
+  -DarchetypeVersion=3.5.0-SNAPSHOT 
 ----
 
 Notice that archetypes will now be downloaded from
