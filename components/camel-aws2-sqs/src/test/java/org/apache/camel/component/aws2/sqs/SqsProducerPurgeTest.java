@@ -45,11 +45,11 @@ public class SqsProducerPurgeTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         template.send("direct:start", new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-			}
-		});
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
         assertMockEndpointsSatisfied();
         PurgeQueueResponse res = result.getExchanges().get(0).getIn().getBody(PurgeQueueResponse.class);
         assertNotNull(res);

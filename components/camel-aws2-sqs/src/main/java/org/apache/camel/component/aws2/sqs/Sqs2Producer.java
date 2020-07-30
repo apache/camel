@@ -83,7 +83,7 @@ public class Sqs2Producer extends DefaultProducer {
                     listQueues(getClient(), exchange);
                     break;
                 case purgeQueue:
-                	purgeQueue(getClient(), exchange);
+                    purgeQueue(getClient(), exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
