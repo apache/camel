@@ -2543,7 +2543,8 @@ public interface Sqs2EndpointBuilderFactory {
     enum Sqs2Operations {
         sendBatchMessage,
         deleteMessage,
-        listQueues;
+        listQueues,
+        purgeQueue;
     }
 
     public interface Sqs2Builders {
