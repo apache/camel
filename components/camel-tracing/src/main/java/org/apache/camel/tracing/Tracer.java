@@ -71,14 +71,14 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private Set<String> excludePatterns = new HashSet<>(0);
     private InterceptStrategy tracingStrategy;
-    private boolean encoding;
+    protected boolean encoding;
     private CamelContext camelContext;
 
     protected abstract void initTracer();
 
     protected abstract SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent);
 
-    protected abstract SpanAdapter startExchangeBeginSpan(String operationName, SpanKind kind, SpanAdapter parent);
+    protected abstract SpanAdapter startExchangeBeginSpan(Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent);
 
     protected abstract void finishSpan(SpanAdapter span);
 
@@ -283,11 +283,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                 SpanAdapter parent = ActiveSpanManager.getSpan(exchange);
                 SpanAdapter span;
-                if (parent == null && !(sd instanceof AbstractInternalSpanDecorator)) {
-                    span = startExchangeBeginSpan(sd.getOperationName(exchange, route.getEndpoint()), sd.getReceiverSpanKind(), null);
-                } else {
-                    span = startExchangeBeginSpan(sd.getOperationName(exchange, route.getEndpoint()), null, parent);
-                }
+                span = startExchangeBeginSpan(exchange, sd, sd.getOperationName(exchange, route.getEndpoint()), sd.getReceiverSpanKind(), parent);
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
                 if (LOG.isTraceEnabled()) {
