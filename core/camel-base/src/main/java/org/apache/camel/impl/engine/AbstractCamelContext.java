@@ -2576,6 +2576,7 @@ public abstract class AbstractCamelContext extends BaseService
             ServiceHelper.initService(notifier);
         }
 
+        // the event notifiers must be initialized before we can emit this event
         EventHelper.notifyCamelContextInitializing(this);
 
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
@@ -2606,7 +2607,7 @@ public abstract class AbstractCamelContext extends BaseService
         // start components
         ServiceHelper.initService(components.values());
 
-        // create routes from route templates if we have any sources
+        // create route definitions from route templates if we have any sources
         for (RouteTemplateParameterSource source : getRegistry().findByType(RouteTemplateParameterSource.class)) {
             for (String routeId : source.routeIds()) {
                 // do a defensive copy of the parameters
