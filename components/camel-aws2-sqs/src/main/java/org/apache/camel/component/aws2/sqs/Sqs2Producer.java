@@ -41,6 +41,8 @@ import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest;
+import software.amazon.awssdk.services.sqs.model.PurgeQueueResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
@@ -79,6 +81,9 @@ public class Sqs2Producer extends DefaultProducer {
                     break;
                 case listQueues:
                     listQueues(getClient(), exchange);
+                    break;
+                case purgeQueue:
+                	purgeQueue(getClient(), exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -150,6 +155,16 @@ public class Sqs2Producer extends DefaultProducer {
             request.queueNamePrefix(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX, String.class));
         }
         ListQueuesResponse result = amazonSQS.listQueues(request.build());
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void purgeQueue(SqsClient amazonSQS, Exchange exchange) {
+        PurgeQueueRequest.Builder request = PurgeQueueRequest.builder();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX))) {
+            request.queueUrl(getQueueUrl());
+        }
+        PurgeQueueResponse result = amazonSQS.purgeQueue(request.build());
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
