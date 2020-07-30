@@ -17,6 +17,7 @@
 ** xref:microprofile-fault-tolerance.adoc[Microprofile Fault Tolerance]
 ** xref:microprofile-health.adoc[Microprofile Health]
 ** xref:openapi-java.adoc[Openapi Java]
+** xref:opentelemetry.adoc[OpenTelemetry]
 ** xref:opentracing.adoc[OpenTracing]
 ** xref:platform-http-vertx.adoc[Platform Http Vertx]
 ** xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x]
