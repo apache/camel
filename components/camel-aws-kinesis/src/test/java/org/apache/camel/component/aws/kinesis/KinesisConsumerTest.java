@@ -173,7 +173,7 @@ public class KinesisConsumerTest {
             .thenReturn(new GetRecordsResult()
                 .withNextShardIterator("nextShardIterator")
                 .withRecords(new Record().withSequenceNumber("1"), new Record().withSequenceNumber("2"))
-            );
+        );
 
         int messageCount = undertest.poll();
 
@@ -197,7 +197,7 @@ public class KinesisConsumerTest {
                     .withApproximateArrivalTimestamp(new Date(42))
                     .withPartitionKey(partitionKey)
                 )
-            );
+        );
 
         undertest.poll();
 
