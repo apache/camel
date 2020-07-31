@@ -165,7 +165,7 @@ Camel-AWS2 IAM component provides the following operation on the producer side:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:createUser")
-    .setHeader(IAMConstants.GROUP_NAME, constant("camel"))
+    .setHeader(IAMConstants.USERNAME, constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser")
 --------------------------------------------------------------------------------
 
