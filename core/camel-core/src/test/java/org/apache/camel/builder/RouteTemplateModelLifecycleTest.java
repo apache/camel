@@ -50,7 +50,7 @@ public class RouteTemplateModelLifecycleTest extends ContextTestSupport {
             }
         });
 
-        RouteTemplateParameterBuilder.builder(context, "myTemplate")
+        TemplatedRouteBuilder.builder(context, "myTemplate")
             .parameter("foo", "one")
             .parameter("bar", "result")
             .routeId("myRoute")
@@ -80,7 +80,7 @@ public class RouteTemplateModelLifecycleTest extends ContextTestSupport {
 
         context.start();
 
-        RouteTemplateParameterBuilder.builder(context, "myTemplate")
+        TemplatedRouteBuilder.builder(context, "myTemplate")
             .parameter("foo", "one")
             .parameter("bar", "result")
             .routeId("myRoute")
