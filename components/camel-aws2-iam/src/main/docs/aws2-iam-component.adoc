@@ -173,7 +173,7 @@ from("direct:createUser")
 
 [source,java]
 --------------------------------------------------------------------------------
-from("direct:createUser")
+from("direct:deleteUser")
     .setHeader(IAMConstants.USERNAME, constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser")
 --------------------------------------------------------------------------------
