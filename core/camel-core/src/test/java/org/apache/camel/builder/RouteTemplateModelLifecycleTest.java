@@ -67,4 +67,37 @@ public class RouteTemplateModelLifecycleTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
+    public void testModelLifecycleViaHandler() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .from("direct:{{foo}}")
+                        .to("mock:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        RouteTemplateParameterBuilder.builder(context, "myTemplate")
+            .parameter("foo", "one")
+            .parameter("bar", "result")
+            .routeId("myRoute")
+            .handler(template -> {
+                // lets mutate the template a bit
+                // (notice changes are global as its not a clone of the template - not possible)
+                template.getRoute().getInput().setUri("seda:{{foo}}");
+            })
+            .add();
+
+        Assertions.assertEquals(1, context.getRoutes().size());
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        template.sendBody("seda:one", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        context.stop();
+    }
+
 }
