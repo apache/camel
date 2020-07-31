@@ -17,7 +17,6 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.RouteTemplateParameterBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategySupport;
 import org.apache.camel.model.RouteTemplateDefinition;
@@ -51,11 +50,11 @@ public class RouteTemplateModelLifecycleTest extends ContextTestSupport {
             }
         });
 
-        new RouteTemplateParameterBuilder(context, "myTemplate")
+        RouteTemplateParameterBuilder.builder(context, "myTemplate")
             .parameter("foo", "one")
             .parameter("bar", "result")
             .routeId("myRoute")
-            .build();
+            .add();
 
         context.start();
 

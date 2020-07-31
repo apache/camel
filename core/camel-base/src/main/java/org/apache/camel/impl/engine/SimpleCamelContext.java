@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.RouteTemplateParameterBuilder;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -409,8 +408,4 @@ public class SimpleCamelContext extends AbstractCamelContext {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public RouteTemplateParameterBuilder addRouteFromTemplate(String routeTemplateId) {
-        return new RouteTemplateParameterBuilder(this, routeTemplateId);
-    }
 }

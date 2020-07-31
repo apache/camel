@@ -602,14 +602,6 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
 
     /**
-     * Adds a new route from a given route template using the fluent parameter builder.
-     *
-     * @param routeTemplateId   the id of the route template (mandatory)
-     * @return builder for setting additional parameters
-     */
-    RouteTemplateParameterBuilder addRouteFromTemplate(String routeTemplateId);
-
-    /**
      * Adds the given route policy factory
      *
      * @param routePolicyFactory the factory

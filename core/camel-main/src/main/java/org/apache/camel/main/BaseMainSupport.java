@@ -43,7 +43,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.RouteTemplateParameterBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
