@@ -186,13 +186,22 @@ from("direct:listUsers")
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listUsers")
 --------------------------------------------------------------------------------
 
-- createGroup: this operation will delete a user in IAM
+- createGroup: this operation will add a group in IAM
 
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:deleteUser")
     .setHeader(IAMConstants.GROUP_NAME, constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createGroup")
+--------------------------------------------------------------------------------
+
+- deleteGroup: this operation will delete a group in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteUser")
+    .setHeader(IAMConstants.GROUP_NAME, constant("camel"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup")
 --------------------------------------------------------------------------------
 
 == Automatic detection of IamClient client in registry
