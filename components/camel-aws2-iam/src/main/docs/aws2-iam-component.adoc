@@ -204,6 +204,14 @@ from("direct:deleteUser")
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup")
 --------------------------------------------------------------------------------
 
+- listGroups: this operation will list the groups in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listUsers")
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listGroups")
+--------------------------------------------------------------------------------
+
 == Automatic detection of IamClient client in registry
 
 The component is capable of detecting the presence of an IamClient bean into the registry.
