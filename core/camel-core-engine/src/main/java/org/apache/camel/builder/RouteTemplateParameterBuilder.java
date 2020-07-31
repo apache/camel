@@ -18,9 +18,12 @@ package org.apache.camel.builder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.RouteTemplateDefinition;
 
 /**
  * Fluent builder for adding new routes from route templates.
@@ -31,6 +34,7 @@ public final class RouteTemplateParameterBuilder {
     private final String routeTemplateId;
     private String routeId;
     private final Map<String, Object> parameters = new HashMap<>();
+    private Consumer<RouteTemplateDefinition> handler;
 
     public static RouteTemplateParameterBuilder builder(CamelContext camelContext, String routeTemplateId) {
         return new RouteTemplateParameterBuilder(camelContext, routeTemplateId);
@@ -63,6 +67,12 @@ public final class RouteTemplateParameterBuilder {
         return this;
     }
 
+    public RouteTemplateParameterBuilder handler(Consumer<RouteTemplateDefinition> handler) {
+        this.handler = handler;
+        return this;
+    }
+
+
     /**
      * Adds the route to the {@link CamelContext} which is built from the configured route template.
      *
@@ -70,6 +80,13 @@ public final class RouteTemplateParameterBuilder {
      */
     public String add() {
         try {
+            if (handler != null) {
+                RouteTemplateDefinition def = camelContext.adapt(ModelCamelContext.class).getRouteTemplateDefinition(routeTemplateId);
+                if (def == null) {
+                    throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
+                }
+                handler.accept(def);
+            }
             return camelContext.addRouteFromTemplate(routeId, routeTemplateId, parameters);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
