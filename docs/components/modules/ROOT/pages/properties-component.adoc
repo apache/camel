@@ -319,8 +319,40 @@ and the others.
 
 The example below has property placeholder in the `<jmxAgent>` tag:
 
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
+    <!-- we can use propery placeholders when we define the JMX agent -->
+    <jmxAgent id="agent" registryPort="{{myjmx.port}}" disabled="{{myjmx.disabled}}"
+              usePlatformMBeanServer="{{myjmx.usePlatform}}" createConnector="true"
+              statisticsLevel="RoutesOnly" useHostIPAddress="true"/>
+    <route id="foo" autoStartup="false">
+        <from uri="seda:start"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
+
+
 You can also define property placeholders in the various attributes on
 the `<camelContext>` tag such as `trace` as shown here:
+
+[source,xml]
+----
+<camelContext trace="{{foo.trace}}" xmlns="http://camel.apache.org/schema/spring">
+    <propertyPlaceholder id="properties" location="org/apache/camel/spring/processor/myprop.properties"/>
+    <template id="camelTemplate" defaultEndpoint="{{foo.cool}}"/>
+    <route>
+        <from uri="direct:start"/>
+        <setHeader name="{{foo.header}}">
+            <simple>${in.body} World!</simple>
+        </setHeader>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
+
 
 == Using JVM system properties or Environment variables as override or fallback values
 
@@ -464,11 +496,50 @@ Each location is separated by comma.
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties directly in the XML file as shown below:
 
+[source,xml]
+----
+<!-- blueprint property placeholders -->
+<cm:property-placeholder persistent-id="my-placeholders" update-strategy="reload">
+  <cm:default-properties>
+    <cm:property name="greeting" value="Hello"/>
+    <cm:property name="destination" value="mock:result"/>
+  </cm:default-properties>
+</cm:property-placeholder>
+
+<!-- a bean that uses a blueprint property placeholder -->
+<bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
+  <property name="say" value="${greeting}"/>
+</bean>
+
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+  <route>
+    <from uri="direct:start"/>
+    <bean ref="myCoolBean" method="saySomething"/>
+    <to uri="{{destination}}"/>
+  </route>
+
+</camelContext>
+----
+
+
 Notice that we have a `<bean>` which refers to one of the properties. And
 in the Camel route we refer to the other using the `{{` and `}}` notation.
 
 Now if you want to override these Blueprint properties from an unit
 test, you can do this as shown below:
+
+[source,java]
+----
+protected String useOverridePropertiesWithConfigAdmin(Dictionary props) {
+    // add the properties we want to override
+    props.put("greeting", "Bye");
+
+    // return the PID of the config-admin we are using in the blueprint xml file
+    return "my-placeholders";
+}
+----
+
 
 To do this we override and implement the
 `useOverridePropertiesWithConfigAdmin` method. We can then put the
@@ -492,6 +563,17 @@ as `etc/stuff.cfg`.
 Now if you want to unit test this blueprint XML file, then you can
 override the `loadConfigAdminConfigurationFile` and tell Camel which
 file to load as shown below:
+
+[source,java]
+----
+@Override
+protected String[] loadConfigAdminConfigurationFile() {
+    // String[0] = tell Camel the path of the .cfg file to use for OSGi ConfigAdmin in the blueprint XML file
+    // String[1] = tell Camel the persistence-id of the cm:property-placeholder in the blueprint XML file
+    return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
+}
+----
+
 
 Notice that this method requires to return a `String[]` with 2 values. The
 1st value is the path for the configuration file to load.
