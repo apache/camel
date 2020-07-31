@@ -178,7 +178,7 @@ from("direct:createAndRun")
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
 --------------------------------------------------------------------------------
 
-- startInstances: this operation will start an EC2 instance
+- startInstances: this operation will start a list of EC2 instances
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -192,6 +192,22 @@ from("direct:start")
             }
         })
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
+--------------------------------------------------------------------------------
+
+- stopInstances: this operation will stop a list of EC2 instances
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:stop")
+     .process(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection<String> l = new ArrayList<>();
+                l.add("myinstance");
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
+            }
+        })
+     .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
 --------------------------------------------------------------------------------
 
 == Automatic detection of Ec2Client client in registry
