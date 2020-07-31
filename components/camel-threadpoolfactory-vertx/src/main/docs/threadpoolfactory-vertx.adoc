@@ -1,5 +1,5 @@
 [[threadpoolfactory-vertx-component]]
-= Thread Pool Factory Vert.x Component
+= ThreadPoolFactory Vert.x Component
 :docTitle: ThreadPoolFactory Vert.x
 :artifactId: camel-threadpoolfactory-vertx
 :description: ThreadPoolFactory for camel-core using Vert.x
