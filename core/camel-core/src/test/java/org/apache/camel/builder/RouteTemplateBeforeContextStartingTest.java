@@ -51,13 +51,13 @@ public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
         getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");
 
-        RouteTemplateParameterBuilder.builder(context, "myTemplate")
+        TemplatedRouteBuilder.builder(context, "myTemplate")
                 .routeId("first")
                 .parameter("foo", "one")
                 .parameter("bar", "cheese")
                 .add();
 
-        RouteTemplateParameterBuilder.builder(context, "myTemplate")
+        TemplatedRouteBuilder.builder(context, "myTemplate")
                 .routeId("second")
                 .parameter("foo", "two")
                 .parameter("bar", "cake")

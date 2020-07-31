@@ -28,7 +28,7 @@ import org.apache.camel.model.RouteTemplateDefinition;
 /**
  * Fluent builder for adding new routes from route templates.
  */
-public final class RouteTemplateParameterBuilder {
+public final class TemplatedRouteBuilder {
 
     private final CamelContext camelContext;
     private final String routeTemplateId;
@@ -36,11 +36,18 @@ public final class RouteTemplateParameterBuilder {
     private final Map<String, Object> parameters = new HashMap<>();
     private Consumer<RouteTemplateDefinition> handler;
 
-    public static RouteTemplateParameterBuilder builder(CamelContext camelContext, String routeTemplateId) {
-        return new RouteTemplateParameterBuilder(camelContext, routeTemplateId);
+    /**
+     * Creates a new {@link TemplatedRouteBuilder} to specify input parameters, and others, for the route template.
+     *
+     * @param camelContext     the camel context
+     * @param routeTemplateId  the id of the route template
+     * @return the builder
+     */
+    public static TemplatedRouteBuilder builder(CamelContext camelContext, String routeTemplateId) {
+        return new TemplatedRouteBuilder(camelContext, routeTemplateId);
     }
 
-    private RouteTemplateParameterBuilder(CamelContext camelContext, String routeTemplateId) {
+    private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
         this.camelContext = camelContext;
         this.routeTemplateId = routeTemplateId;
     }
@@ -51,7 +58,7 @@ public final class RouteTemplateParameterBuilder {
      *
      * @param routeId the route id
      */
-    public RouteTemplateParameterBuilder routeId(String routeId) {
+    public TemplatedRouteBuilder routeId(String routeId) {
         this.routeId = routeId;
         return this;
     }
@@ -62,16 +69,22 @@ public final class RouteTemplateParameterBuilder {
      * @param name  parameter name
      * @param value parameter value
      */
-    public RouteTemplateParameterBuilder parameter(String name, Object value) {
+    public TemplatedRouteBuilder parameter(String name, Object value) {
         parameters.put(name, value);
         return this;
     }
 
-    public RouteTemplateParameterBuilder handler(Consumer<RouteTemplateDefinition> handler) {
+    /**
+     * Sets a handler which gives access to the route template model that will be used for creating the route.
+     * This can be used to do validation. Any changes to the model happens before the route is created and added,
+     * however these changes affect future usage of the same template.
+     *
+     * @param handler  the handler with callback to invoke with the given route template
+     */
+    public TemplatedRouteBuilder handler(Consumer<RouteTemplateDefinition> handler) {
         this.handler = handler;
         return this;
     }
-
 
     /**
      * Adds the route to the {@link CamelContext} which is built from the configured route template.
