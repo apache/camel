@@ -178,6 +178,22 @@ from("direct:createAndRun")
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
 --------------------------------------------------------------------------------
 
+- startInstances: this operation will start an EC2 instance
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+     .process(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection<String> l = new ArrayList<>();
+                l.add("myinstance");
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
+            }
+        })
+     .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
+--------------------------------------------------------------------------------
+
 == Automatic detection of Ec2Client client in registry
 
 The component is capable of detecting the presence of an Ec2Client bean into the registry.
