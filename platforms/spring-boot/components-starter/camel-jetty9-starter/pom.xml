@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>apt</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
