@@ -60,6 +60,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -1466,6 +1467,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
 
     protected ModelCamelContext getModelCamelContext() {
         return delegate.adapt(ModelCamelContext.class);
+    }
+
+    @Override
+    public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        getModelCamelContext().addModelLifecycleStrategy(modelLifecycleStrategy);
+    }
+
+    @Override
+    public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
+        return getModelCamelContext().getModelLifecycleStrategies();
     }
 
     @Override
