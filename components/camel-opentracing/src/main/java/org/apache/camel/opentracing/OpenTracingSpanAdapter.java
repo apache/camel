@@ -55,15 +55,15 @@ public class OpenTracingSpanAdapter implements SpanAdapter {
     }
 
     @Override public void setError(boolean error) {
-        span.setTag(Tags.ERROR, error);
+        span.setTag(Tags.ERROR.getKey(), error);
     }
 
     @Override public void setTag(Tag key, String value) {
-        span.setTag(tagMap.get(key), value);
+        span.setTag(tagMap.get(key).getKey(), value);
     }
 
     @Override public void setTag(Tag key, Number value) {
-        span.setTag(tagMap.get(key), value);
+        span.setTag(tagMap.get(key).getKey(), value);
     }
 
     @Override public void setTag(String key, String value) {

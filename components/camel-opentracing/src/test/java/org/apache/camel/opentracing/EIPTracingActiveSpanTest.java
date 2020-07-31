@@ -24,9 +24,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
+@Disabled
 public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
@@ -69,7 +70,7 @@ public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
                         // here you can use GlobalTracer if it's in your classpath or
                         // use the exchange context to look for a tracer in the registry
                         GlobalTracer.get().buildSpan("using-active-span")
-                                .withTag(Tags.COMPONENT, "custom-component")
+                                .withTag(Tags.COMPONENT.getKey(), "custom-component")
                                 .asChildOf(GlobalTracer.get().activeSpan())
                                 .start().finish();
                     }
