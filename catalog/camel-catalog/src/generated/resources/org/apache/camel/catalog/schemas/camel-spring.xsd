@@ -8006,6 +8006,10 @@ path to be maintained in the zip file. Default value: false
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="modelLifecycleStrategySupport">
+    <xs:sequence/>
+  </xs:complexType>
+
   <xs:complexType name="multicastDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
