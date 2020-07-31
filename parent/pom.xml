@@ -479,7 +479,7 @@
         <rest-assured-version>4.3.1</rest-assured-version>
         <resteasy-version>4.5.6.Final</resteasy-version>
         <revapi-java-version>0.22.0</revapi-java-version>
-        <revapi-maven-plugin-version>0.11.5</revapi-maven-plugin-version>
+        <revapi-maven-plugin-version>0.12.0</revapi-maven-plugin-version>
         <rhino-version>1.7.7.1</rhino-version>
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
