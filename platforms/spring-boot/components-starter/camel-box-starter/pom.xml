@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-box</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <!--START OF GENERATED CODE-->
       <exclusions>
         <exclusion>

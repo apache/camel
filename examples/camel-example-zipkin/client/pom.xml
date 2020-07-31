@@ -37,7 +37,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -80,7 +80,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.deltaspike.cdictrl</groupId>
@@ -91,7 +91,7 @@
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se</artifactId>
             <version>${weld2-version}</version>
-          </dependency> 
+          </dependency>
           <!-- logging -->
           <dependency>
             <groupId>org.apache.logging.log4j</groupId>

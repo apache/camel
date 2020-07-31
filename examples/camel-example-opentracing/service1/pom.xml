@@ -48,7 +48,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -84,7 +84,7 @@
     <dependency>
       <groupId>org.apache.camel.example</groupId>
       <artifactId>camel-example-opentracing-loggingtracer</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
   </dependencies>

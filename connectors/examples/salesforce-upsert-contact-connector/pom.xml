@@ -104,7 +104,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-connector-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <id>boot</id>
@@ -160,7 +160,7 @@
           <plugin>
             <groupId>org.apache.camel.maven</groupId>
             <artifactId>camel-salesforce-maven-plugin</artifactId>
-            <version>${project.version}</version>
+            <version>${upstream.version}</version>
             <executions>
               <execution>
                 <id>generate-dtos</id>

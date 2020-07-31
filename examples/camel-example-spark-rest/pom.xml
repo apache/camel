@@ -57,7 +57,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -84,7 +84,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <mainClass>org.apache.camel.example.spark.UserMain</mainClass>
         </configuration>

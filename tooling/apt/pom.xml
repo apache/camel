@@ -40,14 +40,14 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- use our patched ordered json-simple parser -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>json-simple-ordered</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- logging -->

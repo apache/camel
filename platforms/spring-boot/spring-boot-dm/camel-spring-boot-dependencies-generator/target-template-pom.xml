@@ -26,7 +26,7 @@
     <parent>
         <artifactId>camel-spring-boot-dm</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
     </parent>
 
     <artifactId>camel-spring-boot-dependencies</artifactId>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-dependencies-generator</artifactId>
-            <version>${project.version}</version>
+            <version>${upstream.version}</version>
             <type>pom</type>
             <scope>provided</scope>
         </dependency>

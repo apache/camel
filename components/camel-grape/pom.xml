@@ -68,7 +68,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
-    </dependency>       
+    </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -135,7 +135,7 @@
           <replacements>
             <replacement>
               <token>ARTIFACT_VERSION</token>
-              <value>${project.version}</value>
+              <value>${upstream.version}</value>
             </replacement>
           </replacements>
         </configuration>

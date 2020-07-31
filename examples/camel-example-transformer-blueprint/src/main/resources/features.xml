@@ -18,14 +18,14 @@
 
 -->
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" name="camel-example-transformer-blueprint">
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${upstream.version}/xml/features</repository>
 
-    <feature name='camel-example-transformer-blueprint' version='${project.version}'>
-        <feature version="${project.version}">camel</feature>
-        <feature version="${project.version}">camel-blueprint</feature>
+    <feature name='camel-example-transformer-blueprint' version='${upstream.version}'>
+        <feature version="${upstream.version}">camel</feature>
+        <feature version="${upstream.version}">camel-blueprint</feature>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
-        <bundle>mvn:org.apache.camel.example/camel-example-transformer-blueprint/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-transformer-blueprint/${upstream.version}</bundle>
     </feature>
 
 </features>

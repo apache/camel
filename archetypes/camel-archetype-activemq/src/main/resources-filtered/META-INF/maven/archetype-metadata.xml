@@ -25,7 +25,7 @@
       <defaultValue>${activemq-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="camel-version">
-      <defaultValue>${project.version}</defaultValue>
+      <defaultValue>${upstream.version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>

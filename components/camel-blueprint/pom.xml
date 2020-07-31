@@ -164,14 +164,14 @@
                 <artifactItem>
                   <groupId>org.apache.camel</groupId>
                   <artifactId>camel-core-xml</artifactId>
-                  <version>${project.version}</version>
+                  <version>${upstream.version}</version>
                   <includes>org/apache/camel/**</includes>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.apache.camel</groupId>
                   <artifactId>camel-core-osgi</artifactId>
-                  <version>${project.version}</version>
+                  <version>${upstream.version}</version>
                   <includes>org/apache/camel/**</includes>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                 </artifactItem>
@@ -208,7 +208,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <id>eip-documentation-enricher</id>
@@ -250,7 +250,7 @@
               <artifactItem>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-blueprint</artifactId>
-                <version>${project.version}</version>
+                <version>${upstream.version}</version>
                 <type>jar</type>
                 <overWrite>false</overWrite>
                 <outputDirectory>${project.build.directory}/schema</outputDirectory>
@@ -381,7 +381,7 @@
                 <configuration>
                   <target>
                     <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
-                    <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                    <jar destfile="${project.build.directory}/${project.artifactId}-${upstream.version}-sources.jar" update="true">
                       <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
                       <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
                       <fileset dir="${basedir}/src/main/java" includes="**/*" />
@@ -541,7 +541,7 @@
                 <configuration>
                   <target>
                     <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
-                    <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                    <jar destfile="${project.build.directory}/${project.artifactId}-${upstream.version}-sources.jar" update="true">
                       <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
                       <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
                     </jar>

@@ -71,7 +71,7 @@
       <classifier>javadoc</classifier>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -101,7 +101,7 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -111,7 +111,7 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -132,16 +132,16 @@
             <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
             <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
             <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
-            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
+            <Export-Package>${componentPackage};version=${upstream.version}</Export-Package>
             <Import-Package>
-              ${componentPackage}.api;version=${project.version},
-              ${componentPackage};version=${project.version},
+              ${componentPackage}.api;version=${upstream.version},
+              ${componentPackage};version=${upstream.version},
               org.apache.camel.*;version=${camelVersion}
             </Import-Package>
             <Private-Package>${outPackage}</Private-Package>
             <Implementation-Title>Apache Camel</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+            <Implementation-Version>${upstream.version}</Implementation-Version>
+            <Karaf-Info>Camel;${project.artifactId}=${upstream.version}</Karaf-Info>
             <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
             <_failok>false</_failok>
           </instructions>

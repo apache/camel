@@ -24,7 +24,7 @@
     <requiredProperty key="name"/>
     <requiredProperty key="scheme"/>
     <requiredProperty key="camel-version">
-      <defaultValue>${project.version}</defaultValue>
+      <defaultValue>${upstream.version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="log4j-version">
       <defaultValue>${log4j-version}</defaultValue>
@@ -37,7 +37,7 @@
     </requiredProperty>
     <requiredProperty key="maven-bundle-plugin-version">
       <defaultValue>${maven-bundle-plugin-version}</defaultValue>
-    </requiredProperty>    
+    </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
     </requiredProperty>

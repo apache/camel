@@ -24,16 +24,16 @@
   <tooManyResults>false</tooManyResults>
   <data>
     <artifact>
-      <resourceURI>http://nexus.dummy/service/local/repositories/staging/content/org/apache/camel/dummy-component/${project.version}/dummy-component-${project.version}.jar</resourceURI>
+      <resourceURI>http://nexus.dummy/service/local/repositories/staging/content/org/apache/camel/dummy-component/${upstream.version}/dummy-component-${upstream.version}.jar</resourceURI>
       <groupId>org.apache.camel</groupId>
       <artifactId>dummy-component</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <packaging>jar</packaging>
       <extension>jar</extension>
       <repoId>staging</repoId>
       <contextId>Staging</contextId>
-      <pomLink>http://nexus.dummy/service/local/artifact/maven/redirect?r=staging&amp;g=org.apache.camel&amp;a=dummy-component&amp;v=${project.version}&amp;e=pom</pomLink>
-      <artifactLink>http://nexus.dummy/service/local/artifact/maven/redirect?r=staging&amp;g=org.apache.camel&amp;a=dummy-component&amp;v=${project.version}&amp;e=jar</artifactLink>
+      <pomLink>http://nexus.dummy/service/local/artifact/maven/redirect?r=staging&amp;g=org.apache.camel&amp;a=dummy-component&amp;v=${upstream.version}&amp;e=pom</pomLink>
+      <artifactLink>http://nexus.dummy/service/local/artifact/maven/redirect?r=staging&amp;g=org.apache.camel&amp;a=dummy-component&amp;v=${upstream.version}&amp;e=jar</artifactLink>
       <highlightedFragment>&lt;blockquote&gt;Artifact ID&lt;UL&gt;&lt;LI&gt;dummy-&lt;B&gt;component&lt;/B&gt;&lt;/LI&gt;&lt;/UL&gt;&lt;/blockquote&gt;</highlightedFragment>
     </artifact>
   </data>

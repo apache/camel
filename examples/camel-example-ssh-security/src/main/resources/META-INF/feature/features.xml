@@ -17,15 +17,15 @@
     limitations under the License.
 
 -->
-<features name="camel-example-ssh-security-${project.version}"
+<features name="camel-example-ssh-security-${upstream.version}"
           xmlns="http://karaf.apache.org/xmlns/features/v1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.0.0 http://karaf.apache.org/xmlns/features/v1.0.0">
-  <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+  <repository>mvn:org.apache.camel.karaf/apache-camel/${upstream.version}/xml/features</repository>
 
-  <feature name="camel-example-ssh-security" version="${project.version}">
-    <feature version="${project.version}">camel-ssh</feature>
-    <feature version="${project.version}">camel-spring</feature>
-    <bundle>mvn:org.apache.camel.example/camel-example-ssh-security/${project.version}</bundle>
+  <feature name="camel-example-ssh-security" version="${upstream.version}">
+    <feature version="${upstream.version}">camel-ssh</feature>
+    <feature version="${upstream.version}">camel-spring</feature>
+    <bundle>mvn:org.apache.camel.example/camel-example-ssh-security/${upstream.version}</bundle>
   </feature>
 </features>

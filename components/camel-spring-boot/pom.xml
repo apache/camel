@@ -137,7 +137,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <!-- set to true to make build fail fast if missing documentation in docs files -->
           <failFast>true</failFast>

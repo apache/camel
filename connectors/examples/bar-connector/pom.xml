@@ -41,7 +41,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -54,14 +54,14 @@
     <dependency>
       <groupId>org.foo</groupId>
       <artifactId>beverage-component</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- camel-connector -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-connector</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- camel and spring boot compiler plugins -->
@@ -128,7 +128,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <id>prepare</id>
@@ -164,7 +164,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-connector-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <id>boot</id>

@@ -45,7 +45,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>bom-generator-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <goals>

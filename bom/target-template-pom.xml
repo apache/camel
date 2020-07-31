@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>${project.version}</version>
+    <version>${upstream.version}</version>
     <relativePath>../../</relativePath>
   </parent>
 
@@ -48,12 +48,12 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>bom-generator-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>bom-generator</artifactId>
-            <version>${project.version}</version>
+            <version>${upstream.version}</version>
           </dependency>
         </dependencies>
       </plugin>

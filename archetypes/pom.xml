@@ -27,7 +27,7 @@
     <version>2.25.2</version>
     <relativePath>../parent</relativePath>
   </parent>
-  
+
   <artifactId>archetypes</artifactId>
   <name>Camel :: Archetypes</name>
   <description>Camel Archetypes</description>
@@ -58,7 +58,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <goals>

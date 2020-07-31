@@ -49,7 +49,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -78,14 +78,14 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- connectors used in this example -->
     <dependency>
       <groupId>org.foo</groupId>
       <artifactId>petstore-connector</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
   </dependencies>

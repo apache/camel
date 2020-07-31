@@ -40,6 +40,8 @@
   </prerequisites>
 
   <properties>
+    <upstream.version>2.25.2</upstream.version>
+
     <!-- enforce to require using at least this maven version -->
     <maven-enforcer-require-maven-version>3.2.5</maven-enforcer-require-maven-version>
 
@@ -157,10 +159,10 @@
   </modules>
 
   <scm>
-    <connection>scm:git:http://gitbox.apache.org/repos/asf/camel.git</connection>
-    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel.git</developerConnection>
-    <url>https://gitbox.apache.org/repos/asf?p=camel.git;a=summary</url>
-    <tag>camel-2.25.2</tag>
+    <connection>scm:git:http://github.com/Talend/apache-camel.git</connection>
+    <developerConnection>scm:git:https://github.com/Talend/apache-camel.git</developerConnection>
+    <url>https://github.com/Talend/apache-camel</url>
+    <tag>HEAD</tag>
   </scm>
 
   <build>
@@ -168,6 +170,10 @@
 
     <!-- enforce maven version -->
     <plugins>
+        <plugin>
+          <groupId>io.paradoxical</groupId>
+          <artifactId>resolved-pom-maven-plugin</artifactId>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
@@ -193,6 +199,34 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>io.paradoxical</groupId>
+          <artifactId>resolved-pom-maven-plugin</artifactId>
+          <version>1.0</version>
+          <configuration>
+            <properties>
+              <revision>${revision}</revision>
+              <upstream.version>${upstream.version}</upstream.version>
+
+              <!-- ADD HERE ALL THE CUSTOM PROPERTIES declared in the above <properties> part -->
+              <!-- something like :
+              <my.custom.property>${my.custom.property}</my.custom.property>
+              -->
+            </properties>
+          </configuration>
+          <executions>
+            <execution>
+              <id>resolve-my-pom</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>resolve-pom</goal>
+              </goals>
+              <configuration>
+                <resolvedPomFile>.resolved-pom.xml</resolvedPomFile>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>${maven-javadoc-plugin-version}</version>
@@ -205,7 +239,7 @@
             <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
+              <version>${upstream.version}</version>
             </dependency>
           </dependencies>
           <configuration>
@@ -756,7 +790,7 @@
               <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-buildtools</artifactId>
-                <version>${project.version}</version>
+                <version>${upstream.version}</version>
               </dependency>
             </dependencies>
           </plugin>

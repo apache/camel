@@ -81,11 +81,11 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
       </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
     <profile>
       <id>artemis</id>
@@ -139,5 +139,5 @@
       </build>
     </profile>
   </profiles>
-  
+
 </project>

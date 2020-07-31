@@ -125,7 +125,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <optional>true</optional>
     </dependency>
 
@@ -139,7 +139,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>json-simple-ordered</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -253,7 +253,7 @@
                   <pluginExecutionFilter>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-package-maven-plugin</artifactId>
-                    <versionRange>${project.version}</versionRange>
+                    <versionRange>${upstream.version}</versionRange>
                     <goals>
                       <goal>generate-eips-list</goal>
                     </goals>
@@ -320,7 +320,7 @@
             <configuration>
               <target>
                 <echo>Including metadata properties files in camel-core.jar</echo>
-                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}.jar" update="true">
+                <jar destfile="${project.build.directory}/${project.artifactId}-${upstream.version}.jar" update="true">
                   <fileset dir="${basedir}/target/generated/camel/components/" includes="**/*" />
                   <fileset dir="${basedir}/target/generated/camel/dataformats/" includes="**/*" />
                   <fileset dir="${basedir}/target/generated/camel/languages/" includes="**/*" />
@@ -374,7 +374,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <id>components</id>
@@ -508,7 +508,7 @@
           <plugin>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-maven-plugin</artifactId>
-            <version>${project.version}</version>
+            <version>${upstream.version}</version>
             <configuration>
               <failOnError>true</failOnError>
               <includeTest>true</includeTest>

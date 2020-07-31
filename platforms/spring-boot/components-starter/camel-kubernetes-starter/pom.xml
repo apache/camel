@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-kubernetes</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate.validator</groupId>

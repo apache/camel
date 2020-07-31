@@ -25,13 +25,13 @@
     <requiredProperty key="baseGroupId"/>
     <requiredProperty key="baseArtifactId"/>
     <requiredProperty key="baseVersion">
-      <defaultValue>${project.version}</defaultValue>
+      <defaultValue>${upstream.version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="name"/>
     <requiredProperty key="scheme"/>
     <requiredProperty key="description"/>
     <requiredProperty key="camel-version">
-      <defaultValue>${project.version}</defaultValue>
+      <defaultValue>${upstream.version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="log4j-version">
       <defaultValue>${log4j-version}</defaultValue>

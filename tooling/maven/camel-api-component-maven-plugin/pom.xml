@@ -36,7 +36,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>tooling-parent</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -120,7 +120,7 @@
       <artifactId>velocity-engine-core</artifactId>
       <version>${velocity-version}</version>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -152,7 +152,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- VelocityEngine javadoc for testing -->

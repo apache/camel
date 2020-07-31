@@ -67,7 +67,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -117,7 +117,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>guice-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <duration>5s</duration>
           <jndiProperties>/guicejndi.properties</jndiProperties>

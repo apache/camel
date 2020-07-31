@@ -41,7 +41,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -54,17 +54,17 @@
     <dependency>
       <groupId>org.foo</groupId>
       <artifactId>foo-connector</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
     <dependency>
       <groupId>org.foo</groupId>
       <artifactId>bar-connector</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
     <dependency>
       <groupId>org.foo</groupId>
       <artifactId>wine-connector</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- logging -->
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -97,7 +97,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <mainClass>org.foo.FooBarWineMain</mainClass>
         </configuration>

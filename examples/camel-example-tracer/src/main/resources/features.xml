@@ -18,9 +18,9 @@
 
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${upstream.version}/xml/features</repository>
 
-    <feature name="jpa-hibernate" version="${project.version}">
+    <feature name="jpa-hibernate" version="${upstream.version}">
         <bundle>mvn:org.apache.geronimo.specs/geronimo-jpa_2.1_spec/${geronimo-jpa-spec-version}</bundle>
         <bundle>mvn:org.springframework/spring-jdbc/${spring-version}</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_2</bundle>
@@ -35,12 +35,12 @@
         <bundle>mvn:org.springframework/spring-orm/${spring-version}</bundle>
     </feature>
 
-    <feature name="camel-example-tracer" version="${project.version}">
-        <feature version="${project.version}">camel</feature>
-        <feature version="${project.version}">camel-jpa</feature>
-        <feature version="${project.version}">camel-stream</feature>
-        <feature version="${project.version}">camel-spring</feature>
-        <bundle>mvn:org.apache.camel.example/camel-example-tracer/${project.version}</bundle>
+    <feature name="camel-example-tracer" version="${upstream.version}">
+        <feature version="${upstream.version}">camel</feature>
+        <feature version="${upstream.version}">camel-jpa</feature>
+        <feature version="${upstream.version}">camel-stream</feature>
+        <feature version="${upstream.version}">camel-spring</feature>
+        <bundle>mvn:org.apache.camel.example/camel-example-tracer/${upstream.version}</bundle>
     </feature>
 
 </features>

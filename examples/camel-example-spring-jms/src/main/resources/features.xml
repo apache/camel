@@ -18,15 +18,15 @@
 
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${upstream.version}/xml/features</repository>
     <repository>mvn:org.apache.activemq/activemq-karaf/${activemq-version}/xml/features</repository>
 
-    <feature name='camel-example-spring-jms' version='${project.version}'>
+    <feature name='camel-example-spring-jms' version='${upstream.version}'>
         <feature>activemq-broker-noweb</feature>
         <feature>activemq-camel</feature>
-        <feature version="${project.version}">camel</feature>
-        <feature version="${project.version}">camel-jms</feature>
-        <bundle>mvn:org.apache.camel.example/camel-example-spring-jms/${project.version}</bundle>
+        <feature version="${upstream.version}">camel</feature>
+        <feature version="${upstream.version}">camel-jms</feature>
+        <bundle>mvn:org.apache.camel.example/camel-example-spring-jms/${upstream.version}</bundle>
     </feature>
 
 </features>

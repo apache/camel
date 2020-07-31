@@ -23,3 +23,4 @@ log-camel-lsp.out
 *.code-workspace
 components/camel-cxf/activemq-data
 .flattened-pom.xml
+.resolved-pom.xml

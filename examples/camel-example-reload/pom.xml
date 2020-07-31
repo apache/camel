@@ -74,7 +74,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <!-- turn on reload when the XML file is updated in the source code -->
           <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>

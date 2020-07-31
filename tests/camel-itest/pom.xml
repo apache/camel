@@ -61,8 +61,8 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <scope>test</scope>        
-    </dependency>        
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty9</artifactId>
@@ -235,7 +235,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>           
+      <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -343,7 +343,7 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- for http component tests -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -352,12 +352,12 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
-  	
+
     <!-- for validator tests, the artifact itself is included inside the project repository 'camel-validator-test-repo' above -->
     <dependency>
       <groupId>org.apache.camel.tests</groupId>
       <artifactId>camel-validator-test-resources</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- Narayana XA TX manager -->
@@ -396,7 +396,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <failOnError>false</failOnError>
           <includeTest>true</includeTest>
@@ -404,7 +404,7 @@
           <ignoreLenientProperties>false</ignoreLenientProperties>
         </configuration>
       </plugin>
-            
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

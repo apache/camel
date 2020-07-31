@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-servlet</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.servlet</groupId>

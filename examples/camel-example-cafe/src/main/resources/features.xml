@@ -18,11 +18,11 @@
 
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${upstream.version}/xml/features</repository>
 
-    <feature name='camel-example-cafe' version='${project.version}'>
-        <feature version="${project.version}">camel</feature>
-        <bundle>mvn:org.apache.camel.example/camel-example-cafe/${project.version}</bundle>
+    <feature name='camel-example-cafe' version='${upstream.version}'>
+        <feature version="${upstream.version}">camel</feature>
+        <bundle>mvn:org.apache.camel.example/camel-example-cafe/${upstream.version}</bundle>
     </feature>
 
 </features>

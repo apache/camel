@@ -18,13 +18,13 @@
 
 -->
 <features>
-  <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features
+  <repository>mvn:org.apache.camel.karaf/apache-camel/${upstream.version}/xml/features
   </repository>
 
-  <feature name='camel-example-loan-broker' version='${project.version}'>
-    <feature version="${project.version}">camel</feature>
-    <feature version="${project.version}">camel-cxf</feature>
-    <bundle>mvn:org.apache.camel.example/camel-example-loan-broker-cxf/${project.version}
+  <feature name='camel-example-loan-broker' version='${upstream.version}'>
+    <feature version="${upstream.version}">camel</feature>
+    <feature version="${upstream.version}">camel-cxf</feature>
+    <bundle>mvn:org.apache.camel.example/camel-example-loan-broker-cxf/${upstream.version}
     </bundle>
   </feature>
 

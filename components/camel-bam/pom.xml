@@ -187,7 +187,7 @@
               <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core</artifactId>
-                <version>${project.version}</version>
+                <version>${upstream.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.springframework</groupId>
@@ -208,7 +208,7 @@
         </dependency>
       </dependencies>
     </profile>
-    
+
     <profile>
       <id>jdk9+-hibernate</id>
       <activation>
@@ -220,7 +220,7 @@
             <directory>${basedir}/src/test/profiles/hibernate</directory>
           </testResource>
         </testResources>
-        
+
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>

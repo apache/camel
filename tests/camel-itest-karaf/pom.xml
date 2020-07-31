@@ -35,7 +35,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-karaf</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -121,7 +121,7 @@
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>apache-camel</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
@@ -192,7 +192,7 @@
           <rerunFailingTestsCount>0</rerunFailingTestsCount>
           <systemPropertyVariables>
             <karafVersion>${karaf4-version}</karafVersion>
-            <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
+            <camelKarafFeatureVersion>${upstream.version}</camelKarafFeatureVersion>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -222,7 +222,7 @@
               <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
               <systemPropertyVariables>
                 <karafVersion>${karaf4-version}</karafVersion>
-                <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
+                <camelKarafFeatureVersion>${upstream.version}</camelKarafFeatureVersion>
               </systemPropertyVariables>
             </configuration>
           </plugin>

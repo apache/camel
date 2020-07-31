@@ -37,7 +37,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -69,11 +69,11 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <mainClass>sample.camel.Service2Application</mainClass>
         </configuration>
-        <dependencies>  
+        <dependencies>
           <!-- logging -->
           <dependency>
             <groupId>org.apache.logging.log4j</groupId>

@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -644,7 +644,7 @@
         <plugin>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-api-component-maven-plugin</artifactId>
-          <version>${project.version}</version>
+          <version>${upstream.version}</version>
           <configuration>
             <scheme>${schemeName}</scheme>
             <componentName>${componentName}</componentName>
@@ -662,7 +662,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <scheme>${schemeName}</scheme>
           <componentName>${componentName}</componentName>

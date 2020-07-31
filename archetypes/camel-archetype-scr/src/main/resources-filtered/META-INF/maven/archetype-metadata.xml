@@ -23,7 +23,7 @@
     <requiredProperties>
         <requiredProperty key="className"/>
         <requiredProperty key="camel-version">
-          <defaultValue>${project.version}</defaultValue>
+          <defaultValue>${upstream.version}</defaultValue>
         </requiredProperty>
         <requiredProperty key="maven-bundle-plugin-version">
           <defaultValue>${maven-bundle-plugin-version}</defaultValue>

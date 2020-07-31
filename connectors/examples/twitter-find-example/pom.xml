@@ -47,7 +47,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -78,14 +78,14 @@
     <dependency>
       <groupId>org.foo</groupId>
       <artifactId>twitter-find-connector</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
 

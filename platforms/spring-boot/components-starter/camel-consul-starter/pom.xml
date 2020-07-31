@@ -37,19 +37,19 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-consul</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-testcontainers</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
     <!--START OF GENERATED CODE-->

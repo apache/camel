@@ -42,7 +42,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>tooling-parent</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -125,7 +125,7 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-      
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -224,7 +224,7 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.5</version>
         <configuration>
-          <goalPrefix>camel-servicenow</goalPrefix>          
+          <goalPrefix>camel-servicenow</goalPrefix>
         </configuration>
         <executions>
           <execution>

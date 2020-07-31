@@ -343,7 +343,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
             <!-- set to true to make build fail fast if missing documentation in docs files -->
             <failFast>false</failFast>
@@ -392,7 +392,7 @@
         <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>apt</artifactId>
-          <version>${project.version}</version>
+          <version>${upstream.version}</version>
           <scope>provided</scope>
         </dependency>
       </dependencies>
@@ -405,7 +405,7 @@
           <plugin>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-maven-plugin</artifactId>
-            <version>${project.version}</version>
+            <version>${upstream.version}</version>
             <configuration>
               <failOnError>false</failOnError>
               <includeTest>true</includeTest>

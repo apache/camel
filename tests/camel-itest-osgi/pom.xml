@@ -91,7 +91,7 @@
           <rerunFailingTestsCount>0</rerunFailingTestsCount>
           <systemPropertyVariables>
             <karafVersion>${karaf4-version}</karafVersion>
-            <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
+            <camelKarafFeatureVersion>${upstream.version}</camelKarafFeatureVersion>
           </systemPropertyVariables>
         </configuration>
       </plugin>

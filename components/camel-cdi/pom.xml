@@ -97,14 +97,14 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-xml</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-osgi</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
@@ -130,7 +130,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-context</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -159,7 +159,7 @@
       <version>${slf4j-version}</version>
       <scope>test</scope>
     </dependency>
-        
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>

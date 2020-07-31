@@ -93,7 +93,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -106,7 +106,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- logging -->   
+    <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -135,7 +135,7 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -171,7 +171,7 @@
                   <apiName>attachments</apiName>
                   <proxyClass>com.google.api.services.gmail.Gmail$Users$Messages$Attachments</proxyClass>
                   <fromJavadoc />
-                </api>                
+                </api>
                 <api>
                   <apiName>labels</apiName>
                   <proxyClass>com.google.api.services.gmail.Gmail$Users$Labels</proxyClass>
@@ -186,7 +186,7 @@
                   <apiName>drafts</apiName>
                   <proxyClass>com.google.api.services.gmail.Gmail$Users$Drafts</proxyClass>
                   <fromJavadoc />
-                </api>           
+                </api>
                 <api>
                   <apiName>users</apiName>
                   <proxyClass>com.google.api.services.gmail.Gmail$Users</proxyClass>
@@ -207,7 +207,7 @@
                   <argName>content</argName>
                   <argType>com.google.api.services.gmail.model.ModifyMessageRequest</argType>
                   <replacement>modifyMessageRequest</replacement>
-                </substitution>                   
+                </substitution>
                 <substitution>
                   <method>^.+$</method>
                   <argName>content</argName>
@@ -264,7 +264,7 @@
         <plugin>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
           <configuration>
             <scheme>${schemeName}</scheme>
             <componentName>${componentName}</componentName>
@@ -282,7 +282,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <scheme>${schemeName}</scheme>
           <componentName>${componentName}</componentName>

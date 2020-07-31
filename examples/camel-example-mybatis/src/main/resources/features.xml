@@ -19,13 +19,13 @@
 -->
 <features>
 
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${upstream.version}/xml/features</repository>
 
-    <feature name="camel-example-mybatis" version="${project.version}">
-        <feature version="${project.version}">camel-blueprint</feature>
-        <feature version="${project.version}">camel-mybatis</feature>
+    <feature name="camel-example-mybatis" version="${upstream.version}">
+        <feature version="${upstream.version}">camel-blueprint</feature>
+        <feature version="${upstream.version}">camel-mybatis</feature>
         <bundle>mvn:org.apache.derby/derby/${derby-version}</bundle>
-        <bundle>mvn:org.apache.camel.example/camel-example-mybatis/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-mybatis/${upstream.version}</bundle>
     </feature>
 
 </features>

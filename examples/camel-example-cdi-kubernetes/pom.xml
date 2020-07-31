@@ -81,7 +81,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.deltaspike.cdictrl</groupId>

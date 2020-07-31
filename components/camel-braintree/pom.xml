@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
     <dependency>
       <groupId>com.braintreepayments.gateway</groupId>
@@ -85,7 +85,7 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- testing - logging -->    
+    <!-- testing - logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -118,7 +118,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <id>generate-test-component-classes</id>

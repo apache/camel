@@ -18,7 +18,7 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -33,14 +33,14 @@
 
   <properties>
     <category>Messaging</category>
-  
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
   </properties>
-  
+
   <dependencyManagement>
-  
+
     <dependencies>
       <!-- Spring Boot BOM -->
       <dependency>
@@ -50,21 +50,21 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      
+
       <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
-    
+
   </dependencyManagement>
-  
+
   <dependencies>
-  
+
     <!-- activemq -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -76,7 +76,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -93,7 +93,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <!-- test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

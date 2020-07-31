@@ -52,7 +52,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -69,7 +69,7 @@
       <artifactId>log4j-slf4j-impl</artifactId>
       <scope>runtime</scope>
     </dependency>
-    
+
     <!-- test -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -98,7 +98,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.deltaspike.cdictrl</groupId>

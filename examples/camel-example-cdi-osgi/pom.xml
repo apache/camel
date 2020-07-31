@@ -79,7 +79,7 @@
       <artifactId>org.osgi.compendium</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -159,7 +159,7 @@
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>camel-karaf-commands</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -175,13 +175,13 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-commands-core</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -197,7 +197,7 @@
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>apache-camel</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
       <scope>test</scope>
@@ -229,7 +229,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.deltaspike.cdictrl</groupId>

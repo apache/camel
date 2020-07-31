@@ -46,11 +46,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-as2-api</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
@@ -64,11 +64,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-as2-api</artifactId>
-      <version>${project.version}</version>
+      <version>${upstream.version}</version>
       <type>javadoc</type>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -103,12 +103,12 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -174,7 +174,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <executions>
           <execution>
             <id>prepare</id>
@@ -230,7 +230,7 @@
         <plugin>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-api-component-maven-plugin</artifactId>
-          <version>${project.version}</version>
+          <version>${upstream.version}</version>
           <configuration>
             <scheme>${schemeName}</scheme>
             <componentName>${componentName}</componentName>
@@ -248,7 +248,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${upstream.version}</version>
         <configuration>
           <scheme>${schemeName}</scheme>
           <componentName>${componentName}</componentName>
