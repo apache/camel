@@ -178,6 +178,54 @@ from("direct:createAndRun")
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
 --------------------------------------------------------------------------------
 
+- startInstances: this operation will start a list of EC2 instances
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+     .process(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection<String> l = new ArrayList<>();
+                l.add("myinstance");
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
+            }
+        })
+     .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
+--------------------------------------------------------------------------------
+
+- stopInstances: this operation will stop a list of EC2 instances
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:stop")
+     .process(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection<String> l = new ArrayList<>();
+                l.add("myinstance");
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
+            }
+        })
+     .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
+--------------------------------------------------------------------------------
+
+- terminateInstances: this operation will terminate a list of EC2 instances
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:stop")
+     .process(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection<String> l = new ArrayList<>();
+                l.add("myinstance");
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
+            }
+        })
+     .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
+--------------------------------------------------------------------------------
+
 == Automatic detection of Ec2Client client in registry
 
 The component is capable of detecting the presence of an Ec2Client bean into the registry.
