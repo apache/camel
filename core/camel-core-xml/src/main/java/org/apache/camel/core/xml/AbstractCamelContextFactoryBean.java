@@ -63,6 +63,7 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
@@ -329,6 +330,18 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 if (!getContext().getLifecycleStrategies().contains(strategy)) {
                     LOG.info("Using custom LifecycleStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
                     getContext().addLifecycleStrategy(strategy);
+                }
+            }
+        }
+        // set the node lifecycle strategy if defined
+        Map<String, ModelLifecycleStrategy> modelLifecycleStrategies = getContext().getRegistry().findByTypeWithName(ModelLifecycleStrategy.class);
+        if (modelLifecycleStrategies != null && !modelLifecycleStrategies.isEmpty()) {
+            for (Entry<String, ModelLifecycleStrategy> entry : modelLifecycleStrategies.entrySet()) {
+                ModelLifecycleStrategy strategy = entry.getValue();
+                ModelCamelContext mcc = getContext().adapt(ModelCamelContext.class);
+                if (!mcc.getModelLifecycleStrategies().contains(strategy)) {
+                    LOG.info("Using custom ModelLifecycleStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
+                    mcc.addModelLifecycleStrategy(strategy);
                 }
             }
         }

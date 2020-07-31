@@ -33,6 +33,7 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
@@ -50,6 +51,7 @@ public class DefaultModel implements Model {
 
     private final CamelContext camelContext;
 
+    private final List<ModelLifecycleStrategy> modelLifecycleStrategies = new ArrayList<>();
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
     private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
@@ -71,6 +73,16 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        this.modelLifecycleStrategies.add(modelLifecycleStrategy);
+    }
+
+    @Override
+    public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
+        return modelLifecycleStrategies;
+    }
+
+    @Override
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;
@@ -83,7 +95,10 @@ public class DefaultModel implements Model {
         });
 
         removeRouteDefinitions(list);
-        this.routeDefinitions.addAll(list);
+        list.forEach(r -> {
+            modelLifecycleStrategies.forEach(s -> s.onAddRouteDefinition(r));
+            this.routeDefinitions.add(r);
+        });
         if (shouldStartRoutes()) {
             getCamelContext().adapt(ModelCamelContext.class).startRouteDefinitions(list);
         }
@@ -110,6 +125,9 @@ public class DefaultModel implements Model {
             camelContext.getRouteController().stopRoute(id);
             camelContext.removeRoute(id);
             toBeRemoved = getRouteDefinition(id);
+        }
+        for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+            s.onRemoveRouteDefinition(toBeRemoved);
         }
         this.routeDefinitions.remove(toBeRemoved);
     }
@@ -149,7 +167,10 @@ public class DefaultModel implements Model {
         if (routeTemplateDefinitions == null || routeTemplateDefinitions.isEmpty()) {
             return;
         }
-        this.routeTemplateDefinitions.addAll(routeTemplateDefinitions);
+        routeTemplateDefinitions.forEach(r -> {
+            modelLifecycleStrategies.forEach(s -> s.onAddRouteTemplateDefinition(r));
+            this.routeTemplateDefinitions.add(r);
+        });
     }
 
     @Override
@@ -159,11 +180,16 @@ public class DefaultModel implements Model {
 
     @Override
     public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
-        routeTemplateDefinitions.removeAll(routeTemplateDefinitions);
+        for (RouteTemplateDefinition r : routeTemplateDefinitions) {
+            removeRouteTemplateDefinition(r);
+        }
     }
 
     @Override
     public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+            s.onRemoveRouteTemplateDefinition(routeTemplateDefinition);
+        }
         routeTemplateDefinitions.remove(routeTemplateDefinition);
     }
 

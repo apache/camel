@@ -34,6 +34,20 @@ import org.apache.camel.support.PatternHelper;
 public interface Model {
 
     /**
+     * Adds the given model lifecycle strategy to be used.
+     *
+     * @param modelLifecycleStrategy the strategy
+     */
+    void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy);
+
+    /**
+     * Returns the model lifecycle strategies used to handle lifecycle notifications
+     *
+     * @return the lifecycle strategies
+     */
+    List<ModelLifecycleStrategy> getModelLifecycleStrategies();
+
+    /**
      * Returns a list of the current route definitions
      *
      * @return list of the current route definitions

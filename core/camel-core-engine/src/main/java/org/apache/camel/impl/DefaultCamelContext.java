@@ -39,6 +39,7 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -112,6 +113,16 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     public DefaultCamelContext(boolean init) {
         super(init);
+    }
+
+    @Override
+    public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        model.addModelLifecycleStrategy(modelLifecycleStrategy);
+    }
+
+    @Override
+    public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
+        return model.getModelLifecycleStrategies();
     }
 
     @Override

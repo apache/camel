@@ -31,6 +31,8 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
@@ -341,6 +343,9 @@ public final class DefaultConfigurationConfigurer {
         registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);
         final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
+        ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+        final Predicate<ModelLifecycleStrategy> containsModelLifecycleStrategy = mcc.getModelLifecycleStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, ModelLifecycleStrategy.class, containsModelLifecycleStrategy.negate(), mcc::addModelLifecycleStrategy);
 
         // service registry
         Map<String, ServiceRegistry> serviceRegistries = registry.findByTypeWithName(ServiceRegistry.class);
