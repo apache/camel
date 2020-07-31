@@ -15,3 +15,5 @@ outgoing Camel messages using https://opentelemetry.io/[OpenTelemetry].
 
 Events (spans) are captured for incoming and outgoing messages being sent
 to/from Camel.
+
+include::camel-spring-boot::page$opentelemetry-starter.adoc[]
