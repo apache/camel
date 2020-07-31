@@ -36,6 +36,11 @@ public final class TemplatedRouteBuilder {
     private final Map<String, Object> parameters = new HashMap<>();
     private Consumer<RouteTemplateDefinition> handler;
 
+    private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
+        this.camelContext = camelContext;
+        this.routeTemplateId = routeTemplateId;
+    }
+
     /**
      * Creates a new {@link TemplatedRouteBuilder} to specify input parameters, and others, for the route template.
      *
@@ -45,11 +50,6 @@ public final class TemplatedRouteBuilder {
      */
     public static TemplatedRouteBuilder builder(CamelContext camelContext, String routeTemplateId) {
         return new TemplatedRouteBuilder(camelContext, routeTemplateId);
-    }
-
-    private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
-        this.camelContext = camelContext;
-        this.routeTemplateId = routeTemplateId;
     }
 
     /**
