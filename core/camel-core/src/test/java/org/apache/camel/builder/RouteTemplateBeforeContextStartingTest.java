@@ -51,17 +51,17 @@ public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
         getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");
 
-        context.addRouteFromTemplate("myTemplate")
+        RouteTemplateParameterBuilder.builder(context, "myTemplate")
                 .routeId("first")
                 .parameter("foo", "one")
                 .parameter("bar", "cheese")
-                .build();
+                .add();
 
-        context.addRouteFromTemplate("myTemplate")
+        RouteTemplateParameterBuilder.builder(context, "myTemplate")
                 .routeId("second")
                 .parameter("foo", "two")
                 .parameter("bar", "cake")
-                .build();
+                .add();
 
         // now start camel
         context.start();

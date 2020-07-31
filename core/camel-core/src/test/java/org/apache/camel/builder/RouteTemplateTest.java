@@ -24,6 +24,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteTemplateTest extends ContextTestSupport {
@@ -81,17 +82,23 @@ public class RouteTemplateTest extends ContextTestSupport {
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
         getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");
 
-        context.addRouteFromTemplate("myTemplate")
+        RouteTemplateParameterBuilder.builder(context, "myTemplate")
                 .routeId("first")
                 .parameter("foo", "one")
                 .parameter("bar", "cheese")
-                .build();
+                .add();
 
-        context.addRouteFromTemplate("myTemplate")
+        RouteTemplateParameterBuilder.builder(context, "myTemplate")
+                .routeId("first")
+                .parameter("foo", "one")
+                .parameter("bar", "cheese")
+                .add();
+
+        RouteTemplateParameterBuilder.builder(context, "myTemplate")
                 .routeId("second")
                 .parameter("foo", "two")
                 .parameter("bar", "cake")
-                .build();
+                .add();
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
