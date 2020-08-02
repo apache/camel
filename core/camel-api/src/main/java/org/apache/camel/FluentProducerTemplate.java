@@ -140,7 +140,10 @@ public interface FluentProducerTemplate extends Service {
 
     /**
      * Remove the body and headers.
+     *
+     * @deprecated the template automatic clears when sending
      */
+    @Deprecated
     FluentProducerTemplate clearAll();
 
     /**
@@ -153,7 +156,10 @@ public interface FluentProducerTemplate extends Service {
 
     /**
      * Remove the headers.
+     *
+     * @deprecated the template automatic clears when sending
      */
+    @Deprecated
     FluentProducerTemplate clearHeaders();
 
     /**
@@ -173,7 +179,10 @@ public interface FluentProducerTemplate extends Service {
 
     /**
      * Remove the body.
+     *
+     * @deprecated the template automatic clears when sending
      */
+    @Deprecated
     FluentProducerTemplate clearBody();
 
     /**
@@ -236,7 +245,7 @@ public interface FluentProducerTemplate extends Service {
      *     .request()}
      * </pre>
      *
-     * @param processor
+     * @param processor the processor
      */
     FluentProducerTemplate withProcessor(Processor processor);
 

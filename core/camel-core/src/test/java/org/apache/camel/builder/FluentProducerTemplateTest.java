@@ -345,6 +345,22 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testUseTwoTimesSameThread() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:echo");
+        mock.expectedBodiesReceived("Camel", "World");
+        mock.message(0).header("foo").isEqualTo("!");
+        mock.message(1).header("foo").isNull();
+
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+        Object result = fluent.withBody("Camel").withHeader("foo", "!").to("direct:echo").request();
+        Object result2 = fluent.withBody("World").to("direct:echo").request();
+        assertEquals("CamelCamel!", result);
+        assertEquals("WorldWorld", result2);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -370,6 +386,9 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 from("direct:inout").transform(constant(123));
 
                 from("direct:async").to("mock:async");
+
+                from("direct:echo").to("mock:echo").setBody().simple("${body}${body}${header.foo}");
+
             }
         };
     }
