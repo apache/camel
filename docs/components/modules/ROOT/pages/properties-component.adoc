@@ -323,9 +323,9 @@ The example below has property placeholder in the `<jmxAgent>` tag:
 ----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
-    <!-- we can use propery placeholders when we define the JMX agent -->
-    <jmxAgent id="agent" registryPort="{{myjmx.port}}" disabled="{{myjmx.disabled}}"
-              usePlatformMBeanServer="{{myjmx.usePlatform}}" createConnector="true"
+    <!-- we can use property placeholders when we define the JMX agent -->
+    <jmxAgent id="agent" disabled="{{myjmx.disabled}}"
+              usePlatformMBeanServer="{{myjmx.usePlatform}}"
               statisticsLevel="RoutesOnly" useHostIPAddress="true"/>
     <route id="foo" autoStartup="false">
         <from uri="seda:start"/>
@@ -333,7 +333,6 @@ The example below has property placeholder in the `<jmxAgent>` tag:
     </route>
 </camelContext>
 ----
-
 
 You can also define property placeholders in the various attributes on
 the `<camelContext>` tag such as `trace` as shown here:
@@ -352,7 +351,6 @@ the `<camelContext>` tag such as `trace` as shown here:
     </route>
 </camelContext>
 ----
-
 
 == Using JVM system properties or Environment variables as override or fallback values
 
@@ -522,7 +520,6 @@ can declare the properties directly in the XML file as shown below:
 </camelContext>
 ----
 
-
 Notice that we have a `<bean>` which refers to one of the properties. And
 in the Camel route we refer to the other using the `{{` and `}}` notation.
 
@@ -539,7 +536,6 @@ protected String useOverridePropertiesWithConfigAdmin(Dictionary props) {
     return "my-placeholders";
 }
 ----
-
 
 To do this we override and implement the
 `useOverridePropertiesWithConfigAdmin` method. We can then put the
@@ -573,7 +569,6 @@ protected String[] loadConfigAdminConfigurationFile() {
     return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
 }
 ----
-
 
 Notice that this method requires to return a `String[]` with 2 values. The
 1st value is the path for the configuration file to load.
