@@ -264,18 +264,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 }
 
                 LOG.trace("Deleting object from bucket {} with objectName {}...", srcBucketName, srcObjectName);
-
-                RemoveObjectArgs.Builder removeObjectRequest = RemoveObjectArgs.builder()
-                        .bucket(srcBucketName)
-                        .object(srcObjectName)
-                        .bypassGovernanceMode(getConfiguration().isBypassGovernanceMode());
-
-                if (getConfiguration().getVersionId() != null) {
-                    removeObjectRequest.versionId(getConfiguration().getVersionId());
-                }
-
-                getMinioClient().removeObject(removeObjectRequest.build());
-
+                removeObject(srcBucketName, srcObjectName);
                 LOG.trace("Deleted object from bucket {} with objectName {}...", srcBucketName, srcObjectName);
             }
         } catch (MinioException e) {
@@ -286,64 +275,70 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    private void copyObject(String srcBucketName, String srcObjectName) {
+    private void removeObject(String srcBucketName, String srcObjectName) throws Exception {
+        RemoveObjectArgs.Builder removeObjectRequest = RemoveObjectArgs.builder()
+                .bucket(srcBucketName)
+                .object(srcObjectName)
+                .bypassGovernanceMode(getConfiguration().isBypassGovernanceMode());
+
+        if (getConfiguration().getVersionId() != null) {
+            removeObjectRequest.versionId(getConfiguration().getVersionId());
+        }
+
+        getMinioClient().removeObject(removeObjectRequest.build());
+    }
+
+    private void copyObject(String srcBucketName, String srcObjectName) throws Exception {
         String destinationBucketName = getConfiguration().getDestinationBucketName();
         if (destinationBucketName == null) {
             throw new IllegalArgumentException("Destination Bucket name must be specified to copy operation");
         }
 
-        try {
-            // set destination object name as source object name, if not specified
-            String destinationObjectName = (getConfiguration().getDestinationObjectName() != null)
-                    ? getConfiguration().getDestinationObjectName()
-                    : srcObjectName;
+        // set destination object name as source object name, if not specified
+        String destinationObjectName = (getConfiguration().getDestinationObjectName() != null)
+                ? getConfiguration().getDestinationObjectName()
+                : srcObjectName;
 
 
-            LOG.trace("Copying object from bucket {} with objectName {} to bucket {}...",
-                    srcBucketName, srcObjectName, destinationBucketName);
+        LOG.trace("Copying object from bucket {} with objectName {} to bucket {}...",
+                srcBucketName, srcObjectName, destinationBucketName);
 
-            CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
-            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
-                copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
-            }
-            if (getConfiguration().getOffset() != 0) {
-                copySourceBuilder.offset(getConfiguration().getOffset());
-            }
-            if (getConfiguration().getLength() != 0) {
-                copySourceBuilder.length(getConfiguration().getLength());
-            }
-            if (getConfiguration().getVersionId() != null) {
-                copySourceBuilder.versionId(getConfiguration().getVersionId());
-            }
-            if (getConfiguration().getMatchETag() != null) {
-                copySourceBuilder.matchETag(getConfiguration().getMatchETag());
-            }
-            if (getConfiguration().getNotMatchETag() != null) {
-                copySourceBuilder.notMatchETag(getConfiguration().getNotMatchETag());
-            }
-            if (getConfiguration().getModifiedSince() != null) {
-                copySourceBuilder.modifiedSince(getConfiguration().getModifiedSince());
-            }
-            if (getConfiguration().getUnModifiedSince() != null) {
-                copySourceBuilder.unmodifiedSince(getConfiguration().getUnModifiedSince());
-            }
-
-            CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
-                    .source(copySourceBuilder.build())
-                    .bucket(getConfiguration().getDestinationBucketName())
-                    .object(destinationObjectName);
-
-            if (getConfiguration().getServerSideEncryption() != null) {
-                copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
-            }
-
-            getMinioClient().copyObject(copyObjectRequest.build());
-
-        } catch (Exception e) {
-            LOG.warn("Error copy object from bucket {} with objectName {} to bucket {}...",
-                    srcBucketName, srcObjectName, destinationBucketName);
+        CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
+        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+        }
+        if (getConfiguration().getOffset() != 0) {
+            copySourceBuilder.offset(getConfiguration().getOffset());
+        }
+        if (getConfiguration().getLength() != 0) {
+            copySourceBuilder.length(getConfiguration().getLength());
+        }
+        if (getConfiguration().getVersionId() != null) {
+            copySourceBuilder.versionId(getConfiguration().getVersionId());
+        }
+        if (getConfiguration().getMatchETag() != null) {
+            copySourceBuilder.matchETag(getConfiguration().getMatchETag());
+        }
+        if (getConfiguration().getNotMatchETag() != null) {
+            copySourceBuilder.notMatchETag(getConfiguration().getNotMatchETag());
+        }
+        if (getConfiguration().getModifiedSince() != null) {
+            copySourceBuilder.modifiedSince(getConfiguration().getModifiedSince());
+        }
+        if (getConfiguration().getUnModifiedSince() != null) {
+            copySourceBuilder.unmodifiedSince(getConfiguration().getUnModifiedSince());
         }
 
+        CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
+                .source(copySourceBuilder.build())
+                .bucket(getConfiguration().getDestinationBucketName())
+                .object(destinationObjectName);
+
+        if (getConfiguration().getServerSideEncryption() != null) {
+            copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
+        }
+
+        getMinioClient().copyObject(copyObjectRequest.build());
     }
 
     /**
