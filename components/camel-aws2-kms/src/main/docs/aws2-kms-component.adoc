@@ -165,6 +165,15 @@ from("direct:listKeys")
       .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=createKey")
 --------------------------------------------------------------------------------
 
+- disableKey: this operation will disable a key in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listKeys")
+      .setHeader(KMS2Constants.KEY_ID, constant("123")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=disableKey")
+--------------------------------------------------------------------------------
+
 == Automatic detection of KmsClient client in registry
 
 The component is capable of detecting the presence of an KmsClient bean into the registry.
