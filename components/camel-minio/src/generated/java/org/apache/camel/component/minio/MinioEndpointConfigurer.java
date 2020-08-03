@@ -135,6 +135,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "useversion1":
         case "useVersion1": target.getConfiguration().setUseVersion1(property(camelContext, boolean.class, value)); return true;
+        case "versionid":
+        case "versionId": target.getConfiguration().setVersionId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -207,6 +209,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("unModifiedSince", java.time.ZonedDateTime.class);
         answer.put("useFixedDelay", boolean.class);
         answer.put("useVersion1", boolean.class);
+        answer.put("versionId", java.lang.String.class);
         return answer;
     }
 
@@ -330,6 +333,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "useFixedDelay": return target.isUseFixedDelay();
         case "useversion1":
         case "useVersion1": return target.getConfiguration().isUseVersion1();
+        case "versionid":
+        case "versionId": return target.getConfiguration().getVersionId();
         default: return null;
         }
     }

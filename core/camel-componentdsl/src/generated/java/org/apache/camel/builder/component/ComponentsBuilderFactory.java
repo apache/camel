@@ -2616,7 +2616,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Minio Storage Service (camel-minio)
-     * Store and retrie objects from Minio Storage Service using Minio SDK.
+     * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 
      * Category: cloud,file
      * Since: 3.5

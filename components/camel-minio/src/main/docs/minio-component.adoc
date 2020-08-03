@@ -2,7 +2,7 @@
 = Minio Storage Service Component
 :docTitle: Minio Storage Service
 :artifactId: camel-minio
-:description: Store and retrie objects from Minio Storage Service using Minio SDK.
+:description: Store and retrieve objects from Minio Storage Service using Minio SDK.
 :since: 3.5
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
@@ -41,7 +41,7 @@ from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix
 == URI Options
 
 // component options: START
-The Minio Storage Service component supports 45 options, which are listed below.
+The Minio Storage Service component supports 47 options, which are listed below.
 
 
 
@@ -49,13 +49,12 @@ The Minio Storage Service component supports 45 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
-| *bypassGovernanceMode* (common) | Set this flag if you want to bypassGovernanceMode when deleting a particular object. | false | boolean
+| *bucketName* (common) | Name of the bucket. The bucket will be created if it doesn't already exists. | false | String
 | *configuration* (common) | The component configuration |  | MinioConfiguration
 | *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
 | *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | Set when creating new bucket. | false | boolean
-| *pojoRequest* (common) | If we want to use a POJO request as body or not. | false | boolean
 | *policy* (common) | The policy for this queue to set in the method. |  | String
 | *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
 | *region* (common) | The region in which Minio client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id() |  | String
@@ -64,6 +63,7 @@ The Minio Storage Service component supports 45 options, which are listed below.
 | *serverSideEncryptionCustomer Key* (common) | Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
 | *autocloseBody* (consumer) | If this option is true and includeBody is true, then the MinioObject.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bypassGovernanceMode* (consumer) | Set this flag if you want to bypassGovernanceMode when deleting a particular object. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from Minio after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or only the MinioConstants#OBJECT_NAME header. | true | boolean
 | *delimiter* (consumer) | The delimiter which is used in the ListObjectsRequest to only consume objects we are interested in. |  | String
 | *destinationBucketName* (consumer) | Source bucket name. |  | String
@@ -84,11 +84,13 @@ The Minio Storage Service component supports 45 options, which are listed below.
 | *startAfter* (consumer) | list objects in bucket after this object name. |  | String
 | *unModifiedSince* (consumer) | Set un modified since parameter for get object(s). |  | ZonedDateTime
 | *useVersion1* (consumer) | when true, version 1 of REST API is used. | false | boolean
+| *versionId* (consumer) | Set specific version_ID of a object when deleting the object. |  | String
 | *deleteAfterWrite* (producer) | Delete file object after the Minio file has been uploaded. | false | boolean
 | *keyName* (producer) | Setting the key name for an element in the bucket through endpoint parameter. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. The value can be one of: copyObject, listObjects, deleteObject, deleteObjects, deleteBucket, listBuckets, getObject, getObjectRange |  | MinioOperations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not. | false | boolean
 | *storageClass* (producer) | The storage class to set in the request. |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Secret Access Key or Minio Access Key. If not set camel will connect to service for anonymous access. |  | String
@@ -115,19 +117,17 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (65 parameters):
+=== Query Parameters (66 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
-| *bypassGovernanceMode* (common) | Set this flag if you want to bypassGovernanceMode when deleting a particular object. | false | boolean
 | *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
 | *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | Set when creating new bucket. | false | boolean
-| *pojoRequest* (common) | If we want to use a POJO request as body or not. | false | boolean
 | *policy* (common) | The policy for this queue to set in the method. |  | String
 | *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
 | *region* (common) | The region in which Minio client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id() |  | String
@@ -136,6 +136,7 @@ with the following path and query parameters:
 | *serverSideEncryptionCustomer Key* (common) | Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
 | *autocloseBody* (consumer) | If this option is true and includeBody is true, then the MinioObject.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bypassGovernanceMode* (consumer) | Set this flag if you want to bypassGovernanceMode when deleting a particular object. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from Minio after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or only the MinioConstants#OBJECT_NAME header. | true | boolean
 | *delimiter* (consumer) | The delimiter which is used in the ListObjectsRequest to only consume objects we are interested in. |  | String
 | *destinationBucketName* (consumer) | Source bucket name. |  | String
@@ -159,6 +160,7 @@ with the following path and query parameters:
 | *startAfter* (consumer) | list objects in bucket after this object name. |  | String
 | *unModifiedSince* (consumer) | Set un modified since parameter for get object(s). |  | ZonedDateTime
 | *useVersion1* (consumer) | when true, version 1 of REST API is used. | false | boolean
+| *versionId* (consumer) | Set specific version_ID of a object when deleting the object. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
@@ -167,6 +169,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. The value can be one of: copyObject, listObjects, deleteObject, deleteObjects, deleteBucket, listBuckets, getObject, getObjectRange |  | MinioOperations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not. | false | boolean
 | *storageClass* (producer) | The storage class to set in the request. |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

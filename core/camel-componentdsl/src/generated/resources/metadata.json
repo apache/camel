@@ -4859,7 +4859,7 @@
     "kind": "component",
     "name": "minio",
     "title": "Minio Storage Service",
-    "description": "Store and retrie objects from Minio Storage Service using Minio SDK.",
+    "description": "Store and retrieve objects from Minio Storage Service using Minio SDK.",
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "cloud,file",

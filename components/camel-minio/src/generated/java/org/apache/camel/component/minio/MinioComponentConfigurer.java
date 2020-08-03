@@ -36,6 +36,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "bucketname":
+        case "bucketName": getOrCreateConfiguration(target).setBucketName(property(camelContext, java.lang.String.class, value)); return true;
         case "bypassgovernancemode":
         case "bypassGovernanceMode": getOrCreateConfiguration(target).setBypassGovernanceMode(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.minio.MinioConfiguration.class, value)); return true;
@@ -105,6 +107,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "unModifiedSince": getOrCreateConfiguration(target).setUnModifiedSince(property(camelContext, java.time.ZonedDateTime.class, value)); return true;
         case "useversion1":
         case "useVersion1": getOrCreateConfiguration(target).setUseVersion1(property(camelContext, boolean.class, value)); return true;
+        case "versionid":
+        case "versionId": getOrCreateConfiguration(target).setVersionId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -117,6 +121,7 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("autocloseBody", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("bucketName", java.lang.String.class);
         answer.put("bypassGovernanceMode", boolean.class);
         answer.put("configuration", org.apache.camel.component.minio.MinioConfiguration.class);
         answer.put("customHttpClient", okhttp3.OkHttpClient.class);
@@ -157,6 +162,7 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("storageClass", java.lang.String.class);
         answer.put("unModifiedSince", java.time.ZonedDateTime.class);
         answer.put("useVersion1", boolean.class);
+        answer.put("versionId", java.lang.String.class);
         return answer;
     }
 
@@ -174,6 +180,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "bucketname":
+        case "bucketName": return getOrCreateConfiguration(target).getBucketName();
         case "bypassgovernancemode":
         case "bypassGovernanceMode": return getOrCreateConfiguration(target).isBypassGovernanceMode();
         case "configuration": return target.getConfiguration();
@@ -243,6 +251,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "unModifiedSince": return getOrCreateConfiguration(target).getUnModifiedSince();
         case "useversion1":
         case "useVersion1": return getOrCreateConfiguration(target).isUseVersion1();
+        case "versionid":
+        case "versionId": return getOrCreateConfiguration(target).getVersionId();
         default: return null;
         }
     }
