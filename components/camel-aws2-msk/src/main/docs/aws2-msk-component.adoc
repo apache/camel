@@ -159,7 +159,7 @@ from("direct:listClusters")
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters")
 --------------------------------------------------------------------------------
 
-- createBroker: this operation will create an MSK Cluster in AWS
+- createCluster: this operation will create an MSK Cluster in AWS
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -175,6 +175,31 @@ from("direct:createCluster")
        }
     })
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster")
+--------------------------------------------------------------------------------
+
+- deleteCluster: this operation will delete an MSK Cluster in AWS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteCluster")
+    .setHeader(MSK2Constants.CLUSTER_ARN, constant("test-kafka"));
+    .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster")
+--------------------------------------------------------------------------------
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createCluster")
+    .process(new Processor() {
+       @Override
+       public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MSK2Constants.CLUSTER_NAME, "test-kafka");
+                exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
+                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
+                BrokerNodeGroupInfo groupInfo = BrokerNodeGroupInfo.builder().build();
+                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);					
+       }
+    })
+    .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster")
 --------------------------------------------------------------------------------
 
 == Automatic detection of KafkaClient client in registry
