@@ -205,6 +205,15 @@ from("direct:listBrokers")
     .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker")
 --------------------------------------------------------------------------------
 
+- rebootBroker: this operation will delete an MQ Broker in AWS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listBrokers")
+    .setHeader(MQ2Constants.BROKER_ID, constant("123")
+    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker")
+--------------------------------------------------------------------------------
+
 == Automatic detection of MqClient client in registry
 
 The component is capable of detecting the presence of an MqClient bean into the registry.
