@@ -161,7 +161,7 @@ from("direct:listKeys")
 
 [source,java]
 --------------------------------------------------------------------------------
-from("direct:listKeys")
+from("direct:createKey")
       .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=createKey")
 --------------------------------------------------------------------------------
 
@@ -169,9 +169,18 @@ from("direct:listKeys")
 
 [source,java]
 --------------------------------------------------------------------------------
-from("direct:listKeys")
+from("direct:disableKey")
       .setHeader(KMS2Constants.KEY_ID, constant("123")
       .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=disableKey")
+--------------------------------------------------------------------------------
+
+- enableKey: this operation will enable a key in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:enableKey")
+      .setHeader(KMS2Constants.KEY_ID, constant("123")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=enableKey")
 --------------------------------------------------------------------------------
 
 == Automatic detection of KmsClient client in registry
