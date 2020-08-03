@@ -44,6 +44,36 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointConsumerBuilder) this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder autoDiscoverClient(
+                String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The blob name, required for consumer. However on producer, is only
          * required for the operations on the blob level.
          * 
@@ -565,6 +595,36 @@ public interface BlobEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedBlobEndpointProducerBuilder advanced() {
             return (AdvancedBlobEndpointProducerBuilder) this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder autoDiscoverClient(
+                String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
         }
         /**
          * The blob name, required for consumer. However on producer, is only
@@ -1280,6 +1340,35 @@ public interface BlobEndpointBuilderFactory {
                 BlobEndpointProducerBuilder {
         default AdvancedBlobEndpointBuilder advanced() {
             return (AdvancedBlobEndpointBuilder) this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
         }
         /**
          * The blob name, required for consumer. However on producer, is only

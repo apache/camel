@@ -64,13 +64,14 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 26 options, which are listed below.
+The Azure Storage Blob Service component supports 27 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *blobName* (common) | The blob name, required for consumer. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
 | *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. The value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
@@ -120,12 +121,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (29 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *blobName* (common) | The blob name, required for consumer. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
 | *blobServiceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through getBlobContainerClient(String), and operations on a blob are available on BlobClient through getBlobContainerClient(String).getBlobClient(String). |  | BlobServiceClient

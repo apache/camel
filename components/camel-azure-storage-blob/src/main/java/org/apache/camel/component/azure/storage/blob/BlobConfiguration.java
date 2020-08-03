@@ -63,6 +63,8 @@ public class BlobConfiguration implements Cloneable {
     private Integer maxResultsPerPage;
     @UriParam(label = "common", defaultValue = "0")
     private int maxRetryRequests;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
     @UriParam(defaultValue = "true")
     private boolean closeStreamAfterRead = true;
     @UriParam(label = "producer", defaultValue = "true")
@@ -351,6 +353,19 @@ public class BlobConfiguration implements Cloneable {
 
     public void setBlockListType(BlockListType blockListType) {
         this.blockListType = blockListType;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************

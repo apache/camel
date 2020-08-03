@@ -49,6 +49,21 @@ public interface AzureStorageBlobComponentBuilderFactory {
             extends
                 ComponentBuilder<BlobComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The blob name, required for consumer. However on producer, is only
          * required for the operations on the blob level.
          * 
@@ -448,6 +463,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((BlobComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "blobName": getOrCreateConfiguration((BlobComponent) component).setBlobName((java.lang.String) value); return true;
             case "blobOffset": getOrCreateConfiguration((BlobComponent) component).setBlobOffset((long) value); return true;
             case "blobType": getOrCreateConfiguration((BlobComponent) component).setBlobType((org.apache.camel.component.azure.storage.blob.BlobType) value); return true;

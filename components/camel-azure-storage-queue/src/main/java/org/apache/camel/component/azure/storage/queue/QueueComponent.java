@@ -70,9 +70,11 @@ public class QueueComponent extends DefaultComponent {
         final QueueEndpoint endpoint = new QueueEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        checkAndSetRegistryClient(configuration, endpoint);
-        checkCredentials(configuration);
+        if (configuration.isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
 
+        checkCredentials(configuration);
         validateConfigurations(configuration);
 
         return endpoint;
@@ -101,18 +103,18 @@ public class QueueComponent extends DefaultComponent {
         }
     }
 
-    private void checkAndSetRegistryClient(final QueueConfiguration configuration, final QueueEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getServiceClient())) {
-            LOG.debug("Looking for an QueueServiceClient instance in the registry");
+    private void checkAndSetRegistryClient(final QueueConfiguration configuration) {
+        if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
             final Set<QueueServiceClient> clients = getCamelContext().getRegistry().findByType(QueueServiceClient.class);
             if (clients.size() == 1) {
-                LOG.debug("Found exactly one QueueServiceClient instance in the registry");
                 configuration.setServiceClient(clients.stream().findFirst().get());
+            } else if (clients.size() > 1) {
+                LOG.info("More than one QueueServiceClient instance in the registry, make sure to have only one instance");
             } else {
-                LOG.debug("No QueueServiceClient instance in the registry");
+                LOG.info("No QueueServiceClient instance in the registry");
             }
         } else {
-            LOG.debug("QueueServiceClient instance is already set at endpoint level: skipping the check in the registry");
+            LOG.info("QueueServiceClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 
