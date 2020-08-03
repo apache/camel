@@ -70,9 +70,11 @@ public class BlobComponent extends DefaultComponent {
         final BlobEndpoint endpoint = new BlobEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        checkAndSetRegistryClient(configuration, endpoint);
-        checkCredentials(configuration);
+        if (configuration.isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
 
+        checkCredentials(configuration);
         validateConfigurations(configuration);
 
         return endpoint;
@@ -101,18 +103,18 @@ public class BlobComponent extends DefaultComponent {
         }
     }
 
-    private void checkAndSetRegistryClient(final BlobConfiguration configuration, final BlobEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getServiceClient())) {
-            LOG.debug("Looking for an BlobServiceClient instance in the registry");
+    private void checkAndSetRegistryClient(final BlobConfiguration configuration) {
+        if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
             final Set<BlobServiceClient> clients = getCamelContext().getRegistry().findByType(BlobServiceClient.class);
             if (clients.size() == 1) {
-                LOG.debug("Found exactly one BlobServiceClient instance in the registry");
                 configuration.setServiceClient(clients.stream().findFirst().get());
+            } else if (clients.size() > 1) {
+                LOG.info("More than one BlobServiceClient instance in the registry, make sure to have only one instance");
             } else {
-                LOG.debug("No BlobServiceClient instance in the registry");
+                LOG.info("No BlobServiceClient instance in the registry");
             }
         } else {
-            LOG.debug("BlobServiceClient instance is already set at endpoint level: skipping the check in the registry");
+            LOG.info("BlobServiceClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 
