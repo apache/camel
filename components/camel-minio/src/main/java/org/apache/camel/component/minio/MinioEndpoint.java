@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.minio;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -62,7 +66,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Bucket name")
     @Metadata(required = true)
-    private String bucketName; // to support component docs
+    private String bucketName;
     @UriParam
     private MinioConfiguration configuration;
     @UriParam(label = "consumer", defaultValue = "10")
