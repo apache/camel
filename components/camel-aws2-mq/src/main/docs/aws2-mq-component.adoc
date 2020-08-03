@@ -170,6 +170,32 @@ from("direct:listBrokers")
     .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers")
 --------------------------------------------------------------------------------
 
+- createBroker: this operation will create an MQ Broker in AWS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createBroker")
+    .process(new Processor() {
+       @Override
+       public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MQ2Constants.BROKER_NAME, "test");
+                exchange.getIn().setHeader(MQ2Constants.BROKER_DEPLOYMENT_MODE, DeploymentMode.SINGLE_INSTANCE);
+                exchange.getIn().setHeader(MQ2Constants.BROKER_INSTANCE_TYPE, "mq.t2.micro");
+                exchange.getIn().setHeader(MQ2Constants.BROKER_ENGINE, EngineType.ACTIVEMQ.name());
+                exchange.getIn().setHeader(MQ2Constants.BROKER_ENGINE_VERSION, "5.15.6");
+                exchange.getIn().setHeader(MQ2Constants.BROKER_PUBLICLY_ACCESSIBLE, false);
+                List<User> users = new ArrayList<>();
+                User.Builder user = User.builder();
+                user.username("camel");
+                user.password("camelpwd");
+                users.add(user.build());
+                exchange.getIn().setHeader(MQ2Constants.BROKER_USERS, users);
+						
+       }
+    })
+    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker")
+--------------------------------------------------------------------------------
+
 == Automatic detection of MqClient client in registry
 
 The component is capable of detecting the presence of an MqClient bean into the registry.
