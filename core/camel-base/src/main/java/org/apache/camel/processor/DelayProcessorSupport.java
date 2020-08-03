@@ -47,8 +47,6 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     private boolean callerRunsWhenRejected = true;
     private final AtomicInteger delayedCount = new AtomicInteger(0);
 
-    // TODO: Add option to cancel tasks on shutdown so we can stop fast
-
     private final class ProcessCall implements Runnable {
         private final Exchange exchange;
         private final AsyncCallback callback;
