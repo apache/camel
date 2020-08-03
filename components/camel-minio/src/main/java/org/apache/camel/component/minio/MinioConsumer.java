@@ -269,9 +269,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 if (getConfiguration().getVersionId() != null) {
                     removeObjectRequest.versionId(getConfiguration().getVersionId());
                 }
-                if (getConfiguration().isBypassGovernanceMode()) {
-                    removeObjectRequest.versionId(getConfiguration().getVersionId());
-                }
+
                 getMinioClient().removeObject(removeObjectRequest.build());
 
                 LOG.trace("Deleted object from bucket {} with objectName {}...", srcBucketName, srcObjectName);

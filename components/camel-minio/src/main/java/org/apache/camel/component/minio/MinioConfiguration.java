@@ -29,36 +29,35 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class MinioConfiguration implements Cloneable {
 
-    @UriParam
+    @UriParam(label = "common")
     private String endpoint;
-    @UriParam
+    @UriParam(label = "common")
     private Integer proxyPort;
+    @UriParam(label = "common")
+    private boolean secure;
+    @UriParam(label = "common")
+    private String region;
+    @UriParam(label = "common")
+    private OkHttpClient customHttpClient;
 
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(defaultValue = "false")
-    private boolean secure;
-
-    @UriParam
-    private String region;
-
-    @UriParam
-    private OkHttpClient customHttpClient;
+    @UriParam(label = "common", defaultValue = "false")
 
     private String bucketName;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean autoCreateBucket = true;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private boolean objectLock;
-
-    @UriParam
+    @UriParam(label = "common")
+    private String policy;
+    @UriParam(label = "common")
     private ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey;
-    @UriParam
+    @UriParam(label = "common")
     private ServerSideEncryption serverSideEncryption;
-
-    @UriParam
+    @UriParam(label = "common")
     private MinioClient minioClient;
 
     @UriParam(label = "consumer")
@@ -84,6 +83,8 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "consumer")
     private long length;
     @UriParam(label = "consumer")
+    private String versionId;
+    @UriParam(label = "consumer")
     private String matchETag;
     @UriParam(label = "consumer")
     private String notMatchETag;
@@ -99,6 +100,8 @@ public class MinioConfiguration implements Cloneable {
     private boolean deleteAfterRead = true;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean moveAfterRead;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean bypassGovernanceMode;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -110,19 +113,12 @@ public class MinioConfiguration implements Cloneable {
     private boolean deleteAfterWrite;
     @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25 * 1024 * 1024;
-    @UriParam
-    private String policy;
     @UriParam(label = "producer")
     private String storageClass;
     @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange")
     private MinioOperations operation;
-
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "producer", defaultValue = "false")
     private boolean pojoRequest;
-    private String versionId;
-    @UriParam(defaultValue = "false")
-    private boolean bypassGovernanceMode;
-
 
     public String getEndpoint() {
         return endpoint;
@@ -144,30 +140,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Secret Access Key or Minio Access Key.
-     * If not set camel will connect to service for anonymous access.
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Access Key Id or Minio Secret Key.
-     * If not set camel will connect to service for anonymous access.
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
     }
 
     public boolean isSecure() {
@@ -205,6 +177,30 @@ public class MinioConfiguration implements Cloneable {
         this.customHttpClient = customHttpClient;
     }
 
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    /**
+     * Amazon AWS Secret Access Key or Minio Access Key.
+     * If not set camel will connect to service for anonymous access.
+     */
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * Amazon AWS Access Key Id or Minio Secret Key.
+     * If not set camel will connect to service for anonymous access.
+     */
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
     public String getBucketName() {
         return bucketName;
     }
@@ -237,6 +233,17 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setObjectLock(boolean objectLock) {
         this.objectLock = objectLock;
+    }
+
+    public String getPolicy() {
+        return policy;
+    }
+
+    /**
+     * The policy for this queue to set in the method.
+     */
+    public void setPolicy(String policy) {
+        this.policy = policy;
     }
 
     public ServerSideEncryptionCustomerKey getServerSideEncryptionCustomerKey() {
@@ -398,6 +405,17 @@ public class MinioConfiguration implements Cloneable {
         this.length = length;
     }
 
+    public String getVersionId() {
+        return versionId;
+    }
+
+    /**
+     * Set specific version_ID of a object when deleting the object.
+     */
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
+    }
+
     public String getMatchETag() {
         return matchETag;
     }
@@ -497,6 +515,17 @@ public class MinioConfiguration implements Cloneable {
         this.moveAfterRead = moveAfterRead;
     }
 
+    public boolean isBypassGovernanceMode() {
+        return bypassGovernanceMode;
+    }
+
+    /**
+     * Set this flag if you want to bypassGovernanceMode when deleting a particular object.
+     */
+    public void setBypassGovernanceMode(boolean bypassGovernanceMode) {
+        this.bypassGovernanceMode = bypassGovernanceMode;
+    }
+
     public boolean isIncludeBody() {
         return includeBody;
     }
@@ -565,17 +594,6 @@ public class MinioConfiguration implements Cloneable {
         this.partSize = partSize;
     }
 
-    public String getPolicy() {
-        return policy;
-    }
-
-    /**
-     * The policy for this queue to set in the method.
-     */
-    public void setPolicy(String policy) {
-        this.policy = policy;
-    }
-
     public String getStorageClass() {
         return storageClass;
     }
@@ -607,28 +625,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
-    }
-
-    public String getVersionId() {
-        return versionId;
-    }
-
-    /**
-     * Set specific version_ID of a object when deleting the object.
-     */
-    public void setVersionId(String versionId) {
-        this.versionId = versionId;
-    }
-
-    public boolean isBypassGovernanceMode() {
-        return bypassGovernanceMode;
-    }
-
-    /**
-     * Set this flag if you want to bypassGovernanceMode when deleting a particular object.
-     */
-    public void setBypassGovernanceMode(boolean bypassGovernanceMode) {
-        this.bypassGovernanceMode = bypassGovernanceMode;
     }
 
     public MinioConfiguration copy() {
