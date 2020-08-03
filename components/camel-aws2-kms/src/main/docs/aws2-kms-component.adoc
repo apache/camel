@@ -157,6 +157,14 @@ from("direct:listKeys")
       .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=listKeys")
 --------------------------------------------------------------------------------
 
+- createKey: this operation will create a key in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listKeys")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=createKey")
+--------------------------------------------------------------------------------
+
 == Automatic detection of KmsClient client in registry
 
 The component is capable of detecting the presence of an KmsClient bean into the registry.
