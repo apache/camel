@@ -303,6 +303,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         public AtomicBoolean getCompletionTimeoutTrigger() {
             return completionTimeoutTrigger;
         }
+
         public void setKeepAliveDelay(int i) {
             keepAliveDelay = i;
         }
