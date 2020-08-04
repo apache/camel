@@ -30,7 +30,6 @@ public enum Category {
     BITCOIN("bitcoin"),
     BLOCKCHAIN("blockchain"),
     CACHE("cache"),
-    CAMEL_K("camel-k"),
     CHAT("chat"),
     CHATSCRIPT("chatscript"),
     CLOUD("cloud"),
