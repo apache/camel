@@ -126,10 +126,12 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     private String messageSelector;
     @UriParam(label = "consumer,transaction", defaultValue = "-1",
             description = "If transacted sets the number of messages to process before committing a transaction.")
+    @Deprecated
     private int transactionBatchCount = -1;
     @UriParam(label = "consumer,transaction", defaultValue = "5s",
             description = "Sets timeout (in millis) for batch transactions, the value should be 1000 or higher.",
             javaType = "java.time.Duration")
+    @Deprecated
     private long transactionBatchTimeout = 5000;
     @UriParam(label = "advanced",
             description = "Whether to startup the consumer message listener asynchronously, when starting a route."
@@ -512,6 +514,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     /**
      * If transacted sets the number of messages to process before committing a transaction.
      */
+    @Deprecated
     public void setTransactionBatchCount(int transactionBatchCount) {
         this.transactionBatchCount = transactionBatchCount;
     }
@@ -523,6 +526,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     /**
      * Sets timeout (in millis) for batch transactions, the value should be 1000 or higher.
      */
+    @Deprecated
     public void setTransactionBatchTimeout(long transactionBatchTimeout) {
         if (transactionBatchTimeout >= 1000) {
             this.transactionBatchTimeout = transactionBatchTimeout;
@@ -695,7 +699,6 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     public void setConnectionFactory(String connectionFactory) {
         this.connectionFactory = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionFactory, ConnectionFactory.class);
-
     }
 
     public ConnectionFactory getConnectionFactory() {

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * SessionTransactionSynchronization is called at the completion of each
  * {@link org.apache.camel.Exchange}.
  */
+@Deprecated
 public class SessionBatchTransactionSynchronization implements Synchronization {
     private static final Logger LOG = LoggerFactory.getLogger(SessionBatchTransactionSynchronization.class);
     private Session session;

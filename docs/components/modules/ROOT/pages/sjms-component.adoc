@@ -29,7 +29,7 @@ Additional key features include:
 * Plugable Connection Resource Management
 * Session, Consumer, & Producer Pooling & Caching Management
 * Batch Consumers
-* Transacted Batch Consumers
+* Transacted Batch Consumers (*deprecated*)
 * Support for Customizable Transaction Commit Strategies (Local JMS
 Transactions only)
 
@@ -181,8 +181,8 @@ with the following path and query parameters:
 | *errorHandlerLoggingLevel* (logging) | Allows to configure the default errorHandler logging level for logging uncaught exceptions. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *errorHandlerLogStackTrace* (logging) | Allows to control whether stacktraces should be logged or not, by the default errorHandler. | true | boolean
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
-| *transactionBatchCount* (transaction) | If transacted sets the number of messages to process before committing a transaction. | -1 | int
-| *transactionBatchTimeout* (transaction) | Sets timeout (in millis) for batch transactions, the value should be 1000 or higher. | 5s | long
+| *transactionBatchCount* (transaction) | *Deprecated* If transacted sets the number of messages to process before committing a transaction. | -1 | int
+| *transactionBatchTimeout* (transaction) | *Deprecated* Sets timeout (in millis) for batch transactions, the value should be 1000 or higher. | 5s | long
 | *transactionCommitStrategy* (transaction) | Sets the commit strategy. |  | TransactionCommitStrategy
 | *sharedJMSSession* (transaction) | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers, use jms component to leverage XA transaction. | true | boolean
 |===
@@ -360,6 +360,9 @@ An example of its use is the `BatchTransactionCommitStrategy`
 which is detailed further in the next section.
 
 === Transacted Batch Consumers
+
+WARNING: This feature is deprecated because under some situations with race conditions then
+transactions that are committed via a timeout may not work correctly.
 
 The SJMS component has been designed to support the batching of local JMS
 transactions on the consumer endpoints. How they are
