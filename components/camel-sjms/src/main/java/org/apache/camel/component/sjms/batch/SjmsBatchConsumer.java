@@ -321,13 +321,12 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                         // from a topic as you don't car about message loss, users can just use a regular aggregator instead
                         Queue queue = session.createQueue(destinationName);
                         MessageConsumer consumer = session.createConsumer(queue);
-
                         try {
                             task.consumeBatchesOnLoop(session, consumer);
                         } finally {
                             closeJmsConsumer(consumer);
                         }
-                    } catch (javax.jms.IllegalStateException ex) {
+                    } catch (Exception ex) {
                         // from consumeBatchesOnLoop
                         // if keepAliveDelay was not specified (defaults to -1) just rethrow to break the loop. This preserves original default behavior
                         if (keepAliveDelay < 0) {
