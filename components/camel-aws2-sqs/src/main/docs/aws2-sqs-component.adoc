@@ -348,7 +348,7 @@ from("direct:start")
           exchange.getIn().setBody(c);					
       }
   })
-  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ------------------------------------------------------------------------------------------------------
 
 As result you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examinate to check what messages were successfull and what not.
