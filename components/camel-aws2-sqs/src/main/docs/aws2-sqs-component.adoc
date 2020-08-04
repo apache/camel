@@ -362,7 +362,7 @@ Use deleteMessage operation to delete a single message. You'll need to set a rec
 from("direct:start")
   .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
   .setHeader(SqsConstants.RECEIPT_HANDLE, constant("123456"))
-  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ------------------------------------------------------------------------------------------------------
 
 As result you'll get an exchange containing a `DeleteMessageResponse` instance, that you can use to check if the message was deleted or not.
