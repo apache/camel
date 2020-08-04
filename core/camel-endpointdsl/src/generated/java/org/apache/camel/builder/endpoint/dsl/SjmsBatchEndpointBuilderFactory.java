@@ -655,12 +655,12 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The delay in millis between attempts to re-establish a valid session.
          * If this is a positive value the SjmsBatchConsumer will attempt to
-         * create a new session if it sees an IllegalStateException during
-         * message consumption. This delay value allows you to pause between
-         * attempts to prevent spamming the logs. If this is a negative value
-         * (default is -1) then the SjmsBatchConsumer will behave as it always
-         * has before - that is it will bail out and the route will shut down if
-         * it sees an IllegalStateException.
+         * create a new session if it sees an Exception during message
+         * consumption. This delay value allows you to pause between attempts to
+         * prevent spamming the logs. If this is a negative value (default is
+         * -1) then the SjmsBatchConsumer will behave as it always has before -
+         * that is it will bail out and the route will shut down if it sees an
+         * Exception.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -675,12 +675,12 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The delay in millis between attempts to re-establish a valid session.
          * If this is a positive value the SjmsBatchConsumer will attempt to
-         * create a new session if it sees an IllegalStateException during
-         * message consumption. This delay value allows you to pause between
-         * attempts to prevent spamming the logs. If this is a negative value
-         * (default is -1) then the SjmsBatchConsumer will behave as it always
-         * has before - that is it will bail out and the route will shut down if
-         * it sees an IllegalStateException.
+         * create a new session if it sees an Exception during message
+         * consumption. This delay value allows you to pause between attempts to
+         * prevent spamming the logs. If this is a negative value (default is
+         * -1) then the SjmsBatchConsumer will behave as it always has before -
+         * that is it will bail out and the route will shut down if it sees an
+         * Exception.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
