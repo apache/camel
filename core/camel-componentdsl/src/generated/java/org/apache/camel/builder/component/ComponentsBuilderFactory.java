@@ -685,6 +685,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureBlobComponentBuilderFactory.azureBlob();
     }
     /**
+     * Azure Event Hubs (camel-azure-eventhubs)
+     * The azure-eventhubs component that integrates Azure Event Hubs which is a
+     * highly scalable publish-subscribe service that can ingest millions of
+     * events per second and stream them to multiple consumers.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     */
+    static org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.AzureEventhubsComponentBuilder azureEventhubs() {
+        return org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.azureEventhubs();
+    }
+    /**
      * Azure Storage Queue Service (Deprecated) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 

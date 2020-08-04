@@ -1241,6 +1241,27 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "AzureEventhubsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "azure-eventhubs",
+    "title": "Azure Event Hubs",
+    "description": "The azure-eventhubs component that integrates Azure Event Hubs which is a highly scalable publish-subscribe service that can ingest millions of events per second and stream them to multiple consumers.",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "label": "cloud,messaging",
+    "javaType": "org.apache.camel.component.azure.eventhubs.EventHubsComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-eventhubs",
+    "version": "3.5.0-SNAPSHOT",
+    "scheme": "azure-eventhubs",
+    "extendsScheme": "",
+    "syntax": "azure-eventhubs:eventHubName",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "AzureQueueComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-queue",

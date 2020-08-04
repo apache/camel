@@ -2478,6 +2478,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure Event Hubs (camel-azure-eventhubs)
+     * The azure-eventhubs component that integrates Azure Event Hubs which is a
+     * highly scalable publish-subscribe service that can ingest millions of
+     * events per second and stream them to multiple consumers.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     * 
+     * Syntax: <code>azure-eventhubs:eventHubName</code>
+     * 
+     * Path parameter: topicName
+     * test
+     * 
+     * @param path eventHubName
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder("azure-eventhubs", path);
+    }
+    /**
+     * Azure Event Hubs (camel-azure-eventhubs)
+     * The azure-eventhubs component that integrates Azure Event Hubs which is a
+     * highly scalable publish-subscribe service that can ingest millions of
+     * events per second and stream them to multiple consumers.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     * 
+     * Syntax: <code>azure-eventhubs:eventHubName</code>
+     * 
+     * Path parameter: topicName
+     * test
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path eventHubName
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Storage Queue Service (Deprecated) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
