@@ -373,7 +373,8 @@ Use listQueues operation to list queues.
 
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
-  .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues")).to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+  .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues"))
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ------------------------------------------------------------------------------------------------------
 
 As result you'll get an exchange containing a `ListQueuesResponse` instance, that you can examinate to check the actual queues.
