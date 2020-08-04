@@ -330,6 +330,16 @@ consumers.
 - deleteMessage
 - listQueues
 
+== Send Message
+
+You can set a `SendMessageBatchRequest` or an `Iterable`
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(constant("Camel rocks!"))
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+------------------------------------------------------------------------------------------------------
+
 == Send Batch Message
 
 You can set a `SendMessageBatchRequest` or an `Iterable`
