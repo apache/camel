@@ -44,6 +44,88 @@ public interface EventHubsEndpointBuilderFactory {
             return (AdvancedEventHubsEndpointConsumerBuilder) this;
         }
         /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointConsumerBuilder amqpRetryOptions(
+                Object amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointConsumerBuilder amqpRetryOptions(
+                String amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointConsumerBuilder amqpTransportType(
+                AmqpTransportType amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointConsumerBuilder amqpTransportType(
+                String amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default EventHubsEndpointConsumerBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default EventHubsEndpointConsumerBuilder autoDiscoverClient(
+                String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -79,6 +161,105 @@ public interface EventHubsEndpointBuilderFactory {
         default EventHubsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a:
+         * <code>com.azure.messaging.eventhubs.EventHubConsumerAsyncClient</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder consumerAsyncClient(
+                Object consumerAsyncClient) {
+            doSetProperty("consumerAsyncClient", consumerAsyncClient);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.messaging.eventhubs.EventHubConsumerAsyncClient</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder consumerAsyncClient(
+                String consumerAsyncClient) {
+            doSetProperty("consumerAsyncClient", consumerAsyncClient);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder consumerGroupName(
+                String consumerGroupName) {
+            doSetProperty("consumerGroupName", consumerGroupName);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 500
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder prefetchCount(int prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 500
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder prefetchCount(
+                String prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointConsumerBuilder connectionString(
+                String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointConsumerBuilder sharedAccessKey(
+                String sharedAccessKey) {
+            doSetProperty("sharedAccessKey", sharedAccessKey);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointConsumerBuilder sharedAccessName(
+                String sharedAccessName) {
+            doSetProperty("sharedAccessName", sharedAccessName);
             return this;
         }
     }
@@ -218,6 +399,88 @@ public interface EventHubsEndpointBuilderFactory {
             return (AdvancedEventHubsEndpointProducerBuilder) this;
         }
         /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointProducerBuilder amqpRetryOptions(
+                Object amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointProducerBuilder amqpRetryOptions(
+                String amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointProducerBuilder amqpTransportType(
+                AmqpTransportType amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointProducerBuilder amqpTransportType(
+                String amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default EventHubsEndpointProducerBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default EventHubsEndpointProducerBuilder autoDiscoverClient(
+                String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -257,6 +520,68 @@ public interface EventHubsEndpointBuilderFactory {
         default EventHubsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a:
+         * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
+         * 
+         * Group: producer
+         */
+        default EventHubsEndpointProducerBuilder producerAsyncClient(
+                Object producerAsyncClient) {
+            doSetProperty("producerAsyncClient", producerAsyncClient);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
+         * 
+         * Group: producer
+         */
+        default EventHubsEndpointProducerBuilder producerAsyncClient(
+                String producerAsyncClient) {
+            doSetProperty("producerAsyncClient", producerAsyncClient);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointProducerBuilder connectionString(
+                String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointProducerBuilder sharedAccessKey(
+                String sharedAccessKey) {
+            doSetProperty("sharedAccessKey", sharedAccessKey);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointProducerBuilder sharedAccessName(
+                String sharedAccessName) {
+            doSetProperty("sharedAccessName", sharedAccessName);
             return this;
         }
     }
@@ -339,6 +664,123 @@ public interface EventHubsEndpointBuilderFactory {
         default AdvancedEventHubsEndpointBuilder advanced() {
             return (AdvancedEventHubsEndpointBuilder) this;
         }
+        /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointBuilder amqpRetryOptions(
+                Object amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointBuilder amqpRetryOptions(
+                String amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointBuilder amqpTransportType(
+                AmqpTransportType amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
+         * 
+         * Group: common
+         */
+        default EventHubsEndpointBuilder amqpTransportType(
+                String amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default EventHubsEndpointBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default EventHubsEndpointBuilder autoDiscoverClient(
+                String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointBuilder connectionString(
+                String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointBuilder sharedAccessKey(String sharedAccessKey) {
+            doSetProperty("sharedAccessKey", sharedAccessKey);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EventHubsEndpointBuilder sharedAccessName(
+                String sharedAccessName) {
+            doSetProperty("sharedAccessName", sharedAccessName);
+            return this;
+        }
     }
 
     /**
@@ -407,6 +849,14 @@ public interface EventHubsEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Proxy enum for <code>com.azure.core.amqp.AmqpTransportType</code> enum.
+     */
+    enum AmqpTransportType {
+        AMQP,
+        AMQP_WEB_SOCKETS;
+    }
+
     public interface EventHubsBuilders {
         /**
          * Azure Event Hubs (camel-azure-eventhubs)
@@ -418,12 +868,15 @@ public interface EventHubsEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-azure-eventhubs
          * 
-         * Syntax: <code>azure-eventhubs:eventHubName</code>
+         * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
          * 
-         * Path parameter: topicName
+         * Path parameter: namespace
          * test
          * 
-         * @param path eventHubName
+         * Path parameter: eventHubName
+         * test
+         * 
+         * @param path namespace/eventHubName
          */
         default EventHubsEndpointBuilder azureEventhubs(String path) {
             return EventHubsEndpointBuilderFactory.endpointBuilder("azure-eventhubs", path);
@@ -438,14 +891,17 @@ public interface EventHubsEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-azure-eventhubs
          * 
-         * Syntax: <code>azure-eventhubs:eventHubName</code>
+         * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
          * 
-         * Path parameter: topicName
+         * Path parameter: namespace
+         * test
+         * 
+         * Path parameter: eventHubName
          * test
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path eventHubName
+         * @param path namespace/eventHubName
          */
         default EventHubsEndpointBuilder azureEventhubs(
                 String componentName,

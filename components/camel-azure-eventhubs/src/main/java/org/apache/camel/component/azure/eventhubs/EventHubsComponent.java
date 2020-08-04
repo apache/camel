@@ -17,10 +17,17 @@
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import com.azure.messaging.eventhubs.EventHubConsumerAsyncClient;
+import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +39,83 @@ public class EventHubsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHubsComponent.class);
 
+    @Metadata
+    private EventHubsConfiguration configuration = new EventHubsConfiguration();
+
     public EventHubsComponent() {
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new EventHubsEndpoint();
+
+        if (remaining == null || remaining.trim().length() == 0) {
+            throw new IllegalArgumentException("Namespace and eventHub name must be specified.");
+        }
+
+        final EventHubsConfiguration configuration = this.configuration != null ? this.configuration.copy() : new EventHubsConfiguration();
+
+        final String[] parts = remaining.split("/");
+
+        // namespace and eventhubName must be set
+        // TODO: make it more flexible, for example if connection string is set or client, allow for it to be created
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Namespace and eventHub name must be specified.");
+        }
+        configuration.setNamespace(parts[0]);
+        configuration.setEventHubName(parts[1]);
+
+        final EventHubsEndpoint endpoint = new EventHubsEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+
+        if (configuration.isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration::setConsumerAsyncClient, configuration::getConsumerAsyncClient, EventHubConsumerAsyncClient.class);
+            checkAndSetRegistryClient(configuration::setProducerAsyncClient, configuration::getProducerAsyncClient, EventHubProducerAsyncClient.class);
+        }
+
+        validateConfigurations(configuration);
+
+        return endpoint;
     }
 
+    /**
+     * The component configurations
+     */
+    public EventHubsConfiguration getConfiguration() {
+        return configuration;
+    }
 
+    public void setConfiguration(EventHubsConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    private <C> void checkAndSetRegistryClient(final Consumer<C> setClientFn, final Supplier<C> getClientFn, final Class<C> clientType) {
+        if (ObjectHelper.isEmpty(getClientFn.get())) {
+            final Set<C> clients = getCamelContext().getRegistry().findByType(clientType);
+            if (clients.size() == 1) {
+                setClientFn.accept(clients.stream().findFirst().get());
+            } else if (clients.size() > 1) {
+                LOG.info(String.format("More than one %s instance in the registry, make sure to have only one instance", clientType.getSimpleName()));
+            } else {
+                LOG.info(String.format("No %s instance in the registry", clientType.getSimpleName()));
+            }
+        } else {
+            LOG.info(String.format("%s instance is already set at endpoint level: skipping the check in the registry", clientType.getSimpleName()));
+        }
+    }
+
+    private void validateConfigurations(final EventHubsConfiguration configuration) {
+        if (!checkIfOneOfClientsSet(configuration) && !checkIfAccessKeyAndAccessNameSet(configuration)
+                && ObjectHelper.isEmpty(configuration.getConnectionString())) {
+            throw new IllegalArgumentException("Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient " +
+                    "or connectionString must be specified.");
+        }
+    }
+
+    private boolean checkIfAccessKeyAndAccessNameSet(final EventHubsConfiguration configuration) {
+        return ObjectHelper.isNotEmpty(configuration.getSharedAccessName()) && ObjectHelper.isNotEmpty(configuration.getSharedAccessKey());
+    }
+
+    private boolean checkIfOneOfClientsSet(final EventHubsConfiguration configuration) {
+        return configuration.getConsumerAsyncClient() != null || configuration.getProducerAsyncClient() != null;
+    }
 }

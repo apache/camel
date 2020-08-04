@@ -19,16 +19,36 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EventHubsEndpoint target = (EventHubsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amqpretryoptions":
+        case "amqpRetryOptions": target.getConfiguration().setAmqpRetryOptions(property(camelContext, com.azure.core.amqp.AmqpRetryOptions.class, value)); return true;
+        case "amqptransporttype":
+        case "amqpTransportType": target.getConfiguration().setAmqpTransportType(property(camelContext, com.azure.core.amqp.AmqpTransportType.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "connectionstring":
+        case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerasyncclient":
+        case "consumerAsyncClient": target.getConfiguration().setConsumerAsyncClient(property(camelContext, com.azure.messaging.eventhubs.EventHubConsumerAsyncClient.class, value)); return true;
+        case "consumergroupname":
+        case "consumerGroupName": target.getConfiguration().setConsumerGroupName(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "prefetchcount":
+        case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "producerasyncclient":
+        case "producerAsyncClient": target.getConfiguration().setProducerAsyncClient(property(camelContext, com.azure.messaging.eventhubs.EventHubProducerAsyncClient.class, value)); return true;
+        case "sharedaccesskey":
+        case "sharedAccessKey": target.getConfiguration().setSharedAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sharedaccessname":
+        case "sharedAccessName": target.getConfiguration().setSharedAccessName(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -37,11 +57,21 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.put("amqpRetryOptions", com.azure.core.amqp.AmqpRetryOptions.class);
+        answer.put("amqpTransportType", com.azure.core.amqp.AmqpTransportType.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("connectionString", java.lang.String.class);
+        answer.put("consumerAsyncClient", com.azure.messaging.eventhubs.EventHubConsumerAsyncClient.class);
+        answer.put("consumerGroupName", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("prefetchCount", int.class);
+        answer.put("producerAsyncClient", com.azure.messaging.eventhubs.EventHubProducerAsyncClient.class);
+        answer.put("sharedAccessKey", java.lang.String.class);
+        answer.put("sharedAccessName", java.lang.String.class);
         answer.put("synchronous", boolean.class);
         return answer;
     }
@@ -50,16 +80,36 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         EventHubsEndpoint target = (EventHubsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amqpretryoptions":
+        case "amqpRetryOptions": return target.getConfiguration().getAmqpRetryOptions();
+        case "amqptransporttype":
+        case "amqpTransportType": return target.getConfiguration().getAmqpTransportType();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "connectionstring":
+        case "connectionString": return target.getConfiguration().getConnectionString();
+        case "consumerasyncclient":
+        case "consumerAsyncClient": return target.getConfiguration().getConsumerAsyncClient();
+        case "consumergroupname":
+        case "consumerGroupName": return target.getConfiguration().getConsumerGroupName();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "prefetchcount":
+        case "prefetchCount": return target.getConfiguration().getPrefetchCount();
+        case "producerasyncclient":
+        case "producerAsyncClient": return target.getConfiguration().getProducerAsyncClient();
+        case "sharedaccesskey":
+        case "sharedAccessKey": return target.getConfiguration().getSharedAccessKey();
+        case "sharedaccessname":
+        case "sharedAccessName": return target.getConfiguration().getSharedAccessName();
         case "synchronous": return target.isSynchronous();
         default: return null;
         }

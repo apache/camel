@@ -2487,12 +2487,15 @@ public class StaticEndpointBuilders {
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-azure-eventhubs
      * 
-     * Syntax: <code>azure-eventhubs:eventHubName</code>
+     * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
      * 
-     * Path parameter: topicName
+     * Path parameter: namespace
      * test
      * 
-     * @param path eventHubName
+     * Path parameter: eventHubName
+     * test
+     * 
+     * @param path namespace/eventHubName
      */
     public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
             String path) {
@@ -2508,14 +2511,17 @@ public class StaticEndpointBuilders {
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-azure-eventhubs
      * 
-     * Syntax: <code>azure-eventhubs:eventHubName</code>
+     * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
      * 
-     * Path parameter: topicName
+     * Path parameter: namespace
+     * test
+     * 
+     * Path parameter: eventHubName
      * test
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path eventHubName
+     * @param path namespace/eventHubName
      */
     public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
             String componentName,

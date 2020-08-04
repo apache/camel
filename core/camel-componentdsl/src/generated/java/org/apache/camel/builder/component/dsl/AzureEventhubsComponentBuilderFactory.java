@@ -53,6 +53,60 @@ public interface AzureEventhubsComponentBuilderFactory {
             extends
                 ComponentBuilder<EventHubsComponent> {
         /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AzureEventhubsComponentBuilder amqpRetryOptions(
+                com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
+            doSetProperty("amqpRetryOptions", amqpRetryOptions);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AzureEventhubsComponentBuilder amqpTransportType(
+                com.azure.core.amqp.AmqpTransportType amqpTransportType) {
+            doSetProperty("amqpTransportType", amqpTransportType);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AzureEventhubsComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * The component configurations.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.eventhubs.EventHubsConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default AzureEventhubsComponentBuilder configuration(
+                org.apache.camel.component.azure.eventhubs.EventHubsConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -69,6 +123,43 @@ public interface AzureEventhubsComponentBuilderFactory {
         default AzureEventhubsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a:
+         * <code>com.azure.messaging.eventhubs.EventHubConsumerAsyncClient</code> type.
+         * 
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder consumerAsyncClient(
+                com.azure.messaging.eventhubs.EventHubConsumerAsyncClient consumerAsyncClient) {
+            doSetProperty("consumerAsyncClient", consumerAsyncClient);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder consumerGroupName(
+                java.lang.String consumerGroupName) {
+            doSetProperty("consumerGroupName", consumerGroupName);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 500
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder prefetchCount(int prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
         /**
@@ -93,6 +184,19 @@ public interface AzureEventhubsComponentBuilderFactory {
             return this;
         }
         /**
+         * test.
+         * 
+         * The option is a:
+         * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureEventhubsComponentBuilder producerAsyncClient(
+                com.azure.messaging.eventhubs.EventHubProducerAsyncClient producerAsyncClient) {
+            doSetProperty("producerAsyncClient", producerAsyncClient);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -106,6 +210,42 @@ public interface AzureEventhubsComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureEventhubsComponentBuilder connectionString(
+                java.lang.String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureEventhubsComponentBuilder sharedAccessKey(
+                java.lang.String sharedAccessKey) {
+            doSetProperty("sharedAccessKey", sharedAccessKey);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureEventhubsComponentBuilder sharedAccessName(
+                java.lang.String sharedAccessName) {
+            doSetProperty("sharedAccessName", sharedAccessName);
+            return this;
+        }
     }
 
     class AzureEventhubsComponentBuilderImpl
@@ -117,15 +257,33 @@ public interface AzureEventhubsComponentBuilderFactory {
         protected EventHubsComponent buildConcreteComponent() {
             return new EventHubsComponent();
         }
+        private org.apache.camel.component.azure.eventhubs.EventHubsConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.azure.eventhubs.EventHubsComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.azure.eventhubs.EventHubsConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "amqpRetryOptions": getOrCreateConfiguration((EventHubsComponent) component).setAmqpRetryOptions((com.azure.core.amqp.AmqpRetryOptions) value); return true;
+            case "amqpTransportType": getOrCreateConfiguration((EventHubsComponent) component).setAmqpTransportType((com.azure.core.amqp.AmqpTransportType) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((EventHubsComponent) component).setAutoDiscoverClient((boolean) value); return true;
+            case "configuration": ((EventHubsComponent) component).setConfiguration((org.apache.camel.component.azure.eventhubs.EventHubsConfiguration) value); return true;
             case "bridgeErrorHandler": ((EventHubsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "consumerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setConsumerAsyncClient((com.azure.messaging.eventhubs.EventHubConsumerAsyncClient) value); return true;
+            case "consumerGroupName": getOrCreateConfiguration((EventHubsComponent) component).setConsumerGroupName((java.lang.String) value); return true;
+            case "prefetchCount": getOrCreateConfiguration((EventHubsComponent) component).setPrefetchCount((int) value); return true;
             case "lazyStartProducer": ((EventHubsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "producerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setProducerAsyncClient((com.azure.messaging.eventhubs.EventHubProducerAsyncClient) value); return true;
             case "basicPropertyBinding": ((EventHubsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "connectionString": getOrCreateConfiguration((EventHubsComponent) component).setConnectionString((java.lang.String) value); return true;
+            case "sharedAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessKey((java.lang.String) value); return true;
+            case "sharedAccessName": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessName((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -4,6 +4,7 @@ import com.azure.core.amqp.AmqpRetryOptions;
 import com.azure.core.amqp.AmqpTransportType;
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
 import com.azure.messaging.eventhubs.EventHubConsumerAsyncClient;
+import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -13,6 +14,8 @@ import org.apache.camel.spi.UriPath;
 public class EventHubsConfiguration implements Cloneable {
 
     @UriPath
+    private String namespace;
+    @UriPath
     private String eventHubName;
     @UriParam(label = "security")
     private String sharedAccessName;
@@ -21,17 +24,30 @@ public class EventHubsConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String connectionString;
     @UriParam(label = "common")
-    private EventHubClientBuilder eventHubClientBuilder;
-    @UriParam(label = "common")
     private AmqpTransportType amqpTransportType;
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
     @UriParam(label = "consumer")
     private EventHubConsumerAsyncClient consumerAsyncClient;
     @UriParam(label = "consumer")
     private String consumerGroupName;
-    @UriParam(label = "consumer")
-    private int prefetchCount;
+    @UriParam(label = "consumer", defaultValue = "500")
+    private int prefetchCount = 500;
+    @UriParam(label = "producer")
+    private EventHubProducerAsyncClient producerAsyncClient;
+
+    /**
+     * test
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 
     /**
      * test
@@ -75,17 +91,6 @@ public class EventHubsConfiguration implements Cloneable {
 
     public void setConnectionString(String connectionString) {
         this.connectionString = connectionString;
-    }
-
-    /**
-     * test
-     */
-    public EventHubClientBuilder getEventHubClientBuilder() {
-        return eventHubClientBuilder;
-    }
-
-    public void setEventHubClientBuilder(EventHubClientBuilder eventHubClientBuilder) {
-        this.eventHubClientBuilder = eventHubClientBuilder;
     }
 
     /**
@@ -141,6 +146,30 @@ public class EventHubsConfiguration implements Cloneable {
 
     public void setPrefetchCount(int prefetchCount) {
         this.prefetchCount = prefetchCount;
+    }
+
+    /**
+     * test
+     */
+    public EventHubProducerAsyncClient getProducerAsyncClient() {
+        return producerAsyncClient;
+    }
+
+    public void setProducerAsyncClient(EventHubProducerAsyncClient producerAsyncClient) {
+        this.producerAsyncClient = producerAsyncClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************

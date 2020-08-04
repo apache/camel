@@ -1256,7 +1256,7 @@
     "version": "3.5.0-SNAPSHOT",
     "scheme": "azure-eventhubs",
     "extendsScheme": "",
-    "syntax": "azure-eventhubs:eventHubName",
+    "syntax": "azure-eventhubs:namespace\/eventHubName",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,

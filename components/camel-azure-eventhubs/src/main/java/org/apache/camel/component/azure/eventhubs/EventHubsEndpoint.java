@@ -17,10 +17,12 @@
 package org.apache.camel.component.azure.eventhubs;
 
 import org.apache.camel.Category;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
@@ -28,11 +30,16 @@ import org.apache.camel.support.DefaultEndpoint;
  * The azure-eventhubs component that integrates Azure Event Hubs which is a highly scalable publish-subscribe service that
  * can ingest millions of events per second and stream them to multiple consumers.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs", syntax = "azure-eventhubs:eventHubName", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs", syntax = "azure-eventhubs:namespace/eventHubName", category = {Category.CLOUD, Category.MESSAGING})
 public class EventHubsEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "test")
-    private String topicName;
+    @UriParam
+    private EventHubsConfiguration configuration;
+
+    public EventHubsEndpoint(final String uri, final Component component, final EventHubsConfiguration configuration) {
+        super(uri, component);
+        this.configuration = configuration;
+    }
 
     @Override
     public Producer createProducer() throws Exception {
@@ -44,11 +51,14 @@ public class EventHubsEndpoint extends DefaultEndpoint {
         return null;
     }
 
-    public String getTopicName() {
-        return topicName;
+    /**
+     * The component configurations
+     */
+    public EventHubsConfiguration getConfiguration() {
+        return configuration;
     }
 
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
+    public void setConfiguration(EventHubsConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
