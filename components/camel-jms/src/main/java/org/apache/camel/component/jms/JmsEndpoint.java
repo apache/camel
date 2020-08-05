@@ -1042,7 +1042,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
-    @Deprecated
     public void setTransactedInOut(boolean transactedInOut) {
         getConfiguration().setTransactedInOut(transactedInOut);
     }
