@@ -188,7 +188,7 @@ about these properties by consulting the relevant Spring documentation.
 
 
 // component options: START
-The JMS component supports 95 options, which are listed below.
+The JMS component supports 96 options, which are listed below.
 
 
 
@@ -286,6 +286,7 @@ The JMS component supports 95 options, which are listed below.
 | *password* (security) | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *username* (security) | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
+| *transactedInOut* (transaction) | Specifies whether InOut operations (request reply) default to using transacted mode | false | boolean
 | *lazyCreateTransactionManager* (transaction) | If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true. | true | boolean
 | *transactionManager* (transaction) | The Spring transaction manager to use. |  | PlatformTransactionManager
 | *transactionName* (transaction) | The name of the transaction to use. |  | String
@@ -330,7 +331,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (94 parameters):
+=== Query Parameters (95 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -426,6 +427,7 @@ with the following path and query parameters:
 | *password* (security) | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *username* (security) | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
+| *transactedInOut* (transaction) | Specifies whether InOut operations (request reply) default to using transacted mode | false | boolean
 | *lazyCreateTransactionManager* (transaction) | If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true. | true | boolean
 | *transactionManager* (transaction) | The Spring transaction manager to use. |  | PlatformTransactionManager
 | *transactionName* (transaction) | The name of the transaction to use. |  | String
