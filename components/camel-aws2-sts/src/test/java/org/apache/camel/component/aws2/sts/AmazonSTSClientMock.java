@@ -16,11 +16,30 @@
  */
 package org.apache.camel.component.aws2.sts;
 
-/**
- * Constants used in Camel AWS2 STS module
- */
-public interface STS2Constants {
-	String OPERATION = "CamelAwsStsOperation";
-    String ROLE_ARN = "CamelAwsStsRoleArn";
-    String ROLE_SESSION_NAME = "CamelAwsStsRoleSessionName";
+import software.amazon.awssdk.services.sts.StsClient;
+import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
+import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
+import software.amazon.awssdk.services.sts.model.AssumedRoleUser;
+
+public class AmazonSTSClientMock implements StsClient {
+
+    public AmazonSTSClientMock() {
+    }
+    
+    @Override
+	public AssumeRoleResponse assumeRole(AssumeRoleRequest assumeRoleRequest) {
+		return AssumeRoleResponse.builder().assumedRoleUser(AssumedRoleUser.builder().arn("arn").build()).build();    	
+    }
+
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 }

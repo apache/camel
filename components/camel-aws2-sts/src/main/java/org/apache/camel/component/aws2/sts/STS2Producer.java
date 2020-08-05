@@ -32,14 +32,14 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest.Builder;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 
 /**
- * A Producer which sends messages to the Amazon ECS Service SDK v2
- * <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
+ * A Producer which sends messages to the Amazon STS Service SDK v2
+ * <a href="http://aws.amazon.com/sts/">AWS STS</a>
  */
 public class STS2Producer extends DefaultProducer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(STS2Producer.class);
 
-	private transient String ecsProducerToString;
+	private transient String stsProducerToString;
 
 	public STS2Producer(Endpoint endpoint) {
 		super(endpoint);
@@ -70,10 +70,10 @@ public class STS2Producer extends DefaultProducer {
 
 	@Override
 	public String toString() {
-		if (ecsProducerToString == null) {
-			ecsProducerToString = "ECSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+		if (stsProducerToString == null) {
+			stsProducerToString = "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
 		}
-		return ecsProducerToString;
+		return stsProducerToString;
 	}
 
 	@Override
@@ -98,16 +98,23 @@ public class STS2Producer extends DefaultProducer {
 			}
 		} else {
 			Builder builder = AssumeRoleRequest.builder();
-			if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.MAX_RESULTS))) {
-				int maxRes = exchange.getIn().getHeader(STS2Constants.MAX_RESULTS, Integer.class);
-				builder.maxResults(maxRes);
-			}
-			ListClustersResponse result;
+			if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.ROLE_ARN))) {
+				String roleArn = exchange.getIn().getHeader(STS2Constants.ROLE_ARN, String.class);
+				builder.roleArn(roleArn);
+			} else {
+                throw new IllegalArgumentException("Role ARN needs to be specified for assumeRole operation");
+            }
+			if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.ROLE_SESSION_NAME))) {
+				String roleSessionName = exchange.getIn().getHeader(STS2Constants.ROLE_SESSION_NAME, String.class);
+				builder.roleSessionName(roleSessionName);
+			} else {
+                throw new IllegalArgumentException("Role Session Name needs to be specified for assumeRole operation");
+            }
+			AssumeRoleResponse result;
 			try {
-				ListClustersRequest request = builder.build();
-				result = ecsClient.listClusters(request);
+				result = stsClient.assumeRole(builder.build());
 			} catch (AwsServiceException ase) {
-				LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+				LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
 				throw ase;
 			}
 			Message message = getMessageForResponse(exchange);
