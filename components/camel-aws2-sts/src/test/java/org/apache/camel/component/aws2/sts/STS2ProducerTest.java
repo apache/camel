@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

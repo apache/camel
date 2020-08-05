@@ -37,92 +37,92 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
  */
 public class STS2Producer extends DefaultProducer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(STS2Producer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(STS2Producer.class);
 
-	private transient String stsProducerToString;
+    private transient String stsProducerToString;
 
-	public STS2Producer(Endpoint endpoint) {
-		super(endpoint);
-	}
+    public STS2Producer(Endpoint endpoint) {
+        super(endpoint);
+    }
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-		switch (determineOperation(exchange)) {
-		case assumeRole:
-			assumeRole(getEndpoint().getStsClient(), exchange);
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported operation");
-		}
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        switch (determineOperation(exchange)) {
+            case assumeRole:
+                assumeRole(getEndpoint().getStsClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
+        }
+    }
 
-	private STS2Operations determineOperation(Exchange exchange) {
-		STS2Operations operation = exchange.getIn().getHeader(STS2Constants.OPERATION, STS2Operations.class);
-		if (operation == null) {
-			operation = getConfiguration().getOperation();
-		}
-		return operation;
-	}
+    private STS2Operations determineOperation(Exchange exchange) {
+        STS2Operations operation = exchange.getIn().getHeader(STS2Constants.OPERATION, STS2Operations.class);
+        if (operation == null) {
+            operation = getConfiguration().getOperation();
+        }
+        return operation;
+    }
 
-	protected STS2Configuration getConfiguration() {
-		return getEndpoint().getConfiguration();
-	}
+    protected STS2Configuration getConfiguration() {
+        return getEndpoint().getConfiguration();
+    }
 
-	@Override
-	public String toString() {
-		if (stsProducerToString == null) {
-			stsProducerToString = "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
-		}
-		return stsProducerToString;
-	}
+    @Override
+    public String toString() {
+        if (stsProducerToString == null) {
+            stsProducerToString = "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return stsProducerToString;
+    }
 
-	@Override
-	public STS2Endpoint getEndpoint() {
-		return (STS2Endpoint) super.getEndpoint();
-	}
+    @Override
+    public STS2Endpoint getEndpoint() {
+        return (STS2Endpoint)super.getEndpoint();
+    }
 
-	private void assumeRole(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
-		if (getConfiguration().isPojoRequest()) {
-			Object payload = exchange.getIn().getMandatoryBody();
-			if (payload instanceof AssumeRoleRequest) {
-				AssumeRoleResponse result;
-				try {
-					AssumeRoleRequest request = (AssumeRoleRequest) payload;
-					result = stsClient.assumeRole(request);
-				} catch (AwsServiceException ase) {
-					LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
-					throw ase;
-				}
-				Message message = getMessageForResponse(exchange);
-				message.setBody(result);
-			}
-		} else {
-			Builder builder = AssumeRoleRequest.builder();
-			if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.ROLE_ARN))) {
-				String roleArn = exchange.getIn().getHeader(STS2Constants.ROLE_ARN, String.class);
-				builder.roleArn(roleArn);
-			} else {
+    private void assumeRole(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof AssumeRoleRequest) {
+                AssumeRoleResponse result;
+                try {
+                    AssumeRoleRequest request = (AssumeRoleRequest)payload;
+                    result = stsClient.assumeRole(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            Builder builder = AssumeRoleRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.ROLE_ARN))) {
+                String roleArn = exchange.getIn().getHeader(STS2Constants.ROLE_ARN, String.class);
+                builder.roleArn(roleArn);
+            } else {
                 throw new IllegalArgumentException("Role ARN needs to be specified for assumeRole operation");
             }
-			if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.ROLE_SESSION_NAME))) {
-				String roleSessionName = exchange.getIn().getHeader(STS2Constants.ROLE_SESSION_NAME, String.class);
-				builder.roleSessionName(roleSessionName);
-			} else {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.ROLE_SESSION_NAME))) {
+                String roleSessionName = exchange.getIn().getHeader(STS2Constants.ROLE_SESSION_NAME, String.class);
+                builder.roleSessionName(roleSessionName);
+            } else {
                 throw new IllegalArgumentException("Role Session Name needs to be specified for assumeRole operation");
             }
-			AssumeRoleResponse result;
-			try {
-				result = stsClient.assumeRole(builder.build());
-			} catch (AwsServiceException ase) {
-				LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
-				throw ase;
-			}
-			Message message = getMessageForResponse(exchange);
-			message.setBody(result);
-		}
-	}
-	
-	public static Message getMessageForResponse(final Exchange exchange) {
-		return exchange.getMessage();
-	}
+            AssumeRoleResponse result;
+            try {
+                result = stsClient.assumeRole(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    public static Message getMessageForResponse(final Exchange exchange) {
+        return exchange.getMessage();
+    }
 }

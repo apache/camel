@@ -25,10 +25,10 @@ public class AmazonSTSClientMock implements StsClient {
 
     public AmazonSTSClientMock() {
     }
-    
+
     @Override
-	public AssumeRoleResponse assumeRole(AssumeRoleRequest assumeRoleRequest) {
-		return AssumeRoleResponse.builder().assumedRoleUser(AssumedRoleUser.builder().arn("arn").build()).build();    	
+    public AssumeRoleResponse assumeRole(AssumeRoleRequest assumeRoleRequest) {
+        return AssumeRoleResponse.builder().assumedRoleUser(AssumedRoleUser.builder().arn("arn").build()).build();
     }
 
     @Override

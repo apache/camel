@@ -20,7 +20,7 @@ package org.apache.camel.component.aws2.sts;
  * Constants used in Camel AWS2 STS module
  */
 public interface STS2Constants {
-	String OPERATION = "CamelAwsStsOperation";
+    String OPERATION = "CamelAwsStsOperation";
     String ROLE_ARN = "CamelAwsStsRoleArn";
     String ROLE_SESSION_NAME = "CamelAwsStsRoleSessionName";
 }
