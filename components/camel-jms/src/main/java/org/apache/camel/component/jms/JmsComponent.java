@@ -131,6 +131,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
         configuration.setTransactionManager(transactionManager);
         configuration.setTransacted(true);
+        configuration.setTransactedInOut(true);
         return jmsComponent(configuration);
     }
 
@@ -609,8 +610,16 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return configuration.isTransacted();
     }
 
-    public void setTransacted(boolean consumerTransacted) {
-        configuration.setTransacted(consumerTransacted);
+    public void setTransacted(boolean transacted) {
+        configuration.setTransacted(transacted);
+    }
+
+    public boolean isTransactedInOut() {
+        return configuration.isTransactedInOut();
+    }
+
+    public void setTransactedInOut(boolean transacted) {
+        configuration.setTransactedInOut(transacted);
     }
 
     public boolean isLazyCreateTransactionManager() {

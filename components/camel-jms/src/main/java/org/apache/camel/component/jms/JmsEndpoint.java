@@ -761,6 +761,11 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
+    public boolean isTransactedInOut() {
+        return getConfiguration().isTransactedInOut();
+    }
+
+    @ManagedAttribute
     public boolean isLazyCreateTransactionManager() {
         return getConfiguration().isLazyCreateTransactionManager();
     }
@@ -1002,8 +1007,8 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
-    public void setTransacted(boolean consumerTransacted) {
-        getConfiguration().setTransacted(consumerTransacted);
+    public void setTransacted(boolean transacted) {
+        getConfiguration().setTransacted(transacted);
     }
 
     @ManagedAttribute

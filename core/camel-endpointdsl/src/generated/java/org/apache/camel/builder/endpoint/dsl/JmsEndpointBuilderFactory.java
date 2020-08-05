@@ -651,6 +651,34 @@ public interface JmsEndpointBuilderFactory {
             doSetProperty("transacted", transacted);
             return this;
         }
+        /**
+         * Specifies whether InOut operations (request reply) default to using
+         * transacted mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: transaction
+         */
+        default JmsEndpointConsumerBuilder transactedInOut(
+                boolean transactedInOut) {
+            doSetProperty("transactedInOut", transactedInOut);
+            return this;
+        }
+        /**
+         * Specifies whether InOut operations (request reply) default to using
+         * transacted mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: transaction
+         */
+        default JmsEndpointConsumerBuilder transactedInOut(
+                String transactedInOut) {
+            doSetProperty("transactedInOut", transactedInOut);
+            return this;
+        }
     }
 
     /**
@@ -2774,6 +2802,34 @@ public interface JmsEndpointBuilderFactory {
             doSetProperty("transacted", transacted);
             return this;
         }
+        /**
+         * Specifies whether InOut operations (request reply) default to using
+         * transacted mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: transaction
+         */
+        default JmsEndpointProducerBuilder transactedInOut(
+                boolean transactedInOut) {
+            doSetProperty("transactedInOut", transactedInOut);
+            return this;
+        }
+        /**
+         * Specifies whether InOut operations (request reply) default to using
+         * transacted mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: transaction
+         */
+        default JmsEndpointProducerBuilder transactedInOut(
+                String transactedInOut) {
+            doSetProperty("transactedInOut", transactedInOut);
+            return this;
+        }
     }
 
     /**
@@ -4345,6 +4401,32 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
+            return this;
+        }
+        /**
+         * Specifies whether InOut operations (request reply) default to using
+         * transacted mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: transaction
+         */
+        default JmsEndpointBuilder transactedInOut(boolean transactedInOut) {
+            doSetProperty("transactedInOut", transactedInOut);
+            return this;
+        }
+        /**
+         * Specifies whether InOut operations (request reply) default to using
+         * transacted mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: transaction
+         */
+        default JmsEndpointBuilder transactedInOut(String transactedInOut) {
+            doSetProperty("transactedInOut", transactedInOut);
             return this;
         }
     }

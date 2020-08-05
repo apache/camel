@@ -248,6 +248,9 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "transaction",
             description = "Specifies whether to use transacted mode")
     private boolean transacted;
+    @UriParam(label = "transaction",
+            description = "Specifies whether InOut operations (request reply) default to using transacted mode")
+    private boolean transactedInOut;
     @UriParam(defaultValue = "true", label = "transaction,advanced",
             description = "If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true.")
     private boolean lazyCreateTransactionManager = true;
@@ -644,13 +647,18 @@ public class JmsConfiguration implements Cloneable {
                 jmsTemplate.setTimeToLive(ttl);
             }
 
-            if (acknowledgementMode >= 0) {
-                jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
-            } else if (acknowledgementModeName != null) {
-                jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
+            jmsTemplate.setSessionTransacted(transactedInOut);
+            if (transactedInOut) {
+                jmsTemplate.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
             } else {
-                // default to AUTO
-                jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+                if (acknowledgementMode >= 0) {
+                    jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
+                } else if (acknowledgementModeName != null) {
+                    jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
+                } else {
+                    // default to AUTO
+                    jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+                }
             }
         }
         return answer;
@@ -1362,8 +1370,36 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Specifies whether to use transacted mode
      */
-    public void setTransacted(boolean consumerTransacted) {
-        this.transacted = consumerTransacted;
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
+    }
+
+    /**
+     * Specifies whether InOut operations (request reply) default to using transacted mode.
+     *
+     * If this flag is set to true, then Spring JmsTemplate will have
+     * sessionTransacted set to true, and the acknowledgeMode as transacted
+     * on the JmsTemplate used for InOut operations.
+     *
+     * Note from Spring JMS: that within a JTA transaction, the parameters passed to
+     * createQueue, createTopic methods are not taken into account. Depending on the Java EE transaction context,
+     * the container makes its own decisions on these values. Analogously, these
+     * parameters are not taken into account within a locally managed transaction
+     * either, since Spring JMS operates on an existing JMS Session in this case.
+     * <p>Setting this flag to true will use a short local JMS transaction
+     * when running outside of a managed transaction, and a synchronized local
+     * JMS transaction in case of a managed transaction (other than an XA
+     * transaction) being present. This has the effect of a local JMS
+     * transaction being managed alongside the main transaction (which might
+     * be a native JDBC transaction), with the JMS transaction committing
+     * right after the main transaction.
+     */
+    public boolean isTransactedInOut() {
+        return transactedInOut;
+    }
+
+    public void setTransactedInOut(boolean transactedInOut) {
+        this.transactedInOut = transactedInOut;
     }
 
     public boolean isLazyCreateTransactionManager() {
@@ -1382,7 +1418,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) (cannot be read/mapped),
+     * If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) cannot be read/mapped,
      * then set this text as the message body instead so the message can be processed
      * (the cause of the poison are already stored as exception on the Exchange).
      * This can be turned off by setting eagerPoisonBody=false.
