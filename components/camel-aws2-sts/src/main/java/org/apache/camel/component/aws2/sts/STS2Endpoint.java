@@ -40,7 +40,7 @@ import software.amazon.awssdk.services.sts.StsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+ * Manage AWS STS cluster instances using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "aws2-sts", title = "AWS 2 Security Token Service (STS)", syntax = "aws2-sts:label", producerOnly = true, category = {Category.CLOUD,
                                                                                                                                                                     Category.MANAGEMENT})

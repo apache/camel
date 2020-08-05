@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class STS2ComponentClientRegistryTest extends CamelTestSupport {
 
     @Test
-    public void createEndpointWithMinimalECSClientConfiguration() throws Exception {
+    public void createEndpointWithMinimalSTSClientConfiguration() throws Exception {
 
         AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
         context.getRegistry().bind("amazonStsClient", clientMock);
@@ -38,7 +38,7 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalSTSClientMisconfiguration() throws Exception {
 
         STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
