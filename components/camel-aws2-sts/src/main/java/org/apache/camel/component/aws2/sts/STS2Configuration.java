@@ -22,6 +22,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sts.StsClient;
 
 @UriParams
@@ -45,8 +46,8 @@ public class STS2Configuration implements Cloneable {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
-    @UriParam
-    private String region;
+    @UriParam(defaultValue = "aws-global")
+    private String region = Region.AWS_GLOBAL.id();
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
