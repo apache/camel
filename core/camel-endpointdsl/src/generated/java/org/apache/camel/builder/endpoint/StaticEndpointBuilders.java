@@ -1573,7 +1573,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS 2 Security Token Service (STS) (camel-aws2-sts)
-     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+     * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.5
@@ -1592,7 +1592,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS 2 Security Token Service (STS) (camel-aws2-sts)
-     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+     * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.5
