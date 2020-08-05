@@ -37,8 +37,8 @@ public class STS2Configuration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
-    @Metadata(required = true)
-    private STS2Operations operation;
+    @Metadata(required = true, defaultValue = "assumeRole")
+    private STS2Operations operation = STS2Operations.assumeRole;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
