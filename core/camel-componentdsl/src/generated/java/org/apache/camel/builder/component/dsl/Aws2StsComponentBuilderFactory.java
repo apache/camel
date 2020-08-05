@@ -166,6 +166,7 @@ public interface Aws2StsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: aws-global
          * Group: producer
          */
         default Aws2StsComponentBuilder region(java.lang.String region) {

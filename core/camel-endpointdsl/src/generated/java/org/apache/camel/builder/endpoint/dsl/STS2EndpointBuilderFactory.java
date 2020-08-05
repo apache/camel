@@ -227,6 +227,7 @@ public interface STS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: aws-global
          * Group: producer
          */
         default STS2EndpointBuilder region(String region) {
