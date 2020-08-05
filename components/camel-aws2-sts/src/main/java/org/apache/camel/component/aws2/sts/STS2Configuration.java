@@ -59,7 +59,7 @@ public class STS2Configuration implements Cloneable {
     }
 
     /**
-     * To use a existing configured AWS ECS as client
+     * To use a existing configured AWS STS as client
      */
     public void setStsClient(StsClient stsClient) {
         this.stsClient = stsClient;
@@ -103,7 +103,7 @@ public class STS2Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the ECS client
+     * To define a proxy protocol when instantiating the STS client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
@@ -114,7 +114,7 @@ public class STS2Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the ECS client
+     * To define a proxy host when instantiating the STS client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -125,7 +125,7 @@ public class STS2Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the ECS client
+     * To define a proxy port when instantiating the STS client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -136,7 +136,7 @@ public class STS2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which ECS client needs to work. When using this parameter,
+     * The region in which STS client needs to work. When using this parameter,
      * the configuration will expect the lowercase name of the region (for
      * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
