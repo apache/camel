@@ -25,31 +25,11 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="direct:listClusters"/>
-            <to uri="aws2-ecs://test?ecsClient=#amazonEcsClient&amp;operation=listClusters"/>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:listClustersPojo"/>
-            <to uri="aws2-ecs://test?ecsClient=#amazonEcsClient&amp;operation=listClusters&amp;pojoRequest=true"/>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:createCluster"/>
-            <to uri="aws2-ecs://test?ecsClient=#amazonEcsClient&amp;operation=createCluster"/>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:deleteCluster"/>
-            <to uri="aws2-ecs://test?ecsClient=#amazonEcsClient&amp;operation=deleteCluster"/>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:describeCluster"/>
-            <to uri="aws2-ecs://test?ecsClient=#amazonEcsClient&amp;operation=describeCluster"/>
+            <from uri="direct:assumeRole"/>
+            <to uri="aws2-sts://test?stsClient=#amazonStsClient&amp;operation=assumeRole"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
 
-    <bean id="amazonEcsClient" class="org.apache.camel.component.aws2.ecs.AmazonECSClientMock"/>
+    <bean id="amazonStsClient" class="org.apache.camel.component.aws2.sts.AmazonSTSClientMock"/>
 </beans>

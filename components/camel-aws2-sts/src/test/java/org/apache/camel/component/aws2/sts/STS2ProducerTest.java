@@ -14,39 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ecs.integration;
+package org.apache.camel.component.aws2.sts;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
+
+import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("This test must be manually started, you need to specify AWS Credentials")
-public class ECS2ProducerIntegrationTest extends CamelTestSupport {
+public class STS2ProducerTest extends CamelTestSupport {
+
+    @BindToRegistry("amazonStsClient")
+    AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
-    public void translateTextTest() throws Exception {
+    public void stsAssumeRoleTest() throws Exception {
 
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:listClusters", new Processor() {
+        Exchange exchange = template.request("direct:assumeRole", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Test");
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.assumeRole);
+                exchange.getIn().setHeader(STS2Constants.ROLE_ARN, "arn");
+                exchange.getIn().setHeader(STS2Constants.ROLE_SESSION_NAME, "sessionarn");
             }
         });
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
-        assertEquals(0, resultGet.clusterArns().size());
+        assertMockEndpointsSatisfied();
+
+        AssumeRoleResponse resultGet = (AssumeRoleResponse)exchange.getIn().getBody();
+        assertEquals("arn", resultGet.assumedRoleUser().arn());
     }
 
     @Override
@@ -54,7 +61,7 @@ public class ECS2ProducerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:listClusters").to("aws2-ecs://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1&operation=listClusters").to("mock:result");
+                from("direct:assumeRole").to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole").to("mock:result");
             }
         };
     }

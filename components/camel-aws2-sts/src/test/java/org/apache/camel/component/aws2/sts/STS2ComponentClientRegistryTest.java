@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ecs;
+package org.apache.camel.component.aws2.sts;
 
 import org.apache.camel.component.aws2.sts.STS2Component;
 import org.apache.camel.component.aws2.sts.STS2Endpoint;
@@ -26,47 +26,47 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
+public class STS2ComponentClientRegistryTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMinimalECSClientConfiguration() throws Exception {
 
-        AmazonECSClientMock clientMock = new AmazonECSClientMock();
-        context.getRegistry().bind("amazonEcsClient", clientMock);
-        STS2Component component = context.getComponent("aws2-ecs", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain");
+        AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
+        context.getRegistry().bind("amazonStsClient", clientMock);
+        STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
+        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-sts://TestDomain");
 
-        assertNotNull(endpoint.getConfiguration().getEcsClient());
+        assertNotNull(endpoint.getConfiguration().getStsClient());
     }
 
     @Test
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
-        STS2Component component = context.getComponent("aws2-ecs", STS2Component.class);
+        STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            component.createEndpoint("aws2-ecs://TestDomain");
+            component.createEndpoint("aws2-sts://TestDomain");
         });
     }
     
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
-        AmazonECSClientMock clientMock = new AmazonECSClientMock();
-        context.getRegistry().bind("amazonEcsClient", clientMock);
-        STS2Component component = context.getComponent("aws2-ecs", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
+        context.getRegistry().bind("amazonStsClient", clientMock);
+        STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
+        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
-        assertNotSame(clientMock, endpoint.getConfiguration().getEcsClient());
+        assertNotSame(clientMock, endpoint.getConfiguration().getStsClient());
     }
     
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
-        AmazonECSClientMock clientMock = new AmazonECSClientMock();
-        context.getRegistry().bind("amazonEcsClient", clientMock);
-        STS2Component component = context.getComponent("aws2-ecs", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
+        AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
+        context.getRegistry().bind("amazonStsClient", clientMock);
+        STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
+        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy");
 
-        assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
+        assertSame(clientMock, endpoint.getConfiguration().getStsClient());
     }
 }

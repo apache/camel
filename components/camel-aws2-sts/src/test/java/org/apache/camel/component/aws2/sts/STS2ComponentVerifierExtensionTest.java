@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ecs;
+package org.apache.camel.component.aws2.sts;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
+public class STS2ComponentVerifierExtensionTest extends CamelTestSupport {
 
     // *************************************************
     // Tests (parameters)
@@ -39,7 +39,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testParameters() throws Exception {
-        Component component = context().getComponent("aws2-ecs");
+        Component component = context().getComponent("aws2-sts");
 
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
@@ -48,7 +48,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("accessKey", "k");
         parameters.put("region", "l");
         parameters.put("label", "test");
-        parameters.put("operation", STS2Operations.listClusters);
+        parameters.put("operation", STS2Operations.assumeRole);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
@@ -57,7 +57,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testConnectivity() throws Exception {
-        Component component = context().getComponent("aws2-ecs");
+        Component component = context().getComponent("aws2-sts");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
@@ -65,7 +65,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("accessKey", "k");
         parameters.put("region", "US_EAST_1");
         parameters.put("label", "test");
-        parameters.put("operation", STS2Operations.listClusters);
+        parameters.put("operation", STS2Operations.assumeRole);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
@@ -74,7 +74,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
     
     @Test
     public void testConnectivityAndRegion() throws Exception {
-        Component component = context().getComponent("aws2-ecs");
+        Component component = context().getComponent("aws2-sts");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
@@ -82,7 +82,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("accessKey", "k");
         parameters.put("region", "l");
         parameters.put("label", "test");
-        parameters.put("operation", STS2Operations.listClusters);
+        parameters.put("operation", STS2Operations.assumeRole);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 

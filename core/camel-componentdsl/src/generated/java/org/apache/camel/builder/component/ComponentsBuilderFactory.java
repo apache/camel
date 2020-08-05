@@ -662,6 +662,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2SqsComponentBuilderFactory.aws2Sqs();
     }
     /**
+     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-aws2-sts
+     */
+    static org.apache.camel.builder.component.dsl.Aws2StsComponentBuilderFactory.Aws2StsComponentBuilder aws2Sts() {
+        return org.apache.camel.builder.component.dsl.Aws2StsComponentBuilderFactory.aws2Sts();
+    }
+    /**
      * AWS 2 Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 

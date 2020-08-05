@@ -61,8 +61,8 @@ public class STS2Configuration implements Cloneable {
 	/**
 	 * To use a existing configured AWS ECS as client
 	 */
-	public void setStsClient(StsClient ecsClient) {
-		this.stsClient = ecsClient;
+	public void setStsClient(StsClient stsClient) {
+		this.stsClient = stsClient;
 	}
 
 	public String getAccessKey() {

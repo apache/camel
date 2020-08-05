@@ -1572,6 +1572,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-aws2-sts
+     * 
+     * Syntax: <code>aws2-sts:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     */
+    public static org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.STS2EndpointBuilder aws2Sts(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.endpointBuilder("aws2-sts", path);
+    }
+    /**
+     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-aws2-sts
+     * 
+     * Syntax: <code>aws2-sts:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     */
+    public static org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.STS2EndpointBuilder aws2Sts(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS 2 Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 
