@@ -165,7 +165,7 @@ Camel-AWS2 IAM component provides the following operation on the producer side:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:createUser")
-    .setHeader(IAMConstants.USERNAME, constant("camel"))
+    .setHeader(IAM2Constants.USERNAME, constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser")
 --------------------------------------------------------------------------------
 
@@ -174,7 +174,7 @@ from("direct:createUser")
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:deleteUser")
-    .setHeader(IAMConstants.USERNAME, constant("camel"))
+    .setHeader(IAM2Constants.USERNAME, constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser")
 --------------------------------------------------------------------------------
 
@@ -191,7 +191,7 @@ from("direct:listUsers")
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:deleteUser")
-    .setHeader(IAMConstants.GROUP_NAME, constant("camel"))
+    .setHeader(IAM2Constants.GROUP_NAME, constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createGroup")
 --------------------------------------------------------------------------------
 
@@ -200,7 +200,7 @@ from("direct:deleteUser")
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:deleteUser")
-    .setHeader(IAMConstants.GROUP_NAME, constant("camel"))
+    .setHeader(IAM2Constants.GROUP_NAME, constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup")
 --------------------------------------------------------------------------------
 
