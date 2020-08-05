@@ -657,14 +657,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * If this is a positive value the SjmsBatchConsumer will attempt to
          * create a new session if it sees an Exception during message
          * consumption. This delay value allows you to pause between attempts to
-         * prevent spamming the logs. If this is a negative value (default is
-         * -1) then the SjmsBatchConsumer will behave as it always has before -
-         * that is it will bail out and the route will shut down if it sees an
-         * Exception.
+         * prevent spamming the logs. If this is a negative value then the
+         * SjmsBatchConsumer will bail out and the consumer will not stop
+         * consuming new messages. The default is 5000 ms, that is, 5 seconds.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: -1
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
@@ -677,14 +676,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * If this is a positive value the SjmsBatchConsumer will attempt to
          * create a new session if it sees an Exception during message
          * consumption. This delay value allows you to pause between attempts to
-         * prevent spamming the logs. If this is a negative value (default is
-         * -1) then the SjmsBatchConsumer will behave as it always has before -
-         * that is it will bail out and the route will shut down if it sees an
-         * Exception.
+         * prevent spamming the logs. If this is a negative value then the
+         * SjmsBatchConsumer will bail out and the consumer will not stop
+         * consuming new messages. The default is 5000 ms, that is, 5 seconds.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: -1
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(

@@ -32,13 +32,16 @@ This could have direct impact on the type of parameter `beanRef` if you are usin
 There is a new parameter `datacenter` (with default value `datacenter1`). Data center has to be defined for the proper
 behavior of the default load balancing policy.
 
+=== camel-sjms
 
-=== Camel Karaf
-
-The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.
+The default value for `keepAliveDelay` is changed from `-1` to `5000` in the batch jms consumer.
 
 === camel-weather
 
 The option `httpClient` is now a query parameter.
 
 A new parameter `geoLocationProvider` was introduced to allow the use of a custom `GeolocationProvider` implementation.
+
+=== Camel Karaf
+
+The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.
