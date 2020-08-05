@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
+import org.apache.camel.component.aws2.sts.STS2Operations;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("accessKey", "k");
         parameters.put("region", "l");
         parameters.put("label", "test");
-        parameters.put("operation", ECS2Operations.listClusters);
+        parameters.put("operation", STS2Operations.listClusters);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
@@ -64,7 +65,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("accessKey", "k");
         parameters.put("region", "US_EAST_1");
         parameters.put("label", "test");
-        parameters.put("operation", ECS2Operations.listClusters);
+        parameters.put("operation", STS2Operations.listClusters);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
@@ -81,7 +82,7 @@ public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("accessKey", "k");
         parameters.put("region", "l");
         parameters.put("label", "test");
-        parameters.put("operation", ECS2Operations.listClusters);
+        parameters.put("operation", STS2Operations.listClusters);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ecs;
 
+import org.apache.camel.component.aws2.sts.STS2Component;
+import org.apache.camel.component.aws2.sts.STS2Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +34,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         STS2Component component = context.getComponent("aws2-ecs", STS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain");
+        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getEcsClient());
     }
@@ -52,7 +54,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         STS2Component component = context.getComponent("aws2-ecs", STS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }
@@ -63,7 +65,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         STS2Component component = context.getComponent("aws2-ecs", STS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
+        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }

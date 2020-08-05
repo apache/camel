@@ -21,6 +21,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.sts.STS2Constants;
+import org.apache.camel.component.aws2.sts.STS2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,7 @@ public class ECS2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.listClusters);
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.listClusters);
             }
         });
 
@@ -65,7 +67,7 @@ public class ECS2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:listClustersPojo", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.listClusters);
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.listClusters);
                 exchange.getIn().setBody(ListClustersRequest.builder().maxResults(10).build());
             }
         });
@@ -84,8 +86,8 @@ public class ECS2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:createCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.createCluster);
-                exchange.getIn().setHeader(ECS2Constants.CLUSTER_NAME, "Test");
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.createCluster);
+                exchange.getIn().setHeader(STS2Constants.CLUSTER_NAME, "Test");
             }
         });
 
@@ -102,8 +104,8 @@ public class ECS2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:describeCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.describeCluster);
-                exchange.getIn().setHeader(ECS2Constants.CLUSTER_NAME, "Test");
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.describeCluster);
+                exchange.getIn().setHeader(STS2Constants.CLUSTER_NAME, "Test");
             }
         });
 
@@ -120,8 +122,8 @@ public class ECS2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:deleteCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.deleteCluster);
-                exchange.getIn().setHeader(ECS2Constants.CLUSTER_NAME, "Test");
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.deleteCluster);
+                exchange.getIn().setHeader(STS2Constants.CLUSTER_NAME, "Test");
             }
         });
 

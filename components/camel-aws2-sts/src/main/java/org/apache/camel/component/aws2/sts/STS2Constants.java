@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ecs;
+package org.apache.camel.component.aws2.sts;
 
-public enum ECS2Operations {
-
-    listClusters, describeCluster, createCluster, deleteCluster
+/**
+ * Constants used in Camel AWS2 STS module
+ */
+public interface STS2Constants {
+	String OPERATION = "CamelAwsECSOperation";
+	String MAX_RESULTS = "CamelAwsECSMaxResults";
+	String CLUSTER_NAME = "CamelAwsECSClusterName";
 }
