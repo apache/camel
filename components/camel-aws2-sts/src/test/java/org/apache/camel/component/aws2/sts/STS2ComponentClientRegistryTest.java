@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.sts;
 
-import org.apache.camel.component.aws2.sts.STS2Component;
-import org.apache.camel.component.aws2.sts.STS2Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +45,7 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
             component.createEndpoint("aws2-sts://TestDomain");
         });
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
@@ -58,7 +56,7 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotSame(clientMock, endpoint.getConfiguration().getStsClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 

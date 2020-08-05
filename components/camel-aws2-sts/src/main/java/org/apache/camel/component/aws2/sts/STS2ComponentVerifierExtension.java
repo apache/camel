@@ -31,66 +31,59 @@ import software.amazon.awssdk.services.sts.StsClientBuilder;
 
 public class STS2ComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
-	public STS2ComponentVerifierExtension() {
-		this("aws2-sts");
-	}
+    public STS2ComponentVerifierExtension() {
+        this("aws2-sts");
+    }
 
-	public STS2ComponentVerifierExtension(String scheme) {
-		super(scheme);
-	}
+    public STS2ComponentVerifierExtension(String scheme) {
+        super(scheme);
+    }
 
-	// *********************************
-	// Parameters validation
-	// *********************************
+    // *********************************
+    // Parameters validation
+    // *********************************
 
-	@Override
-	protected Result verifyParameters(Map<String, Object> parameters) {
+    @Override
+    protected Result verifyParameters(Map<String, Object> parameters) {
 
-		ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-				.error(ResultErrorHelper.requiresOption("accessKey", parameters))
-				.error(ResultErrorHelper.requiresOption("secretKey", parameters))
-				.error(ResultErrorHelper.requiresOption("region", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
+            .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
 
-		// Validate using the catalog
+        // Validate using the catalog
 
-		super.verifyParametersAgainstCatalog(builder, parameters);
+        super.verifyParametersAgainstCatalog(builder, parameters);
 
-		return builder.build();
-	}
+        return builder.build();
+    }
 
-	// *********************************
-	// Connectivity validation
-	// *********************************
+    // *********************************
+    // Connectivity validation
+    // *********************************
 
-	@Override
-	protected Result verifyConnectivity(Map<String, Object> parameters) {
-		ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
+    @Override
+    protected Result verifyConnectivity(Map<String, Object> parameters) {
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
 
-		try {
-			STS2Configuration configuration = setProperties(new STS2Configuration(), parameters);
-			if (!StsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-				ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
-						VerificationError.StandardCode.ILLEGAL_PARAMETER,
-						"The service is not supported in this region");
-				return builder.error(errorBuilder.build()).build();
-			}
-			AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(),
-					configuration.getSecretKey());
-			StsClientBuilder clientBuilder = StsClient.builder();
-			StsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-					.region(Region.of(configuration.getRegion())).build();
-			client.serviceName();
-		} catch (SdkClientException e) {
-			ResultErrorBuilder errorBuilder = ResultErrorBuilder
-					.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-					.detail("aws_sts_exception_message", e.getMessage())
-					.detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-					.detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+        try {
+            STS2Configuration configuration = setProperties(new STS2Configuration(), parameters);
+            if (!StsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER,
+                                                                                            "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
+            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            StsClientBuilder clientBuilder = StsClient.builder();
+            StsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
+            client.serviceName();
+        } catch (SdkClientException e) {
+            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                .detail("aws_sts_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
-			builder.error(errorBuilder.build());
-		} catch (Exception e) {
-			builder.error(ResultErrorBuilder.withException(e).build());
-		}
-		return builder.build();
-	}
+            builder.error(errorBuilder.build());
+        } catch (Exception e) {
+            builder.error(ResultErrorBuilder.withException(e).build());
+        }
+        return builder.build();
+    }
 }

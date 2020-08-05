@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
-import org.apache.camel.component.aws2.sts.STS2Operations;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -71,7 +70,7 @@ public class STS2ComponentVerifierExtensionTest extends CamelTestSupport {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
-    
+
     @Test
     public void testConnectivityAndRegion() throws Exception {
         Component component = context().getComponent("aws2-sts");
