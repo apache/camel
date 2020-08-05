@@ -1500,7 +1500,22 @@ public interface JmsComponentBuilderFactory {
         }
         /**
          * Specifies whether InOut operations (request reply) default to using
-         * transacted mode.
+         * transacted mode If this flag is set to true, then Spring JmsTemplate
+         * will have sessionTransacted set to true, and the acknowledgeMode as
+         * transacted on the JmsTemplate used for InOut operations. Note from
+         * Spring JMS: that within a JTA transaction, the parameters passed to
+         * createQueue, createTopic methods are not taken into account.
+         * Depending on the Java EE transaction context, the container makes its
+         * own decisions on these values. Analogously, these parameters are not
+         * taken into account within a locally managed transaction either, since
+         * Spring JMS operates on an existing JMS Session in this case. Setting
+         * this flag to true will use a short local JMS transaction when running
+         * outside of a managed transaction, and a synchronized local JMS
+         * transaction in case of a managed transaction (other than an XA
+         * transaction) being present. This has the effect of a local JMS
+         * transaction being managed alongside the main transaction (which might
+         * be a native JDBC transaction), with the JMS transaction committing
+         * right after the main transaction.
          * 
          * The option is a: <code>boolean</code> type.
          * 
