@@ -140,6 +140,11 @@ the https://aws.amazon.com/iam/[Amazon IAM] service.
 |`CamelAwsIAMGroupPath` |`String` |The path of an AWS IAM Group
 |=======================================================================
 
+[NOTE]
+====
+The AWS2 IAM component works on the aws-global region and it has aws-global as default region
+====
+
 === IAM Producer operations
 
 Camel-AWS2 IAM component provides the following operation on the producer side:
