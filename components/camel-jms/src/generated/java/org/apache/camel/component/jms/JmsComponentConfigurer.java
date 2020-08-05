@@ -193,6 +193,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "timetolive":
         case "timeToLive": getOrCreateConfiguration(target).setTimeToLive(property(camelContext, long.class, value)); return true;
         case "transacted": getOrCreateConfiguration(target).setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "transactedinout":
+        case "transactedInOut": getOrCreateConfiguration(target).setTransactedInOut(property(camelContext, boolean.class, value)); return true;
         case "transactionmanager":
         case "transactionManager": getOrCreateConfiguration(target).setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
         case "transactionname":
@@ -303,6 +305,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         answer.put("testConnectionOnStartup", boolean.class);
         answer.put("timeToLive", long.class);
         answer.put("transacted", boolean.class);
+        answer.put("transactedInOut", boolean.class);
         answer.put("transactionManager", org.springframework.transaction.PlatformTransactionManager.class);
         answer.put("transactionName", java.lang.String.class);
         answer.put("transactionTimeout", int.class);
@@ -486,6 +489,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "timetolive":
         case "timeToLive": return getOrCreateConfiguration(target).getTimeToLive();
         case "transacted": return getOrCreateConfiguration(target).isTransacted();
+        case "transactedinout":
+        case "transactedInOut": return getOrCreateConfiguration(target).isTransactedInOut();
         case "transactionmanager":
         case "transactionManager": return getOrCreateConfiguration(target).getTransactionManager();
         case "transactionname":

@@ -1499,6 +1499,19 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether InOut operations (request reply) default to using
+         * transacted mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: transaction
+         */
+        default JmsComponentBuilder transactedInOut(boolean transactedInOut) {
+            doSetProperty("transactedInOut", transactedInOut);
+            return this;
+        }
+        /**
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
@@ -1665,6 +1678,7 @@ public interface JmsComponentBuilderFactory {
             case "password": getOrCreateConfiguration((JmsComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((JmsComponent) component).setUsername((java.lang.String) value); return true;
             case "transacted": getOrCreateConfiguration((JmsComponent) component).setTransacted((boolean) value); return true;
+            case "transactedInOut": getOrCreateConfiguration((JmsComponent) component).setTransactedInOut((boolean) value); return true;
             case "lazyCreateTransactionManager": getOrCreateConfiguration((JmsComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
             case "transactionManager": getOrCreateConfiguration((JmsComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
             case "transactionName": getOrCreateConfiguration((JmsComponent) component).setTransactionName((java.lang.String) value); return true;

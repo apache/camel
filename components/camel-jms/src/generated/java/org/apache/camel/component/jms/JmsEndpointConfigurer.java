@@ -184,6 +184,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "timetolive":
         case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, long.class, value)); return true;
         case "transacted": target.getConfiguration().setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "transactedinout":
+        case "transactedInOut": target.getConfiguration().setTransactedInOut(property(camelContext, boolean.class, value)); return true;
         case "transactionmanager":
         case "transactionManager": target.getConfiguration().setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
         case "transactionname":
@@ -293,6 +295,7 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         answer.put("testConnectionOnStartup", boolean.class);
         answer.put("timeToLive", long.class);
         answer.put("transacted", boolean.class);
+        answer.put("transactedInOut", boolean.class);
         answer.put("transactionManager", org.springframework.transaction.PlatformTransactionManager.class);
         answer.put("transactionName", java.lang.String.class);
         answer.put("transactionTimeout", int.class);
@@ -474,6 +477,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "timetolive":
         case "timeToLive": return target.getConfiguration().getTimeToLive();
         case "transacted": return target.getConfiguration().isTransacted();
+        case "transactedinout":
+        case "transactedInOut": return target.getConfiguration().isTransactedInOut();
         case "transactionmanager":
         case "transactionManager": return target.getConfiguration().getTransactionManager();
         case "transactionname":
