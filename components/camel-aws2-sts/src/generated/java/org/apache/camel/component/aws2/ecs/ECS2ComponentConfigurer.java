@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.ecs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.aws2.sts.STS2Component;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -15,9 +16,9 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ECS2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private org.apache.camel.component.aws2.ecs.STS2Configuration getOrCreateConfiguration(STS2Component target) {
+    private org.apache.camel.component.aws2.sts.STS2Configuration getOrCreateConfiguration(STS2Component target) {
         if (target.getConfiguration() == null) {
-            target.setConfiguration(new org.apache.camel.component.aws2.ecs.STS2Configuration());
+            target.setConfiguration(new org.apache.camel.component.aws2.sts.STS2Configuration());
         }
         return target.getConfiguration();
     }
@@ -32,12 +33,12 @@ public class ECS2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ecs.STS2Configuration.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.sts.STS2Configuration.class, value)); return true;
         case "ecsclient":
         case "ecsClient": getOrCreateConfiguration(target).setEcsClient(property(camelContext, software.amazon.awssdk.services.ecs.EcsClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.ecs.ECS2Operations.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.sts.STS2Operations.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -61,10 +62,10 @@ public class ECS2ComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("accessKey", java.lang.String.class);
         answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configuration", org.apache.camel.component.aws2.ecs.STS2Configuration.class);
+        answer.put("configuration", org.apache.camel.component.aws2.sts.STS2Configuration.class);
         answer.put("ecsClient", software.amazon.awssdk.services.ecs.EcsClient.class);
         answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws2.ecs.ECS2Operations.class);
+        answer.put("operation", org.apache.camel.component.aws2.sts.STS2Operations.class);
         answer.put("pojoRequest", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);

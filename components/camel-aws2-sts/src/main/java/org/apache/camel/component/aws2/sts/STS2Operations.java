@@ -14,13 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ecs;
+package org.apache.camel.component.aws2.sts;
 
-/**
- * Constants used in Camel AWS2 ECS module
- */
-public interface ECS2Constants {
-    String OPERATION = "CamelAwsECSOperation";
-    String MAX_RESULTS = "CamelAwsECSMaxResults";
-    String CLUSTER_NAME = "CamelAwsECSClusterName";
+public enum STS2Operations {
+
+	assumeRole
 }

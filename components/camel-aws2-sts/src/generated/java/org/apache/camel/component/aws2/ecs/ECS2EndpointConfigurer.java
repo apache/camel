@@ -4,6 +4,7 @@ package org.apache.camel.component.aws2.ecs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.aws2.sts.STS2Endpoint;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
@@ -17,7 +18,7 @@ public class ECS2EndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        ECS2Endpoint target = (ECS2Endpoint) obj;
+        STS2Endpoint target = (STS2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -29,7 +30,7 @@ public class ECS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "ecsClient": target.getConfiguration().setEcsClient(property(camelContext, software.amazon.awssdk.services.ecs.EcsClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.ecs.ECS2Operations.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.sts.STS2Operations.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -56,7 +57,7 @@ public class ECS2EndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("ecsClient", software.amazon.awssdk.services.ecs.EcsClient.class);
         answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws2.ecs.ECS2Operations.class);
+        answer.put("operation", org.apache.camel.component.aws2.sts.STS2Operations.class);
         answer.put("pojoRequest", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);
@@ -70,7 +71,7 @@ public class ECS2EndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        ECS2Endpoint target = (ECS2Endpoint) obj;
+        STS2Endpoint target = (STS2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
