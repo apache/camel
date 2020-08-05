@@ -46,10 +46,10 @@ public class PgEventEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
 
-    private static final String FORMAT1 = "^pgevent://([^:]*):(\\d+)/(\\w+)/(\\w+).*$";
-    private static final String FORMAT2 = "^pgevent://([^:]+)/(\\w+)/(\\w+).*$";
-    private static final String FORMAT3 = "^pgevent:///(\\w+)/(\\w+).*$";
-    private static final String FORMAT4 = "^pgevent:(\\w+)/(\\w+)/(\\w+).*$";
+    private static final String FORMAT1 = "^pgevent://([^:]*):(\\d+)/(.+)/(\\w+).*$";
+    private static final String FORMAT2 = "^pgevent://([^:]+)/(.+)/(\\w+).*$";
+    private static final String FORMAT3 = "^pgevent:///(.+)/(\\w+).*$";
+    private static final String FORMAT4 = "^pgevent:(.+)/(\\w+)/(\\w+).*$";
 
     @UriPath(defaultValue = "localhost")
     private String host = "localhost";
@@ -186,7 +186,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The database name
+     * The database name. The database name can take any characters because it is sent as a quoted identifier. It is part of the endpoint URI, so diacritical marks and non-Latin letters have to be URL encoded.
      */
     public void setDatabase(String database) {
         this.database = database;
