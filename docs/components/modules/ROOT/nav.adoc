@@ -57,6 +57,7 @@
 *** xref:aws2-msk-component.adoc[AWS 2 Managed Streaming for Apache Kafka (MSK)]
 *** xref:aws2-mq-component.adoc[AWS 2 MQ]
 *** xref:aws2-s3-component.adoc[AWS 2 S3 Storage Service]
+*** xref:aws2-sts-component.adoc[AWS 2 Security Token Service (STS)]
 *** xref:aws2-ses-component.adoc[AWS 2 Simple Email Service (SES)]
 *** xref:aws2-sns-component.adoc[AWS 2 Simple Notification System (SNS)]
 *** xref:aws2-sqs-component.adoc[AWS 2 Simple Queue Service (SQS)]
