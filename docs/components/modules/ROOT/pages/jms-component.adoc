@@ -321,7 +321,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (91 parameters):
+=== Query Parameters (92 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -414,6 +414,7 @@ with the following path and query parameters:
 | *password* (security) | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *username* (security) | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
+| *transactedInOut* (transaction) | Specifies whether InOut operations (request reply) default to using transacted mode. If this flag is set to true, then Spring JmsTemplate will have sessionTransacted set to true, and the acknowledgeMode as transacted on the JmsTemplate used for InOut operations. Note from Spring JMS: that within a JTA transaction, the parameters passed to createQueue, createTopic methods are not taken into account. Depending on the Java EE transaction context, the container makes its own decisions on these values. Analogously, these parameters are not taken into account within a locally managed transaction either, since Spring JMS operates on an existing JMS Session in this case. Setting this flag to true will use a short local JMS transaction when running outside of a managed transaction, and a synchronized local JMS transaction in case of a managed transaction (other than an XA transaction) being present. This has the effect of a local JMS transaction being managed alongside the main transaction (which might be a native JDBC transaction), with the JMS transaction committing right after the main transaction. | false | boolean
 | *lazyCreateTransaction Manager* (transaction) | If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true. | true | boolean
 | *transactionManager* (transaction) | The Spring transaction manager to use. |  | PlatformTransaction Manager
 | *transactionName* (transaction) | The name of the transaction to use. |  | String
@@ -539,6 +540,7 @@ The component supports 172 options, which are listed below.
 | *camel.component.jms.configuration.test-connection-on-startup* | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | Boolean
 | *camel.component.jms.configuration.time-to-live* | When sending messages, specifies the time-to-live of the message (in milliseconds). | -1 | Long
 | *camel.component.jms.configuration.transacted* | Specifies whether to use transacted mode | false | Boolean
+| *camel.component.jms.configuration.transacted-in-out* | Specifies whether InOut operations (request reply) default to using transacted mode. If this flag is set to true, then Spring JmsTemplate will have sessionTransacted set to true, and the acknowledgeMode as transacted on the JmsTemplate used for InOut operations. Note from Spring JMS: that within a JTA transaction, the parameters passed to createQueue, createTopic methods are not taken into account. Depending on the Java EE transaction context, the container makes its own decisions on these values. Analogously, these parameters are not taken into account within a locally managed transaction either, since Spring JMS operates on an existing JMS Session in this case. Setting this flag to true will use a short local JMS transaction when running outside of a managed transaction, and a synchronized local JMS transaction in case of a managed transaction (other than an XA transaction) being present. This has the effect of a local JMS transaction being managed alongside the main transaction (which might be a native JDBC transaction), with the JMS transaction committing right after the main transaction. | false | Boolean
 | *camel.component.jms.configuration.transaction-manager* | The Spring transaction manager to use. |  | PlatformTransaction Manager
 | *camel.component.jms.configuration.transaction-name* | The name of the transaction to use. |  | String
 | *camel.component.jms.configuration.transaction-timeout* | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | Integer
@@ -614,7 +616,6 @@ The component supports 172 options, which are listed below.
 | *camel.component.jms.username* | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *camel.component.jms.wait-for-provision-correlation-to-be-updated-counter* | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled. | 50 | Integer
 | *camel.component.jms.wait-for-provision-correlation-to-be-updated-thread-sleeping-time* | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | Long
-| *camel.component.jms.configuration.transacted-in-out* | *Deprecated*  |  | Boolean
 |===
 // spring-boot-auto-configure options: END
 

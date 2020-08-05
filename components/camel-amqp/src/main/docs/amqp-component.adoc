@@ -153,7 +153,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (91 parameters):
+=== Query Parameters (92 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -246,6 +246,7 @@ with the following path and query parameters:
 | *password* (security) | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *username* (security) | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
+| *transactedInOut* (transaction) | Specifies whether InOut operations (request reply) default to using transacted mode | false | boolean
 | *lazyCreateTransaction Manager* (transaction) | If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true. | true | boolean
 | *transactionManager* (transaction) | The Spring transaction manager to use. |  | PlatformTransaction Manager
 | *transactionName* (transaction) | The name of the transaction to use. |  | String
