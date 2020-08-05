@@ -33,7 +33,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
     
     <jaxws:endpoint id="greeter" 
-	  implementor="org.apache.camel.itest.greeter.GreeterImpl" 
+	  implementor="org.apache.camel.itest.utils.extensions.GreeterImpl"
 	  address="http://localhost:${JmsToCxfInOutTest.port}/SoapContext/SoapPort"
       endpointName="s:SoapOverHttp"
       serviceName="s:SOAPService"
