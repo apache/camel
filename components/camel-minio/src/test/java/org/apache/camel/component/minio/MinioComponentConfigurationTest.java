@@ -28,6 +28,10 @@ public class MinioComponentConfigurationTest extends CamelTestSupport {
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
         MinioEndpoint endpoint = (MinioEndpoint) component
                 .createEndpoint("minio://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&endpoint=http://localhost:4572");
+        assertEquals(endpoint.getConfiguration().getBucketName(), "TestDomain");
+        assertEquals(endpoint.getConfiguration().getAccessKey(), "xxx");
+        assertEquals(endpoint.getConfiguration().getSecretKey(), "yyy");
+        assertEquals(endpoint.getConfiguration().getRegion(), "us-west-1");
         assertEquals(endpoint.getConfiguration().getEndpoint(), "http://localhost:4572");
     }
 }
