@@ -138,7 +138,7 @@ Camel-AWS STS component provides the following operation on the producer side:
 
 [source,java]
 --------------------------------------------------------------------------------
-from("direct:createUser")
+from("direct:assumeRole")
     .setHeader(STS2Constants.ROLE_ARN, constant("arn:123"))
     .setHeader(STS2Constants.ROLE_SESSION_NAME, constant("groot"))
     .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=assumeRole")
