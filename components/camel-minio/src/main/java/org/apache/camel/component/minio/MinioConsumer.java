@@ -183,10 +183,10 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
             getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
-        if (getConfiguration().getOffset() != 0) {
+        if (getConfiguration().getOffset() > 0) {
             getObjectRequest.offset(getConfiguration().getOffset());
         }
-        if (getConfiguration().getLength() != 0) {
+        if (getConfiguration().getLength() > 0) {
             getObjectRequest.length(getConfiguration().getLength());
         }
         if (getConfiguration().getVersionId() != null) {
@@ -307,10 +307,10 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
             copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
-        if (getConfiguration().getOffset() != 0) {
+        if (getConfiguration().getOffset() > 0) {
             copySourceBuilder.offset(getConfiguration().getOffset());
         }
-        if (getConfiguration().getLength() != 0) {
+        if (getConfiguration().getLength() > 0) {
             copySourceBuilder.length(getConfiguration().getLength());
         }
         if (getConfiguration().getVersionId() != null) {

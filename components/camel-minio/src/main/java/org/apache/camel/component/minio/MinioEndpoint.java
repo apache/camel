@@ -255,10 +255,10 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
             statObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
-        if (getConfiguration().getOffset() != 0) {
+        if (getConfiguration().getOffset() > 0) {
             statObjectRequest.offset(getConfiguration().getOffset());
         }
-        if (getConfiguration().getLength() != 0) {
+        if (getConfiguration().getLength() > 0) {
             statObjectRequest.length(getConfiguration().getLength());
         }
         if (getConfiguration().getVersionId() != null) {
