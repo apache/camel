@@ -410,7 +410,47 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("q1=new&q2=world", response, "The response value is wrong");
     }
     
-    
+    @Test
+    public void testProducerWithQueryParametersMultipleValues() {
+        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/testQuery?httpClientAPI=true&synchronous=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setPattern(ExchangePattern.InOut);
+                    Message inMessage = exchange.getIn();
+                    // set the Http method
+                    inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                    inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
+                    inMessage.setHeader(Exchange.HTTP_QUERY, "id=1&id=2");
+                    inMessage.setBody(null);                
+                }
+            
+            });
+     
+        // get the response message 
+        String response = exchange.getOut().getBody(String.class);
+        assertNotNull(response, "The response should not be null");
+        assertEquals("id=1&id=2", response, "The response value is wrong");
+    }    
+
+    @Test
+    public void testProducerWithQueryParametersEscapeAmpersand() {
+        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/testQuery?httpClientAPI=true&synchronous=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setPattern(ExchangePattern.InOut);
+                    Message inMessage = exchange.getIn();
+                    // set the Http method
+                    inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                    inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
+                    inMessage.setHeader(Exchange.HTTP_QUERY, "id=1#262");
+                    inMessage.setBody(null);                
+                }
+            
+            });
+     
+        // get the response message 
+        String response = exchange.getOut().getBody(String.class);
+        assertNotNull(response, "The response should not be null");
+        assertEquals("id=1#262", response, "The response value is wrong");
+    }  
 
     @Test    
     public void testRestServerDirectlyGetCustomer() {

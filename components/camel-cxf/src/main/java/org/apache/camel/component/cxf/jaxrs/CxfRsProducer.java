@@ -237,25 +237,27 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
         // check if there is a query map in the message header
         Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
-        if (maps == null) {
-            // Get the map from HTTP_QUERY header
-            String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
-            if (queryString != null) {
-                maps = getQueryParametersFromQueryString(queryString,
-                                                         ExchangeHelper.getCharsetName(exchange));
-            }
-        }
-        if (maps == null) {
-            maps = cxfRsEndpoint.getParameters();
-        }
         if (maps != null) {
-            for (Map.Entry<String, String> entry : maps.entrySet()) {
-                client.query(entry.getKey(), entry.getValue());
-            }
+            insertQueryParametersFromMap(client, maps);
+        } else {
+            String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
+        	if (queryString != null) {
+        	    // Insert QueryParameters from HTTP_QUERY header
+        	    insertQueryParametersFromQueryString(client, queryString, ExchangeHelper.getCharsetName(exchange));
+        	} else {
+        	    insertQueryParametersFromMap(client, cxfRsEndpoint.getParameters());
+        	}
         }
         
         setupClientHeaders(client, exchange);
-        
+    }
+    
+    private void insertQueryParametersFromMap(WebClient client, Map<String, String> maps) {
+        if (maps != null) {
+    	    for (Map.Entry<String, String> entry : maps.entrySet()) {
+                client.query(entry.getKey(), entry.getValue());
+            }
+    	}
     }
     
     protected void setupClientMatrix(WebClient client, Exchange exchange) throws Exception {
@@ -482,19 +484,17 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         return clientFactoryBeanCache;
     }
     
-    private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
-        Map<String, String> answer  = new LinkedHashMap<>();
+    private void insertQueryParametersFromQueryString(WebClient client, String queryString, String charset) throws UnsupportedEncodingException {
         for (String param : queryString.split("&")) {
             String[] pair = param.split("=", 2);
             if (pair.length == 2) {
                 String name = URLDecoder.decode(pair[0], charset);
                 String value = URLDecoder.decode(pair[1], charset);
-                answer.put(name, value);
+                client.query(name, value);
             } else {
                 throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
             }
         }
-        return answer;
     }
 
     private Method findRightMethod(List<Class<?>> resourceClasses, String methodName,
