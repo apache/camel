@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.minio;
 
-import org.apache.camel.component.minio.client.MinioRemoteClientImpl;
 import org.apache.camel.component.minio.client.MinioCamelInternalClient;
 import org.apache.camel.component.minio.client.MinioClientFactory;
+import org.apache.camel.component.minio.client.MinioRemoteClientImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
