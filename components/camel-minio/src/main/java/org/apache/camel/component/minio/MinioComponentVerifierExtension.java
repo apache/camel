@@ -42,8 +42,10 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
-                .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("accessKey", parameters))
+                .error(ResultErrorHelper.requiresOption("secretKey", parameters))
+                .error(ResultErrorHelper.requiresOption("region", parameters));
 
         // Validate using the catalog
 
@@ -69,7 +71,8 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
             }
 
             if (configuration.getProxyPort() != null) {
-                clientBuilderRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
+                clientBuilderRequest.endpoint(
+                        configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
             } else {
                 clientBuilderRequest.endpoint(configuration.getEndpoint());
             }
@@ -86,7 +89,8 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
             client.listBuckets();
         } catch (MinioException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                    .detail("minio_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                    .detail("minio_exception_message", e.getMessage())
+                    .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
                     .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
