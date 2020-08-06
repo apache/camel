@@ -40,6 +40,6 @@ public interface MinioConstants {
     String SERVER_SIDE_ENCRYPTION = "CamelMinioServerSideEncryption";
     String EXPIRATION_TIME = "CamelMinioExpirationTime";
     String REPLICATION_STATUS = "CamelMinioReplicationStatus";
-    String OFFSET = "CamelMinioRangeStart";
-    String LENGTH = "CamelMinioRangeEnd";
+    String OFFSET = "CamelMinioOffset";
+    String LENGTH = "CamelMinioLength";
 }
