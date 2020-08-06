@@ -24,6 +24,8 @@ import java.util.Set;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,13 +165,24 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     private boolean processInBody(Exchange exchange, Map<String, Object> properties) {
         final String inBodyProperty = endpoint.getInBody();
         if (inBodyProperty != null) {
-
             Object value = exchange.getIn().getBody();
             if (value != null) {
                 try {
-                    value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
-                        endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
-                        exchange, value);
+                    // attempt to find out type via configurer so we avoid using reflection
+                    PropertyConfigurer configurer = endpoint.getComponent().getEndpointPropertyConfigurer();
+                    if (configurer instanceof PropertyConfigurerGetter) {
+                        PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                        Map<String, Object> options = getter.getAllOptions(endpoint);
+                        if (options.containsKey(inBodyProperty)) {
+                            Class<?> type = (Class<?>) options.get(inBodyProperty);
+                            value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
+                        }
+                    } else {
+                        // fallback to be reflection based
+                        value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
+                                endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
+                                exchange, value);
+                    }
                 } catch (Exception e) {
                     exchange.setException(new RuntimeCamelException(String.format(
                             "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()), e));
