@@ -462,9 +462,7 @@ public abstract class BaseMainSupport extends BaseService {
             String[] pkgs = mainConfigurationProperties.getPackageScanRouteBuilders().split(",");
             Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
                     .getPackageScanClassResolver()
-                    .findImplementations(RoutesBuilder.class, pkgs)
-                    .stream().filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                    .collect(Collectors.toSet());
+                    .findImplementations(RoutesBuilder.class, pkgs);
             for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
                 if (builder instanceof RoutesBuilder) {

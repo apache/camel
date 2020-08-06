@@ -66,7 +66,7 @@ public interface PackageScanClassResolver extends StaticService {
     Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames);
 
     /**
-     * Attempts to discover classes that are assignable to the type provided. In
+     * Attempts to discover classes that are assignable to the type provided (exclude abstract classes). In
      * the case that an interface is provided this method will collect
      * implementations. In the case of a non-interface class, subclasses will be
      * collected.
