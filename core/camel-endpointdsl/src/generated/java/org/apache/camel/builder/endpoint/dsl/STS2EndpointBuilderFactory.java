@@ -381,7 +381,8 @@ public interface STS2EndpointBuilderFactory {
      * <code>org.apache.camel.component.aws2.sts.STS2Operations</code> enum.
      */
     enum STS2Operations {
-        assumeRole;
+        assumeRole,
+        getSessionToken;
     }
 
     /**
