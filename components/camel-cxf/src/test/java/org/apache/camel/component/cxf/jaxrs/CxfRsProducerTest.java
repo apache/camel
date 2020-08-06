@@ -440,7 +440,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                     // set the Http method
                     inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                     inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
-                    inMessage.setHeader(Exchange.HTTP_QUERY, "id=1#262");
+                    inMessage.setHeader(Exchange.HTTP_QUERY, "id=1%262");
                     inMessage.setBody(null);                
                 }
             
@@ -449,7 +449,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         // get the response message 
         String response = exchange.getOut().getBody(String.class);
         assertNotNull(response, "The response should not be null");
-        assertEquals("id=1#262", response, "The response value is wrong");
+        assertEquals("id=1%262", response, "The response value is wrong");
     }  
 
     @Test    
