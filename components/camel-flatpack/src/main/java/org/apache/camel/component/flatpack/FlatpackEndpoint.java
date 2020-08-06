@@ -111,8 +111,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
             }
         } catch (Exception e) {
             // must close reader in case of some exception
-            if(bodyReader != null)
-                IOHelper.close(bodyReader);
+            IOHelper.close(bodyReader);
             throw e;
         }
     }
