@@ -460,7 +460,7 @@ public class MinioProducer extends DefaultProducer {
 
     private ByteArrayOutputStream determineLengthInputStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
+        byte[] bytes = new byte[MinioConstants.BYTE_ARRAY_LENGTH];
         int count;
         while ((count = inputStream.read(bytes)) > 0) {
             out.write(bytes, 0, count);

@@ -21,6 +21,7 @@ package org.apache.camel.component.minio;
  */
 public interface MinioConstants {
 
+    int BYTE_ARRAY_LENGTH = 1024;
     String BUCKET_NAME = "CamelMinioBucketName";
     String DESTINATION_BUCKET_NAME = "CamelMinioDestinationBucketName";
     String CACHE_CONTROL = "CamelMinioContentControl";
