@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.minio;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -267,15 +270,13 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 removeObject(srcBucketName, srcObjectName);
                 LOG.trace("Deleted object from bucket {} with objectName {}...", srcBucketName, srcObjectName);
             }
-        } catch (MinioException e) {
+        } catch (MinioException | NoSuchAlgorithmException | InvalidKeyException | IOException e) {
             getExceptionHandler().handleException("Error occurred during moving or deleting object. This exception is ignored.",
                     exchange, e);
-        } catch (Exception e) {
-            LOG.trace("Error process commit...");
         }
     }
 
-    private void removeObject(String srcBucketName, String srcObjectName) throws Exception {
+    private void removeObject(String srcBucketName, String srcObjectName) throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
         RemoveObjectArgs.Builder removeObjectRequest = RemoveObjectArgs.builder()
                 .bucket(srcBucketName)
                 .object(srcObjectName)
@@ -288,7 +289,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         getMinioClient().removeObject(removeObjectRequest.build());
     }
 
-    private void copyObject(String srcBucketName, String srcObjectName) throws Exception {
+    private void copyObject(String srcBucketName, String srcObjectName) throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
         String destinationBucketName = getConfiguration().getDestinationBucketName();
         if (destinationBucketName == null) {
             throw new IllegalArgumentException("Destination Bucket name must be specified to copy operation");
