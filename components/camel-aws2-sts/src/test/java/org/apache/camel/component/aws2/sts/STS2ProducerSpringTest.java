@@ -24,6 +24,7 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -49,6 +50,23 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
 
         AssumeRoleResponse resultGet = (AssumeRoleResponse)exchange.getIn().getBody();
         assertEquals("arn", resultGet.assumedRoleUser().arn());
+    }
+    
+    @Test
+    public void stsGetSessionTokenTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:getSessionToken", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.getSessionToken);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        GetSessionTokenResponse resultGet = (GetSessionTokenResponse)exchange.getIn().getBody();
+        assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 
     @Override
