@@ -20,6 +20,9 @@ import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import software.amazon.awssdk.services.sts.model.AssumedRoleUser;
+import software.amazon.awssdk.services.sts.model.Credentials;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 public class AmazonSTSClientMock implements StsClient {
 
@@ -29,6 +32,11 @@ public class AmazonSTSClientMock implements StsClient {
     @Override
     public AssumeRoleResponse assumeRole(AssumeRoleRequest assumeRoleRequest) {
         return AssumeRoleResponse.builder().assumedRoleUser(AssumedRoleUser.builder().arn("arn").build()).build();
+    }
+    
+    @Override
+    public GetSessionTokenResponse getSessionToken(GetSessionTokenRequest getSessionTokenRequest) {
+        return GetSessionTokenResponse.builder().credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build()).build();
     }
 
     @Override

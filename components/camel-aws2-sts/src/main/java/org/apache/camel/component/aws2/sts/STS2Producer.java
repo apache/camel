@@ -30,6 +30,8 @@ import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest.Builder;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 /**
  * A Producer which sends messages to the Amazon STS Service SDK v2
@@ -50,6 +52,9 @@ public class STS2Producer extends DefaultProducer {
         switch (determineOperation(exchange)) {
             case assumeRole:
                 assumeRole(getEndpoint().getStsClient(), exchange);
+                break;
+            case getSessionToken:
+                getSessionToken(getEndpoint().getStsClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -115,6 +120,35 @@ public class STS2Producer extends DefaultProducer {
                 result = stsClient.assumeRole(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+    
+    private void getSessionToken(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetSessionTokenRequest) {
+                GetSessionTokenResponse result;
+                try {
+                    GetSessionTokenRequest request = (GetSessionTokenRequest)payload;
+                    result = stsClient.getSessionToken(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Get Session Token command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            GetSessionTokenRequest.Builder builder = GetSessionTokenRequest.builder();
+            GetSessionTokenResponse result;
+            try {
+                result = stsClient.getSessionToken(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Get Session Token command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
