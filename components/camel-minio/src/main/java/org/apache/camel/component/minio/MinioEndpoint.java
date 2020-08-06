@@ -165,7 +165,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.warn("Error setting message body");
             }
         } else {
             message.setBody(null);
