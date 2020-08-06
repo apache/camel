@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Route that listen on a JMS queue and send a request/reply over http
@@ -30,6 +32,8 @@ import org.apache.camel.test.AvailablePortFinder;
  * error handler.
  */
 public class JmsToHttpWithOnExceptionRoute extends JmsToHttpRoute {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 

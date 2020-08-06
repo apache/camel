@@ -25,6 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.utils.extensions.GreeterServiceExtension;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -40,6 +41,9 @@ public class CamelGreeterTest {
     @RegisterExtension
     public static GreeterServiceExtension greeterServiceExtension =
             GreeterServiceExtension.createExtension("CamelGreeterTest.port");
+
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Autowired
     protected CamelContext camelContext;

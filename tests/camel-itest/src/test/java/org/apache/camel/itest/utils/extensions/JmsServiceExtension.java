@@ -17,6 +17,7 @@
 package org.apache.camel.itest.utils.extensions;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
@@ -27,11 +28,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class JmsServiceExtension implements BeforeAllCallback, AfterAllCallback {
+public final class JmsServiceExtension implements BeforeAllCallback, AfterAllCallback {
     private static final Logger LOG = LoggerFactory.getLogger(JmsServiceExtension.class);
 
-    private static JmsComponent amq;
+    private static JmsServiceExtension instance;
+
+    private JmsComponent amq;
+
+
+    private JmsServiceExtension() throws JMSException {
+        LOG.info("Creating a new reusable AMQ component");
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+
+        amq = jmsComponentAutoAcknowledge(connectionFactory);
+
+        connectionFactory.createConnection();
+    }
+
 
     @Override
     public void afterAll(ExtensionContext extensionContext) throws Exception {
@@ -40,19 +55,23 @@ public class JmsServiceExtension implements BeforeAllCallback, AfterAllCallback 
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
-        LOG.info("Checking if a new AMQ component is needed");
-        if (amq == null) {
-            LOG.info("Creating a new reusable AMQ component");
-            ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-            amq = jmsComponentAutoAcknowledge(connectionFactory);
-        }
+
     }
 
     public JmsComponent getComponent() {
         return amq;
     }
 
-    public static JmsServiceExtension createExtension() {
-        return new JmsServiceExtension();
+    public static synchronized JmsServiceExtension createExtension() {
+        if (instance == null) {
+            try {
+                instance = new JmsServiceExtension();
+            } catch (JMSException e) {
+                LOG.error("Unable to create JMS connection: {}", e.getMessage(), e);
+                fail(String.format("Unable to create JMS connection: %s", e.getMessage()));
+            }
+        }
+
+        return instance;
     }
 }

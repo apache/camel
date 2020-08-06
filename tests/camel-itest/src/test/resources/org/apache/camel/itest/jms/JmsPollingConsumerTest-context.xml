@@ -28,7 +28,7 @@
     <!-- activemq broker -->
     <broker:broker id="broker" useJmx="false" persistent="false" brokerName="localhost">
         <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="vm://localhost?broker.persistent=false"/>
+            <broker:transportConnector name="tcp" uri="vm://localhost?broker.persistent=false&amp;create=false"/>
         </broker:transportConnectors>
     </broker:broker>
 
@@ -39,7 +39,7 @@
     </bean>
 
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" depends-on="broker">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">

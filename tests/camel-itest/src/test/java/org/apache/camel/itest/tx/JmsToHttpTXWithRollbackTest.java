@@ -19,8 +19,10 @@ package org.apache.camel.itest.tx;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class JmsToHttpTXWithRollbackTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     // use uri to refer to our mock
     @EndpointInject("mock:rollback")

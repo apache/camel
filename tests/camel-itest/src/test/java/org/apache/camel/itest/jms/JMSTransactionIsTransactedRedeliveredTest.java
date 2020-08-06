@@ -20,10 +20,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * from JMS over Jetty.
  */
 public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
