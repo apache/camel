@@ -101,16 +101,18 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     }
 
     public Parser createParser(Exchange exchange) throws Exception {
-        Reader bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
+        Reader bodyReader = null;
         try {
             if (FlatpackType.fixed == type) {
+                bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
                 return createFixedParser(resourceUri, bodyReader);
             } else {
                 return createDelimitedParser(exchange);
             }
         } catch (Exception e) {
             // must close reader in case of some exception
-            IOHelper.close(bodyReader);
+            if(bodyReader != null)
+                IOHelper.close(bodyReader);
             throw e;
         }
     }
