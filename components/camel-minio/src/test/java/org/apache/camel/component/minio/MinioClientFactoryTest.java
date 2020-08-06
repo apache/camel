@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.minio;
 
-import org.apache.camel.component.minio.client.GetMinioClient;
+import org.apache.camel.component.minio.client.MinioRemoteClientImpl;
 import org.apache.camel.component.minio.client.MinioCamelInternalClient;
 import org.apache.camel.component.minio.client.MinioClientFactory;
 import org.junit.jupiter.api.Test;
@@ -29,6 +29,6 @@ public class MinioClientFactoryTest {
     public void getStandardMinioClientDefault() {
         MinioConfiguration minioConfiguration = new MinioConfiguration();
         MinioCamelInternalClient minioClient = MinioClientFactory.getClient(minioConfiguration);
-        assertTrue(minioClient instanceof GetMinioClient);
+        assertTrue(minioClient instanceof MinioRemoteClientImpl);
     }
 }

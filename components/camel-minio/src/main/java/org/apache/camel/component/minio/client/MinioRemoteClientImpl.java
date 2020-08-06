@@ -25,14 +25,14 @@ import org.slf4j.LoggerFactory;
  * Creates MinIO client object according to the
  * given endpoint, port, access key, secret key, region and secure option.
  */
-public class GetMinioClient implements MinioCamelInternalClient {
-    private static final Logger LOG = LoggerFactory.getLogger(GetMinioClient.class);
+public class MinioRemoteClientImpl implements MinioCamelInternalClient {
+    private static final Logger LOG = LoggerFactory.getLogger(MinioRemoteClientImpl.class);
     private final MinioConfiguration configuration;
 
     /**
      * Constructor that uses the config file.
      */
-    public GetMinioClient(MinioConfiguration configuration) {
+    public MinioRemoteClientImpl(MinioConfiguration configuration) {
         LOG.trace("Creating an Minio client.");
         this.configuration = configuration;
     }

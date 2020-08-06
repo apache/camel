@@ -35,6 +35,6 @@ public final class MinioClientFactory {
      * @return MinioClient
      */
     public static MinioCamelInternalClient getClient(MinioConfiguration configuration) {
-        return new GetMinioClient(configuration);
+        return new MinioRemoteClientImpl(configuration);
     }
 }
