@@ -292,13 +292,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         Map<String, Class<?>> result = new HashMap<>();
         Set<Class<?>> classes = getCamelContext().adapt(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(AbstractSObjectBase.class, packages);
         for (Class<?> aClass : classes) {
-            // findImplementations also returns AbstractSObjectBase for some
-            // reason!!!
-            if (AbstractSObjectBase.class != aClass) {
-                result.put(aClass.getSimpleName(), aClass);
-            }
+            result.put(aClass.getSimpleName(), aClass);
         }
-
         return result;
     }
 

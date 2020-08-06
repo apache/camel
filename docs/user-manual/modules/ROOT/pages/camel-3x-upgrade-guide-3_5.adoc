@@ -14,6 +14,10 @@ in case the template should be reused to send other messages.
 After the template has been started / used the first time, then its general configuration cannot be altered later,
 instead create a new template.
 
+=== PackageScanClassResolver
+
+The `PackageScanClassResolver` will now skip abstract classes in its `findImplementations` method.
+
 === camel-bean
 
 The `bean(class)` EIP will now lookup in the registry first whether there is a single bean instance of the given class type
