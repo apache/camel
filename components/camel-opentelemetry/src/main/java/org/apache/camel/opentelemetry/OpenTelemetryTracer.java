@@ -39,6 +39,7 @@ import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     private Tracer tracer;
+    private String instrumentationName = "camel";
 
     public Tracer getTracer() {
         return tracer;
@@ -46,6 +47,10 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     public void setTracer(Tracer tracer) {
         this.tracer = tracer;
+    }
+
+    public void setInstrumentationName(String instrumentationName) {
+        this.instrumentationName = instrumentationName;
     }
 
     private Span.Kind mapToSpanKind(SpanKind kind) {
@@ -68,11 +73,14 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         }
 
         if (tracer == null) {
+            tracer = OpenTelemetry.getTracer(instrumentationName);
+        }
+
+        if (tracer == null) {
             // No tracer is available, so setup NoopTracer
             tracer = DefaultTracer.getInstance();
         }
     }
-
     @Override
     protected SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent) {
         Span.Builder builder = tracer.spanBuilder(operationName).setSpanKind(mapToSpanKind(kind));
