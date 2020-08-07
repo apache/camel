@@ -25,5 +25,4 @@ public enum MinioOperations {
     listBuckets,
     getObject,
     getPartialObject
-
 }

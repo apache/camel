@@ -52,6 +52,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * A Producer which sends messages to the Minio Simple Storage
  */
@@ -73,7 +76,7 @@ public class MinioProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         MinioOperations operation = determineOperation(exchange);
         MinioClient minioClient = getEndpoint().getMinioClient();
-        if (ObjectHelper.isEmpty(operation)) {
+        if (isEmpty(operation)) {
             putObject(minioClient, exchange);
         } else {
             switch (operation) {
@@ -111,11 +114,11 @@ public class MinioProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             PutObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(PutObjectArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 ObjectWriteResponse putObjectResult = minioClient.putObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setHeader(MinioConstants.E_TAG, putObjectResult.etag());
-                if (putObjectResult.versionId() != null) {
+                if (isNotEmpty(putObjectResult.versionId())) {
                     message.setHeader(MinioConstants.VERSION_ID, putObjectResult.versionId());
                 }
             }
@@ -140,13 +143,13 @@ public class MinioProducer extends DefaultProducer {
             } else {
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 if (objectMetadata.containsKey(Exchange.CONTENT_LENGTH)) {
-                    if (objectMetadata.get("Content-Length").equals("0") && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                    if (objectMetadata.get("Content-Length").equals("0") && isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
                         LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
                         baos = determineLengthInputStream(inputStream);
                         objectMetadata.put("Content-Length", String.valueOf(baos.size()));
                         inputStream = new ByteArrayInputStream(baos.toByteArray());
                     } else {
-                        if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                        if (isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
                             objectMetadata.put("Content-Length", exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
                         }
                     }
@@ -170,13 +173,13 @@ public class MinioProducer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setHeader(MinioConstants.E_TAG, putObjectResult.etag());
-            if (putObjectResult.versionId() != null) {
+            if (isNotEmpty(putObjectResult.versionId())) {
                 message.setHeader(MinioConstants.VERSION_ID, putObjectResult.versionId());
             }
 
             IOHelper.close(inputStream);
 
-            if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
+            if (getConfiguration().isDeleteAfterWrite() && isNotEmpty(filePayload)) {
                 FileUtil.deleteFile(filePayload);
             }
         }
@@ -185,12 +188,12 @@ public class MinioProducer extends DefaultProducer {
     private Map<String, String> determineExtraHeaders(Exchange exchange) {
         Map<String, String> extraHeaders = new HashMap<>();
         String storageClass = determineStorageClass(exchange);
-        if (storageClass != null) {
+        if (isNotEmpty(storageClass)) {
             extraHeaders.put("X-Amz-Storage-Class", storageClass);
         }
 
         String cannedAcl = exchange.getIn().getHeader(MinioConstants.CANNED_ACL, String.class);
-        if (cannedAcl != null) {
+        if (isNotEmpty(cannedAcl)) {
             extraHeaders.put("x-amz-acl", cannedAcl);
         }
 
@@ -201,7 +204,7 @@ public class MinioProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             CopyObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(CopyObjectArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 ObjectWriteResponse result = minioClient.copyObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
@@ -213,10 +216,10 @@ public class MinioProducer extends DefaultProducer {
             final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_OBJECT_NAME, String.class);
             final String destinationBucketName = exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
 
-            if (ObjectHelper.isEmpty(destinationBucketName)) {
+            if (isEmpty(destinationBucketName)) {
                 throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
             }
-            if (ObjectHelper.isEmpty(destinationKey)) {
+            if (isEmpty(destinationKey)) {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
 
@@ -232,7 +235,7 @@ public class MinioProducer extends DefaultProducer {
             ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
-            if (copyObjectResult.versionId() != null) {
+            if (isNotEmpty(copyObjectResult.versionId())) {
                 message.setHeader(MinioConstants.VERSION_ID, copyObjectResult.versionId());
             }
         }
@@ -241,7 +244,7 @@ public class MinioProducer extends DefaultProducer {
     private void deleteObject(MinioClient minioClient, Exchange exchange) throws Exception {
         if (getConfiguration().isPojoRequest()) {
             RemoveObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveObjectArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 minioClient.removeObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
@@ -261,7 +264,7 @@ public class MinioProducer extends DefaultProducer {
     private void deleteObjects(MinioClient minioClient, Exchange exchange) throws Exception {
         if (getConfiguration().isPojoRequest()) {
             RemoveObjectsArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveObjectsArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 minioClient.removeObjects(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
@@ -283,7 +286,7 @@ public class MinioProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             RemoveBucketArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveBucketArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 minioClient.removeBucket(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody("ok");
@@ -300,7 +303,7 @@ public class MinioProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             GetObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(GetObjectArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 InputStream respond = minioClient.getObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(respond);
@@ -323,7 +326,7 @@ public class MinioProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             GetObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(GetObjectArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 InputStream respond = minioClient.getObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(respond);
@@ -334,7 +337,7 @@ public class MinioProducer extends DefaultProducer {
             final String offset = exchange.getIn().getHeader(MinioConstants.OFFSET, String.class);
             final String length = exchange.getIn().getHeader(MinioConstants.LENGTH, String.class);
 
-            if (ObjectHelper.isEmpty(offset) || ObjectHelper.isEmpty(length)) {
+            if (isEmpty(offset) || isEmpty(length)) {
                 throw new IllegalArgumentException("A Offset and length header must be configured to perform a partial get operation.");
             }
 
@@ -354,7 +357,7 @@ public class MinioProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             ListObjectsArgs.Builder payload = exchange.getIn().getMandatoryBody(ListObjectsArgs.Builder.class);
-            if (payload != null) {
+            if (isNotEmpty(payload)) {
                 Iterable<Result<Item>> objectList = minioClient.listObjects(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(objectList);
@@ -373,7 +376,7 @@ public class MinioProducer extends DefaultProducer {
 
     private MinioOperations determineOperation(Exchange exchange) {
         MinioOperations operation = exchange.getIn().getHeader(MinioConstants.MINIO_OPERATION, MinioOperations.class);
-        if (operation == null) {
+        if (isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -383,32 +386,32 @@ public class MinioProducer extends DefaultProducer {
         Map<String, String> objectMetadata = new HashMap<>();
 
         Long contentLength = exchange.getIn().getHeader(MinioConstants.CONTENT_LENGTH, Long.class);
-        if (contentLength != null) {
+        if (isNotEmpty(contentLength)) {
             objectMetadata.put("Content-Length", String.valueOf(contentLength));
         }
 
         String contentType = exchange.getIn().getHeader(MinioConstants.CONTENT_TYPE, String.class);
-        if (contentType != null) {
+        if (isNotEmpty(contentType)) {
             objectMetadata.put("Content-Type", contentType);
         }
 
         String cacheControl = exchange.getIn().getHeader(MinioConstants.CACHE_CONTROL, String.class);
-        if (cacheControl != null) {
+        if (isNotEmpty(cacheControl)) {
             objectMetadata.put("Cache-Control", cacheControl);
         }
 
         String contentDisposition = exchange.getIn().getHeader(MinioConstants.CONTENT_DISPOSITION, String.class);
-        if (contentDisposition != null) {
+        if (isNotEmpty(contentDisposition)) {
             objectMetadata.put("Content-Disposition", contentDisposition);
         }
 
         String contentEncoding = exchange.getIn().getHeader(MinioConstants.CONTENT_ENCODING, String.class);
-        if (contentEncoding != null) {
+        if (isNotEmpty(contentEncoding)) {
             objectMetadata.put("Content-Encoding", contentEncoding);
         }
 
         String contentMD5 = exchange.getIn().getHeader(MinioConstants.CONTENT_MD5, String.class);
-        if (contentMD5 != null) {
+        if (isNotEmpty(contentMD5)) {
             objectMetadata.put("Content-Md5", contentMD5);
         }
 
@@ -426,12 +429,12 @@ public class MinioProducer extends DefaultProducer {
     private String determineBucketName(final Exchange exchange) {
         String bucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
 
-        if (ObjectHelper.isEmpty(bucketName)) {
+        if (isEmpty(bucketName)) {
             bucketName = getConfiguration().getBucketName();
             LOG.trace("Minio Bucket name header is missing, using default one [{}]", bucketName);
         }
 
-        if (bucketName == null) {
+        if (isEmpty(bucketName)) {
             throw new IllegalArgumentException("Minio Bucket name header is missing or not configured.");
         }
 
@@ -440,10 +443,10 @@ public class MinioProducer extends DefaultProducer {
 
     private String determineObjectName(final Exchange exchange) {
         String objectName = exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
-        if (ObjectHelper.isEmpty(objectName)) {
+        if (isEmpty(objectName)) {
             objectName = getConfiguration().getKeyName();
         }
-        if (objectName == null) {
+        if (isEmpty(objectName)) {
             throw new IllegalArgumentException("Minio Key header is missing.");
         }
         return objectName;
@@ -451,7 +454,7 @@ public class MinioProducer extends DefaultProducer {
 
     private String determineStorageClass(final Exchange exchange) {
         String storageClass = exchange.getIn().getHeader(MinioConstants.STORAGE_CLASS, String.class);
-        if (storageClass == null) {
+        if (isEmpty(storageClass)) {
             storageClass = getConfiguration().getStorageClass();
         }
 
@@ -474,7 +477,7 @@ public class MinioProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (minioProducerToString == null) {
+        if (isEmpty(minioProducerToString)) {
             minioProducerToString = "MinioProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return minioProducerToString;

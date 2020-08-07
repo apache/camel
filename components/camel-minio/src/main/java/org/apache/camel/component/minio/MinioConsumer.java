@@ -47,6 +47,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * A Consumer of messages from the Minio Storage Service.
  */
@@ -72,7 +75,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         MinioClient minioClient = getMinioClient();
         Queue<Exchange> exchanges;
 
-        if (objectName != null) {
+        if (isNotEmpty(objectName)) {
             LOG.trace("Getting object in bucket {} with object name {}...", bucketName, objectName);
 
             InputStream minioObject = getObject(bucketName, minioClient, objectName);
@@ -89,7 +92,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     .recursive(getConfiguration().isRecursive())
                     .useApiVersion1(getConfiguration().isUseVersion1());
 
-            if (getConfiguration().getDelimiter() != null) {
+            if (isNotEmpty(getConfiguration().getDelimiter())) {
                 listObjectRequest.delimiter(getConfiguration().getDelimiter());
             }
 
@@ -97,17 +100,17 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 listObjectRequest.maxKeys(maxMessagesPerPoll);
             }
 
-            if (getConfiguration().getPrefix() != null) {
+            if (isNotEmpty(getConfiguration().getPrefix())) {
                 listObjectRequest.prefix(getConfiguration().getPrefix());
             }
 
-            if (getConfiguration().getStartAfter() != null) {
+            if (isNotEmpty(getConfiguration().getStartAfter())) {
                 listObjectRequest.startAfter(getConfiguration().getStartAfter());
             }
 
             // if there was a marker from previous poll then use that to
             // continue from where we left last time
-            if (continuationToken != null) {
+            if (isNotEmpty(continuationToken)) {
                 LOG.trace("Resuming from marker: {}", continuationToken);
                 listObjectRequest.continuationToken(continuationToken);
             }
@@ -183,7 +186,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     private InputStream getObject(String bucketName, MinioClient minioClient, String objectName) throws Exception {
         GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+        if (isNotEmpty(getConfiguration().getServerSideEncryptionCustomerKey())) {
             getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
         if (getConfiguration().getOffset() > 0) {
@@ -192,19 +195,19 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         if (getConfiguration().getLength() > 0) {
             getObjectRequest.length(getConfiguration().getLength());
         }
-        if (getConfiguration().getVersionId() != null) {
+        if (isNotEmpty(getConfiguration().getVersionId())) {
             getObjectRequest.versionId(getConfiguration().getVersionId());
         }
-        if (getConfiguration().getMatchETag() != null) {
+        if (isNotEmpty(getConfiguration().getMatchETag())) {
             getObjectRequest.matchETag(getConfiguration().getMatchETag());
         }
-        if (getConfiguration().getNotMatchETag() != null) {
+        if (isNotEmpty(getConfiguration().getNotMatchETag())) {
             getObjectRequest.notMatchETag(getConfiguration().getNotMatchETag());
         }
-        if (getConfiguration().getModifiedSince() != null) {
+        if (isNotEmpty(getConfiguration().getModifiedSince())) {
             getObjectRequest.modifiedSince(getConfiguration().getModifiedSince());
         }
-        if (getConfiguration().getUnModifiedSince() != null) {
+        if (isNotEmpty(getConfiguration().getUnModifiedSince())) {
             getObjectRequest.unmodifiedSince(getConfiguration().getUnModifiedSince());
         }
 
@@ -282,7 +285,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 .object(srcObjectName)
                 .bypassGovernanceMode(getConfiguration().isBypassGovernanceMode());
 
-        if (getConfiguration().getVersionId() != null) {
+        if (isNotEmpty(getConfiguration().getVersionId())) {
             removeObjectRequest.versionId(getConfiguration().getVersionId());
         }
 
@@ -291,12 +294,12 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     private void copyObject(String srcBucketName, String srcObjectName) throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
         String destinationBucketName = getConfiguration().getDestinationBucketName();
-        if (destinationBucketName == null) {
+        if (isEmpty(destinationBucketName)) {
             throw new IllegalArgumentException("Destination Bucket name must be specified to copy operation");
         }
 
         // set destination object name as source object name, if not specified
-        String destinationObjectName = (getConfiguration().getDestinationObjectName() != null)
+        String destinationObjectName = (isNotEmpty(getConfiguration().getDestinationObjectName()))
                 ? getConfiguration().getDestinationObjectName()
                 : srcObjectName;
 
@@ -305,7 +308,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 srcBucketName, srcObjectName, destinationBucketName);
 
         CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
-        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+        if (isNotEmpty(getConfiguration().getServerSideEncryptionCustomerKey())) {
             copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
         if (getConfiguration().getOffset() > 0) {
@@ -314,19 +317,19 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         if (getConfiguration().getLength() > 0) {
             copySourceBuilder.length(getConfiguration().getLength());
         }
-        if (getConfiguration().getVersionId() != null) {
+        if (isNotEmpty(getConfiguration().getVersionId())) {
             copySourceBuilder.versionId(getConfiguration().getVersionId());
         }
-        if (getConfiguration().getMatchETag() != null) {
+        if (isNotEmpty(getConfiguration().getMatchETag())) {
             copySourceBuilder.matchETag(getConfiguration().getMatchETag());
         }
-        if (getConfiguration().getNotMatchETag() != null) {
+        if (isNotEmpty(getConfiguration().getNotMatchETag())) {
             copySourceBuilder.notMatchETag(getConfiguration().getNotMatchETag());
         }
-        if (getConfiguration().getModifiedSince() != null) {
+        if (isNotEmpty(getConfiguration().getModifiedSince())) {
             copySourceBuilder.modifiedSince(getConfiguration().getModifiedSince());
         }
-        if (getConfiguration().getUnModifiedSince() != null) {
+        if (isNotEmpty(getConfiguration().getUnModifiedSince())) {
             copySourceBuilder.unmodifiedSince(getConfiguration().getUnModifiedSince());
         }
 
@@ -335,7 +338,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 .bucket(getConfiguration().getDestinationBucketName())
                 .object(destinationObjectName);
 
-        if (getConfiguration().getServerSideEncryption() != null) {
+        if (isNotEmpty(getConfiguration().getServerSideEncryption())) {
             copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
         }
 
@@ -349,7 +352,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
-        if (cause != null) {
+        if (isNotEmpty(cause)) {
             LOG.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
         } else {
             LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
@@ -371,7 +374,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public String toString() {
-        if (minioConsumerToString == null) {
+        if (isEmpty(minioConsumerToString)) {
             minioConsumerToString = "MinioConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return minioConsumerToString;

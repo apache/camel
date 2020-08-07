@@ -51,6 +51,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * Store and retrieve objects from Minio Storage Service using Minio SDK.
  */
@@ -95,13 +97,13 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        minioClient = getConfiguration().getMinioClient() != null
+        minioClient = isNotEmpty(getConfiguration().getMinioClient())
                 ? getConfiguration().getMinioClient()
                 : MinioClientFactory.getClient(getConfiguration()).getMinioClient();
 
         String objectName = getConfiguration().getObjectName();
 
-        if (objectName != null) {
+        if (isNotEmpty(objectName)) {
             LOG.trace("Object name {} requested, so skipping bucket check...", objectName);
             return;
         }
@@ -121,7 +123,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             }
         }
 
-        if (getConfiguration().getPolicy() != null) {
+        if (isNotEmpty(getConfiguration().getPolicy())) {
             setBucketPolicy(bucketName);
         }
     }
@@ -228,7 +230,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private void makeBucket(String bucketName) throws Exception {
         MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
-        if (getConfiguration().getRegion() != null) {
+        if (isNotEmpty(getConfiguration().getRegion())) {
             makeBucketRequest.region(getConfiguration().getRegion());
         }
         minioClient.makeBucket(makeBucketRequest.build());
@@ -246,7 +248,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         String bucketName = getConfiguration().getBucketName();
         StatObjectArgs.Builder statObjectRequest = StatObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+        if (isNotEmpty(getConfiguration().getServerSideEncryptionCustomerKey())) {
             statObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
         if (getConfiguration().getOffset() > 0) {
@@ -255,19 +257,19 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         if (getConfiguration().getLength() > 0) {
             statObjectRequest.length(getConfiguration().getLength());
         }
-        if (getConfiguration().getVersionId() != null) {
+        if (isNotEmpty(getConfiguration().getVersionId())) {
             statObjectRequest.versionId(getConfiguration().getVersionId());
         }
-        if (getConfiguration().getMatchETag() != null) {
+        if (isNotEmpty(getConfiguration().getMatchETag())) {
             statObjectRequest.matchETag(getConfiguration().getMatchETag());
         }
-        if (getConfiguration().getNotMatchETag() != null) {
+        if (isNotEmpty(getConfiguration().getNotMatchETag())) {
             statObjectRequest.notMatchETag(getConfiguration().getNotMatchETag());
         }
-        if (getConfiguration().getModifiedSince() != null) {
+        if (isNotEmpty(getConfiguration().getModifiedSince())) {
             statObjectRequest.modifiedSince(getConfiguration().getModifiedSince());
         }
-        if (getConfiguration().getUnModifiedSince() != null) {
+        if (isNotEmpty(getConfiguration().getUnModifiedSince())) {
             statObjectRequest.unmodifiedSince(getConfiguration().getUnModifiedSince());
         }
 

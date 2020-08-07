@@ -28,6 +28,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * Represents the component that manages {@link MinioEndpoint}.
  */
@@ -51,11 +54,11 @@ public class MinioComponent extends DefaultComponent {
 
     @Override
     protected MinioEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (remaining == null || remaining.trim().length() == 0) {
+        if (isEmpty(remaining) || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
 
-        final MinioConfiguration configuration = this.configuration != null ? this.configuration.copy() : new MinioConfiguration();
+        final MinioConfiguration configuration = isNotEmpty(this.configuration) ? this.configuration.copy() : new MinioConfiguration();
         configuration.setBucketName(remaining);
         MinioEndpoint endpoint = new MinioEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
@@ -76,7 +79,7 @@ public class MinioComponent extends DefaultComponent {
     }
 
     private void checkAndSetRegistryClient(MinioConfiguration configuration, MinioEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getMinioClient())) {
+        if (isEmpty(endpoint.getConfiguration().getMinioClient())) {
             LOG.debug("Looking for an MinioClient instance in the registry");
             Set<MinioClient> clients = getCamelContext().getRegistry().findByType(MinioClient.class);
             if (clients.size() == 1) {

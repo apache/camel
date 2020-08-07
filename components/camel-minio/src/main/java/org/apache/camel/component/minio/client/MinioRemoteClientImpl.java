@@ -21,6 +21,8 @@ import org.apache.camel.component.minio.MinioConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * Creates MinIO client object according to the
  * given endpoint, port, access key, secret key, region and secure option.
@@ -44,21 +46,21 @@ public class MinioRemoteClientImpl implements MinioCamelInternalClient {
      */
     @Override
     public MinioClient getMinioClient() {
-        if (configuration.getEndpoint() != null) {
+        if (isNotEmpty(configuration.getEndpoint())) {
             MinioClient.Builder minioClientRequest = MinioClient.builder();
 
-            if (configuration.getProxyPort() != null) {
+            if (isNotEmpty(configuration.getProxyPort())) {
                 minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
             } else {
                 minioClientRequest.endpoint(configuration.getEndpoint());
             }
-            if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            if (isNotEmpty(configuration.getAccessKey()) && isNotEmpty(configuration.getSecretKey())) {
                 minioClientRequest.credentials(configuration.getAccessKey(), configuration.getSecretKey());
             }
-            if (configuration.getRegion() != null) {
+            if (isNotEmpty(configuration.getRegion())) {
                 minioClientRequest.region(configuration.getRegion());
             }
-            if (configuration.getCustomHttpClient() != null) {
+            if (isNotEmpty(configuration.getCustomHttpClient())) {
                 minioClientRequest.httpClient(configuration.getCustomHttpClient());
             }
             return minioClientRequest.build();

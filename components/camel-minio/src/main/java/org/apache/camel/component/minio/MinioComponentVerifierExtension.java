@@ -25,6 +25,9 @@ import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 public class MinioComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
     public MinioComponentVerifierExtension() {
@@ -65,23 +68,23 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
             MinioConfiguration configuration = setProperties(new MinioConfiguration(), parameters);
             MinioClient.Builder clientBuilderRequest = MinioClient.builder();
 
-            if (configuration.getEndpoint() == null) {
+            if (isEmpty(configuration.getEndpoint())) {
                 ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service endpoint has not defined");
                 return builder.error(errorBuilder.build()).build();
             }
 
-            if (configuration.getProxyPort() != null) {
+            if (isNotEmpty(configuration.getProxyPort())) {
                 clientBuilderRequest.endpoint(
                         configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
             } else {
                 clientBuilderRequest.endpoint(configuration.getEndpoint());
             }
 
-            if (configuration.getRegion() != null) {
+            if (isNotEmpty(configuration.getRegion())) {
                 clientBuilderRequest.region(configuration.getRegion());
             }
 
-            if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            if (isNotEmpty(configuration.getAccessKey()) && isNotEmpty(configuration.getSecretKey())) {
                 clientBuilderRequest.credentials(configuration.getAccessKey(), configuration.getSecretKey());
             }
 
