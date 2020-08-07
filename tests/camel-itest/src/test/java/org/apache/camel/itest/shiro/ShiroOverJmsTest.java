@@ -41,14 +41,14 @@ public class ShiroOverJmsTest extends CamelTestSupport {
 
     @Test
     void testShiroOverJms() throws Exception {
-        getMockEndpoint("mock:error").expectedMessageCount(0);
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:ShiroOverJmsTestError").expectedMessageCount(0);
+        getMockEndpoint("mock:ShiroOverJmsTestFoo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:ShiroOverJmsTestResult").expectedBodiesReceived("Bye World");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
-        template.requestBodyAndHeaders("direct:start", "Hello World", headers);
+        template.requestBodyAndHeaders("direct:ShiroOverJmsTestStart", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -71,17 +71,17 @@ public class ShiroOverJmsTest extends CamelTestSupport {
                 final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
                 securityPolicy.setBase64(true);
 
-                errorHandler(deadLetterChannel("mock:error"));
+                errorHandler(deadLetterChannel("mock:ShiroOverJmsTestError"));
 
-                from("direct:start")
+                from("direct:ShiroOverJmsTestStart")
                         .policy(securityPolicy)
-                        .to("jms:queue:foo")
-                        .to("mock:result");
+                        .to("jms:queue:ShiroOverJmsTestFoo")
+                        .to("mock:ShiroOverJmsTestResult");
 
-                from("jms:queue:foo")
+                from("jms:queue:ShiroOverJmsTestFoo")
                         .to("log:foo?showHeaders=true")
                         .policy(securityPolicy)
-                        .to("mock:foo")
+                        .to("mock:ShiroOverJmsTestFoo")
                         .transform().constant("Bye World");
             }
         };

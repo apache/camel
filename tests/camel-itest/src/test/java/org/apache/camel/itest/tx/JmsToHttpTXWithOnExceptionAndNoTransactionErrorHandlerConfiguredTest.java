@@ -50,7 +50,7 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
     @EndpointInject("ref:data")
     private Endpoint data;
 
-    @EndpointInject("mock:rollback")
+    @EndpointInject("mock:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
     private MockEndpoint rollback;
 
     // the ok response to expect

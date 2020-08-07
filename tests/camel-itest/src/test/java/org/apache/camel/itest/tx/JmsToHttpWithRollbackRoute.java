@@ -16,8 +16,14 @@
  */
 package org.apache.camel.itest.tx;
 
+import javax.annotation.Resource;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
@@ -27,7 +33,18 @@ import org.apache.camel.test.AvailablePortFinder;
  * Notice we use the SpringRouteBuilder that supports transacted
  * error handler.
  */
-public class JmsToHttpWithRollbackRoute extends JmsToHttpRoute {
+public class JmsToHttpWithRollbackRoute extends SpringRouteBuilder {
+    protected static int counter;
+    protected int port;
+
+    @Resource(name = "PROPAGATION_REQUIRED")
+    protected SpringTransactionPolicy required;
+
+    @EndpointInject("ref:data")
+    protected Endpoint data;
+
+    protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
+    protected String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
 
     @Override
@@ -50,7 +67,7 @@ public class JmsToHttpWithRollbackRoute extends JmsToHttpRoute {
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
                     // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:rollback")
+                    .to("mock:JmsToHttpWithRollbackRoute")
                     // response is not okay so force a rollback
                     .rollback()
                 .otherwise()

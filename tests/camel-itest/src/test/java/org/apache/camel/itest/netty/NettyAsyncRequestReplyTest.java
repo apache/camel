@@ -105,10 +105,10 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
                 port = AvailablePortFinder.getNextAvailable();
 
                 from("netty:tcp://localhost:" + port + "?textline=true&sync=true&reuseAddress=true&synchronous=false")
-                    .to("activemq:queue:foo")
+                    .to("activemq:queue:NettyAsyncRequestReplyTest")
                     .log("Writing reply ${body}");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:NettyAsyncRequestReplyTest")
                     .transform(simple("Bye ${body}"));
             }
         };

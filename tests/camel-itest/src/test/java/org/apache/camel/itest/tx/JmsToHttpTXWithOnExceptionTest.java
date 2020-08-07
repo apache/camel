@@ -50,7 +50,7 @@ public class JmsToHttpTXWithOnExceptionTest {
     @EndpointInject("ref:data")
     private Endpoint data;
 
-    @EndpointInject("mock:rollback")
+    @EndpointInject("mock:JmsToHttpWithOnExceptionRoute")
     private MockEndpoint rollback;
 
     // the ok response to expect

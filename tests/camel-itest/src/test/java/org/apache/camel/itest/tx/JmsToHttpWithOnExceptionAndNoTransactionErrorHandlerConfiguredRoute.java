@@ -32,9 +32,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * error handler.
  */
 public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute extends JmsToHttpRoute {
-    @RegisterExtension
-    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
-
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Override
@@ -49,7 +46,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
             }
         }).handled(true).to("mock:404").transform(constant(noAccess));
 
-        from("activemq:queue:data")
+        from("activemq:queue:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
             // must setup policy to indicate transacted route
             .policy(required)
             // send a request to http and get the response
@@ -62,7 +59,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
                     // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:rollback")
+                    .to("mock:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
                     // response is not okay so force a rollback
                     .rollback()
                 .otherwise()

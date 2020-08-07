@@ -41,7 +41,7 @@ public class JmsToHttpTXWithRollbackTest {
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     // use uri to refer to our mock
-    @EndpointInject("mock:rollback")
+    @EndpointInject("mock:JmsToHttpWithRollbackRoute")
     MockEndpoint mock;
 
     // use the spring id to refer to the endpoint we should send data to

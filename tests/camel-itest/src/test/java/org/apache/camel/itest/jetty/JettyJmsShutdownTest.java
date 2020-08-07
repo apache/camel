@@ -38,9 +38,11 @@ public class JettyJmsShutdownTest {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
-    private static int port = AvailablePortFinder.getNextAvailable();
-    private static final String URL = "http://localhost:" + port + "/test";
+    private static final String URL;
     static {
+        int port = AvailablePortFinder.getNextAvailable();
+        URL = "http://localhost:" + port + "/JettyJmsShutdownTest";
+
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("JettyJmsShutdownTest.port", Integer.toString(port));

@@ -66,7 +66,7 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
                     // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:rollback")
+                    .to("mock:JmsToHttpRoute")
                     // response is not okay so force a rollback by throwing an exception
                     .process(new Processor() {
                         public void process(Exchange exchange) {

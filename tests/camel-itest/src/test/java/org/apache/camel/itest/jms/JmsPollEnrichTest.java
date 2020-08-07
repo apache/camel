@@ -33,12 +33,12 @@ public class JmsPollEnrichTest extends CamelTestSupport {
 
     @Test
     void testPollEnrichJms() throws Exception {
-        template.sendBody("jms:queue:foo", "Bye World");
+        template.sendBody("jms:queue:JmsPollEnrichTestFoo", "Bye World");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint("mock:JmsPollEnrichTestResult");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:JmsPollEnrichTestStart", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,9 @@ public class JmsPollEnrichTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").pollEnrich("jms:queue:foo", 5000).to("mock:result");
+                from("direct:JmsPollEnrichTestStart")
+                        .pollEnrich("jms:queue:JmsPollEnrichTestFoo", 5000)
+                        .to("mock:JmsPollEnrichTestResult");
             }
         };
     }

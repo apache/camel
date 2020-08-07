@@ -47,12 +47,12 @@ public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
     @Test
     void testJettySpringFailoverRoundRobin() throws Exception {
-        getMockEndpoint("mock:bad").expectedMessageCount(1);
-        getMockEndpoint("mock:bad2").expectedMessageCount(1);
-        getMockEndpoint("mock:good").expectedMessageCount(1);
-        getMockEndpoint("mock:good2").expectedMessageCount(0);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad").expectedMessageCount(1);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad2").expectedMessageCount(1);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestGood").expectedMessageCount(1);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestGood2").expectedMessageCount(0);
 
-        String reply = template.requestBody("direct:start", null, String.class);
+        String reply = template.requestBody("direct:JettySpringFailoverRoundRobinTestStart", null, String.class);
         assertEquals("Good", reply);
 
         assertMockEndpointsSatisfied();
@@ -61,12 +61,12 @@ public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
         // continue where it should
         resetMocks();
 
-        getMockEndpoint("mock:bad").expectedMessageCount(0);
-        getMockEndpoint("mock:bad2").expectedMessageCount(0);
-        getMockEndpoint("mock:good").expectedMessageCount(0);
-        getMockEndpoint("mock:good2").expectedMessageCount(1);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad").expectedMessageCount(0);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad2").expectedMessageCount(0);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestGood").expectedMessageCount(0);
+        getMockEndpoint("mock:JettySpringFailoverRoundRobinTestGood2").expectedMessageCount(1);
 
-        reply = template.requestBody("direct:start", null, String.class);
+        reply = template.requestBody("direct:JettySpringFailoverRoundRobinTestStart", null, String.class);
         assertEquals("Also good", reply);
     }
 
