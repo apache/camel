@@ -257,7 +257,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             for (Map.Entry<String, String> entry : maps.entrySet()) {
                 client.query(entry.getKey(), entry.getValue());
             }
-    	}
+        }
     }
     
     protected void setupClientMatrix(WebClient client, Exchange exchange) throws Exception {
