@@ -128,11 +128,6 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public void doStop() throws Exception {
-        if (ObjectHelper.isEmpty(getConfiguration().getMinioClient())) {
-            if (minioClient != null) {
-                minioClient = null;
-            }
-        }
         super.doStop();
     }
 
