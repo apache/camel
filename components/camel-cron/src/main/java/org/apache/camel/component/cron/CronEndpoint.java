@@ -29,6 +29,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A generic interface for triggering events at times specified through the Unix cron syntax.
@@ -41,10 +42,13 @@ public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     @UriParam
     private CamelCronConfiguration configuration;
 
-    public CronEndpoint(String endpointUri, Component component, Endpoint delegate, CamelCronConfiguration configuration) {
+    public CronEndpoint(String endpointUri, CronComponent component, CamelCronConfiguration configuration) {
         super(endpointUri, component);
-        this.delegate = delegate;
         this.configuration = configuration;
+    }
+
+    public void setDelegate(Endpoint delegate) {
+        this.delegate = delegate;
     }
 
     @Override
@@ -108,4 +112,10 @@ public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        ObjectHelper.notNull(delegate, "delegate endpoint");
+    }
 }
