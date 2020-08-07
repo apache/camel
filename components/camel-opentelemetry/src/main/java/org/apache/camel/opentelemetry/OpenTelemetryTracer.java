@@ -20,6 +20,7 @@ import java.util.Set;
 
 import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
+import io.opentelemetry.context.Scope;
 import io.opentelemetry.trace.DefaultTracer;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.SpanContext;
@@ -29,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.opentelemetry.propagators.OpenTelemetryGetter;
 import org.apache.camel.opentelemetry.propagators.OpenTelemetrySetter;
+import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
@@ -91,7 +93,8 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) parent;
             builder = builder.setParent(spanFromExchange.getOpenTelemetrySpan());
         } else {
-            Context ctx = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding), new OpenTelemetryGetter());
+            ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
+            Context ctx = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), adapter, new OpenTelemetryGetter(adapter));
             Span span = TracingContextUtils.getSpan(ctx);
             SpanContext parentFromHeaders = span.getContext();
 
@@ -113,7 +116,10 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     @Override
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
-        OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), adapter, new OpenTelemetrySetter());
+        OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) span;
+        try (Scope scope =  tracer.withSpan(spanFromExchange.getOpenTelemetrySpan())) {
+            OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), adapter, new OpenTelemetrySetter());
+        }
     }
 
 }

@@ -21,6 +21,12 @@ import org.apache.camel.tracing.ExtractAdapter;
 
 public class OpenTelemetryGetter implements HttpTextFormat.Getter<ExtractAdapter> {
 
+    ExtractAdapter adapter;
+
+    public OpenTelemetryGetter(ExtractAdapter adapter) {
+        this.adapter = adapter;
+    }
+
     @Override public String get(ExtractAdapter adapter, String key) {
         return (String) adapter.get(key);
     }
