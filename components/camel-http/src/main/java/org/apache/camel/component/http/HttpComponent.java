@@ -184,12 +184,21 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class);
         Integer proxyAuthPort = getParameter(parameters, "proxyAuthPort", Integer.class);
+        // fallback to alternative option name
+        if (proxyAuthHost == null) {
+            proxyAuthHost = getParameter(parameters, "proxyHost", String.class);
+        }
+        if (proxyAuthPort == null) {
+            proxyAuthPort = getParameter(parameters, "proxyPort", Integer.class);
+        }
 
         if (proxyAuthHost != null && proxyAuthPort != null) {
             String proxyAuthUsername = getParameter(parameters, "proxyAuthUsername", String.class);
             String proxyAuthPassword = getParameter(parameters, "proxyAuthPassword", String.class);
             String proxyAuthDomain = getParameter(parameters, "proxyAuthDomain", String.class);
             String proxyAuthNtHost = getParameter(parameters, "proxyAuthNtHost", String.class);
+
+            LOG.debug("Configuring HTTP client to use HTTP proxy {}:{}", proxyAuthHost, proxyAuthPort);
 
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return CompositeHttpConfigurer.combineConfigurers(
