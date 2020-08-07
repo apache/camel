@@ -45,18 +45,18 @@ public class CronComponent extends DefaultComponent {
     public Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
         CamelCronConfiguration configuration = new CamelCronConfiguration();
         configuration.setName(remaining);
-        setProperties(configuration, properties);
+
+        CronEndpoint answer = new CronEndpoint(uri, this, configuration);
+        setProperties(answer, properties);
+
+        // validate configuration
         validate(configuration);
 
+        // create delegate and set on endpoint
         Endpoint delegate = this.service.createEndpoint(configuration);
-        CronEndpoint cronEndpoint = new CronEndpoint(uri, this, delegate, configuration);
+        answer.setDelegate(delegate);
 
-        if (properties.size() > 0) {
-            // Additional endpoint properties present
-            setProperties(cronEndpoint, properties);
-        }
-
-        return cronEndpoint;
+        return answer;
     }
 
     @Override
