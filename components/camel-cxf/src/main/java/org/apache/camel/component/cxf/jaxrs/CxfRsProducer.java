@@ -241,12 +241,12 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             insertQueryParametersFromMap(client, maps);
         } else {
             String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
-        	if (queryString != null) {
-        	    // Insert QueryParameters from HTTP_QUERY header
-        	    insertQueryParametersFromQueryString(client, queryString, ExchangeHelper.getCharsetName(exchange));
-        	} else {
-        	    insertQueryParametersFromMap(client, cxfRsEndpoint.getParameters());
-        	}
+            if (queryString != null) {
+                // Insert QueryParameters from HTTP_QUERY header
+                insertQueryParametersFromQueryString(client, queryString, ExchangeHelper.getCharsetName(exchange));
+            } else {
+                insertQueryParametersFromMap(client, cxfRsEndpoint.getParameters());
+            }
         }
         
         setupClientHeaders(client, exchange);
@@ -254,7 +254,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     
     private void insertQueryParametersFromMap(WebClient client, Map<String, String> maps) {
         if (maps != null) {
-    	    for (Map.Entry<String, String> entry : maps.entrySet()) {
+            for (Map.Entry<String, String> entry : maps.entrySet()) {
                 client.query(entry.getKey(), entry.getValue());
             }
     	}
