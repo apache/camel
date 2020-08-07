@@ -430,14 +430,13 @@ public class MinioProducer extends DefaultProducer {
         String bucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
 
         if (isEmpty(bucketName)) {
-            bucketName = getConfiguration().getBucketName();
-            LOG.trace("Minio Bucket name header is missing, using default one [{}]", bucketName);
+            if (isNotEmpty(getConfiguration().getBucketName())) {
+                bucketName = getConfiguration().getBucketName();
+                LOG.trace("Minio Bucket name header is missing, using default one [{}]", bucketName);
+            } else {
+                throw new IllegalArgumentException("Minio Bucket name header is missing or not configured.");
+            }
         }
-
-        if (isEmpty(bucketName)) {
-            throw new IllegalArgumentException("Minio Bucket name header is missing or not configured.");
-        }
-
         return bucketName;
     }
 
