@@ -19,9 +19,6 @@ package org.apache.camel.oaipmh.handler;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +74,7 @@ public class Harvester {
             OAIPMHResponse oaipmhResponse = new OAIPMHResponse(responseXML);
             this.oaipmhResponseHandler.process(oaipmhResponse);
             Optional<String> resumptionToken = oaipmhResponse.getResumptionToken();
-            if (resumptionToken.isPresent()) {
+            if (resumptionToken.isPresent() && !resumptionToken.get().isEmpty()) {
                 this.resumptionToken = resumptionToken.get();
                 hasNext = true;
             } else {

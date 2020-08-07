@@ -54,7 +54,7 @@ public class OAIPMHResponse {
                 LOG.warn("Multiple 'resumptionToken' tags detected, taking the first one.");
             }
             Element get = elementsByTag.get(0);
-            vl = Optional.of(get.text());
+            vl = Optional.of(get.text().trim());
         }
         return vl;
     }

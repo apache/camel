@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,11 +31,12 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,22 +47,16 @@ public class OAIPMHHttpClient {
 
     private boolean ignoreSSLWarnings;
 
-    public String doRequest(URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token, String identifier) throws IOException, URISyntaxException, Exception {
-        CloseableHttpClient httpclient = getCloseableHttpClient();
-        try {
+    public String doRequest(URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token, String identifier) throws IOException, URISyntaxException {
 
+        try (CloseableHttpClient httpclient = getCloseableHttpClient()) {
             URIBuilder builder = new URIBuilder();
             builder.setScheme(baseURI.getScheme())
                     .setHost(baseURI.getHost())
                     .setPort(baseURI.getPort())
                     .setPath(baseURI.getPath())
-                    .addParameter("verb", verb);
-
-            if (baseURI.getQuery() != null && !baseURI.getQuery().isEmpty()) {
-                for (String param : baseURI.getQuery().split("&")) {
-                    builder.addParameter(param.split("=")[0], param.split("=")[1]);
-                }
-            }
+                    .addParameter("verb", verb)
+                    .addParameters(URLEncodedUtils.parse(baseURI, Charset.defaultCharset()));
 
             if (identifier != null) {
                 builder.addParameter("identifier", identifier);
@@ -107,22 +105,13 @@ public class OAIPMHHttpClient {
             };
             String responseBody = httpclient.execute(httpget, responseHandler);
 
-//            String uri = requestLine.getUri();
-//            System.out.println(uri);
-//            String sha256Hex = DigestUtils.sha256Hex(uri.split(".org")[1]);
-//            System.out.println ("File:"+sha256Hex);
-//            BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/tests/test4/" + sha256Hex + ".xml"));
-//            writer.write(responseBody);
-//            writer.close();
             LOG.debug("Response received: {}", responseBody);
 
             return responseBody;
-        } finally {
-            httpclient.close();
         }
     }
 
-    protected CloseableHttpClient getCloseableHttpClient() throws Exception {
+    protected CloseableHttpClient getCloseableHttpClient() throws IOException {
         if (isIgnoreSSLWarnings()) {
             try {
                 SSLContextBuilder builder = new SSLContextBuilder();
@@ -131,8 +120,8 @@ public class OAIPMHHttpClient {
                         builder.build());
                 return HttpClients.custom().setSSLSocketFactory(
                         sslsf).build();
-            } catch (Exception ex) {
-                throw ex;
+            } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException ex) {
+                throw new IOException("The HTTP Client could not be started", ex);
             }
         } else {
             return HttpClients.createDefault();

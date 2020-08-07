@@ -18,12 +18,15 @@ package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.oaipmh.component.model.OAIPMHConstants;
 import org.apache.camel.oaipmh.handler.Harvester;
 import org.apache.camel.oaipmh.handler.ProducerResponseHandler;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,58 +61,30 @@ public class OAIPMHProducer extends DefaultProducer {
         List<String> synHarvest = harvester.synHarvest(endpoint.isOnlyFirst());
         exchange.getMessage().setBody(synHarvest);
         if (endpoint.isOnlyFirst() && harvester.getResumptionToken() != null) {
-            exchange.getMessage().setHeader("CamelOaimphResumptionToken", harvester.getResumptionToken());
+            exchange.getMessage().setHeader(OAIPMHConstants.RESUMPTION_TOKEN, harvester.getResumptionToken());
         } else {
-            exchange.getMessage().removeHeader("CamelOaimphResumptionToken");
+            exchange.getMessage().removeHeader(OAIPMHConstants.RESUMPTION_TOKEN);
         }
     }
 
     private void overrideHarvesterConfigs(Message msg, Harvester harvester) {
-        String header = msg.getHeader("CamelOaimphUrl", String.class);
-        if (header != null) {
-            harvester.setBaseURI(URI.create(header));
-        }
+        checkAndSetConfigs(msg, OAIPMHConstants.URL, x -> harvester.setBaseURI(URI.create(x)), String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.ENDPOINT_URL, x -> harvester.setBaseURI(URI.create(x)), String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.VERB, harvester::setVerb, String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.METADATA_PREFIX, harvester::setMetadata, String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.UNTIL, harvester::setUntil, String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.FROM, harvester::setFrom, String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.SET, harvester::setSet, String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.IDENTIFIER, harvester::setIdentifier, String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.RESUMPTION_TOKEN, harvester::setResumptionToken, String.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.ONLY_FIRST, endpoint::setOnlyFirst, Boolean.class);
+        checkAndSetConfigs(msg, OAIPMHConstants.IGNORE_SSL_WARNINGS, endpoint::setIgnoreSSLWarnings, Boolean.class);
+    }
 
-        header = msg.getHeader("CamelOaimphEndpointUrl", String.class);
-        if (header != null) {
-            harvester.setBaseURI(URI.create(header));
-        }
-
-        header = msg.getHeader("CamelOaimphVerb", String.class);
-        if (header != null) {
-            harvester.setVerb(header);
-        }
-        header = msg.getHeader("CamelOaimphMetadataPrefix", String.class);
-        if (header != null) {
-            harvester.setMetadata(header);
-        }
-        header = msg.getHeader("CamelOaimphUntil", String.class);
-        if (header != null) {
-            harvester.setUntil(header);
-        }
-        header = msg.getHeader("CamelOaimphFrom", String.class);
-        if (header != null) {
-            harvester.setFrom(header);
-        }
-        header = msg.getHeader("CamelOaimphSet", String.class);
-        if (header != null) {
-            harvester.setSet(header);
-        }
-        header = msg.getHeader("CamelOaimphIdentifier", String.class);
-        if (header != null) {
-            harvester.setIdentifier(header);
-        }
-        header = msg.getHeader("CamelOaimphResumptionToken", String.class);
-        if (header != null) {
-            harvester.setResumptionToken(header);
-        }
-        Boolean headerBoolean = msg.getHeader("CamelOaimphOnlyFirst", Boolean.class);
-        if (headerBoolean != null) {
-            endpoint.setOnlyFirst(headerBoolean);
-        }
-        headerBoolean = msg.getHeader("CamelOaimphIgnoreSSLWarnings", Boolean.class);
-        if (headerBoolean != null) {
-            endpoint.setIgnoreSSLWarnings(headerBoolean);
+    private <T> void checkAndSetConfigs(final Message message, final String key, final Consumer<T> fn, final Class<T> type) {
+        final T header = message.getHeader(key, type);
+        if (!ObjectHelper.isEmpty(header)) {
+            fn.accept(header);
         }
     }
 
