@@ -219,8 +219,8 @@ public interface MinioComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default MinioComponentBuilder autocloseBody(boolean autocloseBody) {
-            doSetProperty("autocloseBody", autocloseBody);
+        default MinioComponentBuilder autoCloseBody(boolean autoCloseBody) {
+            doSetProperty("autoCloseBody", autoCloseBody);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface MinioComponentBuilderFactory {
             case "secure": getOrCreateConfiguration((MinioComponent) component).setSecure((boolean) value); return true;
             case "serverSideEncryption": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryption((io.minio.ServerSideEncryption) value); return true;
             case "serverSideEncryptionCustomerKey": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryptionCustomerKey((io.minio.ServerSideEncryptionCustomerKey) value); return true;
-            case "autocloseBody": getOrCreateConfiguration((MinioComponent) component).setAutocloseBody((boolean) value); return true;
+            case "autoCloseBody": getOrCreateConfiguration((MinioComponent) component).setAutoCloseBody((boolean) value); return true;
             case "bridgeErrorHandler": ((MinioComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "bypassGovernanceMode": getOrCreateConfiguration((MinioComponent) component).setBypassGovernanceMode((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((MinioComponent) component).setDeleteAfterRead((boolean) value); return true;

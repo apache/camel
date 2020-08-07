@@ -153,7 +153,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         if (getConfiguration().isIncludeBody()) {
             try {
                 message.setBody(readInputStream(minioObject));
-                if (getConfiguration().isAutocloseBody()) {
+                if (getConfiguration().isAutoCloseBody()) {
                     exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                         @Override
                         public void onDone(Exchange exchange) {

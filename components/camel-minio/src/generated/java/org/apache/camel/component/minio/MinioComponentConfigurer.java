@@ -28,10 +28,10 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "autoclosebody":
+        case "autoCloseBody": getOrCreateConfiguration(target).setAutoCloseBody(property(camelContext, boolean.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": getOrCreateConfiguration(target).setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
-        case "autoclosebody":
-        case "autocloseBody": getOrCreateConfiguration(target).setAutocloseBody(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -117,8 +117,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
+        answer.put("autoCloseBody", boolean.class);
         answer.put("autoCreateBucket", boolean.class);
-        answer.put("autocloseBody", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("bucketName", java.lang.String.class);
@@ -172,10 +172,10 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
+        case "autoclosebody":
+        case "autoCloseBody": return getOrCreateConfiguration(target).isAutoCloseBody();
         case "autocreatebucket":
         case "autoCreateBucket": return getOrCreateConfiguration(target).isAutoCreateBucket();
-        case "autoclosebody":
-        case "autocloseBody": return getOrCreateConfiguration(target).isAutocloseBody();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":

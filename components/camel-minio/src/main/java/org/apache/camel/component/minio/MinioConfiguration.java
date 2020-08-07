@@ -105,7 +105,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
     @UriParam(label = "consumer", defaultValue = "true")
-    private boolean autocloseBody = true;
+    private boolean autoCloseBody = true;
 
     @UriParam(label = "producer")
     private String keyName;
@@ -543,8 +543,8 @@ public class MinioConfiguration implements Cloneable {
         this.includeBody = includeBody;
     }
 
-    public boolean isAutocloseBody() {
-        return autocloseBody;
+    public boolean isAutoCloseBody() {
+        return autoCloseBody;
     }
 
     /**
@@ -555,8 +555,8 @@ public class MinioConfiguration implements Cloneable {
      * stream. Setting autocloseBody to true, will close the MinioObject stream
      * automatically.
      */
-    public void setAutocloseBody(boolean autocloseBody) {
-        this.autocloseBody = autocloseBody;
+    public void setAutoCloseBody(boolean autoCloseBody) {
+        this.autoCloseBody = autoCloseBody;
     }
 
     public String getKeyName() {

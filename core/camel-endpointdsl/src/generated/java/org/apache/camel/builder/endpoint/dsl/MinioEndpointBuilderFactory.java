@@ -294,8 +294,8 @@ public interface MinioEndpointBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default MinioEndpointConsumerBuilder autocloseBody(boolean autocloseBody) {
-            doSetProperty("autocloseBody", autocloseBody);
+        default MinioEndpointConsumerBuilder autoCloseBody(boolean autoCloseBody) {
+            doSetProperty("autoCloseBody", autoCloseBody);
             return this;
         }
         /**
@@ -311,8 +311,8 @@ public interface MinioEndpointBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default MinioEndpointConsumerBuilder autocloseBody(String autocloseBody) {
-            doSetProperty("autocloseBody", autocloseBody);
+        default MinioEndpointConsumerBuilder autoCloseBody(String autoCloseBody) {
+            doSetProperty("autoCloseBody", autoCloseBody);
             return this;
         }
         /**

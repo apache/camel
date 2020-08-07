@@ -21,10 +21,10 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "autoclosebody":
+        case "autoCloseBody": target.getConfiguration().setAutoCloseBody(property(camelContext, boolean.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": target.getConfiguration().setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
-        case "autoclosebody":
-        case "autocloseBody": target.getConfiguration().setAutocloseBody(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -145,8 +145,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
+        answer.put("autoCloseBody", boolean.class);
         answer.put("autoCreateBucket", boolean.class);
-        answer.put("autocloseBody", boolean.class);
         answer.put("backoffErrorThreshold", int.class);
         answer.put("backoffIdleThreshold", int.class);
         answer.put("backoffMultiplier", int.class);
@@ -219,10 +219,10 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
+        case "autoclosebody":
+        case "autoCloseBody": return target.getConfiguration().isAutoCloseBody();
         case "autocreatebucket":
         case "autoCreateBucket": return target.getConfiguration().isAutoCreateBucket();
-        case "autoclosebody":
-        case "autocloseBody": return target.getConfiguration().isAutocloseBody();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
