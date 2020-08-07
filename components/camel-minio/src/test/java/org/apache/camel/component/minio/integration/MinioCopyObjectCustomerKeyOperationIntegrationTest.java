@@ -25,6 +25,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.crypto.KeyGenerator;
@@ -54,13 +55,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSupport {
 
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
     final ServerSideEncryptionCustomerKey secretKey = generateSecretKey();
     String key = UUID.randomUUID().toString();
+
     @BindToRegistry("minioClient")
     MinioClient minioClient =
             MinioClient.builder()
-                    .endpoint("https://play.min.io")
-                    .credentials("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG")
+                    .endpoint(properties.getProperty("endpoint"))
+                    .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
                     .build();
     @EndpointInject
     private ProducerTemplate template;
@@ -68,16 +71,7 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    protected static ServerSideEncryptionCustomerKey generateSecretKey() {
-        KeyGenerator generator;
-        try {
-            generator = KeyGenerator.getInstance("AES");
-            generator.init(256, new SecureRandom());
-            return ServerSideEncryption.withCustomerKey(generator.generateKey());
-        } catch (Exception e) {
-            fail("Unable to generate symmetric key: " + e.getMessage());
-            return null;
-        }
+    public MinioCopyObjectCustomerKeyOperationIntegrationTest() throws IOException {
     }
 
     @Test
@@ -151,6 +145,18 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
 
             }
         };
+    }
+
+    protected static ServerSideEncryptionCustomerKey generateSecretKey() {
+        KeyGenerator generator;
+        try {
+            generator = KeyGenerator.getInstance("AES");
+            generator.init(256, new SecureRandom());
+            return ServerSideEncryption.withCustomerKey(generator.generateKey());
+        } catch (Exception e) {
+            fail("Unable to generate symmetric key: " + e.getMessage());
+            return null;
+        }
     }
 
     private String readInputStream(InputStream minioObject) throws IOException {

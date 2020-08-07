@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 import io.minio.MinioClient;
 import org.apache.camel.BindToRegistry;
@@ -41,12 +42,13 @@ import org.slf4j.LoggerFactory;
 public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIntegrationTest.class);
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
     MinioClient minioClient =
             MinioClient.builder()
-                    .endpoint("https://play.min.io")
-                    .credentials("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG")
+                    .endpoint(properties.getProperty("endpoint"))
+                    .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
                     .build();
     @EndpointInject
     private ProducerTemplate template;
@@ -54,7 +56,7 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioObjectRangeOperationIntegrationTest() {
+    public MinioObjectRangeOperationIntegrationTest() throws IOException {
     }
 
     @Test

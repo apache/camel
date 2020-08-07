@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.minio.integration;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import io.minio.MinioClient;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -30,12 +33,13 @@ import org.junit.jupiter.api.Test;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class MinioDeleteBucketOperationIntegrationTest extends CamelTestSupport {
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
     MinioClient minioClient =
             MinioClient.builder()
-                    .endpoint("https://play.min.io")
-                    .credentials("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG")
+                    .endpoint(properties.getProperty("endpoint"))
+                    .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
                     .build();
 
     @EndpointInject
@@ -43,6 +47,9 @@ public class MinioDeleteBucketOperationIntegrationTest extends CamelTestSupport 
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    public MinioDeleteBucketOperationIntegrationTest() throws IOException {
+    }
 
     @Test
     public void sendIn() throws Exception {

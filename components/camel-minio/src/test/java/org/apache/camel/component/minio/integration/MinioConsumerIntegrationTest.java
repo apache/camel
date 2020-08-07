@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.minio.integration;
 
+import java.util.Properties;
+
 import io.minio.MinioClient;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -29,12 +31,13 @@ import org.junit.jupiter.api.Test;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class MinioConsumerIntegrationTest extends CamelTestSupport {
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
-            .endpoint("https://play.min.io")
-            .credentials("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG")
-            .region("us-west-1")
+            .endpoint(properties.getProperty("endpoint"))
+            .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
+            .region(properties.getProperty("region"))
             .build();
 
     @EndpointInject
@@ -42,6 +45,9 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    public MinioConsumerIntegrationTest() throws Exception {
+    }
 
     @Test
     public void sendIn() throws Exception {

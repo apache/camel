@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.minio.integration;
 
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.Properties;
 
 import com.google.common.collect.Iterators;
 import io.minio.MinioClient;
@@ -39,12 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
     MinioClient minioClient =
             MinioClient.builder()
-                    .endpoint("https://play.min.io")
-                    .credentials("Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG")
+                    .endpoint(properties.getProperty("endpoint"))
+                    .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
                     .build();
 
     @EndpointInject
@@ -52,6 +55,9 @@ public class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    public MinioListObjectsOperationIntegrationTest() throws IOException {
+    }
 
     @SuppressWarnings("unchecked")
     @Test
