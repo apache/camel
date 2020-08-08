@@ -81,7 +81,9 @@ public class MinioComponent extends DefaultComponent {
         if (isEmpty(endpoint.getConfiguration().getMinioClient())) {
             LOG.debug("Looking for an MinioClient instance in the registry");
             Set<MinioClient> clients = getCamelContext().getRegistry().findByType(MinioClient.class);
-            if (clients.size() == 1) {
+            if (clients.size() > 1) {
+                LOG.debug("Found more than one MinioClient instance in the registry");
+            } else if (clients.size() == 1) {
                 LOG.debug("Found exactly one MinioClient instance in the registry");
                 configuration.setMinioClient(clients.stream().findFirst().get());
             } else {
