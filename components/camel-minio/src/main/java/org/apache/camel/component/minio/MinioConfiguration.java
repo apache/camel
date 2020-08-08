@@ -111,8 +111,6 @@ public class MinioConfiguration implements Cloneable {
     private String keyName;
     @UriParam(label = "producer")
     private boolean deleteAfterWrite;
-    @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
-    private long partSize = 25 * 1024 * 1024;
     @UriParam(label = "producer")
     private String storageClass;
     @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange")
@@ -580,18 +578,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setDeleteAfterWrite(boolean deleteAfterWrite) {
         this.deleteAfterWrite = deleteAfterWrite;
-    }
-
-    public long getPartSize() {
-        return partSize;
-    }
-
-    /**
-     * Setup the partSize which is used in multi part upload, the default size
-     * is 25M.
-     */
-    public void setPartSize(long partSize) {
-        this.partSize = partSize;
     }
 
     public String getStorageClass() {

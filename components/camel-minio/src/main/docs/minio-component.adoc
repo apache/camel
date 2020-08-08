@@ -30,7 +30,7 @@ The bucket will be created if it doesn't already exist. +
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-For example in order to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
+For example in order to read file `hello.txt` from the bucket `helloBucket`, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ The Minio Storage Service component supports 47 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The Minio Storage Service endpoint is configured using URI syntax:
+The Minio Storage Service endpoint configured using URI syntax:
 
 ----
 minio://bucketName
@@ -443,16 +443,16 @@ This operation will return an MinioObject instance related to the camelKey objec
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing a the bytes from 0 to 9.
+This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing bytes from 0 to 9.
 
 == Bucket Autocreation
 
-With the option `autoCreateBucket` users are able to avoid the autocreation of an Minio Bucket in case it doesn't exist. The default for this option is `true`.
+With the option `autoCreateBucket` users are able to avoid the autocreation of a Minio Bucket in case it doesn't exist. The default for this option is `true`.
 If set to false any operation on a not-existent bucket in Minio won't be successful, and an error will be returned.
 
 == Automatic detection of Minio client in registry
 
-The component is capable of detecting the presence of an Minio bean into the registry.
+The component is capable of detecting the presence of a Minio bean into the registry.
 If it's the only instance of that type it will be used as client, and you won't have to define it as uri parameter, like the example above.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -477,7 +477,7 @@ In this case the objects consumed will be moved to myothercamelbucket bucket and
 
 == Using a POJO as body
 
-Sometimes build an Minio Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+Sometimes build a Minio Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
 In Minio there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
 ------------------------------------------------------------------------------------------------------
