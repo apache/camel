@@ -47,7 +47,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -248,30 +247,14 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         String bucketName = getConfiguration().getBucketName();
         StatObjectArgs.Builder statObjectRequest = StatObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        if (isNotEmpty(getConfiguration().getServerSideEncryptionCustomerKey())) {
-            statObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
-        }
-        if (getConfiguration().getOffset() > 0) {
-            statObjectRequest.offset(getConfiguration().getOffset());
-        }
-        if (getConfiguration().getLength() > 0) {
-            statObjectRequest.length(getConfiguration().getLength());
-        }
-        if (isNotEmpty(getConfiguration().getVersionId())) {
-            statObjectRequest.versionId(getConfiguration().getVersionId());
-        }
-        if (isNotEmpty(getConfiguration().getMatchETag())) {
-            statObjectRequest.matchETag(getConfiguration().getMatchETag());
-        }
-        if (isNotEmpty(getConfiguration().getNotMatchETag())) {
-            statObjectRequest.notMatchETag(getConfiguration().getNotMatchETag());
-        }
-        if (isNotEmpty(getConfiguration().getModifiedSince())) {
-            statObjectRequest.modifiedSince(getConfiguration().getModifiedSince());
-        }
-        if (isNotEmpty(getConfiguration().getUnModifiedSince())) {
-            statObjectRequest.unmodifiedSince(getConfiguration().getUnModifiedSince());
-        }
+        MinioChecks.checkServerSideEncryptionCustomerKeyConfig(getConfiguration(), statObjectRequest::ssec);
+        MinioChecks.checkOffsetConfig(getConfiguration(), statObjectRequest::offset);
+        MinioChecks.checkLengthConfig(getConfiguration(), statObjectRequest::length);
+        MinioChecks.checkVersionIdConfig(getConfiguration(), statObjectRequest::versionId);
+        MinioChecks.checkMatchETagConfig(getConfiguration(), statObjectRequest::matchETag);
+        MinioChecks.checkNotMatchETagConfig(getConfiguration(), statObjectRequest::notMatchETag);
+        MinioChecks.checkModifiedSinceConfig(getConfiguration(), statObjectRequest::modifiedSince);
+        MinioChecks.checkUnModifiedSinceConfig(getConfiguration(), statObjectRequest::unmodifiedSince);
 
         ObjectStat stat = minioClient.statObject(statObjectRequest.build());
 
