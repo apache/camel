@@ -431,7 +431,7 @@ public class MinioProducer extends DefaultProducer {
         if (isEmpty(bucketName)) {
             if (isNotEmpty(getConfiguration().getBucketName())) {
                 bucketName = getConfiguration().getBucketName();
-                LOG.trace("Minio Bucket name header is missing, using default one [{}]", bucketName);
+                LOG.trace("Minio Bucket name header is missing, using default one {}", bucketName);
             } else {
                 throw new IllegalArgumentException("Minio Bucket name header is missing or not configured.");
             }

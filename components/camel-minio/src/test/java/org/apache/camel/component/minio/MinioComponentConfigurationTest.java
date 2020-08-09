@@ -23,7 +23,8 @@ import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MinioComponentConfigurationTest extends CamelTestSupport {
 

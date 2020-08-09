@@ -77,9 +77,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             if (isNotEmpty(destinationBucketName)) {
 
                 if (bucketExists(destinationBucketName)) {
-                    LOG.trace("Bucket [{}] already exists", destinationBucketName);
+                    LOG.trace("Bucket {} already exists", destinationBucketName);
                 } else {
-                    LOG.trace("Destination Bucket [{}] doesn't exist yet", destinationBucketName);
+                    LOG.trace("Destination Bucket {} doesn't exist yet", destinationBucketName);
 
                     if (getConfiguration().isAutoCreateBucket()) {
                         // creates the new bucket because it doesn't exist yet
@@ -107,7 +107,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         }
         getMinioClient().makeBucket(makeBucketRequest.build());
     }
-    
+
     @Override
     protected int poll() throws Exception {
         // must reset for each poll
@@ -127,7 +127,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
         } else {
 
-            LOG.trace("Queueing objects in bucket [{}]...", bucketName);
+            LOG.trace("Queueing objects in bucket {}...", bucketName);
 
             ListObjectsArgs.Builder listObjectRequest = ListObjectsArgs.builder()
                     .bucket(bucketName)
@@ -171,7 +171,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 continuationToken = null;
             }
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} objects in bucket [{}]...", listObjects.contents().size(), bucketName);
+                LOG.trace("Found {} objects in bucket {}...", listObjects.contents().size(), bucketName);
             }
 
             exchanges = createExchanges(listObjects.contents());
