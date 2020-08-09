@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.minio;
 
+import java.util.Properties;
+
+import io.minio.MinioClient;
+import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MinioComponentConfigurationTest extends CamelTestSupport {
 
@@ -33,5 +37,20 @@ public class MinioComponentConfigurationTest extends CamelTestSupport {
         assertEquals(endpoint.getConfiguration().getSecretKey(), "yyy");
         assertEquals(endpoint.getConfiguration().getRegion(), "us-west-1");
         assertEquals(endpoint.getConfiguration().getEndpoint(), "http://localhost:4572");
+    }
+
+    @Test
+    public void createEndpointWithCredentialsAndClientExistInRegistry() throws Exception {
+        final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
+
+        MinioClient client = MinioClient.builder()
+                .endpoint(properties.getProperty("endpoint"))
+                .build();
+        context.getRegistry().bind("minioClient", client);
+        MinioComponent component = context.getComponent("minio", MinioComponent.class);
+        MinioEndpoint endpoint = (MinioEndpoint)component.createEndpoint("minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertSame(client, endpoint.getConfiguration().getMinioClient());
     }
 }

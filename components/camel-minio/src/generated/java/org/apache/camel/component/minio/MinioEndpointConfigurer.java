@@ -90,8 +90,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "objectName": target.getConfiguration().setObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "offset": target.getConfiguration().setOffset(property(camelContext, long.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.minio.MinioOperations.class, value)); return true;
-        case "partsize":
-        case "partSize": target.getConfiguration().setPartSize(property(camelContext, long.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
@@ -183,7 +181,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("objectName", java.lang.String.class);
         answer.put("offset", long.class);
         answer.put("operation", org.apache.camel.component.minio.MinioOperations.class);
-        answer.put("partSize", long.class);
         answer.put("pojoRequest", boolean.class);
         answer.put("policy", java.lang.String.class);
         answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
@@ -288,8 +285,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "objectName": return target.getConfiguration().getObjectName();
         case "offset": return target.getConfiguration().getOffset();
         case "operation": return target.getConfiguration().getOperation();
-        case "partsize":
-        case "partSize": return target.getConfiguration().getPartSize();
         case "pojorequest":
         case "pojoRequest": return target.getConfiguration().isPojoRequest();
         case "policy": return target.getConfiguration().getPolicy();

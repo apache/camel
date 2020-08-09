@@ -26,12 +26,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import io.minio.BucketExistsArgs;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
 import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
+import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
+import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.MinioException;
 import io.minio.messages.Contents;
 import io.minio.messages.ListBucketResultV2;
@@ -42,13 +45,13 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.ObjectHelper.cast;
 
 /**
  * A Consumer of messages from the Minio Storage Service.
@@ -64,6 +67,47 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         super(endpoint, processor);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getConfiguration().isMoveAfterRead()) {
+            String destinationBucketName = getConfiguration().getDestinationBucketName();
+
+            if (isNotEmpty(destinationBucketName)) {
+
+                if (bucketExists(destinationBucketName)) {
+                    LOG.trace("Bucket [{}] already exists", destinationBucketName);
+                } else {
+                    LOG.trace("Destination Bucket [{}] doesn't exist yet", destinationBucketName);
+
+                    if (getConfiguration().isAutoCreateBucket()) {
+                        // creates the new bucket because it doesn't exist yet
+                        LOG.trace("Creating Destination bucket {}...", destinationBucketName);
+                        makeBucket(destinationBucketName);
+                        LOG.trace("Destination Bucket created");
+                    } else {
+                        throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", destinationBucketName);
+                    }
+                }
+            } else {
+                LOG.warn("invalid destinationBucketName found: {}", destinationBucketName);
+            }
+        }
+    }
+
+    private boolean bucketExists(String bucketName) throws Exception {
+        return getMinioClient().bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+    }
+
+    private void makeBucket(String bucketName) throws Exception {
+        MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
+        if (isNotEmpty(getConfiguration().getRegion())) {
+            makeBucketRequest.region(getConfiguration().getRegion());
+        }
+        getMinioClient().makeBucket(makeBucketRequest.build());
+    }
+    
     @Override
     protected int poll() throws Exception {
         // must reset for each poll
@@ -204,7 +248,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
+            final Exchange exchange = cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);

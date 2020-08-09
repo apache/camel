@@ -1801,32 +1801,6 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Setup the partSize which is used in multi part upload, the default
-         * size is 25M.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 26214400
-         * Group: producer
-         */
-        default MinioEndpointProducerBuilder partSize(long partSize) {
-            doSetProperty("partSize", partSize);
-            return this;
-        }
-        /**
-         * Setup the partSize which is used in multi part upload, the default
-         * size is 25M.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 26214400
-         * Group: producer
-         */
-        default MinioEndpointProducerBuilder partSize(String partSize) {
-            doSetProperty("partSize", partSize);
-            return this;
-        }
-        /**
          * If we want to use a POJO request as body or not.
          * 
          * The option is a: <code>boolean</code> type.

@@ -579,19 +579,6 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * Setup the partSize which is used in multi part upload, the default
-         * size is 25M.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 26214400
-         * Group: producer
-         */
-        default MinioComponentBuilder partSize(long partSize) {
-            doSetProperty("partSize", partSize);
-            return this;
-        }
-        /**
          * If we want to use a POJO request as body or not.
          * 
          * The option is a: <code>boolean</code> type.
@@ -717,7 +704,6 @@ public interface MinioComponentBuilderFactory {
             case "keyName": getOrCreateConfiguration((MinioComponent) component).setKeyName((java.lang.String) value); return true;
             case "lazyStartProducer": ((MinioComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((MinioComponent) component).setOperation((org.apache.camel.component.minio.MinioOperations) value); return true;
-            case "partSize": getOrCreateConfiguration((MinioComponent) component).setPartSize((long) value); return true;
             case "pojoRequest": getOrCreateConfiguration((MinioComponent) component).setPojoRequest((boolean) value); return true;
             case "storageClass": getOrCreateConfiguration((MinioComponent) component).setStorageClass((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MinioComponent) component).setBasicPropertyBinding((boolean) value); return true;

@@ -113,17 +113,20 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         if (bucketExists(bucketName)) {
             LOG.trace("Bucket {} already exists", bucketName);
         } else {
-            if (!getConfiguration().isAutoCreateBucket()) {
-                throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", bucketName);
-            } else {
+            if (getConfiguration().isAutoCreateBucket()) {
                 LOG.trace("AutoCreateBucket set to true, Creating bucket {}...", bucketName);
                 makeBucket(bucketName);
                 LOG.trace("Bucket created");
+            } else {
+                throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", bucketName);
+
             }
         }
 
         if (isNotEmpty(getConfiguration().getPolicy())) {
+            LOG.trace("Updating bucket {} with policy {}", bucketName, configuration.getPolicy());
             setBucketPolicy(bucketName);
+            LOG.trace("Bucket policy updated");
         }
     }
 

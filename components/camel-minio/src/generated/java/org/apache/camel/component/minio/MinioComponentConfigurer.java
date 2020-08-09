@@ -82,8 +82,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "objectName": getOrCreateConfiguration(target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "offset": getOrCreateConfiguration(target).setOffset(property(camelContext, long.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.minio.MinioOperations.class, value)); return true;
-        case "partsize":
-        case "partSize": getOrCreateConfiguration(target).setPartSize(property(camelContext, long.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
@@ -147,7 +145,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("objectName", java.lang.String.class);
         answer.put("offset", long.class);
         answer.put("operation", org.apache.camel.component.minio.MinioOperations.class);
-        answer.put("partSize", long.class);
         answer.put("pojoRequest", boolean.class);
         answer.put("policy", java.lang.String.class);
         answer.put("prefix", java.lang.String.class);
@@ -226,8 +223,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "objectName": return getOrCreateConfiguration(target).getObjectName();
         case "offset": return getOrCreateConfiguration(target).getOffset();
         case "operation": return getOrCreateConfiguration(target).getOperation();
-        case "partsize":
-        case "partSize": return getOrCreateConfiguration(target).getPartSize();
         case "pojorequest":
         case "pojoRequest": return getOrCreateConfiguration(target).isPojoRequest();
         case "policy": return getOrCreateConfiguration(target).getPolicy();
