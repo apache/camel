@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -207,8 +208,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     @Metadata(description = "In what packages are the generated DTO classes. Typically the classes would be generated"
                             + " using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short "
-                            + " SObject names in parameters/header values.", label = "common")
-    private String[] packages;
+                            + " SObject names in parameters/header values. Multiple packages can be separated by comma.", javaType = "java.lang.String", label = "common")
+    private String packages;
 
     // component state
     private SalesforceHttpClient httpClient;
@@ -290,7 +291,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     private Map<String, Class<?>> parsePackages() {
         Map<String, Class<?>> result = new HashMap<>();
-        Set<Class<?>> classes = getCamelContext().adapt(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(AbstractSObjectBase.class, packages);
+        Set<Class<?>> classes = getCamelContext().adapt(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(AbstractSObjectBase.class, getPackagesAsArray());
         for (Class<?> aClass : classes) {
             result.put(aClass.getSimpleName(), aClass);
         }
@@ -357,10 +358,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             ServiceHelper.startService(session);
         }
 
-        if (packages != null && packages.length > 0) {
+        if (packages != null) {
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
-            LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
+            LOG.info("Found {} generated classes in packages: {}", classMap.size(), packages);
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
@@ -653,18 +654,29 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.httpProxyUseDigestAuth = httpProxyUseDigestAuth;
     }
 
-    public String[] getPackages() {
+    public String getPackages() {
         return packages;
     }
 
-    public void setPackages(String[] packages) {
+    public void setPackages(String packages) {
         this.packages = packages;
     }
 
-    public void setPackages(String packages) {
-        // split using comma
+    /**
+     * @deprecated use {@link #setPackages(String)}
+     */
+    @Deprecated
+    public void setPackages(String[] packages) {
         if (packages != null) {
-            setPackages(packages.split(","));
+            this.packages = String.join(",", packages);
+        }
+    }
+
+    public String[] getPackagesAsArray() {
+        if (packages != null) {
+            return packages.split(",");
+        } else {
+            return null;
         }
     }
 

@@ -126,7 +126,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "notifyForOperations": getOrCreateConfiguration(target).setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
         case "objectMapper": getOrCreateConfiguration(target).setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
-        case "packages": target.setPackages(property(camelContext, java.lang.String[].class, value)); return true;
+        case "packages": target.setPackages(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": getOrCreateConfiguration(target).setRawPayload(property(camelContext, boolean.class, value)); return true;
@@ -223,7 +223,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         answer.put("notifyForOperationUpdate", java.lang.Boolean.class);
         answer.put("notifyForOperations", org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class);
         answer.put("objectMapper", com.fasterxml.jackson.databind.ObjectMapper.class);
-        answer.put("packages", java.lang.String[].class);
+        answer.put("packages", java.lang.String.class);
         answer.put("password", java.lang.String.class);
         answer.put("rawPayload", boolean.class);
         answer.put("refreshToken", java.lang.String.class);
