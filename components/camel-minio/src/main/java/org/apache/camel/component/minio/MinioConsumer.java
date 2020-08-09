@@ -22,8 +22,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import io.minio.BucketExistsArgs;
@@ -34,10 +34,10 @@ import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
+import io.minio.Result;
 import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.MinioException;
-import io.minio.messages.Contents;
-import io.minio.messages.ListBucketResultV2;
+import io.minio.messages.Item;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
@@ -60,6 +60,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioConsumer.class);
 
+    int totalCounter;
     private String continuationToken;
     private transient String minioConsumerToString;
 
@@ -124,6 +125,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
             InputStream minioObject = getObject(bucketName, minioClient, objectName);
             exchanges = createExchanges(minioObject, objectName);
+            return processBatch(CastUtils.cast(exchanges));
 
         } else {
 
@@ -150,33 +152,31 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
             if (isNotEmpty(getConfiguration().getStartAfter())) {
                 listObjectRequest.startAfter(getConfiguration().getStartAfter());
+                continuationToken = null;
             }
 
             // if there was a marker from previous poll then use that to
             // continue from where we left last time
             if (isNotEmpty(continuationToken)) {
                 LOG.trace("Resuming from marker: {}", continuationToken);
-                listObjectRequest.continuationToken(continuationToken);
+                listObjectRequest.startAfter(continuationToken);
             }
 
-            // TODO: Check for validity of the statement
-            ListBucketResultV2 listObjects = (ListBucketResultV2) getMinioClient().listObjects(listObjectRequest.build());
+            Iterator<Result<Item>> listObjects = getMinioClient().listObjects(listObjectRequest.build()).iterator();
 
-            if (listObjects.isTruncated()) {
-                LOG.trace("Returned list is truncated, so setting next marker: {}", continuationToken);
-                continuationToken = listObjects.nextContinuationToken();
+            if (listObjects.hasNext()) {
+                exchanges = createExchanges(listObjects);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Found {} objects in bucket {}...", totalCounter, bucketName);
+                }
+                return processBatch(CastUtils.cast(exchanges));
 
             } else {
                 // no more data so clear marker
                 continuationToken = null;
+                return 0;
             }
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} objects in bucket {}...", listObjects.contents().size(), bucketName);
-            }
-
-            exchanges = createExchanges(listObjects.contents());
         }
-        return processBatch(CastUtils.cast(exchanges));
     }
 
     protected Queue<Exchange> createExchanges(InputStream objectStream, String objectName) throws Exception {
@@ -187,31 +187,40 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         return answer;
     }
 
-    protected Queue<Exchange> createExchanges(List<Contents> minioObjectSummaries) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received {} messages in this poll", minioObjectSummaries.size());
-        }
+    protected Queue<Exchange> createExchanges(Iterator<Result<Item>> minioObjectSummaries) throws Exception {
+        int messageCounter = 0;
         String bucketName = getConfiguration().getBucketName();
         Collection<InputStream> minioObjects = new ArrayList<>();
         Queue<Exchange> answer = new LinkedList<>();
         try {
             if (getConfiguration().isIncludeFolders()) {
-                for (Contents minioObjectSummary : minioObjectSummaries) {
+                do {
+                    messageCounter++;
+                    Item minioObjectSummary = minioObjectSummaries.next().get();
                     InputStream minioObject = getObject(bucketName, getMinioClient(), minioObjectSummary.objectName());
                     minioObjects.add(minioObject);
                     Exchange exchange = getEndpoint().createExchange(minioObject, minioObjectSummary.objectName());
                     answer.add(exchange);
-                }
+                    continuationToken = minioObjectSummary.objectName();
+                } while (minioObjectSummaries.hasNext());
             } else {
-                for (Contents minioObjectSummary : minioObjectSummaries) {
+                do {
+                    messageCounter++;
+                    Item minioObjectSummary = minioObjectSummaries.next().get();
                     // ignore if directory
                     if (!minioObjectSummary.isDir()) {
                         InputStream minioObject = getObject(bucketName, getMinioClient(), minioObjectSummary.objectName());
                         minioObjects.add(minioObject);
                         Exchange exchange = getEndpoint().createExchange(minioObject, minioObjectSummary.objectName());
                         answer.add(exchange);
+                        continuationToken = minioObjectSummary.objectName();
                     }
-                }
+                } while (minioObjectSummaries.hasNext());
+            }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Received {} messages in this poll", messageCounter);
+                totalCounter += messageCounter;
             }
 
         } catch (Throwable e) {
