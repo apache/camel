@@ -10073,6 +10073,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Minio Storage Service (camel-minio)
+     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * 
+     * Category: cloud,file
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     * 
+     * Syntax: <code>minio://bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param path //bucketName
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder("minio", path);
+    }
+    /**
+     * Minio Storage Service (camel-minio)
+     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * 
+     * Category: cloud,file
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     * 
+     * Syntax: <code>minio://bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path //bucketName
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
      * 

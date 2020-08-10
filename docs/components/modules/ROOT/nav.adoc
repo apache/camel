@@ -232,6 +232,7 @@
 ** xref:micrometer-component.adoc[Micrometer]
 ** xref:microprofile-metrics-component.adoc[MicroProfile Metrics]
 ** xref:mina-component.adoc[Mina]
+** xref:minio-component.adoc[Minio Storage Service]
 ** xref:mllp-component.adoc[MLLP]
 ** xref:mock-component.adoc[Mock]
 ** xref:mongodb-component.adoc[MongoDB]
