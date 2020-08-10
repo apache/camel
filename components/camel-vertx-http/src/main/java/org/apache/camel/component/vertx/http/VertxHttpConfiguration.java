@@ -64,6 +64,8 @@ public class VertxHttpConfiguration {
     private String basicAuthPassword;
     @UriParam(label = "security")
     private String bearerToken;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
@@ -76,8 +78,6 @@ public class VertxHttpConfiguration {
     private String proxyPassword;
     @UriParam(label = "producer")
     private WebClientOptions webClientOptions;
-    @UriParam(label = "security")
-    private SSLContextParameters sslContextParameters;
 
     /**
      * The HTTP URI to connect to

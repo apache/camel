@@ -36,7 +36,7 @@ vertx-http:hostname[:port][/resourceUri][?options]
 == Options
 
 // component options: START
-The Vert.x HTTP Client component supports 13 options, which are listed below.
+The Vert.x HTTP Client component supports 17 options, which are listed below.
 
 
 
@@ -55,6 +55,10 @@ The Vert.x HTTP Client component supports 13 options, which are listed below.
 | *proxyPort* (proxy) | The proxy server port |  | Integer
 | *proxyType* (proxy) | The proxy server type. The value can be one of: HTTP, SOCKS4, SOCKS5 |  | ProxyType
 | *proxyUsername* (proxy) | The proxy server username if authentication is required |  | String
+| *basicAuthPassword* (security) | The password to use for basic authentication |  | String
+| *basicAuthUsername* (security) | The user name to use for basic authentication |  | String
+| *bearerToken* (security) | The bearer token to use for bearer token authentication |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
 |===
 // component options: END

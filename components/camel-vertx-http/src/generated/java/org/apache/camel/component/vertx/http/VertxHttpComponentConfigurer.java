@@ -21,8 +21,14 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
+        case "basicauthpassword":
+        case "basicAuthPassword": target.setBasicAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicauthusername":
+        case "basicAuthUsername": target.setBasicAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bearertoken":
+        case "bearerToken": target.setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
@@ -37,6 +43,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "proxyType": target.setProxyType(property(camelContext, io.vertx.core.net.ProxyType.class, value)); return true;
         case "proxyusername":
         case "proxyUsername": target.setProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
@@ -52,7 +60,10 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("allowJavaSerializedObject", boolean.class);
+        answer.put("basicAuthPassword", java.lang.String.class);
+        answer.put("basicAuthUsername", java.lang.String.class);
         answer.put("basicPropertyBinding", boolean.class);
+        answer.put("bearerToken", java.lang.String.class);
         answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
@@ -60,6 +71,7 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         answer.put("proxyPort", java.lang.Integer.class);
         answer.put("proxyType", io.vertx.core.net.ProxyType.class);
         answer.put("proxyUsername", java.lang.String.class);
+        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         answer.put("useGlobalSslContextParameters", boolean.class);
         answer.put("vertx", io.vertx.core.Vertx.class);
         answer.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
@@ -73,8 +85,14 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
+        case "basicauthpassword":
+        case "basicAuthPassword": return target.getBasicAuthPassword();
+        case "basicauthusername":
+        case "basicAuthUsername": return target.getBasicAuthUsername();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "bearertoken":
+        case "bearerToken": return target.getBearerToken();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
@@ -89,6 +107,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "proxyType": return target.getProxyType();
         case "proxyusername":
         case "proxyUsername": return target.getProxyUsername();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getSslContextParameters();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "vertx": return target.getVertx();

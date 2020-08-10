@@ -211,6 +211,55 @@ public interface VertxHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * The password to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default VertxHttpComponentBuilder basicAuthPassword(
+                java.lang.String basicAuthPassword) {
+            doSetProperty("basicAuthPassword", basicAuthPassword);
+            return this;
+        }
+        /**
+         * The user name to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default VertxHttpComponentBuilder basicAuthUsername(
+                java.lang.String basicAuthUsername) {
+            doSetProperty("basicAuthUsername", basicAuthUsername);
+            return this;
+        }
+        /**
+         * The bearer token to use for bearer token authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default VertxHttpComponentBuilder bearerToken(
+                java.lang.String bearerToken) {
+            doSetProperty("bearerToken", bearerToken);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default VertxHttpComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -252,6 +301,10 @@ public interface VertxHttpComponentBuilderFactory {
             case "proxyPort": ((VertxHttpComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyType": ((VertxHttpComponent) component).setProxyType((io.vertx.core.net.ProxyType) value); return true;
             case "proxyUsername": ((VertxHttpComponent) component).setProxyUsername((java.lang.String) value); return true;
+            case "basicAuthPassword": ((VertxHttpComponent) component).setBasicAuthPassword((java.lang.String) value); return true;
+            case "basicAuthUsername": ((VertxHttpComponent) component).setBasicAuthUsername((java.lang.String) value); return true;
+            case "bearerToken": ((VertxHttpComponent) component).setBearerToken((java.lang.String) value); return true;
+            case "sslContextParameters": ((VertxHttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((VertxHttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
