@@ -35,6 +35,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -46,6 +47,14 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
 
     private volatile boolean managedVertx;
 
+    @Metadata(label = "security")
+    private String basicAuthUsername;
+    @Metadata(label = "security")
+    private String basicAuthPassword;
+    @Metadata(label = "security")
+    private String bearerToken;
+    @Metadata(label = "security")
+    private SSLContextParameters sslContextParameters;
     @Metadata(label = "proxy")
     private String proxyHost;
     @Metadata(label = "proxy")
@@ -77,6 +86,18 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
         VertxHttpEndpoint endpoint = new VertxHttpEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
+        if (configuration.getBasicAuthUsername() == null) {
+            configuration.setBasicAuthUsername(getBasicAuthUsername());
+        }
+        if (configuration.getBasicAuthPassword() == null) {
+            configuration.setBasicAuthPassword(getBasicAuthPassword());
+        }
+        if (configuration.getBearerToken() == null) {
+            configuration.setBearerToken(getBearerToken());
+        }
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(getSslContextParameters());
+        }
         if (configuration.getProxyType() == null) {
             configuration.setProxyType(getProxyType());
         }
@@ -316,6 +337,50 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
 
     public ProxyType getProxyType() {
         return proxyType;
+    }
+
+    /**
+     * The user name to use for basic authentication
+     */
+    public void setBasicAuthUsername(String basicAuthUsername) {
+        this.basicAuthUsername = basicAuthUsername;
+    }
+
+    public String getBasicAuthUsername() {
+        return basicAuthUsername;
+    }
+
+    /**
+     * The password to use for basic authentication
+     */
+    public void setBasicAuthPassword(String basicAuthPassword) {
+        this.basicAuthPassword = basicAuthPassword;
+    }
+
+    public String getBasicAuthPassword() {
+        return basicAuthPassword;
+    }
+
+    /**
+     * The bearer token to use for bearer token authentication
+     */
+    public void setBearerToken(String bearerToken) {
+        this.bearerToken = bearerToken;
+    }
+
+    public String getBearerToken() {
+        return bearerToken;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
 }
