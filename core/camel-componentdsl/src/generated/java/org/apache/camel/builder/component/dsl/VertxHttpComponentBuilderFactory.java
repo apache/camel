@@ -153,6 +153,64 @@ public interface VertxHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * The proxy server host address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default VertxHttpComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The proxy server password if authentication is required.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default VertxHttpComponentBuilder proxyPassword(
+                java.lang.String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * The proxy server port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default VertxHttpComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy server type.
+         * 
+         * The option is a: <code>io.vertx.core.net.ProxyType</code> type.
+         * 
+         * Group: proxy
+         */
+        default VertxHttpComponentBuilder proxyType(
+                io.vertx.core.net.ProxyType proxyType) {
+            doSetProperty("proxyType", proxyType);
+            return this;
+        }
+        /**
+         * The proxy server username if authentication is required.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default VertxHttpComponentBuilder proxyUsername(
+                java.lang.String proxyUsername) {
+            doSetProperty("proxyUsername", proxyUsername);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -189,6 +247,11 @@ public interface VertxHttpComponentBuilderFactory {
             case "vertxHttpBinding": ((VertxHttpComponent) component).setVertxHttpBinding((org.apache.camel.component.vertx.http.VertxHttpBinding) value); return true;
             case "vertxOptions": ((VertxHttpComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
             case "headerFilterStrategy": ((VertxHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "proxyHost": ((VertxHttpComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPassword": ((VertxHttpComponent) component).setProxyPassword((java.lang.String) value); return true;
+            case "proxyPort": ((VertxHttpComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyType": ((VertxHttpComponent) component).setProxyType((io.vertx.core.net.ProxyType) value); return true;
+            case "proxyUsername": ((VertxHttpComponent) component).setProxyUsername((java.lang.String) value); return true;
             case "useGlobalSslContextParameters": ((VertxHttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }

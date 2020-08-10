@@ -23,6 +23,7 @@ import java.util.Set;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.net.ProxyType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
@@ -43,6 +44,19 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 @Component("vertx-http")
 public class VertxHttpComponent extends HeaderFilterStrategyComponent implements RestProducerFactory, SSLContextParametersAware {
 
+    private volatile boolean managedVertx;
+
+    @Metadata(label = "proxy")
+    private String proxyHost;
+    @Metadata(label = "proxy")
+    private Integer proxyPort;
+    @Metadata(label = "proxy", enums = "HTTP,SOCKS4,SOCKS5")
+    private ProxyType proxyType;
+    @Metadata(label = "proxy")
+    private String proxyUsername;
+    @Metadata(label = "proxy")
+    private String proxyPassword;
+
     @Metadata(label = "advanced")
     private Vertx vertx;
     @Metadata(label = "advanced")
@@ -53,7 +67,6 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
-    private boolean managedVertx;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -64,14 +77,27 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
         VertxHttpEndpoint endpoint = new VertxHttpEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
+        if (configuration.getProxyType() == null) {
+            configuration.setProxyType(getProxyType());
+        }
+        if (configuration.getProxyHost() == null) {
+            configuration.setProxyHost(getProxyHost());
+        }
+        if (configuration.getProxyPort() == null) {
+            configuration.setProxyPort(getProxyPort());
+        }
+        if (configuration.getProxyUsername() == null) {
+            configuration.setProxyUsername(getProxyUsername());
+        }
+        if (configuration.getProxyPassword() == null) {
+            configuration.setProxyPassword(getProxyPassword());
+        }
         if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
-
         if (configuration.getVertxHttpBinding() == null) {
             configuration.setVertxHttpBinding(getVertxHttpBinding());
         }
-
         if (configuration.getHeaderFilterStrategy() == null) {
             configuration.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
@@ -236,4 +262,60 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
+
+    /**
+     * The proxy server host address
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The proxy server port
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The proxy server username if authentication is required
+     */
+    public void setProxyUsername(String proxyUsername) {
+        this.proxyUsername = proxyUsername;
+    }
+
+    public String getProxyUsername() {
+        return proxyUsername;
+    }
+
+    /**
+     * The proxy server password if authentication is required
+     */
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    /**
+     * The proxy server type
+     */
+    public void setProxyType(ProxyType proxyType) {
+        this.proxyType = proxyType;
+    }
+
+    public ProxyType getProxyType() {
+        return proxyType;
+    }
+
 }
