@@ -32,9 +32,9 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
 
     static {
         tagMap.put(Tag.COMPONENT, "component");
-        tagMap.put(Tag.DB_TYPE, SemanticAttributes.DB_TYPE.key());
+        tagMap.put(Tag.DB_TYPE, SemanticAttributes.DB_SYSTEM.key());
         tagMap.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.key());
-        tagMap.put(Tag.DB_INSTANCE, SemanticAttributes.DB_INSTANCE.key());
+        tagMap.put(Tag.DB_INSTANCE, SemanticAttributes.DB_NAME.key());
         tagMap.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.key());
         tagMap.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.key());
         tagMap.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.key());
