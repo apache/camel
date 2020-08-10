@@ -36,8 +36,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "bucketname":
-        case "bucketName": getOrCreateConfiguration(target).setBucketName(property(camelContext, java.lang.String.class, value)); return true;
         case "bypassgovernancemode":
         case "bypassGovernanceMode": getOrCreateConfiguration(target).setBypassGovernanceMode(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.minio.MinioConfiguration.class, value)); return true;
@@ -68,6 +66,10 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "length": getOrCreateConfiguration(target).setLength(property(camelContext, long.class, value)); return true;
         case "matchetag":
         case "matchETag": getOrCreateConfiguration(target).setMatchETag(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxconnections":
+        case "maxConnections": getOrCreateConfiguration(target).setMaxConnections(property(camelContext, int.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": getOrCreateConfiguration(target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "minioclient":
         case "minioClient": getOrCreateConfiguration(target).setMinioClient(property(camelContext, io.minio.MinioClient.class, value)); return true;
         case "modifiedsince":
@@ -119,7 +121,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("autoCreateBucket", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("bucketName", java.lang.String.class);
         answer.put("bypassGovernanceMode", boolean.class);
         answer.put("configuration", org.apache.camel.component.minio.MinioConfiguration.class);
         answer.put("customHttpClient", okhttp3.OkHttpClient.class);
@@ -137,6 +138,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("lazyStartProducer", boolean.class);
         answer.put("length", long.class);
         answer.put("matchETag", java.lang.String.class);
+        answer.put("maxConnections", int.class);
+        answer.put("maxMessagesPerPoll", int.class);
         answer.put("minioClient", io.minio.MinioClient.class);
         answer.put("modifiedSince", java.time.ZonedDateTime.class);
         answer.put("moveAfterRead", boolean.class);
@@ -177,8 +180,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "bucketname":
-        case "bucketName": return getOrCreateConfiguration(target).getBucketName();
         case "bypassgovernancemode":
         case "bypassGovernanceMode": return getOrCreateConfiguration(target).isBypassGovernanceMode();
         case "configuration": return target.getConfiguration();
@@ -209,6 +210,10 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "length": return getOrCreateConfiguration(target).getLength();
         case "matchetag":
         case "matchETag": return getOrCreateConfiguration(target).getMatchETag();
+        case "maxconnections":
+        case "maxConnections": return getOrCreateConfiguration(target).getMaxConnections();
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return getOrCreateConfiguration(target).getMaxMessagesPerPoll();
         case "minioclient":
         case "minioClient": return getOrCreateConfiguration(target).getMinioClient();
         case "modifiedsince":

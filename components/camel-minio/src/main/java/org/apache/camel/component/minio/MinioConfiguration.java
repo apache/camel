@@ -23,11 +23,17 @@ import io.minio.ServerSideEncryption;
 import io.minio.ServerSideEncryptionCustomerKey;
 import okhttp3.OkHttpClient;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class MinioConfiguration implements Cloneable {
+
+    @UriPath(description = "Bucket name")
+    @Metadata(required = true)
+    private String bucketName;
 
     @UriParam(label = "common")
     private String endpoint;
@@ -44,9 +50,7 @@ public class MinioConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(label = "common", defaultValue = "false")
 
-    private String bucketName;
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoCreateBucket = true;
     @UriParam(label = "common", defaultValue = "false")
@@ -60,6 +64,10 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "common")
     private MinioClient minioClient;
 
+    @UriParam(label = "consumer", defaultValue = "10")
+    private int maxMessagesPerPoll = 10;
+    @UriParam(label = "consumer", defaultValue = "60")
+    private int maxConnections = 50 + maxMessagesPerPoll;
     @UriParam(label = "consumer")
     private String objectName;
     @UriParam(label = "consumer")
@@ -275,6 +283,32 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setMinioClient(MinioClient minioClient) {
         this.minioClient = minioClient;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    /**
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * The default value is 10. Use 0 or a negative number to set it as
+     * unlimited.
+     */
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    /**
+     * Set the maxConnections parameter in the minio client configuration
+     */
+    public void setMaxConnections(int maxConnections) {
+        this.maxConnections = maxConnections;
     }
 
     public String getObjectName() {

@@ -40,10 +40,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.minio.client.MinioClientFactory;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
@@ -55,24 +53,16 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * Store and retrieve objects from Minio Storage Service using Minio SDK.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio://bucketName",
+@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio:bucketName",
         category = {Category.CLOUD, Category.FILE})
-
 public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);
 
     private MinioClient minioClient;
 
-    @UriPath(description = "Bucket name")
-    @Metadata(required = true)
-    private String bucketName;
     @UriParam
     private MinioConfiguration configuration;
-    @UriParam(label = "consumer", defaultValue = "10")
-    private int maxMessagesPerPoll = 10;
-    @UriParam(label = "consumer", defaultValue = "60")
-    private int maxConnections = 50 + maxMessagesPerPoll;
 
     public MinioEndpoint(String uri, Component component, MinioConfiguration configuration) {
         super(uri, component);
@@ -83,7 +73,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         MinioConsumer minioConsumer = new MinioConsumer(this, processor);
         configureConsumer(minioConsumer);
-        minioConsumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
+        minioConsumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
         return minioConsumer;
     }
 
@@ -150,20 +140,14 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         getObjectStat(objectName, message);
 
         if (getConfiguration().isIncludeBody()) {
-            try {
-                message.setBody(readInputStream(minioObject));
-                if (getConfiguration().isAutoCloseBody()) {
-                    exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-                        @Override
-                        public void onDone(Exchange exchange) {
-                            IOHelper.close(minioObject);
-                        }
-                    });
-                }
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                LOG.warn("Error setting message body");
+            message.setBody(readInputStream(minioObject));
+            if (getConfiguration().isAutoCloseBody()) {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        IOHelper.close(minioObject);
+                    }
+                });
             }
         } else {
             message.setBody(null);
@@ -187,32 +171,6 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     public void setMinioClient(MinioClient minioClient) {
         this.minioClient = minioClient;
-    }
-
-    public int getMaxMessagesPerPoll() {
-        return maxMessagesPerPoll;
-    }
-
-    /**
-     * Gets the maximum number of messages as a limit to poll at each polling.
-     * <p/>
-     * Gets the maximum number of messages as a limit to poll at each polling.
-     * The default value is 10. Use 0 or a negative number to set it as
-     * unlimited.
-     */
-    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
-        this.maxMessagesPerPoll = maxMessagesPerPoll;
-    }
-
-    public int getMaxConnections() {
-        return maxConnections;
-    }
-
-    /**
-     * Set the maxConnections parameter in the minio client configuration
-     */
-    public void setMaxConnections(int maxConnections) {
-        this.maxConnections = maxConnections;
     }
 
     private String readInputStream(InputStream minioObject) throws IOException {

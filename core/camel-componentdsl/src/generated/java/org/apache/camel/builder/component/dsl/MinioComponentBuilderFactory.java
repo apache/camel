@@ -59,19 +59,6 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * Name of the bucket. The bucket will be created if it doesn't already
-         * exists.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default MinioComponentBuilder bucketName(java.lang.String bucketName) {
-            doSetProperty("bucketName", bucketName);
-            return this;
-        }
-        /**
          * The component configuration.
          * 
          * The option is a:
@@ -392,6 +379,33 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the maxConnections parameter in the minio client configuration.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60
+         * Group: consumer
+         */
+        default MinioComponentBuilder maxConnections(int maxConnections) {
+            doSetProperty("maxConnections", maxConnections);
+            return this;
+        }
+        /**
+         * Gets the maximum number of messages as a limit to poll at each
+         * polling. Gets the maximum number of messages as a limit to poll at
+         * each polling. The default value is 10. Use 0 or a negative number to
+         * set it as unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         */
+        default MinioComponentBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
          * Set modified since parameter for get object(s).
          * 
          * The option is a: <code>java.time.ZonedDateTime</code> type.
@@ -664,7 +678,6 @@ public interface MinioComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "autoCreateBucket": getOrCreateConfiguration((MinioComponent) component).setAutoCreateBucket((boolean) value); return true;
-            case "bucketName": getOrCreateConfiguration((MinioComponent) component).setBucketName((java.lang.String) value); return true;
             case "configuration": ((MinioComponent) component).setConfiguration((org.apache.camel.component.minio.MinioConfiguration) value); return true;
             case "customHttpClient": getOrCreateConfiguration((MinioComponent) component).setCustomHttpClient((okhttp3.OkHttpClient) value); return true;
             case "endpoint": getOrCreateConfiguration((MinioComponent) component).setEndpoint((java.lang.String) value); return true;
@@ -689,6 +702,8 @@ public interface MinioComponentBuilderFactory {
             case "includeVersions": getOrCreateConfiguration((MinioComponent) component).setIncludeVersions((boolean) value); return true;
             case "length": getOrCreateConfiguration((MinioComponent) component).setLength((long) value); return true;
             case "matchETag": getOrCreateConfiguration((MinioComponent) component).setMatchETag((java.lang.String) value); return true;
+            case "maxConnections": getOrCreateConfiguration((MinioComponent) component).setMaxConnections((int) value); return true;
+            case "maxMessagesPerPoll": getOrCreateConfiguration((MinioComponent) component).setMaxMessagesPerPoll((int) value); return true;
             case "modifiedSince": getOrCreateConfiguration((MinioComponent) component).setModifiedSince((java.time.ZonedDateTime) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((MinioComponent) component).setMoveAfterRead((boolean) value); return true;
             case "notMatchETag": getOrCreateConfiguration((MinioComponent) component).setNotMatchETag((java.lang.String) value); return true;
