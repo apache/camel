@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.http;
 
+import io.vertx.core.net.ProxyType;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
@@ -33,6 +34,25 @@ public class VertxHttpProxyServerTest extends VertxHttpTestSupport {
                 + port2 + "&proxyUsername=foo"
                 + "&proxyPassword=bar&proxyType=HTTP", null, String.class);
         assertEquals("Hello Proxied World", result);
+    }
+
+    @Test
+    public void testProxyComponent() {
+        VertxHttpComponent comp = context.getComponent("vertx-http", VertxHttpComponent.class);
+        comp.setProxyHost("localhost");
+        comp.setProxyPort(port2);
+        comp.setProxyUsername("foo");
+        comp.setProxyPassword("bar");
+        comp.setProxyType(ProxyType.HTTP);
+
+        String result = template.requestBody(getProducerUri(), null, String.class);
+        assertEquals("Hello Proxied World", result);
+
+        comp.setProxyHost(null);
+        comp.setProxyPort(null);
+        comp.setProxyUsername(null);
+        comp.setProxyPassword(null);
+        comp.setProxyType(null);
     }
 
     @Override

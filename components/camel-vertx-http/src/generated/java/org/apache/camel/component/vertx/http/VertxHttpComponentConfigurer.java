@@ -27,6 +27,16 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxypassword":
+        case "proxyPassword": target.setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxytype":
+        case "proxyType": target.setProxyType(property(camelContext, io.vertx.core.net.ProxyType.class, value)); return true;
+        case "proxyusername":
+        case "proxyUsername": target.setProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
@@ -45,6 +55,11 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("proxyHost", java.lang.String.class);
+        answer.put("proxyPassword", java.lang.String.class);
+        answer.put("proxyPort", java.lang.Integer.class);
+        answer.put("proxyType", io.vertx.core.net.ProxyType.class);
+        answer.put("proxyUsername", java.lang.String.class);
         answer.put("useGlobalSslContextParameters", boolean.class);
         answer.put("vertx", io.vertx.core.Vertx.class);
         answer.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
@@ -64,6 +79,16 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "proxyhost":
+        case "proxyHost": return target.getProxyHost();
+        case "proxypassword":
+        case "proxyPassword": return target.getProxyPassword();
+        case "proxyport":
+        case "proxyPort": return target.getProxyPort();
+        case "proxytype":
+        case "proxyType": return target.getProxyType();
+        case "proxyusername":
+        case "proxyUsername": return target.getProxyUsername();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "vertx": return target.getVertx();

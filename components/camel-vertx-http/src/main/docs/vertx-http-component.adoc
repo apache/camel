@@ -36,7 +36,7 @@ vertx-http:hostname[:port][/resourceUri][?options]
 == Options
 
 // component options: START
-The Vert.x HTTP Client component supports 8 options, which are listed below.
+The Vert.x HTTP Client component supports 13 options, which are listed below.
 
 
 
@@ -50,6 +50,11 @@ The Vert.x HTTP Client component supports 8 options, which are listed below.
 | *vertxHttpBinding* (advanced) | A custom VertxHttpBinding which can control how to bind between Vert.x and Camel |  | VertxHttpBinding
 | *vertxOptions* (advanced) | To provide a custom set of vertx options for configuring vertx |  | VertxOptions
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *proxyHost* (proxy) | The proxy server host address |  | String
+| *proxyPassword* (proxy) | The proxy server password if authentication is required |  | String
+| *proxyPort* (proxy) | The proxy server port |  | Integer
+| *proxyType* (proxy) | The proxy server type. The value can be one of: HTTP, SOCKS4, SOCKS5 |  | ProxyType
+| *proxyUsername* (proxy) | The proxy server username if authentication is required |  | String
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
 |===
 // component options: END
