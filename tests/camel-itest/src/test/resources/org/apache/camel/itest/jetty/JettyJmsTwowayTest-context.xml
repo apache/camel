@@ -28,7 +28,7 @@
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
 
     <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <bean id="setResponseProcessor" class="org.apache.camel.itest.jetty.SetResponseProcessor"/>
@@ -36,11 +36,11 @@
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
         <route>
-            <from uri="jetty:http://localhost:{{JettyJmsTwowayTest.port}}/test"/>
-            <to uri="jms:responseQueue"/>
+            <from uri="jetty:http://localhost:{{JettyJmsTwowayTest.port}}/JettyJmsTwowayTest"/>
+            <to uri="jms:JettyJmsTwowayTestResponseQueue"/>
         </route>
         <route>
-            <from uri="jms:responseQueue"/>
+            <from uri="jms:JettyJmsTwowayTestResponseQueue"/>
             <process ref="setResponseProcessor"/>
         </route>
     </camelContext>

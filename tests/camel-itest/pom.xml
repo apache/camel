@@ -31,6 +31,11 @@
     <name>Camel :: Integration Tests :: Non OSGi</name>
     <description>Performs cross component integration tests</description>
 
+    <properties>
+        <camel.itest.fork.count>1</camel.itest.fork.count>
+        <camel.itest.fork.reuse>true</camel.itest.fork.reuse>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -388,8 +393,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- must for per test -->
-                    <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
+                    <forkCount>${camel.itest.fork.count}</forkCount>
+                    <reuseForks>${camel.itest.fork.reuse}</reuseForks>
                     <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
                     <systemPropertyVariables>
                         <derby.stream.error.file>target/derby.log</derby.stream.error.file>

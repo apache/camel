@@ -18,13 +18,17 @@ package org.apache.camel.itest.jms;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 
 public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

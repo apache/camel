@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.greeter;
+package org.apache.camel.itest.utils.extensions;
 
 import java.util.logging.Logger;
 

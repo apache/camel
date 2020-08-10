@@ -29,6 +29,8 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.hello_world_soap_http.Greeter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -75,7 +77,20 @@ public class GreeterClientTest {
 
         client.getOutInterceptors().add(wss4jOut);
         ((BindingProvider)greeter).getRequestContext().put("password", password);
+
         return greeter.greetMe(message);
+    }
+
+    @BeforeEach
+    public void setUp() {
+        if (!camelContext.isStarted()) {
+            camelContext.start();
+        }
+    }
+
+    @AfterEach
+    public void tearDown() {
+        camelContext.stop();
     }
 
     @Test

@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Route that listen on a JMS queue and send a request/reply over http
@@ -30,7 +32,6 @@ import org.apache.camel.test.AvailablePortFinder;
  * error handler.
  */
 public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute extends JmsToHttpRoute {
-
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Override
@@ -45,7 +46,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
             }
         }).handled(true).to("mock:404").transform(constant(noAccess));
 
-        from("activemq:queue:data")
+        from("activemq:queue:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
             // must setup policy to indicate transacted route
             .policy(required)
             // send a request to http and get the response
@@ -58,7 +59,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
                     // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:rollback")
+                    .to("mock:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
                     // response is not okay so force a rollback
                     .rollback()
                 .otherwise()
