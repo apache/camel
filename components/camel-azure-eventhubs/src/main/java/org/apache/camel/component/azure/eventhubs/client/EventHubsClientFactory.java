@@ -6,6 +6,7 @@ import com.azure.messaging.eventhubs.EventHubClientBuilder;
 import com.azure.messaging.eventhubs.EventHubConsumerAsyncClient;
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
 import org.apache.camel.component.azure.eventhubs.EventHubsConfiguration;
+import org.apache.camel.util.ObjectHelper;
 
 public final class EventHubsClientFactory {
 
@@ -29,6 +30,9 @@ public final class EventHubsClientFactory {
     }
 
     private static String buildConnectionString(final EventHubsConfiguration configuration) {
+        if (ObjectHelper.isNotEmpty(configuration.getConnectionString()))
+            return configuration.getConnectionString();
+
         return String.format(Locale.ROOT, "Endpoint=sb://%s.%s/;SharedAccessKeyName=%s;SharedAccessKey=%s;EntityPath=%s",
                 configuration.getNamespace(), SERVICE_URI_SEGMENT, configuration.getSharedAccessName(), configuration.getSharedAccessKey(), configuration.getEventHubName());
     }

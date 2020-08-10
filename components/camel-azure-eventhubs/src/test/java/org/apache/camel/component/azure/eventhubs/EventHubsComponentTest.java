@@ -16,11 +16,11 @@ class EventHubsComponentTest extends CamelTestSupport {
 
     @Test
     public void testCreateEndpointWithNoEventHubsNameOrNameSpace() throws Exception {
-        ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("azure-eventhubs:?connectionString=string"));
-        assertTrue(exception.getMessage().contains("Namespace and eventHub name must be specified"));
+        ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("azure-eventhubs:?sharedAccessKey=string&sharedAccessName=name"));
+        assertTrue(exception.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
 
-        ResolveEndpointFailedException exception2 = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("azure-eventhubs:name?connectionString=string"));
-        assertTrue(exception2.getMessage().contains("Namespace and eventHub name must be specified"));
+        ResolveEndpointFailedException exception2 = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("azure-eventhubs:name?sharedAccessKey=string&sharedAccessName=name"));
+        assertTrue(exception2.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
     }
 
     @Test
@@ -32,7 +32,7 @@ class EventHubsComponentTest extends CamelTestSupport {
         assertTrue(getErrorMessage("azure-eventhubs:name/hubName?").contains(expectedErrorMessage));
 
         // second case: connectionString set
-        assertNotNull(context.getEndpoint("azure-eventhubs:name/hubName?connectionString=string"));
+        assertNotNull(context.getEndpoint("azure-eventhubs:?connectionString=string"));
 
         // third case: either access key or access name set
         assertTrue(getErrorMessage("azure-eventhubs:name/hubName?sharedAccessName=test").contains(expectedErrorMessage));
@@ -83,17 +83,21 @@ class EventHubsComponentTest extends CamelTestSupport {
 
     @Test
     public void testCreateEndpointWithConfig() {
-        final String uri = "azure-eventhubs:namespace/hubName?connectionString=" +
+        final String uris = "azure-eventhubs:namespace/hubName?connectionString=" +
                 "Endpoint=sb://dummynamespace.servicebus.windows.net/;SharedAccessKeyName=DummyAccessKeyName;SharedAccessKey=DummyKey;EntityPath=test" +
+                "&consumerGroupName=testConsumer&prefetchCount=100";
+
+        final String uri = "azure-eventhubs:namespace/hubName?sharedAccessName=DummyAccessKeyName" +
+                "&sharedAccessKey=DummyKey" +
                 "&consumerGroupName=testConsumer&prefetchCount=100";
 
         final EventHubsEndpoint endpoint = (EventHubsEndpoint) context.getEndpoint(uri);
 
         assertEquals("namespace", endpoint.getConfiguration().getNamespace());
-        assertEquals("hubName", endpoint.getConfiguration().getEventHubName());
-        assertEquals("Endpoint=sb://dummynamespace.servicebus.windows.net/;SharedAccessKeyName=DummyAccessKeyName;SharedAccessKey=DummyKey;EntityPath=test",
-                endpoint.getConfiguration().getConnectionString());
+        assertEquals("hubName", endpoint.getConfiguration().getEventHubName());;
         assertEquals("testConsumer", endpoint.getConfiguration().getConsumerGroupName());
+        assertEquals("DummyAccessKeyName", endpoint.getConfiguration().getSharedAccessName());
+        assertEquals("DummyKey", endpoint.getConfiguration().getSharedAccessKey());
         assertEquals(100, endpoint.getConfiguration().getPrefetchCount());
         assertTrue(endpoint.getConfiguration().isAutoDiscoverClient());
     }

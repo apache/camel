@@ -29,6 +29,8 @@ public class EventHubsConfiguration implements Cloneable {
     private AmqpRetryOptions amqpRetryOptions;
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoDiscoverClient = true;
+    @UriParam(label = "common")
+    private String partitionId;
     @UriParam(label = "consumer")
     private EventHubConsumerAsyncClient consumerAsyncClient;
     @UriParam(label = "consumer")
@@ -37,6 +39,10 @@ public class EventHubsConfiguration implements Cloneable {
     private int prefetchCount = 500;
     @UriParam(label = "producer")
     private EventHubProducerAsyncClient producerAsyncClient;
+    @UriParam(label = "producer", defaultValue = "0")
+    private int maximumSizeInBytes = 0;
+    @UriParam(label = "producer")
+    private String partitionKey;
 
     /**
      * test
@@ -170,6 +176,39 @@ public class EventHubsConfiguration implements Cloneable {
 
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
+    }
+
+    /**
+     * test
+     */
+    public String getPartitionId() {
+        return partitionId;
+    }
+
+    public void setPartitionId(String partitionId) {
+        this.partitionId = partitionId;
+    }
+
+    /**
+     * test
+     */
+    public int getMaximumSizeInBytes() {
+        return maximumSizeInBytes;
+    }
+
+    public void setMaximumSizeInBytes(int maximumSizeInBytes) {
+        this.maximumSizeInBytes = maximumSizeInBytes;
+    }
+
+    /**
+     * test
+     */
+    public String getPartitionKey() {
+        return partitionKey;
+    }
+
+    public void setPartitionKey(String partitionKey) {
+        this.partitionKey = partitionKey;
     }
 
     // *************************************************

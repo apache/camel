@@ -48,21 +48,7 @@ public class EventHubsComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        if (remaining == null || remaining.trim().length() == 0) {
-            throw new IllegalArgumentException("Namespace and eventHub name must be specified.");
-        }
-
         final EventHubsConfiguration configuration = this.configuration != null ? this.configuration.copy() : new EventHubsConfiguration();
-
-        final String[] parts = remaining.split("/");
-
-        // namespace and eventhubName must be set
-        // TODO: make it more flexible, for example if connection string is set or client, allow for it to be created
-        if (parts.length < 2) {
-            throw new IllegalArgumentException("Namespace and eventHub name must be specified.");
-        }
-        configuration.setNamespace(parts[0]);
-        configuration.setEventHubName(parts[1]);
 
         final EventHubsEndpoint endpoint = new EventHubsEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
@@ -72,7 +58,11 @@ public class EventHubsComponent extends DefaultComponent {
             checkAndSetRegistryClient(configuration::setProducerAsyncClient, configuration::getProducerAsyncClient, EventHubProducerAsyncClient.class);
         }
 
-        validateConfigurations(configuration);
+        // if we don't have client nor connectionString, we check for params
+        if (areAzureClientsNotSet(configuration) && ObjectHelper.isEmpty(configuration.getConnectionString())) {
+            checkAndSetNamespaceAndHubName(configuration, remaining);
+            validateConfigurations(configuration);
+        }
 
         return endpoint;
     }
@@ -104,18 +94,32 @@ public class EventHubsComponent extends DefaultComponent {
     }
 
     private void validateConfigurations(final EventHubsConfiguration configuration) {
-        if (!checkIfOneOfClientsSet(configuration) && !checkIfAccessKeyAndAccessNameSet(configuration)
-                && ObjectHelper.isEmpty(configuration.getConnectionString())) {
+        if (!isAccessKeyAndAccessNameSet(configuration)) {
             throw new IllegalArgumentException("Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient " +
                     "or connectionString must be specified.");
         }
     }
 
-    private boolean checkIfAccessKeyAndAccessNameSet(final EventHubsConfiguration configuration) {
+    private boolean isAccessKeyAndAccessNameSet(final EventHubsConfiguration configuration) {
         return ObjectHelper.isNotEmpty(configuration.getSharedAccessName()) && ObjectHelper.isNotEmpty(configuration.getSharedAccessKey());
     }
 
-    private boolean checkIfOneOfClientsSet(final EventHubsConfiguration configuration) {
-        return configuration.getConsumerAsyncClient() != null || configuration.getProducerAsyncClient() != null;
+    private boolean areAzureClientsNotSet(final EventHubsConfiguration configuration) {
+        return ObjectHelper.isEmpty(configuration.getConsumerAsyncClient()) && ObjectHelper.isEmpty(configuration.getProducerAsyncClient());
+    }
+
+    private void checkAndSetNamespaceAndHubName(final EventHubsConfiguration configuration, final String remaining) {
+        // only set if clients are empty and remaining exists
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("ConnectionString, AzureClients or Namespace and EventHub name must be set");
+        }
+
+        final String[] parts = remaining.split("/");
+
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("ConnectionString, AzureClients or Namespace and EventHub name must be set");
+        }
+        configuration.setNamespace(parts[0]);
+        configuration.setEventHubName(parts[1]);
     }
 }

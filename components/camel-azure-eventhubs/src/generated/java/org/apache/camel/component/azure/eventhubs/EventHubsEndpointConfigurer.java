@@ -41,6 +41,12 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maximumsizeinbytes":
+        case "maximumSizeInBytes": target.getConfiguration().setMaximumSizeInBytes(property(camelContext, int.class, value)); return true;
+        case "partitionid":
+        case "partitionId": target.getConfiguration().setPartitionId(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionkey":
+        case "partitionKey": target.getConfiguration().setPartitionKey(property(camelContext, java.lang.String.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, int.class, value)); return true;
         case "producerasyncclient":
@@ -68,6 +74,9 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("maximumSizeInBytes", int.class);
+        answer.put("partitionId", java.lang.String.class);
+        answer.put("partitionKey", java.lang.String.class);
         answer.put("prefetchCount", int.class);
         answer.put("producerAsyncClient", com.azure.messaging.eventhubs.EventHubProducerAsyncClient.class);
         answer.put("sharedAccessKey", java.lang.String.class);
@@ -102,6 +111,12 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maximumsizeinbytes":
+        case "maximumSizeInBytes": return target.getConfiguration().getMaximumSizeInBytes();
+        case "partitionid":
+        case "partitionId": return target.getConfiguration().getPartitionId();
+        case "partitionkey":
+        case "partitionKey": return target.getConfiguration().getPartitionKey();
         case "prefetchcount":
         case "prefetchCount": return target.getConfiguration().getPrefetchCount();
         case "producerasyncclient":
