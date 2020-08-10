@@ -25,9 +25,9 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="direct:start"/>
+            <from uri="direct:SpringDebugBeforeTestStart"/>
             <log message="Got ${body}"/>
-            <to uri="mock:result"/>
+            <to uri="mock:SpringDebugBeforeTestResult"/>
         </route>
     </camelContext>
 

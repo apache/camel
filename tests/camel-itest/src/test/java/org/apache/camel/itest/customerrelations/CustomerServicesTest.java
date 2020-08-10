@@ -19,6 +19,7 @@ package org.apache.camel.itest.customerrelations;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Fault;
@@ -27,12 +28,15 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CustomerServicesTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Test
     void testCustomerService() throws Exception {

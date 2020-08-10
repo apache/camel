@@ -25,12 +25,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://activemq.apache.org/schema/core http://activemq.org/config/1.0/1.0.xsd">
 
-    <!-- activemq broker -->
-    <broker:broker id="broker" useJmx="false" persistent="false" brokerName="localhost">
-        <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="vm://localhost?broker.persistent=false"/>
-        </broker:transportConnectors>
-    </broker:broker>
 
     <!-- camel stuff below to send and listen to broker with a spring JMS transaction manager -->
     <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
@@ -38,8 +32,8 @@
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" depends-on="broker">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
@@ -71,21 +65,21 @@
         <consumerTemplate id="consumerTemplate"/>
 
         <route>
-            <from uri="activemq:startConsumer"/>
+            <from uri="activemq:JmsPollingConsumerTestStartConsumer"/>
             <delay>
                 <constant>1000</constant>
             </delay>
             <to uri="bean:consumer"/>
-            <to uri="mock:result"/>
+            <to uri="mock:JmsPollingConsumerTestResult"/>
         </route>
 
         <route>
-            <from uri="direct:startConsumer"/>
+            <from uri="direct:JmsPollingConsumerTestStartConsumer"/>
             <delay>
                 <constant>1000</constant>
             </delay>
             <to uri="bean:consumer"/>
-            <to uri="mock:result"/>
+            <to uri="mock:JmsPollingConsumerTestResult"/>
         </route>
 
     </camelContext>

@@ -16,10 +16,14 @@
  */
 package org.apache.camel.itest.tx;
 
+import javax.annotation.Resource;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
@@ -29,9 +33,17 @@ import org.apache.camel.test.AvailablePortFinder;
  * Notice we use the SpringRouteBuilder that supports transacted
  * error handler.
  */
-public class JmsToHttpWithOnExceptionRoute extends JmsToHttpRoute {
+public class JmsToHttpWithOnExceptionRoute extends SpringRouteBuilder {
+    protected static int counter;
+    protected int port;
 
-    private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
+    @Resource(name = "PROPAGATION_REQUIRED")
+    protected SpringTransactionPolicy required;
+
+    protected final String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
+    protected final String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+
+    private final String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Override
     public void configure() {
@@ -46,9 +58,9 @@ public class JmsToHttpWithOnExceptionRoute extends JmsToHttpRoute {
                 HttpOperationFailedException e = exchange.getException(HttpOperationFailedException.class);
                 return e != null && e.getStatusCode() == 404;
             }
-        }).handled(true).to("mock:404").transform(constant(noAccess));
+        }).handled(true).to("mock:JmsToHttpWithOnExceptionRoute404").transform(constant(noAccess));
 
-        from("activemq:queue:data")
+        from("activemq:queue:JmsToHttpWithOnExceptionRoute")
             // must setup policy to indicate transacted route
             .policy(required)
             // send a request to http and get the response
@@ -61,7 +73,7 @@ public class JmsToHttpWithOnExceptionRoute extends JmsToHttpRoute {
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
                     // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:rollback")
+                    .to("mock:JmsToHttpWithOnExceptionRoute")
                     // response is not okay so force a rollback
                     .rollback()
                 .otherwise()

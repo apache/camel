@@ -16,13 +16,17 @@
  */
 package org.apache.camel.itest.customerrelations;
 
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CustomerServicesWsAddressingTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Test
     void testCustomerService() throws Exception {

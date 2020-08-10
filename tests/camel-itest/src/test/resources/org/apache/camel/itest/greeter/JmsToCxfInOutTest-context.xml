@@ -33,7 +33,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
     
     <jaxws:endpoint id="greeter" 
-	  implementor="org.apache.camel.itest.greeter.GreeterImpl" 
+	  implementor="org.apache.camel.itest.utils.extensions.GreeterImpl"
 	  address="http://localhost:${JmsToCxfInOutTest.port}/SoapContext/SoapPort"
       endpointName="s:SoapOverHttp"
       serviceName="s:SOAPService"
@@ -52,7 +52,7 @@
     <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
       <property name="connectionFactory">
         <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-          <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+          <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
           <property name="trustAllPackages" value="true"/>
         </bean>
       </property>

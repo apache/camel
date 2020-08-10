@@ -18,7 +18,6 @@ package org.apache.camel.itest.jms;
 
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
 
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
@@ -27,19 +26,21 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JmsResequencerTest extends CamelTestSupport  {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
     
     private static final Logger LOG = LoggerFactory.getLogger(JmsResequencerTest.class);
     private ReusableBean b1 = new ReusableBean("myBean1");
@@ -164,8 +165,8 @@ public class JmsResequencerTest extends CamelTestSupport  {
     @Override
     protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
         registry.bind("activemq", amq);
 

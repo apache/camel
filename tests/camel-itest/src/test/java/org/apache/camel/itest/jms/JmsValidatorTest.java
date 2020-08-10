@@ -16,19 +16,19 @@
  */
 package org.apache.camel.itest.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsValidatorTest extends CamelTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Test
     void testJmsValidator() throws Exception {
@@ -57,8 +57,8 @@ public class JmsValidatorTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
 
         registry.bind("jms", amq);
