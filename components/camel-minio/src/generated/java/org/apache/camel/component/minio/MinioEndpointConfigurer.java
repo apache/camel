@@ -73,9 +73,9 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "matchetag":
         case "matchETag": target.getConfiguration().setMatchETag(property(camelContext, java.lang.String.class, value)); return true;
         case "maxconnections":
-        case "maxConnections": target.setMaxConnections(property(camelContext, int.class, value)); return true;
+        case "maxConnections": target.getConfiguration().setMaxConnections(property(camelContext, int.class, value)); return true;
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "maxMessagesPerPoll": target.getConfiguration().setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "minioclient":
         case "minioClient": target.getConfiguration().setMinioClient(property(camelContext, io.minio.MinioClient.class, value)); return true;
         case "modifiedsince":
@@ -268,9 +268,9 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "matchetag":
         case "matchETag": return target.getConfiguration().getMatchETag();
         case "maxconnections":
-        case "maxConnections": return target.getMaxConnections();
+        case "maxConnections": return target.getConfiguration().getMaxConnections();
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "maxMessagesPerPoll": return target.getConfiguration().getMaxMessagesPerPoll();
         case "minioclient":
         case "minioClient": return target.getConfiguration().getMinioClient();
         case "modifiedsince":

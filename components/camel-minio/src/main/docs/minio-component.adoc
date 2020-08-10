@@ -41,7 +41,7 @@ from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix
 == URI Options
 
 // component options: START
-The Minio Storage Service component supports 46 options, which are listed below.
+The Minio Storage Service component supports 47 options, which are listed below.
 
 
 
@@ -49,7 +49,6 @@ The Minio Storage Service component supports 46 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
-| *bucketName* (common) | Name of the bucket. The bucket will be created if it doesn't already exists. | false | String
 | *configuration* (common) | The component configuration |  | MinioConfiguration
 | *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
@@ -74,6 +73,8 @@ The Minio Storage Service component supports 46 options, which are listed below.
 | *includeVersions* (consumer) | The flag which is used in the ListObjectsRequest to get objects with versioning. | false | boolean
 | *length* (consumer) | Number of bytes of object data from offset. |  | long
 | *matchETag* (consumer) | Set match ETag parameter for get object(s). |  | String
+| *maxConnections* (consumer) | Set the maxConnections parameter in the minio client configuration | 60 | int
+| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative number to set it as unlimited. | 10 | int
 | *modifiedSince* (consumer) | Set modified since parameter for get object(s). |  | ZonedDateTime
 | *moveAfterRead* (consumer) | Move objects from bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean
 | *notMatchETag* (consumer) | Set not match ETag parameter for get object(s). |  | String
@@ -101,7 +102,7 @@ The Minio Storage Service component supports 46 options, which are listed below.
 The Minio Storage Service endpoint is configured using URI syntax:
 
 ----
-minio://bucketName
+minio:bucketName
 ----
 
 with the following path and query parameters:

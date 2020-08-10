@@ -31,23 +31,15 @@
     <packaging>jar</packaging>
 
     <name>Camel :: MinIO</name>
-    <description>A Camel MinIO cloud storage server Component</description>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <camel.osgi.export.pkg>org.apache.camel.component.minio.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>
-            org.apache.camel.spi.ComponentResolver;component=minio
-        </camel.osgi.export.service>
-    </properties>
+    <description>Store and retrieve objects from Minio Storage Service</description>
 
     <dependencies>
-        <!-- camel -->
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
@@ -83,65 +75,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <defaultGoal>install</defaultGoal>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-
-            <!-- generate camel meta-data -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-component-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>add-resource</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/generated/java</source>
-                            </sources>
-                            <resources>
-                                <resource>
-                                    <directory>src/generated/resources</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

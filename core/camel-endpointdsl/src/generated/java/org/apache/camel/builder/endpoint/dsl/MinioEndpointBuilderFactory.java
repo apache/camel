@@ -2286,12 +2286,12 @@ public interface MinioEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-minio
          * 
-         * Syntax: <code>minio://bucketName</code>
+         * Syntax: <code>minio:bucketName</code>
          * 
          * Path parameter: bucketName (required)
          * Bucket name
          * 
-         * @param path //bucketName
+         * @param path bucketName
          */
         default MinioEndpointBuilder minio(String path) {
             return MinioEndpointBuilderFactory.endpointBuilder("minio", path);
@@ -2305,14 +2305,14 @@ public interface MinioEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-minio
          * 
-         * Syntax: <code>minio://bucketName</code>
+         * Syntax: <code>minio:bucketName</code>
          * 
          * Path parameter: bucketName (required)
          * Bucket name
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path //bucketName
+         * @param path bucketName
          */
         default MinioEndpointBuilder minio(String componentName, String path) {
             return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);

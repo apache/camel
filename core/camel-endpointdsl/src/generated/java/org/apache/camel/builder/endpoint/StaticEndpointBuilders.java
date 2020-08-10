@@ -10080,12 +10080,12 @@ public class StaticEndpointBuilders {
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      * 
-     * Syntax: <code>minio://bucketName</code>
+     * Syntax: <code>minio:bucketName</code>
      * 
      * Path parameter: bucketName (required)
      * Bucket name
      * 
-     * @param path //bucketName
+     * @param path bucketName
      */
     public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
             String path) {
@@ -10099,14 +10099,14 @@ public class StaticEndpointBuilders {
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      * 
-     * Syntax: <code>minio://bucketName</code>
+     * Syntax: <code>minio:bucketName</code>
      * 
      * Path parameter: bucketName (required)
      * Bucket name
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path //bucketName
+     * @param path bucketName
      */
     public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
             String componentName,
