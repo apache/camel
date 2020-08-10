@@ -28,13 +28,13 @@ public class VertxHttpQueryStringTest extends VertxHttpTestSupport {
     @Test
     public void testQueryStringPropertyPlaceholder() {
         String result = template.requestBody(getProducerUri() + "?os={{sys:os.name}}", null, String.class);
-        assertEquals("os=" + System.getProperty("os.name"), result);
+        assertEquals("os=" + System.getProperty("os.name"), result.replaceAll("%20", " "));
     }
 
     @Test
     public void testQueryStringFromHttpUriHeader() {
         String result = template.requestBody(getProducerUri() + "?os={{sys:os.name}}", null, String.class);
-        assertEquals("os=" + System.getProperty("os.name"), result);
+        assertEquals("os=" + System.getProperty("os.name"), result.replaceAll("%20", " "));
     }
 
     @Test
