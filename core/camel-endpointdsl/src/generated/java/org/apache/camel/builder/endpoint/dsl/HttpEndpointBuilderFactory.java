@@ -508,6 +508,17 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Proxy authentication domain (workstation name) to use with NTML.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthNtHost(String proxyAuthNtHost) {
+            doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
+            return this;
+        }
+        /**
          * Proxy authentication password.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -521,18 +532,19 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          */
-        default HttpEndpointBuilder proxyAuthPort(int proxyAuthPort) {
+        default HttpEndpointBuilder proxyAuthPort(Integer proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
             return this;
         }
         /**
          * Proxy authentication port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          */
