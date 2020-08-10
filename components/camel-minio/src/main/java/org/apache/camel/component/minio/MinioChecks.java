@@ -42,13 +42,13 @@ public final class MinioChecks {
     }
 
     static void checkOffsetConfig(final MinioConfiguration configuration, final java.util.function.Consumer<Long> fn) {
-        if (isNotEmpty(configuration.getOffset())) {
+        if (configuration.getOffset() > 0) {
             fn.accept(configuration.getOffset());
         }
     }
 
     static void checkLengthConfig(final MinioConfiguration configuration, final java.util.function.Consumer<Long> fn) {
-        if (isNotEmpty(configuration.getLength())) {
+        if (configuration.getLength() > 0) {
             fn.accept(configuration.getLength());
         }
     }
