@@ -4858,7 +4858,7 @@
   "MinioComponentBuilderFactory": {
     "kind": "component",
     "name": "minio",
-    "title": "Minio Storage Service",
+    "title": "Minio",
     "description": "Store and retrieve objects from Minio Storage Service using Minio SDK.",
     "deprecated": false,
     "firstVersion": "3.5.0",

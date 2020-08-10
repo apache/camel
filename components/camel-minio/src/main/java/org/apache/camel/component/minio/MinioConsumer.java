@@ -60,7 +60,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioConsumer.class);
 
-    int totalCounter;
+    private long totalCounter;
     private String continuationToken;
     private transient String minioConsumerToString;
 

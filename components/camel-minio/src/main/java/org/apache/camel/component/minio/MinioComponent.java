@@ -30,9 +30,6 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
-/**
- * Represents the component that manages {@link MinioEndpoint}.
- */
 @Component("minio")
 public class MinioComponent extends DefaultComponent {
 
@@ -48,7 +45,6 @@ public class MinioComponent extends DefaultComponent {
     public MinioComponent(CamelContext context) {
         super(context);
         registerExtension(new MinioComponentVerifierExtension());
-
     }
 
     @Override

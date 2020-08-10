@@ -10073,7 +10073,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Minio Storage Service (camel-minio)
+     * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 
      * Category: cloud,file
@@ -10092,7 +10092,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder("minio", path);
     }
     /**
-     * Minio Storage Service (camel-minio)
+     * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 
      * Category: cloud,file
