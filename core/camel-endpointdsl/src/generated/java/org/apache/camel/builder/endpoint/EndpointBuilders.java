@@ -237,6 +237,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory,

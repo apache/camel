@@ -2615,6 +2615,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MinaComponentBuilderFactory.mina();
     }
     /**
+     * Minio Storage Service (camel-minio)
+     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * 
+     * Category: cloud,file
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     */
+    static org.apache.camel.builder.component.dsl.MinioComponentBuilderFactory.MinioComponentBuilder minio() {
+        return org.apache.camel.builder.component.dsl.MinioComponentBuilderFactory.minio();
+    }
+    /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
      * 
