@@ -39,7 +39,7 @@ public interface MinioEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Minio Storage Service component.
+     * Builder for endpoint consumers for the Minio component.
      */
     public interface MinioEndpointConsumerBuilder
             extends
@@ -1297,8 +1297,7 @@ public interface MinioEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Minio Storage Service
-     * component.
+     * Advanced builder for endpoint consumers for the Minio component.
      */
     public interface AdvancedMinioEndpointConsumerBuilder
             extends
@@ -1454,7 +1453,7 @@ public interface MinioEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Minio Storage Service component.
+     * Builder for endpoint producers for the Minio component.
      */
     public interface MinioEndpointProducerBuilder
             extends
@@ -1862,8 +1861,7 @@ public interface MinioEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Minio Storage Service
-     * component.
+     * Advanced builder for endpoint producers for the Minio component.
      */
     public interface AdvancedMinioEndpointProducerBuilder
             extends
@@ -1930,7 +1928,7 @@ public interface MinioEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Minio Storage Service component.
+     * Builder for endpoint for the Minio component.
      */
     public interface MinioEndpointBuilder
             extends
@@ -2196,7 +2194,7 @@ public interface MinioEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Minio Storage Service component.
+     * Advanced builder for endpoint for the Minio component.
      */
     public interface AdvancedMinioEndpointBuilder
             extends
@@ -2278,7 +2276,7 @@ public interface MinioEndpointBuilderFactory {
 
     public interface MinioBuilders {
         /**
-         * Minio Storage Service (camel-minio)
+         * Minio (camel-minio)
          * Store and retrieve objects from Minio Storage Service using Minio
          * SDK.
          * 
@@ -2297,7 +2295,7 @@ public interface MinioEndpointBuilderFactory {
             return MinioEndpointBuilderFactory.endpointBuilder("minio", path);
         }
         /**
-         * Minio Storage Service (camel-minio)
+         * Minio (camel-minio)
          * Store and retrieve objects from Minio Storage Service using Minio
          * SDK.
          * 

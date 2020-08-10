@@ -31,7 +31,7 @@ import org.apache.camel.component.minio.MinioComponent;
 public interface MinioComponentBuilderFactory {
 
     /**
-     * Minio Storage Service (camel-minio)
+     * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 
      * Category: cloud,file
@@ -43,7 +43,7 @@ public interface MinioComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Minio Storage Service component.
+     * Builder for the Minio component.
      */
     interface MinioComponentBuilder extends ComponentBuilder<MinioComponent> {
         /**

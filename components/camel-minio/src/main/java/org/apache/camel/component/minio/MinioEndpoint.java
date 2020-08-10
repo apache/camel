@@ -53,7 +53,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * Store and retrieve objects from Minio Storage Service using Minio SDK.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio:bucketName",
+@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio", syntax = "minio:bucketName",
         category = {Category.CLOUD, Category.FILE})
 public class MinioEndpoint extends ScheduledPollEndpoint {
 

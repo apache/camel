@@ -2615,7 +2615,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MinaComponentBuilderFactory.mina();
     }
     /**
-     * Minio Storage Service (camel-minio)
+     * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 
      * Category: cloud,file

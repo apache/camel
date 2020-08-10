@@ -1,6 +1,6 @@
 [[minio-component]]
-= Minio Storage Service Component
-:docTitle: Minio Storage Service
+= Minio Component
+:docTitle: Minio
 :artifactId: camel-minio
 :description: Store and retrieve objects from Minio Storage Service using Minio SDK.
 :since: 3.5
@@ -41,7 +41,7 @@ from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix
 == URI Options
 
 // component options: START
-The Minio Storage Service component supports 47 options, which are listed below.
+The Minio component supports 47 options, which are listed below.
 
 
 
@@ -99,7 +99,7 @@ The Minio Storage Service component supports 47 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The Minio Storage Service endpoint is configured using URI syntax:
+The Minio endpoint is configured using URI syntax:
 
 ----
 minio:bucketName
