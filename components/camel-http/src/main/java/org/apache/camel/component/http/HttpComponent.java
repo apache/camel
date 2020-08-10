@@ -118,21 +118,21 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected int socketTimeout = -1;
 
     // proxy
-    private String proxyAuthScheme;
+    protected String proxyAuthScheme;
     @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
-    private String proxyAuthMethod;
+    protected String proxyAuthMethod;
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
-    private String proxyAuthUsername;
+    protected String proxyAuthUsername;
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication password")
-    private String proxyAuthPassword;
+    protected String proxyAuthPassword;
     @Metadata(label = "producer,proxy", description = "Proxy authentication host")
-    private String proxyAuthHost;
+    protected String proxyAuthHost;
     @Metadata(label = "producer,proxy", description = "Proxy authentication port")
-    private Integer proxyAuthPort;
+    protected Integer proxyAuthPort;
     @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use")
-    private String proxyAuthDomain;
+    protected String proxyAuthDomain;
     @Metadata(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
-    private String proxyAuthNtHost;
+    protected String proxyAuthNtHost;
 
     // options to the default created http connection manager
     @Metadata(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
