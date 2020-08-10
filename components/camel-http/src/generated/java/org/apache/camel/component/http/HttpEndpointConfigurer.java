@@ -98,6 +98,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyAuthHost": target.setProxyAuthHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthmethod":
         case "proxyAuthMethod": target.setProxyAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": target.setProxyAuthNtHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthpassword":
         case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthport":
@@ -168,6 +170,7 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("proxyAuthDomain", java.lang.String.class);
         answer.put("proxyAuthHost", java.lang.String.class);
         answer.put("proxyAuthMethod", java.lang.String.class);
+        answer.put("proxyAuthNtHost", java.lang.String.class);
         answer.put("proxyAuthPassword", java.lang.String.class);
         answer.put("proxyAuthPort", int.class);
         answer.put("proxyAuthScheme", java.lang.String.class);
@@ -266,6 +269,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyAuthHost": return target.getProxyAuthHost();
         case "proxyauthmethod":
         case "proxyAuthMethod": return target.getProxyAuthMethod();
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return target.getProxyAuthNtHost();
         case "proxyauthpassword":
         case "proxyAuthPassword": return target.getProxyAuthPassword();
         case "proxyauthport":

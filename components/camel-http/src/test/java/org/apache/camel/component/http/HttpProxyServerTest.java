@@ -122,6 +122,21 @@ public class HttpProxyServerTest extends BaseHttpTest {
         assertExchange(exchange);
     }
 
+    @Test
+    public void httpGetWithProxyOnComponent() throws Exception {
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setProxyAuthHost(getProxyHost());
+        http.setProxyAuthPort(Integer.parseInt(getProxyPort()));
+
+        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort(), exchange1 -> {
+        });
+
+        http.setProxyAuthHost(null);
+        http.setProxyAuthPort(null);
+
+        assertExchange(exchange);
+    }
+
     private String getProxyHost() {
         return proxy.getInetAddress().getHostName();
     }

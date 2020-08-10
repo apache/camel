@@ -42,6 +42,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -116,6 +117,23 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         + " A negative value is interpreted as undefined (system default).")
     protected int socketTimeout = -1;
 
+    // proxy
+    private String proxyAuthScheme;
+    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    private String proxyAuthMethod;
+    @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
+    private String proxyAuthUsername;
+    @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication password")
+    private String proxyAuthPassword;
+    @Metadata(label = "producer,proxy", description = "Proxy authentication host")
+    private String proxyAuthHost;
+    @Metadata(label = "producer,proxy", description = "Proxy authentication port")
+    private Integer proxyAuthPort;
+    @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use")
+    private String proxyAuthDomain;
+    @Metadata(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
+    private String proxyAuthNtHost;
+
     // options to the default created http connection manager
     @Metadata(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
     protected int maxTotalConnections = 200;
@@ -177,13 +195,13 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) throws Exception {
-        String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class);
+        String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class, getProxyAuthScheme());
         if (proxyAuthScheme == null) {
             // fallback and use either http or https depending on secure
             proxyAuthScheme = secure ? "https" : "http";
         }
-        String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class);
-        Integer proxyAuthPort = getParameter(parameters, "proxyAuthPort", Integer.class);
+        String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class, getProxyAuthHost());
+        Integer proxyAuthPort = getParameter(parameters, "proxyAuthPort", Integer.class, getProxyAuthPort());
         // fallback to alternative option name
         if (proxyAuthHost == null) {
             proxyAuthHost = getParameter(parameters, "proxyHost", String.class);
@@ -193,10 +211,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
 
         if (proxyAuthHost != null && proxyAuthPort != null) {
-            String proxyAuthUsername = getParameter(parameters, "proxyAuthUsername", String.class);
-            String proxyAuthPassword = getParameter(parameters, "proxyAuthPassword", String.class);
-            String proxyAuthDomain = getParameter(parameters, "proxyAuthDomain", String.class);
-            String proxyAuthNtHost = getParameter(parameters, "proxyAuthNtHost", String.class);
+            String proxyAuthUsername = getParameter(parameters, "proxyAuthUsername", String.class, getProxyAuthUsername());
+            String proxyAuthPassword = getParameter(parameters, "proxyAuthPassword", String.class, getProxyAuthPassword());
+            String proxyAuthDomain = getParameter(parameters, "proxyAuthDomain", String.class, getProxyAuthDomain());
+            String proxyAuthNtHost = getParameter(parameters, "proxyAuthNtHost", String.class, getProxyAuthNtHost());
 
             LOG.debug("Configuring HTTP client to use HTTP proxy {}:{}", proxyAuthHost, proxyAuthPort);
 
@@ -649,6 +667,70 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
+    }
+
+    public String getProxyAuthScheme() {
+        return proxyAuthScheme;
+    }
+
+    public void setProxyAuthScheme(String proxyAuthScheme) {
+        this.proxyAuthScheme = proxyAuthScheme;
+    }
+
+    public String getProxyAuthMethod() {
+        return proxyAuthMethod;
+    }
+
+    public void setProxyAuthMethod(String proxyAuthMethod) {
+        this.proxyAuthMethod = proxyAuthMethod;
+    }
+
+    public String getProxyAuthUsername() {
+        return proxyAuthUsername;
+    }
+
+    public void setProxyAuthUsername(String proxyAuthUsername) {
+        this.proxyAuthUsername = proxyAuthUsername;
+    }
+
+    public String getProxyAuthPassword() {
+        return proxyAuthPassword;
+    }
+
+    public void setProxyAuthPassword(String proxyAuthPassword) {
+        this.proxyAuthPassword = proxyAuthPassword;
+    }
+
+    public String getProxyAuthHost() {
+        return proxyAuthHost;
+    }
+
+    public void setProxyAuthHost(String proxyAuthHost) {
+        this.proxyAuthHost = proxyAuthHost;
+    }
+
+    public Integer getProxyAuthPort() {
+        return proxyAuthPort;
+    }
+
+    public void setProxyAuthPort(Integer proxyAuthPort) {
+        this.proxyAuthPort = proxyAuthPort;
+    }
+
+    public String getProxyAuthDomain() {
+        return proxyAuthDomain;
+    }
+
+    public void setProxyAuthDomain(String proxyAuthDomain) {
+        this.proxyAuthDomain = proxyAuthDomain;
+    }
+
+    public String getProxyAuthNtHost() {
+        return proxyAuthNtHost;
+    }
+
+    public void setProxyAuthNtHost(String proxyAuthNtHost) {
+        this.proxyAuthNtHost = proxyAuthNtHost;
     }
 
     @Override

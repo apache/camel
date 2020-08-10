@@ -49,6 +49,20 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
+        case "proxyauthdomain":
+        case "proxyAuthDomain": target.setProxyAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthhost":
+        case "proxyAuthHost": target.setProxyAuthHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthmethod":
+        case "proxyAuthMethod": target.setProxyAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": target.setProxyAuthNtHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthport":
+        case "proxyAuthPort": target.setProxyAuthPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyauthusername":
+        case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
         case "sslcontextparameters":
@@ -79,6 +93,13 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("httpContext", org.apache.http.protocol.HttpContext.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxTotalConnections", int.class);
+        answer.put("proxyAuthDomain", java.lang.String.class);
+        answer.put("proxyAuthHost", java.lang.String.class);
+        answer.put("proxyAuthMethod", java.lang.String.class);
+        answer.put("proxyAuthNtHost", java.lang.String.class);
+        answer.put("proxyAuthPassword", java.lang.String.class);
+        answer.put("proxyAuthPort", java.lang.Integer.class);
+        answer.put("proxyAuthUsername", java.lang.String.class);
         answer.put("socketTimeout", int.class);
         answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         answer.put("useGlobalSslContextParameters", boolean.class);
@@ -120,6 +141,20 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
+        case "proxyauthdomain":
+        case "proxyAuthDomain": return target.getProxyAuthDomain();
+        case "proxyauthhost":
+        case "proxyAuthHost": return target.getProxyAuthHost();
+        case "proxyauthmethod":
+        case "proxyAuthMethod": return target.getProxyAuthMethod();
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return target.getProxyAuthNtHost();
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return target.getProxyAuthPassword();
+        case "proxyauthport":
+        case "proxyAuthPort": return target.getProxyAuthPort();
+        case "proxyauthusername":
+        case "proxyAuthUsername": return target.getProxyAuthUsername();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
         case "sslcontextparameters":

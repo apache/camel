@@ -163,6 +163,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     private int proxyAuthPort;
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
     private String proxyAuthDomain;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
+    private String proxyAuthNtHost;
 
     public HttpCommonEndpoint() {
     }
@@ -741,5 +743,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getProxyAuthNtHost() {
+        return proxyAuthNtHost;
+    }
+
+    /**
+     * Proxy authentication domain (workstation name) to use with NTML
+     */
+    public void setProxyAuthNtHost(String proxyAuthNtHost) {
+        this.proxyAuthNtHost = proxyAuthNtHost;
     }
 }
