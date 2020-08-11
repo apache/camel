@@ -564,4 +564,34 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(ExampleBean.class, setters.get(0).getParameterTypes()[0]);
         assertEquals(String.class, setters.get(1).getParameterTypes()[0]);
     }
+
+
+    @Test
+    public void testArray() throws Exception {
+        MyBeanWithArray target = new MyBeanWithArray();
+        IntrospectionSupport.setProperty(context.getTypeConverter(), target, "names[0]", "James");
+        IntrospectionSupport.setProperty(context.getTypeConverter(), target, "names[1]", "Claus");
+        assertEquals("James", target.getNames()[0]);
+        assertEquals("Claus", target.getNames()[1]);
+
+        IntrospectionSupport.setProperty(context.getTypeConverter(), target, "names[0]", "JamesX");
+        assertEquals("JamesX", target.getNames()[0]);
+
+        IntrospectionSupport.setProperty(context.getTypeConverter(), target, "names[2]", "Andrea");
+        assertEquals("JamesX", target.getNames()[0]);
+        assertEquals("Claus", target.getNames()[1]);
+        assertEquals("Andrea", target.getNames()[2]);
+    }
+
+    public class MyBeanWithArray {
+        private String[] names = new String[10];
+
+        public String[] getNames() {
+            return names;
+        }
+
+        public void setNames(String[] names) {
+            this.names = names;
+        }
+    }
 }
