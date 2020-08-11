@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -28,7 +29,6 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,11 +51,11 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         System.setProperty(JmxSystemPropertyKeys.DISABLED, Boolean.toString(!useJmx()));
         Class<?>[] excluded = excludeRoutes();
         if (excluded != null && excluded.length > 0) {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            StringJoiner excludedRoutes = new StringJoiner(",");
             for (Class<?> clazz : excluded) {
-                csb.append(clazz.getName());
+                excludedRoutes.add(clazz.getName());
             }
-            System.setProperty(SpringCamelContext.EXCLUDE_ROUTES, csb.toString());
+            System.setProperty(SpringCamelContext.EXCLUDE_ROUTES, excludedRoutes.toString());
         }
 
         applicationContext = createApplicationContext();

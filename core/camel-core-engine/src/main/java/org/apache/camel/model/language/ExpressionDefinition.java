@@ -17,6 +17,7 @@
 package org.apache.camel.model.language;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,7 +35,6 @@ import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -78,9 +78,9 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
     }
 
     public static String getLabel(List<ExpressionDefinition> expressions) {
-        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        StringJoiner buffer = new StringJoiner(", ");
         for (ExpressionDefinition expression : expressions) {
-            buffer.append(expression.getLabel());
+            buffer.add(expression.getLabel());
         }
         return buffer.toString();
     }

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -32,12 +33,14 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.engine.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CachedOutputStreamTest extends ContextTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
@@ -73,13 +76,13 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
     private static String toString(InputStream input) throws IOException {
         BufferedReader reader = IOHelper.buffered(new InputStreamReader(input));
-        CollectionStringBuffer builder = new CollectionStringBuffer();
+        StringJoiner builder = new StringJoiner(", ");
         while (true) {
             String line = reader.readLine();
             if (line == null) {
                 return builder.toString();
             }
-            builder.append(line);
+            builder.add(line);
         }
     }
 

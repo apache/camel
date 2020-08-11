@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -39,7 +40,6 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -152,7 +152,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 // resolve template and replace {key} with the values form the exchange
                 // each {} is a parameter (url templating)
                 String[] arr = resolvedUriTemplate.split("\\/");
-                CollectionStringBuffer csb = new CollectionStringBuffer("/");
+                StringJoiner uriTemplateBuilder = new StringJoiner("/");
                 for (String a : arr) {
                     String resolvedUriParam = resolveHeaderPlaceholders(a, inMessage);
 
@@ -162,12 +162,12 @@ public class RestProducer extends DefaultAsyncProducer {
                             && !resolvedUriParam.contains("{")
                             && !resolvedUriParam.contains("}")) {
                         hasPath = true;
-                        csb.append(resolvedUriParam);
+                        uriTemplateBuilder.add(resolvedUriParam);
                     } else {
-                        csb.append(a);
+                        uriTemplateBuilder.add(a);
                     }
                 }
-                resolvedUriTemplate = csb.toString();
+                resolvedUriTemplate = uriTemplateBuilder.toString();
             }
         }
 

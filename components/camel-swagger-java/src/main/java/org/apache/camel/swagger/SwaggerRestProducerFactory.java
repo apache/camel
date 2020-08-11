@@ -19,6 +19,7 @@ package org.apache.camel.swagger;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -30,7 +31,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,30 +143,30 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
             LOG.debug("Using RestProducerFactory: {}", factory);
 
             if (produces == null) {
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                StringJoiner producesBuilder = new StringJoiner(",");
                 List<String> list = operation.getProduces();
                 if (list == null) {
                     list = swagger.getProduces();
                 }
                 if (list != null) {
                     for (String s : list) {
-                        csb.append(s);
+                        producesBuilder.add(s);
                     }
                 }
-                produces = csb.isEmpty() ? null : csb.toString();
+                produces = producesBuilder.toString().isEmpty() ? null : producesBuilder.toString();
             }
             if (consumes == null) {
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                StringJoiner consumesBuilder = new StringJoiner(",");
                 List<String> list = operation.getConsumes();
                 if (list == null) {
                     list = swagger.getConsumes();
                 }
                 if (list != null) {
                     for (String s : list) {
-                        csb.append(s);
+                        consumesBuilder.add(s);
                     }
                 }
-                consumes = csb.isEmpty() ? null : csb.toString();
+                consumes = consumesBuilder.toString().isEmpty() ? null : consumesBuilder.toString();
             }
 
             String basePath;

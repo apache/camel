@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -37,7 +38,6 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -86,12 +86,12 @@ public final class CamelAnnotationsHandler {
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
             Class[] routes = testClass.getAnnotation(ExcludeRoutes.class).value();
             // need to setup this as a JVM system property
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            StringJoiner routesBuilder = new StringJoiner(",");
             for (Class clazz : routes) {
-                csb.append(clazz.getName());
+                routesBuilder.add(clazz.getName());
             }
             String key = SpringCamelContext.EXCLUDE_ROUTES;
-            String value = csb.toString();
+            String value = routesBuilder.toString();
 
             String exists = System.getProperty(key);
             if (exists != null) {
