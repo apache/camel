@@ -39,6 +39,8 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "okStatusCodeRange": target.setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
         case "preservehostheader":
         case "preserveHostHeader": target.setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": target.setProxyAuthNtHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthscheme":
         case "proxyAuthScheme": target.setProxyAuthScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -68,6 +70,7 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         answer.put("lazyStartProducer", boolean.class);
         answer.put("okStatusCodeRange", java.lang.String.class);
         answer.put("preserveHostHeader", boolean.class);
+        answer.put("proxyAuthNtHost", java.lang.String.class);
         answer.put("proxyAuthScheme", java.lang.String.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", int.class);
@@ -101,6 +104,8 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "okStatusCodeRange": return target.getOkStatusCodeRange();
         case "preservehostheader":
         case "preserveHostHeader": return target.isPreserveHostHeader();
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return target.getProxyAuthNtHost();
         case "proxyauthscheme":
         case "proxyAuthScheme": return target.getProxyAuthScheme();
         case "proxyhost":

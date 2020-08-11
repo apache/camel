@@ -161,6 +161,90 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
+         * Proxy authentication domain to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyComponentBuilder proxyAuthDomain(
+                java.lang.String proxyAuthDomain) {
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
+            return this;
+        }
+        /**
+         * Proxy authentication host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyComponentBuilder proxyAuthHost(
+                java.lang.String proxyAuthHost) {
+            doSetProperty("proxyAuthHost", proxyAuthHost);
+            return this;
+        }
+        /**
+         * Proxy authentication method to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyComponentBuilder proxyAuthMethod(
+                java.lang.String proxyAuthMethod) {
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
+            return this;
+        }
+        /**
+         * Proxy authentication domain (workstation name) to use with NTML.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyComponentBuilder proxyAuthNtHost(
+                java.lang.String proxyAuthNtHost) {
+            doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
+            return this;
+        }
+        /**
+         * Proxy authentication password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyComponentBuilder proxyAuthPassword(
+                java.lang.String proxyAuthPassword) {
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
+            return this;
+        }
+        /**
+         * Proxy authentication port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyComponentBuilder proxyAuthPort(
+                java.lang.Integer proxyAuthPort) {
+            doSetProperty("proxyAuthPort", proxyAuthPort);
+            return this;
+        }
+        /**
+         * Proxy authentication username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyComponentBuilder proxyAuthUsername(
+                java.lang.String proxyAuthUsername) {
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters. Important: Only one
          * instance of org.apache.camel.support.jsse.SSLContextParameters is
          * supported per HttpComponent. If you need to use 2 or more different
@@ -227,6 +311,13 @@ public interface ResteasyComponentBuilderFactory {
             case "basicPropertyBinding": ((ResteasyComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "httpBinding": ((ResteasyComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "headerFilterStrategy": ((ResteasyComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "proxyAuthDomain": ((ResteasyComponent) component).setProxyAuthDomain((java.lang.String) value); return true;
+            case "proxyAuthHost": ((ResteasyComponent) component).setProxyAuthHost((java.lang.String) value); return true;
+            case "proxyAuthMethod": ((ResteasyComponent) component).setProxyAuthMethod((java.lang.String) value); return true;
+            case "proxyAuthNtHost": ((ResteasyComponent) component).setProxyAuthNtHost((java.lang.String) value); return true;
+            case "proxyAuthPassword": ((ResteasyComponent) component).setProxyAuthPassword((java.lang.String) value); return true;
+            case "proxyAuthPort": ((ResteasyComponent) component).setProxyAuthPort((java.lang.Integer) value); return true;
+            case "proxyAuthUsername": ((ResteasyComponent) component).setProxyAuthUsername((java.lang.String) value); return true;
             case "sslContextParameters": ((ResteasyComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ResteasyComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "x509HostnameVerifier": ((ResteasyComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;

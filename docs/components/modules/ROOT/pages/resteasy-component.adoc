@@ -43,7 +43,7 @@ You can append query options to the URI in the following format:
 === Options
 
 // component options: START
-The Resteasy component supports 10 options, which are listed below.
+The Resteasy component supports 17 options, which are listed below.
 
 
 
@@ -57,6 +57,13 @@ The Resteasy component supports 10 options, which are listed below.
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *proxyAuthDomain* (proxy) | Proxy authentication domain to use |  | String
+| *proxyAuthHost* (proxy) | Proxy authentication host |  | String
+| *proxyAuthMethod* (proxy) | Proxy authentication method to use. The value can be one of: Basic, Digest, NTLM |  | String
+| *proxyAuthNtHost* (proxy) | Proxy authentication domain (workstation name) to use with NTML |  | String
+| *proxyAuthPassword* (proxy) | Proxy authentication password |  | String
+| *proxyAuthPort* (proxy) | Proxy authentication port |  | Integer
+| *proxyAuthUsername* (proxy) | Proxy authentication username |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *x509HostnameVerifier* (security) | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier. |  | HostnameVerifier
@@ -83,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (65 parameters):
+=== Query Parameters (66 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -134,6 +141,7 @@ with the following path and query parameters:
 | *proxyAuthDomain* (proxy) | Proxy authentication domain to use with NTML |  | String
 | *proxyAuthHost* (proxy) | Proxy authentication host |  | String
 | *proxyAuthMethod* (proxy) | Proxy authentication method to use. The value can be one of: Basic, Digest, NTLM |  | String
+| *proxyAuthNtHost* (proxy) | Proxy authentication domain (workstation name) to use with NTML |  | String
 | *proxyAuthPassword* (proxy) | Proxy authentication password |  | String
 | *proxyAuthPort* (proxy) | Proxy authentication port |  | int
 | *proxyAuthScheme* (proxy) | Proxy authentication scheme to use. The value can be one of: http, https |  | String
