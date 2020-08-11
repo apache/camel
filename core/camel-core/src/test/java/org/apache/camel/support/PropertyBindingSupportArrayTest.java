@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for PropertyBindingSupport
  */
-public class PropertyBindingSupportListTest extends ContextTestSupport {
+public class PropertyBindingSupportArrayTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -58,7 +57,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesList() throws Exception {
+    public void testPropertiesArray() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -75,15 +74,15 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         assertEquals(33, foo.getBar().getAge());
         assertTrue(foo.getBar().isRider());
         assertTrue(foo.getBar().isGoldCustomer());
-        assertEquals(2, foo.getBar().getWorks().size());
-        assertEquals(123, foo.getBar().getWorks().get(0).getId());
-        assertEquals("Acme", foo.getBar().getWorks().get(0).getName());
-        assertEquals(456, foo.getBar().getWorks().get(1).getId());
-        assertEquals("Acme 2", foo.getBar().getWorks().get(1).getName());
+        assertEquals(2, foo.getBar().getWorks().length);
+        assertEquals(123, foo.getBar().getWorks()[0].getId());
+        assertEquals("Acme", foo.getBar().getWorks()[0].getName());
+        assertEquals(456, foo.getBar().getWorks()[1].getId());
+        assertEquals("Acme 2", foo.getBar().getWorks()[1].getName());
     }
 
     @Test
-    public void testPropertiesListWithGaps() throws Exception {
+    public void testPropertiesArrayWithGaps() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -100,15 +99,15 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         assertEquals(33, foo.getBar().getAge());
         assertTrue(foo.getBar().isRider());
         assertTrue(foo.getBar().isGoldCustomer());
-        assertEquals(10, foo.getBar().getWorks().size());
-        assertEquals(123, foo.getBar().getWorks().get(5).getId());
-        assertEquals("Acme", foo.getBar().getWorks().get(5).getName());
-        assertEquals(456, foo.getBar().getWorks().get(9).getId());
-        assertEquals("Acme 2", foo.getBar().getWorks().get(9).getName());
+        assertEquals(10, foo.getBar().getWorks().length);
+        assertEquals(123, foo.getBar().getWorks()[5].getId());
+        assertEquals("Acme", foo.getBar().getWorks()[5].getName());
+        assertEquals(456, foo.getBar().getWorks()[9].getId());
+        assertEquals("Acme 2", foo.getBar().getWorks()[9].getName());
     }
 
     @Test
-    public void testPropertiesListNested() throws Exception {
+    public void testPropertiesArrayNested() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -127,34 +126,36 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         assertEquals(33, foo.getBar().getAge());
         assertTrue(foo.getBar().isRider());
         assertTrue(foo.getBar().isGoldCustomer());
-        assertEquals(2, foo.getBar().getWorks().size());
-        assertEquals(666, foo.getBar().getWorks().get(0).getId());
-        assertEquals("Acme", foo.getBar().getWorks().get(0).getName());
-        assertEquals(456, foo.getBar().getWorks().get(1).getId());
-        assertEquals("I changed this", foo.getBar().getWorks().get(1).getName());
+        assertEquals(2, foo.getBar().getWorks().length);
+        assertEquals(666, foo.getBar().getWorks()[0].getId());
+        assertEquals("Acme", foo.getBar().getWorks()[0].getName());
+        assertEquals(456, foo.getBar().getWorks()[1].getId());
+        assertEquals("I changed this", foo.getBar().getWorks()[1].getName());
     }
 
     @Test
-    public void testPropertiesListNestedWithType() throws Exception {
+    public void testPropertiesArrayNestedSimple() throws Exception {
         Foo foo = new Foo();
 
-        // use CollectionHelper::mapOf to avoid insertion ordered iteration
         PropertyBindingSupport.build().bind(context, foo, mapOf(
-            "bar.works[0]", "#class:" + Company.class.getName(),
-            "bar.works[0].name", "first",
-            "bar.works[1]", "#class:" + Company.class.getName(),
-            "bar.works[1].name", "second"
+            "bar.works[0].id", "666",
+            "bar.works[1].name", "I changed this"
         ));
 
-        assertEquals(2, foo.getBar().getWorks().size());
-        assertEquals(0, foo.getBar().getWorks().get(0).getId());
-        assertEquals("first", foo.getBar().getWorks().get(0).getName());
-        assertEquals(0, foo.getBar().getWorks().get(1).getId());
-        assertEquals("second", foo.getBar().getWorks().get(1).getName());
+        assertEquals(666, foo.bar.works[0].getId());
+        assertEquals("I changed this", foo.bar.works[1].getName());
+
+        PropertyBindingSupport.build().bind(context, foo, mapOf(
+            "bar.works[0].id", "999",
+            "bar.works[1].name", "I changed this again"
+        ));
+
+        assertEquals(999, foo.bar.works[0].getId());
+        assertEquals("I changed this again", foo.bar.works[1].getName());
     }
 
     @Test
-    public void testPropertiesListFirst() throws Exception {
+    public void testPropertiesArrayFirst() throws Exception {
         Bar bar = new Bar();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -165,15 +166,15 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
 
         PropertyBindingSupport.build().bind(context, bar, prop);
 
-        assertEquals(2, bar.getWorks().size());
-        assertEquals(666, bar.getWorks().get(0).getId());
-        assertEquals("Acme", bar.getWorks().get(0).getName());
-        assertEquals(456, bar.getWorks().get(1).getId());
-        assertEquals("I changed this", bar.getWorks().get(1).getName());
+        assertEquals(2, bar.getWorks().length);
+        assertEquals(666, bar.getWorks()[0].getId());
+        assertEquals("Acme", bar.getWorks()[0].getName());
+        assertEquals(456, bar.getWorks()[1].getId());
+        assertEquals("I changed this", bar.getWorks()[1].getName());
     }
 
     @Test
-    public void testPropertiesNotList() throws Exception {
+    public void testPropertiesNotArray() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -192,8 +193,8 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     public static class Foo {
-        private String name;
-        private Bar bar = new Bar();
+        String name;
+        Bar bar = new Bar();
 
         public String getName() {
             return name;
@@ -213,10 +214,10 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     public static class Bar {
-        private int age;
-        private boolean rider;
-        private List<Company> works; // should auto-create this via the setter
-        private boolean goldCustomer;
+        int age;
+        boolean rider;
+        Company[] works; // should auto-create this via the setter
+        boolean goldCustomer;
 
         public int getAge() {
             return age;
@@ -234,11 +235,11 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
             this.rider = rider;
         }
 
-        public List<Company> getWorks() {
+        public Company[] getWorks() {
             return works;
         }
 
-        public void setWorks(List<Company> works) {
+        public void setWorks(Company[] works) {
             this.works = works;
         }
 

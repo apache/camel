@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -199,7 +200,7 @@ public final class IntrospectionSupport {
 
         return false;
     }
-    
+
     public static boolean isSetter(Method method) {
         return isSetter(method, false);
     }
@@ -471,7 +472,7 @@ public final class IntrospectionSupport {
                 }
             }
         }
-        
+
         return rc;
     }
 
@@ -621,6 +622,8 @@ public final class IntrospectionSupport {
                         obj = new LinkedHashMap<>();
                     } else if (Collection.class.isAssignableFrom(returnType)) {
                         obj = new ArrayList<>();
+                    } else if (returnType.isArray()) {
+                        obj = Array.newInstance(returnType.getComponentType(), 0);
                     }
                 } else {
                     // fallback as map type
@@ -646,15 +649,53 @@ public final class IntrospectionSupport {
                     value = CamelContextHelper.lookup(context, s);
                 }
                 if (isNotEmpty(lookupKey)) {
-                    int idx = Integer.valueOf(lookupKey);
-                    list.add(idx, value);
+                    int idx = Integer.parseInt(lookupKey);
+                    if (idx < list.size()) {
+                        list.set(idx, value);
+                    } else if (idx == list.size()) {
+                        list.add(value);
+                    } else {
+                        // If the list implementation is based on an array, we
+                        // can increase tha capacity to the required value to
+                        // avoid potential re-allocation weh invoking List::add.
+                        //
+                        // Note that ArrayList is the default List impl that
+                        // is automatically created if the property is null.
+                        if (list instanceof ArrayList) {
+                            ((ArrayList) list).ensureCapacity(idx + 1);
+                        }
+                        while (list.size() < idx) {
+                            list.add(null);
+                        }
+                        list.add(idx, value);
+                    }
                 } else {
                     list.add(value);
                 }
                 return true;
+            } else if (obj.getClass().isArray() && lookupKey != null) {
+                if (context != null && refName != null && value == null) {
+                    String s = StringHelper.replaceAll(refName, "#", "");
+                    value = CamelContextHelper.lookup(context, s);
+                }
+                int idx = Integer.parseInt(lookupKey);
+                int size = Array.getLength(obj);
+                if (idx >= size) {
+                    obj = Arrays.copyOf((Object[])obj, idx + 1);
+
+                    // replace array
+                    boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
+                    if (!hit) {
+                        throw new IllegalArgumentException("Cannot set property: " + name + " as an array because target bean has no setter method for the array");
+                    }
+                }
+
+                Array.set(obj, idx, value);
+
+                return true;
             } else {
                 // not a map or list
-                throw new IllegalArgumentException("Cannot set property: " + name + " as either a Map/List because target bean is not a Map or List type: " + target);
+                throw new IllegalArgumentException("Cannot set property: " + name + " as either a Map/List/array because target bean is not a Map, List or array type: " + target);
             }
         }
 
@@ -799,7 +840,7 @@ public final class IntrospectionSupport {
         // allow build pattern as a setter as well
         return setProperty(context, typeConverter, target, name, value, null, true, false, false);
     }
-    
+
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(null, typeConverter, target, name, value, null, true, false, false);
@@ -873,7 +914,7 @@ public final class IntrospectionSupport {
             // find the best match if possible
             LOG.trace("Found {} suitable setter methods for setting {}", candidates.size(), name);
             // prefer to use the one with the same instance if any exists
-            for (Method method : candidates) {                               
+            for (Method method : candidates) {
                 if (method.getParameterTypes()[0].isInstance(value)) {
                     LOG.trace("Method {} is the best candidate as it has parameter with same instance type", method);
                     // retain only this method in the answer
