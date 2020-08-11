@@ -41,8 +41,9 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 @Component("resteasy")
 @Metadata(excludeProperties = "clientConnectionManager,connectionsPerRoute,connectionTimeToLive,"
-        + "httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
-        + "connectTimeout,socketTimeout,cookieStore")
+        + "httpBinding,httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
+        + "connectTimeout,socketTimeout,cookieStore,x509HostnameVerifier,sslContextParameters,useGlobalSslContextParameters,"
+        + "proxyMethod,proxyHost,proxyPort,proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,proxyAuthNtHost")
 public class ResteasyComponent extends HttpComponent implements RestConsumerFactory {
 
     @Metadata(label = "advanced")

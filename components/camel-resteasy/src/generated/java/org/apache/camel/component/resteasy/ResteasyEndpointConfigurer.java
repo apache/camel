@@ -20,8 +20,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         ResteasyEndpoint target = (ResteasyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
-        case "basicauth":
-        case "basicAuth": target.setBasicAuth(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "eagercheckcontentavailable":
@@ -41,8 +39,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyclientclass":
         case "proxyClientClass": target.setProxyClientClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxymethod":
-        case "proxyMethod": target.setProxyMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "responsebuffersize":
         case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "resteasymethod":
@@ -64,7 +60,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = super.getAllOptions(target);
         answer.put("async", boolean.class);
-        answer.put("basicAuth", java.lang.Boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("eagerCheckContentAvailable", boolean.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
@@ -75,7 +70,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         answer.put("optionsEnabled", boolean.class);
         answer.put("password", java.lang.String.class);
         answer.put("proxyClientClass", java.lang.String.class);
-        answer.put("proxyMethod", java.lang.String.class);
         answer.put("responseBufferSize", java.lang.Integer.class);
         answer.put("resteasyMethod", java.lang.String.class);
         answer.put("servletName", java.lang.String.class);
@@ -91,8 +85,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         ResteasyEndpoint target = (ResteasyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": return target.isAsync();
-        case "basicauth":
-        case "basicAuth": return target.getBasicAuth();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "eagercheckcontentavailable":
@@ -112,8 +104,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "password": return target.getPassword();
         case "proxyclientclass":
         case "proxyClientClass": return target.getProxyClientClass();
-        case "proxymethod":
-        case "proxyMethod": return target.getProxyMethod();
         case "responsebuffersize":
         case "responseBufferSize": return target.getResponseBufferSize();
         case "resteasymethod":

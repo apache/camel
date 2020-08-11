@@ -39,7 +39,10 @@ import org.slf4j.LoggerFactory;
         title = "Resteasy", syntax = "resteasy:httpUri", category = {Category.REST})
 @Metadata(excludeProperties = "clientConnectionManager,connectionsPerRoute,connectionTimeToLive,"
         + "httpBinding,httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
-        + "connectTimeout,socketTimeout,cookieStore")
+        + "connectTimeout,socketTimeout,cookieStore,x509HostnameVerifier,sslContextParameters,"
+        + "clientBuilder,httpClient,httpClientOptions,"
+        + "proxyHost,proxyMethod,proxyPort,authDomain,authenticationPreemptive,authHost,authMethod,authMethodPriority,authPassword,authUsername,basicAuth,"
+        + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,proxyAuthNtHost")
 public class ResteasyEndpoint extends HttpEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResteasyEndpoint.class);

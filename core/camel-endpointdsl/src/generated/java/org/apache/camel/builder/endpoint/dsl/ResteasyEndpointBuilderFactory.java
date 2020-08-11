@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -361,40 +360,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy method defined in an interface.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointConsumerBuilder proxyMethod(String proxyMethod) {
-            doSetProperty("proxyMethod", proxyMethod);
-            return this;
-        }
-        /**
-         * Sets the flag to basicAuth on endpoint.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointConsumerBuilder basicAuth(Boolean basicAuth) {
-            doSetProperty("basicAuth", basicAuth);
-            return this;
-        }
-        /**
-         * Sets the flag to basicAuth on endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointConsumerBuilder basicAuth(String basicAuth) {
-            doSetProperty("basicAuth", basicAuth);
-            return this;
-        }
-        /**
          * Sets the password.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -406,40 +371,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointConsumerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
          * Sets the username.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -448,33 +379,6 @@ public interface ResteasyEndpointBuilderFactory {
          */
         default ResteasyEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or NoopHostnameVerifier.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointConsumerBuilder x509HostnameVerifier(
-                Object x509HostnameVerifier) {
-            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
-            return this;
-        }
-        /**
-         * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or NoopHostnameVerifier.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointConsumerBuilder x509HostnameVerifier(
-                String x509HostnameVerifier) {
-            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
     }
@@ -660,36 +564,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Provide access to the http client request parameters used on new
-         * RequestConfig instances used by producers or consumers of this
-         * endpoint.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder clientBuilder(
-                Object clientBuilder) {
-            doSetProperty("clientBuilder", clientBuilder);
-            return this;
-        }
-        /**
-         * Provide access to the http client request parameters used on new
-         * RequestConfig instances used by producers or consumers of this
-         * endpoint.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder clientBuilder(
-                String clientBuilder) {
-            doSetProperty("clientBuilder", clientBuilder);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -715,64 +589,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Sets a custom HttpClient to be used by the producer.
-         * 
-         * The option is a: <code>org.apache.http.client.HttpClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpClient(
-                Object httpClient) {
-            doSetProperty("httpClient", httpClient);
-            return this;
-        }
-        /**
-         * Sets a custom HttpClient to be used by the producer.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.client.HttpClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpClient(
-                String httpClient) {
-            doSetProperty("httpClient", httpClient);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpClientOptions(
-                String key,
-                Object value) {
-            doSetMultiValueProperty("httpClientOptions", "httpClient." + key, value);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpClientOptions(
-                Map values) {
-            doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
             return this;
         }
         /**
@@ -1431,115 +1247,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication domain to use with NTML.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthDomain(
-                String proxyAuthDomain) {
-            doSetProperty("proxyAuthDomain", proxyAuthDomain);
-            return this;
-        }
-        /**
-         * Proxy authentication host.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthHost(
-                String proxyAuthHost) {
-            doSetProperty("proxyAuthHost", proxyAuthHost);
-            return this;
-        }
-        /**
-         * Proxy authentication method to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthMethod(
-                String proxyAuthMethod) {
-            doSetProperty("proxyAuthMethod", proxyAuthMethod);
-            return this;
-        }
-        /**
-         * Proxy authentication domain (workstation name) to use with NTML.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthNtHost(
-                String proxyAuthNtHost) {
-            doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
-            return this;
-        }
-        /**
-         * Proxy authentication password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthPassword(
-                String proxyAuthPassword) {
-            doSetProperty("proxyAuthPassword", proxyAuthPassword);
-            return this;
-        }
-        /**
-         * Proxy authentication port.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthPort(
-                Integer proxyAuthPort) {
-            doSetProperty("proxyAuthPort", proxyAuthPort);
-            return this;
-        }
-        /**
-         * Proxy authentication port.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthPort(
-                String proxyAuthPort) {
-            doSetProperty("proxyAuthPort", proxyAuthPort);
-            return this;
-        }
-        /**
-         * Proxy authentication scheme to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthScheme(
-                String proxyAuthScheme) {
-            doSetProperty("proxyAuthScheme", proxyAuthScheme);
-            return this;
-        }
-        /**
-         * Proxy authentication username.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyAuthUsername(
-                String proxyAuthUsername) {
-            doSetProperty("proxyAuthUsername", proxyAuthUsername);
-            return this;
-        }
-        /**
          * Sets the resteasy proxyClientClass.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1549,170 +1256,6 @@ public interface ResteasyEndpointBuilderFactory {
         default ResteasyEndpointProducerBuilder proxyClientClass(
                 String proxyClientClass) {
             doSetProperty("proxyClientClass", proxyClientClass);
-            return this;
-        }
-        /**
-         * Proxy hostname to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Sets the proxy method defined in an interface.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyMethod(String proxyMethod) {
-            doSetProperty("proxyMethod", proxyMethod);
-            return this;
-        }
-        /**
-         * Proxy port to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyPort(int proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Proxy port to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Authentication domain to use with NTML.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authDomain(String authDomain) {
-            doSetProperty("authDomain", authDomain);
-            return this;
-        }
-        /**
-         * If this option is true, camel-http sends preemptive basic
-         * authentication to the server.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authenticationPreemptive(
-                boolean authenticationPreemptive) {
-            doSetProperty("authenticationPreemptive", authenticationPreemptive);
-            return this;
-        }
-        /**
-         * If this option is true, camel-http sends preemptive basic
-         * authentication to the server.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authenticationPreemptive(
-                String authenticationPreemptive) {
-            doSetProperty("authenticationPreemptive", authenticationPreemptive);
-            return this;
-        }
-        /**
-         * Authentication host to use with NTML.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authHost(String authHost) {
-            doSetProperty("authHost", authHost);
-            return this;
-        }
-        /**
-         * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authMethod(String authMethod) {
-            doSetProperty("authMethod", authMethod);
-            return this;
-        }
-        /**
-         * Which authentication method to prioritize to use, either as Basic,
-         * Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authMethodPriority(
-                String authMethodPriority) {
-            doSetProperty("authMethodPriority", authMethodPriority);
-            return this;
-        }
-        /**
-         * Authentication password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authPassword(String authPassword) {
-            doSetProperty("authPassword", authPassword);
-            return this;
-        }
-        /**
-         * Authentication username.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder authUsername(String authUsername) {
-            doSetProperty("authUsername", authUsername);
-            return this;
-        }
-        /**
-         * Sets the flag to basicAuth on endpoint.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder basicAuth(Boolean basicAuth) {
-            doSetProperty("basicAuth", basicAuth);
-            return this;
-        }
-        /**
-         * Sets the flag to basicAuth on endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder basicAuth(String basicAuth) {
-            doSetProperty("basicAuth", basicAuth);
             return this;
         }
         /**
@@ -1727,40 +1270,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
          * Sets the username.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1769,33 +1278,6 @@ public interface ResteasyEndpointBuilderFactory {
          */
         default ResteasyEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or NoopHostnameVerifier.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder x509HostnameVerifier(
-                Object x509HostnameVerifier) {
-            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
-            return this;
-        }
-        /**
-         * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or NoopHostnameVerifier.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointProducerBuilder x509HostnameVerifier(
-                String x509HostnameVerifier) {
-            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
     }
@@ -1940,36 +1422,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Provide access to the http client request parameters used on new
-         * RequestConfig instances used by producers or consumers of this
-         * endpoint.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder clientBuilder(
-                Object clientBuilder) {
-            doSetProperty("clientBuilder", clientBuilder);
-            return this;
-        }
-        /**
-         * Provide access to the http client request parameters used on new
-         * RequestConfig instances used by producers or consumers of this
-         * endpoint.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder clientBuilder(
-                String clientBuilder) {
-            doSetProperty("clientBuilder", clientBuilder);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -1995,64 +1447,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Sets a custom HttpClient to be used by the producer.
-         * 
-         * The option is a: <code>org.apache.http.client.HttpClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpClient(
-                Object httpClient) {
-            doSetProperty("httpClient", httpClient);
-            return this;
-        }
-        /**
-         * Sets a custom HttpClient to be used by the producer.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.client.HttpClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpClient(
-                String httpClient) {
-            doSetProperty("httpClient", httpClient);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpClientOptions(
-                String key,
-                Object value) {
-            doSetMultiValueProperty("httpClientOptions", "httpClient." + key, value);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpClientOptions(
-                Map values) {
-            doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
             return this;
         }
         /**
@@ -2426,40 +1820,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy method defined in an interface.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default ResteasyEndpointBuilder proxyMethod(String proxyMethod) {
-            doSetProperty("proxyMethod", proxyMethod);
-            return this;
-        }
-        /**
-         * Sets the flag to basicAuth on endpoint.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointBuilder basicAuth(Boolean basicAuth) {
-            doSetProperty("basicAuth", basicAuth);
-            return this;
-        }
-        /**
-         * Sets the flag to basicAuth on endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointBuilder basicAuth(String basicAuth) {
-            doSetProperty("basicAuth", basicAuth);
-            return this;
-        }
-        /**
          * Sets the password.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2471,40 +1831,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
          * Sets the username.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2513,33 +1839,6 @@ public interface ResteasyEndpointBuilderFactory {
          */
         default ResteasyEndpointBuilder username(String username) {
             doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or NoopHostnameVerifier.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointBuilder x509HostnameVerifier(
-                Object x509HostnameVerifier) {
-            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
-            return this;
-        }
-        /**
-         * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or NoopHostnameVerifier.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyEndpointBuilder x509HostnameVerifier(
-                String x509HostnameVerifier) {
-            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
     }
@@ -2583,36 +1882,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Provide access to the http client request parameters used on new
-         * RequestConfig instances used by producers or consumers of this
-         * endpoint.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder clientBuilder(
-                Object clientBuilder) {
-            doSetProperty("clientBuilder", clientBuilder);
-            return this;
-        }
-        /**
-         * Provide access to the http client request parameters used on new
-         * RequestConfig instances used by producers or consumers of this
-         * endpoint.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder clientBuilder(
-                String clientBuilder) {
-            doSetProperty("clientBuilder", clientBuilder);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -2638,61 +1907,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Sets a custom HttpClient to be used by the producer.
-         * 
-         * The option is a: <code>org.apache.http.client.HttpClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpClient(Object httpClient) {
-            doSetProperty("httpClient", httpClient);
-            return this;
-        }
-        /**
-         * Sets a custom HttpClient to be used by the producer.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.client.HttpClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpClient(String httpClient) {
-            doSetProperty("httpClient", httpClient);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpClientOptions(
-                String key,
-                Object value) {
-            doSetMultiValueProperty("httpClientOptions", "httpClient." + key, value);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpClientOptions(Map values) {
-            doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
             return this;
         }
         /**
