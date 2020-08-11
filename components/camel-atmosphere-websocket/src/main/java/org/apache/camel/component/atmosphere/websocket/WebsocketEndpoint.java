@@ -34,8 +34,10 @@ import org.apache.camel.spi.UriPath;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
         syntax = "atmosphere-websocket:servicePath", category = {Category.WEBSOCKET})
-@Metadata(excludeProperties = "httpUri,contextPath,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
-                + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
+@Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost,"
+                + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
+                + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
+                + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
