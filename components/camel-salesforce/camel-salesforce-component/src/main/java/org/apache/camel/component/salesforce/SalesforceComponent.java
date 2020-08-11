@@ -662,16 +662,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.packages = packages;
     }
 
-    /**
-     * @deprecated use {@link #setPackages(String)}
-     */
-    @Deprecated
-    public void setPackages(String[] packages) {
-        if (packages != null) {
-            this.packages = String.join(",", packages);
-        }
-    }
-
     public String[] getPackagesAsArray() {
         if (packages != null) {
             return packages.split(",");
