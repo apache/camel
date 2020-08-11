@@ -1467,6 +1467,18 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Proxy authentication domain (workstation name) to use with NTML.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default ResteasyEndpointProducerBuilder proxyAuthNtHost(
+                String proxyAuthNtHost) {
+            doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
+            return this;
+        }
+        /**
          * Proxy authentication password.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1481,18 +1493,20 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * Proxy authentication port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          */
-        default ResteasyEndpointProducerBuilder proxyAuthPort(int proxyAuthPort) {
+        default ResteasyEndpointProducerBuilder proxyAuthPort(
+                Integer proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
             return this;
         }
         /**
          * Proxy authentication port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          */

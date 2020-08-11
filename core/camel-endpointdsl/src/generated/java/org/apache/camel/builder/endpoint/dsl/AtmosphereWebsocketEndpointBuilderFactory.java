@@ -1271,6 +1271,18 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * Proxy authentication domain (workstation name) to use with NTML.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default AtmosphereWebsocketEndpointProducerBuilder proxyAuthNtHost(
+                String proxyAuthNtHost) {
+            doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
+            return this;
+        }
+        /**
          * Proxy authentication scheme to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
