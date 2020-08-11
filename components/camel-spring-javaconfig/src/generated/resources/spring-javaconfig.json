@@ -4,7 +4,7 @@
     "name": "spring-javaconfig",
     "title": "Spring Java Configuration",
     "description": "Using Camel with Spring Java Configuration",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.0.0",
     "label": "spring",
     "supportLevel": "Stable",
