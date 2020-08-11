@@ -46,13 +46,10 @@ class EventHubsComponentTest extends CamelTestSupport {
         configuration.setSharedAccessKey("dummyKey");
         configuration.setSharedAccessName("dummyUser");
 
-        final EventHubConsumerAsyncClient consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
         final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
 
-        context.getRegistry().bind("consumerClient", consumerAsyncClient);
         context.getRegistry().bind("producerClient", producerAsyncClient);
 
-        assertNotNull(context.getEndpoint("azure-eventhubs:name/hubName?autoDiscoverClient=false&consumerAsyncClient=#consumerClient"));
         assertNotNull(context.getEndpoint("azure-eventhubs:name/hubName?autoDiscoverClient=false&producerAsyncClient=#producerClient"));
     }
 

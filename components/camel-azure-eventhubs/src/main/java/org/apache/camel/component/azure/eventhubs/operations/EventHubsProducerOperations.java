@@ -42,6 +42,7 @@ public class EventHubsProducerOperations {
         sendAsyncEventsWithSuitableMethod(eventData, sendOptions)
                 .subscribe(unused -> {
                             // we finished only with one event, keep async check
+                            LOG.debug("Processed one event...");
                             asyncCallback.done(false);
                         },
                         error -> {

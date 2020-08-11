@@ -75,6 +75,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
+         * Default: Amqp
          * Group: common
          */
         default EventHubsEndpointConsumerBuilder amqpTransportType(
@@ -88,6 +89,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
+         * Default: Amqp
          * Group: common
          */
         default EventHubsEndpointConsumerBuilder amqpTransportType(
@@ -123,6 +125,70 @@ public interface EventHubsEndpointBuilderFactory {
         default EventHubsEndpointConsumerBuilder autoDiscoverClient(
                 String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder blobAccessKey(
+                String blobAccessKey) {
+            doSetProperty("blobAccessKey", blobAccessKey);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder blobAccountName(
+                String blobAccountName) {
+            doSetProperty("blobAccountName", blobAccountName);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder blobContainerName(
+                String blobContainerName) {
+            doSetProperty("blobContainerName", blobContainerName);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder blobStorageSharedKeyCredential(
+                Object blobStorageSharedKeyCredential) {
+            doSetProperty("blobStorageSharedKeyCredential", blobStorageSharedKeyCredential);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder blobStorageSharedKeyCredential(
+                String blobStorageSharedKeyCredential) {
+            doSetProperty("blobStorageSharedKeyCredential", blobStorageSharedKeyCredential);
             return this;
         }
         /**
@@ -167,26 +233,28 @@ public interface EventHubsEndpointBuilderFactory {
          * test.
          * 
          * The option is a:
-         * <code>com.azure.messaging.eventhubs.EventHubConsumerAsyncClient</code> type.
+         * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
          * 
+         * Default: BlobCheckpointStore
          * Group: consumer
          */
-        default EventHubsEndpointConsumerBuilder consumerAsyncClient(
-                Object consumerAsyncClient) {
-            doSetProperty("consumerAsyncClient", consumerAsyncClient);
+        default EventHubsEndpointConsumerBuilder checkpointStore(
+                Object checkpointStore) {
+            doSetProperty("checkpointStore", checkpointStore);
             return this;
         }
         /**
          * test.
          * 
          * The option will be converted to a
-         * <code>com.azure.messaging.eventhubs.EventHubConsumerAsyncClient</code> type.
+         * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
          * 
+         * Default: BlobCheckpointStore
          * Group: consumer
          */
-        default EventHubsEndpointConsumerBuilder consumerAsyncClient(
-                String consumerAsyncClient) {
-            doSetProperty("consumerAsyncClient", consumerAsyncClient);
+        default EventHubsEndpointConsumerBuilder checkpointStore(
+                String checkpointStore) {
+            doSetProperty("checkpointStore", checkpointStore);
             return this;
         }
         /**
@@ -194,6 +262,7 @@ public interface EventHubsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: $Default
          * Group: consumer
          */
         default EventHubsEndpointConsumerBuilder consumerGroupName(
@@ -430,6 +499,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
+         * Default: Amqp
          * Group: common
          */
         default EventHubsEndpointProducerBuilder amqpTransportType(
@@ -443,6 +513,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
+         * Default: Amqp
          * Group: common
          */
         default EventHubsEndpointProducerBuilder amqpTransportType(
@@ -520,6 +591,29 @@ public interface EventHubsEndpointBuilderFactory {
         default EventHubsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EventHubsEndpointProducerBuilder partitionId(String partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EventHubsEndpointProducerBuilder partitionKey(
+                String partitionKey) {
+            doSetProperty("partitionKey", partitionKey);
             return this;
         }
         /**
@@ -696,6 +790,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
+         * Default: Amqp
          * Group: common
          */
         default EventHubsEndpointBuilder amqpTransportType(
@@ -709,6 +804,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
+         * Default: Amqp
          * Group: common
          */
         default EventHubsEndpointBuilder amqpTransportType(

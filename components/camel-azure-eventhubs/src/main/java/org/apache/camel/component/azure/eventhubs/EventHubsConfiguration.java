@@ -1,10 +1,14 @@
 package org.apache.camel.component.azure.eventhubs;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.azure.core.amqp.AmqpRetryOptions;
 import com.azure.core.amqp.AmqpTransportType;
-import com.azure.messaging.eventhubs.EventHubClientBuilder;
-import com.azure.messaging.eventhubs.EventHubConsumerAsyncClient;
+import com.azure.messaging.eventhubs.CheckpointStore;
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
+import com.azure.messaging.eventhubs.models.EventPosition;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -23,26 +27,34 @@ public class EventHubsConfiguration implements Cloneable {
     private String sharedAccessKey;
     @UriParam(label = "security", secret = true)
     private String connectionString;
-    @UriParam(label = "common")
-    private AmqpTransportType amqpTransportType;
+    @UriParam(label = "common", defaultValue = "Amqp")
+    private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoDiscoverClient = true;
-    @UriParam(label = "common")
-    private String partitionId;
-    @UriParam(label = "consumer")
-    private EventHubConsumerAsyncClient consumerAsyncClient;
-    @UriParam(label = "consumer")
-    private String consumerGroupName;
+    @UriParam(label = "consumer", defaultValue = "$Default")
+    private String consumerGroupName = "$Default";
     @UriParam(label = "consumer", defaultValue = "500")
     private int prefetchCount = 500;
+    @UriParam(label = "consumer", defaultValue = "BlobCheckpointStore")
+    private CheckpointStore checkpointStore;
+    @UriParam(label = "consumer")
+    private String blobAccountName;
+    @UriParam(label = "consumer", secret = true)
+    private String blobAccessKey;
+    @UriParam(label = "consumer")
+    private String blobContainerName;
+    @UriParam(label = "consumer", secret = true)
+    private StorageSharedKeyCredential blobStorageSharedKeyCredential;
+    @UriParam(label = "consumer")
+    private Map<String, EventPosition> eventPosition = new HashMap<>();
     @UriParam(label = "producer")
     private EventHubProducerAsyncClient producerAsyncClient;
-    @UriParam(label = "producer", defaultValue = "0")
-    private int maximumSizeInBytes = 0;
     @UriParam(label = "producer")
     private String partitionKey;
+    @UriParam(label = "producer")
+    private String partitionId;
 
     /**
      * test
@@ -124,17 +136,6 @@ public class EventHubsConfiguration implements Cloneable {
     /**
      * test
      */
-    public EventHubConsumerAsyncClient getConsumerAsyncClient() {
-        return consumerAsyncClient;
-    }
-
-    public void setConsumerAsyncClient(EventHubConsumerAsyncClient consumerAsyncClient) {
-        this.consumerAsyncClient = consumerAsyncClient;
-    }
-
-    /**
-     * test
-     */
     public String getConsumerGroupName() {
         return consumerGroupName;
     }
@@ -192,23 +193,78 @@ public class EventHubsConfiguration implements Cloneable {
     /**
      * test
      */
-    public int getMaximumSizeInBytes() {
-        return maximumSizeInBytes;
-    }
-
-    public void setMaximumSizeInBytes(int maximumSizeInBytes) {
-        this.maximumSizeInBytes = maximumSizeInBytes;
-    }
-
-    /**
-     * test
-     */
     public String getPartitionKey() {
         return partitionKey;
     }
 
     public void setPartitionKey(String partitionKey) {
         this.partitionKey = partitionKey;
+    }
+
+    /**
+     * test
+     */
+    public CheckpointStore getCheckpointStore() {
+        return checkpointStore;
+    }
+
+    public void setCheckpointStore(CheckpointStore checkpointStore) {
+        this.checkpointStore = checkpointStore;
+    }
+
+    /**
+     * test
+     */
+    public String getBlobAccountName() {
+        return blobAccountName;
+    }
+
+    public void setBlobAccountName(String blobAccountName) {
+        this.blobAccountName = blobAccountName;
+    }
+
+    /**
+     * test
+     */
+    public String getBlobAccessKey() {
+        return blobAccessKey;
+    }
+
+    public void setBlobAccessKey(String blobAccessKey) {
+        this.blobAccessKey = blobAccessKey;
+    }
+
+    /**
+     * test
+     */
+    public String getBlobContainerName() {
+        return blobContainerName;
+    }
+
+    public void setBlobContainerName(String blobContainerName) {
+        this.blobContainerName = blobContainerName;
+    }
+
+    /**
+     * test
+     */
+    public StorageSharedKeyCredential getBlobStorageSharedKeyCredential() {
+        return blobStorageSharedKeyCredential;
+    }
+
+    public void setBlobStorageSharedKeyCredential(StorageSharedKeyCredential blobStorageSharedKeyCredential) {
+        this.blobStorageSharedKeyCredential = blobStorageSharedKeyCredential;
+    }
+
+    /**
+     * test
+     */
+    public Map<String, EventPosition> getEventPosition() {
+        return eventPosition;
+    }
+
+    public void setEventPosition(Map<String, EventPosition> eventPosition) {
+        this.eventPosition = eventPosition;
     }
 
     // *************************************************

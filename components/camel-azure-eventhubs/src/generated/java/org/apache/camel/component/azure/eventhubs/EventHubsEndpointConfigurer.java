@@ -27,12 +27,20 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "blobaccesskey":
+        case "blobAccessKey": target.getConfiguration().setBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "blobaccountname":
+        case "blobAccountName": target.getConfiguration().setBlobAccountName(property(camelContext, java.lang.String.class, value)); return true;
+        case "blobcontainername":
+        case "blobContainerName": target.getConfiguration().setBlobContainerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "blobstoragesharedkeycredential":
+        case "blobStorageSharedKeyCredential": target.getConfiguration().setBlobStorageSharedKeyCredential(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "checkpointstore":
+        case "checkpointStore": target.getConfiguration().setCheckpointStore(property(camelContext, com.azure.messaging.eventhubs.CheckpointStore.class, value)); return true;
         case "connectionstring":
         case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerasyncclient":
-        case "consumerAsyncClient": target.getConfiguration().setConsumerAsyncClient(property(camelContext, com.azure.messaging.eventhubs.EventHubConsumerAsyncClient.class, value)); return true;
         case "consumergroupname":
         case "consumerGroupName": target.getConfiguration().setConsumerGroupName(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -41,8 +49,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maximumsizeinbytes":
-        case "maximumSizeInBytes": target.getConfiguration().setMaximumSizeInBytes(property(camelContext, int.class, value)); return true;
         case "partitionid":
         case "partitionId": target.getConfiguration().setPartitionId(property(camelContext, java.lang.String.class, value)); return true;
         case "partitionkey":
@@ -67,14 +73,17 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         answer.put("amqpTransportType", com.azure.core.amqp.AmqpTransportType.class);
         answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
+        answer.put("blobAccessKey", java.lang.String.class);
+        answer.put("blobAccountName", java.lang.String.class);
+        answer.put("blobContainerName", java.lang.String.class);
+        answer.put("blobStorageSharedKeyCredential", com.azure.storage.common.StorageSharedKeyCredential.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("checkpointStore", com.azure.messaging.eventhubs.CheckpointStore.class);
         answer.put("connectionString", java.lang.String.class);
-        answer.put("consumerAsyncClient", com.azure.messaging.eventhubs.EventHubConsumerAsyncClient.class);
         answer.put("consumerGroupName", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("lazyStartProducer", boolean.class);
-        answer.put("maximumSizeInBytes", int.class);
         answer.put("partitionId", java.lang.String.class);
         answer.put("partitionKey", java.lang.String.class);
         answer.put("prefetchCount", int.class);
@@ -97,12 +106,20 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "blobaccesskey":
+        case "blobAccessKey": return target.getConfiguration().getBlobAccessKey();
+        case "blobaccountname":
+        case "blobAccountName": return target.getConfiguration().getBlobAccountName();
+        case "blobcontainername":
+        case "blobContainerName": return target.getConfiguration().getBlobContainerName();
+        case "blobstoragesharedkeycredential":
+        case "blobStorageSharedKeyCredential": return target.getConfiguration().getBlobStorageSharedKeyCredential();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "checkpointstore":
+        case "checkpointStore": return target.getConfiguration().getCheckpointStore();
         case "connectionstring":
         case "connectionString": return target.getConfiguration().getConnectionString();
-        case "consumerasyncclient":
-        case "consumerAsyncClient": return target.getConfiguration().getConsumerAsyncClient();
         case "consumergroupname":
         case "consumerGroupName": return target.getConfiguration().getConsumerGroupName();
         case "exceptionhandler":
@@ -111,8 +128,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "maximumsizeinbytes":
-        case "maximumSizeInBytes": return target.getConfiguration().getMaximumSizeInBytes();
         case "partitionid":
         case "partitionId": return target.getConfiguration().getPartitionId();
         case "partitionkey":

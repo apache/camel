@@ -54,7 +54,6 @@ public class EventHubsComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         if (configuration.isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration::setConsumerAsyncClient, configuration::getConsumerAsyncClient, EventHubConsumerAsyncClient.class);
             checkAndSetRegistryClient(configuration::setProducerAsyncClient, configuration::getProducerAsyncClient, EventHubProducerAsyncClient.class);
         }
 
@@ -105,7 +104,7 @@ public class EventHubsComponent extends DefaultComponent {
     }
 
     private boolean areAzureClientsNotSet(final EventHubsConfiguration configuration) {
-        return ObjectHelper.isEmpty(configuration.getConsumerAsyncClient()) && ObjectHelper.isEmpty(configuration.getProducerAsyncClient());
+        return ObjectHelper.isEmpty(configuration.getProducerAsyncClient());
     }
 
     private void checkAndSetNamespaceAndHubName(final EventHubsConfiguration configuration, final String remaining) {

@@ -71,6 +71,7 @@ public interface AzureEventhubsComponentBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
+         * Default: Amqp
          * Group: common
          */
         default AzureEventhubsComponentBuilder amqpTransportType(
@@ -107,6 +108,56 @@ public interface AzureEventhubsComponentBuilderFactory {
             return this;
         }
         /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder blobAccessKey(
+                java.lang.String blobAccessKey) {
+            doSetProperty("blobAccessKey", blobAccessKey);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder blobAccountName(
+                java.lang.String blobAccountName) {
+            doSetProperty("blobAccountName", blobAccountName);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder blobContainerName(
+                java.lang.String blobContainerName) {
+            doSetProperty("blobContainerName", blobContainerName);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder blobStorageSharedKeyCredential(
+                com.azure.storage.common.StorageSharedKeyCredential blobStorageSharedKeyCredential) {
+            doSetProperty("blobStorageSharedKeyCredential", blobStorageSharedKeyCredential);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -129,13 +180,14 @@ public interface AzureEventhubsComponentBuilderFactory {
          * test.
          * 
          * The option is a:
-         * <code>com.azure.messaging.eventhubs.EventHubConsumerAsyncClient</code> type.
+         * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
          * 
+         * Default: BlobCheckpointStore
          * Group: consumer
          */
-        default AzureEventhubsComponentBuilder consumerAsyncClient(
-                com.azure.messaging.eventhubs.EventHubConsumerAsyncClient consumerAsyncClient) {
-            doSetProperty("consumerAsyncClient", consumerAsyncClient);
+        default AzureEventhubsComponentBuilder checkpointStore(
+                com.azure.messaging.eventhubs.CheckpointStore checkpointStore) {
+            doSetProperty("checkpointStore", checkpointStore);
             return this;
         }
         /**
@@ -143,6 +195,7 @@ public interface AzureEventhubsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: $Default
          * Group: consumer
          */
         default AzureEventhubsComponentBuilder consumerGroupName(
@@ -181,6 +234,30 @@ public interface AzureEventhubsComponentBuilderFactory {
         default AzureEventhubsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureEventhubsComponentBuilder partitionId(
+                java.lang.String partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureEventhubsComponentBuilder partitionKey(
+                java.lang.String partitionKey) {
+            doSetProperty("partitionKey", partitionKey);
             return this;
         }
         /**
@@ -274,11 +351,17 @@ public interface AzureEventhubsComponentBuilderFactory {
             case "amqpTransportType": getOrCreateConfiguration((EventHubsComponent) component).setAmqpTransportType((com.azure.core.amqp.AmqpTransportType) value); return true;
             case "autoDiscoverClient": getOrCreateConfiguration((EventHubsComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((EventHubsComponent) component).setConfiguration((org.apache.camel.component.azure.eventhubs.EventHubsConfiguration) value); return true;
+            case "blobAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setBlobAccessKey((java.lang.String) value); return true;
+            case "blobAccountName": getOrCreateConfiguration((EventHubsComponent) component).setBlobAccountName((java.lang.String) value); return true;
+            case "blobContainerName": getOrCreateConfiguration((EventHubsComponent) component).setBlobContainerName((java.lang.String) value); return true;
+            case "blobStorageSharedKeyCredential": getOrCreateConfiguration((EventHubsComponent) component).setBlobStorageSharedKeyCredential((com.azure.storage.common.StorageSharedKeyCredential) value); return true;
             case "bridgeErrorHandler": ((EventHubsComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "consumerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setConsumerAsyncClient((com.azure.messaging.eventhubs.EventHubConsumerAsyncClient) value); return true;
+            case "checkpointStore": getOrCreateConfiguration((EventHubsComponent) component).setCheckpointStore((com.azure.messaging.eventhubs.CheckpointStore) value); return true;
             case "consumerGroupName": getOrCreateConfiguration((EventHubsComponent) component).setConsumerGroupName((java.lang.String) value); return true;
             case "prefetchCount": getOrCreateConfiguration((EventHubsComponent) component).setPrefetchCount((int) value); return true;
             case "lazyStartProducer": ((EventHubsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "partitionId": getOrCreateConfiguration((EventHubsComponent) component).setPartitionId((java.lang.String) value); return true;
+            case "partitionKey": getOrCreateConfiguration((EventHubsComponent) component).setPartitionKey((java.lang.String) value); return true;
             case "producerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setProducerAsyncClient((com.azure.messaging.eventhubs.EventHubProducerAsyncClient) value); return true;
             case "basicPropertyBinding": ((EventHubsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((EventHubsComponent) component).setConnectionString((java.lang.String) value); return true;
