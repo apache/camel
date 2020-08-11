@@ -279,7 +279,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
         cloned.setKeepAliveTime(keepAliveTime);
         cloned.setMaxPoolSize(maxPoolSize);
         cloned.setMaxQueueSize(maxQueueSize);
-        cloned.setPoolSize(maxPoolSize);
+        cloned.setPoolSize(poolSize);
         cloned.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
         cloned.setRejectedPolicy(rejectedPolicy);
         cloned.setTimeUnit(timeUnit);
