@@ -118,6 +118,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         return sqsConsumer;
     }
 
+    private boolean isDefaultAwsHost() {
+        return configuration.getAmazonAWSHost().equals("amazonaws.com");
+    }
+
     /*
      * If using a different AWS host, do not assume specific parts of the AWS
      * host and, instead, just return whatever is provided as the host.
@@ -126,11 +130,22 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         String host = configuration.getAmazonAWSHost();
         host = FileUtil.stripTrailingSeparator(host);
 
-        if (host.equals("amazonaws.com")) {
+        if (isDefaultAwsHost()) {
             return "sqs." + Region.of(configuration.getRegion()).id() + "." + host;
         }
 
         return host;
+    }
+
+    /*
+     * Gets the base endpoint for AWS (ie.: http(s)://host:port.
+     *
+     * Do not confuse with other Camel endpoint methods: this one is named after AWS'
+     * own endpoint terminology and can also be used for the endpoint override in the
+     * client builder.
+     */
+    private String getAwsEndpointUri() {
+        return configuration.getProtocol() + "://" + getFullyQualifiedAWSHost();
     }
 
     @Override
@@ -151,9 +166,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             // This allows accessing queues where you don't have permission to
             // list queues or query queues
             if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-                String protocol = configuration.getProtocol();
-
-                queueUrl = protocol + "://" + getFullyQualifiedAWSHost() + "/" + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
+                queueUrl = getAwsEndpointUri() + "/" + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
             } else if (configuration.getQueueOwnerAWSAccountId() != null) {
                 GetQueueUrlRequest.Builder getQueueUrlRequest = GetQueueUrlRequest.builder();
                 getQueueUrlRequest.queueName(configuration.getQueueName());
@@ -359,6 +372,11 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             if (!isClientConfigFound) {
                 clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
             }
+        }
+
+        if (!isDefaultAwsHost()) {
+            String endpointOverrideUri = getAwsEndpointUri();
+            clientBuilder.endpointOverride(URI.create(endpointOverrideUri));
         }
 
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
