@@ -218,6 +218,120 @@ The following table lists all the options:
 |===
 // main options: END
 
+== Specifying custom beans
+
+Custom beans can be configured in `camel-main` via properties (such as in the `application.properties` file).
+
+For example to create a `DataSource` for a Postgress database, you can create a new bean instance via `#class:` with the class name (fully qualified).
+Properties on the data source can then additional configured such as the server and database name, etc.
+
+[source,properties]
+----
+camel.beans.myDS = #class:org.postgresql.jdbc3.Jdbc3PoolingDataSource
+camel.beans.myDS.dataSourceName = myDS
+camel.beans.myDS.serverName = mypostrgress
+camel.beans.myDS.databaseName = test
+camel.beans.myDS.user = testuser
+camel.beans.myDS.password = testpassword
+camel.beans.myDS.maxConnections = 10
+----
+
+The bean is registered in the Camel Registry with the name `myDS`.
+
+If you use the SQL component then the datasource can be configured on the SQL component:
+
+[source,properties]
+----
+camel.component.sql.dataSource = #myDS
+----
+
+To refer to a custom bean you may want to favour using `#bean:` style, as this states the intention more clearly that its referring to a bean,
+and not just a text value that happens to start with a `#` sign:
+
+[source,properties]
+----
+camel.component.sql.dataSource = #bean:myDS
+----
+
+=== Creating a custom bean with constructor parameters
+
+When creating a bean then parameters to the constructor can be provided.
+Suppose we have a class `MyFoo` with a constructur:
+
+[source,java]
+----
+public class MyFoo {
+    private String name;
+    private boolean important;
+    private int id;
+
+    public MyFoo(String name, boolean important, int id) {
+        this.name = name;
+        this.important = important;
+        this.id = id;
+    }
+}
+----
+
+Then we can create a bean instance with name `foo` and provide parameters to the constructor as shown:
+
+[source,properties]
+----
+camel.beans.foo = #class:com.foo.MyBean("Hello World", true, 123)
+----
+
+=== Configuring singleton beans by their type
+
+In the example above the SQL component was configured with the name of the `DataSource`. There can be situations where you know there is only
+a single instance of a data source in the Camel registry. In such a situation you can instead refer to the class
+or interface type via the `#type:` prefix as shown below:
+
+[source,properties]
+----
+camel.component.sql.dataSource = #type:javax.sql.DataSource
+----
+
+If there is no bean in the registry with the type `javax.sql.DataSource` then the option isn't configured.
+
+=== Autowiring beans
+
+The example above can be taken one step further by letting `camel-main` try to autowire the beans.
+
+[source,properties]
+----
+camel.component.sql.dataSource = #autowired
+----
+
+In this situation then `#autowrired` will make Camel detect the type of the `dataSource` option on the `SQL` component.
+As the type is a `javax.sql.DataSource` instance, then Camel will lookup in the registry if there is a single instance of the same type.
+If there is no such bean then the option isn't configured.
+
+== Defining a Map bean
+
+You can specify `java.util.Map` beans in `camel-main` via properties (such as in the `application.properties` file).
+
+Maps have a special syntax with brackets as shown below:
+
+[source,properties]
+----
+camel.beans.company[name] = Acme
+camel.beans.company[country] = USA
+camel.beans.company[zip] = 92010
+----
+
+The Map is registered in the Camel Registry with the name `company`.
+
+== Defining a List bean
+
+This is similar to Map bean where the key is the index, eg 0, 1, 2, etc:
+
+[source,properties]
+----
+camel.beans.projects[0] = Camel
+camel.beans.projects[1] = Kafka
+camel.beans.projects[2] = Quarkus
+----
+
 == Examples
 
 You can find a set of examples using `camel-main` in https://github.com/apache/camel-examples[Camel Examples]
