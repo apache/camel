@@ -82,7 +82,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private String nativeQuery;
     @UriParam(label = "consumer", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-    @UriParam(label = "consumer,advanced", multiValue = true)
+    @UriParam(label = "consumer,advanced", multiValue = true, prefix = "parameters.")
     private Map<String, Object> parameters;
     @UriParam
     private Class<?> resultClass;
