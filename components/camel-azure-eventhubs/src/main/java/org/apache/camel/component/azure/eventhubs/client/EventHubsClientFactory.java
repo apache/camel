@@ -77,10 +77,11 @@ public final class EventHubsClientFactory {
 
         // so we have no checkpoint store, we fallback to default BlobCheckpointStore
         // first we check if we have all required params for BlobCheckpointStore
-        if (ObjectHelper.isEmpty(configuration.getBlobContainerName()) &&
+        if (ObjectHelper.isEmpty(configuration.getBlobContainerName()) ||
                 !isCredentialsSet(configuration))
             throw new IllegalArgumentException("Since there is no provided CheckpointStore, you will need to set blobAccountName, blobAccessName" +
                     " or blobContainerName in order to use the default BlobCheckpointStore");
+
 
         // second build the BlobContainerAsyncClient
         return new BlobCheckpointStore(createBlobContainerClient(configuration));

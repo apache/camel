@@ -206,6 +206,19 @@ public interface AzureEventhubsComponentBuilderFactory {
         /**
          * test.
          * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition></code> type.
+         * 
+         * Group: consumer
+         */
+        default AzureEventhubsComponentBuilder eventPosition(
+                java.util.Map<java.lang.String, com.azure.messaging.eventhubs.models.EventPosition> eventPosition) {
+            doSetProperty("eventPosition", eventPosition);
+            return this;
+        }
+        /**
+         * test.
+         * 
          * The option is a: <code>int</code> type.
          * 
          * Default: 500
@@ -358,6 +371,7 @@ public interface AzureEventhubsComponentBuilderFactory {
             case "bridgeErrorHandler": ((EventHubsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "checkpointStore": getOrCreateConfiguration((EventHubsComponent) component).setCheckpointStore((com.azure.messaging.eventhubs.CheckpointStore) value); return true;
             case "consumerGroupName": getOrCreateConfiguration((EventHubsComponent) component).setConsumerGroupName((java.lang.String) value); return true;
+            case "eventPosition": getOrCreateConfiguration((EventHubsComponent) component).setEventPosition((java.util.Map) value); return true;
             case "prefetchCount": getOrCreateConfiguration((EventHubsComponent) component).setPrefetchCount((int) value); return true;
             case "lazyStartProducer": ((EventHubsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "partitionId": getOrCreateConfiguration((EventHubsComponent) component).setPartitionId((java.lang.String) value); return true;

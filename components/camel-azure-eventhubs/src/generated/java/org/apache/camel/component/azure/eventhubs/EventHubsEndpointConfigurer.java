@@ -43,6 +43,8 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "consumergroupname":
         case "consumerGroupName": target.getConfiguration().setConsumerGroupName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventposition":
+        case "eventPosition": target.getConfiguration().setEventPosition(property(camelContext, java.util.Map.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -81,6 +83,7 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         answer.put("checkpointStore", com.azure.messaging.eventhubs.CheckpointStore.class);
         answer.put("connectionString", java.lang.String.class);
         answer.put("consumerGroupName", java.lang.String.class);
+        answer.put("eventPosition", java.util.Map.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -122,6 +125,8 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectionString": return target.getConfiguration().getConnectionString();
         case "consumergroupname":
         case "consumerGroupName": return target.getConfiguration().getConsumerGroupName();
+        case "eventposition":
+        case "eventPosition": return target.getConfiguration().getEventPosition();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

@@ -32,5 +32,7 @@ public class EventProcessorTest {
         configuration.setBlobAccessKey("testAccess");
         assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
+        configuration.setBlobContainerName(null);
+        assertThrows(IllegalArgumentException.class, () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
     }
 }

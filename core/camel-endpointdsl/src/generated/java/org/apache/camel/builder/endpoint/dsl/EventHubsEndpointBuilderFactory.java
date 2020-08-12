@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -268,6 +269,33 @@ public interface EventHubsEndpointBuilderFactory {
         default EventHubsEndpointConsumerBuilder consumerGroupName(
                 String consumerGroupName) {
             doSetProperty("consumerGroupName", consumerGroupName);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&gt;</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder eventPosition(
+                Map<String, Object> eventPosition) {
+            doSetProperty("eventPosition", eventPosition);
+            return this;
+        }
+        /**
+         * test.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&gt;</code> type.
+         * 
+         * Group: consumer
+         */
+        default EventHubsEndpointConsumerBuilder eventPosition(
+                String eventPosition) {
+            doSetProperty("eventPosition", eventPosition);
             return this;
         }
         /**
