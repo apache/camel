@@ -153,7 +153,7 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
                         producesBuilder.add(s);
                     }
                 }
-                produces = producesBuilder.toString().isEmpty() ? null : producesBuilder.toString();
+                produces = producesBuilder.length() == 0 ? null : producesBuilder.toString();
             }
             if (consumes == null) {
                 StringJoiner consumesBuilder = new StringJoiner(",");
@@ -166,7 +166,7 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
                         consumesBuilder.add(s);
                     }
                 }
-                consumes = consumesBuilder.toString().isEmpty() ? null : consumesBuilder.toString();
+                consumes = consumesBuilder.length() == 0 ? null : consumesBuilder.toString();
             }
 
             String basePath;

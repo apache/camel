@@ -156,7 +156,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
 
             if (produces == null) {
                 StringJoiner producesBuilder = new StringJoiner(",");
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 if (operation instanceof Oas20Operation) {
                     list = ((Oas20Operation)operation).produces;
                 } else if (operation instanceof Oas30Operation) {
@@ -179,11 +179,11 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                         producesBuilder.add(s);
                     }
                 }
-                produces = producesBuilder.toString().isEmpty() ? null : producesBuilder.toString();
+                produces = producesBuilder.length() == 0 ? null : producesBuilder.toString();
             }
             if (consumes == null) {
                 StringJoiner consumesBuilder = new StringJoiner(",");
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 if (operation instanceof Oas20Operation) {
                     list = ((Oas20Operation)operation).consumes;
                 } else if (operation instanceof Oas30Operation) {
@@ -206,7 +206,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                         consumesBuilder.add(s);
                     }
                 }
-                consumes = consumesBuilder.toString().isEmpty() ? null : consumesBuilder.toString();
+                consumes = consumesBuilder.length() == 0 ? null : consumesBuilder.toString();
             }
 
             String basePath = null;

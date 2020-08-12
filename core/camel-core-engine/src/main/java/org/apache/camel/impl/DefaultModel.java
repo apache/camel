@@ -221,7 +221,7 @@ public class DefaultModel implements Model {
                 }
             }
         }
-        if (!templatesBuilder.toString().isEmpty()) {
+        if (templatesBuilder.length() > 0) {
             throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + templatesBuilder.toString());
         }
         // then override with user parameters
