@@ -17,46 +17,25 @@
 package org.apache.camel.test.spring;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
-import org.apache.camel.processor.interceptor.DefaultDebugger;
-import org.apache.camel.spi.Breakpoint;
-import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.spring.CamelSpringTestHelper.DoToSpringCamelContextsStrategy;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.test.context.support.GenericXmlContextLoader;
 import org.springframework.util.StringUtils;
-
-import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
 
 /**
  * Replacement for the default {@link GenericXmlContextLoader} that provides hooks for

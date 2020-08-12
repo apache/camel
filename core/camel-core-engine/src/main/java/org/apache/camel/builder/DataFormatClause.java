@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.w3c.dom.Node;
 
@@ -63,7 +64,6 @@ import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * An expression for constructing the different possible
@@ -890,12 +890,12 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param type the pojo class(es) xstream should use as allowed permission
      */
     public T xstream(String encoding, Class<?>... type) {
-        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        StringJoiner stringBuilder = new StringJoiner(",");
         for (Class<?> clazz : type) {
-            csb.append("+");
-            csb.append(clazz.getName());
+            stringBuilder.add("+");
+            stringBuilder.add(clazz.getName());
         }
-        return xstream(encoding, csb.toString());
+        return xstream(encoding, stringBuilder.toString());
     }
 
     /**

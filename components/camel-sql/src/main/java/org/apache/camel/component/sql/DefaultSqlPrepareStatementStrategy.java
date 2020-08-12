@@ -24,13 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,12 +68,12 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                     Object parameter = lookupParameter(found, exchange, exchange.getIn().getBody());
                     if (parameter != null) {
                         Iterator it = createInParameterIterator(parameter);
-                        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                        StringJoiner replaceBuilder = new StringJoiner(",");
                         while (it.hasNext()) {
                             it.next();
-                            csb.append("\\?");
+                            replaceBuilder.add("\\?");
                         }
-                        String replace = csb.toString();
+                        String replace = replaceBuilder.toString();
                         String foundEscaped = found.replace("$", "\\$").replace("{", "\\{").replace("}", "\\}");
                         Matcher paramMatcher = Pattern.compile("\\:\\?in\\:" + foundEscaped, Pattern.MULTILINE).matcher(query);
                         query = paramMatcher.replaceAll(replace);
