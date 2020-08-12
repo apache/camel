@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.StringJoiner;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Marshal POJOs to JSON and back.
@@ -326,12 +327,12 @@ public class JsonDataFormat extends DataFormatDefinition {
      * @see #setPermissions(String)
      */
     public void setPermissions(Class<?>... type) {
-        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        StringJoiner permissionsBuilder = new StringJoiner(",");
         for (Class<?> clazz : type) {
-            csb.append("+");
-            csb.append(clazz.getName());
+            permissionsBuilder.add("+");
+            permissionsBuilder.add(clazz.getName());
         }
-        setPermissions(csb.toString());
+        setPermissions(permissionsBuilder.toString());
     }
 
     public String getAllowUnmarshallType() {

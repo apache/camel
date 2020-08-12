@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
@@ -51,7 +52,6 @@ import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -157,7 +157,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     public void handleRequest(HttpServerExchange httpExchange) throws Exception {
         HttpString requestMethod = httpExchange.getRequestMethod();
         if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            StringJoiner methodsBuilder = new StringJoiner(",");
 
             Collection<HttpHandlerRegistrationInfo> handlers = getEndpoint().getComponent().getHandlers();
             for (HttpHandlerRegistrationInfo reg : handlers) {
@@ -168,10 +168,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                     if (restrict.endsWith(",OPTIONS")) {
                         restrict = restrict.substring(0, restrict.length() - 8);
                     }
-                    csb.append(restrict);
+                    methodsBuilder.add(restrict);
                 }
             }
-            String allowedMethods = csb.toString();
+            String allowedMethods = methodsBuilder.toString();
             if (ObjectHelper.isEmpty(allowedMethods)) {
                 allowedMethods = getEndpoint().getHttpMethodRestrict();
             }

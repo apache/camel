@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -51,7 +52,6 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
@@ -647,15 +647,15 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 if (size > 0) {
                     try {
                         // build a message with inflight per route
-                        CollectionStringBuffer csb = new CollectionStringBuffer();
+                        StringJoiner inflightsBuilder = new StringJoiner(", ", " Inflights per route: [", "]");
                         for (Map.Entry<String, Integer> entry : routeInflight.entrySet()) {
                             String row = String.format("%s = %s", entry.getKey(), entry.getValue());
-                            csb.append(row);
+                            inflightsBuilder.add(row);
                         }
 
                         String msg = "Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
                                 + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.";
-                        msg += " Inflights per route: [" + csb.toString() + "]";
+                        msg += inflightsBuilder.toString();
 
                         LOG.info(msg);
 
