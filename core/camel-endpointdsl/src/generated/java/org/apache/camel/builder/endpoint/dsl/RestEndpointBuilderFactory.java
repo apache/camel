@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -474,33 +473,17 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Query parameters for the HTTP service to call.
+         * Query parameters for the HTTP service to call. The query parameters
+         * can contain multiple parameters separated by ampersand such such as
+         * foo=123&bar=456.
          * 
          * The option is a: <code>java.lang.String</code> type.
-         * The option is multivalued, and you can use the
-         * queryParameters(String, Object) method to add a value (call the
-         * method multiple times to set more values).
          * 
          * Group: producer
          */
         default RestEndpointProducerBuilder queryParameters(
-                String key,
-                Object value) {
-            doSetMultiValueProperty("queryParameters", "null" + key, value);
-            return this;
-        }
-        /**
-         * Query parameters for the HTTP service to call.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * The option is multivalued, and you can use the
-         * queryParameters(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: producer
-         */
-        default RestEndpointProducerBuilder queryParameters(Map values) {
-            doSetMultiValueProperties("queryParameters", "null", values);
+                String queryParameters) {
+            doSetProperty("queryParameters", queryParameters);
             return this;
         }
     }
