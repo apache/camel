@@ -73,7 +73,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
         SUPPORTED_ENCRYPTION_ALGORITHMS.put(CAST5_CBC_PKCS5_PADDING, Arrays.asList(new Integer[] {128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40}));
     }
 
-    @UriParam(label = "encrypt", multiValue = true, description = "Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo")
+    @UriParam(label = "encrypt", description = "Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo")
     private final List<RecipientInfo> recipient = new ArrayList<>(3);
 
     @UriParam(label = "encrypt", enums = "AES/CBC/PKCS5Padding,DESede/CBC/PKCS5Padding,Camellia/CBC/PKCS5Padding,CAST5/CBC/PKCS5Padding")
