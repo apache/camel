@@ -16,10 +16,12 @@
  */
 package org.apache.camel.support;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
@@ -54,7 +57,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the property that is a
  *                     List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
  *     <li>reference by property placeholder id - Values can refer to a property placeholder key with #property:myKey</li>
- *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with with # or #bean: eg #myBean or #bean:myBean</li>
+ *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with # or #bean: eg #myBean or #bean:myBean.
+ *                                It is recommended to favour using `#bean:` syntax to make it obvious it's a bean reference.</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType.
@@ -778,17 +782,37 @@ public final class PropertyBindingSupport {
 
         // use configurer if possible
         Object answer = null;
-        GeneratedPropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
+        Class<?> type = null;
+
+        GeneratedPropertyConfigurer configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(context, target);
         if (configurer instanceof PropertyConfigurerGetter) {
-            answer = ((PropertyConfigurerGetter) configurer).getOptionValue(target, key, ignoreCase);
+            answer = ((PropertyConfigurerGetter)configurer).getOptionValue(target, key, ignoreCase);
             if (answer == null) {
                 answer = defaultValue;
             }
         }
         if (answer == null) {
+            BeanIntrospection introspection = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
             // fallback to reflection based
-            answer = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(target, key, defaultValue, ignoreCase);
+            answer = introspection.getOrElseProperty(target, key, defaultValue, ignoreCase);
+            if (answer == null) {
+                try {
+                    Method method = introspection.getPropertyGetter(target.getClass(), key, ignoreCase);
+                    if (method != null) {
+                        type = method.getReturnType();
+                    }
+                } catch (NoSuchMethodException e) {
+                    // ignore
+                }
+            }
         }
+
+        if (answer != null) {
+            type = answer.getClass();
+        } else if (configurer instanceof PropertyConfigurerGetter) {
+            type = (Class<?>)((PropertyConfigurerGetter)configurer).getAllOptions(target).get(key);
+        }
+
         if (answer instanceof Map && lookupKey != null) {
             Map map = (Map) answer;
             answer = map.getOrDefault(lookupKey, defaultValue);
@@ -804,6 +828,38 @@ public final class PropertyBindingSupport {
                     answer = list.get(list.size() - 1);
                 }
             }
+        } else if (type != null && type.isArray() && lookupKey != null) {
+            int idx = Integer.parseInt(lookupKey);
+            int size = answer != null ? Array.getLength(answer) : 0;
+            if (idx >= size) {
+                answer = answer != null ? Arrays.copyOf((Object[]) answer, idx + 1) : Array.newInstance(Object.class, idx + 1);
+            }
+
+            Object result = Array.get(answer, idx);
+            if (result == null) {
+                result = context.getInjector().newInstance(type.getComponentType());
+                Array.set(answer, idx, result);
+            }
+
+            if (idx >= size) {
+                // replace array
+                if (configurer != null) {
+                    configurer.configure(context, target, key, answer, true);
+                } else {
+                    // fallback to reflection
+                    boolean hit;
+                    try {
+                        hit = IntrospectionSupport.setProperty(context.getTypeConverter(), target, key, answer);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Cannot set property: " + key + " as an array because target bean has no setter method for the array");
+                    }
+                    if (!hit) {
+                        throw new IllegalArgumentException("Cannot set property: " + key + " as an array because target bean has no setter method for the array");
+                    }
+                }
+            }
+
+            answer = result;
         }
 
         return answer != null ? answer : defaultValue;
@@ -1035,7 +1091,7 @@ public final class PropertyBindingSupport {
                 continue;
             }
             // must be a public static method that returns something
-            if (!Modifier.isStatic(method.getModifiers()) 
+            if (!Modifier.isStatic(method.getModifiers())
                 || !Modifier.isPublic(method.getModifiers())
                 || method.getReturnType() == Void.TYPE) {
                 continue;

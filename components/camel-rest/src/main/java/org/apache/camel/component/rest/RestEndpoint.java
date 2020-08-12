@@ -81,7 +81,7 @@ public class RestEndpoint extends DefaultEndpoint {
     private String apiDoc;
     @UriParam(label = "producer")
     private String host;
-    @UriParam(label = "producer", multiValue = true)
+    @UriParam(label = "producer")
     private String queryParameters;
     @UriParam(label = "producer", enums = "auto,off,json,xml,json_xml")
     private RestConfiguration.RestBindingMode bindingMode;
@@ -278,7 +278,9 @@ public class RestEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Query parameters for the HTTP service to call
+     * Query parameters for the HTTP service to call.
+     *
+     * The query parameters can contain multiple parameters separated by ampersand such such as foo=123&bar=456.
      */
     public void setQueryParameters(String queryParameters) {
         this.queryParameters = queryParameters;

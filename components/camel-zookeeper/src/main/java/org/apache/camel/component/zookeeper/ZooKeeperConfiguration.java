@@ -18,13 +18,13 @@ package org.apache.camel.component.zookeeper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * <code>ZookeeperConfiguration</code> encapsulates the configuration used to
@@ -80,11 +80,11 @@ public class ZooKeeperConfiguration implements Cloneable {
      */
     public String getServerUrls() {
         if (servers != null) {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            StringJoiner serversBuilder = new StringJoiner(",");
             for (String server : servers) {
-                csb.append(server);
+                serversBuilder.add(server);
             }
-            return csb.toString();
+            return serversBuilder.toString();
         }
         return null;
     }

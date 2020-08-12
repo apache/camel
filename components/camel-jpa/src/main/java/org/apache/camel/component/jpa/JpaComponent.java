@@ -26,6 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -119,6 +120,11 @@ public class JpaComponent extends DefaultComponent {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
         endpoint.setJoinTransaction(isJoinTransaction());
         endpoint.setSharedEntityManager(isSharedEntityManager());
+
+        Map<String, Object> params = PropertiesHelper.extractProperties(options, "parameters.", true);
+        if (!params.isEmpty()) {
+            endpoint.setParameters(params);
+        }
 
         // lets interpret the next string as a class
         if (ObjectHelper.isNotEmpty(path)) {
