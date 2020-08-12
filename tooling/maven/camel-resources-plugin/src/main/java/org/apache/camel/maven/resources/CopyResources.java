@@ -65,7 +65,7 @@ public class CopyResources extends AbstractMojo {
     @Parameter(required = true)
     private List<Resource> resources;
 
-    @Component
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession session;
 
     @Component
