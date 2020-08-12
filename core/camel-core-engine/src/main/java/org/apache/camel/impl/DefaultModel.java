@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -45,7 +46,6 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.util.CollectionStringBuffer;
 
 public class DefaultModel implements Model {
 
@@ -206,7 +206,7 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
-        CollectionStringBuffer cbs = new CollectionStringBuffer();
+        StringJoiner templatesBuilder = new StringJoiner(", ");
         final Map<String, Object> prop = new HashMap();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
@@ -216,13 +216,13 @@ public class DefaultModel implements Model {
                 } else {
                     // this is a required parameter do we have that as input
                     if (!parameters.containsKey(temp.getName())) {
-                        cbs.append(temp.getName());
+                        templatesBuilder.add(temp.getName());
                     }
                 }
             }
         }
-        if (!cbs.isEmpty()) {
-            throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + cbs.toString());
+        if (templatesBuilder.length() > 0) {
+            throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + templatesBuilder.toString());
         }
         // then override with user parameters
         if (parameters != null) {

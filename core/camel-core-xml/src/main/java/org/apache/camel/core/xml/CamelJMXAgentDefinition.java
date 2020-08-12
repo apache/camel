@@ -16,6 +16,8 @@
  */
 package org.apache.camel.core.xml;
 
+import java.util.StringJoiner;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * JMX configuration.
@@ -205,53 +206,47 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("CamelJMXAgent[");
-
-        CollectionStringBuffer csb = new CollectionStringBuffer();
+        StringJoiner buffer = new StringJoiner(", ", "CamelJMXAgent[", "]");
         if (disabled != null) {
-            csb.append("disabled=" + disabled);
+            buffer.add("disabled=" + disabled);
         }
         if (usePlatformMBeanServer != null) {
-            csb.append("usePlatformMBeanServer=" + usePlatformMBeanServer);
+            buffer.add("usePlatformMBeanServer=" + usePlatformMBeanServer);
         }
         if (mbeanServerDefaultDomain != null) {
-            csb.append("mbeanServerDefaultDomain=" + mbeanServerDefaultDomain);
+            buffer.add("mbeanServerDefaultDomain=" + mbeanServerDefaultDomain);
         }
         if (mbeanObjectDomainName != null) {
-            csb.append("mbeanObjectDomainName=" + mbeanObjectDomainName);
+            buffer.add("mbeanObjectDomainName=" + mbeanObjectDomainName);
         }
         if (statisticsLevel != null) {
-            csb.append("statisticsLevel=" + statisticsLevel);
+            buffer.add("statisticsLevel=" + statisticsLevel);
         }
         if (loadStatisticsEnabled != null) {
-            csb.append("loadStatisticsEnabled=" + loadStatisticsEnabled);
+            buffer.add("loadStatisticsEnabled=" + loadStatisticsEnabled);
         }
         if (endpointRuntimeStatisticsEnabled != null) {
-            csb.append("endpointRuntimeStatisticsEnabled=" + endpointRuntimeStatisticsEnabled);
+            buffer.add("endpointRuntimeStatisticsEnabled=" + endpointRuntimeStatisticsEnabled);
         }
         if (onlyRegisterProcessorWithCustomId != null) {
-            csb.append("onlyRegisterProcessorWithCustomId=" + onlyRegisterProcessorWithCustomId);
+            buffer.add("onlyRegisterProcessorWithCustomId=" + onlyRegisterProcessorWithCustomId);
         }
         if (registerAlways != null) {
-            csb.append("registerAlways=" + registerAlways);
+            buffer.add("registerAlways=" + registerAlways);
         }
         if (registerNewRoutes != null) {
-            csb.append("registerNewRoutes=" + registerNewRoutes);
+            buffer.add("registerNewRoutes=" + registerNewRoutes);
         }
         if (includeHostName != null) {
-            csb.append("includeHostName=" + includeHostName);
+            buffer.add("includeHostName=" + includeHostName);
         }
         if (useHostIPAddress != null) {
-            csb.append("useHostIPAddress=" + useHostIPAddress);
+            buffer.add("useHostIPAddress=" + useHostIPAddress);
         }
         if (mask != null) {
-            csb.append("mask=" + mask);
+            buffer.add("mask=" + mask);
         }
-
-        sb.append(csb.toString());
-        sb.append("]");
-        return sb.toString();
+        return buffer.toString();
     }
 
 }

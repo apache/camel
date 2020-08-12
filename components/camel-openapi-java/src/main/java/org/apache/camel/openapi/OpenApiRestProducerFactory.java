@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +39,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,8 +155,8 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             LOG.debug("Using RestProducerFactory: {}", factory);
 
             if (produces == null) {
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
-                List<String> list = new ArrayList<String>();
+                StringJoiner producesBuilder = new StringJoiner(",");
+                List<String> list = new ArrayList<>();
                 if (operation instanceof Oas20Operation) {
                     list = ((Oas20Operation)operation).produces;
                 } else if (operation instanceof Oas30Operation) {
@@ -176,14 +176,14 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 }
                 if (list != null) {
                     for (String s : list) {
-                        csb.append(s);
+                        producesBuilder.add(s);
                     }
                 }
-                produces = csb.isEmpty() ? null : csb.toString();
+                produces = producesBuilder.length() == 0 ? null : producesBuilder.toString();
             }
             if (consumes == null) {
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
-                List<String> list = new ArrayList<String>();
+                StringJoiner consumesBuilder = new StringJoiner(",");
+                List<String> list = new ArrayList<>();
                 if (operation instanceof Oas20Operation) {
                     list = ((Oas20Operation)operation).consumes;
                 } else if (operation instanceof Oas30Operation) {
@@ -203,10 +203,10 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 }
                 if (list != null) {
                     for (String s : list) {
-                        csb.append(s);
+                        consumesBuilder.add(s);
                     }
                 }
-                consumes = csb.isEmpty() ? null : csb.toString();
+                consumes = consumesBuilder.length() == 0 ? null : consumesBuilder.toString();
             }
 
             String basePath = null;
