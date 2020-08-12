@@ -57,7 +57,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the property that is a
  *                     List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
  *     <li>reference by property placeholder id - Values can refer to a property placeholder key with #property:myKey</li>
- *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with with # or #bean: eg #myBean or #bean:myBean</li>
+ *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with # or #bean: eg #myBean or #bean:myBean.
+ *                                It is recommended to favour using `#bean:` syntax to make it obvious it's a bean reference.</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType.
