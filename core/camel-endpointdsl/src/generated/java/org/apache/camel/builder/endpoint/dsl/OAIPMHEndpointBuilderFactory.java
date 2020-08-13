@@ -47,18 +47,6 @@ public interface OAIPMHEndpointBuilderFactory {
             return (AdvancedOAIPMHEndpointConsumerBuilder) this;
         }
         /**
-         * Base URL of the repository to which the request is made through the
-         * OAI-PMH protocol. (Parameter).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default OAIPMHEndpointConsumerBuilder endpointUrl(String endpointUrl) {
-            doSetProperty("endpointUrl", endpointUrl);
-            return this;
-        }
-        /**
          * Specifies a lower bound for datestamp-based selective harvesting. UTC
          * DateTime value.
          * 
@@ -788,18 +776,6 @@ public interface OAIPMHEndpointBuilderFactory {
             return (AdvancedOAIPMHEndpointProducerBuilder) this;
         }
         /**
-         * Base URL of the repository to which the request is made through the
-         * OAI-PMH protocol. (Parameter).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default OAIPMHEndpointProducerBuilder endpointUrl(String endpointUrl) {
-            doSetProperty("endpointUrl", endpointUrl);
-            return this;
-        }
-        /**
          * Specifies a lower bound for datestamp-based selective harvesting. UTC
          * DateTime value.
          * 
@@ -1071,18 +1047,6 @@ public interface OAIPMHEndpointBuilderFactory {
             return (AdvancedOAIPMHEndpointBuilder) this;
         }
         /**
-         * Base URL of the repository to which the request is made through the
-         * OAI-PMH protocol. (Parameter).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default OAIPMHEndpointBuilder endpointUrl(String endpointUrl) {
-            doSetProperty("endpointUrl", endpointUrl);
-            return this;
-        }
-        /**
          * Specifies a lower bound for datestamp-based selective harvesting. UTC
          * DateTime value.
          * 
@@ -1281,13 +1245,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 
-         * Syntax: <code>oaipmh:url</code>
+         * Syntax: <code>oaipmh:baseUrl</code>
          * 
-         * Path parameter: url (required)
+         * Path parameter: baseUrl (required)
          * Base URL of the repository to which the request is made through the
          * OAI-PMH protocol
          * 
-         * @param path url
+         * @param path baseUrl
          */
         default OAIPMHEndpointBuilder oaipmh(String path) {
             return OAIPMHEndpointBuilderFactory.endpointBuilder("oaipmh", path);
@@ -1300,15 +1264,15 @@ public interface OAIPMHEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 
-         * Syntax: <code>oaipmh:url</code>
+         * Syntax: <code>oaipmh:baseUrl</code>
          * 
-         * Path parameter: url (required)
+         * Path parameter: baseUrl (required)
          * Base URL of the repository to which the request is made through the
          * OAI-PMH protocol
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path url
+         * @param path baseUrl
          */
         default OAIPMHEndpointBuilder oaipmh(String componentName, String path) {
             return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -52,7 +52,7 @@ public class OAIPMHComponentConsumerParticularCaseTest extends CamelTestSupport 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("oaipmh:?endpointUrl=http://localhost:" + JettyTestServer.getInstance().port + "/index.php?page=oai&"
+                from("oaipmh:localhost:" + JettyTestServer.getInstance().port + "/index.php?page=oai&"
                         + "delay=1000&"
                         + "from=2020-02-01T00:00:00Z&"
                         + "initialDelay=1000")

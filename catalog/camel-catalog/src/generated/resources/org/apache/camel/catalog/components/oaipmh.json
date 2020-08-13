@@ -14,7 +14,7 @@
     "version": "3.5.0-SNAPSHOT",
     "scheme": "oaipmh",
     "extendsScheme": "",
-    "syntax": "oaipmh:url",
+    "syntax": "oaipmh:baseUrl",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,
@@ -26,8 +26,7 @@
     "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" }
   },
   "properties": {
-    "url": { "kind": "path", "displayName": "Url", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.net.URI", "deprecated": false, "deprecationNote": "", "secret": false, "description": "Base URL of the repository to which the request is made through the OAI-PMH protocol" },
-    "endpointUrl": { "kind": "parameter", "displayName": "Endpoint Url", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Base URL of the repository to which the request is made through the OAI-PMH protocol. (Parameter)" },
+    "baseUrl": { "kind": "path", "displayName": "Base Url", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "Base URL of the repository to which the request is made through the OAI-PMH protocol" },
     "from": { "kind": "parameter", "displayName": "From", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Specifies a lower bound for datestamp-based selective harvesting. UTC DateTime value" },
     "identifier": { "kind": "parameter", "displayName": "Identifier", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Identifier of the requested resources. Applicable only with certain verbs" },
     "metadataPrefix": { "kind": "parameter", "displayName": "Metadata Prefix", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "oai_dc", "description": "Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records." },
