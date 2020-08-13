@@ -38,7 +38,7 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "from": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "identitier": target.setIdentitier(property(camelContext, java.lang.String.class, value)); return true;
+        case "identifier": target.setIdentifier(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoresslwarnings":
         case "ignoreSSLWarnings": target.setIgnoreSSLWarnings(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
@@ -91,7 +91,7 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("from", java.lang.String.class);
         answer.put("greedy", boolean.class);
-        answer.put("identitier", java.lang.String.class);
+        answer.put("identifier", java.lang.String.class);
         answer.put("ignoreSSLWarnings", boolean.class);
         answer.put("initialDelay", long.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -138,7 +138,7 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return target.getExchangePattern();
         case "from": return target.getFrom();
         case "greedy": return target.isGreedy();
-        case "identitier": return target.getIdentitier();
+        case "identifier": return target.getIdentifier();
         case "ignoresslwarnings":
         case "ignoreSSLWarnings": return target.isIgnoreSSLWarnings();
         case "initialdelay":

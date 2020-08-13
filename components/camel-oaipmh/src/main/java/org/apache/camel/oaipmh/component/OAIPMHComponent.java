@@ -22,9 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link OAIPMHEndpoint}.
- */
 @Component("oaipmh")
 public class OAIPMHComponent extends DefaultComponent {
 

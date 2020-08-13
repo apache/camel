@@ -42,7 +42,7 @@ public class OAIPMHConsumer extends DefaultScheduledPollConsumer {
                 endpoint.getUntil(),
                 endpoint.getFrom(),
                 endpoint.getSet(),
-                endpoint.getIdentitier());
+                endpoint.getIdentifier());
         if (endpoint.isIgnoreSSLWarnings()) {
             this.harvester.getHttpClient().setIgnoreSSLWarnings(true);
         }
