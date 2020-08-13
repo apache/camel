@@ -10828,13 +10828,13 @@ public class StaticEndpointBuilders {
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-oaipmh
      * 
-     * Syntax: <code>oaipmh:url</code>
+     * Syntax: <code>oaipmh:baseUrl</code>
      * 
-     * Path parameter: url (required)
+     * Path parameter: baseUrl (required)
      * Base URL of the repository to which the request is made through the
      * OAI-PMH protocol
      * 
-     * @param path url
+     * @param path baseUrl
      */
     public static org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(
             String path) {
@@ -10848,15 +10848,15 @@ public class StaticEndpointBuilders {
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-oaipmh
      * 
-     * Syntax: <code>oaipmh:url</code>
+     * Syntax: <code>oaipmh:baseUrl</code>
      * 
-     * Path parameter: url (required)
+     * Path parameter: baseUrl (required)
      * Base URL of the repository to which the request is made through the
      * OAI-PMH protocol
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path url
+     * @param path baseUrl
      */
     public static org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(
             String componentName,

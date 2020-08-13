@@ -18,6 +18,7 @@ package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -28,21 +29,20 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultPollingEndpoint;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.camel.util.URISupport;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Harvest metadata using OAI-PMH protocol
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:url", category = {Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", category = {Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH})
 public class OAIPMHEndpoint extends DefaultPollingEndpoint {
+
+    private transient URI url;
 
     @UriPath(description = "Base URL of the repository to which the request is made through the OAI-PMH protocol")
     @Metadata(required = true)
-    private URI url;
-
-    @UriParam(description = "Base URL of the repository to which the request is made through the OAI-PMH protocol. (Parameter)")
-    private String endpointUrl;
+    private String baseUrl;
 
     @UriParam(description = "Specifies a lower bound for datestamp-based selective harvesting. UTC DateTime value")
     private String from;
@@ -71,42 +71,55 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
     @UriParam(label = "producer", description = "Returns the response of a single request. Otherwise it will make requests until there is no more data to return.")
     private boolean onlyFirst;
 
-    public OAIPMHEndpoint(String uri, String url, OAIPMHComponent component) {
+    private Map<String, Object> queryParameters;
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
+    }
+
+    public OAIPMHEndpoint(String uri, String remaining, OAIPMHComponent component) {
         super(uri, component);
-        if (this.getEndpointUrl() != null) {
-            this.url = URI.create(this.getEndpointUrl());
-        } else {
-            this.url = url.isEmpty() ? null : URI.create((this.isSsl() ? "https://" : "http://") + url);
+        this.baseUrl = remaining;
+    }
+
+    public Map<String, Object> getQueryParameters() {
+        return queryParameters;
+    }
+
+    public void setQueryParameters(Map<String, Object> queryParameters) {
+        this.queryParameters = queryParameters;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        validateParameters();
+
+        // build uri from parameters
+        this.url = URI.create((this.isSsl() ? "https://" : "http://") + baseUrl);
+        // append extra parameters
+        if (queryParameters != null && !queryParameters.isEmpty()) {
+            Map<String, Object> parameters = URISupport.parseParameters(url);
+            parameters.putAll(queryParameters);
+            this.url = URISupport.createRemainingURI(url, parameters);
         }
-    }
-
-    public String getEndpointUrl() {
-        return endpointUrl;
-    }
-
-    public void setEndpointUrl(String endpointUrl) {
-        this.url = URI.create(endpointUrl);
-        this.endpointUrl = endpointUrl;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        validateParameters();
         return new OAIPMHProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        validateParameters();
         OAIPMHConsumer consumer = new OAIPMHConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
 
     private void validateParameters() throws URISyntaxException {
-        //Update url if SSL is set to true
-        this.url = new URIBuilder(this.url).setScheme(this.ssl ? "https" : "http").build();
-
         // From parameter in ISO 8601 format
         if (from != null) {
             ISODateTimeFormat.dateTimeNoMillis().parseDateTime(from);

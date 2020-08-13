@@ -13,8 +13,6 @@
 
 *{component-header}*
 
-
-
 The oaipmh component is used for harvest OAI-PMH data providers. It allows do request to OAI-PMH endpoint using all verbs supported by the protocol.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -62,7 +60,7 @@ The OAI-PMH component supports 3 options, which are listed below.
 The OAI-PMH endpoint is configured using URI syntax:
 
 ----
-oaipmh:name
+oaipmh:baseUrl
 ----
 
 with the following path and query parameters:
@@ -73,17 +71,16 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *url* | *Required* Base URL of the repository to which the request is made through the OAI-PMH protocol |  | URI
+| *baseUrl* | *Required* Base URL of the repository to which the request is made through the OAI-PMH protocol |  | String
 |===
 
 
-=== Query Parameters (32 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *endpointUrl* (common) | Base URL of the repository to which the request is made through the OAI-PMH protocol. (Parameter) |  | String
 | *from* (common) | Specifies a lower bound for datestamp-based selective harvesting. UTC DateTime value |  | String
 | *identifier* (common) | Identifier of the requested resources. Applicable only with certain verbs |  | String
 | *metadataPrefix* (common) | Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records. | oai_dc | String

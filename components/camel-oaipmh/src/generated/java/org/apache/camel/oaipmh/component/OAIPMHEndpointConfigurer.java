@@ -30,8 +30,6 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
-        case "endpointurl":
-        case "endpointUrl": target.setEndpointUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -86,7 +84,6 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("delay", long.class);
-        answer.put("endpointUrl", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("from", java.lang.String.class);
@@ -130,8 +127,6 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "delay": return target.getDelay();
-        case "endpointurl":
-        case "endpointUrl": return target.getEndpointUrl();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
