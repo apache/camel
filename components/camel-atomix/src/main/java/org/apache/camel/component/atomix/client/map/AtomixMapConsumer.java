@@ -75,7 +75,7 @@ public final class AtomixMapConsumer extends AbstractAtomixClientConsumer<Atomix
         // close listeners
         listeners.forEach(Listener::close);
 
-        super.doStart();
+        super.doStop();
     }
 
     // ********************************************

@@ -95,7 +95,8 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         marshaller = marshallerFactory.create(getActiveFormat(), this);
         unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
     }

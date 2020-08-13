@@ -54,7 +54,7 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         for (final Method method : getClass().getDeclaredMethods()) {
             InvokeOnHeader[] annotations = method.getAnnotationsByType(InvokeOnHeader.class);
             if (annotations != null && annotations.length > 0) {
@@ -64,7 +64,7 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
             }
         }
 
-        super.doStart();
+        super.doInit();
     }
 
     @Override
