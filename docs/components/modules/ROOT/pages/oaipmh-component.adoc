@@ -1,10 +1,10 @@
 [[oaipmh-component]]
-= OAIPMH Component
+= OAI-PMH Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-oaipmh/src/main/docs/oaipmh-component.adoc
-:docTitle: OAIPMH
+:docTitle: OAI-PMH
 :artifactId: camel-oaipmh
-:description: Represents a OAIPMH endpoint. Component for do OAI-PMH request
+:description: Harvest metadata using OAI-PMH protocol
 :since: 3.5
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
@@ -15,7 +15,7 @@
 
 
 
-The oaipmh component is used for harvest  OAI-PMH data providers. It allows do request to OAI-PMH endpoint using all verbs supported by the protocol.
+The oaipmh component is used for harvest OAI-PMH data providers. It allows do request to OAI-PMH endpoint using all verbs supported by the protocol.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -43,7 +43,7 @@ You can append query options to the URI in the following format,
 == Options
 
 // component options: START
-The OAIPMH component supports 3 options, which are listed below.
+The OAI-PMH component supports 3 options, which are listed below.
 
 
 
@@ -59,7 +59,7 @@ The OAIPMH component supports 3 options, which are listed below.
 
 
 // endpoint options: START
-The OAIPMH endpoint is configured using URI syntax:
+The OAI-PMH endpoint is configured using URI syntax:
 
 ----
 oaipmh:name
@@ -73,7 +73,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *url* | *Required* Base URL of the repository to which the request is made through the OAI-PMH protocol. |  | URI
+| *url* | *Required* Base URL of the repository to which the request is made through the OAI-PMH protocol |  | URI
 |===
 
 
@@ -85,12 +85,9 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *endpointUrl* (common) | Base URL of the repository to which the request is made through the OAI-PMH protocol. (Parameter) |  | String
 | *from* (common) | Specifies a lower bound for datestamp-based selective harvesting. UTC DateTime value |  | String
-| *identitier* (common) | Identifier of the requested resources. Applicable only with certain verbs |  | String
-| *ignoreSSLWarnings* (common) | Ignore SSL certificate warnings | false | boolean
+| *identifier* (common) | Identifier of the requested resources. Applicable only with certain verbs |  | String
 | *metadataPrefix* (common) | Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records. | oai_dc | String
-| *onlyFirst* (common) | Returns the response of a single request. Otherwise it will make requests until there is no more data to return. | False | boolean
-| *set* (common) | Specifies membership as a criteria for set-based selective harvesting. |  | String
-| *ssl* (common) | Causes the defined url to make an https request | false | boolean
+| *set* (common) | Specifies membership as a criteria for set-based selective harvesting |  | String
 | *until* (common) | Specifies an upper bound for datestamp-based selective harvesting. UTC DateTime value. |  | String
 | *verb* (common) | Request name supported by OAI-PMh protocol | ListRecords | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -99,6 +96,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *onlyFirst* (producer) | Returns the response of a single request. Otherwise it will make requests until there is no more data to return. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
@@ -115,6 +113,8 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *ignoreSSLWarnings* (security) | Ignore SSL certificate warnings | false | boolean
+| *ssl* (security) | Causes the defined url to make an https request | false | boolean
 |===
 // endpoint options: END
 
@@ -128,8 +128,6 @@ with the following path and query parameters:
 |=======================================================================
 |Name |Description
 |`CamelOaimphResumptionToken` | This header is obtained when onlyFirst option is enable. Return resumptiontoken of the request when data is still available.
-
-
 |=======================================================================
 
 == Usage
@@ -165,5 +163,3 @@ from("oaipmh:baseUrlRepository/oai/request")
 ---------------------------------------------------------
 
 For more details about OAI-PMH see the documentation: http://www.openarchives.org/pmh/
-
-
