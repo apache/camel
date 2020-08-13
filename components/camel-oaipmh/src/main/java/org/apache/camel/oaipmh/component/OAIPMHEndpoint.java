@@ -32,12 +32,12 @@ import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * Represents a OAIPMH endpoint. Component for do OAI-PMH request
+ * Harvest metadata using OAI-PMH protocol
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAIPMH", syntax = "oaipmh:name", category = {Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:name", category = {Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH})
 public class OAIPMHEndpoint extends DefaultPollingEndpoint {
 
-    @UriPath(description = "Base URL of the repository to which the request is made through the OAI-PMH protocol.", label = "advanced")
+    @UriPath(description = "Base URL of the repository to which the request is made through the OAI-PMH protocol")
     @Metadata(required = true)
     private URI url;
 
@@ -50,7 +50,7 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
     @UriParam(description = "Specifies an upper bound for datestamp-based selective harvesting. UTC DateTime value.")
     private String until;
 
-    @UriParam(description = "Specifies membership as a criteria for set-based selective harvesting.")
+    @UriParam(description = "Specifies membership as a criteria for set-based selective harvesting")
     private String set;
 
     @UriParam(description = "Request name supported by OAI-PMh protocol", defaultValue = "ListRecords")
@@ -59,22 +59,21 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
     @UriParam(description = "Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records.", defaultValue = "oai_dc")
     private String metadataPrefix = "oai_dc";
 
-    @UriParam(description = "Causes the defined url to make an https request", defaultValue = "false")
+    @UriParam(label = "security", description = "Causes the defined url to make an https request")
     private boolean ssl;
 
-    @UriParam(description = "Ignore SSL certificate warnings", defaultValue = "false")
+    @UriParam(label = "security", description = "Ignore SSL certificate warnings")
     private boolean ignoreSSLWarnings;
 
-    @UriParam(description = "Identifier of the requested resources. Applicable only with certain verbs ")
-    private String identitier;
+    @UriParam(description = "Identifier of the requested resources. Applicable only with certain verbs")
+    private String identifier;
 
-    @UriParam(description = "Returns the response of a single request. Otherwise it will make requests until there is no more data to return.", defaultValue = "False")
+    @UriParam(label = "producer", description = "Returns the response of a single request. Otherwise it will make requests until there is no more data to return.")
     private boolean onlyFirst;
 
     public OAIPMHEndpoint(String uri, String url, OAIPMHComponent component) {
         super(uri, component);
         if (this.getEndpointUrl() != null) {
-            //this.url = this.getEndpointUrl() == null ? null : URI.create(this.getEndpointUrl());
             this.url = URI.create(this.getEndpointUrl());
         } else {
             this.url = url.isEmpty() ? null : URI.create((this.isSsl() ? "https://" : "http://") + url);
@@ -181,12 +180,12 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
         return this.url;
     }
 
-    public String getIdentitier() {
-        return identitier;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setIdentitier(String identitier) {
-        this.identitier = identitier;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public boolean isOnlyFirst() {

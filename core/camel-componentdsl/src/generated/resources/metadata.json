@@ -5195,8 +5195,8 @@
   "OaipmhComponentBuilderFactory": {
     "kind": "component",
     "name": "oaipmh",
-    "title": "OAIPMH",
-    "description": "Represents a OAIPMH endpoint. Component for do OAI-PMH request",
+    "title": "OAI-PMH",
+    "description": "Harvest metadata using OAI-PMH protocol",
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "endpoint,webservice,batch",

@@ -10821,8 +10821,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * OAIPMH (camel-oaipmh)
-     * Represents a OAIPMH endpoint. Component for do OAI-PMH request
+     * OAI-PMH (camel-oaipmh)
+     * Harvest metadata using OAI-PMH protocol
      * 
      * Category: endpoint,webservice,batch
      * Since: 3.5
@@ -10832,7 +10832,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: url (required)
      * Base URL of the repository to which the request is made through the
-     * OAI-PMH protocol.
+     * OAI-PMH protocol
      * 
      * @param path name
      */
@@ -10841,8 +10841,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.endpointBuilder("oaipmh", path);
     }
     /**
-     * OAIPMH (camel-oaipmh)
-     * Represents a OAIPMH endpoint. Component for do OAI-PMH request
+     * OAI-PMH (camel-oaipmh)
+     * Harvest metadata using OAI-PMH protocol
      * 
      * Category: endpoint,webservice,batch
      * Since: 3.5
@@ -10852,7 +10852,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: url (required)
      * Base URL of the repository to which the request is made through the
-     * OAI-PMH protocol.
+     * OAI-PMH protocol
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -2794,8 +2794,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.nsq();
     }
     /**
-     * OAIPMH (camel-oaipmh)
-     * Represents a OAIPMH endpoint. Component for do OAI-PMH request
+     * OAI-PMH (camel-oaipmh)
+     * Harvest metadata using OAI-PMH protocol
      * 
      * Category: endpoint,webservice,batch
      * Since: 3.5

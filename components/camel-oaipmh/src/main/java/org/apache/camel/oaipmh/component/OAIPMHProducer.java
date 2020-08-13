@@ -53,7 +53,7 @@ public class OAIPMHProducer extends DefaultProducer {
                 endpoint.getUntil(),
                 endpoint.getFrom(),
                 endpoint.getSet(),
-                endpoint.getIdentitier());
+                endpoint.getIdentifier());
         overrideHarvesterConfigs(exchange.getIn(), harvester);
         if (endpoint.isIgnoreSSLWarnings()) {
             harvester.getHttpClient().setIgnoreSSLWarnings(true);
