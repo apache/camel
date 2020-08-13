@@ -5207,7 +5207,7 @@
     "version": "3.5.0-SNAPSHOT",
     "scheme": "oaipmh",
     "extendsScheme": "",
-    "syntax": "oaipmh:name",
+    "syntax": "oaipmh:url",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,

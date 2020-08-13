@@ -60,7 +60,7 @@ The OAI-PMH component supports 3 options, which are listed below.
 The OAI-PMH endpoint is configured using URI syntax:
 
 ----
-oaipmh:name
+oaipmh:url
 ----
 
 with the following path and query parameters:

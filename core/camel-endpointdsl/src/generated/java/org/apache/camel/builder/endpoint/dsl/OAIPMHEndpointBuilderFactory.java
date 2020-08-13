@@ -1281,13 +1281,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 
-         * Syntax: <code>oaipmh:name</code>
+         * Syntax: <code>oaipmh:url</code>
          * 
          * Path parameter: url (required)
          * Base URL of the repository to which the request is made through the
          * OAI-PMH protocol
          * 
-         * @param path name
+         * @param path url
          */
         default OAIPMHEndpointBuilder oaipmh(String path) {
             return OAIPMHEndpointBuilderFactory.endpointBuilder("oaipmh", path);
@@ -1300,7 +1300,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 
-         * Syntax: <code>oaipmh:name</code>
+         * Syntax: <code>oaipmh:url</code>
          * 
          * Path parameter: url (required)
          * Base URL of the repository to which the request is made through the
@@ -1308,7 +1308,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path name
+         * @param path url
          */
         default OAIPMHEndpointBuilder oaipmh(String componentName, String path) {
             return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
