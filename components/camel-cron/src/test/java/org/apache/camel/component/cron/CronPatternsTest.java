@@ -18,6 +18,7 @@ package org.apache.camel.component.cron;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -60,6 +61,7 @@ public class CronPatternsTest extends CamelTestSupport {
     void testPlusInURI() throws Exception {
         BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         bi.setExtendedStatistics(true);
+        bi.setLoggingLevel(LoggingLevel.INFO);
 
         context.addRoutes(new RouteBuilder() {
             @Override

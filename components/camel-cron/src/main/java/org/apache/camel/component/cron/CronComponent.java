@@ -25,6 +25,7 @@ import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -55,6 +56,14 @@ public class CronComponent extends DefaultComponent {
         // create delegate and set on endpoint
         Endpoint delegate = this.service.createEndpoint(configuration);
         answer.setDelegate(delegate);
+        if (delegate instanceof DefaultEndpoint) {
+            DefaultEndpoint de = (DefaultEndpoint) delegate;
+            de.setBasicPropertyBinding(answer.isBasicPropertyBinding());
+            de.setBridgeErrorHandler(answer.isBridgeErrorHandler());
+            de.setExceptionHandler(answer.getExceptionHandler());
+            de.setExchangePattern(answer.getExchangePattern());
+            de.setSynchronous(answer.isSynchronous());
+        }
 
         return answer;
     }
