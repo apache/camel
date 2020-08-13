@@ -73,14 +73,15 @@ public class S3ClientIAMOptimizedImpl implements S3Client {
 
         if (!configuration.isUseEncryption()) {
             clientBuilder = AmazonS3ClientBuilder.standard().withCredentials(new InstanceProfileCredentialsProvider(false));
-        } else if (configuration.isUseEncryption()) {
+
+            if (configuration.hasProxyConfiguration()) {
+                clientBuilder = clientBuilder.withClientConfiguration(clientConfiguration);
+            }
+        } else {
             StaticEncryptionMaterialsProvider encryptionMaterialsProvider
                     = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
             encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration)
                     .withEncryptionMaterials(encryptionMaterialsProvider)
-                    .withCredentials(new InstanceProfileCredentialsProvider(false));
-        } else {
-            clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration)
                     .withCredentials(new InstanceProfileCredentialsProvider(false));
         }
 

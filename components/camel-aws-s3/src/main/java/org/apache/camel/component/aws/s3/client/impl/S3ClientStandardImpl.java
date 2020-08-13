@@ -76,14 +76,12 @@ public class S3ClientStandardImpl implements S3Client {
             if (!configuration.isUseEncryption()) {
                 clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration)
                         .withCredentials(credentialsProvider);
-            } else if (configuration.isUseEncryption()) {
+            } else {
                 StaticEncryptionMaterialsProvider encryptionMaterialsProvider
                         = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
                 encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration)
                         .withCredentials(credentialsProvider)
                         .withEncryptionMaterials(encryptionMaterialsProvider);
-            } else {
-                clientBuilder = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider);
             }
 
             if (!configuration.isUseEncryption()) {
