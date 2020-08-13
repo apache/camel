@@ -1,8 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.eventhubs.operations;
 
 import java.util.Properties;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
@@ -21,8 +35,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsProducerOperationsIT extends CamelTestSupport {
@@ -37,7 +51,6 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
         configuration.setConnectionString(properties.getProperty("connectionString"));
         configuration.setConsumerGroupName(EventHubClientBuilder.DEFAULT_CONSUMER_GROUP_NAME);
     }
-
 
     @Test
     public void testSendSingleEventAsAsync() {
@@ -75,10 +88,12 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
         final EventHubConsumerAsyncClient consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
 
-        final boolean eventExists = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
-                .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition) && partitionEvent.getData().getBodyAsString().contains("test should be in firstPartition"))
+        final Boolean eventExists = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
+                .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition) && partitionEvent.getData().getBodyAsString()
+                        .contains("test should be in firstPartition"))
                 .block();
 
+        assertNotNull(eventExists);
         assertTrue(eventExists);
 
         producerAsyncClient.close();

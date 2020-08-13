@@ -18,17 +18,23 @@ package org.apache.camel.component.azure.eventhubs;
 
 import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
-import org.apache.camel.*;
+import org.apache.camel.Category;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The azure-eventhubs component that integrates Azure Event Hubs which is a highly scalable publish-subscribe service that
+ * The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly scalable publish-subscribe service that
  * can ingest millions of events per second and stream them to multiple consumers.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs", syntax = "azure-eventhubs:namespace/eventHubName", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs", syntax = "azure-eventhubs:namespace/eventHubName", category = {
+        Category.CLOUD, Category.MESSAGING })
 public class EventHubsEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -41,7 +47,7 @@ public class EventHubsEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return null;
+        return new EventHubsProducer(this);
     }
 
     @Override
@@ -64,7 +70,7 @@ public class EventHubsEndpoint extends DefaultEndpoint {
         final Exchange exchange = createExchange();
         final Message message = exchange.getIn();
 
-        // set body as byte[] and let camel typeConverter do the job to convert
+        // set body as byte[] and let camel typeConverters do the job to convert
         message.setBody(eventContext.getEventData().getBody());
         // set headers
         message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
@@ -83,6 +89,7 @@ public class EventHubsEndpoint extends DefaultEndpoint {
         // set headers
         message.setHeader(EventHubsConstants.PARTITION_ID, errorContext.getPartitionContext().getPartitionId());
 
+        // set exception
         exchange.setException(errorContext.getThrowable());
 
         return exchange;

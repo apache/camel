@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.azure.messaging.eventhubs.EventHubConsumerAsyncClient;
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -94,8 +93,8 @@ public class EventHubsComponent extends DefaultComponent {
 
     private void validateConfigurations(final EventHubsConfiguration configuration) {
         if (!isAccessKeyAndAccessNameSet(configuration)) {
-            throw new IllegalArgumentException("Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient " +
-                    "or connectionString must be specified.");
+            throw new IllegalArgumentException("Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
+                    + "or connectionString must be specified.");
         }
     }
 

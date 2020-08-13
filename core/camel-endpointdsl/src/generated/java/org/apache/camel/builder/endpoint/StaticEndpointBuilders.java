@@ -2479,9 +2479,10 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
-     * The azure-eventhubs component that integrates Azure Event Hubs which is a
-     * highly scalable publish-subscribe service that can ingest millions of
-     * events per second and stream them to multiple consumers.
+     * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
+     * protocol. Azure EventHubs is a highly scalable publish-subscribe service
+     * that can ingest millions of events per second and stream them to multiple
+     * consumers.
      * 
      * Category: cloud,messaging
      * Since: 3.5
@@ -2503,9 +2504,10 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
-     * The azure-eventhubs component that integrates Azure Event Hubs which is a
-     * highly scalable publish-subscribe service that can ingest millions of
-     * events per second and stream them to multiple consumers.
+     * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
+     * protocol. Azure EventHubs is a highly scalable publish-subscribe service
+     * that can ingest millions of events per second and stream them to multiple
+     * consumers.
      * 
      * Category: cloud,messaging
      * Since: 3.5

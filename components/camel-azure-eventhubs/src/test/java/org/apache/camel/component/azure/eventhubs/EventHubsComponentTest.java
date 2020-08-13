@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.eventhubs;
 
 import com.azure.messaging.eventhubs.EventHubConsumerAsyncClient;
@@ -16,17 +32,21 @@ class EventHubsComponentTest extends CamelTestSupport {
 
     @Test
     public void testCreateEndpointWithNoEventHubsNameOrNameSpace() throws Exception {
-        ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("azure-eventhubs:?sharedAccessKey=string&sharedAccessName=name"));
+        ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class, () ->
+                context.getEndpoint("azure-eventhubs:?sharedAccessKey=string&sharedAccessName=name"));
+
         assertTrue(exception.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
 
-        ResolveEndpointFailedException exception2 = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("azure-eventhubs:name?sharedAccessKey=string&sharedAccessName=name"));
+        ResolveEndpointFailedException exception2 = assertThrows(ResolveEndpointFailedException.class, () ->
+                context.getEndpoint("azure-eventhubs:name?sharedAccessKey=string&sharedAccessName=name"));
+
         assertTrue(exception2.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
     }
 
     @Test
     public void testCreateEndpointWithNoSuppliedClientsOrKeysOrConnectionString() {
-        final String expectedErrorMessage = "Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient " +
-                "or connectionString must be specified";
+        final String expectedErrorMessage = "Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
+                + "or connectionString must be specified";
 
         // first case: with no client or key or connectionstring
         assertTrue(getErrorMessage("azure-eventhubs:name/hubName?").contains(expectedErrorMessage));
@@ -80,18 +100,14 @@ class EventHubsComponentTest extends CamelTestSupport {
 
     @Test
     public void testCreateEndpointWithConfig() {
-        final String uris = "azure-eventhubs:namespace/hubName?connectionString=" +
-                "Endpoint=sb://dummynamespace.servicebus.windows.net/;SharedAccessKeyName=DummyAccessKeyName;SharedAccessKey=DummyKey;EntityPath=test" +
-                "&consumerGroupName=testConsumer&prefetchCount=100";
-
-        final String uri = "azure-eventhubs:namespace/hubName?sharedAccessName=DummyAccessKeyName" +
-                "&sharedAccessKey=DummyKey" +
-                "&consumerGroupName=testConsumer&prefetchCount=100";
+        final String uri = "azure-eventhubs:namespace/hubName?sharedAccessName=DummyAccessKeyName"
+                + "&sharedAccessKey=DummyKey"
+                + "&consumerGroupName=testConsumer&prefetchCount=100";
 
         final EventHubsEndpoint endpoint = (EventHubsEndpoint) context.getEndpoint(uri);
 
         assertEquals("namespace", endpoint.getConfiguration().getNamespace());
-        assertEquals("hubName", endpoint.getConfiguration().getEventHubName());;
+        assertEquals("hubName", endpoint.getConfiguration().getEventHubName());
         assertEquals("testConsumer", endpoint.getConfiguration().getConsumerGroupName());
         assertEquals("DummyAccessKeyName", endpoint.getConfiguration().getSharedAccessName());
         assertEquals("DummyKey", endpoint.getConfiguration().getSharedAccessKey());
