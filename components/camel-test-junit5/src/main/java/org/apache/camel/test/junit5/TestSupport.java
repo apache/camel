@@ -512,8 +512,9 @@ public final class TestSupport {
      * @return <tt>true</tt> if its Java 1.8.0_261 and later, <tt>false</tt> if its not (for
      *         example Java 1.8.0_251)
      */
+    // CHECKSTYLE:OFF
     public static boolean isJava18_261_later() {
-        boolean ret = false;
+        boolean ret;
         String version = System.getProperty("java.version");
         try {
             ret = version != null && version.startsWith("1.8.0_")
@@ -523,7 +524,7 @@ public final class TestSupport {
         }
         return ret;
     }
-
+    // CHECKSTYLE:ON
 
     /**
      * Tells whether the current Java version is 1.9.
