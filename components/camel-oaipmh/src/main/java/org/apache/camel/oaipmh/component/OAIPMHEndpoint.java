@@ -73,22 +73,14 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
 
     private Map<String, Object> queryParameters;
 
-    @Override
-    public boolean isLenientProperties() {
-        return true;
-    }
-
     public OAIPMHEndpoint(String uri, String remaining, OAIPMHComponent component) {
         super(uri, component);
         this.baseUrl = remaining;
     }
 
-    public Map<String, Object> getQueryParameters() {
-        return queryParameters;
-    }
-
-    public void setQueryParameters(Map<String, Object> queryParameters) {
-        this.queryParameters = queryParameters;
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 
     @Override
@@ -98,7 +90,11 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
         validateParameters();
 
         // build uri from parameters
-        this.url = URI.create((this.isSsl() ? "https://" : "http://") + baseUrl);
+        String prefix = "";
+        if (!baseUrl.startsWith("http:") && !baseUrl.startsWith("https:")) {
+            prefix = isSsl() ? "https://" : "http://";
+        }
+        this.url = URI.create(prefix + baseUrl);
         // append extra parameters
         if (queryParameters != null && !queryParameters.isEmpty()) {
             Map<String, Object> parameters = URISupport.parseParameters(url);
@@ -127,6 +123,14 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
         if (until != null) {
             ISODateTimeFormat.dateTimeNoMillis().parseDateTime(until);
         }
+    }
+
+    public Map<String, Object> getQueryParameters() {
+        return queryParameters;
+    }
+
+    public void setQueryParameters(Map<String, Object> queryParameters) {
+        this.queryParameters = queryParameters;
     }
 
     public boolean isIgnoreSSLWarnings() {
