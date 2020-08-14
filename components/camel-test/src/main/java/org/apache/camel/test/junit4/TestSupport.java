@@ -490,7 +490,6 @@ public abstract class TestSupport extends Assert {
     @Deprecated
     public static boolean isJava16() {
         return getJavaMajorVersion() == 6;
-
     }
     
     /**
@@ -502,7 +501,6 @@ public abstract class TestSupport extends Assert {
     @Deprecated
     public static boolean isJava17() {
         return getJavaMajorVersion() == 7;
-
     }
 
     /**
@@ -512,8 +510,27 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isJava18() {
         return getJavaMajorVersion() == 8;
-
     }
+
+    /**
+     * Tells whether the current Java version is 1.8 and build_no 261 and later.
+     *
+     * @return <tt>true</tt> if its Java 1.8.0_261 and later, <tt>false</tt> if its not (for
+     *         example Java 1.8.0_251)
+     */
+    // CHECKSTYLE:OFF
+    public static boolean isJava18_261_later() {
+        boolean ret;
+        String version = System.getProperty("java.version");
+        try {
+            ret = version != null && version.startsWith("1.8.0_")
+                    && Integer.parseInt(version.substring(6)) >= 261;
+        } catch (NumberFormatException ex) {
+            ret = false;
+        }
+        return ret;
+    }
+    // CHECKSTYLE:ON
 
     /**
      * Is this Java 1.9
@@ -522,14 +539,13 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isJava19() {
         return getJavaMajorVersion() == 9;
-
     }
 
     /**
      * Returns the current major Java version e.g 8.
      * <p/>
      * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
-
+     *
      * @return the current major Java version.
      */
     public static int getJavaMajorVersion() {
