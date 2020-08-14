@@ -46,7 +46,8 @@ public interface EventHubsEndpointBuilderFactory {
             return (AdvancedEventHubsEndpointConsumerBuilder) this;
         }
         /**
-         * test.
+         * Sets the retry policy for EventHubAsyncClient. If not specified, the
+         * default retry options are used.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
          * type.
@@ -59,7 +60,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the retry policy for EventHubAsyncClient. If not specified, the
+         * default retry options are used.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
@@ -72,7 +74,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the transport type by which all the communication with Azure
+         * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
@@ -86,7 +89,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the transport type by which all the communication with Azure
+         * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
@@ -130,7 +134,9 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * In case you chose the default BlobCheckpointStore, this sets access
+         * key for the associated azure account name to be used for
+         * authentication with azure blob services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -142,7 +148,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * In case you chose the default BlobCheckpointStore, this sets Azure
+         * account name to be used for authentication with azure blob services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -154,7 +161,9 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * In case you chose the default BlobCheckpointStore, this sets the blob
+         * container that shall be used by the BlobCheckpointStore to store the
+         * checkpoint offsets.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -166,7 +175,9 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * In case you chose the default BlobCheckpointStore,
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option is a:
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -180,7 +191,9 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * In case you chose the default BlobCheckpointStore,
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -232,7 +245,12 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the CheckpointStore the EventProcessorClient will use for
+         * storing partition ownership and checkpoint information. Users can,
+         * optionally, provide their own implementation of CheckpointStore which
+         * will store ownership and checkpoint information. By default it set to
+         * use
+         * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option is a:
          * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
@@ -246,7 +264,12 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the CheckpointStore the EventProcessorClient will use for
+         * storing partition ownership and checkpoint information. Users can,
+         * optionally, provide their own implementation of CheckpointStore which
+         * will store ownership and checkpoint information. By default it set to
+         * use
+         * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option will be converted to a
          * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
@@ -260,7 +283,10 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the name of the consumer group this consumer is associated with.
+         * Events are read in the context of this group. The name of the
+         * consumer group that is created by default is {link
+         * #DEFAULT_CONSUMER_GROUP_NAME $Default}.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -273,7 +299,12 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the map containing the event position to use for each partition
+         * if a checkpoint for the partition does not exist in CheckpointStore.
+         * This map is keyed off of the partition id. If there is no checkpoint
+         * in CheckpointStore and there is no entry in this map, the processing
+         * of the partition will start from {link EventPosition#latest() latest}
+         * position.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * com.azure.messaging.eventhubs.models.EventPosition&gt;</code> type.
@@ -286,7 +317,12 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the map containing the event position to use for each partition
+         * if a checkpoint for the partition does not exist in CheckpointStore.
+         * This map is keyed off of the partition id. If there is no checkpoint
+         * in CheckpointStore and there is no entry in this map, the processing
+         * of the partition will start from {link EventPosition#latest() latest}
+         * position.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
@@ -300,7 +336,9 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the count used by the receiver to control the number of events
+         * the Event Hub consumer will actively receive and queue locally
+         * without regard to whether a receive operation is currently active.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -312,7 +350,9 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the count used by the receiver to control the number of events
+         * the Event Hub consumer will actively receive and queue locally
+         * without regard to whether a receive operation is currently active.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -325,7 +365,12 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Instead of supplying namespace, sharedAccessKey, sharedAccessName ...
+         * etc, you can just supply the connection string for your eventHub. The
+         * connection string for EventHubs already include all the necessary
+         * information to connection to your EventHub. To learn on how to
+         * generate the connection string, take a look at this documentation:
+         * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -337,7 +382,7 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * The generated value for the SharedAccessName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -349,7 +394,7 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * The name you chose for your EventHubs SAS keys.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -497,7 +542,8 @@ public interface EventHubsEndpointBuilderFactory {
             return (AdvancedEventHubsEndpointProducerBuilder) this;
         }
         /**
-         * test.
+         * Sets the retry policy for EventHubAsyncClient. If not specified, the
+         * default retry options are used.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
          * type.
@@ -510,7 +556,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the retry policy for EventHubAsyncClient. If not specified, the
+         * default retry options are used.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
@@ -523,7 +570,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the transport type by which all the communication with Azure
+         * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
@@ -537,7 +585,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the transport type by which all the communication with Azure
+         * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
@@ -623,7 +672,10 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the identifier of the Event Hub partition that the {link
+         * EventData events} will be sent to. If the identifier is not
+         * specified, the Event Hubs service will be responsible for routing
+         * events that are sent to an available partition.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -634,7 +686,17 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets a hashing key to be provided for the batch of events, which
+         * instructs the Event Hubs service to map this key to a specific
+         * partition. The selection of a partition is stable for a given
+         * partition hashing key. Should any other batches of events be sent
+         * using the same exact partition hashing key, the Event Hubs service
+         * will route them all to the same partition. This should be specified
+         * only when there is a need to group events by partition, but there is
+         * flexibility into which partition they are routed. If ensuring that a
+         * batch of events is sent only to a specific partition, it is
+         * recommended that the {link #setPartitionId(String) identifier of the
+         * position be specified directly} when sending the batch.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -646,7 +708,13 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the EventHubProducerAsyncClient.An asynchronous producer
+         * responsible for transmitting EventData to a specific Event Hub,
+         * grouped together in batches. Depending on the {link
+         * CreateBatchOptions options} specified when creating an
+         * {linkEventDataBatch}, the events may be automatically routed to an
+         * available partition or specific to a partition. Use by this component
+         * to produce the data in camel producer.
          * 
          * The option is a:
          * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
@@ -659,7 +727,13 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the EventHubProducerAsyncClient.An asynchronous producer
+         * responsible for transmitting EventData to a specific Event Hub,
+         * grouped together in batches. Depending on the {link
+         * CreateBatchOptions options} specified when creating an
+         * {linkEventDataBatch}, the events may be automatically routed to an
+         * available partition or specific to a partition. Use by this component
+         * to produce the data in camel producer.
          * 
          * The option will be converted to a
          * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
@@ -672,7 +746,12 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Instead of supplying namespace, sharedAccessKey, sharedAccessName ...
+         * etc, you can just supply the connection string for your eventHub. The
+         * connection string for EventHubs already include all the necessary
+         * information to connection to your EventHub. To learn on how to
+         * generate the connection string, take a look at this documentation:
+         * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -684,7 +763,7 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * The generated value for the SharedAccessName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -696,7 +775,7 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * The name you chose for your EventHubs SAS keys.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -788,7 +867,8 @@ public interface EventHubsEndpointBuilderFactory {
             return (AdvancedEventHubsEndpointBuilder) this;
         }
         /**
-         * test.
+         * Sets the retry policy for EventHubAsyncClient. If not specified, the
+         * default retry options are used.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
          * type.
@@ -801,7 +881,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the retry policy for EventHubAsyncClient. If not specified, the
+         * default retry options are used.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
@@ -814,7 +895,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the transport type by which all the communication with Azure
+         * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
@@ -828,7 +910,8 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Sets the transport type by which all the communication with Azure
+         * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
@@ -872,7 +955,12 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * Instead of supplying namespace, sharedAccessKey, sharedAccessName ...
+         * etc, you can just supply the connection string for your eventHub. The
+         * connection string for EventHubs already include all the necessary
+         * information to connection to your EventHub. To learn on how to
+         * generate the connection string, take a look at this documentation:
+         * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -884,7 +972,7 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * The generated value for the SharedAccessName.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -895,7 +983,7 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * test.
+         * The name you chose for your EventHubs SAS keys.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -997,10 +1085,10 @@ public interface EventHubsEndpointBuilderFactory {
          * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
          * 
          * Path parameter: namespace
-         * test
+         * EventHubs namespace created in Azure Portal
          * 
          * Path parameter: eventHubName
-         * test
+         * EventHubs name under a specific namcespace
          * 
          * @param path namespace/eventHubName
          */
@@ -1021,10 +1109,10 @@ public interface EventHubsEndpointBuilderFactory {
          * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
          * 
          * Path parameter: namespace
-         * test
+         * EventHubs namespace created in Azure Portal
          * 
          * Path parameter: eventHubName
-         * test
+         * EventHubs name under a specific namcespace
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
