@@ -167,7 +167,7 @@ from("direct:start").bean(ExampleBean.class);
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
 constructed from the Message are all defined by the
-xref:ROOT:bean-binding.adoc[Bean Binding] mechanism which is used throughout
+xref:bean-binding.adoc[Bean Binding] mechanism which is used throughout
 all of the various Bean Integration
 mechanisms in Camel.
 
