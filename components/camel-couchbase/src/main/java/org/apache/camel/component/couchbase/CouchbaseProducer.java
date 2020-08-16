@@ -168,7 +168,7 @@ public class CouchbaseProducer extends DefaultProducer {
         UpsertOptions options = UpsertOptions.upsertOptions()
                 .expiry(Duration.ofSeconds(expiry))
                 .durability(persistTo, replicateTo)
-                .timeout(Duration.ofMillis(retryAttempts * producerRetryPause))
+                .timeout(Duration.ofMillis(retryAttempts * (long) producerRetryPause))
                 .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause), Duration.ofMillis(producerRetryPause), 1));
 
         MutationResult result = collection.upsert(id, obj, options);
