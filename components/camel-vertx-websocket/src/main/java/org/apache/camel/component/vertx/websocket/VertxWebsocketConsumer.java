@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.vertx.core.http.ServerWebSocket;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -34,7 +32,6 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketConsumer.class);
 
     private final VertxWebsocketEndpoint endpoint;
-    private final ConcurrentHashMap<String, ServerWebSocket> connectedPeers = new ConcurrentHashMap();
 
     public VertxWebsocketConsumer(VertxWebsocketEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
