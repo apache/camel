@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 public class MimeMultipartDataFormatReifier extends DataFormatReifier<MimeMultipartDataFormat> {
 
     public MimeMultipartDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (MimeMultipartDataFormat)definition);
+        super(camelContext, (MimeMultipartDataFormat) definition);
     }
 
     @Override

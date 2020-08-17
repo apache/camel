@@ -27,7 +27,8 @@ public class SpringServiceCallDnsRouteTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/kubernetes/cloud/SpringServiceCallDnsRouteTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/kubernetes/cloud/SpringServiceCallDnsRouteTest.xml");
     }
 
     @Test

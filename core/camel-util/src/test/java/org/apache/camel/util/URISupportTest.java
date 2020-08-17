@@ -252,7 +252,8 @@ public class URISupportTest {
 
     @Test
     public void testSanitizeAccessToken() throws Exception {
-        String out1 = URISupport.sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
+        String out1 = URISupport
+                .sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
         assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=foo&clientSecret=xxxxxx", out1);
     }
 
@@ -316,7 +317,8 @@ public class URISupportTest {
 
     @Test
     public void testSanitizeSaslJaasConfig() throws Exception {
-        String out1 = URISupport.sanitizeUri("kafka://MY-TOPIC-NAME?saslJaasConfig=org.apache.kafka.common.security.plain.PlainLoginModule required username=scott password=tiger");
+        String out1 = URISupport.sanitizeUri(
+                "kafka://MY-TOPIC-NAME?saslJaasConfig=org.apache.kafka.common.security.plain.PlainLoginModule required username=scott password=tiger");
         assertEquals("kafka://MY-TOPIC-NAME?saslJaasConfig=xxxxxx", out1);
     }
 
@@ -337,28 +339,35 @@ public class URISupportTest {
 
     @Test
     public void testSpecialUriFromXmppComponent() throws Exception {
-        String out1 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
+        String out1 = URISupport
+                .normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat", out1);
     }
 
     @Test
     public void testRawParameter() throws Exception {
-        String out = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat");
+        String out = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat");
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some+chat", out);
 
-        String out2 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
+        String out2 = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some+chat", out2);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some+chat",
+                out2);
     }
 
     @Test
     public void testRawParameterCurly() throws Exception {
-        String out = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat");
+        String out = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat");
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some+chat", out);
 
-        String out2 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat");
+        String out2 = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some+chat", out2);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some+chat",
+                out2);
     }
 
     @Test
@@ -377,7 +386,7 @@ public class URISupportTest {
         assertEquals(2, map.size());
         assertEquals("RAW(++?)w&rd)", map.get("password"));
         assertEquals("somechat", map.get("serviceName"));
-        
+
         map = URISupport.parseQuery("password=RAW(%2520w&rd)&serviceName=somechat");
         assertEquals(2, map.size());
         assertEquals("RAW(%2520w&rd)", map.get("password"));

@@ -48,13 +48,11 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
         headers.put(DockerConstants.DOCKER_FORCE, force);
         headers.put(DockerConstants.DOCKER_REMOVE_VOLUMES, removeVolumes);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).removeContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withForce(eq(force));
         Mockito.verify(mockObject, Mockito.times(1)).withRemoveVolumes(eq(removeVolumes));
-
 
     }
 

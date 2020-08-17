@@ -107,9 +107,9 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             if (curdata.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
                 Set<String> stale = Stream.concat(Stream.concat(
-                            project.getCompileSourceRoots().stream().map(File::new),
-                            Stream.of(new File(project.getBuild().getOutputDirectory()))),
-                            project.getArtifacts().stream().map(Artifact::getFile))
+                        project.getCompileSourceRoots().stream().map(File::new),
+                        Stream.of(new File(project.getBuild().getOutputDirectory()))),
+                        project.getArtifacts().stream().map(Artifact::getFile))
                         .flatMap(f -> newer(lastmod, f)).collect(Collectors.toSet());
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating.");
@@ -141,7 +141,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     }
 
     private Path getIncrementalDataPath(MavenProject project) {
-        return Paths.get(project.getBuild().getDirectory(), "camel-package-maven-plugin", "org.apache.camel_camel-package-maven-plugin_info_xx");
+        return Paths.get(project.getBuild().getDirectory(), "camel-package-maven-plugin",
+                "org.apache.camel_camel-package-maven-plugin_info_xx");
     }
 
     private long lastmod(Path p) {
@@ -155,12 +156,14 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private Stream<String> newer(long lastmod, File file) {
         try {
             if (file.isDirectory()) {
-                return Files.walk(file.toPath()).filter(Files::isRegularFile).filter(p -> lastmod(p) > lastmod).map(Path::toString);
+                return Files.walk(file.toPath()).filter(Files::isRegularFile).filter(p -> lastmod(p) > lastmod)
+                        .map(Path::toString);
             } else if (file.isFile()) {
                 if (lastmod(file.toPath()) > lastmod) {
                     if (file.getName().endsWith(".jar")) {
                         try (ZipFile zf = new ZipFile(file)) {
-                            return zf.stream().filter(ze -> !ze.isDirectory()).filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
+                            return zf.stream().filter(ze -> !ze.isDirectory())
+                                    .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
                                     .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList()).stream();
                         } catch (IOException e) {
                             throw new IOException("Error reading zip file: " + file, e);

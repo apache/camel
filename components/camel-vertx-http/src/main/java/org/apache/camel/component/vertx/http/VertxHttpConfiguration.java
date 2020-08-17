@@ -102,8 +102,8 @@ public class VertxHttpConfiguration {
     }
 
     /**
-     * The amount of time in milliseconds after which if the request does not return any data within the timeout
-     * period a TimeoutException fails the request.
+     * The amount of time in milliseconds after which if the request does not return any data within the timeout period
+     * a TimeoutException fails the request.
      * <p/>
      * Setting zero or a negative value disables the timeout.
      */
@@ -116,7 +116,8 @@ public class VertxHttpConfiguration {
     }
 
     /**
-     * The amount of time in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout.
+     * The amount of time in milliseconds until a connection is established. A timeout value of zero is interpreted as
+     * an infinite timeout.
      */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
@@ -160,13 +161,13 @@ public class VertxHttpConfiguration {
     }
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was sent back serialized
-     * in the response as a application/x-java-serialized-object content type.
-     * On the producer side the exception will be deserialized and thrown as is, instead of HttpOperationFailedException.
-     * The caused exception is required to be serialized.
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was sent back
+     * serialized in the response as a application/x-java-serialized-object content type. On the producer side the
+     * exception will be deserialized and thrown as is, instead of HttpOperationFailedException. The caused exception is
+     * required to be serialized.
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Camel will deserialize the incoming
-     * data from the request to a Java object, which can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Camel will deserialize the incoming data
+     * from the request to a Java object, which can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
@@ -177,9 +178,9 @@ public class VertxHttpConfiguration {
     }
 
     /**
-     * The status codes which are considered a success response. The values are inclusive. Multiple ranges
-     * can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number
-     * or from-to with the dash included
+     * The status codes which are considered a success response. The values are inclusive. Multiple ranges can be
+     * defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the
+     * dash included
      */
     public void setOkStatusCodeRange(String okStatusCodeRange) {
         this.okStatusCodeRange = okStatusCodeRange;
@@ -190,8 +191,8 @@ public class VertxHttpConfiguration {
     }
 
     /**
-     * Enables session management via WebClientSession. By default the client is configured to use
-     * an in-memory CookieStore. The cookieStore option can be used to override this
+     * Enables session management via WebClientSession. By default the client is configured to use an in-memory
+     * CookieStore. The cookieStore option can be used to override this
      */
     public void setSessionManagement(boolean sessionManagement) {
         this.sessionManagement = sessionManagement;
@@ -202,8 +203,8 @@ public class VertxHttpConfiguration {
     }
 
     /**
-     * A custom CookieStore to use when session management is enabled. If this option is not set
-     * then an in-memory CookieStore is used
+     * A custom CookieStore to use when session management is enabled. If this option is not set then an in-memory
+     * CookieStore is used
      */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;

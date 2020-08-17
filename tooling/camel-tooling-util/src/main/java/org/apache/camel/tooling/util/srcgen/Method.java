@@ -87,6 +87,7 @@ public class Method {
     public String getName() {
         return name;
     }
+
     public Method setName(String name) {
         this.name = name;
         return this;
@@ -99,37 +100,44 @@ public class Method {
     public GenericType getReturnType() {
         return returnType;
     }
+
     public Method setReturnType(Type returnType) {
         return setReturnType(new GenericType(returnType));
     }
+
     public Method setReturnType(GenericType returnType) {
         this.returnType = returnType;
         return this;
     }
+
     public Method setReturnType(String returnType) {
         this.returnType = null;
         this.returnTypeLiteral = returnType;
         return this;
     }
 
-
     public Method addParameter(String type, String name) {
         return addParameter(type, name, false);
     }
+
     public Method addParameter(String type, String name, boolean vararg) {
         this.parameters.add(new Param(type, name, vararg));
         return this;
     }
+
     public Method addParameter(Class<?> type, String name) {
         return addParameter(new GenericType(type), name);
     }
+
     public Method addParameter(Class<?> type, String name, boolean vararg) {
         return addParameter(new GenericType(type), name, vararg);
     }
+
     public Method addParameter(GenericType type, String name) {
         this.parameters.add(new Param(type, name));
         return this;
     }
+
     public Method addParameter(GenericType type, String name, boolean vararg) {
         this.parameters.add(new Param(type, name, vararg));
         return this;
@@ -138,6 +146,7 @@ public class Method {
     public List<Param> getParameters() {
         return this.parameters;
     }
+
     public List<String> getParametersNames() {
         return this.parameters.stream().map(Param::getName).collect(Collectors.toList());
     }
@@ -145,10 +154,12 @@ public class Method {
     public String getBody() {
         return body;
     }
+
     public Method setBody(String body) {
         this.body = body;
         return this;
     }
+
     public Method setBodyF(String format, Object... args) {
         this.body = String.format(format, args);
         return this;
@@ -162,9 +173,11 @@ public class Method {
     public Method addThrows(Class<?> type) {
         return addThrows(new GenericType(type));
     }
+
     public Method addThrows(GenericType type) {
         return addThrows(type.toString());
     }
+
     public Method addThrows(String type) {
         this.exceptions.add(type);
         return this;
@@ -175,9 +188,11 @@ public class Method {
         this.annotations.add(ann);
         return ann;
     }
+
     public boolean hasAnnotation(Class<? extends java.lang.annotation.Annotation> clazz) {
         return annotations.stream().map(Annotation::getType).anyMatch(clazz::equals);
     }
+
     public Annotation getAnnotation(Class<? extends java.lang.annotation.Annotation> clazz) {
         return annotations.stream().filter(a -> Objects.equals(a.getType(), clazz)).findAny().orElse(null);
     }

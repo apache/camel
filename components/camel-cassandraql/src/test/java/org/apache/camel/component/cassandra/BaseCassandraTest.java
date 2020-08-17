@@ -37,13 +37,13 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
     public static final String DATACENTER_NAME = "datacenter1";
     private static final int ORIGINAL_PORT = 9042;
 
-    private static GenericContainer<?>  container;
+    private static GenericContainer<?> container;
     private CqlSession session;
-
 
     @BeforeAll
     public static void beforeAll() {
-        container = new CassandraContainer().withInitScript("initScript.cql").withNetworkAliases("cassandra").withExposedPorts(ORIGINAL_PORT);
+        container = new CassandraContainer().withInitScript("initScript.cql").withNetworkAliases("cassandra")
+                .withExposedPorts(ORIGINAL_PORT);
         container.start();
     }
 
@@ -95,13 +95,14 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
 
     public CqlSession getSession() {
         if (session == null) {
-            InetSocketAddress endpoint = new InetSocketAddress(container.getContainerIpAddress(),  container.getMappedPort(ORIGINAL_PORT));
+            InetSocketAddress endpoint
+                    = new InetSocketAddress(container.getContainerIpAddress(), container.getMappedPort(ORIGINAL_PORT));
             //create a new session
             session = CqlSession.builder()
                     .withLocalDatacenter(DATACENTER_NAME)
                     .withKeyspace(KEYSPACE_NAME)
                     .withConfigLoader(DriverConfigLoader.programmaticBuilder()
-                                     .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5)).build())
+                            .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5)).build())
                     .addContactPoint(endpoint).build();
         }
         return session;

@@ -83,8 +83,9 @@ public class PdfProducer extends DefaultProducer {
         String body = exchange.getIn().getBody(String.class);
         try (PDDocument document = exchange.getIn().getHeader(PDF_DOCUMENT_HEADER_NAME, PDDocument.class)) {
             if (document == null) {
-                throw new IllegalArgumentException(String.format("%s header is expected for append operation",
-                        PDF_DOCUMENT_HEADER_NAME));
+                throw new IllegalArgumentException(
+                        String.format("%s header is expected for append operation",
+                                PDF_DOCUMENT_HEADER_NAME));
             }
 
             if (document.isEncrypted()) {
@@ -142,8 +143,9 @@ public class PdfProducer extends DefaultProducer {
                 result = new LineTerminationWriterAbstractFactory(pdfConfiguration);
                 break;
             default:
-                throw new IllegalArgumentException(String.format("Unknown text processing factory %s",
-                        pdfConfiguration.getTextProcessingFactory()));
+                throw new IllegalArgumentException(
+                        String.format("Unknown text processing factory %s",
+                                pdfConfiguration.getTextProcessingFactory()));
         }
         return result;
     }

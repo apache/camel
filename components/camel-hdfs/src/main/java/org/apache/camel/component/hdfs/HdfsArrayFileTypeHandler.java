@@ -42,8 +42,8 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFi
                     hdfsPath,
                     valueWritableClass,
                     endpointConfig.getCompressionType(),
-            () -> { }
-            );
+                    () -> {
+                    });
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

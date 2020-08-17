@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
 
-    private static final String[] EXISTED_USERS = {"Kim", "Pavlo", "Peter"};
+    private static final String[] EXISTED_USERS = { "Kim", "Pavlo", "Peter" };
     private static String[] broadcastMessageTo = {};
     private static Map<String, String> connectionKeyUserMap = new HashMap<>();
 
@@ -70,7 +70,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         //all connections were registered in external store
         assertTrue(connectionKeyUserMap.size() == EXISTED_USERS.length);
 
-        broadcastMessageTo = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
+        broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
 
         wsclient1.sendTextMessage("Gambas");
         wsclient1.await(awaitTime);
@@ -120,7 +120,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         wsclient2.close();
         wsclient2.await(awaitTime);
 
-        broadcastMessageTo = new String[]{EXISTED_USERS[0], EXISTED_USERS[1]};
+        broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
 
         wsclient1.sendTextMessage("Gambas");
         wsclient1.await(awaitTime);
@@ -275,7 +275,9 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         assertTrue(connectionKey != null);
 
         if (eventType instanceof Integer) {
-            assertTrue(eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE) || eventType.equals(WebsocketConstants.ONCLOSE_EVENT_TYPE) || eventType.equals(WebsocketConstants.ONERROR_EVENT_TYPE));
+            assertTrue(eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)
+                    || eventType.equals(WebsocketConstants.ONCLOSE_EVENT_TYPE)
+                    || eventType.equals(WebsocketConstants.ONERROR_EVENT_TYPE));
         }
     }
 
@@ -289,8 +291,8 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
 
         if ((eventType instanceof Integer) && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
 
-            String param1 = (String)exchange.getIn().getHeader("param1");
-            String param2 = (String)exchange.getIn().getHeader("param2");
+            String param1 = (String) exchange.getIn().getHeader("param1");
+            String param2 = (String) exchange.getIn().getHeader("param2");
 
             assertTrue(param1.equals("value1") && param2.equals("value2"));
         }

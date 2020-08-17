@@ -72,7 +72,7 @@ public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTes
                 // which confirms the exchange when its complete.
                 from("seda:foo")
                         .delay(1000)
-                                // simulate errors the first two times
+                        // simulate errors the first two times
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 int count = counter.incrementAndGet();

@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class HBaseConvertionsTest extends CamelHBaseTestSupport {
 
-    protected Object[] key = {1, "2", "3"};
-    protected final Object[] body = {1L, false, "3"};
-    protected final String[] column = {"DEFAULTCOLUMN"};
-    protected final byte[][] families = {INFO_FAMILY.getBytes()};
+    protected Object[] key = { 1, "2", "3" };
+    protected final Object[] body = { 1L, false, "3" };
+    protected final String[] column = { "DEFAULTCOLUMN" };
+    protected final byte[][] families = { INFO_FAMILY.getBytes() };
 
     @Test
     public void testPutMultiRows() throws Exception {
@@ -90,8 +90,8 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
-     * to define the routes for testing
+     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder} to define
+     * the routes for testing
      */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -101,7 +101,8 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
                 from("direct:start")
                         .to("hbase://" + PERSON_TABLE);
                 from("direct:scan")
-                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&row.family=family1&row.qualifier=column1");
+                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN
+                            + "&maxResults=2&row.family=family1&row.qualifier=column1");
             }
         };
     }

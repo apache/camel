@@ -51,10 +51,10 @@ public class RouteTemplateModelLifecycleTest extends ContextTestSupport {
         });
 
         TemplatedRouteBuilder.builder(context, "myTemplate")
-            .parameter("foo", "one")
-            .parameter("bar", "result")
-            .routeId("myRoute")
-            .add();
+                .parameter("foo", "one")
+                .parameter("bar", "result")
+                .routeId("myRoute")
+                .add();
 
         context.start();
 
@@ -81,15 +81,15 @@ public class RouteTemplateModelLifecycleTest extends ContextTestSupport {
         context.start();
 
         TemplatedRouteBuilder.builder(context, "myTemplate")
-            .parameter("foo", "one")
-            .parameter("bar", "result")
-            .routeId("myRoute")
-            .handler(template -> {
-                // lets mutate the template a bit
-                // (notice changes are global as its not a clone of the template - not possible)
-                template.getRoute().getInput().setUri("seda:{{foo}}");
-            })
-            .add();
+                .parameter("foo", "one")
+                .parameter("bar", "result")
+                .routeId("myRoute")
+                .handler(template -> {
+                    // lets mutate the template a bit
+                    // (notice changes are global as its not a clone of the template - not possible)
+                    template.getRoute().getInput().setUri("seda:{{foo}}");
+                })
+                .add();
 
         Assertions.assertEquals(1, context.getRoutes().size());
 

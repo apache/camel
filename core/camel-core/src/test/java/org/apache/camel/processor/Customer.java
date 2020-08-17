@@ -22,6 +22,8 @@ package org.apache.camel.processor;
 // START SNIPPET: e1
 public enum Customer {
 
-    GOLD, SILVER, BRONZE
+    GOLD,
+    SILVER,
+    BRONZE
 }
 // END SNIPPET: e1

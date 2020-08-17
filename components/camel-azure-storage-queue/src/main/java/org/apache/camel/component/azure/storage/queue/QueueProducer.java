@@ -99,7 +99,9 @@ public class QueueProducer extends DefaultProducer {
     }
 
     private QueueOperations getQueueOperations(final Exchange exchange) {
-        return new QueueOperations(getEndpoint().getConfiguration(), queueServiceClientWrapper.getQueueClientWrapper(determineQueueName(exchange)));
+        return new QueueOperations(
+                getEndpoint().getConfiguration(),
+                queueServiceClientWrapper.getQueueClientWrapper(determineQueueName(exchange)));
     }
 
     private String determineQueueName(final Exchange exchange) {

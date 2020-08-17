@@ -29,32 +29,34 @@ public class CouchbaseEndpointTest {
 
     @Test
     public void assertSingleton() throws Exception {
-        CouchbaseEndpoint endpoint = new CouchbaseEndpoint("couchbase:http://localhost/bucket", "http://localhost/bucket", new CouchbaseComponent());
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint(
+                "couchbase:http://localhost/bucket", "http://localhost/bucket", new CouchbaseComponent());
         assertTrue(endpoint.isSingleton());
     }
 
     @Test
     public void testBucketRequired() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseEndpoint("couchbase:http://localhost:80", "http://localhost:80", new CouchbaseComponent()));
+                () -> new CouchbaseEndpoint("couchbase:http://localhost:80", "http://localhost:80", new CouchbaseComponent()));
     }
 
     @Test
     public void testDefaultPortIsSet() throws Exception {
-        CouchbaseEndpoint endpoint = new CouchbaseEndpoint("couchbase:http://localhost/bucket", "http://localhost/bucket", new CouchbaseComponent());
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint(
+                "couchbase:http://localhost/bucket", "http://localhost/bucket", new CouchbaseComponent());
         assertEquals(DEFAULT_COUCHBASE_PORT, endpoint.getPort());
     }
 
     @Test
     public void testHostnameRequired() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", new CouchbaseComponent()));
+                () -> new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", new CouchbaseComponent()));
     }
 
     @Test
     public void testSchemeRequired() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
+                () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class CouchbaseEndpointTest {
     @Test
     public void testCouchbaseEndpointWithoutProtocol() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
+                () -> new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
     }
 
     @Test
@@ -76,7 +78,7 @@ public class CouchbaseEndpointTest {
     @Test
     public void testCouchbaseEndpointCreateProducer() throws Exception {
         assertThrows(InvalidArgumentException.class,
-            () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createProducer());
+                () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createProducer());
     }
 
     @Test
@@ -85,7 +87,7 @@ public class CouchbaseEndpointTest {
             // Nothing to do
         };
         assertThrows(InvalidArgumentException.class,
-            () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createConsumer(p));
+                () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createConsumer(p));
     }
 
     @Test

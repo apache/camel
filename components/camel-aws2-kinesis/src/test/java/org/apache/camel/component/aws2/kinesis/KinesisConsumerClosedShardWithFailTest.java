@@ -75,10 +75,13 @@ public class KinesisConsumerClosedShardWithFailTest {
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").build());
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
+                .thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").build());
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
-            .thenReturn(DescribeStreamResponse.builder().streamDescription(StreamDescription.builder().shards(shardList).build()).build());
-        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class))).thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
+                .thenReturn(DescribeStreamResponse.builder()
+                        .streamDescription(StreamDescription.builder().shards(shardList).build()).build());
+        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+                .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
     }
 
     @Test
@@ -88,7 +91,8 @@ public class KinesisConsumerClosedShardWithFailTest {
         });
 
         final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
+                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).describeStream(describeStreamReqCap.capture());
         assertThat(describeStreamReqCap.getValue().streamName(), is("streamName"));

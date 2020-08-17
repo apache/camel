@@ -27,9 +27,8 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.ALWAYS;
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_METERS;
 
 /**
- * Filter for adding distribution statistics to Timers and Distribution Summaries.
- * Configure and add this to the {@link io.micrometer.core.instrument.MeterRegistry}
- * if desired:
+ * Filter for adding distribution statistics to Timers and Distribution Summaries. Configure and add this to the
+ * {@link io.micrometer.core.instrument.MeterRegistry} if desired:
  *
  * <pre>
  *     DistributionStatisticConfigFilter filter = new DistributionStatisticConfigFilter()
@@ -88,9 +87,9 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
     }
 
     /**
-     * Sets the maximum expected value for a distribution summary value.
-     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
-     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     * Sets the maximum expected value for a distribution summary value. Controls the number of buckets shipped by
+     * publishPercentileHistogram as well as controlling the accuracy and memory footprint of the underlying
+     * HdrHistogram structure.
      *
      * @param maximumExpectedValue the maximum expected value for a distribution summary value
      */
@@ -100,9 +99,9 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
     }
 
     /**
-     * Sets the minimum expected value for a distribution summary value.
-     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
-     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     * Sets the minimum expected value for a distribution summary value. Controls the number of buckets shipped by
+     * publishPercentileHistogram as well as controlling the accuracy and memory footprint of the underlying
+     * HdrHistogram structure.
      *
      * @param minimumExpectedValue the minimum expected value for a distribution summary value
      */
@@ -112,9 +111,9 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
     }
 
     /**
-     * Sets the maximum expected duration for a timer value
-     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
-     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     * Sets the maximum expected duration for a timer value Controls the number of buckets shipped by
+     * publishPercentileHistogram as well as controlling the accuracy and memory footprint of the underlying
+     * HdrHistogram structure.
      *
      * @param maximumExpectedDuration the maximum expected duration for a timer value
      */
@@ -124,9 +123,9 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
     }
 
     /**
-     * Sets the minimum expected duration for a timer value
-     * Controls the number of buckets shipped by publishPercentileHistogram as well as controlling the
-     * accuracy and memory footprint of the underlying HdrHistogram structure.
+     * Sets the minimum expected duration for a timer value Controls the number of buckets shipped by
+     * publishPercentileHistogram as well as controlling the accuracy and memory footprint of the underlying
+     * HdrHistogram structure.
      *
      * @param minimumExpectedDuration the minimum expected duration for a timer value
      */
@@ -136,9 +135,8 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
     }
 
     /**
-     * Whether to publish aggregatable percentile approximations for Prometheus or Atlas.
-     * Has no effect on systems that do not support aggregatable percentile approximations.
-     * This defaults to true.
+     * Whether to publish aggregatable percentile approximations for Prometheus or Atlas. Has no effect on systems that
+     * do not support aggregatable percentile approximations. This defaults to true.
      *
      * @param publishPercentileHistogram Whether to publish aggregatable percentile approximations.
      */
@@ -174,8 +172,9 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
 
     /**
      * Publish a cumulative histogram with buckets defined by your SLAs. Used together with publishPercentileHistogram
-     * on a monitoring system that supports aggregatable percentiles, this setting adds additional buckets to the published histogram.
-     * Used on a system that does not support aggregatable percentiles, this setting causes a histogram to be published with only these buckets.
+     * on a monitoring system that supports aggregatable percentiles, this setting adds additional buckets to the
+     * published histogram. Used on a system that does not support aggregatable percentiles, this setting causes a
+     * histogram to be published with only these buckets.
      *
      * @param slas array of percentiles to be published
      */

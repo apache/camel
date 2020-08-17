@@ -31,8 +31,8 @@ class JCacheComponentTestSupport extends CamelTestSupport {
 
     protected Cache<Object, Object> getCacheFromEndpoint(String endpoint) throws Exception {
         return resolveMandatoryEndpoint(endpoint, JCacheEndpoint.class)
-            .getManager()
-            .getCache();
+                .getManager()
+                .getCache();
     }
 
     protected String randomString() {

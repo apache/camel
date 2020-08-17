@@ -82,14 +82,16 @@ public class ProxyProtocolTest {
                 // origin service that serves `"origin server"` on
                 // http://localhost:originPort/path
                 from("netty-http:http://localhost:" + ORIGIN_PORT + "/path")
-                    .process(ProxyProtocolTest::origin);
+                        .process(ProxyProtocolTest::origin);
             }
         });
         context.start();
     }
 
-    @ParameterizedTest @MethodSource("routeOptions")
-    public void shouldProvideProxyProtocolSupport(Function<RouteBuilder, RouteDefinition> variant, String url) throws Exception {
+    @ParameterizedTest
+    @MethodSource("routeOptions")
+    public void shouldProvideProxyProtocolSupport(Function<RouteBuilder, RouteDefinition> variant, String url)
+            throws Exception {
         createContext(variant, url);
 
         final NettyHttpEndpoint endpoint = context.getEndpoint("netty-http:proxy://localhost", NettyHttpEndpoint.class);
@@ -97,7 +99,8 @@ public class ProxyProtocolTest {
         assertThat(endpoint.getConfiguration().isHttpProxy()).isTrue();
     }
 
-    @ParameterizedTest @MethodSource("routeOptions")
+    @ParameterizedTest
+    @MethodSource("routeOptions")
     public void shouldServeAsHttpProxy(Function<RouteBuilder, RouteDefinition> variant, String url) throws Exception {
         createContext(variant, url);
 
@@ -108,8 +111,10 @@ public class ProxyProtocolTest {
         }
     }
 
-    @ParameterizedTest @MethodSource("routeOptions")
-    public void shouldSupportPostingFormEncodedPayloads(Function<RouteBuilder, RouteDefinition> variant, String url) throws Exception {
+    @ParameterizedTest
+    @MethodSource("routeOptions")
+    public void shouldSupportPostingFormEncodedPayloads(Function<RouteBuilder, RouteDefinition> variant, String url)
+            throws Exception {
         createContext(variant, url);
 
         try (InputStream stream = request(url, "hello=world", NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)) {
@@ -117,8 +122,10 @@ public class ProxyProtocolTest {
         }
     }
 
-    @ParameterizedTest @MethodSource("routeOptions")
-    public void shouldSupportPostingPlaintextPayloads(Function<RouteBuilder, RouteDefinition> variant, String url) throws Exception {
+    @ParameterizedTest
+    @MethodSource("routeOptions")
+    public void shouldSupportPostingPlaintextPayloads(Function<RouteBuilder, RouteDefinition> variant, String url)
+            throws Exception {
         createContext(variant, url);
 
         try (InputStream stream = request(url, "hello", "text/plain")) {
@@ -126,7 +133,8 @@ public class ProxyProtocolTest {
         }
     }
 
-    @ParameterizedTest @MethodSource("routeOptions")
+    @ParameterizedTest
+    @MethodSource("routeOptions")
     public void shouldSupportQueryParameters(Function<RouteBuilder, RouteDefinition> variant, String url) throws Exception {
         createContext(variant, url);
 
@@ -150,28 +158,28 @@ public class ProxyProtocolTest {
 
     public static Iterable<Object[]> routeOptions() {
         final Function<RouteBuilder, RouteDefinition> single = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-            .process(ProxyProtocolTest::uppercase)
-            .to("netty-http:http://localhost:" + ORIGIN_PORT)
-            .process(ProxyProtocolTest::uppercase);
+                .process(ProxyProtocolTest::uppercase)
+                .to("netty-http:http://localhost:" + ORIGIN_PORT)
+                .process(ProxyProtocolTest::uppercase);
 
         final Function<RouteBuilder, RouteDefinition> dynamicPath = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-            .process(ProxyProtocolTest::uppercase)
-            .toD("netty-http:http://localhost:" + ORIGIN_PORT + "/${headers." + Exchange.HTTP_PATH + "}")
-            .process(ProxyProtocolTest::uppercase);
+                .process(ProxyProtocolTest::uppercase)
+                .toD("netty-http:http://localhost:" + ORIGIN_PORT + "/${headers." + Exchange.HTTP_PATH + "}")
+                .process(ProxyProtocolTest::uppercase);
 
         final Function<RouteBuilder, RouteDefinition> dynamicUrl = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-            .process(ProxyProtocolTest::uppercase)
-            .toD("netty-http:"
-                + "${headers." + Exchange.HTTP_SCHEME + "}://"
-                + "${headers." + Exchange.HTTP_HOST + "}:"
-                + "${headers." + Exchange.HTTP_PORT + "}/"
-                + "${headers." + Exchange.HTTP_PATH + "}")
-            .process(ProxyProtocolTest::uppercase);
+                .process(ProxyProtocolTest::uppercase)
+                .toD("netty-http:"
+                     + "${headers." + Exchange.HTTP_SCHEME + "}://"
+                     + "${headers." + Exchange.HTTP_HOST + "}:"
+                     + "${headers." + Exchange.HTTP_PORT + "}/"
+                     + "${headers." + Exchange.HTTP_PATH + "}")
+                .process(ProxyProtocolTest::uppercase);
 
         return Arrays.asList(
-            new Object[] {single, "http://test/path"},
-            new Object[] {dynamicPath, "http://test/path"},
-            new Object[] {dynamicUrl, "http://localhost:" + ORIGIN_PORT + "/path"});
+                new Object[] { single, "http://test/path" },
+                new Object[] { dynamicPath, "http://test/path" },
+                new Object[] { dynamicUrl, "http://localhost:" + ORIGIN_PORT + "/path" });
     }
 
     @BeforeAll
@@ -233,7 +241,8 @@ public class ProxyProtocolTest {
         return connection.getInputStream();
     }
 
-    private static InputStream request(final String url, final String payload, final String contentType) throws IOException, MalformedURLException {
+    private static InputStream request(final String url, final String payload, final String contentType)
+            throws IOException, MalformedURLException {
         final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);

@@ -32,7 +32,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * Send SMS messages via <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host", category = {Category.MOBILE}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host",
+             category = { Category.MOBILE }, producerOnly = true)
 public class CMEndpoint extends DefaultEndpoint {
 
     @UriPath

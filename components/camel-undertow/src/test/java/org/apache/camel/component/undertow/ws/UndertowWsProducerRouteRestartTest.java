@@ -76,27 +76,27 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/shop")
-            .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-                @Override
-                public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                    received.add(message);
-                    LOG.info("received --> " + message);
-                    latch.countDown();
-                }
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
+                    @Override
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
+                        received.add(message);
+                        LOG.info("received --> " + message);
+                        latch.countDown();
+                    }
 
-                @Override
-                public void onOpen(WebSocket websocket) {
-                }
+                    @Override
+                    public void onOpen(WebSocket websocket) {
+                    }
 
-                @Override
-                public void onClose(WebSocket websocket, int code, String reason) {
-                }
+                    @Override
+                    public void onClose(WebSocket websocket, int code, String reason) {
+                    }
 
-                @Override
-                public void onError(Throwable t) {
-                    t.printStackTrace();
-                }
-            }).build()).get();
+                    @Override
+                    public void onError(Throwable t) {
+                        t.printStackTrace();
+                    }
+                }).build()).get();
 
         // Send message to the direct endpoint
         producer.sendBodyAndHeader("Beer on stock at Apache Mall", UndertowConstants.SEND_TO_ALL, "true");

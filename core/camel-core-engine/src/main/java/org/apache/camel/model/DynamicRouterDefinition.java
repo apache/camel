@@ -75,12 +75,10 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     /**
-     * Expression to call that returns the endpoint(s) to route to in the
-     * dynamic routing.
+     * Expression to call that returns the endpoint(s) to route to in the dynamic routing.
      * <p/>
-     * <b>Important:</b> The expression will be called in a while loop fashion,
-     * until the expression returns <tt>null</tt> which means the dynamic router
-     * is finished.
+     * <b>Important:</b> The expression will be called in a while loop fashion, until the expression returns
+     * <tt>null</tt> which means the dynamic router is finished.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {
@@ -119,12 +117,11 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @SuppressWarnings("unchecked")
     public Type end() {
         // allow end() to return to previous type so you can continue in the DSL
-        return (Type)super.end();
+        return (Type) super.end();
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer
-     * with that endpoint
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
      *
      * @return the builder
      */
@@ -136,8 +133,8 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     /**
      * Sets the uri delimiter to use
      *
-     * @param uriDelimiter the delimiter
-     * @return the builder
+     * @param  uriDelimiter the delimiter
+     * @return              the builder
      */
     public DynamicRouterDefinition<Type> uriDelimiter(String uriDelimiter) {
         setUriDelimiter(uriDelimiter);
@@ -145,26 +142,23 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     /**
-     * Sets the maximum size used by the
-     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
-     * reuse producers when using this dynamic router, when uris are reused.
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
+     * producers when using this dynamic router, when uris are reused.
      *
-     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
-     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
-     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
-     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
-     * are stored in memory in the caches.
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
+     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
+     * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
-     * However if there are a high degree of dynamic endpoints that have been used before, then it can
-     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
-     * can be set accordingly or rely on the default size (1000).
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
+     * the default size (1000).
      *
-     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
-     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
+     * reduce memory usage to avoid storing too many non frequent used producers.
      *
-     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
-     *            or <tt>-1</tt> to turn cache off.
-     * @return the builder
+     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return           the builder
      */
     public DynamicRouterDefinition<Type> cacheSize(int cacheSize) {
         setCacheSize(Integer.toString(cacheSize));
@@ -172,26 +166,23 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     /**
-     * Sets the maximum size used by the
-     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
-     * reuse producers when using this dynamic router, when uris are reused.
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
+     * producers when using this dynamic router, when uris are reused.
      *
-     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
-     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
-     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
-     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
-     * are stored in memory in the caches.
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
+     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
+     * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
-     * However if there are a high degree of dynamic endpoints that have been used before, then it can
-     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
-     * can be set accordingly or rely on the default size (1000).
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
+     * the default size (1000).
      *
-     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
-     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
+     * reduce memory usage to avoid storing too many non frequent used producers.
      *
-     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
-     *            or <tt>-1</tt> to turn cache off.
-     * @return the builder
+     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return           the builder
      */
     public DynamicRouterDefinition<Type> cacheSize(String cacheSize) {
         setCacheSize(cacheSize);

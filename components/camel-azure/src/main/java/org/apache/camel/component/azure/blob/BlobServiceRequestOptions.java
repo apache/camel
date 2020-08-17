@@ -23,7 +23,7 @@ import org.apache.camel.component.azure.common.AbstractServiceRequestOptions;
 public class BlobServiceRequestOptions extends AbstractServiceRequestOptions {
     private AccessCondition accessCond;
     private BlobRequestOptions requestOpts;
-    
+
     public AccessCondition getAccessCond() {
         return accessCond;
     }

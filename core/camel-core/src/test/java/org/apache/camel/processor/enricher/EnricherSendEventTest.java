@@ -74,9 +74,9 @@ public class EnricherSendEventTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start1")
-                    // using the async utility component to ensure that the
-                    // async routing engine kicks in
-                    .enrich("async:out?reply=Reply").to("mock:result");
+                        // using the async utility component to ensure that the
+                        // async routing engine kicks in
+                        .enrich("async:out?reply=Reply").to("mock:result");
 
                 from("direct:start2").enrich("direct:result").to("mock:result");
 

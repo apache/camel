@@ -55,7 +55,7 @@ public class GraphqlComponentTest extends CamelTestSupport {
     private static String readJsonFile(String name) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(objectMapper.readValue(
-            IOHelper.loadText(ObjectHelper.loadResourceAsStream(name)), Object.class));
+                IOHelper.loadText(ObjectHelper.loadResourceAsStream(name)), Object.class));
     }
 
     @AfterAll
@@ -86,17 +86,19 @@ public class GraphqlComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start1")
-                    .to("graphql://http://localhost:" + server.getPort() + "/graphql?query={books{id name}}")
-                    .to("mock:result");
+                        .to("graphql://http://localhost:" + server.getPort() + "/graphql?query={books{id name}}")
+                        .to("mock:result");
                 from("direct:start2")
-                    .to("graphql://http://localhost:" + server.getPort() + "/graphql?queryFile=booksQuery.graphql")
-                    .to("mock:result");
+                        .to("graphql://http://localhost:" + server.getPort() + "/graphql?queryFile=booksQuery.graphql")
+                        .to("mock:result");
                 from("direct:start3")
-                    .to("graphql://http://localhost:" + server.getPort() + "/graphql?queryFile=multipleQueries.graphql&operationName=BookById&variables=#bookByIdQueryVariables")
-                    .to("mock:result");
+                        .to("graphql://http://localhost:" + server.getPort()
+                            + "/graphql?queryFile=multipleQueries.graphql&operationName=BookById&variables=#bookByIdQueryVariables")
+                        .to("mock:result");
                 from("direct:start4")
-                    .to("graphql://http://localhost:" + server.getPort() + "/graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
-                    .to("mock:result");
+                        .to("graphql://http://localhost:" + server.getPort()
+                            + "/graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
+                        .to("mock:result");
             }
         };
     }

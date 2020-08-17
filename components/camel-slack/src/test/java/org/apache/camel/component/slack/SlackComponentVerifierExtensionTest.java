@@ -40,7 +40,8 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     public void testParametersWebhook() throws Exception {
         Component component = context().getComponent("slack");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("webhookUrl", "l");
@@ -49,12 +50,13 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
 
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
-    
+
     @Test
     public void testParametersToken() throws Exception {
         Component component = context().getComponent("slack");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("token", "l");
@@ -63,12 +65,13 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
 
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
-    
+
     @Test
     public void testParametersEmpty() throws Exception {
         Component component = context().getComponent("slack");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
 
@@ -76,12 +79,13 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
-    
+
     @Test
     public void testParametersWebhookUrlTokenBoth() throws Exception {
         Component component = context().getComponent("slack");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("token", "l");
@@ -95,7 +99,8 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivityWebhook() throws Exception {
         Component component = context().getComponent("slack");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("webhookUrl", "l");
@@ -108,7 +113,8 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivityToken() throws Exception {
         Component component = context().getComponent("slack");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("token", "l");

@@ -99,8 +99,10 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getLatitude())
                 && ObjectHelper.isNotEmpty(endpoint.getProperties().getLongitude())
                 && ObjectHelper.isNotEmpty(endpoint.getProperties().getRadius())) {
-            GeoLocation location = new GeoLocation(endpoint.getProperties().getLatitude(), endpoint.getProperties().getLongitude());
-            query.setGeoCode(location, endpoint.getProperties().getRadius(), Unit.valueOf(endpoint.getProperties().getDistanceMetric()));
+            GeoLocation location
+                    = new GeoLocation(endpoint.getProperties().getLatitude(), endpoint.getProperties().getLongitude());
+            query.setGeoCode(location, endpoint.getProperties().getRadius(),
+                    Unit.valueOf(endpoint.getProperties().getDistanceMetric()));
 
             LOG.debug("Searching with additional geolocation parameters.");
         }

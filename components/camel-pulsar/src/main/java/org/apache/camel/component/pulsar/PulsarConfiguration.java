@@ -29,7 +29,6 @@ import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
 import org.apache.pulsar.client.api.RegexSubscriptionMode;
 
-
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.LATEST;
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
 
@@ -64,28 +63,40 @@ public class PulsarConfiguration implements Cloneable {
     private long ackGroupTimeMillis = 100;
     @UriParam(label = "consumer", defaultValue = "LATEST")
     private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
-    @UriParam(label = "consumer", description = "Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created")
+    @UriParam(label = "consumer",
+              description = "Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created")
     private Integer maxRedeliverCount;
-    @UriParam(label = "consumer", description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
+    @UriParam(label = "consumer",
+              description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
     private String deadLetterTopic;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
-    @UriParam(label = "producer", description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError", defaultValue = "false")
+    @UriParam(label = "producer",
+              description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError",
+              defaultValue = "false")
     private boolean blockIfQueueFull;
-    @UriParam(label = "producer", description = "Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true", defaultValue = "1000")
+    @UriParam(label = "producer",
+              description = "Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true",
+              defaultValue = "1000")
     private int maxPendingMessages = 1000;
-    @UriParam(label = "producer", description = "The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if "
-                                                + "(number of partitions * maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition.", defaultValue = "50000")
+    @UriParam(label = "producer",
+              description = "The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if "
+                            + "(number of partitions * maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition.",
+              defaultValue = "50000")
     private int maxPendingMessagesAcrossPartitions = 50000;
-    @UriParam(label = "producer", description = "The maximum time period within which the messages sent will be batched if batchingEnabled is true.", defaultValue = "1000")
+    @UriParam(label = "producer",
+              description = "The maximum time period within which the messages sent will be batched if batchingEnabled is true.",
+              defaultValue = "1000")
     private long batchingMaxPublishDelayMicros = TimeUnit.MILLISECONDS.toMicros(1);
     @UriParam(label = "producer", description = "The maximum size to batch messages.", defaultValue = "1000")
     private int batchingMaxMessages = 1000;
-    @UriParam(label = "producer", description = "Control whether automatic batching of messages is enabled for the producer.", defaultValue = "true")
+    @UriParam(label = "producer", description = "Control whether automatic batching of messages is enabled for the producer.",
+              defaultValue = "true")
     private boolean batchingEnabled = true;
     @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT")
     private BatcherBuilder batcherBuilder = BatcherBuilder.DEFAULT;
-    @UriParam(label = "producer", description = "The first message published will have a sequence Id of initialSequenceId  1.", defaultValue = "-1")
+    @UriParam(label = "producer", description = "The first message published will have a sequence Id of initialSequenceId  1.",
+              defaultValue = "-1")
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
@@ -99,7 +110,7 @@ public class PulsarConfiguration implements Cloneable {
      */
     public PulsarConfiguration copy() {
         try {
-            PulsarConfiguration copy = (PulsarConfiguration)clone();
+            PulsarConfiguration copy = (PulsarConfiguration) clone();
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -111,7 +122,8 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Whether the topic is a pattern (regular expression) that allows the consumer to subscribe to all matching topics in the namespace
+     * Whether the topic is a pattern (regular expression) that allows the consumer to subscribe to all matching topics
+     * in the namespace
      */
     public void setTopicsPattern(boolean topicsPattern) {
         this.topicsPattern = topicsPattern;
@@ -145,8 +157,7 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER|KEY_SHARED], defaults to
-     * EXCLUSIVE
+     * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER|KEY_SHARED], defaults to EXCLUSIVE
      */
     public void setSubscriptionType(SubscriptionType subscriptionType) {
         this.subscriptionType = subscriptionType;
@@ -201,8 +212,7 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Prefix to add to consumer names when a SHARED or FAILOVER subscription is
-     * used
+     * Prefix to add to consumer names when a SHARED or FAILOVER subscription is used
      */
     public void setConsumerNamePrefix(String consumerNamePrefix) {
         this.consumerNamePrefix = consumerNamePrefix;
@@ -215,12 +225,10 @@ public class PulsarConfiguration implements Cloneable {
     /**
      * Whether to allow manual message acknowledgements.
      * <p/>
-     * If this option is enabled, then messages are not acknowledged automatically
-     * after successful route completion. Instead, an instance of
-     * {@link PulsarMessageReceipt} is stored as a header on the
-     * {@link org.apache.camel.Exchange}. Messages can then be acknowledged
-     * using {@link PulsarMessageReceipt} at any time before the ackTimeout
-     * occurs.
+     * If this option is enabled, then messages are not acknowledged automatically after successful route completion.
+     * Instead, an instance of {@link PulsarMessageReceipt} is stored as a header on the
+     * {@link org.apache.camel.Exchange}. Messages can then be acknowledged using {@link PulsarMessageReceipt} at any
+     * time before the ackTimeout occurs.
      */
     public void setAllowManualAcknowledgement(boolean allowManualAcknowledgement) {
         this.allowManualAcknowledgement = allowManualAcknowledgement;
@@ -242,8 +250,7 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Group the consumer acknowledgments for the specified time in milliseconds
-     * - defaults to 100
+     * Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100
      */
     public void setAckGroupTimeMillis(long ackGroupTimeMillis) {
         this.ackGroupTimeMillis = ackGroupTimeMillis;
@@ -261,10 +268,9 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Set whether the send and asyncSend operations should block when the
-     * outgoing message queue is full. If set to false, send operations will
-     * immediately fail with ProducerQueueIsFullError when there is no space
-     * left in the pending queue. Default is false.
+     * Set whether the send and asyncSend operations should block when the outgoing message queue is full. If set to
+     * false, send operations will immediately fail with ProducerQueueIsFullError when there is no space left in the
+     * pending queue. Default is false.
      */
     public void setBlockIfQueueFull(boolean blockIfQueueFull) {
         this.blockIfQueueFull = blockIfQueueFull;
@@ -275,8 +281,8 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Set the max size of the queue holding the messages pending to receive an
-     * acknowledgment from the broker. Default is 1000.
+     * Set the max size of the queue holding the messages pending to receive an acknowledgment from the broker. Default
+     * is 1000.
      */
     public void setMaxPendingMessages(int maxPendingMessages) {
         this.maxPendingMessages = maxPendingMessages;
@@ -287,8 +293,7 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Set the number of max pending messages across all the partitions. Default
-     * is 50000.
+     * Set the number of max pending messages across all the partitions. Default is 50000.
      */
     public void setMaxPendingMessagesAcrossPartitions(int maxPendingMessagesAcrossPartitions) {
         this.maxPendingMessagesAcrossPartitions = maxPendingMessagesAcrossPartitions;
@@ -299,9 +304,8 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Set the time period within which the messages sent will be batched if
-     * batch messages are enabled. If set to a non zero value, messages will be
-     * queued until either:
+     * Set the time period within which the messages sent will be batched if batch messages are enabled. If set to a non
+     * zero value, messages will be queued until either:
      * <ul>
      * <li>this time interval expires</li>
      * <li>the max number of messages in a batch is reached
@@ -328,8 +332,7 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Control whether automatic batching of messages is enabled for the
-     * producer. Default is true.
+     * Control whether automatic batching of messages is enabled for the producer. Default is true.
      */
     public void setBatchingEnabled(boolean batchingEnabled) {
         this.batchingEnabled = batchingEnabled;
@@ -340,11 +343,9 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Control batching method of the Pulsar producer.
-     * KEY_BASED batches based on the Pulsar message key.
-     * DEFAULT batches all messages together regardless of key;
-     * this may cause only a single consumer to work when consuming using a KEY_SHARED subscription.
-     * Default is DEFAULT.
+     * Control batching method of the Pulsar producer. KEY_BASED batches based on the Pulsar message key. DEFAULT
+     * batches all messages together regardless of key; this may cause only a single consumer to work when consuming
+     * using a KEY_SHARED subscription. Default is DEFAULT.
      */
     public void setBatcherBuilder(BatcherBuilder batcherBuilder) {
         this.batcherBuilder = batcherBuilder;
@@ -366,10 +367,9 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Set the baseline for the sequence ids for messages published by the
-     * producer. First message will be using (initialSequenceId 1) as its
-     * sequence id and subsequent messages will be assigned incremental sequence
-     * ids, if not otherwise specified.
+     * Set the baseline for the sequence ids for messages published by the producer. First message will be using
+     * (initialSequenceId 1) as its sequence id and subsequent messages will be assigned incremental sequence ids, if
+     * not otherwise specified.
      */
     public void setInitialSequenceId(long initialSequenceId) {
         this.initialSequenceId = initialSequenceId;
@@ -429,6 +429,7 @@ public class PulsarConfiguration implements Cloneable {
     public void setNegativeAckRedeliveryDelayMicros(long negativeAckRedeliveryDelayMicros) {
         this.negativeAckRedeliveryDelayMicros = negativeAckRedeliveryDelayMicros;
     }
+
     public Integer getMaxRedeliverCount() {
         return maxRedeliverCount;
     }

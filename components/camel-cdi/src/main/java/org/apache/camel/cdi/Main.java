@@ -36,8 +36,8 @@ import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer;
 
 /**
- * Camel CDI boot integration. Allows Camel and CDI to be booted up on the command line as a JVM process.
- * See http://camel.apache.org/camel-boot.html.
+ * Camel CDI boot integration. Allows Camel and CDI to be booted up on the command line as a JVM process. See
+ * http://camel.apache.org/camel-boot.html.
  */
 @Vetoed
 public class Main extends MainCommandLineSupport {
@@ -82,10 +82,11 @@ public class Main extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         BeanManager manager = cdiContainer.getBeanManager();
         Map<String, CamelContext> camels = manager.getBeans(CamelContext.class, ANY).stream()
-            .map(bean -> getReference(manager, CamelContext.class, bean))
-            .collect(toMap(CamelContext::getName, identity()));
+                .map(bean -> getReference(manager, CamelContext.class, bean))
+                .collect(toMap(CamelContext::getName, identity()));
         if (camels.size() > 1) {
-            throw new IllegalArgumentException("Multiple CamelContext detected. This Main class only supports single CamelContext");
+            throw new IllegalArgumentException(
+                    "Multiple CamelContext detected. This Main class only supports single CamelContext");
         } else if (camels.size() == 1) {
             return camels.values().iterator().next();
         }

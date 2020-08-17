@@ -16,7 +16,6 @@
  */
 package org.apache.camel.opentracing.integration;
 
-
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import io.opentracing.contrib.grizzly.ahc.TracingRequestFilter;
@@ -28,7 +27,6 @@ import org.apache.camel.opentracing.CamelOpenTracingTestSupport;
 import org.apache.camel.opentracing.SpanTestData;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-
 
 public class InterprocessTest extends CamelOpenTracingTestSupport {
     private static final String URL = "http://localhost:" + AvailablePortFinder.getNextAvailable() + "/test";

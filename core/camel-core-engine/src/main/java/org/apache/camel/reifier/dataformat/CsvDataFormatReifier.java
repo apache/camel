@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
 
     public CsvDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (CsvDataFormat)definition);
+        super(camelContext, (CsvDataFormat) definition);
     }
 
     @Override

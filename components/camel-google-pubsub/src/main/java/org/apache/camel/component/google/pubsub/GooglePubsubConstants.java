@@ -24,7 +24,8 @@ public final class GooglePubsubConstants {
     public static final String ATTRIBUTES = "CamelGooglePubsub.Attributes";
 
     public enum AckMode {
-        AUTO, NONE
+        AUTO,
+        NONE
     }
 
     private GooglePubsubConstants() {

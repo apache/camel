@@ -54,12 +54,12 @@ public class JmsInOutSynchronousFalseTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:before")
-                    .process(exchange -> beforeThreadName = Thread.currentThread().getName())
-                    .to(url)
-                    .process(exchange -> afterThreadName = Thread.currentThread().getName())
-                    .to("log:after")
-                    .to("mock:result");
+                        .to("log:before")
+                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
+                        .to(url)
+                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .to("log:after")
+                        .to("mock:result");
 
                 from("activemq:queue:in").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }

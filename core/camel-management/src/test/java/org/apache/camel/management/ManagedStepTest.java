@@ -100,11 +100,11 @@ public class ManagedStepTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("route1")
-                    .step("foo")
+                        .step("foo")
                         .to("log:foo").id("abc")
                         .to("mock:foo").id("def")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }

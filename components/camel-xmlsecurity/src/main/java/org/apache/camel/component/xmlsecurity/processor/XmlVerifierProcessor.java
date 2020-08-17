@@ -60,8 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * XML signature verifier. Assumes that the input XML contains exactly one
- * Signature element.
+ * XML signature verifier. Assumes that the input XML contains exactly one Signature element.
  */
 public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
@@ -172,8 +171,9 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         map2Message(collectedReferences, collectedObjects, out, doc);
     }
 
-    private void map2Message(final List<Reference> refs, final List<XMLObject> objs, Message out, final Document messageBodyDocument)
-        throws Exception {
+    private void map2Message(
+            final List<Reference> refs, final List<XMLObject> objs, Message out, final Document messageBodyDocument)
+            throws Exception {
 
         XmlSignature2Message.Input refsAndObjects = new XmlSignature2Message.Input() {
 
@@ -211,7 +211,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
             public Boolean getRemoveSignatureElements() {
                 return getConfiguration().getRemoveSignatureElements();
             }
-            
+
             @Override
             public String getOutputXmlEncoding() {
                 return getConfiguration().getOutputXmlEncoding();
@@ -221,7 +221,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         getConfiguration().getXmlSignature2Message().mapToMessage(refsAndObjects, out);
     }
 
-    private NodeList getSignatureNodes(Document doc) throws IOException, ParserConfigurationException, XmlSignatureFormatException {
+    private NodeList getSignatureNodes(Document doc)
+            throws IOException, ParserConfigurationException, XmlSignatureFormatException {
 
         // Find Signature element
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
@@ -294,7 +295,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
             errorHandler.handleErrors(message.getExchange(), schema, null); // throws ValidationException
             return doc;
         } catch (SAXException e) {
-            throw new XmlSignatureFormatException("Message has wrong format, it is not a XML signature document. Check the sent message.",
+            throw new XmlSignatureFormatException(
+                    "Message has wrong format, it is not a XML signature document. Check the sent message.",
                     e);
         }
     }

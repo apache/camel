@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringSetHeaderNameDynamicTest extends ContextTestSupport {
 
-
     @Test
     public void testSetHeaderNameWithExpression() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
@@ -39,8 +38,8 @@ public class SpringSetHeaderNameDynamicTest extends ContextTestSupport {
 
         Exchange exchange = resultEndpoint.getExchanges().get(0);
 
-        assertEquals(Boolean.TRUE, exchange.getIn().getHeader(SpringSetPropertyNameDynamicTest.TestConstans
-                .EXCHANGE_PROP_TX_FAILED, Boolean.class));
+        assertEquals(Boolean.TRUE, exchange.getIn()
+                .getHeader(SpringSetPropertyNameDynamicTest.TestConstans.EXCHANGE_PROP_TX_FAILED, Boolean.class));
     }
 
     @Override

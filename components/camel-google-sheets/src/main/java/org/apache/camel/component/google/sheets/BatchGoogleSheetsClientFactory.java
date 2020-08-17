@@ -44,11 +44,12 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
     }
 
     @Override
-    public Sheets makeClient(String clientId,
-                             String clientSecret,
-                             String applicationName,
-                             String refreshToken,
-                             String accessToken) {
+    public Sheets makeClient(
+            String clientId,
+            String clientSecret,
+            String applicationName,
+            String refreshToken,
+            String accessToken) {
         if (clientId == null || clientSecret == null) {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Google Sheets client.");
         }
@@ -57,7 +58,7 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
             Credential credential = authorize(clientId, clientSecret, refreshToken, accessToken);
 
             Sheets.Builder clientBuilder = new Sheets.Builder(transport, jsonFactory, credential)
-                                                     .setApplicationName(applicationName);
+                    .setApplicationName(applicationName);
             configure(clientBuilder);
             return clientBuilder.build();
         } catch (Exception e) {
@@ -67,6 +68,7 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
 
     /**
      * Subclasses may add customized configuration to client builder.
+     * 
      * @param clientBuilder
      */
     protected void configure(Sheets.Builder clientBuilder) {
@@ -77,10 +79,10 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
     private Credential authorize(String clientId, String clientSecret, String refreshToken, String accessToken) {
         // authorize
         Credential credential = new GoogleCredential.Builder()
-                        .setJsonFactory(jsonFactory)
-                        .setTransport(transport)
-                        .setClientSecrets(clientId, clientSecret)
-                        .build();
+                .setJsonFactory(jsonFactory)
+                .setTransport(transport)
+                .setClientSecrets(clientId, clientSecret)
+                .build();
 
         if (ObjectHelper.isNotEmpty(refreshToken)) {
             credential.setRefreshToken(refreshToken);

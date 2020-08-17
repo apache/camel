@@ -50,10 +50,9 @@ public final class MnistTraining {
         // No-op; won't be called
     }
 
-
     public static void main(String[] args) throws IOException {
         // Construct neural network
-        Block block = new Mlp(Mnist.IMAGE_HEIGHT * Mnist.IMAGE_WIDTH, Mnist.NUM_CLASSES, new int[]{128, 64});
+        Block block = new Mlp(Mnist.IMAGE_HEIGHT * Mnist.IMAGE_WIDTH, Mnist.NUM_CLASSES, new int[] { 128, 64 });
 
         try (Model model = Model.newInstance()) {
             model.setBlock(block);
@@ -80,7 +79,9 @@ public final class MnistTraining {
         }
     }
 
-    private static void fit(Trainer trainer, int numEpoch, Dataset trainingSet, Dataset validateSet, String outputDir, String modelName) throws IOException {
+    private static void fit(
+            Trainer trainer, int numEpoch, Dataset trainingSet, Dataset validateSet, String outputDir, String modelName)
+            throws IOException {
         for (int epoch = 0; epoch < numEpoch; epoch++) {
             for (Batch batch : trainer.iterateDataset(trainingSet)) {
                 trainer.trainBatch(batch);

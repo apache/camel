@@ -27,7 +27,7 @@ public class TidyMarkupDataFormatWithUnmarshalTypeTest extends TidyMarkupDataFor
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {                
+            public void configure() {
                 TidyMarkupDataFormat dataFormat = new TidyMarkupDataFormat(String.class);
                 from("direct:start").unmarshal(dataFormat).to("mock:result");
             }

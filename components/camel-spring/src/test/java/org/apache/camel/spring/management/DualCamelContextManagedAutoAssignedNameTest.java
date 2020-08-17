@@ -35,7 +35,8 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/dualCamelContextManagedAutoAssignedNameTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/dualCamelContextManagedAutoAssignedNameTest.xml");
     }
 
     @Override
@@ -51,8 +52,10 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         ObjectName on1 = it.next();
         ObjectName on2 = it.next();
 
-        assertTrue(on1.getCanonicalName().contains("route1") || on2.getCanonicalName().contains("route1"), "Route 1 is missing");
-        assertTrue(on1.getCanonicalName().contains("route2") || on2.getCanonicalName().contains("route2"), "Route 2 is missing");
+        assertTrue(on1.getCanonicalName().contains("route1") || on2.getCanonicalName().contains("route1"),
+                "Route 1 is missing");
+        assertTrue(on1.getCanonicalName().contains("route2") || on2.getCanonicalName().contains("route2"),
+                "Route 2 is missing");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
         assertTrue(set.size() >= 4, "Size should be 4 or higher, was: " + set.size());

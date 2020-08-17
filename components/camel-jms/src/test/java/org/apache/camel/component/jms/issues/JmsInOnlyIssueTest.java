@@ -60,7 +60,8 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly,
+                exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
         assertFalse(out.hasOut(), "Should not have OUT");

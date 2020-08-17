@@ -23,7 +23,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * A simple post processor
  */
 public class MyPostProcessor implements BeanPostProcessor {
-    
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String name) throws BeansException {
         if (bean instanceof Cheese) {

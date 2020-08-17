@@ -88,8 +88,10 @@ public class ChoiceAsyncTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when().xpath("$foo = 'bar'").delay(10).asyncDelayed().to("mock:x").endChoice().when().xpath("$foo = 'cheese'").delay(10)
-                    .asyncDelayed().to("mock:y").endChoice().otherwise().delay(10).asyncDelayed().to("mock:z").endChoice().end().to("mock:end");
+                from("direct:start").choice().when().xpath("$foo = 'bar'").delay(10).asyncDelayed().to("mock:x").endChoice()
+                        .when().xpath("$foo = 'cheese'").delay(10)
+                        .asyncDelayed().to("mock:y").endChoice().otherwise().delay(10).asyncDelayed().to("mock:z").endChoice()
+                        .end().to("mock:end");
             }
         };
     }

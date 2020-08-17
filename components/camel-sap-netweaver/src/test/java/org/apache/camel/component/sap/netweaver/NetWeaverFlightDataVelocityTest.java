@@ -30,7 +30,7 @@ public class NetWeaverFlightDataVelocityTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND,
-            NetWeaverTestConstants.NETWEAVER_FLIGHT_COMMAND);
+                NetWeaverTestConstants.NETWEAVER_FLIGHT_COMMAND);
 
         assertMockEndpointsSatisfied();
     }
@@ -41,11 +41,12 @@ public class NetWeaverFlightDataVelocityTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .toF("sap-netweaver:%s?username=%s&password=%s", NetWeaverTestConstants.NETWEAVER_GATEWAY_URL, username, password)
-                    .to("log:response")
-                    .to("velocity:flight-info.vm")
-                    .to("log:info")
-                    .to("mock:result");
+                        .toF("sap-netweaver:%s?username=%s&password=%s", NetWeaverTestConstants.NETWEAVER_GATEWAY_URL, username,
+                                password)
+                        .to("log:response")
+                        .to("velocity:flight-info.vm")
+                        .to("log:info")
+                        .to("mock:result");
             }
         };
     }

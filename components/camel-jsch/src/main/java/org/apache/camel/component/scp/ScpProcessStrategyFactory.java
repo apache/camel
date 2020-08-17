@@ -27,16 +27,18 @@ import org.apache.camel.component.file.strategy.GenericFileNoOpProcessStrategy;
 public class ScpProcessStrategyFactory implements GenericFileProcessStrategyFactory<ScpFile> {
 
     @SuppressWarnings("unchecked")
-    public GenericFileProcessStrategy<ScpFile> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
+    public GenericFileProcessStrategy<ScpFile> createGenericFileProcessStrategy(
+            CamelContext context, Map<String, Object> params) {
         // default strategy will do nothing
         GenericFileNoOpProcessStrategy<ScpFile> strategy = new GenericFileNoOpProcessStrategy<>();
         strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
         return strategy;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     private static GenericFileExclusiveReadLockStrategy<ScpFile> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<ScpFile> strategy = (GenericFileExclusiveReadLockStrategy<ScpFile>) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<ScpFile> strategy
+                = (GenericFileExclusiveReadLockStrategy<ScpFile>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }

@@ -22,12 +22,12 @@ import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
 
 /**
- * A single interface to easily configure and setup a shared Netty HTTP server
- * to be re-used among other Camel applications.
+ * A single interface to easily configure and setup a shared Netty HTTP server to be re-used among other Camel
+ * applications.
  * <p/>
- * To use this, just define a {@link NettyServerBootstrapConfiguration} configuration, and
- * set this using {@link #setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration)}.
- * Then call the {@link #start()} to initialize this shared server.
+ * To use this, just define a {@link NettyServerBootstrapConfiguration} configuration, and set this using
+ * {@link #setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration)}. Then call the
+ * {@link #start()} to initialize this shared server.
  */
 public interface NettySharedHttpServer extends Service {
 

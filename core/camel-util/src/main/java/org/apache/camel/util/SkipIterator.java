@@ -34,8 +34,8 @@ public final class SkipIterator implements Iterator<Object>, Closeable {
     /**
      * Creates a new skip iterator
      *
-     * @param it        the iterator
-     * @param skip      number of times to skip
+     * @param  it                       the iterator
+     * @param  skip                     number of times to skip
      * @throws IllegalArgumentException is thrown if skip is not a positive number
      */
     public SkipIterator(Iterator<?> it, int skip) {

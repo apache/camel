@@ -40,10 +40,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MQProducerSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void mqListBrokersTest() throws Exception {
 
@@ -56,13 +56,13 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ListBrokersResult resultGet = (ListBrokersResult) exchange.getIn().getBody();
         assertEquals(1, resultGet.getBrokerSummaries().size());
         assertEquals("mybroker", resultGet.getBrokerSummaries().get(0).getBrokerName());
         assertEquals(BrokerState.RUNNING.toString(), resultGet.getBrokerSummaries().get(0).getBrokerState());
     }
-    
+
     @Test
     public void mqCreateBrokerTest() throws Exception {
 
@@ -85,14 +85,14 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(MQConstants.BROKER_USERS, users);
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         CreateBrokerResult resultGet = (CreateBrokerResult) exchange.getIn().getBody();
         assertEquals(resultGet.getBrokerId(), "1");
         assertEquals(resultGet.getBrokerArn(), "test");
     }
-    
+
     @Test
     public void mqDeleteBrokerTest() throws Exception {
 
@@ -104,13 +104,13 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(MQConstants.BROKER_ID, "1");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         DeleteBrokerResult resultGet = (DeleteBrokerResult) exchange.getIn().getBody();
         assertEquals(resultGet.getBrokerId(), "1");
     }
-    
+
     @Test
     public void mqRebootBrokerTest() throws Exception {
 
@@ -122,10 +122,10 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(MQConstants.BROKER_ID, "1");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void mqUpdateBrokerTest() throws Exception {
 
@@ -141,12 +141,12 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(MQConstants.CONFIGURATION_ID, cId);
             }
         });
-        
+
         assertMockEndpointsSatisfied();
         UpdateBrokerResult resultGet = (UpdateBrokerResult) exchange.getIn().getBody();
         assertEquals(resultGet.getBrokerId(), "1");
     }
-    
+
     @Test
     public void mqDescribeBrokerTest() throws Exception {
 
@@ -162,7 +162,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(MQConstants.CONFIGURATION_ID, cId);
             }
         });
-        
+
         assertMockEndpointsSatisfied();
         DescribeBrokerResult resultGet = (DescribeBrokerResult) exchange.getIn().getBody();
         assertEquals(resultGet.getBrokerId(), "1");

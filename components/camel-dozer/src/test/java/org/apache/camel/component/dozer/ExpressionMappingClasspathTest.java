@@ -35,13 +35,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class ExpressionMappingClasspathTest {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
-    
+
     @Produce("direct:start")
     private ProducerTemplate startEndpoint;
-    
+
     @AfterEach
     public void tearDown() {
         resultEndpoint.reset();

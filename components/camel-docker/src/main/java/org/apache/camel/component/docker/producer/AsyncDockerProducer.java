@@ -68,7 +68,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
     public AsyncDockerProducer(DockerEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
-        this.component = (DockerComponent)endpoint.getComponent();
+        this.component = (DockerComponent) endpoint.getComponent();
     }
 
     @Override
@@ -96,9 +96,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     });
 
                     if (result != null) {
-                        String imageId = ((BuildImageResultCallback)result).awaitImageId();
+                        String imageId = ((BuildImageResultCallback) result).awaitImageId();
 
-                        ((BuildImageResultCallback)result).close();
+                        ((BuildImageResultCallback) result).close();
 
                         result = imageId;
                     }
@@ -114,9 +114,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     });
 
                     if (result != null) {
-                        result = ((PullImageResultCallback)result).awaitCompletion();
+                        result = ((PullImageResultCallback) result).awaitCompletion();
 
-                        ((PullImageResultCallback)result).close();
+                        ((PullImageResultCallback) result).close();
                     }
 
                     break;
@@ -130,9 +130,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     });
 
                     if (result != null) {
-                        result = ((PushImageResultCallback)result).awaitCompletion();
+                        result = ((PushImageResultCallback) result).awaitCompletion();
 
-                        ((PushImageResultCallback)result).close();
+                        ((PushImageResultCallback) result).close();
                     }
 
                     break;
@@ -148,9 +148,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     });
 
                     if (result != null) {
-                        result = ((AttachContainerResultCallback)result).awaitCompletion();
+                        result = ((AttachContainerResultCallback) result).awaitCompletion();
 
-                        ((AttachContainerResultCallback)result).close();
+                        ((AttachContainerResultCallback) result).close();
                     }
 
                     break;
@@ -165,9 +165,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     });
 
                     if (result != null) {
-                        result = ((LogContainerResultCallback)result).awaitCompletion();
+                        result = ((LogContainerResultCallback) result).awaitCompletion();
 
-                        ((LogContainerResultCallback)result).close();
+                        ((LogContainerResultCallback) result).close();
                     }
 
                     break;
@@ -183,9 +183,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     });
 
                     if (result != null) {
-                        Integer statusCode = ((WaitContainerResultCallback)result).awaitStatusCode();
+                        Integer statusCode = ((WaitContainerResultCallback) result).awaitStatusCode();
 
-                        ((WaitContainerResultCallback)result).close();
+                        ((WaitContainerResultCallback) result).close();
 
                         result = statusCode;
                     }
@@ -202,9 +202,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     });
 
                     if (result != null) {
-                        result = ((ExecStartResultCallback)result).awaitCompletion();
+                        result = ((ExecStartResultCallback) result).awaitCompletion();
 
-                        ((ExecStartResultCallback)result).close();
+                        ((ExecStartResultCallback) result).close();
                     }
 
                     break;
@@ -236,9 +236,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         BuildImageCmd buildImageCmd;
 
         if (body instanceof InputStream) {
-            buildImageCmd = client.buildImageCmd((InputStream)body);
+            buildImageCmd = client.buildImageCmd((InputStream) body);
         } else if (body instanceof File) {
-            buildImageCmd = client.buildImageCmd((File)body);
+            buildImageCmd = client.buildImageCmd((File) body);
         } else {
             throw new DockerException("Unable to location source Image");
         }
@@ -340,13 +340,15 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Attach Container Request");
 
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId
+                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
         AttachContainerCmd attachContainerCmd = client.attachContainerCmd(containerId);
 
-        Boolean followStream = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
+        Boolean followStream
+                = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
 
         if (followStream != null) {
             attachContainerCmd.withFollowStream(followStream);
@@ -387,13 +389,15 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Log Container Request");
 
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId
+                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 
         LogContainerCmd logContainerCmd = client.logContainerCmd(containerId);
 
-        Boolean followStream = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
+        Boolean followStream
+                = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
 
         if (followStream != null) {
             logContainerCmd.withFollowStream(followStream);
@@ -440,7 +444,8 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Wait Container Request");
 
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId
+                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, "Container ID must be specified");
 

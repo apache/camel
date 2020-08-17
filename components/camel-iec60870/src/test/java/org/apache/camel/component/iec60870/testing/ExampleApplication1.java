@@ -35,32 +35,32 @@ public class ExampleApplication1 {
             public void configure() throws Exception {
 
                 from("timer:foo") //
-                    .setBody(simple("${random(10)}"))//
-                    .convertBodyTo(Float.class) //
-                    .to("iec60870-client:localhost:2404/0-1-2-3-4") //
-                    .to("iec60870-client:localhost:2405/0-1-2-3-4") //
-                    .setBody(simple("Timer: ${body}")) //
-                    .to("stream:err");
+                        .setBody(simple("${random(10)}"))//
+                        .convertBodyTo(Float.class) //
+                        .to("iec60870-client:localhost:2404/0-1-2-3-4") //
+                        .to("iec60870-client:localhost:2405/0-1-2-3-4") //
+                        .setBody(simple("Timer: ${body}")) //
+                        .to("stream:err");
 
                 from("iec60870-server:localhost:2404/0-1-2-3-4") //
-                    .setBody(simple("${body.value}")) //
-                    .to("iec60870-server:localhost:2404/0-1-2-3-4") //
-                    .setBody(simple("Server 1: ${body}")) //
-                    .to("stream:err");
+                        .setBody(simple("${body.value}")) //
+                        .to("iec60870-server:localhost:2404/0-1-2-3-4") //
+                        .setBody(simple("Server 1: ${body}")) //
+                        .to("stream:err");
 
                 from("iec60870-server:localhost:2405/0-1-2-3-4") //
-                    .setBody(simple("${body.value}")) //
-                    .to("iec60870-server:localhost:2405/0-1-2-3-4") //
-                    .setBody(simple("Server 2: ${body}")) //
-                    .to("stream:err");
+                        .setBody(simple("${body.value}")) //
+                        .to("iec60870-server:localhost:2405/0-1-2-3-4") //
+                        .setBody(simple("Server 2: ${body}")) //
+                        .to("stream:err");
 
                 from("iec60870-client:localhost:2404/0-1-2-3-4") //
-                    .setBody(simple("From 1: ${body}")) //
-                    .to("stream:err");
+                        .setBody(simple("From 1: ${body}")) //
+                        .to("stream:err");
 
                 from("iec60870-client:localhost:2405/0-1-2-3-4") //
-                    .setBody(simple("From 2: ${body}")) //
-                    .to("stream:err");
+                        .setBody(simple("From 2: ${body}")) //
+                        .to("stream:err");
             }
         });
 

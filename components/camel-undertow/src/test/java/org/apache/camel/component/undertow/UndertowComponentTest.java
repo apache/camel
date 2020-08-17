@@ -51,11 +51,10 @@ public class UndertowComponentTest extends BaseUndertowTest {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/myapp")
-                    .transform().constant("Bye Camel!")
-                    .to("mock:myapp");
+                        .transform().constant("Bye Camel!")
+                        .to("mock:myapp");
             }
         };
     }
-
 
 }

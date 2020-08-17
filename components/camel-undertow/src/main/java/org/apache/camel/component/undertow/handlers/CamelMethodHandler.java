@@ -35,7 +35,7 @@ public class CamelMethodHandler implements HttpHandler {
     private static final String DEFAULT_HANDLER_KEY = "";
     private static final String[] DEFAULT_METHODS;
     static {
-        DEFAULT_METHODS = new String[] {DEFAULT_HANDLER_KEY};
+        DEFAULT_METHODS = new String[] { DEFAULT_HANDLER_KEY };
     }
 
     private final Map<String, MethodEntry> methodMap = new ConcurrentHashMap<>();
@@ -75,7 +75,6 @@ public class CamelMethodHandler implements HttpHandler {
         handlerString = null;
         return result;
     }
-
 
     public boolean remove(String methods) {
         boolean result;
@@ -121,12 +120,14 @@ public class CamelMethodHandler implements HttpHandler {
                 this.handler = handler;
                 refCount++;
                 return handler;
-            } else if ("OPTIONS".equals(method) || CamelWebSocketHandler.class == this.handler.getClass() && CamelWebSocketHandler.class == handler.getClass()) {
+            } else if ("OPTIONS".equals(method) || CamelWebSocketHandler.class == this.handler.getClass()
+                    && CamelWebSocketHandler.class == handler.getClass()) {
                 refCount++;
                 return this.handler;
             } else {
-                throw new IllegalArgumentException(String.format(
-                        "Duplicate handler for %s method: '%s', '%s'", method, this.handler, handler));
+                throw new IllegalArgumentException(
+                        String.format(
+                                "Duplicate handler for %s method: '%s', '%s'", method, this.handler, handler));
             }
         }
 

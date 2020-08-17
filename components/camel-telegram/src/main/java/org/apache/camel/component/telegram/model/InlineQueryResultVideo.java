@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a page containing an embedded video player or a video file.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultvideo">
- * https://core.telegram.org/bots/api#inlinequeryresultvideo</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultvideo</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultVideo extends InlineQueryResult {

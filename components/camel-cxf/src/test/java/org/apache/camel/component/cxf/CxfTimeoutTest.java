@@ -48,30 +48,30 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
 
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String JAXWS_SERVER_ADDRESS 
-        = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfTimeoutTest/SoapContext/SoapPort";
+    protected static final String JAXWS_SERVER_ADDRESS
+            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfTimeoutTest/SoapContext/SoapPort";
 
     @BeforeAll
     public static void startService() {
         Greeter implementor = new GreeterImplWithSleep();
-        Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor); 
+        Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor);
     }
 
     @Test
     public void testInvokingJaxWsServerWithBusUriParams() throws Exception {
         sendTimeOutMessage("cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter&bus=#cxf");
     }
-    
+
     @Test
     public void testInvokingJaxWsServerWithoutBusUriParams() throws Exception {
         sendTimeOutMessage("cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter");
     }
-    
+
     @Test
     public void testInvokingJaxWsServerWithCxfEndpoint() throws Exception {
         sendTimeOutMessage("cxf://bean:springEndpoint");
     }
-    
+
     @Test
     public void testInvokingJaxWsServerWithCxfEndpointWithConfigurer() throws Exception {
         Exchange reply = sendJaxWsMessage("cxf://bean:springEndpoint?cxfConfigurer=#myConfigurer");
@@ -79,17 +79,17 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         assertFalse(reply.isFailed(), "We don't expect the exception here");
         assertEquals("Greet Hello World!", reply.getOut().getBody(String.class), "Get a wrong response");
     }
-    
+
     @Test
     public void testInvokingFromCamelRoute() throws Exception {
         sendTimeOutMessage("direct:start");
     }
-    
+
     @Test
     public void testDoCatchWithTimeOutException() throws Exception {
         sendTimeOutMessage("direct:doCatch");
     }
-    
+
     protected void sendTimeOutMessage(String endpointUri) throws Exception {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
@@ -114,7 +114,7 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/cxfConduitTimeOutContext.xml");
     }
-    
+
     public static class MyCxfConfigurer implements CxfConfigurer {
 
         @Override
@@ -129,15 +129,15 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
             HTTPClientPolicy policy = new HTTPClientPolicy();
             policy.setReceiveTimeout(60000);
             conduit.setClient(policy);
-            
+
         }
 
         @Override
         public void configureServer(Server server) {
             // Do nothing here
-            
+
         }
-        
+
     }
 
 }

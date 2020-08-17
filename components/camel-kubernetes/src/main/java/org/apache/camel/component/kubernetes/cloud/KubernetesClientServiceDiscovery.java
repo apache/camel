@@ -42,7 +42,8 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
 
     public KubernetesClientServiceDiscovery(KubernetesConfiguration configuration) {
         super(configuration);
-        this.namespace = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
+        this.namespace
+                = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
         this.portName = configuration.getPortName();
         this.client = null;
     }
@@ -54,7 +55,8 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         List<ServiceDefinition> result = new ArrayList<>();
         if (endpoints != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found {} endpoints in namespace: {} for name: {} and portName: {}", endpoints.getSubsets().size(), this.namespace, name, this.portName);
+                LOG.debug("Found {} endpoints in namespace: {} for name: {} and portName: {}", endpoints.getSubsets().size(),
+                        this.namespace, name, this.portName);
             }
             for (EndpointSubset subset : endpoints.getSubsets()) {
                 if (subset.getPorts().size() == 1) {
@@ -97,7 +99,8 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
 
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())) && ObjectHelper.isEmpty(configuration.getOauthToken())) {
+        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword()))
+                && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         } else {

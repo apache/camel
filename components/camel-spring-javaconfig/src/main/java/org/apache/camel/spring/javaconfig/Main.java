@@ -29,28 +29,30 @@ import org.springframework.context.support.AbstractApplicationContext;
  * The Main class which takes the spring java config parameter
  */
 public class Main extends org.apache.camel.spring.Main {
-    
+
     private String basedPackages;
     private String configClasses;
     private Class[] configClass;
 
     public Main() {
 
-        addOption(new ParameterOption("bp", "basedPackages",
-            "Sets the based packages of Spring java config ApplicationContext", "basedPackages") {
+        addOption(new ParameterOption(
+                "bp", "basedPackages",
+                "Sets the based packages of Spring java config ApplicationContext", "basedPackages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setBasedPackages(parameter);
             }
         });
 
-        addOption(new ParameterOption("cc", "configClasses",
-            "Sets the config of Spring java config ApplicationContext", "configureClasses") {
+        addOption(new ParameterOption(
+                "cc", "configClasses",
+                "Sets the config of Spring java config ApplicationContext", "configureClasses") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setConfigClasses(parameter);
             }
         });
     }
-    
+
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
@@ -58,8 +60,8 @@ public class Main extends org.apache.camel.spring.Main {
     }
 
     /**
-     * Sets the base packages where Spring annotation scanning is performed.
-     * You can separate multiple packages using comma or semi colon.
+     * Sets the base packages where Spring annotation scanning is performed. You can separate multiple packages using
+     * comma or semi colon.
      */
     public void setBasedPackages(String config) {
         basedPackages = config;
@@ -70,13 +72,13 @@ public class Main extends org.apache.camel.spring.Main {
     }
 
     /**
-     * Sets the name of Spring <tt>@Configuration</tt> classes to use.
-     * You can separate multiple classes using comma or semi colon.
+     * Sets the name of Spring <tt>@Configuration</tt> classes to use. You can separate multiple classes using comma or
+     * semi colon.
      */
     public void setConfigClasses(String config) {
         configClasses = config;
     }
-    
+
     public String getConfigClasses() {
         return configClasses;
     }
@@ -110,17 +112,17 @@ public class Main extends org.apache.camel.spring.Main {
 
     private Class<?>[] getConfigClasses(String configureClasses) {
         List<Class<?>> answer = new ArrayList<>();
-        String[] classes =  configureClasses.split("(;|,)");
-        for (String className :  classes) {
+        String[] classes = configureClasses.split("(;|,)");
+        for (String className : classes) {
             className = className.trim();
             Class<?> configClass = ObjectHelper.loadClass(className);
             if (configClass != null) {
                 answer.add(configClass);
-            } 
+            }
         }
         return answer.toArray(new Class<?>[answer.size()]);
     }
-        
+
     @Override
     protected AbstractApplicationContext createDefaultApplicationContext() {
         ApplicationContext parentContext = getParentApplicationContext();

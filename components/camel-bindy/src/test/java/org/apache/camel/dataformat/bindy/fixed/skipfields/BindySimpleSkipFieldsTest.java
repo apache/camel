@@ -32,16 +32,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This test validates that bindy can skip values in the fixed-length record when absolute pos
- * values are provided
+ * This test validates that bindy can skip values in the fixed-length record when absolute pos values are provided
  */
 public class BindySimpleSkipFieldsTest extends CamelTestSupport {
 
-    public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
-    public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
-    
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
+
     private static final String TEST_RECORD = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     \r\n";
 
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
@@ -59,24 +58,23 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
 
         unmarshallResult.expectedMessageCount(1);
         template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD);
-        
+
         unmarshallResult.assertIsSatisfied();
 
         // check the model
-        BindySimpleSkipFieldsTest.Order order = 
-            (BindySimpleSkipFieldsTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
+        BindySimpleSkipFieldsTest.Order order
+                = (BindySimpleSkipFieldsTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertEquals(null, order.getFirstName());
         assertEquals("M    ", order.getLastName());
         assertEquals("Hello     ", order.getComment());
     }
-    
-    
+
     // *************************************************************************
     // ROUTES
     // *************************************************************************
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         RouteBuilder routeBuilder = new RouteBuilder() {
@@ -89,15 +87,15 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
                 bindy.type(BindyType.Fixed);
 
                 from(URI_DIRECT_MARSHALL)
-                    .marshal(bindy)
-                    .to(URI_MOCK_MARSHALL_RESULT);
-            
+                        .marshal(bindy)
+                        .to(URI_MOCK_MARSHALL_RESULT);
+
                 from(URI_DIRECT_UNMARSHALL)
-                    .unmarshal().bindy(BindyType.Fixed, BindySimpleSkipFieldsTest.Order.class)
-                    .to(URI_MOCK_UNMARSHALL_RESULT);
+                        .unmarshal().bindy(BindyType.Fixed, BindySimpleSkipFieldsTest.Order.class)
+                        .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
-        
+
         return routeBuilder;
     }
 
@@ -241,8 +239,10 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }

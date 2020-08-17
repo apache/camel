@@ -44,7 +44,8 @@ public class XPathTransformTest extends ContextTestSupport {
 
     @Test
     public void testXPathTransform() throws Exception {
-        Document doc = context.getTypeConverter().convertTo(Document.class, "<root><firstname>Apache</firstname><lastname>Camel</lastname></root>");
+        Document doc = context.getTypeConverter().convertTo(Document.class,
+                "<root><firstname>Apache</firstname><lastname>Camel</lastname></root>");
         NodeList list = XPathBuilder.xpath("/root/firstname", NodeList.class).evaluate(context, doc, NodeList.class);
         assertNotNull(list);
         list.item(0).setTextContent("Servicemix");
@@ -55,15 +56,17 @@ public class XPathTransformTest extends ContextTestSupport {
 
     @Test
     public void testXPathNamespaceLoggingEnabledJavaDSL() throws Exception {
-        assumeThat("Reflection on java.lang.Field has been disabled in JDK 12", getJavaVersion(), Matchers.lessThanOrEqualTo(11));
+        assumeThat("Reflection on java.lang.Field has been disabled in JDK 12", getJavaVersion(),
+                Matchers.lessThanOrEqualTo(11));
 
         Logger l = mock(Logger.class);
 
         when(l.isInfoEnabled()).thenReturn(true);
 
-        String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
-                      + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
-                      + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
+        String body
+                = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
+                  + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
+                  + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
         Document doc = context.getTypeConverter().convertTo(Document.class, body);
         Field logField = XPathBuilder.class.getDeclaredField("LOG");
         logField.setAccessible(true);
@@ -82,15 +85,17 @@ public class XPathTransformTest extends ContextTestSupport {
 
     @Test
     public void testXPathNamespaceLoggingDisabledJavaDSL() throws Exception {
-        assumeThat("Reflection on java.lang.Field has been disabled in JDK 12", getJavaVersion(), Matchers.lessThanOrEqualTo(11));
+        assumeThat("Reflection on java.lang.Field has been disabled in JDK 12", getJavaVersion(),
+                Matchers.lessThanOrEqualTo(11));
 
         Logger l = mock(Logger.class);
 
         when(l.isInfoEnabled()).thenReturn(true);
 
-        String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
-                      + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
-                      + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
+        String body
+                = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
+                  + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
+                  + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
         Document doc = context.getTypeConverter().convertTo(Document.class, body);
         Field logField = XPathBuilder.class.getDeclaredField("LOG");
         logField.setAccessible(true);

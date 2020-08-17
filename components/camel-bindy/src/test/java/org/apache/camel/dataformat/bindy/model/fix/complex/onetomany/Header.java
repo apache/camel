@@ -110,7 +110,8 @@ public class Header {
 
     @Override
     public String toString() {
-        return Header.class.getName() + " --> 8: " + this.beginString + ", 9: " + this.bodyLength + ", 34: " + this.msgSeqNum + " , 35: " + this.msgType + ", 49: "
+        return Header.class.getName() + " --> 8: " + this.beginString + ", 9: " + this.bodyLength + ", 34: " + this.msgSeqNum
+               + " , 35: " + this.msgType + ", 49: "
                + this.sendCompId + ", 56: " + this.targetCompId + ", 777: " + this.created;
     }
 

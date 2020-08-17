@@ -30,10 +30,9 @@ import org.junit.jupiter.api.Test;
 public class BeanIODataFormatSimpleTest extends CamelTestSupport {
 
     // START SNIPPET: e2
-    private static final String FIXED_DATA =
-            "Joe,Smith,Developer,75000,10012009" + Constants.LS
-            + "Jane,Doe,Architect,80000,01152008" + Constants.LS
-            + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
+    private static final String FIXED_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
+                                             + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+                                             + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
     // END SNIPPET: e2
 
     @Test
@@ -74,15 +73,15 @@ public class BeanIODataFormatSimpleTest extends CamelTestSupport {
                 // a route which uses the bean io data format to format a CSV data
                 // to java objects
                 from("direct:unmarshal")
-                    .unmarshal(format)
-                    // and then split the message body so we get a message for each row
-                    .split(body())
+                        .unmarshal(format)
+                        // and then split the message body so we get a message for each row
+                        .split(body())
                         .to("mock:beanio-unmarshal");
 
                 // convert list of java objects back to flat format
                 from("direct:marshal")
-                    .marshal(format)
-                    .to("mock:beanio-marshal");
+                        .marshal(format)
+                        .to("mock:beanio-marshal");
                 // END SNIPPET: e1
             }
         };

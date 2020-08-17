@@ -29,8 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to verify that we can pool an ASCII file from the FTP Server and
- * store it on a local file path
+ * Unit test to verify that we can pool an ASCII file from the FTP Server and store it on a local file path
  */
 public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
 
@@ -78,7 +77,8 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
-                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).convertBodyTo(String.class).to(fileUrl).to("mock:result");
+                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).convertBodyTo(String.class)
+                        .to(fileUrl).to("mock:result");
             }
         };
     }

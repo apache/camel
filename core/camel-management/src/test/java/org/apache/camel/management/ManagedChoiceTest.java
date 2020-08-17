@@ -72,11 +72,11 @@ public class ManagedChoiceTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .choice().id("mysend")
+                        .choice().id("mysend")
                         .when(header("foo"))
-                            .to("mock:foo")
+                        .to("mock:foo")
                         .otherwise()
-                            .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

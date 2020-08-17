@@ -37,7 +37,8 @@ public class JdbcProducerOutputTypeSelectOneOutputClassTest extends AbstractJdbc
 
         assertMockEndpointsSatisfied();
 
-        CustomerModel model = assertIsInstanceOf(CustomerModel.class, mock.getReceivedExchanges().get(0).getIn().getBody(CustomerModel.class));
+        CustomerModel model = assertIsInstanceOf(CustomerModel.class,
+                mock.getReceivedExchanges().get(0).getIn().getBody(CustomerModel.class));
         assertEquals("cust1", model.getId());
         assertEquals("jstrachan", model.getName());
     }
@@ -46,7 +47,9 @@ public class JdbcProducerOutputTypeSelectOneOutputClassTest extends AbstractJdbc
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("jdbc:testdb?outputType=SelectOne&outputClass=org.apache.camel.component.jdbc.CustomerModel").to("mock:result");
+                from("direct:start")
+                        .to("jdbc:testdb?outputType=SelectOne&outputClass=org.apache.camel.component.jdbc.CustomerModel")
+                        .to("mock:result");
             }
         };
     }

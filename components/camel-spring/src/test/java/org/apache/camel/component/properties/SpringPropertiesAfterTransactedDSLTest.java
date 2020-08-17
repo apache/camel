@@ -25,7 +25,8 @@ public class SpringPropertiesAfterTransactedDSLTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesAfterTransactedDSLTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringPropertiesAfterTransactedDSLTest.xml");
     }
 
     @Test

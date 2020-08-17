@@ -61,8 +61,11 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
             }
 
             // validate time options has been configured
-            if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null) && (getRouteResumeTime() == null)) {
-                throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId() + " has no start/stop/suspend/resume times specified");
+            if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null)
+                    && (getRouteResumeTime() == null)) {
+                throw new IllegalArgumentException(
+                        "Scheduled Route Policy for route " + route.getId()
+                                                   + " has no start/stop/suspend/resume times specified");
             }
 
             registerRouteToScheduledRouteDetails(route);
@@ -109,9 +112,9 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
             TriggerKey triggerKey = new TriggerKey(triggerPrefix + route.getId(), TRIGGER_GROUP + route.getId());
             trigger = TriggerBuilder.newTrigger()
-                .withIdentity(triggerKey)
-                .withSchedule(scheduleBuilder)
-                .build();
+                    .withIdentity(triggerKey)
+                    .withSchedule(scheduleBuilder)
+                    .build();
         }
 
         return trigger;

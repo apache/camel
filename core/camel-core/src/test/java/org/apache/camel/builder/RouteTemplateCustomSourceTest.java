@@ -28,7 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateCustomSourceTest extends ContextTestSupport {
@@ -61,8 +60,8 @@ public class RouteTemplateCustomSourceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                    .from("direct:{{foo}}")
-                    .to("mock:{{bar}}");
+                        .from("direct:{{foo}}")
+                        .to("mock:{{bar}}");
             }
         };
     }

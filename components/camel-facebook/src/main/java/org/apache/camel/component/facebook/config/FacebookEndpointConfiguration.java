@@ -241,6 +241,7 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
 
     /**
      * The checkin to be created. Deprecated, instead create a Post with an attached location
+     * 
      * @deprecated instead create a Post with an attached location
      */
     @Deprecated

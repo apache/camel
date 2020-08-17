@@ -28,9 +28,8 @@ import org.springframework.beans.factory.InitializingBean;
 import static org.apache.camel.util.ObjectHelper.name;
 
 /**
- * A simple helper bean for running main classes from within the spring.xml
- * usually asynchronous in a background thread; which is useful for demos such
- * as running Swing programs in the same JVM.
+ * A simple helper bean for running main classes from within the spring.xml usually asynchronous in a background thread;
+ * which is useful for demos such as running Swing programs in the same JVM.
  */
 public class MainRunner implements InitializingBean, Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(MainRunner.class);
@@ -59,7 +58,8 @@ public class MainRunner implements InitializingBean, Runnable {
         }
     }
 
-    public void runMethodWithoutCatchingExceptions() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void runMethodWithoutCatchingExceptions()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (delay > 0) {
             try {
                 Thread.sleep(delay);
@@ -71,7 +71,7 @@ public class MainRunner implements InitializingBean, Runnable {
         if (!Modifier.isStatic(method.getModifiers())) {
             throw new IllegalArgumentException("The main method is not static!: " + method);
         }
-        Object[] arguments = {getArgs()};
+        Object[] arguments = { getArgs() };
         method.invoke(null, arguments);
     }
 

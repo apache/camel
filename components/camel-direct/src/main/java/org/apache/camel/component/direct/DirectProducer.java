@@ -56,7 +56,8 @@ public class DirectProducer extends DefaultAsyncProducer {
             DirectConsumer consumer = endpoint.getConsumer();
             if (consumer == null) {
                 if (endpoint.isFailIfNoConsumers()) {
-                    exchange.setException(new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
+                    exchange.setException(new DirectConsumerNotAvailableException(
+                            "No consumers available on endpoint: " + endpoint, exchange));
                 } else {
                     LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
                 }

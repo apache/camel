@@ -31,8 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveConfigurationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-    private static final String TEST_URI = "google-drive://" + PATH_PREFIX + "/copy?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+    private static final String TEST_URI = "google-drive://" + PATH_PREFIX
+                                           + "/copy?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -44,7 +46,7 @@ public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
 
         return context;
     }
-    
+
     @Test
     public void testConfiguration() throws Exception {
         GoogleDriveEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleDriveEndpoint.class);
@@ -54,7 +56,7 @@ public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
         assertEquals("b", configuration.getClientSecret());
         assertEquals("c", configuration.getApplicationName());
         assertEquals("d", configuration.getAccessToken());
-        assertEquals("e", configuration.getRefreshToken());        
+        assertEquals("e", configuration.getRefreshToken());
     }
 
     @Override

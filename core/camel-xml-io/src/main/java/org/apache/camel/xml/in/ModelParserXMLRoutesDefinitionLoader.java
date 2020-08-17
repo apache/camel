@@ -24,8 +24,8 @@ import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.spi.annotations.JdkService;
 
 /**
- * {@link XMLRoutesDefinitionLoader} that uses {@link ModelParser} to load and parse the routes from XML
- * which is fast and light-weight compared to the default that uses JAXB.
+ * {@link XMLRoutesDefinitionLoader} that uses {@link ModelParser} to load and parse the routes from XML which is fast
+ * and light-weight compared to the default that uses JAXB.
  */
 @JdkService(XMLRoutesDefinitionLoader.FACTORY)
 public class ModelParserXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {

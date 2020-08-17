@@ -46,7 +46,8 @@ public class RecipientListFunctionalTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").recipientList().message(m -> m.getHeader("Endpoints", String.class).split(",")).onPrepare().message(m -> m.setHeader("OnPrepare", true));
+                from("direct:a").recipientList().message(m -> m.getHeader("Endpoints", String.class).split(",")).onPrepare()
+                        .message(m -> m.setHeader("OnPrepare", true));
             }
         };
     }

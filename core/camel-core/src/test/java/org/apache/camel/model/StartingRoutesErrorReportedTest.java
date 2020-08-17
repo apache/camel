@@ -37,7 +37,8 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.start();
             fail();
         } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("Failed to create route route1: Route(route1)[From[direct:start?foo=bar] -> [To[mock:result]... because of"));
+            assertTrue(e.getMessage().startsWith(
+                    "Failed to create route route1: Route(route1)[From[direct:start?foo=bar] -> [To[mock:result]... because of"));
         }
     }
 
@@ -53,7 +54,8 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.start();
             fail();
         } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
+            assertTrue(
+                    e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
         }
     }
 
@@ -69,7 +71,8 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.start();
             fail();
         } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
+            assertTrue(
+                    e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
         }
     }
 
@@ -101,7 +104,8 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("Ensure that the data format is valid and the associated Camel component is present on the classpath"));
+            assertTrue(e.getMessage().contains(
+                    "Ensure that the data format is valid and the associated Camel component is present on the classpath"));
         }
     }
 

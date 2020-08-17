@@ -34,12 +34,13 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "combinedServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
-    @XmlElements({@XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
-                  @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class)})
+    @XmlElements({
+            @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+            @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class) })
     private List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations;
 
     public CombinedServiceCallServiceDiscoveryConfiguration() {
@@ -63,7 +64,8 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
      * 
      * @param serviceDiscoveryConfigurations
      */
-    public void setServiceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
+    public void setServiceDiscoveryConfigurations(
+            List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
         this.serviceDiscoveryConfigurations = serviceDiscoveryConfigurations;
     }
 
@@ -85,7 +87,8 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     /**
      * List of ServiceDiscovery configuration to use
      */
-    public CombinedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
+    public CombinedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfigurations(
+            List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
         setServiceDiscoveryConfigurations(serviceDiscoveryConfigurations);
         return this;
     }
@@ -93,7 +96,8 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     /**
      * Add a ServiceDiscovery configuration
      */
-    public CombinedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public CombinedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(
+            ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         addServiceDiscoveryConfigurations(serviceDiscoveryConfiguration);
         return this;
     }
@@ -156,7 +160,8 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     // *************************************************************************
 
     @Override
-    protected void postProcessFactoryParameters(final CamelContext camelContext, final Map<String, Object> parameters) throws Exception {
+    protected void postProcessFactoryParameters(final CamelContext camelContext, final Map<String, Object> parameters)
+            throws Exception {
         if (serviceDiscoveryConfigurations != null && !serviceDiscoveryConfigurations.isEmpty()) {
             List<ServiceDiscovery> discoveries = new ArrayList<>(serviceDiscoveryConfigurations.size());
             for (ServiceCallServiceDiscoveryConfiguration conf : serviceDiscoveryConfigurations) {

@@ -49,7 +49,8 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JMXTXUseOriginalBodyWithTXErrorHandlerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/component/jms/tx/JMXTXUseOriginalBodyWithTXErrorHandlerTest.xml");
     }
 
     @Override
@@ -84,7 +85,6 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
             return "oh no";
         }
     }
-
 
     public static class TestRoutes extends SpringRouteBuilder {
 

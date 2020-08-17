@@ -60,7 +60,7 @@ public class ManagedTopicLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().topic().id("mysend")
+                        .loadBalance().topic().id("mysend")
                         .to("mock:foo", "mock:bar");
             }
         };

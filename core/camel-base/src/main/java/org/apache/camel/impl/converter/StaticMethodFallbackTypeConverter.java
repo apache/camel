@@ -24,8 +24,8 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
- * A {@link org.apache.camel.TypeConverter} implementation which invokes a static method
- * as a fallback type converter from a type to another type
+ * A {@link org.apache.camel.TypeConverter} implementation which invokes a static method as a fallback type converter
+ * from a type to another type
  */
 public class StaticMethodFallbackTypeConverter extends TypeConverterSupport {
     private final Method method;
@@ -53,8 +53,9 @@ public class StaticMethodFallbackTypeConverter extends TypeConverterSupport {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return useExchange ? (T)ObjectHelper.invokeMethod(method, null, type, exchange, value, registry)
-            : (T) ObjectHelper.invokeMethod(method, null, type, value, registry);
+        return useExchange
+                ? (T) ObjectHelper.invokeMethod(method, null, type, exchange, value, registry)
+                : (T) ObjectHelper.invokeMethod(method, null, type, value, registry);
     }
 
 }

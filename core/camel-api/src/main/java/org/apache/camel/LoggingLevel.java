@@ -24,7 +24,12 @@ import javax.xml.bind.annotation.XmlEnum;
 @XmlEnum
 public enum LoggingLevel {
 
-    TRACE, DEBUG, INFO, WARN, ERROR, OFF;
+    TRACE,
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR,
+    OFF;
 
     /**
      * Is the given logging level equal or higher than the current level.

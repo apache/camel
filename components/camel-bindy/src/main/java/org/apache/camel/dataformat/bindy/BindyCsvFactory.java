@@ -43,10 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The BindyCsvFactory is the class who allows to : Generate a model associated
- * to a CSV record, bind data from a record to the POJOs, export data of POJOs
- * to a CSV record and format data into String, Date, Double, ... according to
- * the format/pattern defined
+ * The BindyCsvFactory is the class who allows to : Generate a model associated to a CSV record, bind data from a record
+ * to the POJOs, export data of POJOs to a CSV record and format data into String, Date, Double, ... according to the
+ * format/pattern defined
  */
 public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactory {
 
@@ -85,10 +84,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
-     * method uses to initialize the model representing the classes who will
-     * bind the data. This process will scan for classes according to the
-     * package name provided, check the annotated classes and fields and
-     * retrieve the separator of the CSV record
+     * method uses to initialize the model representing the classes who will bind the data. This process will scan for
+     * classes according to the package name provided, check the annotated classes and fields and retrieve the separator
+     * of the CSV record
      *
      * @throws Exception
      */
@@ -118,7 +116,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Position defined in the class: {}, position: {}, Field: {}",
-                                new Object[]{cl.getName(), dataField.pos(), dataField});
+                                new Object[] { cl.getName(), dataField.pos(), dataField });
                     }
 
                     if (dataField.required()) {
@@ -130,7 +128,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     int pos = dataField.pos();
                     if (annotatedFields.containsKey(pos)) {
                         Field f = annotatedFields.get(pos);
-                        LOG.warn("Potentially invalid model: existing @DataField '{}' replaced by '{}'", f.getName(), field.getName());
+                        LOG.warn("Potentially invalid model: existing @DataField '{}' replaced by '{}'", f.getName(),
+                                field.getName());
                     }
                     dataFields.put(pos, dataField);
                     annotatedFields.put(pos, field);
@@ -175,16 +174,18 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             // Get DataField from model
             DataField dataField = dataFields.get(pos);
-            
+
             // If a DataField can be skipped, it needs to check whether it is in dataFields keyset
             if (isSkipField()) {
-                if (dataFields.keySet().contains(pos))  {
-                    counterMandatoryFields = setDataFieldValue(camelContext, model, line, pos, counterMandatoryFields, data, dataField);
+                if (dataFields.keySet().contains(pos)) {
+                    counterMandatoryFields
+                            = setDataFieldValue(camelContext, model, line, pos, counterMandatoryFields, data, dataField);
                 }
             } else {
-                counterMandatoryFields = setDataFieldValue(camelContext, model, line, pos, counterMandatoryFields, data, dataField);
+                counterMandatoryFields
+                        = setDataFieldValue(camelContext, model, line, pos, counterMandatoryFields, data, dataField);
             }
-            
+
             ++pos;
 
         }
@@ -201,8 +202,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     }
 
-    private int setDataFieldValue(CamelContext camelContext, Map<String, Object> model, int line, int pos, int counterMandatoryFields, String data, DataField dataField) throws Exception {
-        org.apache.camel.util.ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
+    private int setDataFieldValue(
+            CamelContext camelContext, Map<String, Object> model, int line, int pos, int counterMandatoryFields, String data,
+            DataField dataField)
+            throws Exception {
+        org.apache.camel.util.ObjectHelper.notNull(dataField,
+                "No position " + pos + " defined for the field: " + data + ", line: " + line);
 
         if (dataField.trim()) {
             data = data.trim();
@@ -215,7 +220,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             // Check if content of the field is empty
             // This is not possible for mandatory fields
             if (data.equals("")) {
-                throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty for the line: " + line);
+                throw new IllegalArgumentException(
+                        "The mandatory field defined at the position " + pos + " is empty for the line: " + line);
             }
         }
 
@@ -244,7 +250,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             try {
                 if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
                     value = format.parse(data.replaceAll("\\\\" + quote, "\\" + quote));
-                } else if (quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL) && data.contains(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL) && !quotingEscaped) {
+                } else if (quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL)
+                        && data.contains(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL) && !quotingEscaped) {
                     // If double-quotes are used to enclose fields, the two double 
                     // quotes character must be replaced with one according to RFC 4180 section 2.7
                     value = format.parse(data.replaceAll(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL));
@@ -254,7 +261,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             } catch (FormatException ie) {
                 throw new IllegalArgumentException(ie.getMessage() + ", position: " + pos + ", line: " + line, ie);
             } catch (Exception e) {
-                throw new IllegalArgumentException("Parsing error detected for field defined at the position: " + pos + ", line: " + line, e);
+                throw new IllegalArgumentException(
+                        "Parsing error detected for field defined at the position: " + pos + ", line: " + line, e);
             }
         } else {
             if (!dataField.defaultValue().isEmpty()) {
@@ -267,7 +275,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         if (value != null && !dataField.method().isEmpty()) {
             Class<?> clazz;
             if (dataField.method().contains(".")) {
-                clazz = camelContext.getClassResolver().resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf('.')));
+                clazz = camelContext.getClassResolver()
+                        .resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf('.')));
             } else {
                 clazz = field.getType();
             }
@@ -300,7 +309,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         Map<Integer, List<String>> results = new HashMap<>();
 
         // Check if separator exists
-        org.apache.camel.util.ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
+        org.apache.camel.util.ObjectHelper.notNull(this.separator,
+                "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
 
         char separator = ConverterUtils.getCharDelimiter(this.getSeparator());
 
@@ -366,9 +376,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                             buffer.append(quote);
                         }
                         // CAMEL-7519 - improvement escape the token itself by prepending escape char
-                        if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote))  && quotingEscaped) {
+                        if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote)) && quotingEscaped) {
                             buffer.append(res.replaceAll("\\" + quote, "\\\\" + quote));
-                        } else if (quoting && quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL) && res.contains(quote) && !quotingEscaped) {
+                        } else if (quoting && quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL) && res.contains(quote)
+                                && !quotingEscaped) {
                             // If double-quotes are used to enclose fields, then a double-quote 
                             // appearing inside a field must be escaped by preceding it with another 
                             // double quote according to RFC 4180 section 2.7
@@ -439,10 +450,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
-     * Generate a table containing the data formatted and sorted with their position/offset
-     * If the model is Ordered than a key is created combining the annotation @Section and Position of the field
-     * If a relation @OneToMany is defined, than we iterate recursively through this function
-     * The result is placed in the Map<Integer, List> results
+     * Generate a table containing the data formatted and sorted with their position/offset If the model is Ordered than
+     * a key is created combining the annotation @Section and Position of the field If a relation @OneToMany is defined,
+     * than we iterate recursively through this function The result is placed in the Map<Integer, List> results
      */
     private void generateCsvPositionMap(Class<?> clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
 
@@ -469,7 +479,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Object value = field.get(obj);
 
                     // If the field value is empty, populate it with the default value
-                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(datafield.defaultValue()) && org.apache.camel.util.ObjectHelper.isEmpty(value)) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(datafield.defaultValue())
+                            && org.apache.camel.util.ObjectHelper.isEmpty(value)) {
                         value = datafield.defaultValue();
                     }
 
@@ -484,7 +495,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", value, datafield.pos(), result);
+                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", value,
+                                datafield.pos(), result);
                     }
 
                 } else {
@@ -529,7 +541,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // Will be used during generation of CSV
                 isOneToMany = true;
 
-                List<?> list = (List<?>)field.get(obj);
+                List<?> list = (List<?>) field.get(obj);
                 if (list != null) {
 
                     Iterator<?> it = list.iterator();
@@ -582,7 +594,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (quoting && quote != null) {
                 builderHeader.append(quote);
             }
-            if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote))  && quotingEscaped) {
+            if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote)) && quotingEscaped) {
                 builderHeader.append(res.replaceAll("\\" + quote, "\\\\" + quote));
             } else {
                 builderHeader.append(res);
@@ -629,7 +641,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
 
                     // Get Separator parameter
-                    org.apache.camel.util.ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
+                    org.apache.camel.util.ObjectHelper.notNull(record.separator(),
+                            "No separator has been defined in the @Record annotation");
                     separator = record.separator();
                     LOG.debug("Separator defined for the CSV: {}", separator);
 
@@ -651,15 +664,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     autospanLine = record.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);
-                    
+
                     // Get allowEmptyStream parameter
                     allowEmptyStream = record.allowEmptyStream();
                     LOG.debug("Allow empty stream parameter of the CSV: {}", allowEmptyStream);
-                    
+
                     // Get quotingEscaped parameter
                     quotingEscaped = record.quotingEscaped();
                     LOG.debug("Escape quote character flag of the CSV: {}", quotingEscaped);
-                    
+
                     // Get endWithLineBreak parameter
                     endWithLineBreak = record.endWithLineBreak();
                     LOG.debug("End with line break: {}", endWithLineBreak);
@@ -678,14 +691,17 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
         }
     }
+
     /**
      * Set the default values for the non defined fields.
-     * @param model the model which has its default fields set.
+     * 
+     * @param  model                  the model which has its default fields set.
      * @throws IllegalAccessException if the underlying fields are inaccessible
-     * @throws Exception In case the field cannot be parsed
+     * @throws Exception              In case the field cannot be parsed
      */
-    private void setDefaultValuesForFields(final Map<String, Object> model) throws IllegalAccessException,
-        Exception {
+    private void setDefaultValuesForFields(final Map<String, Object> model)
+            throws IllegalAccessException,
+            Exception {
         // Set the default values, if defined
         for (int i = 1; i <= dataFields.size(); i++) {
             Field field = annotatedFields.get(i);
@@ -726,7 +742,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
-     *  Indicate if can skip fields
+     * Indicate if can skip fields
      * 
      * @return boolean
      */
@@ -765,9 +781,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public boolean isAllowEmptyStream() {
         return allowEmptyStream;
     }
-    
+
     public boolean isEndWithLineBreak() {
         return endWithLineBreak;
     }
-    
+
 }

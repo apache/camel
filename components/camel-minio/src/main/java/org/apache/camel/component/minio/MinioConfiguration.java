@@ -121,7 +121,8 @@ public class MinioConfiguration implements Cloneable {
     private boolean deleteAfterWrite;
     @UriParam(label = "producer")
     private String storageClass;
-    @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange")
+    @UriParam(label = "producer",
+              enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange")
     private MinioOperations operation;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean pojoRequest;
@@ -164,9 +165,8 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which Minio client needs to work. When using this parameter,
-     * the configuration will expect the lowercase name of the region (for
-     * example ap-east-1). You'll need to use the name Region.EU_WEST_1.id()
+     * The region in which Minio client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -188,8 +188,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Secret Access Key or Minio Access Key.
-     * If not set camel will connect to service for anonymous access.
+     * Amazon AWS Secret Access Key or Minio Access Key. If not set camel will connect to service for anonymous access.
      */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
@@ -200,8 +199,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Access Key Id or Minio Secret Key.
-     * If not set camel will connect to service for anonymous access.
+     * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will connect to service for anonymous access.
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
@@ -212,8 +210,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Name of the bucket. The bucket will be created if it doesn't already
-     * exists.
+     * Name of the bucket. The bucket will be created if it doesn't already exists.
      */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
@@ -292,9 +289,8 @@ public class MinioConfiguration implements Cloneable {
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Gets the maximum number of messages as a limit to poll at each polling.
-     * The default value is 10. Use 0 or a negative number to set it as
-     * unlimited.
+     * Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a
+     * negative number to set it as unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
@@ -327,9 +323,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * The delimiter which is used in the
-     * ListObjectsRequest to only consume
-     * objects we are interested in.
+     * The delimiter which is used in the ListObjectsRequest to only consume objects we are interested in.
      */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
@@ -340,8 +334,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * The flag which is used in the
-     * ListObjectsRequest to get objects with user meta data.
+     * The flag which is used in the ListObjectsRequest to get objects with user meta data.
      */
     public void setIncludeUserMetadata(boolean includeUserMetadata) {
         this.includeUserMetadata = includeUserMetadata;
@@ -352,8 +345,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * The flag which is used in the
-     * ListObjectsRequest to get objects with versioning.
+     * The flag which is used in the ListObjectsRequest to get objects with versioning.
      */
     public void setIncludeVersions(boolean includeVersions) {
         this.includeVersions = includeVersions;
@@ -364,8 +356,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * The flag which is used in the
-     * ListObjectsRequest to set include folders.
+     * The flag which is used in the ListObjectsRequest to set include folders.
      */
     public void setIncludeFolders(boolean includeFolders) {
         this.includeFolders = includeFolders;
@@ -519,15 +510,13 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Delete objects from Minio after they have been retrieved. The delete is only
-     * performed if the Exchange is committed. If a rollback occurs, the object
-     * is not deleted.
+     * Delete objects from Minio after they have been retrieved. The delete is only performed if the Exchange is
+     * committed. If a rollback occurs, the object is not deleted.
      * <p/>
-     * If this option is false, then the same objects will be retrieve over and
-     * over again on the polls. Therefore you need to use the Idempotent
-     * Consumer EIP in the route to filter out duplicates. You can filter using
-     * the {@link MinioConstants#BUCKET_NAME} and {@link MinioConstants#OBJECT_NAME}
-     * headers, or only the {@link MinioConstants#OBJECT_NAME} header.
+     * If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you
+     * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
+     * {@link MinioConstants#BUCKET_NAME} and {@link MinioConstants#OBJECT_NAME} headers, or only the
+     * {@link MinioConstants#OBJECT_NAME} header.
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
@@ -538,10 +527,9 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Move objects from bucket to a different bucket after they have been retrieved. To accomplish the operation
-     * the destinationBucket option must be set.
-     * The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object
-     * is not moved.
+     * Move objects from bucket to a different bucket after they have been retrieved. To accomplish the operation the
+     * destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed.
+     * If a rollback occurs, the object is not moved.
      */
     public void setMoveAfterRead(boolean moveAfterRead) {
         this.moveAfterRead = moveAfterRead;
@@ -563,12 +551,10 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * If it is true, the exchange body will be set to a stream to the contents
-     * of the file. If false, the headers will be set with the Minio object
-     * metadata, but the body will be null. This option is strongly related to
-     * autocloseBody option. In case of setting includeBody to true and
-     * autocloseBody to false, it will be up to the caller to close the MinioObject
-     * stream. Setting autocloseBody to true, will close the MinioObject stream
+     * If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will
+     * be set with the Minio object metadata, but the body will be null. This option is strongly related to
+     * autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the
+     * caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream
      * automatically.
      */
     public void setIncludeBody(boolean includeBody) {
@@ -580,12 +566,10 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * If this option is true and includeBody is true, then the MinioObject.close()
-     * method will be called on exchange completion. This option is strongly
-     * related to includeBody option. In case of setting includeBody to true and
-     * autocloseBody to false, it will be up to the caller to close the MinioObject
-     * stream. Setting autocloseBody to true, will close the MinioObject stream
-     * automatically.
+     * If this option is true and includeBody is true, then the MinioObject.close() method will be called on exchange
+     * completion. This option is strongly related to includeBody option. In case of setting includeBody to true and
+     * autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to
+     * true, will close the MinioObject stream automatically.
      */
     public void setAutoCloseBody(boolean autoCloseBody) {
         this.autoCloseBody = autoCloseBody;
@@ -596,8 +580,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Setting the key name for an element in the bucket through endpoint
-     * parameter.
+     * Setting the key name for an element in the bucket through endpoint parameter.
      */
     public void setKeyName(String keyName) {
         this.keyName = keyName;

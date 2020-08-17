@@ -41,7 +41,7 @@ public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/OnExceptionNoExceptionConfiguredTest.xml");
     }
-    
+
     @Test
     public void testDummy() {
         // noop

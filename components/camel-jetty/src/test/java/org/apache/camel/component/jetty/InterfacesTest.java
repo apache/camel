@@ -119,13 +119,16 @@ public class InterfacesTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:" + port1 + "/testRoute").setBody().constant("local").to("mock:endpoint");
 
-                from("jetty:http://localhost:" + port2 + "/testRoute").setBody().constant("local-differentPort").to("mock:endpoint");
+                from("jetty:http://localhost:" + port2 + "/testRoute").setBody().constant("local-differentPort")
+                        .to("mock:endpoint");
 
                 if (remoteInterfaceAddress != null) {
-                    from("jetty:http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute").setBody().constant("remote").to("mock:endpoint");
+                    from("jetty:http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute").setBody().constant("remote")
+                            .to("mock:endpoint");
                 }
 
-                from("jetty:http://0.0.0.0:" + port4 + "/allInterfaces").setBody().constant("allInterfaces").to("mock:endpoint");
+                from("jetty:http://0.0.0.0:" + port4 + "/allInterfaces").setBody().constant("allInterfaces")
+                        .to("mock:endpoint");
 
             }
         };

@@ -56,8 +56,7 @@ import software.amazon.awssdk.services.iam.model.UpdateAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.UpdateAccessKeyResponse;
 
 /**
- * A Producer which sends messages to the Amazon IAM Service
- * <a href="http://aws.amazon.com/iam/">AWS IAM</a>
+ * A Producer which sends messages to the Amazon IAM Service <a href="http://aws.amazon.com/iam/">AWS IAM</a>
  */
 public class IAM2Producer extends DefaultProducer {
 
@@ -137,7 +136,7 @@ public class IAM2Producer extends DefaultProducer {
 
     @Override
     public IAM2Endpoint getEndpoint() {
-        return (IAM2Endpoint)super.getEndpoint();
+        return (IAM2Endpoint) super.getEndpoint();
     }
 
     private void listAccessKeys(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
@@ -146,7 +145,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof ListAccessKeysRequest) {
                 ListAccessKeysResponse response;
                 try {
-                    response = iamClient.listAccessKeys((ListAccessKeysRequest)payload);
+                    response = iamClient.listAccessKeys((ListAccessKeysRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Access Keys command returned the error code {}", ase.getMessage());
                     throw ase;
@@ -173,7 +172,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateUserRequest) {
                 CreateUserResponse result;
                 try {
-                    result = iamClient.createUser((CreateUserRequest)payload);
+                    result = iamClient.createUser((CreateUserRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -207,7 +206,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof DeleteUserRequest) {
                 DeleteUserResponse result;
                 try {
-                    result = iamClient.deleteUser((DeleteUserRequest)payload);
+                    result = iamClient.deleteUser((DeleteUserRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -241,7 +240,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof GetUserRequest) {
                 GetUserResponse result;
                 try {
-                    result = iamClient.getUser((GetUserRequest)payload);
+                    result = iamClient.getUser((GetUserRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -275,7 +274,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof ListUsersRequest) {
                 ListUsersResponse result;
                 try {
-                    result = iamClient.listUsers((ListUsersRequest)payload);
+                    result = iamClient.listUsers((ListUsersRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -302,7 +301,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateAccessKeyRequest) {
                 CreateAccessKeyResponse result;
                 try {
-                    result = iamClient.createAccessKey((CreateAccessKeyRequest)payload);
+                    result = iamClient.createAccessKey((CreateAccessKeyRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -334,7 +333,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof DeleteAccessKeyRequest) {
                 DeleteAccessKeyResponse result;
                 try {
-                    result = iamClient.deleteAccessKey((DeleteAccessKeyRequest)payload);
+                    result = iamClient.deleteAccessKey((DeleteAccessKeyRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -372,7 +371,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof UpdateAccessKeyRequest) {
                 UpdateAccessKeyResponse result;
                 try {
-                    result = iamClient.updateAccessKey((UpdateAccessKeyRequest)payload);
+                    result = iamClient.updateAccessKey((UpdateAccessKeyRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -416,7 +415,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateGroupRequest) {
                 CreateGroupResponse result;
                 try {
-                    result = iamClient.createGroup((CreateGroupRequest)payload);
+                    result = iamClient.createGroup((CreateGroupRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -454,7 +453,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateGroupRequest) {
                 DeleteGroupResponse result;
                 try {
-                    result = iamClient.deleteGroup((DeleteGroupRequest)payload);
+                    result = iamClient.deleteGroup((DeleteGroupRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -488,7 +487,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof ListGroupsRequest) {
                 ListGroupsResponse result;
                 try {
-                    result = iamClient.listGroups((ListGroupsRequest)payload);
+                    result = iamClient.listGroups((ListGroupsRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -515,7 +514,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof AddUserToGroupRequest) {
                 AddUserToGroupResponse result;
                 try {
-                    result = iamClient.addUserToGroup((AddUserToGroupRequest)payload);
+                    result = iamClient.addUserToGroup((AddUserToGroupRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -555,7 +554,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof RemoveUserFromGroupRequest) {
                 RemoveUserFromGroupResponse result;
                 try {
-                    result = iamClient.removeUserFromGroup((RemoveUserFromGroupRequest)payload);
+                    result = iamClient.removeUserFromGroup((RemoveUserFromGroupRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

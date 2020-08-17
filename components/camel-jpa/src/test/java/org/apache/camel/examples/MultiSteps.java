@@ -30,9 +30,8 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Represents a task which has multiple steps so that it can move from stage to stage
- * with the method annotated with {@link @Consumed} being invoked when the Camel consumer
- * has processed the entity bean
+ * Represents a task which has multiple steps so that it can move from stage to stage with the method annotated with
+ * {@link @Consumed} being invoked when the Camel consumer has processed the entity bean
  */
 @Entity
 @NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
@@ -75,7 +74,7 @@ public class MultiSteps {
     public void setStep(int step) {
         this.step = step;
     }
-    
+
     @PreConsumed
     public void beforeGoToNextStep(Exchange exchange) {
         // we could do some thing to update the entity by using the exchange property

@@ -53,7 +53,7 @@ public class RestUndertowHttpBindingModeAutoWithJsonTest extends BaseUndertowTes
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/json").type(UserPojo.class)
+                        .post("new").consumes("application/json").type(UserPojo.class)
                         .to("mock:input");
             }
         };

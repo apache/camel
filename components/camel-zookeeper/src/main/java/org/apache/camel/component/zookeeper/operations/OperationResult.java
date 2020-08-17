@@ -21,8 +21,7 @@ import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.data.Stat;
 
 /**
- * <code>OperationResult</code> is used to ecapsulate the results of executing a
- * {@link ZooKeeperOperation}
+ * <code>OperationResult</code> is used to ecapsulate the results of executing a {@link ZooKeeperOperation}
  */
 public class OperationResult<ResultType> {
     private Stat statistics;
@@ -65,7 +64,7 @@ public class OperationResult<ResultType> {
         if (exception instanceof KeeperException) {
 
             for (Code code : codes) {
-                if (code.equals(((KeeperException)exception).code())) {
+                if (code.equals(((KeeperException) exception).code())) {
                     return true;
                 }
             }

@@ -96,7 +96,8 @@ class XMLStreamReaderReader extends Reader {
                             writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
                                 writer.writeAttribute(
-                                        reader.getAttributePrefix(i), reader.getAttributeNamespace(i), reader.getAttributeLocalName(i),
+                                        reader.getAttributePrefix(i), reader.getAttributeNamespace(i),
+                                        reader.getAttributeLocalName(i),
                                         reader.getAttributeValue(i));
                             }
                             for (int i = 0; i < reader.getNamespaceCount(); i++) {

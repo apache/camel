@@ -34,8 +34,8 @@ import org.apache.johnzon.mapper.MapperBuilder;
 import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
- * using <a href="http://johnzon.apache.org/">Johnzon</a> to marshal to and from JSON.
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
+ * <a href="http://johnzon.apache.org/">Johnzon</a> to marshal to and from JSON.
  */
 @Dataformat("json-johnzon")
 @Metadata(includeProperties = "unmarshalTypeName,objectMapper,prettyPrint")
@@ -55,27 +55,25 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     public JohnzonDataFormat() {
         this(Object.class);
     }
-    
+
     /**
-     * Use the default Johnzon {@link Mapper} and with a custom
-     * unmarshal type
+     * Use the default Johnzon {@link Mapper} and with a custom unmarshal type
      *
      * @param unmarshalType the custom unmarshal type
      */
     public JohnzonDataFormat(Class<?> unmarshalType) {
         this(null, unmarshalType);
     }
-    
+
     /**
-     * Use the default Johnzon {@link Mapper} and with a custom
-     * parameterized type
+     * Use the default Johnzon {@link Mapper} and with a custom parameterized type
      *
      * @param parameterizedType the custom parameterized type
      */
     public JohnzonDataFormat(JohnzonParameterizedType parameterizedType) {
         this(null, parameterizedType);
     }
-    
+
     /**
      * Use a custom Johnzon mapper and unmarshal type
      *
@@ -86,28 +84,28 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
     }
-    
+
     /**
      * Use a custom Johnzon mapper and unmarshal type
      *
-     * @param mapper        the custom mapper
+     * @param mapper            the custom mapper
      * @param parameterizedType the JohnzonParameterizedType type
      */
     public JohnzonDataFormat(Mapper mapper, JohnzonParameterizedType parameterizedType) {
         this.objectMapper = mapper;
         this.parameterizedType = parameterizedType;
     }
-    
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
-    
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
-    
+
     @Override
     public String getDataFormatName() {
         return "json-johnzon";
@@ -189,7 +187,7 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         objectMapper.writeObject(graph, stream);
     }
-    
+
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         // is there a header with the unmarshal type?

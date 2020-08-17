@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class LambdaComponentIntegrationTest extends CamelTestSupport {
 
-
     @Test
     public void lambdaCreateFunctionTest() throws Exception {
         Exchange exchange = template.send("direct:createFunction", ExchangePattern.InOut, new Processor() {
@@ -52,7 +51,9 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(LambdaConstants.ROLE, "arn:aws:iam::643534317684:role/lambda-execution-role");
 
                 ClassLoader classLoader = getClass().getClassLoader();
-                File file = new File(classLoader.getResource("org/apache/camel/component/aws/lambda/function/node/GetHelloWithName.zip").getFile());
+                File file = new File(
+                        classLoader.getResource("org/apache/camel/component/aws/lambda/function/node/GetHelloWithName.zip")
+                                .getFile());
                 FileInputStream inputStream = new FileInputStream(file);
                 exchange.getIn().setBody(IOUtils.toByteArray(inputStream));
             }
@@ -74,7 +75,6 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         assertEquals(exchange.getMessage().getBody(ListFunctionsResult.class).getFunctions().size(), 3);
     }
 
-
     @Test
     public void lambdaGetFunctionTest() throws Exception {
         Exchange exchange = template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
@@ -91,7 +91,6 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
 
     }
 
-
     @Test
     public void lambdaInvokeFunctionTest() throws Exception {
         Exchange exchange = template.send("direct:invokeFunction", ExchangePattern.InOut, new Processor() {
@@ -106,7 +105,6 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
     }
 
-
     @Test
     public void lambdaDeleteFunctionTest() throws Exception {
 
@@ -119,28 +117,26 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getMessage().getBody(DeleteFunctionResult.class));
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
 
-
                 from("direct:createFunction")
-                    .to("aws-lambda://GetHelloWithName?operation=createFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
+                        .to("aws-lambda://GetHelloWithName?operation=createFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
 
                 from("direct:listFunctions")
-                    .to("aws-lambda://myFunction?operation=listFunctions&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
+                        .to("aws-lambda://myFunction?operation=listFunctions&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
 
                 from("direct:getFunction")
-                    .to("aws-lambda://GetHelloWithName?operation=getFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
+                        .to("aws-lambda://GetHelloWithName?operation=getFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
 
                 from("direct:invokeFunction")
-                    .to("aws-lambda://GetHelloWithName?operation=invokeFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
+                        .to("aws-lambda://GetHelloWithName?operation=invokeFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
 
                 from("direct:deleteFunction")
-                    .to("aws-lambda://GetHelloWithName?operation=deleteFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
+                        .to("aws-lambda://GetHelloWithName?operation=deleteFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
 
             }
         };

@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmsMessageBindTest extends CamelSpringTestSupport {
-    
+
     @Test
     public void testSendAMessageToBean() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Completed");
-        
+
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         // this header should not be sent as its value cannot be serialized 
@@ -52,11 +52,10 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
 
         Map<?, ?> beanHeaders = bean.getHeaders();
         assertNotNull(beanHeaders, "No headers!");
-        
+
         assertEquals("bar", beanHeaders.get("foo"), "foo header");
         assertNull(beanHeaders.get("binding"), "Should get a null value");
     }
-
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {

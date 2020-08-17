@@ -166,7 +166,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
     @Test
     public void testWhenExchangeDoneAnd() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").whenDone(5).and().from("direct:bar").whenDone(7).create();
+        NotifyBuilder notify
+                = new NotifyBuilder(context).from("direct:foo").whenDone(5).and().from("direct:bar").whenDone(7).create();
 
         assertEquals(false, notify.matches());
 
@@ -198,7 +199,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
     @Test
     public void testFromRouteWhenExchangeDoneAnd() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).fromRoute("foo").whenDone(5).and().fromRoute("bar").whenDone(7).create();
+        NotifyBuilder notify
+                = new NotifyBuilder(context).fromRoute("foo").whenDone(5).and().fromRoute("bar").whenDone(7).create();
 
         assertEquals(false, notify.matches());
 
@@ -230,7 +232,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
     @Test
     public void testFromRouteAndNot() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).fromRoute("foo").whenDone(2).and().fromRoute("bar").whenReceived(1).not().fromRoute("cake").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).fromRoute("foo").whenDone(2).and().fromRoute("bar").whenReceived(1)
+                .not().fromRoute("cake").whenDone(1).create();
 
         assertEquals(false, notify.matches());
 
@@ -252,7 +255,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
     @Test
     public void testWhenExchangeDoneOr() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").whenDone(5).or().from("direct:bar").whenDone(7).create();
+        NotifyBuilder notify
+                = new NotifyBuilder(context).from("direct:foo").whenDone(5).or().from("direct:bar").whenDone(7).create();
 
         assertEquals("from(direct:foo).whenDone(5).or().from(direct:bar).whenDone(7)", notify.toString());
 
@@ -284,7 +288,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
     @Test
     public void testWhenExchangeDoneNot() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").whenDone(5).not().from("direct:bar").whenDone(1).create();
+        NotifyBuilder notify
+                = new NotifyBuilder(context).from("direct:foo").whenDone(5).not().from("direct:bar").whenDone(1).create();
 
         assertEquals("from(direct:foo).whenDone(5).not().from(direct:bar).whenDone(1)", notify.toString());
 
@@ -385,7 +390,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
     @Test
     public void testFromFilterWhenExchangeDone() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").filter(body().contains("World")).whenDone(3).create();
+        NotifyBuilder notify
+                = new NotifyBuilder(context).from("direct:foo").filter(body().contains("World")).whenDone(3).create();
 
         assertEquals(false, notify.matches());
 
@@ -763,8 +769,9 @@ public class NotifyBuilderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:assert");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
 
-        NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").whenReceivedSatisfied(mock).and().from("direct:bar").whenExactlyDone(5)
-            .whenAnyReceivedMatches(body().contains("Camel")).create();
+        NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").whenReceivedSatisfied(mock).and()
+                .from("direct:bar").whenExactlyDone(5)
+                .whenAnyReceivedMatches(body().contains("Camel")).create();
 
         assertEquals(false, notify.matches());
 
@@ -978,7 +985,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
     public void testTwoWereSentToDoneAndFailed() throws Exception {
         // we expect 2+ done messages which were sent to mock:bar
         // and 1+ failed message which were sent to mock:fail
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).wereSentTo("mock:bar").and().whenFailed(1).wereSentTo("mock:fail").create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).wereSentTo("mock:bar").and().whenFailed(1)
+                .wereSentTo("mock:fail").create();
 
         template.sendBody("direct:bar", "Hello World");
         assertEquals(false, notify.matches());

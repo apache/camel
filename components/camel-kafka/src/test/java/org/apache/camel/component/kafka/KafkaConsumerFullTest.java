@@ -47,7 +47,8 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     @BindToRegistry("myHeaderDeserializer")
     private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
 
-    @EndpointInject("kafka:" + TOPIC + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+    @EndpointInject("kafka:" + TOPIC
+                    + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
                     + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
@@ -105,7 +106,8 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false).count());
+        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
+                .count());
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
@@ -149,7 +151,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         // Restart endpoint,
         context.getRouteController().stopRoute("foo");
 
-        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint)from;
+        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("beginning");
 
         context.getRouteController().startRoute("foo");
@@ -177,7 +179,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         // Restart endpoint,
         context.getRouteController().stopRoute("foo");
 
-        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint)from;
+        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("end");
 
         context.getRouteController().startRoute("foo");
@@ -191,7 +193,8 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     @Test
     public void headerDeserializerCouldBeOverridden() {
-        KafkaEndpoint kafkaEndpoint = context.getEndpoint("kafka:random_topic?kafkaHeaderDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
+        KafkaEndpoint kafkaEndpoint
+                = context.getEndpoint("kafka:random_topic?kafkaHeaderDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
         assertIsInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getKafkaHeaderDeserializer());
     }
 

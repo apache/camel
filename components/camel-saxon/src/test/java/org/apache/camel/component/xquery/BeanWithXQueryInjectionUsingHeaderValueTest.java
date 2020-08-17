@@ -29,8 +29,8 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
     @Test
     public void testConstantXPathHeaders() throws Exception {
         template.sendBodyAndHeader("bean:myBean", "<response>OK</response>",
-                                   "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
-       
+                "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
+
         assertEquals("OK", myBean.response, "bean response:  " + myBean);
         assertEquals("Alan", myBean.userName, "bean userName: " + myBean);
         assertEquals("26/08/2012", myBean.date, "bean date:  " + myBean);
@@ -47,9 +47,10 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
         public String response;
 
         @Handler
-        public void handler(@XQuery("/response") String response,
-                            @XQuery(headerName = "invoiceDetails", value = "/invoice/person/name") String userName,
-                            @XQuery(headerName = "invoiceDetails", value = "/invoice/person/date") String date) {
+        public void handler(
+                @XQuery("/response") String response,
+                @XQuery(headerName = "invoiceDetails", value = "/invoice/person/name") String userName,
+                @XQuery(headerName = "invoiceDetails", value = "/invoice/person/date") String date) {
             this.response = response;
             this.userName = userName;
             this.date = date;

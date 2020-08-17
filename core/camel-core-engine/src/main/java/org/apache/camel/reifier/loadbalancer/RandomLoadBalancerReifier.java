@@ -25,7 +25,7 @@ import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 public class RandomLoadBalancerReifier extends LoadBalancerReifier<RandomLoadBalancerDefinition> {
 
     public RandomLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
-        super(route, (RandomLoadBalancerDefinition)definition);
+        super(route, (RandomLoadBalancerDefinition) definition);
     }
 
     @Override

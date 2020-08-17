@@ -64,4 +64,3 @@ public class ChunkDifferentThemeFolderTest extends CamelTestSupport {
         };
     }
 }
-

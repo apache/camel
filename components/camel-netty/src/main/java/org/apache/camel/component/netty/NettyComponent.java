@@ -64,14 +64,13 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * Sets a maximum thread pool size for the netty consumer ordered thread pool.
-     * The default size is 2 x cpu_core plus 1. Setting this value to eg 10 will then use 10 threads
-     * unless 2 x cpu_core plus 1 is a higher value, which then will override and be used. For example
-     * if there are 8 cores, then the consumer thread pool will be 17.
+     * Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu_core plus
+     * 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu_core plus 1 is a higher value, which then
+     * will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17.
      *
-     * This thread pool is used to route messages received from Netty by Camel.
-     * We use a separate thread pool to ensure ordering of messages and also in case some messages
-     * will block, then nettys worker threads (event loop) wont be affected.
+     * This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure
+     * ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be
+     * affected.
      */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
@@ -83,7 +82,8 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
         config = parseConfiguration(config, remaining, parameters);
 
         // merge any custom bootstrap configuration on the config
-        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
+        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters,
+                "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
         if (bootstrapConfiguration != null) {
             Map<String, Object> options = new HashMap<>();
             BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
@@ -109,7 +109,9 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
      *
      * @return the parsed and valid configuration to use
      */
-    protected NettyConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+    protected NettyConfiguration parseConfiguration(
+            NettyConfiguration configuration, String remaining, Map<String, Object> parameters)
+            throws Exception {
         configuration.parseURI(new URI(remaining), parameters, this, "tcp", "udp");
         return configuration;
     }

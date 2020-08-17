@@ -49,8 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> (
- * {@link DataFormat}) using Bindy to marshal to and from CSV files
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) using Bindy to marshal to
+ * and from CSV files
  */
 @Dataformat("bindy-csv")
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
@@ -72,7 +72,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
+        BindyCsvFactory factory = (BindyCsvFactory) getFactory();
         org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -94,7 +94,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // bit here and create one for us
         for (Object model : ObjectHelper.createIterable(body)) {
             if (model instanceof Map) {
-                models.add((Map<String, Object>)model);
+                models.add((Map<String, Object>) model);
             } else {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<>(1);
@@ -119,8 +119,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     /**
-     * check emptyStream and if CVSRecord is allow to process emptyStreams avoid
-     * IllegalArgumentException and return empty list when unmarshalling
+     * check emptyStream and if CVSRecord is allow to process emptyStreams avoid IllegalArgumentException and return
+     * empty list when unmarshalling
      */
     private boolean checkEmptyStream(BindyCsvFactory factory, InputStream inputStream) throws IOException {
         boolean allowEmptyStream = factory.isAllowEmptyStream();
@@ -140,7 +140,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
+        BindyCsvFactory factory = (BindyCsvFactory) getFactory();
         org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
@@ -157,7 +157,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             // Retrieve the separator defined to split the record
             String separator = factory.getSeparator();
             String quote = factory.getQuote();
-            org.apache.camel.util.ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
+            org.apache.camel.util.ObjectHelper.notNull(separator,
+                    "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
             Boolean removeQuotes = factory.getRemoveQuotes();
             AtomicInteger count = new AtomicInteger(0);
 
@@ -196,8 +197,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
     }
 
-    private Consumer<String> consumeFile(BindyCsvFactory factory, List<Map<String, Object>> models,
-                                         String separator, Boolean removeQuotes, String quote, AtomicInteger count) {
+    private Consumer<String> consumeFile(
+            BindyCsvFactory factory, List<Map<String, Object>> models,
+            String separator, Boolean removeQuotes, String quote, AtomicInteger count) {
         return line -> {
             try {
                 // Trim the line coming in to remove any trailing whitespace
@@ -268,9 +270,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     /**
-     * Unquote the tokens, by removing leading and trailing quote chars, as will
-     * handling fixing broken tokens which may have been split by a separator
-     * inside a quote.
+     * Unquote the tokens, by removing leading and trailing quote chars, as will handling fixing broken tokens which may
+     * have been split by a separator inside a quote.
      */
     private List<String> unquoteTokens(List<String> result, List<String> separators, String quote) {
         // a current quoted token which we assemble from the broken pieces

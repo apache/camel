@@ -21,6 +21,7 @@ public final class AtmosConstants {
     public static final String ATMOS_FILE_SEPARATOR = "/";
     public static final long POLL_CONSUMER_DELAY = 60 * 60 * 1000L;
 
-    private AtmosConstants() { }
+    private AtmosConstants() {
+    }
 
 }

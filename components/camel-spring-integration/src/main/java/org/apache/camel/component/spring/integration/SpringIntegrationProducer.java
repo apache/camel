@@ -33,10 +33,9 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.core.DestinationResolver;
 
 /**
- * A producer of exchanges for the Spring Integration
- * Please specify the outputChannel in the endpoint url for this producer.
- * If the message pattern is inOut, the inputChannel property
- * should be set for receiving the response message.
+ * A producer of exchanges for the Spring Integration Please specify the outputChannel in the endpoint url for this
+ * producer. If the message pattern is inOut, the inputChannel property should be set for receiving the response
+ * message.
  */
 public class SpringIntegrationProducer extends DefaultProducer implements Processor {
 
@@ -80,7 +79,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         if (getEndpoint().isInOut()) {
             // we need to setup right inputChannel for further processing
             StringHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
-            inputChannel = (DirectChannel)destinationResolver.resolveDestination(getEndpoint().getInputChannel());
+            inputChannel = (DirectChannel) destinationResolver.resolveDestination(getEndpoint().getInputChannel());
 
             if (inputChannel == null) {
                 throw new IllegalArgumentException("Cannot resolve InputChannel on " + getEndpoint());
@@ -106,7 +105,8 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
                 }
             });
         }
-        org.springframework.messaging.Message<?> siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+        org.springframework.messaging.Message<?> siOutmessage
+                = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
         // send the message to spring integration
         LOG.debug("Sending {} to OutputChannel: {}", siOutmessage, outputChannel);

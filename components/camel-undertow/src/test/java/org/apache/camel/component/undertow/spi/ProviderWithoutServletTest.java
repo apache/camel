@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Test for case that UndertowSecurityProvider.requireServletContext returns false.
- * ServletContext can not be present in httpExchange.
+ * Test for case that UndertowSecurityProvider.requireServletContext returns false. ServletContext can not be present in
+ * httpExchange.
  */
 public class ProviderWithoutServletTest extends AbstractProviderServletTest {
 

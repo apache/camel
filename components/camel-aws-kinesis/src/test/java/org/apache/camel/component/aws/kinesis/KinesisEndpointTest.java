@@ -29,7 +29,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @ExtendWith(MockitoExtension.class)
 public class KinesisEndpointTest {
 
@@ -48,12 +47,11 @@ public class KinesisEndpointTest {
     @Test
     public void allTheEndpointParams() throws Exception {
         KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-                + "&maxResultsPerRequest=101"
-                + "&iteratorType=latest"
-                + "&shardId=abc"
-                + "&sequenceNumber=123"
-        );
+                                                                              + "?amazonKinesisClient=#kinesisClient"
+                                                                              + "&maxResultsPerRequest=101"
+                                                                              + "&iteratorType=latest"
+                                                                              + "&shardId=abc"
+                                                                              + "&sequenceNumber=123");
 
         assertEquals(amazonKinesisClient, endpoint.getConfiguration().getAmazonKinesisClient());
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
@@ -66,8 +64,7 @@ public class KinesisEndpointTest {
     @Test
     public void onlyRequiredEndpointParams() throws Exception {
         KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-        );
+                                                                              + "?amazonKinesisClient=#kinesisClient");
 
         assertEquals(amazonKinesisClient, endpoint.getConfiguration().getAmazonKinesisClient());
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
@@ -78,11 +75,10 @@ public class KinesisEndpointTest {
     @Test
     public void afterSequenceNumberRequiresSequenceNumber() throws Exception {
         KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-                + "&iteratorType=AFTER_SEQUENCE_NUMBER"
-                + "&shardId=abc"
-                + "&sequenceNumber=123"
-        );
+                                                                              + "?amazonKinesisClient=#kinesisClient"
+                                                                              + "&iteratorType=AFTER_SEQUENCE_NUMBER"
+                                                                              + "&shardId=abc"
+                                                                              + "&sequenceNumber=123");
 
         assertEquals(amazonKinesisClient, endpoint.getConfiguration().getAmazonKinesisClient());
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
@@ -94,11 +90,10 @@ public class KinesisEndpointTest {
     @Test
     public void atSequenceNumberRequiresSequenceNumber() throws Exception {
         KinesisEndpoint endpoint = (KinesisEndpoint) camelContext.getEndpoint("aws-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-                + "&iteratorType=AT_SEQUENCE_NUMBER"
-                + "&shardId=abc"
-                + "&sequenceNumber=123"
-        );
+                                                                              + "?amazonKinesisClient=#kinesisClient"
+                                                                              + "&iteratorType=AT_SEQUENCE_NUMBER"
+                                                                              + "&shardId=abc"
+                                                                              + "&sequenceNumber=123");
 
         assertEquals(amazonKinesisClient, endpoint.getConfiguration().getAmazonKinesisClient());
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());

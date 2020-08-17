@@ -26,12 +26,12 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisQueueTest extends MyBatisTestSupport {
-    
+
     @Override
     protected boolean createTestData() {
         return false;
     }
-    
+
     @Override
     protected String getCreateStatement() {
         return "create table ACCOUNT (ACC_ID INTEGER, ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)";
@@ -54,7 +54,7 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
         account2.setLastName("Hale");
         account2.setEmailAddress("TryGuessingSkipper@gmail.com");
 
-        template.sendBody("direct:start", new Account[]{account1, account2});
+        template.sendBody("direct:start", new Account[] { account1, account2 });
 
         assertMockEndpointsSatisfied();
 

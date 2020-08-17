@@ -27,8 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of
- * the <tt>skipFirstLine</tt> option.
+ * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of the <tt>skipFirstLine</tt> option.
  */
 public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport {
 
@@ -88,6 +87,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalSkipFirstLineSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvUnmarshalSkipFirstLineSpringTest-context.xml");
     }
 }

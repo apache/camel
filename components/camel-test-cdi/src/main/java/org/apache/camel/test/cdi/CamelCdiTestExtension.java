@@ -40,13 +40,10 @@ final class CamelCdiTestExtension implements Extension {
     }
 
     /**
-     * Activates the alternatives declared with {@code @Beans} globally for the
-     * application.
+     * Activates the alternatives declared with {@code @Beans} globally for the application.
      * <p/>
-     * For every types and every methods of every types declared with
-     * {@link Beans#alternatives()}, the {@code Priority} annotation is added
-     * so that the corresponding alternatives are selected globally for the
-     * entire application.
+     * For every types and every methods of every types declared with {@link Beans#alternatives()}, the {@code Priority}
+     * annotation is added so that the corresponding alternatives are selected globally for the entire application.
      *
      * @see Beans
      */

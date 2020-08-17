@@ -27,8 +27,8 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 
 /**
- * Holder class for {@link org.apache.camel.component.olingo4.api.Olingo4App}
- * and its lazily read {@link org.apache.olingo.commons.api.edm.Edm}.
+ * Holder class for {@link org.apache.camel.component.olingo4.api.Olingo4App} and its lazily read
+ * {@link org.apache.olingo.commons.api.edm.Edm}.
  */
 public class Olingo4AppWrapper {
 
@@ -88,7 +88,7 @@ public class Olingo4AppWrapper {
                         final Exception ex = error[0];
                         if (ex != null) {
                             if (ex instanceof RuntimeCamelException) {
-                                throw (RuntimeCamelException)ex;
+                                throw (RuntimeCamelException) ex;
                             } else {
                                 final String message = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
                                 throw new RuntimeCamelException("Error reading EDM: " + message, ex);

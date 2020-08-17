@@ -216,8 +216,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     /**
-     * {@link AsyncCallback} which preserves {@link org.slf4j.MDC} when
-     * the asynchronous routing engine is being used.
+     * {@link AsyncCallback} which preserves {@link org.slf4j.MDC} when the asynchronous routing engine is being used.
      */
     private static final class MDCCallback implements AsyncCallback {
 

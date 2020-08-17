@@ -151,18 +151,18 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:remove")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:remove");
                 from("direct:remove-if")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:remove-if");
                 from("direct:remove-if-failure")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:remove-if-failure");
                 from("direct:remove-all")
-                    .to("jcache://test-cache");
+                        .to("jcache://test-cache");
                 from("direct:remove-subset")
-                    .to("jcache://test-cache");
+                        .to("jcache://test-cache");
             }
         };
     }

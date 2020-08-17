@@ -36,7 +36,8 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
     private ASN1DataFormat asn1;
     private String fileName = "src/test/resources/asn1_data/SMS_SINGLE.tt";
 
-    private void baseASN1DataFormatWithStreamIteratorByteArrayTest(String mockEnpointName, String directEndpointName) throws Exception {
+    private void baseASN1DataFormatWithStreamIteratorByteArrayTest(String mockEnpointName, String directEndpointName)
+            throws Exception {
         getMockEndpoint(mockEnpointName).expectedMessageCount(1);
 
         File testFile = new File(fileName);
@@ -60,7 +61,7 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
     void testUnmarshalReturnByteArray() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:unmarshal", "direct:unmarshal");
     }
-    
+
     @Test
     void testUnmarshalReturnByteArrayDsl() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:unmarshaldsl", "direct:unmarshaldsl");
@@ -70,7 +71,7 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
     void testUnmarshalMarshalReturnOutputStream() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:marshal", "direct:unmarshalthenmarshal");
     }
-    
+
     @Test
     void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:marshaldsl", "direct:unmarshalthenmarshaldsl");
@@ -86,10 +87,13 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
                 asn1.setUsingIterator(true);
 
                 from("direct:unmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshal");
-                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().marshal(asn1).to("mock:marshal");
-                
-                from("direct:unmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshaldsl");
-                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming().marshal().asn1(true).to("mock:marshaldsl");
+                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().marshal(asn1)
+                        .to("mock:marshal");
+
+                from("direct:unmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming()
+                        .to("mock:unmarshaldsl");
+                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming()
+                        .marshal().asn1(true).to("mock:marshaldsl");
             }
         };
     }

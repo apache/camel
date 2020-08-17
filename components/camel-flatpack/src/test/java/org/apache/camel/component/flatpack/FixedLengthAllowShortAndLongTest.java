@@ -47,7 +47,7 @@ public class FixedLengthAllowShortAndLongTest {
     @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
-    protected String[] expectedFirstName = {"JOHN-LONG", "JIMMY-SHORT", "JANE-LONG", "FRED-NORMAL"};
+    protected String[] expectedFirstName = { "JOHN-LONG", "JIMMY-SHORT", "JANE-LONG", "FRED-NORMAL" };
 
     @Test
     public void testFlatpack() throws Exception {

@@ -55,7 +55,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
     }
 
     @Override
-    public String parseUri(String text, PropertiesLookup properties, boolean defaultFallbackEnabled) throws IllegalArgumentException {
+    public String parseUri(String text, PropertiesLookup properties, boolean defaultFallbackEnabled)
+            throws IllegalArgumentException {
         ParsingContext context = new ParsingContext(properties, defaultFallbackEnabled);
         return context.parse(text);
     }
@@ -80,8 +81,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         /**
          * Parses the given input string and replaces all properties
          *
-         * @param input Input string
-         * @return Evaluated string
+         * @param  input Input string
+         * @return       Evaluated string
          */
         public String parse(String input) {
             return doParse(input, new HashSet<String>());
@@ -90,9 +91,9 @@ public class DefaultPropertiesParser implements PropertiesParser {
         /**
          * Recursively parses the given input string and replaces all properties
          *
-         * @param input                Input string
-         * @param replacedPropertyKeys Already replaced property keys used for tracking circular references
-         * @return Evaluated string
+         * @param  input                Input string
+         * @param  replacedPropertyKeys Already replaced property keys used for tracking circular references
+         * @return                      Evaluated string
          */
         private String doParse(String input, Set<String> replacedPropertyKeys) {
             if (input == null) {
@@ -103,7 +104,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
             while ((property = readProperty(answer)) != null) {
                 // Check for circular references
                 if (replacedPropertyKeys.contains(property.getKey())) {
-                    throw new IllegalArgumentException("Circular reference detected with key [" + property.getKey() + "] from text: " + input);
+                    throw new IllegalArgumentException(
+                            "Circular reference detected with key [" + property.getKey() + "] from text: " + input);
                 }
 
                 Set<String> newReplaced = new HashSet<>(replacedPropertyKeys);
@@ -119,8 +121,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         /**
          * Finds a property in the given string. It returns {@code null} if there's no property defined.
          *
-         * @param input Input string
-         * @return A property in the given string or {@code null} if not found
+         * @param  input Input string
+         * @return       A property in the given string or {@code null} if not found
          */
         private Property readProperty(String input) {
             // Find the index of the first valid suffix token
@@ -148,8 +150,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         /**
          * Gets the first index of the suffix token that is not surrounded by quotes
          *
-         * @param input Input string
-         * @return First index of the suffix token that is not surrounded by quotes
+         * @param  input Input string
+         * @return       First index of the suffix token that is not surrounded by quotes
          */
         private int getSuffixIndex(String input) {
             int index = -1;
@@ -160,11 +162,13 @@ public class DefaultPropertiesParser implements PropertiesParser {
         }
 
         /**
-         * Gets the index of the prefix token that matches the suffix at the given index and that is not surrounded by quotes
+         * Gets the index of the prefix token that matches the suffix at the given index and that is not surrounded by
+         * quotes
          *
-         * @param input       Input string
-         * @param suffixIndex Index of the suffix token
-         * @return Index of the prefix token that matches the suffix at the given index and that is not surrounded by quotes
+         * @param  input       Input string
+         * @param  suffixIndex Index of the suffix token
+         * @return             Index of the prefix token that matches the suffix at the given index and that is not
+         *                     surrounded by quotes
          */
         private int getMatchingPrefixIndex(String input, int suffixIndex) {
             int index = suffixIndex;
@@ -177,10 +181,10 @@ public class DefaultPropertiesParser implements PropertiesParser {
         /**
          * Indicates whether or not the token at the given index is surrounded by single or double quotes
          *
-         * @param input Input string
-         * @param index Index of the token
-         * @param token Token
-         * @return {@code true}
+         * @param  input Input string
+         * @param  index Index of the token
+         * @param  token Token
+         * @return       {@code true}
          */
         private boolean isQuoted(String input, int index, String token) {
             int beforeIndex = index - 1;
@@ -196,9 +200,9 @@ public class DefaultPropertiesParser implements PropertiesParser {
         /**
          * Gets the value of the property with given key
          *
-         * @param key   Key of the property
-         * @param input Input string (used for exception message if value not found)
-         * @return Value of the property with the given key
+         * @param  key   Key of the property
+         * @param  input Input string (used for exception message if value not found)
+         * @return       Value of the property with the given key
          */
         private String getPropertyValue(String key, String input) {
 
@@ -211,11 +215,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
                         String value = function.apply(remainder);
                         if (value == null) {
-                            throw new IllegalArgumentException("Property with key [" + key + "] using function [" + function.getName() + "]"
-                                    + " returned null value which is not allowed, from input: " + input);
+                            throw new IllegalArgumentException(
+                                    "Property with key [" + key + "] using function [" + function.getName() + "]"
+                                                               + " returned null value which is not allowed, from input: "
+                                                               + input);
                         } else {
                             if (log.isDebugEnabled()) {
-                                log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(), value);
+                                log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
+                                        value);
                             }
                             return value;
                         }
@@ -249,8 +256,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         /**
          * Gets the property with the given key, it returns {@code null} if the property is not found
          *
-         * @param key Key of the property
-         * @return Value of the property or {@code null} if not found
+         * @param  key Key of the property
+         * @return     Value of the property or {@code null} if not found
          */
         private String doGetPropertyValue(String key) {
             if (ObjectHelper.isEmpty(key)) {
@@ -260,9 +267,12 @@ public class DefaultPropertiesParser implements PropertiesParser {
             String value = null;
 
             // override is the default mode for ENV
-            int envMode = propertiesComponent != null ? propertiesComponent.getEnvironmentVariableMode() : PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK;
+            int envMode = propertiesComponent != null
+                    ? propertiesComponent.getEnvironmentVariableMode()
+                    : PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK;
             // override is the default mode for SYS
-            int sysMode = propertiesComponent != null ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
+            int sysMode = propertiesComponent != null
+                    ? propertiesComponent.getSystemPropertiesMode() : PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
             if (envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
                 value = lookupEnvironmentVariable(key);

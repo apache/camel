@@ -43,8 +43,8 @@ public class DockerStatsConsumerTestIT extends DockerITTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("docker://stats?containerId=%s", CONTAINER_ID)
-                    .log("${body}")
-                    .to("mock:result");
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

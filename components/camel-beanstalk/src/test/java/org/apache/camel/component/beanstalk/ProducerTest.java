@@ -77,7 +77,8 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(PutCommand.class));
 
         // TODO: SetBodyProcessor(?)
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setBody(testMessage));
+        final Exchange exchange
+                = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setBody(testMessage));
 
         assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).put(priority, delay, timeToRun, payload);
@@ -99,7 +100,8 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(PutCommand.class));
 
         // TODO: SetBodyProcessor(?)
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOut, exchange1 -> exchange1.getIn().setBody(testMessage));
+        final Exchange exchange
+                = template.send(endpoint, ExchangePattern.InOut, exchange1 -> exchange1.getIn().setBody(testMessage));
 
         assertEquals(Long.valueOf(jobId), exchange.getMessage().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).put(priority, delay, timeToRun, payload);
@@ -144,7 +146,8 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
         when(client.bury(jobId, priority)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
         assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
         assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
@@ -204,7 +207,8 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
         when(client.delete(jobId)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
         assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
         assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
@@ -241,7 +245,8 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
         when(client.release(jobId, priority, delay)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
         assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
         assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
@@ -301,7 +306,8 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
         when(client.touch(jobId)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
         assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
         assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
@@ -381,7 +387,8 @@ public class ProducerTest extends BeanstalkMockTestSupport {
                 .thenThrow(new BeanstalkException("test"));
 
         endpoint.setCommand(BeanstalkCommand.touch);
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
         assertTrue(exchange.isFailed(), "Exchange failed");
 

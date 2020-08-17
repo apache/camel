@@ -64,8 +64,9 @@ public class JmsRoutingSlipInOutTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("activemq:queue:start").to("direct:start").to("bean:myBean?method=doResult").to("mock:result");
 
-                from("direct:start").to("bean:myBean?method=createSlip").setExchangePattern(ExchangePattern.InOut).routingSlip(header("mySlip"))
-                    .to("bean:myBean?method=backFromSlip");
+                from("direct:start").to("bean:myBean?method=createSlip").setExchangePattern(ExchangePattern.InOut)
+                        .routingSlip(header("mySlip"))
+                        .to("bean:myBean?method=backFromSlip");
 
                 from("activemq:queue:a").to("bean:myBean?method=doA");
 

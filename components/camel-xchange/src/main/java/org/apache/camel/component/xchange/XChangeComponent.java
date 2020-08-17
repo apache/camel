@@ -29,7 +29,7 @@ import org.knowm.xchange.utils.Assert;
 public class XChangeComponent extends DefaultComponent {
 
     private XChange xchange;
-    
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // Init the configuration
@@ -51,19 +51,19 @@ public class XChangeComponent extends DefaultComponent {
     public XChange getXChange() {
         return xchange;
     }
-    
+
     private synchronized XChange createXChange(XChangeConfiguration configuration) {
-        
+
         if (xchange == null) {
-            
+
             // Get the XChange implementation
             Class<? extends Exchange> exchangeClass = configuration.getXChangeClass();
             Assert.notNull(exchangeClass, "XChange not supported: " + configuration.getName());
-            
+
             // Create the XChange and associated Endpoint
             xchange = new XChange(ExchangeFactory.INSTANCE.createExchange(exchangeClass));
         }
-        
+
         return xchange;
     }
 

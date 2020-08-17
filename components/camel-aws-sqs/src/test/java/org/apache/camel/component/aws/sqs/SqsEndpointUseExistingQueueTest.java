@@ -78,17 +78,20 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
         }
 
         @Override
-        public CreateQueueResult createQueue(CreateQueueRequest createQueueRequest) throws AmazonServiceException, AmazonClientException {
+        public CreateQueueResult createQueue(CreateQueueRequest createQueueRequest)
+                throws AmazonServiceException, AmazonClientException {
             throw new AmazonServiceException("forced exception for test if this method is called");
         }
 
         @Override
-        public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
+        public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest)
+                throws AmazonServiceException, AmazonClientException {
             return new SetQueueAttributesResult();
         }
 
         @Override
-        public ReceiveMessageResult receiveMessage(ReceiveMessageRequest receiveMessageRequest) throws AmazonServiceException, AmazonClientException {
+        public ReceiveMessageResult receiveMessage(ReceiveMessageRequest receiveMessageRequest)
+                throws AmazonServiceException, AmazonClientException {
             ReceiveMessageResult result = new ReceiveMessageResult();
             List<Message> resultMessages = result.getMessages();
             Message message = new Message();

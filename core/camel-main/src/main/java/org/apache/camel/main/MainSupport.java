@@ -38,7 +38,6 @@ public abstract class MainSupport extends BaseMainSupport {
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
     protected MainShutdownStrategy shutdownStrategy;
 
-
     protected MainSupport(Class<?>... configurationClasses) {
         this();
         configure().addConfigurationClass(configurationClasses);
@@ -151,8 +150,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the duration (in seconds) to run the application until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value <=
+     * 0 will run forever.
+     * 
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -166,10 +166,10 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the maximum idle duration (in seconds) when running the application, and
-     * if there has been no message processed after being idle for more than this duration
-     * then the application should be terminated.
-     * Defaults to -1. Any value <= 0 will run forever.
+     * Sets the maximum idle duration (in seconds) when running the application, and if there has been no message
+     * processed after being idle for more than this duration then the application should be terminated. Defaults to -1.
+     * Any value <= 0 will run forever.
+     * 
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -183,8 +183,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the duration to run the application to process at most max messages until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * Sets the duration to run the application to process at most max messages until it should be terminated. Defaults
+     * to -1. Any value <= 0 will run forever.
+     * 
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -194,6 +195,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Sets the exit code for the application if duration was hit
+     * 
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -223,8 +225,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Set the {@link MainShutdownStrategy} used to properly shut-down the main instance. By default a {@link DefaultMainShutdownStrategy}
-     * will be used.
+     * Set the {@link MainShutdownStrategy} used to properly shut-down the main instance. By default a
+     * {@link DefaultMainShutdownStrategy} will be used.
+     * 
      * @param shutdownStrategy the shutdown strategy
      */
     public void setShutdownStrategy(MainShutdownStrategy shutdownStrategy) {
@@ -243,14 +246,15 @@ public abstract class MainSupport extends BaseMainSupport {
 
     @Override
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
-        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
+        if (mainConfigurationProperties.getDurationMaxMessages() > 0
+                || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
             EventNotifier notifier = new MainDurationEventNotifier(
-                camelContext,
-                mainConfigurationProperties.getDurationMaxMessages(),
-                mainConfigurationProperties.getDurationMaxIdleSeconds(),
-                shutdownStrategy,
-                true);
+                    camelContext,
+                    mainConfigurationProperties.getDurationMaxMessages(),
+                    mainConfigurationProperties.getDurationMaxIdleSeconds(),
+                    shutdownStrategy,
+                    true);
 
             // register our event notifier
             ServiceHelper.startService(notifier);

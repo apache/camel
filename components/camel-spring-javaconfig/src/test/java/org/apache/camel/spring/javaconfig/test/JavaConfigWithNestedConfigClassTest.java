@@ -27,7 +27,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @CamelSpringTest
 @ContextConfiguration(classes = JavaConfigWithNestedConfigClassTest.ContextConfig.class)
 @Component

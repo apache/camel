@@ -53,7 +53,10 @@ public class KubernetesServer implements BeforeEachCallback, AfterEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        this.mock = this.crudMode ? new KubernetesMockServer(new Context(), new MockWebServer(), new HashMap(), new KubernetesCrudDispatcher(), true) : new KubernetesMockServer(this.https);
+        this.mock = this.crudMode
+                ? new KubernetesMockServer(
+                        new Context(), new MockWebServer(), new HashMap(), new KubernetesCrudDispatcher(), true)
+                : new KubernetesMockServer(this.https);
         this.mock.init();
         this.client = this.mock.createClient();
     }
@@ -75,25 +78,25 @@ public class KubernetesServer implements BeforeEachCallback, AfterEachCallback {
     /** @deprecated */
     @Deprecated
     public <T> void expectAndReturnAsJson(String path, int code, T body) {
-        ((TimesOnceableOrHttpHeaderable)((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
+        ((TimesOnceableOrHttpHeaderable) ((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
     }
 
     /** @deprecated */
     @Deprecated
     public void expectAndReturnAsString(String path, int code, String body) {
-        ((TimesOnceableOrHttpHeaderable)((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
+        ((TimesOnceableOrHttpHeaderable) ((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
     }
 
     /** @deprecated */
     @Deprecated
     public <T> void expectAndReturnAsJson(String method, String path, int code, T body) {
-        ((TimesOnceableOrHttpHeaderable)((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
+        ((TimesOnceableOrHttpHeaderable) ((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
     }
 
     /** @deprecated */
     @Deprecated
     public void expectAndReturnAsString(String method, String path, int code, String body) {
-        ((TimesOnceableOrHttpHeaderable)((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
+        ((TimesOnceableOrHttpHeaderable) ((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
     }
 
     public MockWebServer getMockServer() {

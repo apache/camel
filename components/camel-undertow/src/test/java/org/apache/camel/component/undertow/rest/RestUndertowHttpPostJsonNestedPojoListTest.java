@@ -59,14 +59,14 @@ public class RestUndertowHttpPostJsonNestedPojoListTest extends BaseUndertowTest
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration()
-                    .component("undertow")
-                    .host("localhost")
-                    .port(getPort())
-                    .bindingMode(RestBindingMode.auto);
+                        .component("undertow")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(MyUserPojo[].class)
+                        .post("new").type(MyUserPojo[].class)
                         .to("mock:input");
             }
         };

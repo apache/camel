@@ -44,9 +44,9 @@ public final class RouteCoverageHelper {
     /**
      * Parses the dumped route coverage data and creates a line by line coverage data
      *
-     * @param directory  the directory with the dumped route coverage data
-     * @param routeId    the route id to gather, must not be null.
-     * @return line by line coverage data
+     * @param  directory the directory with the dumped route coverage data
+     * @param  routeId   the route id to gather, must not be null.
+     * @return           line by line coverage data
      */
     public static List<CoverageData> parseDumpRouteCoverageByRouteId(String directory, String routeId) throws Exception {
         List<CoverageData> answer = new ArrayList<>();
@@ -68,7 +68,8 @@ public final class RouteCoverageHelper {
                 for (int i = 0; i < routes.getLength(); i++) {
                     Node route = routes.item(i);
                     String id = route.getAttributes().getNamedItem("id").getNodeValue();
-                    String customId = route.getAttributes().getNamedItem("customId") != null ? route.getAttributes().getNamedItem("customId").getNodeValue() : "false";
+                    String customId = route.getAttributes().getNamedItem("customId") != null
+                            ? route.getAttributes().getNamedItem("customId").getNodeValue() : "false";
                     // must be the target route and the route must be explicit assigned with that route id (not anonymous route)
                     if ("true".equals(customId) && routeId.equals(id)) {
                         // parse each route and build a List<CoverageData> for line by line coverage data
@@ -82,7 +83,8 @@ public final class RouteCoverageHelper {
         return answer;
     }
 
-    public static Map<String, List<CoverageData>> parseDumpRouteCoverageByClassAndTestMethod(String directory) throws Exception {
+    public static Map<String, List<CoverageData>> parseDumpRouteCoverageByClassAndTestMethod(String directory)
+            throws Exception {
         Map<String, List<CoverageData>> answer = new LinkedHashMap<>();
 
         File[] files = new File(directory).listFiles(f -> f.getName().endsWith(".xml"));
@@ -130,7 +132,7 @@ public final class RouteCoverageHelper {
 
         // inlined error handler, on completion etc should be skipped (and currently not supported in route coverage)
         boolean skip = "onException".equals(key) || "onCompletion".equals(key)
-            || "intercept".equals(key) || "interceptFrom".equals(key) || "interceptSendToEndpoint".equals(key);
+                || "intercept".equals(key) || "interceptFrom".equals(key) || "interceptSendToEndpoint".equals(key);
 
         if (skip) {
             return;

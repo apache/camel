@@ -17,5 +17,7 @@
 package org.apache.camel.component.salesforce;
 
 public enum AuthenticationType {
-    USERNAME_PASSWORD, REFRESH_TOKEN, JWT
+    USERNAME_PASSWORD,
+    REFRESH_TOKEN,
+    JWT
 }

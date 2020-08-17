@@ -26,16 +26,19 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 public final class MinioChecks {
     private MinioChecks() {
         // Prevent instantiation of this factory class.
-        throw new RuntimeException("Do not instantiate a Factory class! Refer to the class to learn how to properly use this factory implementation.");
+        throw new RuntimeException(
+                "Do not instantiate a Factory class! Refer to the class to learn how to properly use this factory implementation.");
     }
 
-    static void checkServerSideEncryptionConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ServerSideEncryption> fn) {
+    static void checkServerSideEncryptionConfig(
+            final MinioConfiguration configuration, final java.util.function.Consumer<ServerSideEncryption> fn) {
         if (isNotEmpty(configuration.getServerSideEncryption())) {
             fn.accept(configuration.getServerSideEncryption());
         }
     }
 
-    static void checkServerSideEncryptionCustomerKeyConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ServerSideEncryptionCustomerKey> fn) {
+    static void checkServerSideEncryptionCustomerKeyConfig(
+            final MinioConfiguration configuration, final java.util.function.Consumer<ServerSideEncryptionCustomerKey> fn) {
         if (isNotEmpty(configuration.getServerSideEncryptionCustomerKey())) {
             fn.accept(configuration.getServerSideEncryptionCustomerKey());
         }
@@ -71,13 +74,15 @@ public final class MinioChecks {
         }
     }
 
-    static void checkModifiedSinceConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ZonedDateTime> fn) {
+    static void checkModifiedSinceConfig(
+            final MinioConfiguration configuration, final java.util.function.Consumer<ZonedDateTime> fn) {
         if (isNotEmpty(configuration.getModifiedSince())) {
             fn.accept(configuration.getModifiedSince());
         }
     }
 
-    static void checkUnModifiedSinceConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ZonedDateTime> fn) {
+    static void checkUnModifiedSinceConfig(
+            final MinioConfiguration configuration, final java.util.function.Consumer<ZonedDateTime> fn) {
         if (isNotEmpty(configuration.getUnModifiedSince())) {
             fn.accept(configuration.getUnModifiedSince());
         }

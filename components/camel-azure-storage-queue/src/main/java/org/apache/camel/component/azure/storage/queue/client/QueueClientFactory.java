@@ -53,6 +53,7 @@ public final class QueueClientFactory {
     }
 
     private static String getAccountName(final QueueConfiguration configuration) {
-        return !ObjectHelper.isEmpty(configuration.getCredentials()) ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
+        return !ObjectHelper.isEmpty(configuration.getCredentials())
+                ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
     }
 }

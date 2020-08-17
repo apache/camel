@@ -24,8 +24,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.annotations.JdkService;
 
 /**
- * Default implementation of
- * {@link org.apache.camel.spi.ModelJAXBContextFactory}.
+ * Default implementation of {@link org.apache.camel.spi.ModelJAXBContextFactory}.
  */
 @JdkService(ModelJAXBContextFactory.FACTORY)
 public class DefaultModelJAXBContextFactory implements ModelJAXBContextFactory {

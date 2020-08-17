@@ -41,21 +41,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
-    protected static int port1 = CXFTestSupport.getPort1(); 
-    protected static int port2 = CXFTestSupport.getPort2(); 
+    protected static int port1 = CXFTestSupport.getPort1();
+    protected static int port2 = CXFTestSupport.getPort2();
 
-    protected static final String SERVICE_NAME_PROP =  "serviceName=";
+    protected static final String SERVICE_NAME_PROP = "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}PersonMultiPartPort";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" + port1 
-        + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
+    protected static final String SERVICE_ADDRESS = "http://localhost:" + port1
+                                                    + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
     protected Endpoint endpoint;
 
     @BeforeEach
     public void startService() {
         endpoint = Endpoint.publish(SERVICE_ADDRESS, new PersonMultiPartImpl());
     }
-    
+
     @AfterEach
     public void stopService() {
         if (endpoint != null) {
@@ -67,42 +67,44 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf://http://localhost:" + port2 
-                     + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" 
-                     + getDataFormat() + "&loggingFeatureEnabled=true")                
-                    .to("cxf://http://localhost:" + port1 
-                        + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" 
-                        + getDataFormat() + "&loggingFeatureEnabled=true");
+                from("cxf://http://localhost:" + port2
+                     + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
+                     + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
+                     + getDataFormat() + "&loggingFeatureEnabled=true")
+                             .to("cxf://http://localhost:" + port1
+                                 + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
+                                 + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
+                                 + getDataFormat() + "&loggingFeatureEnabled=true");
             }
         };
     }
- 
+
     protected String getDataFormat() {
         return "PAYLOAD";
     }
-    
+
     @Test
     public void testMultiPartMessage() {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonMultiPartService ss = new PersonMultiPartService(wsdlURL, QName.valueOf(getServiceName()));
 
-        PersonMultiPartPortType client = ss.getPersonMultiPartPort();       
-        ((BindingProvider)client).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port2 
-                     + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart");
+        PersonMultiPartPortType client = ss.getPersonMultiPartPort();
+        ((BindingProvider) client).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + port2
+                                                                + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart");
         Holder<Integer> ssn = new Holder<>();
         ssn.value = 0;
-        
+
         Holder<String> name = new Holder<>();
         name.value = "Unknown name";
-        
+
         client.getPersonMultiPartOperation("foo", 0, name, ssn);
         assertEquals("New Person Name", name.value);
         assertTrue(123456789 == ssn.value);
-       
+
     }
-    
+
     protected String getServiceName() {
         return "{http://camel.apache.org/wsdl-first}PersonMultiPartService";
     }

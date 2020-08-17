@@ -31,14 +31,15 @@ public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     public void testHttpEndpointURLWithIPv6() throws Exception {
-        HttpEndpoint endpoint = (HttpEndpoint)context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
+        HttpEndpoint endpoint = (HttpEndpoint) context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
     }
 
     @Test
     public void testHttpEndpointHttpUri() throws Exception {
         HttpEndpoint http1 = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("https://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint(
+                "https://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
         HttpEndpoint http3 = context.getEndpoint("https://www.google.com?test=parameter", HttpEndpoint.class);
 
         assertEquals("http://www.google.com", http1.getHttpUri().toString(), "Get a wrong HttpUri of http1");
@@ -50,17 +51,19 @@ public class HttpEndpointURLTest extends CamelTestSupport {
             context.getEndpoint("https://http://www.google.com", HttpEndpoint.class);
             fail("need to throw an exception here");
         } catch (ResolveEndpointFailedException ex) {
-            assertTrue(ex.getMessage().indexOf("You have duplicated the http(s) protocol") > 0, "Get a wrong exception message");
+            assertTrue(ex.getMessage().indexOf("You have duplicated the http(s) protocol") > 0,
+                    "Get a wrong exception message");
         }
     }
 
     @Test
     public void testConnectionManagerFromHttpUri() throws Exception {
-        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
+        HttpEndpoint http1
+                = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
         HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
         assertTrue(connectionManager instanceof PoolingHttpClientConnectionManager, "Get a wrong type of connection manager");
         @SuppressWarnings("resource")
-        PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager)connectionManager;
+        PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager) connectionManager;
         assertEquals(40, poolManager.getMaxTotal(), "Get a wrong setting of maxTotalConnections");
         assertEquals(5, poolManager.getDefaultMaxPerRoute(), "Get a wrong setting of connectionsPerRoute");
     }
@@ -68,8 +71,11 @@ public class HttpEndpointURLTest extends CamelTestSupport {
     @Test
     // Just for CAMEL-8607
     public void testRawWithUnsafeCharacters() throws Exception {
-        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?authenticationPreemptive=true&authPassword=RAW(foo%bar)&authUsername=RAW(username)", HttpEndpoint.class);
-        assertTrue(URISupport.sanitizeUri(http1.getEndpointUri()).indexOf("authPassword=xxxxxx") > 0, "The password is not loggged");
+        HttpEndpoint http1 = context.getEndpoint(
+                "http://www.google.com?authenticationPreemptive=true&authPassword=RAW(foo%bar)&authUsername=RAW(username)",
+                HttpEndpoint.class);
+        assertTrue(URISupport.sanitizeUri(http1.getEndpointUri()).indexOf("authPassword=xxxxxx") > 0,
+                "The password is not loggged");
     }
 
 }

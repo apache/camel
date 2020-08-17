@@ -41,6 +41,6 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
         conf.setCreateCacheIfNotExists(false);
 
         assertThrows(IllegalStateException.class,
-            () -> new JCacheManager<>(conf).getCache());
+                () -> new JCacheManager<>(conf).getCache());
     }
 }

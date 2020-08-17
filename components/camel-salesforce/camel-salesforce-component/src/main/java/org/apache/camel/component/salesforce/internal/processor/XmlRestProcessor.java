@@ -147,7 +147,9 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                 exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
                 break;
             case APPROVALS:
-                throw new SalesforceException("Fetching of approvals (as of 18.11.2016) with XML format results in HTTP status 500." + " To fetch approvals please use JSON format.",
+                throw new SalesforceException(
+                        "Fetching of approvals (as of 18.11.2016) with XML format results in HTTP status 500."
+                                              + " To fetch approvals please use JSON format.",
                         0);
 
             default:
@@ -171,7 +173,8 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     // if all else fails, get body as String
                     final String body = in.getBody(String.class);
                     if (null == body) {
-                        String msg = "Unsupported request message body " + (in.getBody() == null ? null : in.getBody().getClass());
+                        String msg
+                                = "Unsupported request message body " + (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
                         request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8));
@@ -207,8 +210,10 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     }
 
     @Override
-    protected void processResponse(final Exchange exchange, final InputStream responseEntity, final Map<String, String> headers, final SalesforceException exception,
-                                   final AsyncCallback callback) {
+    protected void processResponse(
+            final Exchange exchange, final InputStream responseEntity, final Map<String, String> headers,
+            final SalesforceException exception,
+            final AsyncCallback callback) {
         final XStream localXStream = xStream.get();
         try {
             final Message out = exchange.getOut();
@@ -232,7 +237,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     if (responseAlias != null) {
                         // extremely dirty, need to flush entire cache if its
                         // holding on to an old alias!!!
-                        final CachingMapper mapper = (CachingMapper)localXStream.getMapper();
+                        final CachingMapper mapper = (CachingMapper) localXStream.getMapper();
                         try {
                             if (mapper.realClass(responseAlias) != responseClass) {
                                 mapper.flushCache();

@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
 
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() 
-        + "/JaxWsWebFaultAnnotationToFaultTest/router";
+    protected static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1()
+                                                   + "/JaxWsWebFaultAnnotationToFaultTest/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.cxf.greeter_control.Greeter";
     protected static final String SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
 
@@ -72,8 +72,8 @@ public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
         } catch (Throwable t) {
             t.printStackTrace();
             fail("The CXF client did not manage to map the client exception "
-                + t.getClass().getName() + " to a " + PingMeFault.class.getName()
-                + ": " + t.getMessage());
+                 + t.getClass().getName() + " to a " + PingMeFault.class.getName()
+                 + ": " + t.getMessage());
         }
 
     }

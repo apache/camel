@@ -27,7 +27,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class SqlPreserveHeaderTest extends CamelTestSupport {
-    
+
     private EmbeddedDatabase db;
 
     @Test
@@ -45,8 +45,8 @@ public class SqlPreserveHeaderTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-        
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+
         super.setUp();
     }
 
@@ -54,7 +54,7 @@ public class SqlPreserveHeaderTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -67,9 +67,9 @@ public class SqlPreserveHeaderTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from("direct:start")
-                    .setHeader("foo", constant("bar"))
-                    .to("sql:select * from projects")
-                    .to("mock:result");
+                        .setHeader("foo", constant("bar"))
+                        .to("sql:select * from projects")
+                        .to("mock:result");
             }
         };
     }

@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpStreamingMoveTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/mymove?password=admin&delay=1000&streamDownload=true&move=done&stepwise=false";
+        return "ftp://admin@localhost:" + getPort()
+               + "/mymove?password=admin&delay=1000&streamDownload=true&move=done&stepwise=false";
     }
 
     @Override
@@ -56,7 +57,7 @@ public class FtpStreamingMoveTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GenericFile<?> remoteFile = (GenericFile<?>)mock.getExchanges().get(0).getIn().getBody();
+        GenericFile<?> remoteFile = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
         assertTrue(remoteFile.getBody() instanceof InputStream);
 
         // give time for consumer to rename file

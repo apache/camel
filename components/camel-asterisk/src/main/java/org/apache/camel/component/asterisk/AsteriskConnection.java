@@ -54,13 +54,15 @@ public final class AsteriskConnection {
         }
     }
 
-    public void login() throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
+    public void login()
+            throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
         // Lazy connect if not done before
         connect();
 
-        if (managerConnection != null && (managerConnection.getState() == ManagerConnectionState.DISCONNECTED || managerConnection.getState() == ManagerConnectionState.INITIAL)) {
+        if (managerConnection != null && (managerConnection.getState() == ManagerConnectionState.DISCONNECTED
+                || managerConnection.getState() == ManagerConnectionState.INITIAL)) {
             managerConnection.login("on");
-        
+
             LOG.debug("asterisk login done!");
         } else {
             throw new CamelAsteriskException("Login operation, managerConnection is empty!");
@@ -80,7 +82,7 @@ public final class AsteriskConnection {
     public void addListener(ManagerEventListener listener) throws CamelAsteriskException {
         if (managerConnection != null) {
             managerConnection.addEventListener(listener);
-            
+
             LOG.debug("asterisk added listener {}", listener);
         } else {
             throw new CamelAsteriskException("Add listener operation, managerConnection is empty!");
@@ -97,7 +99,8 @@ public final class AsteriskConnection {
         }
     }
 
-    public ManagerResponse sendAction(ManagerAction action) throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
+    public ManagerResponse sendAction(ManagerAction action)
+            throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
         ManagerResponse response = managerConnection.sendAction(action);
 
         return response;

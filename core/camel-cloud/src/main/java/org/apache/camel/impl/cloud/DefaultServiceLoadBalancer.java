@@ -105,10 +105,11 @@ public class DefaultServiceLoadBalancer
         ObjectHelper.notNull(serviceChooser, "service chooser");
         ObjectHelper.notNull(serviceFilter, "service serviceFilter");
 
-        LOGGER.info("ServiceCall is using default load balancer with service discovery type: {}, service filter type: {} and service chooser type: {}",
-            serviceDiscovery.getClass(),
-            serviceFilter.getClass(),
-            serviceChooser.getClass());
+        LOGGER.info(
+                "ServiceCall is using default load balancer with service discovery type: {}, service filter type: {} and service chooser type: {}",
+                serviceDiscovery.getClass(),
+                serviceFilter.getClass(),
+                serviceChooser.getClass());
 
         ServiceHelper.startService(serviceChooser);
         ServiceHelper.startService(serviceDiscovery);

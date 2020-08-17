@@ -28,7 +28,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerBuilder> {
 
     public NoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
-        super(route, (NoErrorHandlerBuilder)definition);
+        super(route, (NoErrorHandlerBuilder) definition);
     }
 
     @Override

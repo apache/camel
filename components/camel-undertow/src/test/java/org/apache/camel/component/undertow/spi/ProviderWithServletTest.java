@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test for case that UndertowSecurityProvider.requireServletContext returns true.
- * ServletContext has to be present in httpExchange.
+ * Test for case that UndertowSecurityProvider.requireServletContext returns true. ServletContext has to be present in
+ * httpExchange.
  */
 public class ProviderWithServletTest extends AbstractProviderServletTest {
 
@@ -45,7 +45,8 @@ public class ProviderWithServletTest extends AbstractProviderServletTest {
 
     @BeforeAll
     public static void initProvider() throws Exception {
-        createSecurtyProviderConfigurationFile(org.apache.camel.component.undertow.spi.ProviderWithServletTest.MockSecurityProvider.class);
+        createSecurtyProviderConfigurationFile(
+                org.apache.camel.component.undertow.spi.ProviderWithServletTest.MockSecurityProvider.class);
     }
 
     @Test

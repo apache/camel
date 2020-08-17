@@ -29,6 +29,8 @@ import org.apache.camel.spi.Metadata;
 @XmlEnum
 public enum RestHostNameResolver {
 
-    allLocalIp, localIp, localHostName
+    allLocalIp,
+    localIp,
+    localHostName
 
 }

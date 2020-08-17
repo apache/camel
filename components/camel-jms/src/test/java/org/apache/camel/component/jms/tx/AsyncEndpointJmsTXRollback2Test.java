@@ -61,7 +61,7 @@ public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")
-                    .transacted()
+                        .transacted()
                         .to("mock:before")
                         .to("log:before")
                         .process(exchange -> {
@@ -79,16 +79,15 @@ public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
                         .to("mock:result");
 
                 from("direct:foo")
-                    .transacted()
-                    .to("async:bye:camel")
-                    .process(exchange -> {
-                        invoked++;
-                        if (invoked < 2) {
-                            throw new IllegalArgumentException("Damn");
-                        }
-                        assertTrue(exchange.isTransacted(), "Exchange should be transacted");
-                    });
-
+                        .transacted()
+                        .to("async:bye:camel")
+                        .process(exchange -> {
+                            invoked++;
+                            if (invoked < 2) {
+                                throw new IllegalArgumentException("Damn");
+                            }
+                            assertTrue(exchange.isTransacted(), "Exchange should be transacted");
+                        });
 
             }
         };

@@ -45,40 +45,39 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfDispatchPayloadBeans.xml");
     }
-    
+
     @Test
     public void testDispatchPayload() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchPayload(name, false);
         assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
-        
+
         org.apache.camel.Message response = exchange.getOut();
         assertNotNull(response, "The response must not be null");
-        
-        String value = decodeResponseFromPayload((CxfPayload<?>)response.getBody(CxfPayload.class), exchange);
+
+        String value = decodeResponseFromPayload((CxfPayload<?>) response.getBody(CxfPayload.class), exchange);
         assertTrue(value.endsWith(name), "The response must match the request");
     }
-    
+
     @Test
     public void testDispatchPayloadOneway() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchPayload(name, true);
         assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
-        
+
         org.apache.camel.Message response = exchange.getOut();
         assertNotNull(response, "The response must not be null");
-        
+
         assertNull(response.getBody(), "The response must be null");
     }
 
-    
     private Exchange sendJaxWsDispatchPayload(final String name, final boolean oneway) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                CxfPayload<SoapHeader> request = encodeRequestInPayload(oneway ? PAYLOAD_ONEWAY_TEMPLATE : PAYLOAD_TEMPLATE, 
-                                                            name, exchange);
+                CxfPayload<SoapHeader> request = encodeRequestInPayload(oneway ? PAYLOAD_ONEWAY_TEMPLATE : PAYLOAD_TEMPLATE,
+                        name, exchange);
                 exchange.getIn().setBody(request, CxfPayload.class);
-                exchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, DISPATCH_NS);                                    
+                exchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, DISPATCH_NS);
                 // set the operation for oneway; otherwise use the default operation                
                 if (oneway) {
                     exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, INVOKE_ONEWAY_NAME);
@@ -93,7 +92,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
         CxfPayload<T> payload = null;
         try {
             Document doc = getDocumentBuilderFactory().newDocumentBuilder()
-                                .parse(new ByteArrayInputStream(payloadstr.getBytes("utf-8")));
+                    .parse(new ByteArrayInputStream(payloadstr.getBytes("utf-8")));
             payload = CxfPayloadConverter.documentToCxfPayload(doc, exchange);
         } catch (Exception e) {
             // ignore and let it fail
@@ -105,7 +104,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
         String value = null;
         NodeList nodes = CxfPayloadConverter.cxfPayloadToNodeList(payload, exchange);
         if (nodes != null && nodes.getLength() == 1 && nodes.item(0) instanceof Element) {
-            value = getResponseType((Element)nodes.item(0));
+            value = getResponseType((Element) nodes.item(0));
         }
         return value;
     }

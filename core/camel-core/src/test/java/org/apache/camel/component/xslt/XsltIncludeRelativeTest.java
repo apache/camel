@@ -41,8 +41,9 @@ public class XsltIncludeRelativeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10").to("xslt:org/apache/camel/component/xslt/staff_include_relative.xsl").to("log:foo")
-                    .to("mock:result");
+                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
+                        .to("xslt:org/apache/camel/component/xslt/staff_include_relative.xsl").to("log:foo")
+                        .to("mock:result");
             }
         };
     }

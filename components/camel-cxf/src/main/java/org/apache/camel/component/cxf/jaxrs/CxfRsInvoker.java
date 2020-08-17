@@ -45,21 +45,23 @@ public class CxfRsInvoker extends JAXRSInvoker {
     private static final String SUSPENED = "org.apache.camel.component.cxf.jaxrs.suspend";
     private final CxfRsConsumer cxfRsConsumer;
     private final CxfRsEndpoint endpoint;
-    
+
     public CxfRsInvoker(CxfRsEndpoint endpoint, CxfRsConsumer consumer) {
         this.endpoint = endpoint;
         this.cxfRsConsumer = consumer;
     }
-        
+
     @Override
-    protected Object performInvocation(Exchange cxfExchange, final Object serviceObject, Method method,
-                                       Object[] paramArray) throws Exception {
+    protected Object performInvocation(
+            Exchange cxfExchange, final Object serviceObject, Method method,
+            Object[] paramArray)
+            throws Exception {
         Object response = null;
         if (endpoint.isPerformInvocation()) {
             response = super.performInvocation(cxfExchange, serviceObject, method, paramArray);
         }
         paramArray = insertExchange(method, paramArray, cxfExchange);
-        OperationResourceInfo ori = cxfExchange.get(OperationResourceInfo.class);        
+        OperationResourceInfo ori = cxfExchange.get(OperationResourceInfo.class);
         if (ori.isSubResourceLocator()) {
             // don't delegate the sub resource locator call to camel processor
             return method.invoke(serviceObject, paramArray);
@@ -73,15 +75,17 @@ public class CxfRsInvoker extends JAXRSInvoker {
             return syncInvoke(cxfExchange, serviceObject, method, paramArray, response);
         }
     }
-    
+
     private Continuation getContinuation(Exchange cxfExchange) {
-        ContinuationProvider provider = 
-            (ContinuationProvider)cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
+        ContinuationProvider provider
+                = (ContinuationProvider) cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
         return provider == null ? null : provider.getContinuation();
     }
-    
-    private Object asyncInvoke(Exchange cxfExchange, final Object serviceObject, Method method,
-                              Object[] paramArray, final Continuation continuation, Object response) throws Exception {
+
+    private Object asyncInvoke(
+            Exchange cxfExchange, final Object serviceObject, Method method,
+            Object[] paramArray, final Continuation continuation, Object response)
+            throws Exception {
         synchronized (continuation) {
             if (continuation.isNew()) {
                 final org.apache.camel.Exchange camelExchange = prepareExchange(cxfExchange, method, paramArray, response);
@@ -107,7 +111,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
             }
             if (!continuation.isTimeout() && continuation.isResumed()) {
                 cxfExchange.put(SUSPENED, Boolean.FALSE);
-                org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
+                org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
                 try {
                     return returnResponse(cxfExchange, camelExchange);
                 } catch (Exception ex) {
@@ -117,7 +121,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
             } else {
                 if (continuation.isTimeout() || !continuation.isPending()) {
                     cxfExchange.put(SUSPENED, Boolean.FALSE);
-                    org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
+                    org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
                     camelExchange.setException(new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
                     try {
                         return returnResponse(cxfExchange, camelExchange);
@@ -130,10 +134,12 @@ public class CxfRsInvoker extends JAXRSInvoker {
         }
         return null;
     }
-    
-    private Object syncInvoke(Exchange cxfExchange, final Object serviceObject, Method method,
-                              Object[] paramArray,
-                              Object response) throws Exception {
+
+    private Object syncInvoke(
+            Exchange cxfExchange, final Object serviceObject, Method method,
+            Object[] paramArray,
+            Object response)
+            throws Exception {
         final org.apache.camel.Exchange camelExchange = prepareExchange(cxfExchange, method, paramArray, response);
         // we want to handle the UoW
         cxfRsConsumer.createUoW(camelExchange);
@@ -148,16 +154,17 @@ public class CxfRsInvoker extends JAXRSInvoker {
             return returnResponse(cxfExchange, camelExchange);
         } catch (Exception ex) {
             cxfRsConsumer.doneUoW(camelExchange);
-            throw  ex;
+            throw ex;
         }
     }
-    
-    private org.apache.camel.Exchange prepareExchange(Exchange cxfExchange, Method method,
+
+    private org.apache.camel.Exchange prepareExchange(
+            Exchange cxfExchange, Method method,
             Object[] paramArray, Object response) {
         ExchangePattern ep = ExchangePattern.InOut;
         if (method.getReturnType() == Void.class) {
             ep = ExchangePattern.InOnly;
-        } 
+        }
         final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
         //needs access in MessageObserver/Interceptor to close the UnitOfWork
         cxfExchange.put(org.apache.camel.Exchange.class, camelExchange);
@@ -167,7 +174,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
         }
         CxfRsBinding binding = endpoint.getBinding();
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
-        
+
         // REVISIT: It can be done inside a binding but a propagateContext would need to be passed along as
         // the CXF in message property. Question: where should this property name be set up ? 
         if (endpoint.isPropagateContexts()) {
@@ -176,10 +183,10 @@ public class CxfRsInvoker extends JAXRSInvoker {
             camelExchange.setProperty(HttpHeaders.class.getName(), new HttpHeadersImpl(cxfExchange.getInMessage()));
             camelExchange.setProperty(SecurityContext.class.getName(), new SecurityContextImpl(cxfExchange.getInMessage()));
         }
-        
+
         return camelExchange;
     }
-    
+
     private Object returnResponse(Exchange cxfExchange, org.apache.camel.Exchange camelExchange) throws Exception {
         if (camelExchange.getException() != null) {
             Throwable exception = camelExchange.getException();
@@ -191,13 +198,13 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 }
             }
             if (exception instanceof WebApplicationException) {
-                result = ((WebApplicationException)exception).getResponse();
+                result = ((WebApplicationException) exception).getResponse();
                 if (result != null) {
                     return result;
                 } else {
-                    throw (WebApplicationException)exception;
+                    throw (WebApplicationException) exception;
                 }
-            } 
+            }
             //CAMEL-7357 throw out other exception to make sure the ExceptionMapper work
         }
         return endpoint.getBinding().populateCxfRsResponseFromExchange(camelExchange, cxfExchange);

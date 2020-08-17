@@ -40,7 +40,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JSON to JSON transformation using JOLT.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true,
+             category = { Category.TRANSFORMATION })
 public class JoltEndpoint extends ResourceEndpoint {
 
     private JoltTransform transform;
@@ -78,7 +79,8 @@ public class JoltEndpoint extends ResourceEndpoint {
         if (transform == null) {
             if (log.isDebugEnabled()) {
                 String path = getResourceUri();
-                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
+                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                        getEndpointUri());
             }
 
             // Sortr does not require a spec
@@ -87,7 +89,7 @@ public class JoltEndpoint extends ResourceEndpoint {
             } else {
                 // getResourceAsInputStream also considers the content cache
                 Object spec = JsonUtils.jsonToObject(getResourceAsInputStream());
-                switch(this.transformDsl) {
+                switch (this.transformDsl) {
                     case Shiftr:
                         this.transform = new Shiftr(spec);
                         break;
@@ -155,8 +157,8 @@ public class JoltEndpoint extends ResourceEndpoint {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
@@ -198,9 +200,9 @@ public class JoltEndpoint extends ResourceEndpoint {
         }
         Object output;
         if (inputContextMap != null) {
-            output = ((ContextualTransform)getTransform()).transform(input, inputContextMap);
+            output = ((ContextualTransform) getTransform()).transform(input, inputContextMap);
         } else {
-            output = ((Transform)getTransform()).transform(input);
+            output = ((Transform) getTransform()).transform(input);
         }
 
         // now lets output the results to the exchange

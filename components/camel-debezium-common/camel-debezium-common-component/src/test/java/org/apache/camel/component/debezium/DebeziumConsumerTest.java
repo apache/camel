@@ -43,7 +43,8 @@ public class DebeziumConsumerTest extends CamelTestSupport {
     private static final int NUMBER_OF_LINES = 5;
     private static final String DEFAULT_DATA_TESTING_FOLDER = "target/data";
     private static final Path TEST_FILE_PATH = createTestingPath("camel-debezium-test-file-input.txt").toAbsolutePath();
-    private static final Path TEST_OFFSET_STORE_PATH = createTestingPath("camel-debezium-test-offset-store.txt").toAbsolutePath();
+    private static final Path TEST_OFFSET_STORE_PATH
+            = createTestingPath("camel-debezium-test-offset-store.txt").toAbsolutePath();
     private static final String DEFAULT_TOPIC_NAME = "test_name_dummy";
     private static final String DEFAULT_ROUTE_ID = "foo";
 
@@ -128,7 +129,6 @@ public class DebeziumConsumerTest extends CamelTestSupport {
 
         to.assertIsSatisfied(50);
 
-
     }
 
     @Override
@@ -187,7 +187,8 @@ public class DebeziumConsumerTest extends CamelTestSupport {
         for (int i = 0; i != numberOfLines; ++i) {
             lines[i] = generateLine(linesAdded + i + 1);
         }
-        java.nio.file.Files.write(inputFile.toPath(), Collect.arrayListOf(lines), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+        java.nio.file.Files.write(inputFile.toPath(), Collect.arrayListOf(lines), StandardCharsets.UTF_8,
+                StandardOpenOption.APPEND);
         linesAdded += numberOfLines;
     }
 

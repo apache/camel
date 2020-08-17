@@ -29,29 +29,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Pseudo-abstract class that encapsulates Service logic common to
- * {@link Jt400DataQueueConsumer} and {@link Jt400DataQueueProducer}.
+ * Pseudo-abstract class that encapsulates Service logic common to {@link Jt400DataQueueConsumer} and
+ * {@link Jt400DataQueueProducer}.
  */
 class Jt400DataQueueService implements Service {
-    
+
     /**
      * Logging tool.
      */
     private static final Logger LOG = LoggerFactory.getLogger(Jt400DataQueueService.class);
-    
+
     /**
      * Endpoint which this service connects to.
      */
     private final Jt400Endpoint endpoint;
-    
+
     /**
      * Data queue object that corresponds to the endpoint of this service (null if stopped).
      */
     private BaseDataQueue queue;
-    
+
     /**
-     * Creates a {@code Jt400DataQueueService} that connects to the specified
-     * endpoint.
+     * Creates a {@code Jt400DataQueueService} that connects to the specified endpoint.
      * 
      * @param endpoint endpoint which this service connects to
      */
@@ -89,13 +88,11 @@ class Jt400DataQueueService implements Service {
             endpoint.releaseSystem(system);
         }
     }
-    
+
     /**
-     * Returns the data queue object that this service connects to. Returns
-     * {@code null} if the service is stopped.
+     * Returns the data queue object that this service connects to. Returns {@code null} if the service is stopped.
      * 
-     * @return the data queue object that this service connects to, or
-     *         {@code null} if stopped
+     * @return the data queue object that this service connects to, or {@code null} if stopped
      */
     public BaseDataQueue getDataQueue() {
         return queue;

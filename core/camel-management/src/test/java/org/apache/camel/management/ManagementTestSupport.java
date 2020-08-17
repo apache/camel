@@ -44,12 +44,13 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
     @SuppressWarnings("unchecked")
     protected <T> T invoke(MBeanServerConnection server, ObjectName name, String operationName)
             throws InstanceNotFoundException, MBeanException, ReflectionException, IOException {
-        return (T)server.invoke(name, operationName, null, null);
+        return (T) server.invoke(name, operationName, null, null);
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T invoke(MBeanServerConnection server, ObjectName name, String operationName, Object[] params, String[] signature)
+    protected <T> T invoke(
+            MBeanServerConnection server, ObjectName name, String operationName, Object[] params, String[] signature)
             throws InstanceNotFoundException, MBeanException, ReflectionException, IOException {
-        return (T)server.invoke(name, operationName, params, signature);
+        return (T) server.invoke(name, operationName, params, signature);
     }
 }

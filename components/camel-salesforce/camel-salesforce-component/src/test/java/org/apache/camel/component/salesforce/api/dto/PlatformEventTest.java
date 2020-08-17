@@ -37,7 +37,8 @@ public class PlatformEventTest {
                                                              "  \"CreatedById\": \"005B00000031mqb\", \n" + //
                                                              "  \"Order_Number__c\": \"10013\", \n" + //
                                                              "  \"Type__c\": \"Placed\"\n" + //
-                                                             "}", PlatformEvent.class);
+                                                             "}",
+                PlatformEvent.class);
 
         assertThat(platformEvent.getCreated()).isEqualTo(ZonedDateTime.parse("2017-04-14T13:35:23Z"));
         assertThat(platformEvent.getCreatedById()).isEqualTo("005B00000031mqb");

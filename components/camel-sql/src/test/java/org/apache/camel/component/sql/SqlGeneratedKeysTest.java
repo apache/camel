@@ -46,7 +46,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // - more than one generated column in row
         // - return all keys generated in batch insert
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.HSQL).addScript("sql/createAndPopulateDatabase3.sql").build();
+                .setType(EmbeddedDatabaseType.HSQL).addScript("sql/createAndPopulateDatabase3.sql").build();
 
         super.setUp();
     }
@@ -80,7 +80,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(new Object[] {"project x", "ASF", "new project"});
+        exchange.getIn().setBody(new Object[] { "project x", "ASF", "new project" });
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -93,13 +93,14 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull(generatedKeys, "out body could not be converted to a List - was: "
-                + out.getMessage().getBody());
+                                     + out.getMessage().getBody());
         assertEquals(1, generatedKeys.get(0).size());
 
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(3, row.get("ID"), "auto increment value should be 3");
 
-        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
+        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be one");
     }
 
     @Test
@@ -109,9 +110,9 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:insert2");
 
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(new Object[] {"Star Swirl", "Wizard"});
+        exchange.getIn().setBody(new Object[] { "Star Swirl", "Wizard" });
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
-        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new String[]{"ID1", "ID2"});
+        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new String[] { "ID1", "ID2" });
         exchange.getIn().setHeader("foo", "123");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -131,7 +132,8 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         assertEquals(5, row.get("ID1"), "auto increment value of ID1 should be 5");
         assertEquals(6, row.get("ID2"), "auto increment value of ID2 should be 6");
 
-        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
+        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be one");
     }
 
     @Test
@@ -142,10 +144,10 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         Exchange exchange = endpoint.createExchange();
         List<Object[]> payload = new ArrayList<>(4);
-        payload.add(new Object[] {"project x", "ASF", "new project x"});
-        payload.add(new Object[] {"project y", "ASF", "new project y"});
-        payload.add(new Object[] {"project z", "ASF", "new project z"});
-        payload.add(new Object[] {"project q", "ASF", "new project q"});
+        payload.add(new Object[] { "project x", "ASF", "new project x" });
+        payload.add(new Object[] { "project y", "ASF", "new project y" });
+        payload.add(new Object[] { "project z", "ASF", "new project z" });
+        payload.add(new Object[] { "project q", "ASF", "new project q" });
         exchange.getIn().setBody(payload);
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
         exchange.getIn().setHeader("foo", "123");
@@ -162,7 +164,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull(generatedKeys, "out body could not be converted to a List - was: " + out.getMessage().getBody());
 
-         // it seems not to work with Derby...
+        // it seems not to work with Derby...
         assertEquals(4, generatedKeys.size());
 
         int id = 3;
@@ -170,7 +172,8 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
             assertEquals(id++, row.get("ID"), "auto increment value should be " + id);
         }
 
-        assertEquals(4, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be four");
+        assertEquals(4, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be four");
     }
 
     @Test
@@ -180,9 +183,9 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(new Object[] {"project x", "ASF", "new project"});
+        exchange.getIn().setBody(new Object[] { "project x", "ASF", "new project" });
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
-        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new String[]{"ID"});
+        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new String[] { "ID" });
         exchange.getIn().setHeader("foo", "123");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -201,7 +204,8 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(3, row.get("ID"), "auto increment value should be 3");
 
-        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
+        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be one");
     }
 
     @Test
@@ -211,9 +215,9 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(new Object[] {"project x", "ASF", "new project"});
+        exchange.getIn().setBody(new Object[] { "project x", "ASF", "new project" });
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
-        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new int[]{1});
+        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new int[] { 1 });
         exchange.getIn().setHeader("foo", "123");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -231,7 +235,8 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(3, row.get("ID"), "auto increment value should be 3");
 
-        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
+        assertEquals(1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT),
+                "generated keys row count should be one");
     }
 
     @Test
@@ -241,11 +246,11 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         Exchange exchange = endpoint.createExchange();
         // then we set the SQL on the in body
-        exchange.getIn().setBody(new Object[] {"project x", "ASF", "new project"});
+        exchange.getIn().setBody(new Object[] { "project x", "ASF", "new project" });
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
 
         // set wrong data type for generated columns
-        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new Object[]{});
+        exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new Object[] {});
 
         // now we send the exchange to the endpoint, and receives the response from Camel
         template.send(endpoint, exchange);

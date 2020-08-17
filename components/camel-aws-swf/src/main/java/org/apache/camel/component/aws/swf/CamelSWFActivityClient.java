@@ -36,14 +36,15 @@ public class CamelSWFActivityClient {
         activity.setVersion(version);
 
         Promise<?>[] promises = asPromiseArray(input);
-        Promise<?> promise = dynamicActivitiesClient.scheduleActivity(activity, promises, configuration.getActivitySchedulingOptions(), Object.class, null);
+        Promise<?> promise = dynamicActivitiesClient.scheduleActivity(activity, promises,
+                configuration.getActivitySchedulingOptions(), Object.class, null);
         return promise;
     }
 
     protected Promise<?>[] asPromiseArray(Object input) {
         Promise<?>[] promises;
         if (input instanceof Object[]) {
-            Object[] inputArray = (Object[])input;
+            Object[] inputArray = (Object[]) input;
             promises = new Promise[inputArray.length];
             for (int i = 0; i < inputArray.length; i++) {
                 promises[i] = Promise.asPromise(inputArray[i]);

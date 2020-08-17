@@ -35,14 +35,16 @@ import org.slf4j.LoggerFactory;
 /**
  * Read from system-in and write to system-out and system-err streams.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", category = {Category.FILE, Category.SYSTEM})
+@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind",
+             category = { Category.FILE, Category.SYSTEM })
 public class StreamEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private transient Charset charset;
 
-    @UriPath(enums = "in,out,err,header,file") @Metadata(required = true)
+    @UriPath(enums = "in,out,err,header,file")
+    @Metadata(required = true)
     private String kind;
     @UriParam
     private String fileName;
@@ -105,7 +107,6 @@ public class StreamEndpoint extends DefaultEndpoint {
     // Properties
     //-------------------------------------------------------------------------
 
-
     public String getKind() {
         return kind;
     }
@@ -144,8 +145,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * You can configure the encoding (is a charset name) to use text-based streams (for example, message body is a String object).
-     * If not provided, Camel uses the JVM default Charset.
+     * You can configure the encoding (is a charset name) to use text-based streams (for example, message body is a
+     * String object). If not provided, Camel uses the JVM default Charset.
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
@@ -178,8 +179,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Initial delay in milliseconds before showing the message prompt. This delay occurs only once.
-     * Can be used during system startup to avoid message prompts being written while other logging is done to the system out.
+     * Initial delay in milliseconds before showing the message prompt. This delay occurs only once. Can be used during
+     * system startup to avoid message prompts being written while other logging is done to the system out.
      */
     public void setInitialPromptDelay(long initialPromptDelay) {
         this.initialPromptDelay = initialPromptDelay;
@@ -225,7 +226,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To use JVM file watcher to listen for file change events to support re-loading files that may be overwritten, somewhat like tail --retry
+     * To use JVM file watcher to listen for file change events to support re-loading files that may be overwritten,
+     * somewhat like tail --retry
      */
     public void setFileWatcher(boolean fileWatcher) {
         this.fileWatcher = fileWatcher;
@@ -236,9 +238,9 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * This option is used in combination with Splitter and streaming to the same file.
-     * The idea is to keep the stream open and only close when the Splitter is done, to improve performance.
-     * Mind this requires that you only stream to the same file, and not 2 or more files.
+     * This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream
+     * open and only close when the Splitter is done, to improve performance. Mind this requires that you only stream to
+     * the same file, and not 2 or more files.
      */
     public void setCloseOnDone(boolean closeOnDone) {
         this.closeOnDone = closeOnDone;
@@ -260,8 +262,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To group X number of lines in the consumer.
-     * For example to group 10 lines and therefore only spit out an Exchange with 10 lines, instead of 1 Exchange per line.
+     * To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange
+     * with 10 lines, instead of 1 Exchange per line.
      */
     public void setGroupLines(int groupLines) {
         this.groupLines = groupLines;
@@ -272,8 +274,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Number of messages to process before closing stream on Producer side.
-     * Never close stream by default (only when Producer is stopped). If more messages are sent, the stream is reopened for another autoCloseCount batch.
+     * Number of messages to process before closing stream on Producer side. Never close stream by default (only when
+     * Producer is stopped). If more messages are sent, the stream is reopened for another autoCloseCount batch.
      */
     public void setAutoCloseCount(int autoCloseCount) {
         this.autoCloseCount = autoCloseCount;
@@ -288,12 +290,10 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the read timeout to a specified timeout, in
-     * milliseconds. A non-zero value specifies the timeout when
-     * reading from Input stream when a connection is established to a
-     * resource. If the timeout expires before there is data available
-     * for read, a java.net.SocketTimeoutException is raised. A
-     * timeout of zero is interpreted as an infinite timeout.
+     * Sets the read timeout to a specified timeout, in milliseconds. A non-zero value specifies the timeout when
+     * reading from Input stream when a connection is established to a resource. If the timeout expires before there is
+     * data available for read, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an
+     * infinite timeout.
      */
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;

@@ -27,8 +27,7 @@ import org.apache.zookeeper.data.Stat;
 import static java.lang.String.format;
 
 /**
- * <code>CreateOperation</code> is a basic Zookeeper operation used to create
- * and set the data contained in a given node
+ * <code>CreateOperation</code> is a basic Zookeeper operation used to create and set the data contained in a given node
  */
 public class CreateOperation extends ZooKeeperOperation<String> {
 

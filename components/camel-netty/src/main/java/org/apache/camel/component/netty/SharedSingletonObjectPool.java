@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
 /**
  * An {@link org.apache.commons.pool.ObjectPool} that uses a single shared instance.
  * <p/>
- * This implementation will always return <tt>1</tt> in {@link #getNumActive()} and
- * return <tt>0</tt> in {@link #getNumIdle()}.
+ * This implementation will always return <tt>1</tt> in {@link #getNumActive()} and return <tt>0</tt> in
+ * {@link #getNumIdle()}.
  */
 public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
 

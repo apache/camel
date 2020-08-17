@@ -54,7 +54,8 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         this.consumers = createServicePool(camelContext, maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            this.extendedStatistics
+                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         } else {
             this.extendedStatistics = false;
         }
@@ -78,7 +79,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     /**
      * Releases an acquired producer back after usage.
      *
-     * @param endpoint the endpoint
+     * @param endpoint        the endpoint
      * @param pollingConsumer the pollingConsumer to release
      */
     @Override
@@ -90,8 +91,8 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      * Acquires a pooled PollingConsumer which you <b>must</b> release back again after usage using the
      * {@link #releasePollingConsumer(org.apache.camel.Endpoint, org.apache.camel.PollingConsumer)} method.
      *
-     * @param endpoint the endpoint
-     * @return the PollingConsumer
+     * @param  endpoint the endpoint
+     * @return          the PollingConsumer
      */
     @Override
     public PollingConsumer acquirePollingConsumer(Endpoint endpoint) {
@@ -105,7 +106,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             throw new FailedToCreateConsumerException(endpoint, e);
         }
     }
- 
+
     @Override
     public Exchange receive(Endpoint endpoint) {
         if (camelContext.isStopped()) {
@@ -159,7 +160,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             }
         }
     }
-    
+
     public CamelContext getCamelContext() {
         return camelContext;
     }

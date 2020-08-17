@@ -37,7 +37,8 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
-        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltme.xml");
+        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
+                "target/data/xslt/xsltme.xml");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
@@ -52,7 +53,8 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/example.xsl?output=file&deleteOutputFile=true").to("mock:result");
+                from("direct:start").to("xslt:org/apache/camel/component/xslt/example.xsl?output=file&deleteOutputFile=true")
+                        .to("mock:result");
             }
         };
     }

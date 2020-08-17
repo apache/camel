@@ -22,7 +22,7 @@ public class BeanInjectBean {
 
     @BeanInject
     private PropertyInjectBean injectBeanField;
-    
+
     private PropertyInjectBean injectBeanMethod;
 
     @BeanInject("beanName")

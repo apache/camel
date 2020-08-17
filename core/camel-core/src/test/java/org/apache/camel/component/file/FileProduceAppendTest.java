@@ -52,7 +52,8 @@ public class FileProduceAppendTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to("file://target/data/test-file-append?fileExist=Append", "mock:result");
+                from("direct:start").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                        .to("file://target/data/test-file-append?fileExist=Append", "mock:result");
             }
         };
     }

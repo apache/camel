@@ -30,8 +30,6 @@ public class ArangoDbContainer extends GenericContainer {
     private static final String ARANGO_NO_AUTH = "ARANGO_NO_AUTH";
     private static final Integer PORT_DEFAULT = 8529;
 
-
-
     public ArangoDbContainer() {
         super(ARANGO_IMAGE);
         setWaitStrategy(Wait.forListeningPort());

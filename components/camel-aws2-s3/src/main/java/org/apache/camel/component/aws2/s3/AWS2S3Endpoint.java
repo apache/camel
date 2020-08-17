@@ -54,7 +54,8 @@ import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
 /**
  * Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS 2 S3 Storage Service", syntax = "aws2-s3://bucketNameOrArn", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS 2 S3 Storage Service",
+             syntax = "aws2-s3://bucketNameOrArn", category = { Category.CLOUD, Category.FILE })
 public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Endpoint.class);
@@ -93,7 +94,8 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client() : AWS2S3ClientFactory.getAWSS3Client(configuration).getS3Client();
+        s3Client = configuration.getAmazonS3Client() != null
+                ? configuration.getAmazonS3Client() : AWS2S3ClientFactory.getAWSS3Client(configuration).getS3Client();
 
         String fileName = getConfiguration().getFileName();
 
@@ -126,9 +128,11 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
         if (getConfiguration().isAutoCreateBucket()) {
             // creates the new bucket because it doesn't exist yet
-            CreateBucketRequest createBucketRequest = CreateBucketRequest.builder().bucket(getConfiguration().getBucketName()).build();
+            CreateBucketRequest createBucketRequest
+                    = CreateBucketRequest.builder().bucket(getConfiguration().getBucketName()).build();
 
-            LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(), configuration.getRegion(), createBucketRequest);
+            LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(),
+                    configuration.getRegion(), createBucketRequest);
 
             s3Client.createBucket(createBucketRequest);
 
@@ -138,7 +142,8 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
         if (configuration.getPolicy() != null) {
             LOG.trace("Updating bucket [{}] with policy [{}]", bucketName, configuration.getPolicy());
 
-            s3Client.putBucketPolicy(PutBucketPolicyRequest.builder().bucket(bucketName).policy(configuration.getPolicy()).build());
+            s3Client.putBucketPolicy(
+                    PutBucketPolicyRequest.builder().bucket(bucketName).policy(configuration.getPolicy()).build());
 
             LOG.trace("Bucket policy updated");
         }
@@ -193,10 +198,9 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
 
         /**
-         * If includeBody != true, it is safe to close the object here. If
-         * includeBody == true, the caller is responsible for closing the stream
-         * and object once the body has been fully consumed. As of 2.17, the
-         * consumer does not close the stream or object on commit.
+         * If includeBody != true, it is safe to close the object here. If includeBody == true, the caller is
+         * responsible for closing the stream and object once the body has been fully consumed. As of 2.17, the consumer
+         * does not close the stream or object on commit.
          */
         if (!configuration.isIncludeBody()) {
             IOHelper.close(s3Object);
@@ -237,9 +241,8 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Gets the maximum number of messages as a limit to poll at each polling.
-     * The default value is 10. Use 0 or a negative number to set it as
-     * unlimited.
+     * Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a
+     * negative number to set it as unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
@@ -258,10 +261,11 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
     private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
+        try (Reader reader
+                = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
             int c = 0;
             while ((c = reader.read()) != -1) {
-                textBuilder.append((char)c);
+                textBuilder.append((char) c);
             }
         }
         return textBuilder.toString();

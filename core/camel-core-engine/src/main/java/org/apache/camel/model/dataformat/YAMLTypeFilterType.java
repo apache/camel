@@ -20,5 +20,6 @@ import javax.xml.bind.annotation.XmlEnum;
 
 @XmlEnum
 public enum YAMLTypeFilterType {
-    type, regexp
+    type,
+    regexp
 }

@@ -25,10 +25,9 @@ public class HelloWorldImpl implements HelloWorld {
     @Override
     public String sayHi(String text) {
         logger.info("***** Entering Implementation Code ******");
-        
+
         logger.info("***** Leaving Implementation Code ******");
         return "Hello " + text;
 
     }
 }
-

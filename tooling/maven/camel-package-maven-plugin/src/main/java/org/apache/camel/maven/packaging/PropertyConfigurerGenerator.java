@@ -30,9 +30,11 @@ public final class PropertyConfigurerGenerator {
     private PropertyConfigurerGenerator() {
     }
 
-    public static void generatePropertyConfigurer(String pn, String cn, String en,
-                                                  String pfqn, String psn, boolean hasSuper, boolean component,
-                                                  Collection<? extends BaseOptionModel> options, Writer w) throws IOException {
+    public static void generatePropertyConfigurer(
+            String pn, String cn, String en,
+            String pfqn, String psn, boolean hasSuper, boolean component,
+            Collection<? extends BaseOptionModel> options, Writer w)
+            throws IOException {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");
@@ -42,13 +44,14 @@ public final class PropertyConfigurerGenerator {
         w.write("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
         w.write("import org.apache.camel.spi.PropertyConfigurerGetter;\n");
         w.write("import org.apache.camel.util.CaseInsensitiveMap;\n");
-        w.write("import "  + pfqn + ";\n");
+        w.write("import " + pfqn + ";\n");
         w.write("\n");
         w.write("/**\n");
         w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
         w.write(" */\n");
         w.write("@SuppressWarnings(\"unchecked\")\n");
-        w.write("public class " + cn + " extends " + psn + " implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {\n");
+        w.write("public class " + cn + " extends " + psn
+                + " implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {\n");
         w.write("\n");
         if (!options.isEmpty() || !hasSuper) {
 
@@ -60,7 +63,8 @@ public final class PropertyConfigurerGenerator {
                 // to generate a method that can lazy create a new configuration if it was null
                 Optional<? extends BaseOptionModel> configurationOption = findConfiguration(options);
                 if (configurationOption.isPresent()) {
-                    w.write(createGetOrCreateConfiguration(en, configurationOption.get().getConfigurationClass(), configurationOption.get().getConfigurationField()));
+                    w.write(createGetOrCreateConfiguration(en, configurationOption.get().getConfigurationClass(),
+                            configurationOption.get().getConfigurationField()));
                     w.write("\n");
                 }
             }
@@ -73,7 +77,8 @@ public final class PropertyConfigurerGenerator {
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-                    String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getSetterMethod(), option.getConfigurationField(), component, option.getType());
+                    String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getSetterMethod(),
+                            option.getConfigurationField(), component, option.getType());
                     if (!option.getName().toLowerCase().equals(option.getName())) {
                         w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
@@ -121,7 +126,8 @@ public final class PropertyConfigurerGenerator {
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-                    String getterLambda = getterLambda(getOrSet, option.getJavaType(), option.getGetterMethod(), option.getConfigurationField(), component);
+                    String getterLambda = getterLambda(getOrSet, option.getJavaType(), option.getGetterMethod(),
+                            option.getConfigurationField(), component);
                     if (!option.getName().toLowerCase().equals(option.getName())) {
                         w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
@@ -145,7 +151,9 @@ public final class PropertyConfigurerGenerator {
         return options.stream().filter(o -> o.getConfigurationField() != null).findFirst();
     }
 
-    private static String setterLambda(String getOrSet, String type, String setterMethod, String configurationField, boolean component, String optionKind) {
+    private static String setterLambda(
+            String getOrSet, String type, String setterMethod, String configurationField, boolean component,
+            String optionKind) {
         // type may contain generics so remove those
         if (type.indexOf('<') != -1) {
             type = type.substring(0, type.indexOf('<'));
@@ -155,7 +163,8 @@ public final class PropertyConfigurerGenerator {
             if (component) {
                 getOrSet = "getOrCreateConfiguration(target).set" + getOrSet;
             } else {
-                getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1) + "().set" + getOrSet;
+                getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1)
+                           + "().set" + getOrSet;
             }
         } else {
             getOrSet = "target.set" + getOrSet;
@@ -172,7 +181,8 @@ public final class PropertyConfigurerGenerator {
         return String.format("%s(%s)", getOrSet, v);
     }
 
-    private static String getterLambda(String getOrSet, String type, String getterMethod, String configurationField, boolean component) {
+    private static String getterLambda(
+            String getOrSet, String type, String getterMethod, String configurationField, boolean component) {
         String prefix;
         if (getterMethod == null || getterMethod.isEmpty()) {
             prefix = "boolean".equals(type) ? "is" : "get";
@@ -184,7 +194,8 @@ public final class PropertyConfigurerGenerator {
             if (component) {
                 getOrSet = "getOrCreateConfiguration(target)." + prefix + getOrSet;
             } else {
-                getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1) + "()." + prefix + getOrSet;
+                getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1)
+                           + "()." + prefix + getOrSet;
             }
         } else {
             getOrSet = "target." + prefix + getOrSet;
@@ -193,7 +204,8 @@ public final class PropertyConfigurerGenerator {
         return getOrSet + "()";
     }
 
-    private static String createGetOrCreateConfiguration(String targetClass, String configurationClass, String configurationField) {
+    private static String createGetOrCreateConfiguration(
+            String targetClass, String configurationClass, String configurationField) {
         String getter = "get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
         String setter = "set" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
 

@@ -97,7 +97,8 @@ public class RestComponent extends DefaultComponent {
         answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
-            throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
+            throw new IllegalArgumentException(
+                    "Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
         }
 
         String method = StringHelper.before(remaining, ":");
@@ -143,10 +144,10 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow.
-     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
-     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
-     * If either one is found, then that is being used.
+     * The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no
+     * component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with
+     * the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is
+     * found, then that is being used.
      */
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
@@ -157,10 +158,10 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow.
-     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
-     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry.
-     * If either one is found, then that is being used.
+     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has
+     * been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
+     * or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that
+     * is being used.
      */
     public void setProducerComponentName(String producerComponentName) {
         this.producerComponentName = producerComponentName;
@@ -172,10 +173,10 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow.
-     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
-     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry.
-     * If either one is found, then that is being used.
+     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has
+     * been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
+     * or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that
+     * is being used.
      *
      * @deprecated use producerComponentName instead
      */
@@ -189,8 +190,7 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The swagger api doc resource to use.
-     * The resource is loaded from classpath by default and must be in JSON format.
+     * The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSON format.
      */
     public void setApiDoc(String apiDoc) {
         this.apiDoc = apiDoc;
@@ -212,6 +212,7 @@ public class RestComponent extends DefaultComponent {
     // ****************************************
 
     public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
+                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

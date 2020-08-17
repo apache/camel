@@ -39,7 +39,6 @@ public final class BodyConverter<T> implements Function<Exchange, T> {
     @SuppressWarnings("unchecked")
     public static <C> BodyConverter<C> forType(Class<C> type) {
         return BodyConverter.class.cast(
-            CACHE.computeIfAbsent(type, BodyConverter::new)
-        );
+                CACHE.computeIfAbsent(type, BodyConverter::new));
     }
 }

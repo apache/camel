@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link BoxSearchManager}
- * APIs.
+ * Test class for {@link BoxSearchManager} APIs.
  */
 public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -41,9 +40,9 @@ public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
 
     /**
      * There is a delay 5-10 mins between upload of file and being searchable (probably to update some search indexes,
-     * see https://community.box.com/t5/Platform-and-Development-Forum/Box-Search-Delay/td-p/40072).
-     * With this delay search for an actual item, created in the beginning of the test, doesn't make sense.
-     * Test only verifies, that search results works (and does not end with an exception).
+     * see https://community.box.com/t5/Platform-and-Development-Forum/Box-Search-Delay/td-p/40072). With this delay
+     * search for an actual item, created in the beginning of the test, doesn't make sense. Test only verifies, that
+     * search results works (and does not end with an exception).
      *
      * To test search of real data, change query string from '*' to real name of file.
      */

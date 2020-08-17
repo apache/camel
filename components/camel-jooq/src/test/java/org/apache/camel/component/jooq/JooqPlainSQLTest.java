@@ -54,7 +54,8 @@ public class JooqPlainSQLTest extends BaseJooqTest {
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
 
         // Select
-        Result actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
+        Result actual
+                = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
         assertEquals(bookStoreRecord, actual.get(0));
 
         // Delete

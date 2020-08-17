@@ -27,7 +27,8 @@ public class VertxHttpAuthenticationTest extends VertxHttpTestSupport {
 
     @Test
     public void testBasicAuthentication() {
-        String result = template.requestBody(getProducerUri() + "/basic?basicAuthUsername=foo&basicAuthPassword=bar", null, String.class);
+        String result = template.requestBody(getProducerUri() + "/basic?basicAuthUsername=foo&basicAuthPassword=bar", null,
+                String.class);
         Assertions.assertEquals("foo:bar", result);
     }
 

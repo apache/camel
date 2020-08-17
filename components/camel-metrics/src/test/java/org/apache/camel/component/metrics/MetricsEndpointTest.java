@@ -86,7 +86,7 @@ public class MetricsEndpointTest {
     @Test
     public void testCreateConsumer() throws Exception {
         assertThrows(RuntimeCamelException.class,
-            () -> endpoint.createConsumer(processor));
+                () -> endpoint.createConsumer(processor));
     }
 
     @Test

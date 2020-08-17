@@ -27,8 +27,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import static org.apache.camel.component.pdf.PdfConstants.MIN_CONTENT_WIDTH;
 
 /**
- * Builds lines from words based on line width and PDF document page size.
- * Built lines then will be written to pdf document.
+ * Builds lines from words based on line width and PDF document page size. Built lines then will be written to pdf
+ * document.
  */
 public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
     private final PdfConfiguration pdfConfiguration;
@@ -40,10 +40,10 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
     /**
      * Builds lines from words. Utilizes the same behaviour as office software:
      * <ul>
-     *     <li>If word doesn't fit in current line, and current lines contains other words, then
-     *     it will be moved to new line.</td>
-     *     <li>Word doesn't fit in the line and line does not contain other words, then word will be
-     *     slitted, and split index will be on max amount of characters that fits in the line </li>
+     * <li>If word doesn't fit in current line, and current lines contains other words, then it will be moved to new
+     * line.</td>
+     * <li>Word doesn't fit in the line and line does not contain other words, then word will be slitted, and split
+     * index will be on max amount of characters that fits in the line</li>
      * </ul>
      */
     @Override
@@ -95,7 +95,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
 
     private boolean isSplitIndexFound(String word, float allowedLineWidth, int currentSplitIndex) throws IOException {
         return isLineFitInLineWidth(word.substring(0, currentSplitIndex), allowedLineWidth)
-            && !isLineFitInLineWidth(word.substring(0, currentSplitIndex + 1), allowedLineWidth);
+                && !isLineFitInLineWidth(word.substring(0, currentSplitIndex + 1), allowedLineWidth);
     }
 
     private boolean isWordFitInCurrentLine(LineBuilder currentLine, String word, float allowedLineWidth) throws IOException {
@@ -114,11 +114,13 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
 
     public float getAllowedLineWidth() {
         float result = pdfConfiguration.getPageSize().getWidth()
-                - pdfConfiguration.getMarginLeft()
-                - pdfConfiguration.getMarginRight();
+                       - pdfConfiguration.getMarginLeft()
+                       - pdfConfiguration.getMarginRight();
         if (result < MIN_CONTENT_WIDTH) {
-            throw new IllegalStateException(String.format("Allowed line width cannot be < %d, make sure"
-                    + " (marginLeft + marginRight) < pageSize", MIN_CONTENT_WIDTH));
+            throw new IllegalStateException(
+                    String.format("Allowed line width cannot be < %d, make sure"
+                                  + " (marginLeft + marginRight) < pageSize",
+                            MIN_CONTENT_WIDTH));
         }
         return result;
     }
@@ -127,7 +129,8 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         private StringBuilder line = new StringBuilder();
         private int wordsCount;
 
-        LineBuilder() { }
+        LineBuilder() {
+        }
 
         LineBuilder(String line, int wordsCount) {
             this.line = new StringBuilder(line);

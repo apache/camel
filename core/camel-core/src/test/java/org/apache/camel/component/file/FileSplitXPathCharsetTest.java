@@ -71,7 +71,8 @@ public class FileSplitXPathCharsetTest extends ContextTestSupport {
                 fromF("file:%s?charset=ISO-8859-1&include=.*\\.csv", TEST_DIR).split().tokenize(",").to("mock:result");
 
                 // input: *.xml
-                fromF("file:%s?charset=ISO-8859-1&include=.*\\.xml", TEST_DIR).split().xpath("/foo/bar/text()").to("mock:result");
+                fromF("file:%s?charset=ISO-8859-1&include=.*\\.xml", TEST_DIR).split().xpath("/foo/bar/text()")
+                        .to("mock:result");
             }
         };
     }

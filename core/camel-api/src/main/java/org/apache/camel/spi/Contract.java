@@ -29,11 +29,11 @@ public class Contract {
     private boolean validateInput;
     private boolean validateOutput;
     private String contractString;
-    
+
     public DataType getInputType() {
         return inputType;
     }
-    
+
     /**
      * Set the input data type.
      *
@@ -43,7 +43,7 @@ public class Contract {
         this.inputType = new DataType(inputType);
         this.contractString = null;
     }
-    
+
     /**
      * Set the input data type with Java class.
      *
@@ -53,11 +53,11 @@ public class Contract {
         this.inputType = new DataType(clazz);
         this.contractString = null;
     }
-    
+
     public DataType getOutputType() {
         return outputType;
     }
-    
+
     /**
      * Set the output data type.
      *
@@ -67,7 +67,7 @@ public class Contract {
         this.outputType = new DataType(outputType);
         this.contractString = null;
     }
-    
+
     /**
      * Set the output data type with Java class.
      *
@@ -77,7 +77,7 @@ public class Contract {
         this.outputType = new DataType(clazz);
         this.contractString = null;
     }
-    
+
     public boolean isValidateInput() {
         return validateInput;
     }
@@ -88,7 +88,7 @@ public class Contract {
     public void setValidateInput(boolean validate) {
         this.validateInput = validate;
     }
-    
+
     public boolean isValidateOutput() {
         return validateOutput;
     }
@@ -99,7 +99,7 @@ public class Contract {
     public void setValidateOutput(boolean validate) {
         this.validateOutput = validate;
     }
-    
+
     @Override
     public String toString() {
         if (contractString == null) {
@@ -117,16 +117,16 @@ public class Contract {
         if (!(target instanceof Contract)) {
             return false;
         }
-        Contract targetContract = (Contract)target;
+        Contract targetContract = (Contract) target;
         if (getInputType() != null || targetContract.getInputType() != null) {
             if (getInputType() == null || targetContract.getInputType() == null
-                || !getInputType().equals(targetContract.getInputType())) {
+                    || !getInputType().equals(targetContract.getInputType())) {
                 return false;
             }
         }
         if (getOutputType() != null || targetContract.getOutputType() != null) {
             if (getOutputType() == null || targetContract.getOutputType() == null
-                || !getOutputType().equals(targetContract.getOutputType())) {
+                    || !getOutputType().equals(targetContract.getOutputType())) {
                 return false;
             }
         }

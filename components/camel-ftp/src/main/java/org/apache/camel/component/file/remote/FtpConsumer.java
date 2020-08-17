@@ -52,14 +52,15 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     private transient String ftpConsumerToString;
 
-    public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations, GenericFileProcessStrategy processStrategy) {
+    public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations,
+                       GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
     @Override
     protected FtpOperations getOperations() {
-        return (FtpOperations)super.getOperations();
+        return (FtpOperations) super.getOperations();
     }
 
     @Override
@@ -78,7 +79,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     operations.buildDirectory(dir, true);
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
-                    LOG.warn("Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.", e);
+                    LOG.warn(
+                            "Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.",
+                            e);
                 }
             }
         } finally {
@@ -240,7 +243,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 }
             }
             if (cause instanceof GenericFileOperationFailedException) {
-                GenericFileOperationFailedException generic = ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
+                GenericFileOperationFailedException generic
+                        = ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
                 // exchange is null and cause has the reason for failure to read
                 // directories
                 if (generic.getCode() == 550) {
@@ -263,7 +267,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         if (file.getTimestamp() != null) {
             answer.setLastModified(file.getTimestamp().getTimeInMillis());
         }
-        answer.setHostname(((RemoteFileConfiguration)endpoint.getConfiguration()).getHost());
+        answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
 
         // absolute or relative path
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
@@ -272,7 +276,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // create a pseudo absolute name
         String dir = FileUtil.stripTrailingSeparator(absolutePath);
         String fileName = file.getName();
-        if (((FtpConfiguration)endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()) {
+        if (((FtpConfiguration) endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()) {
             fileName = FtpUtils.extractDirNameFromAbsolutePath(file.getName());
         }
         String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + fileName);
@@ -310,19 +314,19 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     private boolean isStepwise() {
-        RemoteFileConfiguration config = (RemoteFileConfiguration)endpoint.getConfiguration();
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();
     }
 
     private boolean isUseList() {
-        RemoteFileConfiguration config = (RemoteFileConfiguration)endpoint.getConfiguration();
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isUseList();
     }
 
     @ManagedAttribute(description = "Summary of last FTP activity (download only)")
     public String getLastFtpActivity() {
         FTPClient client = getOperations().getFtpClient();
-        FtpClientActivityListener listener = (FtpClientActivityListener)client.getCopyStreamListener();
+        FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
         if (listener != null) {
             String log = listener.getLastLogActivity();
             if (log != null) {
@@ -343,7 +347,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     @ManagedAttribute(description = "Summary of last FTP activity (all)")
     public String getLastFtpActivityVerbose() {
         FTPClient client = getOperations().getFtpClient();
-        FtpClientActivityListener listener = (FtpClientActivityListener)client.getCopyStreamListener();
+        FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
         if (listener != null) {
             String log = listener.getLastVerboseLogActivity();
             if (log != null) {

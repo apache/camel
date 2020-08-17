@@ -36,8 +36,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
 
 /**
- * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when
- * forwarding a JMS message from one destination to another
+ * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
+ * one destination to another
  */
 public class MQSeriesHeaderTest extends CamelTestSupport {
 

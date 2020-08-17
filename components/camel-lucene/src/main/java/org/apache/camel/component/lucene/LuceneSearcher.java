@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class LuceneSearcher {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneSearcher.class);
     private Analyzer analyzer;
-    private IndexSearcher indexSearcher; 
+    private IndexSearcher indexSearcher;
     private IndexReader indexReader;
     private ScoreDoc[] hits;
 
@@ -53,15 +53,16 @@ public class LuceneSearcher {
     }
 
     public void close() throws IOException {
-        indexReader.close();        
+        indexReader.close();
         analyzer.close();
     }
-    
+
     public Hits search(String searchPhrase, int maxNumberOfHits, int totalHitsThreshold) throws Exception {
         return search(searchPhrase, maxNumberOfHits, totalHitsThreshold, false);
     }
 
-    public Hits search(String searchPhrase, int maxNumberOfHits, int totalHitsThreshold, boolean returnLuceneDocs) throws Exception {
+    public Hits search(String searchPhrase, int maxNumberOfHits, int totalHitsThreshold, boolean returnLuceneDocs)
+            throws Exception {
         Hits searchHits = new Hits();
 
         int numberOfHits = doSearch(searchPhrase, maxNumberOfHits, totalHitsThreshold);
@@ -77,12 +78,13 @@ public class LuceneSearcher {
             aHit.setScore(hit.score);
             aHit.setData(selectedDocument.get("contents"));
             searchHits.getHit().add(aHit);
-        }        
+        }
 
         return searchHits;
     }
-                
-    private int doSearch(String searchPhrase, int maxNumberOfHits, int totalHitsThreshold) throws NullPointerException, ParseException, IOException {
+
+    private int doSearch(String searchPhrase, int maxNumberOfHits, int totalHitsThreshold)
+            throws NullPointerException, ParseException, IOException {
         LOG.trace("*** Search Phrase: {} ***", searchPhrase);
 
         QueryParser parser = new QueryParser("contents", analyzer);
@@ -90,7 +92,7 @@ public class LuceneSearcher {
         TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfHits, totalHitsThreshold);
         indexSearcher.search(query, collector);
         hits = collector.topDocs().scoreDocs;
-        
+
         LOG.trace("*** Search generated {} hits ***", hits.length);
         return hits.length;
     }

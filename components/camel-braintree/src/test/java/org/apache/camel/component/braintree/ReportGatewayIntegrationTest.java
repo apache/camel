@@ -39,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(ReportGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(ReportGatewayApiMethod.class).getName();
 
     @Test
     public void testTransactionLevelFees() throws Exception {
@@ -56,8 +57,7 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
         final com.braintreegateway.Result<TransactionLevelFeeReport> result = requestBody(
                 "direct://TRANSACTIONLEVELFEES",
-                request
-        );
+                request);
 
         assertNotNull(result, "transactionLevelFees result");
         assertTrue(result.isSuccess(), "transactionLevelFees success");
@@ -73,7 +73,7 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
             public void configure() {
                 // test route for transactionLevelFees
                 from("direct://TRANSACTIONLEVELFEES")
-                    .to("braintree://" + PATH_PREFIX + "/transactionLevelFees?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/transactionLevelFees?inBody=request");
 
             }
         };

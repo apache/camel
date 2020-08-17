@@ -28,21 +28,27 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class NotFoundIntegrationTest extends AbstractSalesforceTestBase {
 
-    @ParameterizedTest @ValueSource(strings = { "XML", "JSON" })
+    @ParameterizedTest
+    @ValueSource(strings = { "XML", "JSON" })
     public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo(String format) {
-        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format + "&notFoundBehaviour=NULL", "NonExistant",
-                                                 Account.class);
+        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format="
+                                                 + format + "&notFoundBehaviour=NULL",
+                "NonExistant",
+                Account.class);
 
         assertNull(got, "Expecting null when `notFoundBehaviour` is set to NULL");
     }
 
-    @ParameterizedTest @ValueSource(strings = { "XML", "JSON" })
+    @ParameterizedTest
+    @ValueSource(strings = { "XML", "JSON" })
     public void shouldReportNotFoundExceptionFromRestApi(String format) {
         try {
-            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format, "NonExistant", Account.class);
+            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format,
+                    "NonExistant", Account.class);
             fail("Expecting CamelExecutionException");
         } catch (final CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof NoSuchSObjectException, "Expecting the cause of CamelExecutionException to be NoSuchSObjectException");
+            assertTrue(e.getCause() instanceof NoSuchSObjectException,
+                    "Expecting the cause of CamelExecutionException to be NoSuchSObjectException");
         }
     }
 }

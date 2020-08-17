@@ -42,11 +42,13 @@ public class RabbitMQProducerQpidTest extends RabbitMQProducerIntTest {
 
     @Disabled
     @Override
-    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed()
+            throws InterruptedException, IOException, TimeoutException {
     }
 
     @Disabled
     @Override
-    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory() throws InterruptedException, IOException, TimeoutException {
+    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory()
+            throws InterruptedException, IOException, TimeoutException {
     }
 }

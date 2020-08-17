@@ -69,8 +69,9 @@ public class GrpcProducer extends DefaultAsyncProducer {
                 throw new IllegalStateException("The streamReplyTo property is mandatory when using the STREAMING mode");
             }
         }
-        
-        if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE && configuration.getNegotiationType() != NegotiationType.TLS) {
+
+        if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE
+                && configuration.getNegotiationType() != NegotiationType.TLS) {
             throw new IllegalStateException("Google token-based authentication requires SSL/TLS negotiation mode");
         }
     }
@@ -96,26 +97,30 @@ public class GrpcProducer extends DefaultAsyncProducer {
         if (channel == null) {
             CallCredentials callCreds = null;
             initializeChannel();
-            
+
             if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE) {
                 ObjectHelper.notNull(configuration.getKeyCertChainResource(), "serviceAccountResource");
                 ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
-                
-                Credentials creds = GoogleCredentials.fromStream(ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getServiceAccountResource()));
+
+                Credentials creds = GoogleCredentials.fromStream(
+                        ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getServiceAccountResource()));
                 callCreds = MoreCallCredentials.from(creds);
             } else if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
                 ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
-                
-                String jwtToken = JwtHelper.createJwtToken(configuration.getJwtAlgorithm(), configuration.getJwtSecret(), configuration.getJwtIssuer(), configuration.getJwtSubject());
+
+                String jwtToken = JwtHelper.createJwtToken(configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
+                        configuration.getJwtIssuer(), configuration.getJwtSubject());
                 callCreds = new JwtCallCredentials(jwtToken);
             }
-            
+
             if (endpoint.isSynchronous()) {
                 LOG.debug("Getting synchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcBlockingStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, callCreds, endpoint.getCamelContext());
+                grpcStub = GrpcUtils.constructGrpcBlockingStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel,
+                        callCreds, endpoint.getCamelContext());
             } else {
                 LOG.debug("Getting asynchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcAsyncStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, callCreds, endpoint.getCamelContext());
+                grpcStub = GrpcUtils.constructGrpcAsyncStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel,
+                        callCreds, endpoint.getCamelContext());
             }
             forwarder = GrpcExchangeForwarderFactory.createExchangeForwarder(configuration, grpcStub);
 
@@ -149,7 +154,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
 
     protected void initializeChannel() throws Exception {
         NettyChannelBuilder channelBuilder;
-        
+
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             LOG.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
             channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
@@ -159,26 +164,28 @@ public class GrpcProducer extends DefaultAsyncProducer {
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
-            
+
             ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
-            
+
             SslContextBuilder sslContextBuilder = GrpcSslContexts.forClient()
-                                                                 .sslProvider(SslProvider.OPENSSL)
-                                                                 .keyManager(ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyCertChainResource()), 
-                                                                             ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyResource()),
-                                                                             configuration.getKeyPassword());
-                               
+                    .sslProvider(SslProvider.OPENSSL)
+                    .keyManager(
+                            ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyCertChainResource()),
+                            ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyResource()),
+                            configuration.getKeyPassword());
+
             if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getTrustCertCollectionResource()));
+                sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(classResolver,
+                        configuration.getTrustCertCollectionResource()));
             }
-            
+
             channelBuilder = channelBuilder.sslContext(sslContextBuilder.build());
         }
-         
+
         channel = channelBuilder.negotiationType(configuration.getNegotiationType())
-                                .flowControlWindow(configuration.getFlowControlWindow())
-                                .userAgent(configuration.getUserAgent())
-                                .maxInboundMessageSize(configuration.getMaxMessageSize())
-                                .build();
+                .flowControlWindow(configuration.getFlowControlWindow())
+                .userAgent(configuration.getUserAgent())
+                .maxInboundMessageSize(configuration.getMaxMessageSize())
+                .build();
     }
 }

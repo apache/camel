@@ -26,4 +26,3 @@ public class ThrottlerRejectedExecutionException extends RejectedExecutionExcept
     }
 
 }
-

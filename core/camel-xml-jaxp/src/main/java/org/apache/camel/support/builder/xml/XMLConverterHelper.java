@@ -52,8 +52,10 @@ public class XMLConverterHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLConverterHelper.class);
     private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
-    private static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
-    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+    private static final String DOCUMENT_BUILDER_FACTORY_FEATURE
+            = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
+    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY
+            = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
 
     private volatile DocumentBuilderFactory documentBuilderFactory;
     private volatile TransformerFactory transformerFactory;
@@ -85,10 +87,10 @@ public class XMLConverterHelper {
 
         // If the node is the document, just cast it
         if (node instanceof Document) {
-            return (Document)node;
+            return (Document) node;
             // If the node is an element
         } else if (node instanceof Element) {
-            Element elem = (Element)node;
+            Element elem = (Element) node;
             // If this is the root element, return its owner document
             if (elem.getOwnerDocument().getDocumentElement() == elem) {
                 return elem.getOwnerDocument();
@@ -123,14 +125,15 @@ public class XMLConverterHelper {
             // Set secure processing
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", new Object[] {XMLConstants.FEATURE_SECURE_PROCESSING, true, e});
+            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    new Object[] { XMLConstants.FEATURE_SECURE_PROCESSING, true, e });
         }
         try {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
             LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                     new Object[] {"http://xml.org/sax/features/external-general-entities", false, e});
+                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e });
         }
         // setup the SecurityManager by default if it's apache xerces
         try {
@@ -141,7 +144,8 @@ public class XMLConverterHelper {
                 factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
             }
         } catch (Exception e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.", new Object[] {"http://apache.org/xml/properties/security-manager", e});
+            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
+                    new Object[] { "http://apache.org/xml/properties/security-manager", e });
         }
         // setup the feature from the system property
         setupFeatures(factory);
@@ -157,7 +161,9 @@ public class XMLConverterHelper {
             cause = e;
             // try fallback from the JDK
             try {
-                LOG.debug("Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}", e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
+                LOG.debug(
+                        "Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}",
+                        e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
                 factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
             } catch (Throwable t) {
                 // okay we cannot load fallback then throw original exception
@@ -170,7 +176,8 @@ public class XMLConverterHelper {
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
-            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
+            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
         }
         factory.setErrorListener(new XmlErrorListener());
         configureSaxonTransformerFactory(factory);
@@ -178,15 +185,15 @@ public class XMLConverterHelper {
     }
 
     /**
-     * Make a Saxon TransformerFactory more JAXP compliant by configuring it to
-     * send &lt;xsl:message&gt; output to the ErrorListener.
+     * Make a Saxon TransformerFactory more JAXP compliant by configuring it to send &lt;xsl:message&gt; output to the
+     * ErrorListener.
      */
     private void configureSaxonTransformerFactory(TransformerFactory factory) {
         // check whether we have a Saxon TransformerFactory ("net.sf.saxon" for open source editions (HE / B)
         // and "com.saxonica" for commercial editions (PE / EE / SA))
         Class<?> factoryClass = factory.getClass();
         if (factoryClass.getName().startsWith("net.sf.saxon")
-            || factoryClass.getName().startsWith("com.saxonica")) {
+                || factoryClass.getName().startsWith("com.saxonica")) {
 
             // just in case there are multiple class loaders with different Saxon versions, use the
             // TransformerFactory's class loader to find Saxon support classes
@@ -203,7 +210,7 @@ public class XMLConverterHelper {
                     messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
                 } catch (ClassNotFoundException cnfe2) {
                     LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
-                        + " <xsl:message> output will not be redirected to the ErrorListener!");
+                             + " <xsl:message> output will not be redirected to the ErrorListener!");
                 }
             }
 
@@ -240,10 +247,10 @@ public class XMLConverterHelper {
         Properties properties = System.getProperties();
         List<String> features = new ArrayList<>();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
-            String key = (String)prop.getKey();
+            String key = (String) prop.getKey();
             if (key.startsWith(DOCUMENT_BUILDER_FACTORY_FEATURE)) {
                 String uri = StringHelper.after(key, ":");
-                Boolean value = Boolean.valueOf((String)prop.getValue());
+                Boolean value = Boolean.valueOf((String) prop.getValue());
                 try {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);

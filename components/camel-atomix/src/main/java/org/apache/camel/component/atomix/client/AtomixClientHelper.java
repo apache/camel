@@ -30,7 +30,8 @@ public final class AtomixClientHelper {
     private AtomixClientHelper() {
     }
 
-    public static AtomixClient createClient(CamelContext camelContext, AtomixClientConfiguration configuration) throws Exception {
+    public static AtomixClient createClient(CamelContext camelContext, AtomixClientConfiguration configuration)
+            throws Exception {
         AtomixClient atomix = (AtomixClient) configuration.getAtomix();
 
         if (atomix == null) {
@@ -50,7 +51,8 @@ public final class AtomixClientHelper {
             }
 
             if (configuration.getTransportClassName() != null) {
-                Class<? extends Transport> clazz = camelContext.getClassResolver().resolveMandatoryClass(configuration.getTransportClassName(), Transport.class);
+                Class<? extends Transport> clazz = camelContext.getClassResolver()
+                        .resolveMandatoryClass(configuration.getTransportClassName(), Transport.class);
                 atomixBuilder.withTransport(camelContext.getInjector().newInstance(clazz));
             }
 

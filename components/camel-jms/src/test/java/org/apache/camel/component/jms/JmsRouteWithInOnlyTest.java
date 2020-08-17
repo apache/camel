@@ -72,7 +72,8 @@ public class JmsRouteWithInOnlyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:inbox").to("mock:inbox").inOnly("activemq:topic:order").bean("orderService", "handleOrder");
+                from("activemq:queue:inbox").to("mock:inbox").inOnly("activemq:topic:order").bean("orderService",
+                        "handleOrder");
 
                 from("activemq:topic:order").to("mock:topic");
             }

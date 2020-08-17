@@ -54,8 +54,10 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringT
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[]{"classpath:org/apache/camel/component/jms/issues/broker.xml",
-            "classpath:org/apache/camel/component/jms/issues/camelBrokerClient.xml"});
+        return new ClassPathXmlApplicationContext(
+                new String[] {
+                        "classpath:org/apache/camel/component/jms/issues/broker.xml",
+                        "classpath:org/apache/camel/component/jms/issues/camelBrokerClient.xml" });
     }
 
 }

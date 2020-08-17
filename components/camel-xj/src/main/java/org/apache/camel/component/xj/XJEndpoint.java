@@ -26,13 +26,13 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Transform JSON and XML message using a XSLT.
  */
 @ManagedResource(description = "Managed XJEndpoint")
-@UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true,
+             label = "transformation")
 public class XJEndpoint extends XsltSaxonEndpoint {
 
     private final JsonFactory jsonFactory = new JsonFactory();

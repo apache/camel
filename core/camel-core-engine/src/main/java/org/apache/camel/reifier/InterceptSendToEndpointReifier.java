@@ -48,7 +48,8 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             ToDefinition to = new ToDefinition(parseString(definition.getAfterUri()));
             // at first use custom factory
             if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-                afterProcessor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, to);
+                afterProcessor
+                        = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, to);
             }
             // fallback to default implementation if factory did not create the
             // processor
@@ -96,10 +97,10 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
     /**
      * Does the uri match the pattern.
      *
-     * @param uri the uri
-     * @param pattern the pattern, which can be an endpoint uri as well
-     * @return <tt>true</tt> if matched and we should intercept, <tt>false</tt>
-     *         if not matched, and not intercept.
+     * @param  uri     the uri
+     * @param  pattern the pattern, which can be an endpoint uri as well
+     * @return         <tt>true</tt> if matched and we should intercept, <tt>false</tt> if not matched, and not
+     *                 intercept.
      */
     protected boolean matchPattern(String uri, String pattern) {
         // match using the pattern as-is

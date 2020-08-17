@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class DataFormatConcurrentTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataFormatConcurrentTest.class);
-    
+
     private int size = 2000;
     private int warmupCount = 100;
     private int testCycleCount = 10000;
@@ -184,7 +184,8 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         latch.await();
         long end = System.currentTimeMillis();
 
-        LOG.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
+        LOG.info("Sending {} messages to {} took {} ms",
+                new Object[] { payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start });
     }
 
     public void marshal(final CountDownLatch latch) throws Exception {
@@ -209,14 +210,14 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         latch.await();
         long end = System.currentTimeMillis();
 
-        LOG.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
+        LOG.info("Sending {} messages to {} took {} ms",
+                new Object[] { payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start });
     }
 
     /**
-     * the individual size of one record is:
-     * fooBarSize = 1  -> 104 bytes
-     * fooBarSize = 50 -> 2046 bytes
-     * @return the payloads used for this stress test
+     * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
+     * 
+     * @return           the payloads used for this stress test
      * @throws Exception
      */
     public Foo[] createFoo(int testCount) throws Exception {
@@ -237,10 +238,9 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
     }
 
     /**
-     * the individual size of one record is:
-     * fooBarSize = 1  -> 104 bytes
-     * fooBarSize = 50 -> 2046 bytes
-     * @return the payloads used for this stress test
+     * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
+     * 
+     * @return           the payloads used for this stress test
      * @throws Exception
      */
     public ByteArrayInputStream[] createPayloads(int testCount) throws Exception {

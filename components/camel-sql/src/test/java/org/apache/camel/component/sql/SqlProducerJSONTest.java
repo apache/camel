@@ -40,7 +40,7 @@ public class SqlProducerJSONTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase2.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase2.sql").build();
 
         jdbcTemplate = new JdbcTemplate(db);
 
@@ -51,7 +51,7 @@ public class SqlProducerJSONTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -76,8 +76,8 @@ public class SqlProducerJSONTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:insert into projects (id, project, license, description) values (4, 'Food, Inc', 'ASF', #)")
-                    .to("mock:result");
+                        .to("sql:insert into projects (id, project, license, description) values (4, 'Food, Inc', 'ASF', #)")
+                        .to("mock:result");
             }
         };
     }

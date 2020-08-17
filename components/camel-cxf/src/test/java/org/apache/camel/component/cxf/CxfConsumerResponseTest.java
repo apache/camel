@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerResponseTest extends CamelTestSupport {
-    
+
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
     private static final String PING_OPERATION = "ping";
@@ -49,57 +49,58 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
     private static int pingCounter;
 
     protected final String simpleEndpointAddress = "http://localhost:"
-        + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
 
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-        + "&publishedEndpointUrl=http://www.simple.com/services/test";
-    
-    
+                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+                                               + "&publishedEndpointUrl=http://www.simple.com/services/test";
+
     // START SNIPPET: example
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(simpleEndpointURI).inOnly("log:test")
-                    .choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
-                        public void process(final Exchange exchange) {
-                            assertEquals(DataFormat.POJO, exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
-                            Message in = exchange.getIn();
-                            // check the remote IP from the cxfMessage
-                            org.apache.cxf.message.Message cxfMessage = in.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
-                            assertNotNull(cxfMessage, "Should get the cxfMessage instance from message header");
-                            ServletRequest request = (ServletRequest)cxfMessage.get("HTTP.REQUEST");
-                            assertNotNull(request, "Should get the ServletRequest");
-                            assertNotNull("Should get the RemoteAddress" + request.getRemoteAddr());
-                            // Get the parameter list
-                            List<?> parameter = in.getBody(List.class);
-                            // Get the operation name
-                            String operation = (String)in.getHeader(CxfConstants.OPERATION_NAME);
-                            Object result = operation + " " + (String)parameter.get(0);
-                            // Put the result back
-                            exchange.getIn().setBody(result);
-                            // set up the response context which force start document
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
-                            exchange.getIn().setHeader(Client.RESPONSE_CONTEXT, map);
-                        }
-                    })
-                    .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION)).process(new Processor() {
-                        public void process(final Exchange exchange) {
-                            Message in = exchange.getIn();
-                            // Get the parameter list
-                            List<?> parameter = in.getBody(List.class);
-                            // Put the result back
-                            exchange.getOut().setBody(parameter.get(0));
-                        }
-                    })
-                    .when(header(CxfConstants.OPERATION_NAME).isEqualTo(PING_OPERATION)).process(new Processor() {
-                        public void process(final Exchange exchange) {
-                            pingCounter++;
-                        }
+                        .choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                assertEquals(DataFormat.POJO,
+                                        exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
+                                Message in = exchange.getIn();
+                                // check the remote IP from the cxfMessage
+                                org.apache.cxf.message.Message cxfMessage
+                                        = in.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+                                assertNotNull(cxfMessage, "Should get the cxfMessage instance from message header");
+                                ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
+                                assertNotNull(request, "Should get the ServletRequest");
+                                assertNotNull("Should get the RemoteAddress" + request.getRemoteAddr());
+                                // Get the parameter list
+                                List<?> parameter = in.getBody(List.class);
+                                // Get the operation name
+                                String operation = (String) in.getHeader(CxfConstants.OPERATION_NAME);
+                                Object result = operation + " " + (String) parameter.get(0);
+                                // Put the result back
+                                exchange.getIn().setBody(result);
+                                // set up the response context which force start document
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
+                                exchange.getIn().setHeader(Client.RESPONSE_CONTEXT, map);
+                            }
+                        })
+                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION)).process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                Message in = exchange.getIn();
+                                // Get the parameter list
+                                List<?> parameter = in.getBody(List.class);
+                                // Put the result back
+                                exchange.getOut().setBody(parameter.get(0));
+                            }
+                        })
+                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(PING_OPERATION)).process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                pingCounter++;
+                            }
 
-                    });
+                        });
 
             }
         };
@@ -123,12 +124,11 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
         Boolean bool = client.echoBoolean(Boolean.TRUE);
         assertNotNull(bool, "The result should not be null");
         assertEquals(bool.toString(), "true", "We should get the echo boolean result from router");
-        
+
         int beforeCallingPing = pingCounter;
         client.ping();
         int afterCallingPing = pingCounter;
         assertTrue(afterCallingPing - beforeCallingPing == 1, "The ping operation doesn't be called");
     }
-  
 
 }

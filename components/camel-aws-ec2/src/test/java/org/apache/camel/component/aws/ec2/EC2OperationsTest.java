@@ -20,14 +20,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class EC2OperationsTest {
 
     @Test
     public void supportedOperationCount() {
         assertEquals(11, EC2Operations.values().length);
     }
-    
+
     @Test
     public void valueOf() {
         assertEquals(EC2Operations.createAndRunInstances, EC2Operations.valueOf("createAndRunInstances"));
@@ -42,7 +41,7 @@ public class EC2OperationsTest {
         assertEquals(EC2Operations.createTags, EC2Operations.valueOf("createTags"));
         assertEquals(EC2Operations.deleteTags, EC2Operations.valueOf("deleteTags"));
     }
-    
+
     @Test
     public void testToString() {
         assertEquals(EC2Operations.createAndRunInstances.toString(), "createAndRunInstances");

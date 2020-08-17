@@ -57,7 +57,7 @@ public class MemoryWebsocketStore extends ConcurrentHashMap<String, DefaultWebso
     public void stop() {
         clear();
     }
-    
+
     private String getKey(DefaultWebsocket ws) {
         StringBuilder sb = new StringBuilder();
         if (ws.getConnectionKey() == null && ws.getPathSpec() == null) {

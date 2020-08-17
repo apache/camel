@@ -65,17 +65,21 @@ public class HttpHeaderTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket")).setHeader("Content-Type", constant("text/xml; charset=utf-8"))
-                    .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.0")).to("http://localhost:{{port}}/myapp/mytest");
+                from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
+                        .setHeader("Content-Type", constant("text/xml; charset=utf-8"))
+                        .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.0"))
+                        .to("http://localhost:{{port}}/myapp/mytest");
 
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
-                        ServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
+                        ServletRequest request
+                                = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
                         assertNotNull(request);
                         assertEquals(request.getProtocol(), "HTTP/1.0", "Get a wong http protocol version");
                         for (Entry<String, Object> entry : headers.entrySet()) {
-                            if ("SOAPAction".equals(entry.getKey()) && "http://xxx.com/interfaces/ticket".equals(entry.getValue())) {
+                            if ("SOAPAction".equals(entry.getKey())
+                                    && "http://xxx.com/interfaces/ticket".equals(entry.getValue())) {
                                 exchange.getOut().setBody("Find the key!");
                                 return;
                             }
@@ -87,7 +91,8 @@ public class HttpHeaderTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/server/mytest").transform(constant("Response!"));
 
                 // The setting only effect on a new server endpoint
-                from("jetty:http://localhost:{{port2}}/server/mytest?sendServerVersion=false&sendDateHeader=true").transform(constant("Response!"));
+                from("jetty:http://localhost:{{port2}}/server/mytest?sendServerVersion=false&sendDateHeader=true")
+                        .transform(constant("Response!"));
 
             }
         };

@@ -24,10 +24,10 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JdbcSpringAnotherRouteTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void testTimerInvoked() throws Exception {
         mock.expectedMinimumMessageCount(1);

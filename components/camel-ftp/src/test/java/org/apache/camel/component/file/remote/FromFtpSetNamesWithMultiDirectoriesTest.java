@@ -32,13 +32,14 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to verify that using option setNames and having multi remote
- * directories the files are stored locally in the same directory layout.
+ * Unit test to verify that using option setNames and having multi remote directories the files are stored locally in
+ * the same directory layout.
  */
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true&recursive=true&initialDelay=0&delay=100";
+        return "ftp://admin@localhost:" + getPort()
+               + "/incoming?password=admin&binary=true&recursive=true&initialDelay=0&delay=100";
     }
 
     @Override

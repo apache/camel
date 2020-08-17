@@ -46,7 +46,7 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         jdbcTemplate = new JdbcTemplate(db);
 
@@ -79,8 +79,10 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
         // give it a little tine to delete
         Thread.sleep(500);
 
-        assertEquals(new Integer(1), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class), "Should have deleted 2 rows");
-        assertEquals("AMQ", jdbcTemplate.queryForObject("select PROJECT from projects where license = 'BAD'", String.class), "Should be AMQ project that is BAD");
+        assertEquals(new Integer(1), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class),
+                "Should have deleted 2 rows");
+        assertEquals("AMQ", jdbcTemplate.queryForObject("select PROJECT from projects where license = 'BAD'", String.class),
+                "Should be AMQ project that is BAD");
     }
 
     @Override
@@ -91,19 +93,19 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects where license <> 'BAD' order by id"
-                        + "?initialDelay=0&delay=50"
-                        + "&consumer.onConsume=delete from projects where id = :#id"
-                        + "&consumer.onConsumeFailed=update projects set license = 'BAD' where id = :#id")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Object project = exchange.getIn().getBody(Map.class).get("PROJECT");
-                            if ("AMQ".equals(project)) {
-                                throw new IllegalArgumentException("Cannot handled AMQ");
-                            }
-                        }
-                    })
-                    .to("mock:result");
+                     + "?initialDelay=0&delay=50"
+                     + "&consumer.onConsume=delete from projects where id = :#id"
+                     + "&consumer.onConsumeFailed=update projects set license = 'BAD' where id = :#id")
+                             .process(new Processor() {
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+                                     Object project = exchange.getIn().getBody(Map.class).get("PROJECT");
+                                     if ("AMQ".equals(project)) {
+                                         throw new IllegalArgumentException("Cannot handled AMQ");
+                                     }
+                                 }
+                             })
+                             .to("mock:result");
             }
         };
     }

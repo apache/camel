@@ -34,10 +34,14 @@ public final class TimeUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimeUtils.class);
     private static final Pattern NUMBERS_ONLY_STRING_PATTERN = Pattern.compile("^[-]?(\\d)+$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern HOUR_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))\\s*h(our(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
-    private static final Pattern MINUTES_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))\\s*m(in(ute(s)?)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SECONDS_REGEX_PATTERN = Pattern.compile("((\\d)(\\d)*)(\\.(\\d+))?\\s*s(ec(ond)?(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
-    private static final Pattern MILLIS_REGEX_PATTERN = Pattern.compile("((\\d)(\\d)*)(\\.(\\d+))?\\s*m(illi)?s(ec(ond)?(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HOUR_REGEX_PATTERN
+            = Pattern.compile("((\\d)*(\\d))\\s*h(our(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MINUTES_REGEX_PATTERN
+            = Pattern.compile("((\\d)*(\\d))\\s*m(in(ute(s)?)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SECONDS_REGEX_PATTERN
+            = Pattern.compile("((\\d)(\\d)*)(\\.(\\d+))?\\s*s(ec(ond)?(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MILLIS_REGEX_PATTERN
+            = Pattern.compile("((\\d)(\\d)*)(\\.(\\d+))?\\s*m(illi)?s(ec(ond)?(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
 
     private TimeUtils() {
     }
@@ -53,8 +57,8 @@ public final class TimeUtils {
     /**
      * Prints the duration in a human readable format as X days Y hours Z minutes etc.
      *
-     * @param uptime the uptime in millis
-     * @return the time used for displaying on screen or in logs
+     * @param  uptime the uptime in millis
+     * @return        the time used for displaying on screen or in logs
      */
     public static String printDuration(double uptime) {
         // Code taken from Karaf

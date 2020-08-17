@@ -50,13 +50,11 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
         JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
                 getEndpoint().getCamelContext(),
                 JettyServerTest.JETTY_SERVER_NAME,
-                JettyServerTest.class
-        );
+                JettyServerTest.class);
 
         ContextHandler contextHandler = createHandler(endpoint, path);
         // add handler after starting server.
         jettyServerTest.addHandler(contextHandler);
-
 
     }
 
@@ -68,7 +66,9 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
         contextHandler.setAllowNullPathInfo(true);
         contextHandler.setHandler(new AbstractHandler() {
             @Override
-            public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+            public void handle(
+                    String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+                    throws IOException, ServletException {
                 Exchange exchg = null;
                 try {
                     BufferedReader reader = httpServletRequest.getReader();
@@ -85,7 +85,8 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
                     request.setHandled(true);
                     httpServletResponse.getWriter().println(exchange.getMessage().getBody());
                 } catch (Exception e) {
-                    getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg, e);
+                    getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg,
+                            e);
                 } finally {
                     if (exchg != null) {
                         doneUoW(exchg);
@@ -95,7 +96,6 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
         });
         return contextHandler;
     }
-
 
     private Exchange toExchange(Request request, String body) {
         final Exchange exchange = getEndpoint().createExchange();
@@ -111,7 +111,6 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
         exchange.setMessage(message);
         return exchange;
     }
-
 
     @Override
     public PlatformHttpEndpoint getEndpoint() {

@@ -41,7 +41,8 @@ public class ConnectorConfigGeneratorTest {
 
     @Test
     void testIfCorrectlyGeneratedMySQLFile() {
-        final Set<String> requiredFields = new HashSet<>(Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.SERVER_NAME.name()));
+        final Set<String> requiredFields = new HashSet<>(
+                Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.SERVER_NAME.name()));
         final Map<String, Object> overrideFields = new HashMap<>();
         overrideFields.put(MySqlConnectorConfig.DATABASE_HISTORY.name(), FileDatabaseHistory.class);
         overrideFields.put(CommonConnectorConfig.TOMBSTONES_ON_DELETE.name(), false);
@@ -52,9 +53,12 @@ public class ConnectorConfigGeneratorTest {
 
     @Test
     void testIfIgnoreUnWantedFieldsWithIllegal() {
-        final Map<String, ConnectorConfigField> fields = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(new MySqlConnector().config(), MySqlConnectorConfig.class, Collections.EMPTY_SET, Collections.EMPTY_MAP);
+        final Map<String, ConnectorConfigField> fields = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
+                new MySqlConnector().config(), MySqlConnectorConfig.class, Collections.EMPTY_SET, Collections.EMPTY_MAP);
 
-        fields.forEach((name, connectorConfigField) -> assertFalse(StringUtils.containsAny(name, "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~"), "Illegal char found in the field name"));
+        fields.forEach((name, connectorConfigField) -> assertFalse(
+                StringUtils.containsAny(name, "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~"),
+                "Illegal char found in the field name"));
     }
 
     @Test
@@ -64,9 +68,13 @@ public class ConnectorConfigGeneratorTest {
         });
     }
 
-    private void testIfCorrectlyGeneratedFile(final SourceConnector connector, final Class<?> configClass, final Set<String> requiredFields, final Map<String, Object> overrideFields) {
-        final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(connector, configClass, requiredFields, overrideFields);
-        final Map<String, ConnectorConfigField> connectorConfigFields = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(connector.config(), configClass, requiredFields, overrideFields);
+    private void testIfCorrectlyGeneratedFile(
+            final SourceConnector connector, final Class<?> configClass, final Set<String> requiredFields,
+            final Map<String, Object> overrideFields) {
+        final ConnectorConfigGenerator connectorConfigGenerator
+                = ConnectorConfigGenerator.create(connector, configClass, requiredFields, overrideFields);
+        final Map<String, ConnectorConfigField> connectorConfigFields = ConnectorConfigFieldsFactory
+                .createConnectorFieldsAsMap(connector.config(), configClass, requiredFields, overrideFields);
 
         final String connectorFieldsAsString = connectorConfigGenerator.printClassAsString();
 
@@ -79,10 +87,12 @@ public class ConnectorConfigGeneratorTest {
                 assertTrue(connectorFieldsAsString.contains(field.getFieldName()), field.getFieldName());
 
                 // check setters
-                assertTrue(connectorFieldsAsString.contains(field.getFieldSetterMethodName()), field.getFieldSetterMethodName());
+                assertTrue(connectorFieldsAsString.contains(field.getFieldSetterMethodName()),
+                        field.getFieldSetterMethodName());
 
                 // check getters
-                assertTrue(connectorFieldsAsString.contains(field.getFieldGetterMethodName()), field.getFieldGetterMethodName());
+                assertTrue(connectorFieldsAsString.contains(field.getFieldGetterMethodName()),
+                        field.getFieldGetterMethodName());
             }
         });
     }

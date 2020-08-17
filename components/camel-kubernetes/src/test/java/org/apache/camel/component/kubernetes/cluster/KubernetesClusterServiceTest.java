@@ -91,7 +91,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     @Test
     public void testMultipleMembersLeaderElection() throws Exception {
         int number = 5;
-        List<LeaderRecorder> members = IntStream.range(0, number).mapToObj(i -> addMember("mypod" + i)).collect(Collectors.toList());
+        List<LeaderRecorder> members
+                = IntStream.range(0, number).mapToObj(i -> addMember("mypod" + i)).collect(Collectors.toList());
         context.start();
 
         for (LeaderRecorder member : members) {
@@ -243,7 +244,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     private void checkLeadershipChangeDistance(long minimum, TimeUnit unit, LeaderRecorder... recorders) {
         List<LeaderRecorder.LeadershipInfo> infos = Arrays.stream(recorders).flatMap(lr -> lr.getLeadershipInfo().stream())
-            .sorted((li1, li2) -> Long.compare(li1.getChangeTimestamp(), li2.getChangeTimestamp())).collect(Collectors.toList());
+                .sorted((li1, li2) -> Long.compare(li1.getChangeTimestamp(), li2.getChangeTimestamp()))
+                .collect(Collectors.toList());
 
         LeaderRecorder.LeadershipInfo currentLeaderLastSeen = null;
         for (LeaderRecorder.LeadershipInfo info : infos) {
@@ -256,7 +258,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
                     // switch
                     long delay = info.getChangeTimestamp() - currentLeaderLastSeen.getChangeTimestamp();
                     assertTrue(delay >= TimeUnit.MILLISECONDS.convert(minimum, unit),
-                            "Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit) + ", found=" + delay);
+                            "Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit)
+                                                                                      + ", found=" + delay);
                     currentLeaderLastSeen = info;
                 }
             }

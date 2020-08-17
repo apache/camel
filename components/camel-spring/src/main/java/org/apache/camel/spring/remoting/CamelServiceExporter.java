@@ -39,7 +39,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A {@link FactoryBean} to create a proxy to a service exposing a given {@link #getServiceInterface()}
  */
-public class CamelServiceExporter extends RemoteExporter implements InitializingBean, DisposableBean, ApplicationContextAware, CamelContextAware {
+public class CamelServiceExporter extends RemoteExporter
+        implements InitializingBean, DisposableBean, ApplicationContextAware, CamelContextAware {
     private String uri;
     private CamelContext camelContext;
     private String camelContextId;
@@ -65,7 +66,7 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
-    
+
     public void setCamelContextId(String camelContextId) {
         this.camelContextId = camelContextId;
     }

@@ -26,7 +26,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * To be used by 3rd party Camel component developers to generate metadata.
  */
 @Mojo(name = "generate-component", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class GenerateComponentMojo extends AbstractGenerateMojo {
 
     protected void doExecute() throws MojoFailureException, MojoExecutionException {

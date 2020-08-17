@@ -23,6 +23,6 @@ public class MySimpleToFRoute extends RouteBuilder {
     @Override
     public void configure() {
         from("direct:start")
-            .toF("log:a?level=%s", "info");
+                .toF("log:a?level=%s", "info");
     }
 }

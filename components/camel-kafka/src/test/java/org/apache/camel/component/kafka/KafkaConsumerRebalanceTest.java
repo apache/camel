@@ -49,7 +49,8 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     @Test
     public void offsetGetStateMustHaveBeenCalledTwice() throws Exception {
         boolean offsetGetStateCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
-        assertTrue(offsetGetStateCalled, "StateRepository.getState should have been called twice for topic " + TOPIC + ". Remaining count : " + messagesLatch.getCount());
+        assertTrue(offsetGetStateCalled, "StateRepository.getState should have been called twice for topic " + TOPIC
+                                         + ". Remaining count : " + messagesLatch.getCount());
     }
 
     @AfterEach
@@ -63,7 +64,8 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP" + "&autoCommitIntervalMs=1000" + "&autoOffsetReset=latest" + "&consumersCount=1"
+                from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP" + "&autoCommitIntervalMs=1000"
+                     + "&autoOffsetReset=latest" + "&consumersCount=1"
                      + "&offsetRepository=#offset").routeId("consumer-rebalance-route").to("mock:result");
             }
         };

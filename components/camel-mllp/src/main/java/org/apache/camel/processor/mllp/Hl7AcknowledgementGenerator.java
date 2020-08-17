@@ -35,9 +35,8 @@ public class Hl7AcknowledgementGenerator implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(Hl7AcknowledgementGenerator.class);
 
     String defaultNack = "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
-        + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
-        + MllpProtocolConstants.MESSAGE_TERMINATOR;
-
+                         + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
+                         + MllpProtocolConstants.MESSAGE_TERMINATOR;
 
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -62,19 +61,23 @@ public class Hl7AcknowledgementGenerator implements Processor {
         exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
     }
 
-    public byte[] generateApplicationAcceptAcknowledgementMessage(byte[] hl7MessageBytes) throws Hl7AcknowledgementGenerationException {
+    public byte[] generateApplicationAcceptAcknowledgementMessage(byte[] hl7MessageBytes)
+            throws Hl7AcknowledgementGenerationException {
         return generateAcknowledgementMessage(hl7MessageBytes, "AA");
     }
 
-    public byte[] generateApplicationRejectAcknowledgementMessage(byte[] hl7MessageBytes) throws Hl7AcknowledgementGenerationException {
+    public byte[] generateApplicationRejectAcknowledgementMessage(byte[] hl7MessageBytes)
+            throws Hl7AcknowledgementGenerationException {
         return generateAcknowledgementMessage(hl7MessageBytes, "AR");
     }
 
-    public byte[] generateApplicationErrorAcknowledgementMessage(byte[] hl7MessageBytes) throws Hl7AcknowledgementGenerationException {
+    public byte[] generateApplicationErrorAcknowledgementMessage(byte[] hl7MessageBytes)
+            throws Hl7AcknowledgementGenerationException {
         return generateAcknowledgementMessage(hl7MessageBytes, "AE");
     }
 
-    byte[] generateAcknowledgementMessage(byte[] hl7MessageBytes, String acknowledgementCode) throws Hl7AcknowledgementGenerationException {
+    byte[] generateAcknowledgementMessage(byte[] hl7MessageBytes, String acknowledgementCode)
+            throws Hl7AcknowledgementGenerationException {
         if (hl7MessageBytes == null) {
             throw new Hl7AcknowledgementGenerationException("Null HL7 message received for parsing operation");
         }
@@ -96,22 +99,30 @@ public class Hl7AcknowledgementGenerator implements Processor {
         }
 
         if (-1 == endOfMSH) {
-            throw new Hl7AcknowledgementGenerationException("Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes);
+            throw new Hl7AcknowledgementGenerationException(
+                    "Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes);
         }
 
         if (8 > fieldSeparatorIndexes.size()) {
-            throw new Hl7AcknowledgementGenerationException("Insufficient number of fields in MSH to generate a response - 8 are required but "
-                + fieldSeparatorIndexes.size() + " " + "were found", hl7MessageBytes);
+            throw new Hl7AcknowledgementGenerationException(
+                    "Insufficient number of fields in MSH to generate a response - 8 are required but "
+                                                            + fieldSeparatorIndexes.size() + " " + "were found",
+                    hl7MessageBytes);
         }
 
         // Build the MSH Segment
         ByteArrayOutputStream acknowledgement = new ByteArrayOutputStream(1024);
         acknowledgement.write(hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(3), fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3)); // MSH-5
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(4), fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4)); // MSH-6
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(1), fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1)); // MSH-3
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(2), fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2)); // MSH-4
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(5), fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(5)); // MSH-7 and MSH-8
+        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(3),
+                fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3)); // MSH-5
+        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(4),
+                fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4)); // MSH-6
+        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(1),
+                fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1)); // MSH-3
+        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(2),
+                fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2)); // MSH-4
+        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(5),
+                fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(5)); // MSH-7 and MSH-8
         // Need to generate the correct MSH-9
         acknowledgement.write(fieldSeparator);
         acknowledgement.write("ACK".getBytes(), 0, 3); // MSH-9.1
@@ -136,7 +147,8 @@ public class Hl7AcknowledgementGenerator implements Processor {
         acknowledgement.write("MSA".getBytes(), 0, 3);
         acknowledgement.write(fieldSeparator);
         acknowledgement.write(acknowledgementCode.getBytes(), 0, 2);
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(8), fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8)); // MSH-10 end
+        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(8),
+                fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8)); // MSH-10 end
         acknowledgement.write(MllpProtocolConstants.SEGMENT_DELIMITER);
 
         // Terminate the message
@@ -145,6 +157,5 @@ public class Hl7AcknowledgementGenerator implements Processor {
 
         return acknowledgement.toByteArray();
     }
-
 
 }

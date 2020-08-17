@@ -23,8 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link ReplyHandler} to handle processing replies when using temporary
- * queues.
+ * {@link ReplyHandler} to handle processing replies when using temporary queues.
  */
 public class TemporaryQueueReplyHandler implements ReplyHandler {
 
@@ -40,7 +39,8 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     protected final String correlationId;
     protected final long timeout;
 
-    public TemporaryQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId, String correlationId, long timeout) {
+    public TemporaryQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                                      String originalCorrelationId, String correlationId, long timeout) {
         this.replyManager = replyManager;
         this.exchange = exchange;
         this.originalCorrelationId = originalCorrelationId;

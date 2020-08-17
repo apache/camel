@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
+public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport {
 
     @Test
     void testNettyCmdExecFactoryConfig() throws Exception {
@@ -44,13 +44,13 @@ public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("docker://version?cmdExecFactory=" + FakeDockerCmdExecFactory.class.getName())
-                    .log("${body}")
-                    .process(exchange -> {
-                        Version version = exchange.getIn().getBody(Version.class);
-                        exchange.getMessage().setBody(version.getVersion());
-                    })
-                    .to("mock:result");
+                        .to("docker://version?cmdExecFactory=" + FakeDockerCmdExecFactory.class.getName())
+                        .log("${body}")
+                        .process(exchange -> {
+                            Version version = exchange.getIn().getBody(Version.class);
+                            exchange.getMessage().setBody(version.getVersion());
+                        })
+                        .to("mock:result");
             }
         };
     }

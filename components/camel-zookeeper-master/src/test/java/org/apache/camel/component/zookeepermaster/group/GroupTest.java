@@ -56,7 +56,8 @@ public class GroupTest {
             boolean master = group.isMaster();
             if (connected) {
                 Collection<NodeState> members = group.members().values();
-                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members + ")");
+                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members
+                            + ")");
             } else {
                 LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=false)");
             }
@@ -86,7 +87,8 @@ public class GroupTest {
             LOGGER.debug("datalog: {}", datalog);
 
             container.addFileSystemBind(data.toAbsolutePath().toString(), "/data", BindMode.READ_WRITE, SelinuxContext.SHARED);
-            container.addFileSystemBind(datalog.toAbsolutePath().toString(), "/datalog", BindMode.READ_WRITE, SelinuxContext.SHARED);
+            container.addFileSystemBind(datalog.toAbsolutePath().toString(), "/datalog", BindMode.READ_WRITE,
+                    SelinuxContext.SHARED);
         }
 
         container.start();
@@ -120,7 +122,6 @@ public class GroupTest {
                 .retryPolicy(new RetryNTimes(10, 100))
                 .build();
         curator.start();
-
 
         final String path = "/singletons/test/Order" + System.currentTimeMillis();
         ArrayList<ZooKeeperGroup> members = new ArrayList<>();
@@ -184,7 +185,8 @@ public class GroupTest {
                 .build();
         curator.start();
 
-        final Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+        final Group<NodeState> group
+                = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
         group.add(listener);
         group.start();
 
@@ -207,7 +209,6 @@ public class GroupTest {
 
             group.update(new NodeState("foo"));
             assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
-
 
             group.close();
             curator.close();
@@ -234,7 +235,8 @@ public class GroupTest {
                 .build();
         curator.start();
 
-        Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+        Group<NodeState> group
+                = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
         group.add(listener);
         group.start();
 
@@ -282,7 +284,8 @@ public class GroupTest {
 
         try {
             container = startZooKeeper(port, dataDir);
-            Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+            Group<NodeState> group
+                    = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
             group.add(listener);
             group.update(new NodeState("foo"));
             group.start();
@@ -335,10 +338,10 @@ public class GroupTest {
             container = startZooKeeper(port, dataDir);
 
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                .connectString("localhost:" + port)
-                .connectionTimeoutMs(6000)
-                .sessionTimeoutMs(6000)
-                .retryPolicy(new RetryNTimes(10, 100));
+                    .connectString("localhost:" + port)
+                    .connectionTimeoutMs(6000)
+                    .sessionTimeoutMs(6000)
+                    .retryPolicy(new RetryNTimes(10, 100));
             CuratorFramework curator = builder.build();
             curator.start();
             curator.getZookeeperClient().blockUntilConnectedOrTimedOut();

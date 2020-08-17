@@ -26,8 +26,8 @@ public interface CamelContextNameStrategy {
     /**
      * Gets the name
      * <p/>
-     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter,
-     * or the name is always fixed.
+     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
+     * is always fixed.
      *
      * @return the name.
      */
@@ -36,8 +36,8 @@ public interface CamelContextNameStrategy {
     /**
      * Gets the next calculated name, if this strategy is not using fixed names.
      * <p/>
-     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter,
-     * or the name is always fixed.
+     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
+     * is always fixed.
      *
      * @return the next name
      */

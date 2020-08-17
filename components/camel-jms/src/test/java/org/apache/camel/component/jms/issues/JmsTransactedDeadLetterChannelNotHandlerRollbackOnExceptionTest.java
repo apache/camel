@@ -20,7 +20,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest extends JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest {
+public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest
+        extends JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest {
 
     @Override
     protected boolean isHandleNew() {
@@ -37,6 +38,5 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest ext
         Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);
         assertEquals("Hello World", dlqBody);
     }
-
 
 }

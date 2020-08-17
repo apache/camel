@@ -100,8 +100,8 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Whether to prepare the uri template and replace {key} with values from the exchange, and set
-     * as {@link Exchange#HTTP_URI} header with the resolved uri to use instead of uri from endpoint.
+     * Whether to prepare the uri template and replace {key} with values from the exchange, and set as
+     * {@link Exchange#HTTP_URI} header with the resolved uri to use instead of uri from endpoint.
      */
     public void setPrepareUriTemplate(boolean prepareUriTemplate) {
         this.prepareUriTemplate = prepareUriTemplate;
@@ -144,7 +144,8 @@ public class RestProducer extends DefaultAsyncProducer {
 
         // uri template with path parameters resolved
         // uri template may be optional and the user have entered the uri template in the path instead
-        String resolvedUriTemplate = getEndpoint().getUriTemplate() != null ? getEndpoint().getUriTemplate() : getEndpoint().getPath();
+        String resolvedUriTemplate
+                = getEndpoint().getUriTemplate() != null ? getEndpoint().getUriTemplate() : getEndpoint().getPath();
 
         Message inMessage = exchange.getIn();
         if (prepareUriTemplate) {
@@ -181,7 +182,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (hasPath) {
             String host = getEndpoint().getHost();
-            String basePath = getEndpoint().getUriTemplate() != null ? getEndpoint().getPath() :  null;
+            String basePath = getEndpoint().getUriTemplate() != null ? getEndpoint().getPath() : null;
             basePath = FileUtil.stripLeadingSeparator(basePath);
             resolvedUriTemplate = FileUtil.stripLeadingSeparator(resolvedUriTemplate);
             // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the actual url to use
@@ -225,9 +226,9 @@ public class RestProducer extends DefaultAsyncProducer {
     /**
      * Replaces placeholders "{}" with message header values.
      *
-     * @param str string with placeholders
-     * @param msg message with headers
-     * @return filled string
+     * @param  str string with placeholders
+     * @param  msg message with headers
+     * @return     filled string
      */
     private String resolveHeaderPlaceholders(String str, Message msg) {
         int startIndex = -1;
@@ -288,7 +289,8 @@ public class RestProducer extends DefaultAsyncProducer {
             // must only be a name, not refer to an existing instance
             Object instance = camelContext.getRegistry().lookupByName(name);
             if (instance != null) {
-                throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
+                throw new IllegalArgumentException(
+                        "JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
             }
         } else {
             name = "json-jackson";
@@ -304,7 +306,8 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (json != null) {
             // lookup configurer
-            PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(name + "-dataformat-configurer", camelContext);
+            PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                    .resolvePropertyConfigurer(name + "-dataformat-configurer", camelContext);
             if (configurer == null) {
                 throw new IllegalStateException("Cannot find configurer for dataformat: " + name);
             }
@@ -340,7 +343,8 @@ public class RestProducer extends DefaultAsyncProducer {
             // must only be a name, not refer to an existing instance
             Object instance = camelContext.getRegistry().lookupByName(name);
             if (instance != null) {
-                throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
+                throw new IllegalArgumentException(
+                        "XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
             }
         } else {
             name = "jaxb";
@@ -363,7 +367,8 @@ public class RestProducer extends DefaultAsyncProducer {
         return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder)
+            throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
             Map<String, Object> copy = new HashMap<>();
@@ -392,10 +397,12 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     private boolean isKeyKnownPrefix(String key) {
-        return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.") || key.startsWith("xml.out.");
+        return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.")
+                || key.startsWith("xml.out.");
     }
 
-    static String createQueryParameters(String query, Message inMessage) throws URISyntaxException, UnsupportedEncodingException {
+    static String createQueryParameters(String query, Message inMessage)
+            throws URISyntaxException, UnsupportedEncodingException {
         if (query != null) {
             final Map<String, Object> givenParams = URISupport.parseQuery(query);
             final Map<String, Object> params = new LinkedHashMap<>(givenParams.size());

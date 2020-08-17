@@ -28,8 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  * Java class for QueryResultList complex type.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -45,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "QueryResultList", propOrder = {"result"})
+@XmlType(name = "QueryResultList", propOrder = { "result" })
 public class QueryResultList {
 
     protected List<String> result;
@@ -54,10 +53,9 @@ public class QueryResultList {
      * Gets the value of the result property.
      * <p/>
      * <p/>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the result property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
+     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
+     * the result property.
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:

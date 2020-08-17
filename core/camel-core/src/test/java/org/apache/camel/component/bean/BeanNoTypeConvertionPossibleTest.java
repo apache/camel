@@ -42,7 +42,8 @@ public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
             template.requestBody("direct:start", new Date());
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException ntae = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+            NoTypeConversionAvailableException ntae
+                    = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
             assertEquals(Date.class, ntae.getFromType());
             assertEquals(Document.class, ntae.getToType());
             assertNotNull(ntae.getValue());

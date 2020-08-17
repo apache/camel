@@ -64,20 +64,21 @@ public class FilerConsumerRetryDoneFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10").to("mock:input").process(new Processor() {
-                    int index;
+                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10").to("mock:input")
+                        .process(new Processor() {
+                            int index;
 
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        if (index++ == 0) {
-                            // done file should still exists
-                            File file = new File("target/data/done/done");
-                            assertTrue(file.exists(), "Done file should exists: " + file);
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                if (index++ == 0) {
+                                    // done file should still exists
+                                    File file = new File("target/data/done/done");
+                                    assertTrue(file.exists(), "Done file should exists: " + file);
 
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                });
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        });
             }
         };
     }

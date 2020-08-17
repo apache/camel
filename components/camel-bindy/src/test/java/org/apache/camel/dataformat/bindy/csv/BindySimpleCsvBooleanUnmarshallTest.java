@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @ContextConfiguration
 @CamelSpringTest
 public class BindySimpleCsvBooleanUnmarshallTest {
@@ -53,22 +52,22 @@ public class BindySimpleCsvBooleanUnmarshallTest {
     private MockEndpoint error;
 
     private String expected;
-    
+
     @SuppressWarnings("unchecked")
     @Test
     @DirtiesContext
     public void testUnMarshallMessageWithBoolean() throws Exception {
-       
+
         // We suppress the firstName field of the first record
         expected = "andrew,true\r\n" + "andrew,false\r\n";
 
         template.sendBody(expected);
 
-        List<BooleanExample> examples = (List<BooleanExample>)result.getExchanges().get(0).getIn().getBody();
-        
+        List<BooleanExample> examples = (List<BooleanExample>) result.getExchanges().get(0).getIn().getBody();
+
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        
+
         assertFalse(examples.get(0).getName().isEmpty());
         assertEquals(examples.get(0).getName(), "andrew");
         assertTrue(examples.get(0).getExist());
@@ -77,22 +76,22 @@ public class BindySimpleCsvBooleanUnmarshallTest {
         assertFalse(examples.get(1).getExist());
         assertNotNull(examples);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     @DirtiesContext
     public void testUnMarshallMessageWithBooleanMissingFields() throws Exception {
-       
+
         // We suppress the firstName field of the first record
         expected = "andrew,true\r\n" + "joseph,false\r\n" + "nicholas,\r\n";
 
         template.sendBody(expected);
 
-        List<BooleanExample> examples = (List<BooleanExample>)result.getExchanges().get(0).getIn().getBody();
-        
+        List<BooleanExample> examples = (List<BooleanExample>) result.getExchanges().get(0).getIn().getBody();
+
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        
+
         assertFalse(examples.get(0).getName().isEmpty());
         assertEquals(examples.get(0).getName(), "andrew");
         assertTrue(examples.get(0).getExist());
@@ -104,10 +103,10 @@ public class BindySimpleCsvBooleanUnmarshallTest {
         assertTrue(examples.get(2).getExist());
         assertNotNull(examples);
     }
-    
+
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-            org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
+                org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
 
         @Override
         public void configure() {

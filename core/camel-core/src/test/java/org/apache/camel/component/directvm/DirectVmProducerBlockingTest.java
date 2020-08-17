@@ -41,7 +41,8 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
             template.sendBody("direct-vm:suspended?block=true&timeout=500&failIfNoConsumers=false", "hello world");
             fail("Expected CamelExecutionException");
         } catch (CamelExecutionException e) {
-            DirectVmConsumerNotAvailableException cause = assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
+            DirectVmConsumerNotAvailableException cause
+                    = assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
             assertTrue(watch.taken() > 490);
         }
@@ -57,13 +58,14 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
             template.sendBody("direct-vm:start?block=true&timeout=500&failIfNoConsumers=false", "hello world");
             fail("Expected CamelExecutionException");
         } catch (CamelExecutionException e) {
-            DirectVmConsumerNotAvailableException cause = assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
+            DirectVmConsumerNotAvailableException cause
+                    = assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
 
             assertTrue(watch.taken() > 490);
         }
     }
-    
+
     @Test
     public void testProducerBlocksFailIfNoConsumerFalse() throws Exception {
         DirectVmEndpoint endpoint = getMandatoryEndpoint("direct-vm:suspended", DirectVmEndpoint.class);
@@ -73,7 +75,8 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
             template.sendBody("direct-vm:start?block=true&timeout=500&failIfNoConsumers=true", "hello world");
             fail("Expected CamelExecutionException");
         } catch (CamelExecutionException e) {
-            DirectVmConsumerNotAvailableException cause = assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
+            DirectVmConsumerNotAvailableException cause
+                    = assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
         }
     }

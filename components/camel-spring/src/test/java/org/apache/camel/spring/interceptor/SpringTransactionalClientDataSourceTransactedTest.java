@@ -40,7 +40,7 @@ public class SpringTransactionalClientDataSourceTransactedTest extends SpringTes
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/springTransactionalClientDataSource.xml");
+                "/org/apache/camel/spring/interceptor/springTransactionalClientDataSource.xml");
     }
 
     @Override

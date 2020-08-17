@@ -52,8 +52,7 @@ public class OptaPlannerSyncSolverTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").
-                        to("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml");
+                from("direct:in").to("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml");
             }
         };
     }

@@ -61,7 +61,8 @@ public class BindySimpleFixedLengthUnmarshallClassMethodTest {
         result.assertIsSatisfied();
 
         // check the model
-        BindySimpleFixedLengthUnmarshallClassMethodTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallClassMethodTest.Order.class);
+        BindySimpleFixedLengthUnmarshallClassMethodTest.Order order = result.getReceivedExchanges().get(0).getIn()
+                .getBody(BindySimpleFixedLengthUnmarshallClassMethodTest.Order.class);
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertEquals("  PAULINE", order.getFirstName());
@@ -78,7 +79,7 @@ public class BindySimpleFixedLengthUnmarshallClassMethodTest {
         }
 
     }
-    
+
     @FixedLengthRecord(length = 75)
     public static class Order {
 
@@ -216,8 +217,10 @@ public class BindySimpleFixedLengthUnmarshallClassMethodTest {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }

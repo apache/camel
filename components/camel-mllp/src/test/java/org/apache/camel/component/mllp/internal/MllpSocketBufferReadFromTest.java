@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
     SocketStub socketStub;
@@ -50,7 +50,7 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
     @Test
     public void testReadFromWithTimeoutExceptionOnInitialRead() throws Exception {
         inputStreamStub
-            .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
+                .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
 
         try {
             endpoint.setReceiveTimeout(500);
@@ -70,9 +70,9 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
     @Test
     public void testReadFromWithTimeoutException() throws Exception {
         inputStreamStub
-            .addPacket("FOO".getBytes())
-            .addPacket("BAR".getBytes())
-            .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
+                .addPacket("FOO".getBytes())
+                .addPacket("BAR".getBytes())
+                .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
 
         try {
             endpoint.setReceiveTimeout(500);

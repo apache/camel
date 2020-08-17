@@ -36,7 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service", syntax = "azure-storage-blob:containerName", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service",
+             syntax = "azure-storage-blob:containerName", category = { Category.CLOUD, Category.FILE })
 public class BlobEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -71,7 +72,8 @@ public class BlobEndpoint extends DefaultEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        blobServiceClient = configuration.getServiceClient() != null ? configuration.getServiceClient() : BlobClientFactory.createBlobServiceClient(configuration);
+        blobServiceClient = configuration.getServiceClient() != null
+                ? configuration.getServiceClient() : BlobClientFactory.createBlobServiceClient(configuration);
     }
 
     public void setResponseOnExchange(final BlobOperationResponse response, final Exchange exchange) {
@@ -93,13 +95,13 @@ public class BlobEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Client to a storage account. This client does not hold any state about a particular storage account
-     * but is instead a convenient way of sending off appropriate requests to the resource on the service.
-     * It may also be used to construct URLs to blobs and containers.
+     * Client to a storage account. This client does not hold any state about a particular storage account but is
+     * instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used
+     * to construct URLs to blobs and containers.
      *
-     * This client contains operations on a service account. Operations on a container are available on {@link BlobContainerClient}
-     * through {@link #getBlobContainerClient(String)}, and operations on a blob are available on {@link BlobClient} through
-     * {@link #getBlobContainerClient(String).getBlobClient(String)}.
+     * This client contains operations on a service account. Operations on a container are available on
+     * {@link BlobContainerClient} through {@link #getBlobContainerClient(String)}, and operations on a blob are
+     * available on {@link BlobClient} through {@link #getBlobContainerClient(String).getBlobClient(String)}.
      */
     public BlobServiceClient getBlobServiceClient() {
         return blobServiceClient;

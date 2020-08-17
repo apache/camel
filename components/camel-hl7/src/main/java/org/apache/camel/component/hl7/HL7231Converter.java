@@ -219,7 +219,8 @@ public final class HL7231Converter {
         parserConfiguration.setInvalidObx2Type("ST");
         parserConfiguration.setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
 
-        DEFAULT_CONTEXT = new DefaultHapiContext(parserConfiguration, ValidationContextFactory.noValidation(), new DefaultModelClassFactory());
+        DEFAULT_CONTEXT = new DefaultHapiContext(
+                parserConfiguration, ValidationContextFactory.noValidation(), new DefaultModelClassFactory());
     }
 
     private HL7231Converter() {
@@ -305,6 +306,7 @@ public final class HL7231Converter {
     public static ADT_A06 toAdtA06(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return toMessage(ADT_A06.class, body, exchange);
     }
+
     @Converter
     public static ADT_A07 toAdtA07(String body) throws HL7Exception {
         return toMessage(ADT_A07.class, body);
@@ -354,6 +356,7 @@ public final class HL7231Converter {
     public static ADT_A11 toAdtA11(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return toMessage(ADT_A11.class, body, exchange);
     }
+
     @Converter
     public static ADT_A12 toAdtA12(String body) throws HL7Exception {
         return toMessage(ADT_A12.class, body);
@@ -413,6 +416,7 @@ public final class HL7231Converter {
     public static ADT_A17 toAdtA17(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return toMessage(ADT_A17.class, body, exchange);
     }
+
     @Converter
     public static ADT_A18 toAdtA18(String body) throws HL7Exception {
         return toMessage(ADT_A18.class, body);
@@ -1892,7 +1896,7 @@ public final class HL7231Converter {
     public static SUR_P09 toSurP09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return toMessage(SUR_P09.class, body, exchange);
     }
-    
+
     @Converter
     public static TBR_R08 toTbrR08(String body) throws HL7Exception {
         return toMessage(TBR_R08.class, body);
@@ -1963,8 +1967,6 @@ public final class HL7231Converter {
         return toMessage(VXX_V02.class, body, exchange);
     }
 
-
-
     static <T extends Message> T toMessage(Class<T> messageClass, String hl7String) {
         try {
             T genericMessage = DEFAULT_CONTEXT.newMessage(messageClass);
@@ -1977,7 +1979,6 @@ public final class HL7231Converter {
 
         }
     }
-
 
     static <T extends Message> T toMessage(Class<T> messageClass, byte[] hl7Bytes, Exchange exchange) {
         try {

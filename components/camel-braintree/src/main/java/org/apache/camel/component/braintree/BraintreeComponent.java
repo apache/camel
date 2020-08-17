@@ -55,7 +55,8 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         this.configuration = endpointConfiguration;

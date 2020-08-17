@@ -40,7 +40,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(25, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertFalse(config.isDebugMode());
     }
@@ -53,7 +54,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(143, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertFalse(config.isDebugMode());
     }
@@ -66,7 +68,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(110, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertFalse(config.isDebugMode());
     }
@@ -79,7 +82,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(MailUtils.DEFAULT_PORT_SMTP, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
         assertEquals("secret", config.getPassword(), "password");
@@ -102,7 +106,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(MailUtils.DEFAULT_PORT_SMTPS, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
         assertEquals("secret", config.getPassword(), "password");
@@ -139,7 +144,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(MailUtils.DEFAULT_PORT_POP3, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
         assertEquals("secret", config.getPassword(), "password");
@@ -159,7 +165,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(MailUtils.DEFAULT_PORT_IMAP, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
         assertEquals("secret", config.getPassword(), "password");
@@ -174,14 +181,15 @@ public class MailComponentTest extends CamelTestSupport {
     @Test
     public void testManyConfigurations() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
-            + "&from=me@camelriders.org&delete=true&folderName=riders"
-            + "&contentType=text/html&unseen=false");
+                                                         + "&from=me@camelriders.org&delete=true&folderName=riders"
+                                                         + "&contentType=text/html&unseen=false");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(30, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("riders", config.getFolderName(), "folder");
         assertEquals("me@camelriders.org", config.getFrom(), "from");
         assertEquals("secret", config.getPassword(), "password");
@@ -195,13 +203,15 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testTo() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/?password=secret&to=someone@outthere.com&folderName=XXX");
+        MailEndpoint endpoint
+                = resolveMandatoryEndpoint("smtp://james@myhost:25/?password=secret&to=someone@outthere.com&folderName=XXX");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(25, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("someone@outthere.com", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("someone@outthere.com", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("XXX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
         assertEquals("secret", config.getPassword(), "password");
@@ -219,7 +229,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(25, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
         assertEquals("secret", config.getPassword(), "password");
@@ -242,7 +253,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertNotNull(config.getPasswordAuthentication(), "getPasswordAuthentication()");
         assertEquals("u1", config.getPasswordAuthentication().getUserName(), "getPasswordAuthentication().getUserName()");
         assertEquals("p1", config.getPasswordAuthentication().getPassword(), "getPasswordAuthentication().getUserName()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals("camel@localhost", config.getFrom(), "from");
         assertEquals(null, config.getPassword(), "password");
@@ -260,7 +272,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("myhost", config.getHost(), "getHost()");
         assertEquals(110, config.getPort(), "getPort()");
         assertEquals("james", config.getUsername(), "getUsername()");
-        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO), "getRecipients().get(Message.RecipientType.TO)");
+        assertEquals("james@myhost", config.getRecipients().get(Message.RecipientType.TO),
+                "getRecipients().get(Message.RecipientType.TO)");
         assertEquals("INBOX", config.getFolderName(), "folder");
         assertEquals(5, config.getFetchSize(), "fetchSize");
         assertFalse(config.isDebugMode());
@@ -344,7 +357,8 @@ public class MailComponentTest extends CamelTestSupport {
         assertSame(config, comp.getConfiguration());
         assertNull(comp.getContentTypeResolver());
 
-        MailEndpoint endpoint = (MailEndpoint)comp.createEndpoint("imap://myhost?scheduler=quartz&scheduler.cron=0%2F5+*+0-23+%3F+*+*+*&scheduler.timeZone=Europe%2FBerlin");
+        MailEndpoint endpoint = (MailEndpoint) comp.createEndpoint(
+                "imap://myhost?scheduler=quartz&scheduler.cron=0%2F5+*+0-23+%3F+*+*+*&scheduler.timeZone=Europe%2FBerlin");
         assertEquals("james", endpoint.getConfiguration().getUsername());
         assertEquals("secret", endpoint.getConfiguration().getPassword());
         assertEquals("myhost", endpoint.getConfiguration().getHost());
@@ -353,4 +367,3 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("quartz", endpoint.getScheduler());
     }
 }
-

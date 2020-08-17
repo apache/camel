@@ -66,7 +66,8 @@ public class JmsInOutIndividualRequestTimeoutTest extends CamelTestSupport {
     public void testIndividualTimeout() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        String out = template.requestBodyAndHeader("direct:start", "World", JmsConstants.JMS_REQUEST_TIMEOUT, 8000L, String.class);
+        String out
+                = template.requestBodyAndHeader("direct:start", "World", JmsConstants.JMS_REQUEST_TIMEOUT, 8000L, String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

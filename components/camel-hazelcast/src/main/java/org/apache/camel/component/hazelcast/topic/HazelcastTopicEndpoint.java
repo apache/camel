@@ -32,13 +32,15 @@ import org.apache.camel.spi.UriParam;
 /**
  * Send and receive messages to/from <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic", syntax = "hazelcast-topic:cacheName", category = {Category.CACHE, Category.DATAGRID})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic",
+             syntax = "hazelcast-topic:cacheName", category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam
     private final HazelcastTopicConfiguration configuration;
 
-    public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName, final HazelcastTopicConfiguration configuration) {
+    public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
+                                  String cacheName, final HazelcastTopicConfiguration configuration) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         this.configuration = configuration;
         setCommand(HazelcastCommand.topic);
@@ -51,7 +53,8 @@ public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements 
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastTopicConsumer answer = new HazelcastTopicConsumer(hazelcastInstance, this, processor, cacheName, configuration.isReliable());
+        HazelcastTopicConsumer answer
+                = new HazelcastTopicConsumer(hazelcastInstance, this, processor, cacheName, configuration.isReliable());
         configureConsumer(answer);
         return answer;
     }

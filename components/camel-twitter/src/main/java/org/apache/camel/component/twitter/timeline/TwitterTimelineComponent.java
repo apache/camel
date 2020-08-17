@@ -41,7 +41,9 @@ public class TwitterTimelineComponent extends AbstractTwitterComponent {
     }
 
     @Override
-    protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint doCreateEndpoint(
+            TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         String user = getAndRemoveParameter(parameters, "user", String.class);
         return new TwitterTimelineEndpoint(uri, remaining, user, this, properties);
     }

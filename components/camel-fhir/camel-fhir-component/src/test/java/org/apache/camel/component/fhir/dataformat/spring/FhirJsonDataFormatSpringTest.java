@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FhirJsonDataFormatSpringTest extends CamelSpringTestSupport {
 
     private static final String PATIENT = "{\"resourceType\":\"Patient\","
-            + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
-            + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
+                                          + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
+                                          + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
 
     private MockEndpoint mockEndpoint;
 
@@ -80,7 +80,8 @@ public class FhirJsonDataFormatSpringTest extends CamelSpringTestSupport {
 
     private Patient getPatient() {
         Patient patient = new Patient();
-        patient.addName(new HumanName().addGiven("Sherlock").setFamily("Holmes")).addAddress(new Address().addLine("221b Baker St, Marylebone, London NW1 6XE, UK"));
+        patient.addName(new HumanName().addGiven("Sherlock").setFamily("Holmes"))
+                .addAddress(new Address().addLine("221b Baker St, Marylebone, London NW1 6XE, UK"));
         return patient;
     }
 

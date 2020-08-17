@@ -39,7 +39,8 @@ public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("geocoder:address:current?headersOnly=true&apiKey=" + getApiKey()).to("log:result")
-                    .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}").to("mock:result");
+                        .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
+                        .to("mock:result");
             }
         };
     }

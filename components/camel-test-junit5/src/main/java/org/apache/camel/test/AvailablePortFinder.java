@@ -42,7 +42,7 @@ public final class AvailablePortFinder {
      * Gets the next available port.
      *
      * @throws IllegalStateException if there are no ports available
-     * @return the available port
+     * @return                       the available port
      */
     public static int getNextAvailable() {
         return probePort(0);
@@ -51,11 +51,11 @@ public final class AvailablePortFinder {
     /**
      * Gets the next available port in the given range.
      *
-     * @param fromPort port number start range.
-     * @param toPort port number end range.
+     * @param  fromPort              port number start range.
+     * @param  toPort                port number end range.
      *
      * @throws IllegalStateException if there are no ports available
-     * @return the available port
+     * @return                       the available port
      */
     public static int getNextAvailable(int fromPort, int toPort) {
         for (int i = fromPort; i <= toPort; i++) {
@@ -71,9 +71,12 @@ public final class AvailablePortFinder {
     /**
      * Probe a port to see if it is free
      *
-     * @param port an integer port number to be tested. If port is 0, then the next available port is returned.
-     * @throws IllegalStateException if the port is not free or, in case of port 0, if there are no ports available at all.
-     * @return the port number itself if the port is free or, in case of port 0, the first available port number.
+     * @param  port                  an integer port number to be tested. If port is 0, then the next available port is
+     *                               returned.
+     * @throws IllegalStateException if the port is not free or, in case of port 0, if there are no ports available at
+     *                               all.
+     * @return                       the port number itself if the port is free or, in case of port 0, the first
+     *                               available port number.
      */
     private static int probePort(int port) {
         try (ServerSocket ss = new ServerSocket()) {

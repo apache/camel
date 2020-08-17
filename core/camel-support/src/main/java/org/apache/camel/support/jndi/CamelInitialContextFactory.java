@@ -25,8 +25,8 @@ import javax.naming.spi.InitialContextFactory;
 import org.apache.camel.util.CastUtils;
 
 /**
- * A factory of the Camel {@link javax.naming.InitialContext} which allows a {@link java.util.Map} to be used to create a
- * JNDI context.
+ * A factory of the Camel {@link javax.naming.InitialContext} which allows a {@link java.util.Map} to be used to create
+ * a JNDI context.
  * <p/>
  * This implementation is prototype based, by creating a <b>new</b> context on each call to
  * {@link #getInitialContext(java.util.Hashtable)}.
@@ -36,8 +36,8 @@ public class CamelInitialContextFactory implements InitialContextFactory {
     /**
      * Creates a new context with the given environment.
      *
-     * @param  environment  the environment, must not be <tt>null</tt>
-     * @return the created context.
+     * @param  environment     the environment, must not be <tt>null</tt>
+     * @return                 the created context.
      * @throws NamingException is thrown if creation failed.
      */
     @Override

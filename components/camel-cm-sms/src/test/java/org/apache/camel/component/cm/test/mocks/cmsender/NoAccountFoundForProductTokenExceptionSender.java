@@ -23,7 +23,7 @@ import org.apache.camel.component.cm.exceptions.cmresponse.NoAccountFoundForProd
 public class NoAccountFoundForProductTokenExceptionSender implements CMSender {
 
     @Override
-    public void send(CMMessage cmMessage)  {
+    public void send(CMMessage cmMessage) {
         throw new NoAccountFoundForProductTokenException();
     }
 

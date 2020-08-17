@@ -36,15 +36,12 @@ import static org.apache.camel.test.junit5.TestSupport.body;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Integration test that verifies we can replace the internal
- * ConnectionFactoryResource with another provider.
+ * Integration test that verifies we can replace the internal ConnectionFactoryResource with another provider.
  */
 public class ConnectionResourceIT extends JmsTestSupport {
 
     /**
-     * Test method for
-     * {@link org.apache.commons.pool.ObjectPool#returnObject(java.lang.Object)}
-     * .
+     * Test method for {@link org.apache.commons.pool.ObjectPool#returnObject(java.lang.Object)} .
      * 
      * @throws Exception
      */
@@ -100,12 +97,12 @@ public class ConnectionResourceIT extends JmsTestSupport {
             public void configure() throws Exception {
 
                 from("seda:start")
-                    .to("sjms:queue:in.foo?namedReplyTo=out.bar&exchangePattern=InOut&producerCount=5")
-                    .to("mock:result");
+                        .to("sjms:queue:in.foo?namedReplyTo=out.bar&exchangePattern=InOut&producerCount=5")
+                        .to("mock:result");
 
                 from("sjms:queue:in.foo?exchangePattern=InOut&consumerCount=20")
-                    .log("Using ${threadName} to process ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

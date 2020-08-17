@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.digitalocean.constants;
 
-
 public enum DigitalOceanResources {
 
     account,
@@ -30,6 +29,5 @@ public enum DigitalOceanResources {
     sizes,
     floatingIPs,
     tags
-
 
 }

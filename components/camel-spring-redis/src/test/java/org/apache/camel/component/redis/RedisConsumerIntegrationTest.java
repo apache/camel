@@ -73,10 +73,9 @@ public class RedisConsumerIntegrationTest extends RedisTestSupport {
         mock.expectedBodiesReceived("message");
 
         sendHeaders(
-                       RedisConstants.COMMAND, "PUBLISH",
-                       RedisConstants.CHANNEL, "two",
-                       RedisConstants.MESSAGE, "message");
+                RedisConstants.COMMAND, "PUBLISH",
+                RedisConstants.CHANNEL, "two",
+                RedisConstants.MESSAGE, "message");
         mock.assertIsSatisfied();
     }
 }
-

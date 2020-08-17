@@ -30,14 +30,14 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
             public void configure() {
                 // START SNIPPET: onException
                 from("direct:start").onException(SoapFault.class).maximumRedeliveries(0).handled(true)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            SoapFault fault = exchange
-                                .getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                            exchange.getOut().setBody(fault);
-                        }
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                SoapFault fault = exchange
+                                        .getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
+                                exchange.getOut().setBody(fault);
+                            }
 
-                    }).end().to(serviceURI);
+                        }).end().to(serviceURI);
                 // END SNIPPET: onException
                 // START SNIPPET: MessageStreamFault
                 from(routerEndpointURI).process(new Processor() {
@@ -51,7 +51,7 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
                     }
 
                 });
-             // END SNIPPET: MessageStreamFault
+                // END SNIPPET: MessageStreamFault
             }
         };
     }

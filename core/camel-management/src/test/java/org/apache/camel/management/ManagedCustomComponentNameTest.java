@@ -68,8 +68,8 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
                 context.addComponent("foo", new MockComponent());
 
                 from("direct:start")
-                    .to("foo:foo")
-                    .to("mock:result");
+                        .to("foo:foo")
+                        .to("mock:result");
             }
         };
     }

@@ -33,7 +33,8 @@ public class JmsInOutExclusiveTopicRecipientListTest extends CamelTestSupport {
     public void testJmsInOutExclusiveTopicTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo", "activemq:topic:news?replyToType=Exclusive&replyTo=queue:back", String.class);
+        String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo",
+                "activemq:topic:news?replyToType=Exclusive&replyTo=queue:back", String.class);
         assertEquals("Bye Camel", out);
 
         assertMockEndpointsSatisfied();
@@ -52,8 +53,8 @@ public class JmsInOutExclusiveTopicRecipientListTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .recipientList().header("whereTo")
-                    .to("mock:result");
+                        .recipientList().header("whereTo")
+                        .to("mock:result");
 
                 from("activemq:topic:news?disableReplyTo=true")
                         .transform(body().prepend("Bye "))
@@ -67,7 +68,8 @@ public class JmsInOutExclusiveTopicRecipientListTest extends CamelTestSupport {
                                 // wait a bit before sending back
                                 Thread.sleep(1000);
                                 log.info("Sending back reply message on {}", replyTo);
-                                template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(), "JMSCorrelationID", cid);
+                                template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(),
+                                        "JMSCorrelationID", cid);
                             }
                         });
             }

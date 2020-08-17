@@ -39,11 +39,11 @@ import org.apache.camel.util.ObjectHelper;
  * A default management strategy that does <b>not</b> manage.
  * <p/>
  * This is default only used if Camel detects that it cannot use the JMX capable
- * {@link org.apache.camel.management.JmxManagementStrategy} strategy. Then Camel will
- * fallback to use this instead that is basically a simple and <tt>noop</tt> strategy.
+ * {@link org.apache.camel.management.JmxManagementStrategy} strategy. Then Camel will fallback to use this instead that
+ * is basically a simple and <tt>noop</tt> strategy.
  * <p/>
- * This class can also be used to extend your custom management implement. In fact the JMX capable
- * provided by Camel extends this class as well.
+ * This class can also be used to extend your custom management implement. In fact the JMX capable provided by Camel
+ * extends this class as well.
  *
  * @see org.apache.camel.management.JmxManagementStrategy
  */

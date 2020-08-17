@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Consumes new comments on JIRA issues.
  *
- * NOTE: In your JQL, try to optimize the query as much as possible!  For example, the JIRA Toolkit Plugin includes a
-// "Number of comments" custom field -- use '"Number of comments" > 0' in your query.  Also try to minimize based on
-// state (status=Open), increase the polling delay, etc.  We have to do a separate query for *every single* resulting
- * ticket in order to load its comments!  For large organizations, the JIRA API can be significantly slow.
+ * NOTE: In your JQL, try to optimize the query as much as possible! For example, the JIRA Toolkit Plugin includes a //
+ * "Number of comments" custom field -- use '"Number of comments" > 0' in your query. Also try to minimize based on //
+ * state (status=Open), increase the polling delay, etc. We have to do a separate query for *every single* resulting
+ * ticket in order to load its comments! For large organizations, the JIRA API can be significantly slow.
  */
 public class NewCommentsConsumer extends AbstractJiraConsumer {
 
@@ -80,12 +80,13 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
                 }
             }
         }
-        for (Comment c: newComments) {
+        for (Comment c : newComments) {
             if (c.getId() > lastCommentId) {
                 lastCommentId = c.getId();
             }
         }
-        LOG.debug("End: Jira NewCommentsConsumer: retrieving issue comments. {} new comments since last run.", newComments.size());
+        LOG.debug("End: Jira NewCommentsConsumer: retrieving issue comments. {} new comments since last run.",
+                newComments.size());
         return newComments;
     }
 }

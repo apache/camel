@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  */
 public class CxfRsProducerClientFactoryCacheTest {
-    private static int port1 = CXFTestSupport.getPort1(); 
+    private static int port1 = CXFTestSupport.getPort1();
 
     private CamelContext context1;
     private ProducerTemplate template1;
@@ -47,13 +47,14 @@ public class CxfRsProducerClientFactoryCacheTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
+        applicationContext = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
         context1 = SpringCamelContext.springCamelContext(applicationContext, false);
         context1.start();
         template1 = context1.createProducerTemplate();
         template1.start();
     }
-    
+
     @AfterEach
     public void tearDown() throws Exception {
         if (context1 != null) {
@@ -65,7 +66,7 @@ public class CxfRsProducerClientFactoryCacheTest {
             applicationContext.close();
         }
     }
-    
+
     @Test
     public void testGetCostumerWithHttpCentralClientAPI() throws Exception {
         doRunTest(template1, getPort1());
@@ -78,16 +79,16 @@ public class CxfRsProducerClientFactoryCacheTest {
                 Message inMessage = exchange.getIn();
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
-                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");                
+                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
                 inMessage.setHeader("clientPort", clientPort);
-                inMessage.setBody(null);                
+                inMessage.setBody(null);
             }
         });
-     
+
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
-        
+
         assertNotNull(response, "The response should not be null");
         assertEquals(String.valueOf(response.getId()), "123", "Get a wrong customer id");
         assertEquals(response.getName(), "John", "Get a wrong customer name");

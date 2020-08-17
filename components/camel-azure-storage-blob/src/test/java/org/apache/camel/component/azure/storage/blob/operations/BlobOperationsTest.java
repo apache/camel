@@ -106,7 +106,8 @@ public class BlobOperationsTest extends CamelTestSupport {
 
         //third: test with exchange provided but with outputstream set
         // mocking
-        final ResponseBase<BlobDownloadHeaders, Void> mockedResults2 = new ResponseBase<>(null, 200, new HttpHeaders().put("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
+        final ResponseBase<BlobDownloadHeaders, Void> mockedResults2 = new ResponseBase<>(
+                null, 200, new HttpHeaders().put("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
         when(client.downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any())).thenReturn(mockedResults2);
         exchange.getIn().setBody(new ByteArrayOutputStream());
 
@@ -124,7 +125,8 @@ public class BlobOperationsTest extends CamelTestSupport {
         final BlockBlobItem blockBlobItem = new BlockBlobItem("testTag", OffsetDateTime.now(), null, false, null);
         final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
 
-        when(client.uploadBlockBlob(any(), anyLong(), any(), any(), any(), any(), any(), any())).thenReturn(new ResponseBase<>(null, 200, httpHeaders, blockBlobItem, null));
+        when(client.uploadBlockBlob(any(), anyLong(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, blockBlobItem, null));
 
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new ByteArrayInputStream("test".getBytes(Charset.defaultCharset())));
@@ -138,7 +140,8 @@ public class BlobOperationsTest extends CamelTestSupport {
         assertTrue((boolean) operationResponse.getBody());
         assertNotNull(operationResponse.getHeaders());
         assertEquals("testTag", operationResponse.getHeaders().get(BlobConstants.E_TAG));
-        assertEquals("123", ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS)).get("x-test-header").getValue());
+        assertEquals("123", ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
     }
 
     @Test
@@ -167,7 +170,8 @@ public class BlobOperationsTest extends CamelTestSupport {
     }
 
     private BlobProperties createBlobProperties() {
-        return new BlobProperties(OffsetDateTime.now(), null, null, 0L, null, null, null, null, null,
+        return new BlobProperties(
+                OffsetDateTime.now(), null, null, 0L, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null,
                 null, null, null, null);

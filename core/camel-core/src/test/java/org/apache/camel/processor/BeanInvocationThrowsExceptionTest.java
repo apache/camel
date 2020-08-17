@@ -33,7 +33,7 @@ public class BeanInvocationThrowsExceptionTest extends ContextTestSupport {
     // START SNIPPET: e1
     @Test
     public void testBeanInvocation() {
-        int result = (Integer)template.sendBody("direct:input", ExchangePattern.InOut, "Hello London");
+        int result = (Integer) template.sendBody("direct:input", ExchangePattern.InOut, "Hello London");
         assertEquals(1, result);
     }
 

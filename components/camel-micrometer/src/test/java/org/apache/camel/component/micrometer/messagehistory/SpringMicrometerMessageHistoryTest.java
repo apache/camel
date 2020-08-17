@@ -37,7 +37,8 @@ public class SpringMicrometerMessageHistoryTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/micrometer/messagehistory/SpringMetricsMessageHistoryTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/micrometer/messagehistory/SpringMetricsMessageHistoryTest.xml");
     }
 
     @Test

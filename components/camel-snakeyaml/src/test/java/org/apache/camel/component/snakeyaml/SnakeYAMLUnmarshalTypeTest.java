@@ -41,7 +41,7 @@ public class SnakeYAMLUnmarshalTypeTest extends CamelTestSupport {
                 format.setUnmarshalType(TestPojo.class);
 
                 from("direct:unmarshal")
-                    .unmarshal(format);
+                        .unmarshal(format);
             }
         };
     }

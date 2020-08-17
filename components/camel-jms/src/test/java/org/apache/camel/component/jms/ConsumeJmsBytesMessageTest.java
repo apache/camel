@@ -67,7 +67,7 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
 
         endpoint.expectedMessageCount(1);
 
-        byte[] bytes = new byte[] {1, 2, 3};
+        byte[] bytes = new byte[] { 1, 2, 3 };
 
         template.sendBody("direct:test", bytes);
 
@@ -81,7 +81,7 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
         assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
         JmsMessage in = (JmsMessage) exchange.getIn();
         assertNotNull(in);
-        
+
         byte[] bytes = exchange.getIn().getBody(byte[].class);
         LOG.info("Received bytes: " + Arrays.toString(bytes));
 
@@ -90,7 +90,6 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
         assertEquals(1, bytes[0], "Wrong byte 1");
         assertEquals(3, bytes.length);
     }
-
 
     @Override
     @BeforeEach

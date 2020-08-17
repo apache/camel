@@ -26,8 +26,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.olingo.odata2.api.edm.Edm;
 
 /**
- * Holder class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
- * and its lazily read {@link org.apache.olingo.odata2.api.edm.Edm}.
+ * Holder class for {@link org.apache.camel.component.olingo2.api.Olingo2App} and its lazily read
+ * {@link org.apache.olingo.odata2.api.edm.Edm}.
  */
 public class Olingo2AppWrapper {
 
@@ -87,7 +87,7 @@ public class Olingo2AppWrapper {
                         final Exception ex = error[0];
                         if (ex != null) {
                             if (ex instanceof RuntimeCamelException) {
-                                throw (RuntimeCamelException)ex;
+                                throw (RuntimeCamelException) ex;
                             } else {
                                 final String message = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
                                 throw new RuntimeCamelException("Error reading EDM: " + message, ex);

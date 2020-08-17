@@ -30,7 +30,8 @@ public class SpringAdviceWithContextScopedErrorHandlerIssueTest extends SpringTe
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringAdviceWithContextScopedErrorHandlerIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/SpringAdviceWithContextScopedErrorHandlerIssueTest.xml");
     }
 
     @Test
@@ -39,8 +40,8 @@ public class SpringAdviceWithContextScopedErrorHandlerIssueTest extends SpringTe
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:bar")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new IllegalArgumentException("Forced"));
+                        .skipSendToOriginalEndpoint()
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 

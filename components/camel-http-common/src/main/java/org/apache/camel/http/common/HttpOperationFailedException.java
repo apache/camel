@@ -24,7 +24,8 @@ import java.util.Map;
 @Deprecated
 public class HttpOperationFailedException extends org.apache.camel.http.base.HttpOperationFailedException {
 
-    public HttpOperationFailedException(String uri, int statusCode, String statusText, String location, Map<String, String> responseHeaders, String responseBody) {
+    public HttpOperationFailedException(String uri, int statusCode, String statusText, String location,
+                                        Map<String, String> responseHeaders, String responseBody) {
         super(uri, statusCode, statusText, location, responseHeaders, responseBody);
     }
 }

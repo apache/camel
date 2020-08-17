@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 public class InfinispanComponentTest extends InfinispanTestSupport {
     private final String cacheName = "default";
 
@@ -39,10 +38,10 @@ public class InfinispanComponentTest extends InfinispanTestSupport {
     @Test
     public void producerPublishesKeyAndValue() throws Exception {
         fluentTemplate()
-            .to("direct:start")
-            .withHeader(InfinispanConstants.KEY, KEY_ONE)
-            .withHeader(InfinispanConstants.VALUE, VALUE_ONE)
-            .send();
+                .to("direct:start")
+                .withHeader(InfinispanConstants.KEY, KEY_ONE)
+                .withHeader(InfinispanConstants.VALUE, VALUE_ONE)
+                .send();
 
         assertThat(namedCache(cacheName).get(KEY_ONE).toString(), is(VALUE_ONE));
     }
@@ -53,9 +52,9 @@ public class InfinispanComponentTest extends InfinispanTestSupport {
             @Override
             public void configure() {
                 fromF("infinispan:%s?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_CREATED", cacheName)
-                    .to("mock:result");
+                        .to("mock:result");
                 from("direct:start")
-                    .toF("infinispan:%s?cacheContainer=#cacheContainer", cacheName);
+                        .toF("infinispan:%s?cacheContainer=#cacheContainer", cacheName);
             }
         };
     }

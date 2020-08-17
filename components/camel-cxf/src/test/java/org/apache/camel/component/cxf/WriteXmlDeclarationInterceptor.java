@@ -31,7 +31,7 @@ public class WriteXmlDeclarationInterceptor extends AbstractPhaseInterceptor<Soa
 
     @Override
     public void handleMessage(SoapMessage message) throws Fault {
-        message.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);        
+        message.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
     }
 
 }

@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Unit test to poll a fixed file from the FTP server without using the list
- * command.
+ * Unit test to poll a fixed file from the FTP server without using the list command.
  */
 public class FtpConsumerTemplateUseListFalseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/nolist/?password=admin" + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&delete=true";
+        return "ftp://admin@localhost:" + getPort() + "/nolist/?password=admin"
+               + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&delete=true";
     }
 
     @Override

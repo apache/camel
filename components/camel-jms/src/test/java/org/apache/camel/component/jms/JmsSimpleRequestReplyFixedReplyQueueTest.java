@@ -69,11 +69,11 @@ public class JmsSimpleRequestReplyFixedReplyQueueTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .inOut("activemq:queue:foo?replyTo=queue:bar")
-                    .to("mock:result");
+                        .inOut("activemq:queue:foo?replyTo=queue:bar")
+                        .to("mock:result");
 
                 from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
             }
         };
     }

@@ -40,8 +40,8 @@ public class OgnlResourceTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().ognl("resource:classpath:myognl.txt")
-                    .to("mock:result");
+                        .transform().ognl("resource:classpath:myognl.txt")
+                        .to("mock:result");
             }
         };
     }

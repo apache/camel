@@ -21,16 +21,14 @@ import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.springframework.beans.factory.SmartFactoryBean;
 
 /**
- * This factoryBean which can help user to choice CXF components that he wants bus to load
- * without needing to import bunch of CXF packages in OSGi bundle, as the SpringBusFactory
- * will try to load the bus extensions with the CXF bundle classloader.
- * You can set the CXF extensions files with ; as the separator to create a bus.
+ * This factoryBean which can help user to choice CXF components that he wants bus to load without needing to import
+ * bunch of CXF packages in OSGi bundle, as the SpringBusFactory will try to load the bus extensions with the CXF bundle
+ * classloader. You can set the CXF extensions files with ; as the separator to create a bus.
  * 
- * NOTE: when you set the includeDefaultBus value to be false, you should aware that the CXF bus
- * will automatically load all the extension in CXF 2.4.x by default.  
- * You can still specify the spring extension file in the cfgFiles list and it will override 
- * the extensions which is load by CXF bus.
- */ 
+ * NOTE: when you set the includeDefaultBus value to be false, you should aware that the CXF bus will automatically load
+ * all the extension in CXF 2.4.x by default. You can still specify the spring extension file in the cfgFiles list and
+ * it will override the extensions which is load by CXF bus.
+ */
 public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
     private String[] cfgFiles;
     private boolean includeDefaultBus;

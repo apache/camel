@@ -32,7 +32,8 @@ public class AdviceWithContextScopedErrorHandlerIssueTest extends ContextTestSup
         RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 

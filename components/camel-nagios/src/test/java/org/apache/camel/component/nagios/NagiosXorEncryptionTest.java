@@ -35,7 +35,8 @@ import static org.mockito.Mockito.verify;
 public class NagiosXorEncryptionTest extends CamelTestSupport {
     protected boolean canRun;
 
-    @Mock @BindToRegistry("mySender")
+    @Mock
+    @BindToRegistry("mySender")
     private PassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
 
     @BeforeEach
@@ -44,14 +45,14 @@ public class NagiosXorEncryptionTest extends CamelTestSupport {
         canRun = true;
         super.setUp();
     }
-    
+
     @Test
     public void testSendToNagios() throws Exception {
         if (!canRun) {
             return;
         }
 
-        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK, context.getName(),  "Hello Nagios");
+        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK, context.getName(), "Hello Nagios");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.allMessages().body().isInstanceOf(String.class);

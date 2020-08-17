@@ -82,8 +82,9 @@ public class IgniteSetTest extends AbstractIgniteTest {
         }
 
         // RETAIN_ALL
-        boolean retained = template.requestBodyAndHeader("ignite-set:" + resourceUid + "?operation=CLEAR", toRetain, IgniteConstants.IGNITE_SETS_OPERATION,
-                                                         IgniteSetOperation.RETAIN_ALL, boolean.class);
+        boolean retained = template.requestBodyAndHeader("ignite-set:" + resourceUid + "?operation=CLEAR", toRetain,
+                IgniteConstants.IGNITE_SETS_OPERATION,
+                IgniteSetOperation.RETAIN_ALL, boolean.class);
         Assertions.assertThat(retained).isTrue();
 
         // SIZE
@@ -92,7 +93,8 @@ public class IgniteSetTest extends AbstractIgniteTest {
         Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).size()).isEqualTo(50);
 
         // ITERATOR
-        Iterator<String> iterator = template.requestBody("ignite-set:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
+        Iterator<String> iterator
+                = template.requestBody("ignite-set:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
         Assertions.assertThat(Iterators.toArray(iterator, String.class)).containsAll(toRetain);
 
         // ARRAY
@@ -117,7 +119,8 @@ public class IgniteSetTest extends AbstractIgniteTest {
             template.requestBody("ignite-set:" + resourceUid + "?operation=ADD", "hello" + i);
         }
 
-        boolean retained = template.requestBody("ignite-set:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
+        boolean retained
+                = template.requestBody("ignite-set:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
         Assertions.assertThat(retained).isTrue();
 
         // ARRAY
@@ -143,7 +146,8 @@ public class IgniteSetTest extends AbstractIgniteTest {
         Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration()).contains(toAdd)).isTrue();
 
         // Check whether the Set contains the Set.
-        boolean contains = template.requestBody("ignite-set:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true", toAdd, boolean.class);
+        boolean contains = template.requestBody(
+                "ignite-set:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true", toAdd, boolean.class);
         Assertions.assertThat(contains).isTrue();
 
         // Delete the Set.
@@ -164,7 +168,8 @@ public class IgniteSetTest extends AbstractIgniteTest {
 
         context.getRegistry().bind("config", configuration);
 
-        IgniteSetEndpoint igniteEndpoint = context.getEndpoint("ignite-" + "set:" + resourceUid + "?operation=ADD&configuration=#config", IgniteSetEndpoint.class);
+        IgniteSetEndpoint igniteEndpoint = context.getEndpoint(
+                "ignite-" + "set:" + resourceUid + "?operation=ADD&configuration=#config", IgniteSetEndpoint.class);
         template.requestBody(igniteEndpoint, "hello");
 
         Assertions.assertThat(ignite().set(resourceUid, configuration).size()).isEqualTo(1);

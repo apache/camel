@@ -47,7 +47,6 @@ public class AvroGenericMarshaAndUnmarshaTest extends CamelTestSupport {
         marshalAndUnmarshalGeneric("direct:in", "direct:back");
     }
 
-
     private void marshalAndUnmarshalGeneric(String inURI, String outURI) throws InterruptedException {
         GenericRecord input = new GenericData.Record(schema);
         input.put("name", "ceposta");

@@ -24,7 +24,8 @@ public class HttpOperationFailedExceptionTest {
 
     @Test
     public void testUriIsSanitized() {
-        HttpOperationFailedException httpOperationFailedException = new HttpOperationFailedException("http://user:password@host", 500, "", "", null, "");
+        HttpOperationFailedException httpOperationFailedException
+                = new HttpOperationFailedException("http://user:password@host", 500, "", "", null, "");
 
         assertFalse(httpOperationFailedException.getMessage().contains("password"));
         assertFalse(httpOperationFailedException.getUri().contains("password"));

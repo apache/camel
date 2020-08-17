@@ -95,7 +95,9 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
             throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
-        PulsarEndpoint from = (PulsarEndpoint) component.createEndpoint("pulsar:" + TOPIC_URI + "?maxRedeliverCount=5&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
+        PulsarEndpoint from = (PulsarEndpoint) component
+                .createEndpoint("pulsar:" + TOPIC_URI
+                                + "?maxRedeliverCount=5&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
         PulsarEndpoint deadLetterFrom = (PulsarEndpoint) component.createEndpoint("pulsar:" + TOPIC_URI + "-subs-DLQ");
 
         to.expectedMessageCount(5);
@@ -114,11 +116,15 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
     }
 
     @Test
-    public void givenMaxRedeliverCountAndDeadLetterTopicverifyMessageGetsSentToSpecifiedDeadLetterTopicAfterCountExceeded() throws Exception {
+    public void givenMaxRedeliverCountAndDeadLetterTopicverifyMessageGetsSentToSpecifiedDeadLetterTopicAfterCountExceeded()
+            throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
-        PulsarEndpoint from = (PulsarEndpoint) component.createEndpoint("pulsar:" + TOPIC_URI + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
-        PulsarEndpoint deadLetterFrom = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
+        PulsarEndpoint from = (PulsarEndpoint) component
+                .createEndpoint("pulsar:" + TOPIC_URI
+                                + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
+        PulsarEndpoint deadLetterFrom
+                = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
 
         to.expectedMessageCount(5);
         deadLetter.expectedMessageCount(1);
@@ -139,8 +145,11 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
     public void givenOnlyDeadLetterTopicverifyMessageDoesNotGetSentToSpecifiedTopic() throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
-        PulsarEndpoint from = (PulsarEndpoint) component.createEndpoint("pulsar:" + TOPIC_URI + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
-        PulsarEndpoint deadLetterFrom = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
+        PulsarEndpoint from = (PulsarEndpoint) component
+                .createEndpoint("pulsar:" + TOPIC_URI
+                                + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
+        PulsarEndpoint deadLetterFrom
+                = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
 
         to.expectedMessageCount(6);
         deadLetter.expectedMessageCount(0);
@@ -150,7 +159,8 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     Integer tries = exchange.getProperty("retryCount", 1, Integer.class);
                     if (tries >= 6) {
-                        PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                        PulsarMessageReceipt receipt
+                                = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                         receipt.acknowledge();
                     }
                     exchange.setProperty("retryCount", tries + 1);

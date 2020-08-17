@@ -73,16 +73,14 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
     public void doStart() throws Exception {
         if (serviceRegistry == null) {
             serviceRegistry = ServiceRegistryHelper.lookupService(camelContext, serviceRegistrySelector).orElseThrow(
-                () -> new IllegalStateException("ServiceRegistry service not found")
-            );
+                    () -> new IllegalStateException("ServiceRegistry service not found"));
         }
 
         LOGGER.debug("ServiceRegistrationRoutePolicy {} is using ServiceRegistry instance {} (id={}, type={})",
-            this,
-            serviceRegistry,
-            serviceRegistry.getId(),
-            serviceRegistry.getClass().getName()
-        );
+                this,
+                serviceRegistry,
+                serviceRegistry.getId(),
+                serviceRegistry.getClass().getName());
     }
 
     // ***********************
@@ -135,7 +133,7 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
         // then add additional properties from route with ServiceDefinition.SERVICE_META_PREFIX,
         // note that route defined properties may override DiscoverableService
         // provided ones
-        for (Map.Entry<String, Object> entry: route.getProperties().entrySet()) {
+        for (Map.Entry<String, Object> entry : route.getProperties().entrySet()) {
             if (!entry.getKey().startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
                 continue;
             }
@@ -186,14 +184,11 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
         // Build the final resource definition from bits collected from the
         // endpoint and the route.
         return Optional.of(
-            new DefaultServiceDefinition(
-                serviceId,
-                serviceName,
-                serviceHost,
-                Integer.parseInt(servicePort),
-                properties
-            )
-        );
+                new DefaultServiceDefinition(
+                        serviceId,
+                        serviceName,
+                        serviceHost,
+                        Integer.parseInt(servicePort),
+                        properties));
     }
 }
-

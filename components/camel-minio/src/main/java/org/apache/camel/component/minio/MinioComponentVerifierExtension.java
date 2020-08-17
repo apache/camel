@@ -69,7 +69,8 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
             MinioClient.Builder clientBuilderRequest = MinioClient.builder();
 
             if (isEmpty(configuration.getEndpoint())) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service endpoint has not defined");
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
+                        VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service endpoint has not defined");
                 return builder.error(errorBuilder.build()).build();
             }
 
@@ -91,10 +92,11 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
             MinioClient client = clientBuilderRequest.build();
             client.listBuckets();
         } catch (MinioException e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                    .detail("minio_exception_message", e.getMessage())
-                    .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                    .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("minio_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

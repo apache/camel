@@ -83,7 +83,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Photo");
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.PHOTO_JPG); // without using
-                                                                                                  // .name()
+                                                                                                 // .name()
         byte[] image = TelegramTestUtil.createSampleImage("JPG");
         ex.getIn().setBody(image);
 
@@ -150,8 +150,9 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         mockProcessor.clearRecordedMessages();
 
         InlineKeyboardMarkup ik = InlineKeyboardMarkup.builder()
-            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                .url("https://camel.apache.org").build())).build();
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                        .url("https://camel.apache.org").build()))
+                .build();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Photo");
@@ -295,8 +296,8 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-id", message.getChatId());
         assertEquals("Hello", message.getText());
-        assertEquals(2, ((ReplyKeyboardMarkup)message.getReplyMarkup()).getKeyboard().size());
-        assertEquals(true, ((ReplyKeyboardMarkup)message.getReplyMarkup()).getOneTimeKeyboard());
+        assertEquals(2, ((ReplyKeyboardMarkup) message.getReplyMarkup()).getKeyboard().size());
+        assertEquals(true, ((ReplyKeyboardMarkup) message.getReplyMarkup()).getOneTimeKeyboard());
         assertNull(message.getParseMode());
     }
 
@@ -358,13 +359,13 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
-                }
-            }};
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
+                    }
+                } };
     }
 
     @Override
@@ -396,19 +397,22 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
                         OutgoingTextMessage.class,
                         TelegramTestUtil.stringResource("messages/send-message.json"))
                 .addEndpoint(
-                    "sendGame",
-                    "POST",
-                    OutgoingGameMessage.class,
-                    TelegramTestUtil.stringResource("messages/send-game.json"));
+                        "sendGame",
+                        "POST",
+                        OutgoingGameMessage.class,
+                        TelegramTestUtil.stringResource("messages/send-game.json"));
     }
 
     static void assertMultipartFilename(byte[] message, String name, String filename) {
-        assertTrue(contains(message, ("name=\"" + name + "\"; filename=\"" + filename + "\"").getBytes(StandardCharsets.UTF_8)));
+        assertTrue(
+                contains(message, ("name=\"" + name + "\"; filename=\"" + filename + "\"").getBytes(StandardCharsets.UTF_8)));
     }
+
     static void assertMultipartText(byte[] message, String key, String value) {
         assertTrue(contains(message, ("name=\"" + key + "\"\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" + value)
                 .getBytes(StandardCharsets.UTF_8)));
     }
+
     static boolean contains(byte[] array, byte[] target) {
         if (target.length == 0) {
             return true;

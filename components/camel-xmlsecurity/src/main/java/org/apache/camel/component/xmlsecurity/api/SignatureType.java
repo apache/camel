@@ -18,6 +18,8 @@ package org.apache.camel.component.xmlsecurity.api;
 
 public enum SignatureType {
 
-    enveloping, enveloped, detached
+    enveloping,
+    enveloped,
+    detached
 
 }

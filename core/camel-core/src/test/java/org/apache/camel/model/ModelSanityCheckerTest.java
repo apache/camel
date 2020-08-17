@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Performs sanity check on the model classes that their JAXB annotations and
- * getter/setter match up.
+ * Performs sanity check on the model classes that their JAXB annotations and getter/setter match up.
  */
 public class ModelSanityCheckerTest {
 
@@ -78,7 +77,8 @@ public class ModelSanityCheckerTest {
                 // only one of those 3 is allowed, so check that we don't have
                 // 2+ of them
                 if ((attribute && element) || (attribute && elementRef) || (element && elementRef)) {
-                    fail("Class " + clazz.getName() + " has field " + field.getName() + " which has 2+ annotations that are not allowed together.");
+                    fail("Class " + clazz.getName() + " has field " + field.getName()
+                         + " which has 2+ annotations that are not allowed together.");
                 }
 
                 // check getter/setter
@@ -107,10 +107,13 @@ public class ModelSanityCheckerTest {
                 boolean element = method.getAnnotation(XmlElement.class) != null;
                 boolean elementRef = method.getAnnotation(XmlElementRef.class) != null;
 
-                assertFalse(attribute, "Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlAttribute annotation");
-                assertFalse(element, "Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlElement annotation");
+                assertFalse(attribute, "Class " + clazz.getName() + " has method " + method.getName()
+                                       + " should not have @XmlAttribute annotation");
+                assertFalse(element, "Class " + clazz.getName() + " has method " + method.getName()
+                                     + " should not have @XmlElement annotation");
                 boolean b = elementRef && !"setOutputs".equals(method.getName());
-                assertFalse(b, "Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlElementRef annotation");
+                assertFalse(b, "Class " + clazz.getName() + " has method " + method.getName()
+                               + " should not have @XmlElementRef annotation");
             }
         }
 

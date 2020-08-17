@@ -24,7 +24,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Interact with jclouds compute & blobstore service.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "jclouds", title = "JClouds", syntax = "jclouds:command:providerId", category = {Category.API, Category.CLOUD, Category.COMPUTE})
+@UriEndpoint(firstVersion = "2.9.0", scheme = "jclouds", title = "JClouds", syntax = "jclouds:command:providerId",
+             category = { Category.API, Category.CLOUD, Category.COMPUTE })
 public abstract class JcloudsEndpoint extends DefaultEndpoint {
 
     @UriParam

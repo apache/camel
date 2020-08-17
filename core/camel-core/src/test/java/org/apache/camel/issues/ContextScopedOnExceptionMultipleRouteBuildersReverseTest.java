@@ -18,11 +18,12 @@ package org.apache.camel.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class ContextScopedOnExceptionMultipleRouteBuildersReverseTest extends ContextScopedOnExceptionMultipleRouteBuildersTest {
+public class ContextScopedOnExceptionMultipleRouteBuildersReverseTest
+        extends ContextScopedOnExceptionMultipleRouteBuildersTest {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handle-bar");
@@ -36,7 +37,7 @@ public class ContextScopedOnExceptionMultipleRouteBuildersReverseTest extends Co
 
                 from("direct:foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
             }
-        }};
+        } };
     }
 
 }

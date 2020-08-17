@@ -131,7 +131,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // primitive boolean which must return a value so throw exception if not possible
                 Object answer = ObjectConverter.toBoolean(value);
                 if (answer == null) {
-                    throw new TypeConversionException(value, type, new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
+                    throw new TypeConversionException(
+                            value, type,
+                            new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
             } else if (type == Boolean.class && (value instanceof String)) {
@@ -180,7 +182,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // primitive boolean which must return a value so throw exception if not possible
                 Object answer = ObjectConverter.toBoolean(value);
                 if (answer == null) {
-                    throw new TypeConversionException(value, type, new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
+                    throw new TypeConversionException(
+                            value, type,
+                            new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
             } else if (type == Boolean.class && (value instanceof String)) {
@@ -227,8 +231,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         return (T) doConvertTo(type, exchange, value, false, true);
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value,
-                                 final boolean mandatory, final boolean tryConvert) {
+    protected Object doConvertTo(
+            final Class<?> type, final Exchange exchange, final Object value,
+            final boolean mandatory, final boolean tryConvert) {
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value, tryConvert);
@@ -264,8 +269,10 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         }
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value,
-                                 final boolean tryConvert) throws Exception {
+    protected Object doConvertTo(
+            final Class<?> type, final Exchange exchange, final Object value,
+            final boolean tryConvert)
+            throws Exception {
         boolean trace = LOG.isTraceEnabled();
         boolean statisticsEnabled = statistics.isStatisticsEnabled();
 
@@ -274,7 +281,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                     value == null ? "null" : value.getClass().getCanonicalName(),
                     type.getCanonicalName(), value);
         }
-
 
         if (value == null) {
             // no type conversion was needed
@@ -391,8 +397,10 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 if (fallback.isCanPromote()) {
                     // add it as a known type converter since we found a fallback that could do it
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
-                                type.getCanonicalName(), value.getClass().getCanonicalName(), fallback.getFallbackTypeConverter());
+                        LOG.debug(
+                                "Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
+                                type.getCanonicalName(), value.getClass().getCanonicalName(),
+                                fallback.getFallbackTypeConverter());
                     }
                     addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
                 }
@@ -522,7 +530,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 TypeConverter converter = typeMappings.getFirst(
                         toType::isAssignableFrom,
                         // skip Object based we do them last
-                from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
+                        from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
                 if (converter != null) {
                     return converter;
                 }
@@ -541,12 +549,12 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     public List<Class<?>[]> listAllTypeConvertersFromTo() {
         List<Class<?>[]> answer = new ArrayList<>();
-        typeMappings.forEach((k1, k2, v) -> answer.add(new Class<?>[]{k2, k1}));
+        typeMappings.forEach((k1, k2, v) -> answer.add(new Class<?>[] { k2, k1 }));
         return answer;
     }
 
-    protected TypeConversionException createTypeConversionException(Exchange exchange, Class<?> type, Object
-            value, Throwable cause) {
+    protected TypeConversionException createTypeConversionException(
+            Exchange exchange, Class<?> type, Object value, Throwable cause) {
         if (cause instanceof TypeConversionException) {
             if (((TypeConversionException) cause).getToType() == type) {
                 return (TypeConversionException) cause;

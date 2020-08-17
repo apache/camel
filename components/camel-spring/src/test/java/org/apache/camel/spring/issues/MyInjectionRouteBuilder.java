@@ -20,31 +20,29 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 public class MyInjectionRouteBuilder extends RouteBuilder {
-    
+
     private String startEndpointUri;
     private Processor myProcessor;
-    
+
     public void setStartEndpointUri(String startUri) {
         startEndpointUri = startUri;
     }
-    
+
     public String getStartEndpointUri() {
         return startEndpointUri;
     }
-    
+
     public void setMyProcessor(Processor processor) {
         myProcessor = processor;
     }
-    
+
     public Processor getMyProcessor() {
         return myProcessor;
     }
-   
+
     @Override
     public void configure() throws Exception {
         from(getStartEndpointUri()).process(getMyProcessor()).to("mock:result");
     }
 
-   
-    
 }

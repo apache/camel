@@ -47,9 +47,9 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
 
         // if any of the properties is not set, load test-options.properties
         if (!properties.containsKey("consumer.key")
-            || !properties.containsKey("consumer.secret")
-            || !properties.containsKey("access.token")
-            || !properties.containsKey("access.token.secret")) {
+                || !properties.containsKey("consumer.secret")
+                || !properties.containsKey("access.token")
+                || !properties.containsKey("access.token.secret")) {
 
             URL url = getClass().getResource("/test-options.properties");
 
@@ -74,9 +74,9 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
 
     protected String getUriTokens() {
         return "consumerKey=" + consumerKey
-            + "&consumerSecret=" + consumerSecret
-            + "&accessToken=" + accessToken
-            + "&accessTokenSecret=" + accessTokenSecret;
+               + "&consumerSecret=" + consumerSecret
+               + "&accessToken=" + accessToken
+               + "&accessTokenSecret=" + accessTokenSecret;
     }
 
     protected Map<String, Object> getParameters() {

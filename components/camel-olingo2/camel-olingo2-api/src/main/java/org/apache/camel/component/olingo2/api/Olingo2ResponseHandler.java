@@ -26,10 +26,8 @@ public interface Olingo2ResponseHandler<T> {
     /**
      * Handle response data on successful completion of Olingo2 request.
      * 
-     * @param response response data from Olingo2, may be NULL for Olingo2
-     *            operations with no response data.
-     * @param responseHeaders the response HTTP headers received from the
-     *            endpoint.
+     * @param response        response data from Olingo2, may be NULL for Olingo2 operations with no response data.
+     * @param responseHeaders the response HTTP headers received from the endpoint.
      */
     void onResponse(T response, Map<String, String> responseHeaders);
 
@@ -37,14 +35,14 @@ public interface Olingo2ResponseHandler<T> {
      * Handle exception raised from Olingo2 request.
      * 
      * @param ex exception from Olingo2 request. May be an instance of
-     *            {@link org.apache.olingo.odata2.api.exception.ODataException}
-     *            or some other exception, such as {@link java.io.IOException}
+     *           {@link org.apache.olingo.odata2.api.exception.ODataException} or some other exception, such as
+     *           {@link java.io.IOException}
      */
     void onException(Exception ex);
 
     /**
-     * Handle Olingo2 request cancellation. May be caused by the underlying HTTP
-     * connection being shutdown asynchronously.
+     * Handle Olingo2 request cancellation. May be caused by the underlying HTTP connection being shutdown
+     * asynchronously.
      */
     void onCanceled();
 }

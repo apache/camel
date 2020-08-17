@@ -61,10 +61,10 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:toProducer")
-                    .to(getProducerUri());
+                        .to(getProducerUri());
 
                 from(getConsumerUri())
-                    .to("mock:out");
+                        .to("mock:out");
             }
         };
     }
@@ -76,14 +76,14 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
         // here on purpose we provide the room query parameter without the domain name as 'camel-test', and Camel
         // will resolve it properly to 'camel-test@conference.apache.camel'
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
+               + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
-    
+
     protected String getConsumerUri() {
         // however here we provide the room query parameter as fully qualified, including the domain name as
         // 'camel-test@conference.apache.camel'
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
+               + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
 
     @Override

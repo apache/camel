@@ -77,19 +77,20 @@ public class CxfMtomProducerPayloadModeTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:" + port + "/" + getClass().getSimpleName() 
-                                    + "/jaxws-mtom/hello", getServiceImpl());
-        SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
+        endpoint = Endpoint.publish("http://localhost:" + port + "/" + getClass().getSimpleName()
+                                    + "/jaxws-mtom/hello",
+                getServiceImpl());
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(isMtomEnabled());
     }
-    
+
     @AfterEach
     public void tearDown() throws Exception {
         if (endpoint != null) {
             endpoint.stop();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testProducer() throws Exception {
@@ -105,59 +106,59 @@ public class CxfMtomProducerPayloadModeTest {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Source> elements = new ArrayList<>();
                 elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
-                    elements, null);
+                CxfPayload<SoapHeader> body = new CxfPayload<>(
+                        new ArrayList<SoapHeader>(),
+                        elements, null);
                 exchange.getIn().setBody(body);
                 exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
+                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
                 exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
+                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
 
             }
-            
+
         });
-        
+
         // process response 
-        
+
         CxfPayload<SoapHeader> out = exchange.getOut().getBody(CxfPayload.class);
         assertEquals(1, out.getBody().size());
-        
+
         Map<String, String> ns = new HashMap<>();
         ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
         ns.put("xop", MtomTestHelper.XOP_NS);
-        
+
         XPathUtils xu = new XPathUtils(ns);
         Element oute = new XmlConverter().toDOMElement(out.getBody().get(0));
-        Element ele = (Element)xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute,
-                                           XPathConstants.NODE);
+        Element ele = (Element) xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute,
+                XPathConstants.NODE);
         String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
-        
-        ele = (Element)xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute,
-                                           XPathConstants.NODE);
+
+        ele = (Element) xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute,
+                XPathConstants.NODE);
         String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
 
-        
         DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(photoId));
         assertEquals("application/octet-stream", dr.getContentType());
         assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
-   
+
         dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(imageId));
         assertEquals("image/jpeg", dr.getContentType());
-        
+
         BufferedImage image = ImageIO.read(dr.getInputStream());
         assertEquals(560, image.getWidth());
         assertEquals(300, image.getHeight());
-        
+
         // END SNIPPET: producer
 
     }
-    
+
     // CXF encoding the XOP reference since 3.0.1
     private String decodingReference(String reference) throws UnsupportedEncodingException {
         return java.net.URLDecoder.decode(reference, "UTF-8");
     }
-    
+
     protected boolean isMtomEnabled() {
         return true;
     }

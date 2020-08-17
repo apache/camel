@@ -30,7 +30,6 @@ import org.apache.camel.support.DefaultComponent;
 @Component("weather")
 public class WeatherComponent extends DefaultComponent {
 
-
     public WeatherComponent() {
 
     }

@@ -45,12 +45,12 @@ class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
     /**
      * Creates a decoder instance
      *
-     * @param config HL7MLLPConfig to be used for decoding
+     * @param  config                         HL7MLLPConfig to be used for decoding
      * @throws java.lang.NullPointerException is config is null
      */
     HL7MLLPNettyDecoder(HL7MLLPConfig config) {
         super(MAX_FRAME_LENGTH, true, Unpooled.copiedBuffer(
-                new char[]{config.getEndByte1(), config.getEndByte2()},
+                new char[] { config.getEndByte1(), config.getEndByte2() },
                 Charset.defaultCharset()));
         this.config = config;
     }

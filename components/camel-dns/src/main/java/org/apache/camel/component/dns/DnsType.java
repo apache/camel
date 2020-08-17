@@ -18,6 +18,9 @@ package org.apache.camel.component.dns;
 
 public enum DnsType {
 
-    dig, ip, lookup, wikipedia
+    dig,
+    ip,
+    lookup,
+    wikipedia
 
 }

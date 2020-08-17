@@ -18,6 +18,9 @@ package org.apache.camel.component.weather;
 
 public enum WeatherApi {
 
-    Current, Station, Hourly, Daily
+    Current,
+    Station,
+    Hourly,
+    Daily
 
 }

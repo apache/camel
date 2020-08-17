@@ -31,8 +31,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Marshals the body of the incoming message using the given
- * <a href="http://camel.apache.org/data-format.html">data format</a>
+ * Marshals the body of the incoming message using the given <a href="http://camel.apache.org/data-format.html">data
+ * format</a>
  */
 public class MarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware, RouteIdAware {
     private String id;

@@ -17,8 +17,8 @@
 package org.apache.camel.spi;
 
 /**
- * A simple marker interface for an object which has a unique ID which is useful for referring to objects
- * in REST or JMX style APIs
+ * A simple marker interface for an object which has a unique ID which is useful for referring to objects in REST or JMX
+ * style APIs
  */
 public interface HasId {
 

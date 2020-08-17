@@ -17,17 +17,15 @@
 package org.apache.camel;
 
 /**
- * Evaluates a binary <a href="http://camel.apache.org/predicate.html">predicate</a> on the
- * message exchange.
+ * Evaluates a binary <a href="http://camel.apache.org/predicate.html">predicate</a> on the message exchange.
  */
 public interface Predicate {
 
     /**
-     * Evaluates the predicate on the message exchange and returns true if this
-     * exchange matches the predicate
+     * Evaluates the predicate on the message exchange and returns true if this exchange matches the predicate
      * 
-     * @param exchange the message exchange
-     * @return true if the predicate matches
+     * @param  exchange the message exchange
+     * @return          true if the predicate matches
      */
     boolean matches(Exchange exchange);
 

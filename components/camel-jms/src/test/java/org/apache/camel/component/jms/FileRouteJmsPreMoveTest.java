@@ -70,9 +70,9 @@ public class FileRouteJmsPreMoveTest extends CamelTestSupport {
                 from("file://target/inbox?preMove=transfer").to("activemq:queue:hello");
 
                 from("activemq:queue:hello")
-                    .to("log:outbox")
-                    .to("file://target/outbox")
-                    .to("mock:result");
+                        .to("log:outbox")
+                        .to("file://target/outbox")
+                        .to("mock:result");
             }
         };
     }

@@ -25,6 +25,7 @@ public class SpringDefaultErrorHandlerLogExhaustedMessageHistoryTest extends Def
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/DefaultErrorHandlerLogExhaustedMessageHistoryTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/DefaultErrorHandlerLogExhaustedMessageHistoryTest.xml");
     }
 }

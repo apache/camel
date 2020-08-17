@@ -37,8 +37,8 @@ public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
     protected static KafkaContainer kafkaBroker = new KafkaContainer(CONFLUENT_PLATFORM_VERSION)
-        .withEmbeddedZookeeper()
-        .waitingFor(Wait.forListeningPort());
+            .withEmbeddedZookeeper()
+            .waitingFor(Wait.forListeningPort());
 
     static {
         kafkaBroker.start();

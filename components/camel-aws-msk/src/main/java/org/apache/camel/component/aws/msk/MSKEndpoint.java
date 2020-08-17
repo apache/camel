@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS MSK instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-msk", title = "AWS Managed Streaming for Apache Kafka (MSK)", syntax = "aws-msk:label", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-msk", title = "AWS Managed Streaming for Apache Kafka (MSK)",
+             syntax = "aws-msk:label", producerOnly = true, category = { Category.CLOUD, Category.MESSAGING })
 public class MSKEndpoint extends ScheduledPollEndpoint {
 
     private AWSKafka mskClient;
@@ -101,7 +102,8 @@ public class MSKEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AWSKafkaClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AWSKafkaClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AWSKafkaClientBuilder.standard().withCredentials(credentialsProvider);
             }

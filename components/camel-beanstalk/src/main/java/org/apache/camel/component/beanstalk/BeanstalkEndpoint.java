@@ -38,7 +38,8 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Retrieve and post-process Beanstalk jobs.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings", category = {Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings",
+             category = { Category.MESSAGING })
 public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEndpoint {
     final ConnectionSettings conn;
 
@@ -59,7 +60,8 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEnd
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean awaitJob = true;
 
-    public BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn, final String connectionSettings) {
+    public BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn,
+                             final String connectionSettings) {
         super(uri, component);
         this.conn = conn;
         this.connectionSettings = connectionSettings;
@@ -82,9 +84,11 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEnd
     }
 
     /**
-     * put means to put the job into Beanstalk. Job body is specified in the Camel message body. Job ID will be returned in beanstalk.jobId message header.
-     * delete, release, touch or bury expect Job ID in the message header beanstalk.jobId. Result of the operation is returned in beanstalk.result message header
-     * kick expects the number of jobs to kick in the message body and returns the number of jobs actually kicked out in the message header beanstalk.result.
+     * put means to put the job into Beanstalk. Job body is specified in the Camel message body. Job ID will be returned
+     * in beanstalk.jobId message header. delete, release, touch or bury expect Job ID in the message header
+     * beanstalk.jobId. Result of the operation is returned in beanstalk.result message header kick expects the number
+     * of jobs to kick in the message body and returns the number of jobs actually kicked out in the message header
+     * beanstalk.result.
      */
     public void setCommand(BeanstalkCommand command) {
         this.command = command;
@@ -159,12 +163,11 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEnd
     /**
      * Creates Camel producer.
      * <p/>
-     * Depending on the command parameter (see {@link BeanstalkComponent} URI) it
-     * will create one of the producer implementations.
+     * Depending on the command parameter (see {@link BeanstalkComponent} URI) it will create one of the producer
+     * implementations.
      *
-     * @return {@link Producer} instance
-     * @throws IllegalArgumentException when {@link ConnectionSettings} cannot
-     *                                  create a writable {@link Client}
+     * @return                          {@link Producer} instance
+     * @throws IllegalArgumentException when {@link ConnectionSettings} cannot create a writable {@link Client}
      */
     @Override
     public Producer createProducer() throws Exception {

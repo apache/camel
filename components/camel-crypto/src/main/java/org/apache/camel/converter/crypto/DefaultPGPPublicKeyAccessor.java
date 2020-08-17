@@ -32,15 +32,14 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
  * Caches a public key ring.
  */
 public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
-    
 
     private final PGPPublicKeyRingCollection pgpPublicKeyRing;
 
     public DefaultPGPPublicKeyAccessor(byte[] publicKeyRing) throws IOException, PGPException {
         ObjectHelper.notNull(publicKeyRing, "publicKeyRing");
-        pgpPublicKeyRing = 
-            new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyRing)),
-                                           new BcKeyFingerprintCalculator());
+        pgpPublicKeyRing = new PGPPublicKeyRingCollection(
+                PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyRing)),
+                new BcKeyFingerprintCalculator());
     }
 
     @Override
@@ -49,7 +48,7 @@ public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
     }
 
     @Override
-    public PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> userIdParts) throws Exception {       
+    public PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> userIdParts) throws Exception {
         return PGPDataFormatUtil.getPublicKeyWithKeyIdAndUserID(keyId, userIdParts, pgpPublicKeyRing);
     }
 

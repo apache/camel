@@ -24,6 +24,7 @@ public class SpringPropertiesComponentEIPChoiceConvertBodyToTest extends Propert
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/properties/SpringPropertiesComponentEIPChoiceConvertBodyToTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/component/properties/SpringPropertiesComponentEIPChoiceConvertBodyToTest.xml");
     }
 }

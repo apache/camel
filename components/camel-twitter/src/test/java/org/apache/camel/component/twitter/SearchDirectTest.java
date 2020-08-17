@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * consumes tweets
  */
 public class SearchDirectTest extends CamelTwitterConsumerTestSupport {
-    
+
     @Override
     protected String getUri() {
         return "twitter-search://java?type=direct&";

@@ -31,9 +31,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by Hazelcast {@link BlockingQueue}.
+ * Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by
+ * Hazelcast {@link BlockingQueue}.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-seda", title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName", category = {Category.CACHE, Category.DATAGRID})
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-seda", title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName",
+             category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;
@@ -41,7 +43,8 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
     @UriParam
     private final HazelcastSedaConfiguration configuration;
 
-    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastDefaultComponent component, final HazelcastSedaConfiguration configuration) {
+    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri,
+                                 final HazelcastDefaultComponent component, final HazelcastSedaConfiguration configuration) {
         super(hazelcastInstance, uri, component);
         this.queue = hazelcastInstance.getQueue(configuration.getQueueName());
         this.configuration = configuration;

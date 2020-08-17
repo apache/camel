@@ -23,9 +23,8 @@ import io.netty.channel.ChannelPipeline;
 /**
  * Factory to create {@link ChannelPipeline} for servers, eg {@link NettyConsumer}.
  * <p/>
- * Implementators must support creating a new instance of this factory which is associated
- * to the given {@link NettyConsumer} using the {@link #createPipelineFactory(NettyConsumer)}
- * method.
+ * Implementators must support creating a new instance of this factory which is associated to the given
+ * {@link NettyConsumer} using the {@link #createPipelineFactory(NettyConsumer)} method.
  *
  * @see ChannelInitializer
  */
@@ -34,8 +33,8 @@ public abstract class ServerInitializerFactory extends ChannelInitializer<Channe
     /**
      * Creates a new {@link ServerInitializerFactory} using the given {@link NettyConsumer}
      *
-     * @param consumer the associated consumer
-     * @return the {@link ServerInitializerFactory} associated to the given consumer.
+     * @param  consumer the associated consumer
+     * @return          the {@link ServerInitializerFactory} associated to the given consumer.
      */
     public abstract ServerInitializerFactory createPipelineFactory(NettyConsumer consumer);
 

@@ -82,14 +82,14 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&readLockIdempotentReleaseAsync=true&idempotentRepository=#myRepo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // we are in progress
-                            int size = myRepo.getCacheSize();
-                            assertTrue(size == 1 || size == 2);
-                        }
-                    }).to("mock:result");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // we are in progress
+                                int size = myRepo.getCacheSize();
+                                assertTrue(size == 1 || size == 2);
+                            }
+                        }).to("mock:result");
             }
         };
     }

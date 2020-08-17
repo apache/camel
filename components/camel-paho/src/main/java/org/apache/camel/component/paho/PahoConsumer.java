@@ -63,7 +63,8 @@ public class PahoConsumer extends DefaultConsumer {
                 clientId = "camel-" + MqttClient.generateClientId();
             }
             stopClient = true;
-            client = new MqttClient(getEndpoint().getConfiguration().getBrokerUrl(),
+            client = new MqttClient(
+                    getEndpoint().getConfiguration().getBrokerUrl(),
                     clientId,
                     PahoEndpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
             LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());

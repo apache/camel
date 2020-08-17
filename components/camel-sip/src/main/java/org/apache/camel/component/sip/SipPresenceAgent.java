@@ -28,11 +28,11 @@ import org.apache.camel.support.DefaultConsumer;
 public class SipPresenceAgent extends DefaultConsumer {
     private SipConfiguration configuration;
     private SipPresenceAgentListener sipPresenceAgentListener;
-    private SipProvider provider; 
+    private SipProvider provider;
     private SipStack sipStack;
-    
+
     public SipPresenceAgent(SipEndpoint sipEndpoint, Processor processor,
-        SipConfiguration configuration) {
+                            SipConfiguration configuration) {
         super(sipEndpoint, processor);
         this.configuration = configuration;
         this.configuration.setConsumer(true);
@@ -43,20 +43,20 @@ public class SipPresenceAgent extends DefaultConsumer {
         super.doStart();
         Properties properties = configuration.createInitialProperties();
         setSipStack(configuration.getSipFactory().createSipStack(properties));
-        
+
         configuration.parseURI();
         sipPresenceAgentListener = new SipPresenceAgentListener(this);
         configuration.setListeningPoint(
-                sipStack.createListeningPoint(configuration.getFromHost(), 
-                    Integer.valueOf(configuration.getFromPort()).intValue(), 
-                    configuration.getTransport()));
+                sipStack.createListeningPoint(configuration.getFromHost(),
+                        Integer.valueOf(configuration.getFromPort()).intValue(),
+                        configuration.getTransport()));
         provider = getSipStack().createSipProvider(configuration.getListeningPoint());
         provider.addSipListener(sipPresenceAgentListener);
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop(); 
+        super.doStop();
         getSipStack().deleteListeningPoint(configuration.getListeningPoint());
         provider.removeSipListener(sipPresenceAgentListener);
         getSipStack().deleteSipProvider(provider);
@@ -86,5 +86,5 @@ public class SipPresenceAgent extends DefaultConsumer {
     public SipStack getSipStack() {
         return sipStack;
     }
-    
+
 }

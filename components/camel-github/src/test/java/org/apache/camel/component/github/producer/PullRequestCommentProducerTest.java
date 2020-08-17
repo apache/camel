@@ -52,10 +52,8 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
                         .to("github://pullRequestComment?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
-
         };
     }
-
 
     @Test
     public void testPullRequestCommentProducer() throws Exception {
@@ -78,7 +76,6 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
         assertEquals(commentText, commitComment.getBodyText(), "Comment text did not match");
     }
 
-
     public class MockPullRequestCommentProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -87,6 +84,5 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
         }
     }
-
 
 }

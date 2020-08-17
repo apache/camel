@@ -21,8 +21,8 @@ import org.apache.camel.component.crypto.cms.exception.CryptoCmsException;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
 
 /**
- * Provides a exchange dependent attribute table generator. Used in
- * EnvelopedDataEncryptorConfiguration for the unprotected attributes.
+ * Provides a exchange dependent attribute table generator. Used in EnvelopedDataEncryptorConfiguration for the
+ * unprotected attributes.
  */
 public interface AttributesGeneratorProvider {
 

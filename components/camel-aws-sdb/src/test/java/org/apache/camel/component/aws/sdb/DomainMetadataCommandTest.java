@@ -30,23 +30,23 @@ public class DomainMetadataCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
+
     @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new DomainMetadataCommand(sdbClient, configuration, exchange);
     }
 
     @Test
     public void execute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", sdbClient.domainMetadataRequest.getDomainName());
-        
+
         assertEquals(new Integer(10), exchange.getIn().getHeader(SdbConstants.TIMESTAMP));
         assertEquals(new Integer(11), exchange.getIn().getHeader(SdbConstants.ITEM_COUNT));
         assertEquals(new Integer(12), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_COUNT));

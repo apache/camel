@@ -44,17 +44,17 @@ public final class TemplatedRouteBuilder {
     /**
      * Creates a new {@link TemplatedRouteBuilder} to specify input parameters, and others, for the route template.
      *
-     * @param camelContext     the camel context
-     * @param routeTemplateId  the id of the route template
-     * @return the builder
+     * @param  camelContext    the camel context
+     * @param  routeTemplateId the id of the route template
+     * @return                 the builder
      */
     public static TemplatedRouteBuilder builder(CamelContext camelContext, String routeTemplateId) {
         return new TemplatedRouteBuilder(camelContext, routeTemplateId);
     }
 
     /**
-     * Sets the id of the route.
-     * If no route id is configured, then Camel will auto assign a route id, which is returned from the build method.
+     * Sets the id of the route. If no route id is configured, then Camel will auto assign a route id, which is returned
+     * from the build method.
      *
      * @param routeId the route id
      */
@@ -75,11 +75,11 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
-     * Sets a handler which gives access to the route template model that will be used for creating the route.
-     * This can be used to do validation. Any changes to the model happens before the route is created and added,
-     * however these changes affect future usage of the same template.
+     * Sets a handler which gives access to the route template model that will be used for creating the route. This can
+     * be used to do validation. Any changes to the model happens before the route is created and added, however these
+     * changes affect future usage of the same template.
      *
-     * @param handler  the handler with callback to invoke with the given route template
+     * @param handler the handler with callback to invoke with the given route template
      */
     public TemplatedRouteBuilder handler(Consumer<RouteTemplateDefinition> handler) {
         this.handler = handler;
@@ -94,7 +94,8 @@ public final class TemplatedRouteBuilder {
     public String add() {
         try {
             if (handler != null) {
-                RouteTemplateDefinition def = camelContext.adapt(ModelCamelContext.class).getRouteTemplateDefinition(routeTemplateId);
+                RouteTemplateDefinition def
+                        = camelContext.adapt(ModelCamelContext.class).getRouteTemplateDefinition(routeTemplateId);
                 if (def == null) {
                     throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
                 }

@@ -25,9 +25,9 @@ import org.apache.camel.Route;
 import org.apache.camel.support.DefaultMessageHistory;
 
 /**
- * A micrometer metrics based {@link MessageHistory}. This could also use {@link #getElapsed()}
- * provided by the super class, but Micrometer can potentially use other {@link io.micrometer.core.instrument.Clock clocks}
- * and measures in nano-second precision.
+ * A micrometer metrics based {@link MessageHistory}. This could also use {@link #getElapsed()} provided by the super
+ * class, but Micrometer can potentially use other {@link io.micrometer.core.instrument.Clock clocks} and measures in
+ * nano-second precision.
  */
 public class MicrometerMessageHistory extends DefaultMessageHistory {
 

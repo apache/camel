@@ -70,12 +70,12 @@ public class LightweightContextTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .choice()
-                            .when(body().contains("Camel"))
-                                .to("mock:camel")
-                            .when(body().contains("Donkey"))
-                                .to("mock:donkey")
-                            .otherwise()
-                                .to("mock:other");
+                        .when(body().contains("Camel"))
+                        .to("mock:camel")
+                        .when(body().contains("Donkey"))
+                        .to("mock:donkey")
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }

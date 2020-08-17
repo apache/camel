@@ -55,7 +55,6 @@ public class MicrometerRouteEventNotifierTest extends AbstractMicrometerEventNot
         assertEquals(0.0d, running.value(), 0.0001d);
     }
 
-
     private class TestRoute extends RouteBuilder {
         @Override
         public void configure() throws Exception {

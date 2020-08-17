@@ -77,10 +77,10 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
                 from("file://target/inbox?noop=true").to("activemq:queue:hello");
 
                 from("activemq:queue:hello")
-                    // just a little delay so the write of the file happens later
-                    .delayer(100)
-                    .to("file://target/outbox?keepLastModified=true")
-                    .to("mock:result");
+                        // just a little delay so the write of the file happens later
+                        .delayer(100)
+                        .to("file://target/outbox?keepLastModified=true")
+                        .to("mock:result");
             }
         };
     }

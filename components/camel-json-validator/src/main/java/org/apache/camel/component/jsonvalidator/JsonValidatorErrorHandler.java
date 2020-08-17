@@ -28,9 +28,9 @@ public interface JsonValidatorErrorHandler {
     /**
      * Process any errors which may have occurred during validation
      *
-     * @param exchange the exchange
-     * @param schema   the schema
-     * @param errors   the validation errors
+     * @param  exchange            the exchange
+     * @param  schema              the schema
+     * @param  errors              the validation errors
      * @throws ValidationException is thrown in case of validation errors
      */
     void handleErrors(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) throws ValidationException;
@@ -38,9 +38,9 @@ public interface JsonValidatorErrorHandler {
     /**
      * Process a general error that happens during valdating
      *
-     * @param exchange the exchange
-     * @param schema   the schema
-     * @param e        general error
+     * @param  exchange            the exchange
+     * @param  schema              the schema
+     * @param  e                   general error
      * @throws ValidationException is thrown in case of validation errors
      */
     void handleErrors(Exchange exchange, JsonSchema schema, Exception e) throws ValidationException;

@@ -27,7 +27,7 @@ public class SpringTransactionalClientDataSourceUsingTransactedTest extends Spri
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceUsingTransacted.xml");
+                "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceUsingTransacted.xml");
     }
 
 }

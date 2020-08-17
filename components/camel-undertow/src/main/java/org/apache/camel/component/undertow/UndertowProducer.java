@@ -54,11 +54,9 @@ import org.xnio.ssl.XnioSsl;
 /**
  * The Undertow producer.
  *
- * The implementation of Producer is considered as experimental. The Undertow
- * client classes are not thread safe, their purpose is for the reverse proxy
- * usage inside Undertow itself. This may change in the future versions and
- * general purpose HTTP client wrapper will be added. Therefore this Producer
- * may be changed too.
+ * The implementation of Producer is considered as experimental. The Undertow client classes are not thread safe, their
+ * purpose is for the reverse proxy usage inside Undertow itself. This may change in the future versions and general
+ * purpose HTTP client wrapper will be added. Therefore this Producer may be changed too.
  */
 public class UndertowProducer extends DefaultAsyncProducer {
 
@@ -150,7 +148,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
         if (streaming && (body instanceof InputStream)) {
             // For streaming, make it chunked encoding instead of specifying content length
             requestHeaders.put(Headers.TRANSFER_ENCODING, "chunked");
-            clientCallback = new UndertowStreamingClientCallback(camelExchange, callback, getEndpoint(),
+            clientCallback = new UndertowStreamingClientCallback(
+                    camelExchange, callback, getEndpoint(),
                     request, (InputStream) body);
         } else {
             final TypeConverter tc = endpoint.getCamelContext().getTypeConverter();
@@ -164,10 +163,12 @@ public class UndertowProducer extends DefaultAsyncProducer {
 
             if (streaming) {
                 // response may receive streaming
-                clientCallback = new UndertowStreamingClientCallback(camelExchange, callback, getEndpoint(),
+                clientCallback = new UndertowStreamingClientCallback(
+                        camelExchange, callback, getEndpoint(),
                         request, bodyAsByte);
             } else {
-                clientCallback = new UndertowClientCallback(camelExchange, callback, getEndpoint(),
+                clientCallback = new UndertowClientCallback(
+                        camelExchange, callback, getEndpoint(),
                         request, bodyAsByte);
             }
         }
@@ -205,14 +206,14 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 final List<String> connectionKeys = in.getHeader(UndertowConstants.CONNECTION_KEY_LIST, List.class);
                 if (connectionKeys != null) {
                     return webSocketHandler.send(
-                        peer -> connectionKeys.contains(peer.getAttribute(UndertowConstants.CONNECTION_KEY)), message,
-                        timeout, camelExchange, camelCallback);
+                            peer -> connectionKeys.contains(peer.getAttribute(UndertowConstants.CONNECTION_KEY)), message,
+                            timeout, camelExchange, camelCallback);
                 }
                 final String connectionKey = in.getHeader(UndertowConstants.CONNECTION_KEY, String.class);
                 if (connectionKey != null) {
                     return webSocketHandler.send(
-                        peer -> connectionKey.equals(peer.getAttribute(UndertowConstants.CONNECTION_KEY)), message,
-                        timeout, camelExchange, camelCallback);
+                            peer -> connectionKey.equals(peer.getAttribute(UndertowConstants.CONNECTION_KEY)), message,
+                            timeout, camelExchange, camelCallback);
                 }
                 throw new IllegalStateException(
                         String.format("Cannot process message which has none of the headers %s, %s or %s set: %s",
@@ -248,7 +249,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
         client = UndertowClient.getInstance();
 
         if (endpoint.isWebSocket()) {
-            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(null, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(null,
+                    endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
         }
 
         LOG.debug("Created worker: {} with options: {}", worker, options);
@@ -259,7 +261,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
         super.doStop();
 
         if (endpoint.isWebSocket()) {
-            endpoint.getComponent().unregisterEndpoint(null, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
+            endpoint.getComponent().unregisterEndpoint(null, endpoint.getHttpHandlerRegistrationInfo(),
+                    endpoint.getSslContext());
         }
 
         if (worker != null && !worker.isShutdown()) {

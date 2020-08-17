@@ -25,9 +25,9 @@ import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 
 final class AnnotatedMethodDelegate<T> extends AnnotatedMemberDelegate<T> implements AnnotatedMethod<T> {
-    
+
     private final AnnotatedMethod<T> delegate;
-    
+
     AnnotatedMethodDelegate(AnnotatedMethod<T> delegate, Set<Annotation> annotations) {
         super(delegate, annotations);
         this.delegate = delegate;

@@ -40,17 +40,16 @@ public class CamelCdiTest {
     @Inject
     @Uri("seda:a")
     ProducerTemplate producer;
-    
+
     @Deployment
     public static JavaArchive createDeployment() {
         return Maven.configureResolver().workOffline()
-            .loadPomFromFile("pom.xml")
-            .resolve("org.apache.camel:camel-cdi")
-            .withoutTransitivity()
-            .asSingle(JavaArchive.class)
-            .addClasses(
-                MyRoutes.class
-            );
+                .loadPomFromFile("pom.xml")
+                .resolve("org.apache.camel:camel-cdi")
+                .withoutTransitivity()
+                .asSingle(JavaArchive.class)
+                .addClasses(
+                        MyRoutes.class);
     }
 
     @Test

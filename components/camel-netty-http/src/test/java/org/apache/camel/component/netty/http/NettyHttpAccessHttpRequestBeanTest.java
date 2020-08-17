@@ -42,8 +42,8 @@ public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().method(NettyHttpAccessHttpRequestBeanTest.class, "myTransformer");
+                        .to("mock:input")
+                        .transform().method(NettyHttpAccessHttpRequestBeanTest.class, "myTransformer");
             }
         };
     }

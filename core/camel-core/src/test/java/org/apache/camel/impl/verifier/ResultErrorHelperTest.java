@@ -33,9 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResultErrorHelperTest {
 
-    OptionsGroup[] groups = new OptionsGroup[] {OptionsGroup.withName("optionA").options("param1", "param2", "!param3"),
-                                                OptionsGroup.withName("optionB").options("param1", "!param2", "param3"),
-                                                OptionsGroup.withName("optionC").options("!param1", "!param2", "param4")};
+    OptionsGroup[] groups = new OptionsGroup[] {
+            OptionsGroup.withName("optionA").options("param1", "param2", "!param3"),
+            OptionsGroup.withName("optionB").options("param1", "!param2", "param3"),
+            OptionsGroup.withName("optionC").options("!param1", "!param2", "param4") };
 
     @Test
     public void shouldValidateCorrectParameters() {
@@ -52,7 +53,8 @@ public class ResultErrorHelperTest {
     @Test
     public void shouldValidateParameterExclusions() {
         // combining param2 and param3 is not OK
-        final List<ComponentVerifierExtension.VerificationError> results = ResultErrorHelper.requiresAny(map("param1", "param2", "param3"), groups);
+        final List<ComponentVerifierExtension.VerificationError> results
+                = ResultErrorHelper.requiresAny(map("param1", "param2", "param3"), groups);
 
         assertEquals(3, results.size());
 

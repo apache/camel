@@ -48,7 +48,7 @@ public class MaxRetryWaitingTimeProducerConnectionRetryTest extends SoroushBotTe
             @Override
             public void configure() throws Exception {
                 from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/retry 5?maxConnectionRetry=5"
-                        + "&retryWaitingTime=500&retryExponentialCoefficient=2&backOffStrategy=exponential&maxRetryWaitingTime=2500")
+                                          + "&retryWaitingTime=500&retryExponentialCoefficient=2&backOffStrategy=exponential&maxRetryWaitingTime=2500")
                         .to("mock:afterAllRetry")
                         .to("mock:beforeAllRetry");
             }

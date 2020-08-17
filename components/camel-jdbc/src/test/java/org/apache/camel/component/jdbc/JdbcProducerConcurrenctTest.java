@@ -35,7 +35,7 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
@@ -59,7 +59,8 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
             Future<List<?>> out = executor.submit(new Callable<List<?>>() {
                 public List<?> call() throws Exception {
                     int id = (index % 2) + 1;
-                    return template.requestBody("direct:start", "select * from customer where id = 'cust" + id + "'", List.class);
+                    return template.requestBody("direct:start", "select * from customer where id = 'cust" + id + "'",
+                            List.class);
                 }
             });
             responses.put(index, out);

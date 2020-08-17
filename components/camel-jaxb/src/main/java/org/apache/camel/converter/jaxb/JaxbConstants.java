@@ -25,7 +25,7 @@ public interface JaxbConstants {
      * Key to identify custom marshaller properties in the exchange specific to JAX-RI implementation
      */
     String JAXB_PROVIDER_PROPERTIES = "CamelJaxbProviderProperties";
-    
+
     String JAXB_PART_CLASS = "CamelJaxbPartClass";
     String JAXB_PART_NAMESPACE = "CamelJaxbPartNamespace";
 

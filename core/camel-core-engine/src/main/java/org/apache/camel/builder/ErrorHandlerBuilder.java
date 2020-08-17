@@ -19,8 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.ErrorHandlerFactory;
 
 /**
- * A builder of a <a href="http://camel.apache.org/error-handler.html">Error
- * Handler</a>
+ * A builder of a <a href="http://camel.apache.org/error-handler.html">Error Handler</a>
  */
 public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
 
@@ -30,9 +29,8 @@ public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
     boolean supportTransacted();
 
     /**
-     * Clones this builder so each {@link RouteBuilder} has its private builder
-     * to use, to avoid changes from one {@link RouteBuilder} to influence the
-     * others.
+     * Clones this builder so each {@link RouteBuilder} has its private builder to use, to avoid changes from one
+     * {@link RouteBuilder} to influence the others.
      * <p/>
      * This is needed by the current Camel 2.x architecture.
      *

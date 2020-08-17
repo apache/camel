@@ -26,7 +26,8 @@ public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, Managed
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to poll enrich from", mask = true)
+    @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to poll enrich from",
+                      mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "Timeout in millis when polling from the external service")

@@ -25,7 +25,8 @@ public class SpringOnExceptionUseOriginalMessageTest extends OnExceptionUseOrigi
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/onexception/SpringOnExceptionUseOriginalMessageTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/onexception/SpringOnExceptionUseOriginalMessageTest.xml");
     }
 
 }

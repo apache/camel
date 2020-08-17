@@ -28,9 +28,11 @@ public class TryCatchContinueToRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:c").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:c").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
 
@@ -44,7 +46,8 @@ public class TryCatchContinueToRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("mock:a").to("direct:b").to("direct:c");
 
-                from("direct:b").doTry().to("mock:b").throwException(new IllegalArgumentException("Damn")).doCatch(Exception.class).to("mock:catch").end();
+                from("direct:b").doTry().to("mock:b").throwException(new IllegalArgumentException("Damn"))
+                        .doCatch(Exception.class).to("mock:catch").end();
 
                 from("direct:c").to("mock:c");
             }

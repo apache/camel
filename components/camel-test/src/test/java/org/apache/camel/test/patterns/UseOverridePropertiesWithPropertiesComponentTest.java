@@ -71,7 +71,7 @@ public class UseOverridePropertiesWithPropertiesComponentTest extends CamelTestS
         return new RouteBuilder() {
             public void configure() {
                 from("ftp:somepath?username={{ftp.username}}&password={{ftp.password}}").routeId("myRoute")
-                    .to("file:target/out");
+                        .to("file:target/out");
             }
         };
     }

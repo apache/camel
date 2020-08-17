@@ -35,7 +35,7 @@ public abstract class AbstractConfiguration implements Cloneable {
     private boolean validateClientURI = true;
 
     private String accountName;
-    
+
     public String getAccountName() {
         return accountName;
     }
@@ -47,7 +47,6 @@ public abstract class AbstractConfiguration implements Cloneable {
         this.accountName = accountName;
     }
 
-    
     public StorageCredentials getCredentials() {
         return credentials;
     }
@@ -81,7 +80,7 @@ public abstract class AbstractConfiguration implements Cloneable {
         this.credentialsAccountName = credentialsAccountName;
     }
 
-    public  StorageCredentials getAccountCredentials() {
+    public StorageCredentials getAccountCredentials() {
         StorageCredentials creds = credentials;
         //if  credentials is null, fallback to credentialsAccountKey and credentialsAccountName
         if (creds == null) {

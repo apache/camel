@@ -105,8 +105,9 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     }
 
     @Override
-    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-                                String sourceId, String routeId, String threadPoolProfileId) {
+    public void onThreadPoolAdd(
+            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
+            String sourceId, String routeId, String threadPoolProfileId) {
         // noop
     }
 
@@ -114,7 +115,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
         // noop
     }
-
 
     public static LifecycleStrategy adapt(OnCamelContextEvent handler) {
         return new LifecycleStrategySupport() {
@@ -124,12 +124,14 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
                     ((OnCamelContextInitialized) handler).onContextInitialized(context);
                 }
             }
+
             @Override
             public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
                 if (handler instanceof OnCamelContextStart) {
                     ((OnCamelContextStart) handler).onContextStart(context);
                 }
             }
+
             @Override
             public void onContextStop(CamelContext context) {
                 if (handler instanceof OnCamelContextStop) {

@@ -35,13 +35,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixRouteHierarchicalConfigTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/hystrix/processor/SpringHystrixRouteHierarchicalConfigTest.xml");
     }
 
     @Test
     public void testHystrix() throws Exception {
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
-        final Route route = new DefaultRoute(context, routeDefinition,
+        final Route route = new DefaultRoute(
+                context, routeDefinition,
                 routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()), null, null);
         CircuitBreakerDefinition hystrixDefinition = findCircuitBreakerDefinition(routeDefinition);
 
@@ -67,9 +69,9 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
 
     private CircuitBreakerDefinition findCircuitBreakerDefinition(RouteDefinition routeDefinition) throws Exception {
         return routeDefinition.getOutputs().stream()
-            .filter(CircuitBreakerDefinition.class::isInstance)
-            .map(CircuitBreakerDefinition.class::cast)
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Unable to find a CircuitBreakerDefinition"));
+                .filter(CircuitBreakerDefinition.class::isInstance)
+                .map(CircuitBreakerDefinition.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Unable to find a CircuitBreakerDefinition"));
     }
 }

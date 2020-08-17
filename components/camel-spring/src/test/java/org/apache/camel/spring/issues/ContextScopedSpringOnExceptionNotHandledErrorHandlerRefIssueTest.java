@@ -24,11 +24,13 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 /**
  *
  */
-public class ContextScopedSpringOnExceptionNotHandledErrorHandlerRefIssueTest extends ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTest {
+public class ContextScopedSpringOnExceptionNotHandledErrorHandlerRefIssueTest
+        extends ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/ContextScopedSpringOnExceptionNotHandledErrorHandlerRefIssueTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/issues/ContextScopedSpringOnExceptionNotHandledErrorHandlerRefIssueTest.xml");
     }
 
 }

@@ -62,7 +62,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         }
 
         if (wait == WaitForTaskToComplete.Always
-            || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
+                || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
 
             // do not handover the completion as we wait for the copy to complete, and copy its result back when it done
             Exchange copy = prepareCopy(exchange, false);
@@ -117,7 +117,8 @@ public class SedaProducer extends DefaultAsyncProducer {
 
             if (timeout > 0) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout, endpoint.getEndpointUri());
+                    LOG.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout,
+                            endpoint.getEndpointUri());
                 }
                 // lets see if we can get the task done before the timeout
                 boolean done = false;
@@ -167,7 +168,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         // if handover we need to do special handover to avoid handing over
         // RestBindingMarshalOnCompletion as it should not be handed over with SEDA
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true,
-            synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
+                synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
         // set a new from endpoint to be the seda queue
         copy.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
         return copy;
@@ -188,8 +189,8 @@ public class SedaProducer extends DefaultAsyncProducer {
     /**
      * Strategy method for adding the exchange to the queue.
      * <p>
-     * Will perform a blocking "put" if blockWhenFull is true, otherwise it will
-     * simply add which will throw exception if the queue is full
+     * Will perform a blocking "put" if blockWhenFull is true, otherwise it will simply add which will throw exception
+     * if the queue is full
      * 
      * @param exchange the exchange to add to the queue
      * @param copy     whether to create a copy of the exchange to use for adding to the queue
@@ -243,8 +244,9 @@ public class SedaProducer extends DefaultAsyncProducer {
             try {
                 boolean added = queue.offer(target, offerTimeout, TimeUnit.MILLISECONDS);
                 if (!added) {
-                    throw new IllegalStateException("Fails to insert element into queue, "
-                            + "after timeout of "  + offerTimeout + " milliseconds");
+                    throw new IllegalStateException(
+                            "Fails to insert element into queue, "
+                                                    + "after timeout of " + offerTimeout + " milliseconds");
                 }
             } catch (InterruptedException e) {
                 // ignore

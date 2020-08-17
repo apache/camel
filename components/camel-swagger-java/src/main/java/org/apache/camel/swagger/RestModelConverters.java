@@ -23,8 +23,8 @@ import io.swagger.models.Model;
 import io.swagger.models.properties.StringProperty;
 
 /**
- * A Camel extended {@link ModelConverters} where we appending vendor extensions
- * to include the java class name of the model classes.
+ * A Camel extended {@link ModelConverters} where we appending vendor extensions to include the java class name of the
+ * model classes.
  */
 public class RestModelConverters extends ModelConverters {
 

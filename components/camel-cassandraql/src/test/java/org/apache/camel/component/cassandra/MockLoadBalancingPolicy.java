@@ -41,4 +41,3 @@ public class MockLoadBalancingPolicy extends DefaultLoadBalancingPolicy {
         return super.newQueryPlan(request, session);
     }
 }
-

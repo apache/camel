@@ -35,7 +35,7 @@ public class MyRouteEmptyUriTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:foo")
-                    .to(""); // is empty on purpose
+                        .to(""); // is empty on purpose
             }
         };
     }

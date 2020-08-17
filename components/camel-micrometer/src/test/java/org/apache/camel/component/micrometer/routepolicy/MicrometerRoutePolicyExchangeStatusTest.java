@@ -44,8 +44,10 @@ public class MicrometerRoutePolicyExchangeStatusTest extends AbstractMicrometerR
         }
 
         assertMockEndpointsSatisfied();
-        Counter exchangesSucceededCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME).tag(ROUTE_ID_TAG, "completing").counter();
-        Counter exchangesFailedCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME).tag(ROUTE_ID_TAG, "failing").counter();
+        Counter exchangesSucceededCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME)
+                .tag(ROUTE_ID_TAG, "completing").counter();
+        Counter exchangesFailedCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME)
+                .tag(ROUTE_ID_TAG, "failing").counter();
         assertEquals(count / 2.0D, exchangesSucceededCounter.count(), 0.01D);
         assertEquals(count / 2.0D, exchangesFailedCounter.count(), 0.01D);
 
@@ -57,11 +59,11 @@ public class MicrometerRoutePolicyExchangeStatusTest extends AbstractMicrometerR
             @Override
             public void configure() {
                 from("direct:completing").routeId("completing")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("direct:failing").routeId("failing")
-                    .throwException(RuntimeException.class, "Failing")
-                    .to("mock:result");
+                        .throwException(RuntimeException.class, "Failing")
+                        .to("mock:result");
             }
         };
     }

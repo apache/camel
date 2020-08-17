@@ -35,7 +35,7 @@ public class DataSetFlinkProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
 
         Object result;
-        
+
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(DataSet.class.getClassLoader());
@@ -49,7 +49,7 @@ public class DataSetFlinkProducer extends DefaultProducer {
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }
-        
+
         collectResults(exchange, result);
     }
 

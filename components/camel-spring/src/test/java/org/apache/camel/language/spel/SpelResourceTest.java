@@ -40,8 +40,8 @@ public class SpelResourceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().spel("resource:classpath:myspel.txt")
-                    .to("mock:result");
+                        .transform().spel("resource:classpath:myspel.txt")
+                        .to("mock:result");
             }
         };
     }

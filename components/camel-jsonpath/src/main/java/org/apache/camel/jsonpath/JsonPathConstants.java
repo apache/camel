@@ -17,13 +17,12 @@
 package org.apache.camel.jsonpath;
 
 public final class JsonPathConstants {
-    
+
     /** Header name for the encoding of the JSON document. */
     public static final String HEADER_JSON_ENCODING = "CamelJsonPathJsonEncoding";
 
     private JsonPathConstants() {
         // no instance
     }
-
 
 }

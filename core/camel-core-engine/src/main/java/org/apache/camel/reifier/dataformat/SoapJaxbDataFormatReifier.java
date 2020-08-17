@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 public class SoapJaxbDataFormatReifier extends DataFormatReifier<SoapJaxbDataFormat> {
 
     public SoapJaxbDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (SoapJaxbDataFormat)definition);
+        super(camelContext, (SoapJaxbDataFormat) definition);
     }
 
     @Override

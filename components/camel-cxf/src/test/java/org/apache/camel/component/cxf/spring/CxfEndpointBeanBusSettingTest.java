@@ -27,44 +27,43 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport {
 
     static int port1 = CXFTestSupport.getPort1();
-    
+
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansBusSetting.xml"};    
+        return new String[] { "org/apache/camel/component/cxf/spring/CxfEndpointBeansBusSetting.xml" };
     }
-    
+
     @Test
     public void testBusInjectedBySpring() throws Exception {
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
-        
+
         CxfEndpoint endpoint = camelContext.getEndpoint("cxf:bean:routerEndpoint", CxfEndpoint.class);
         assertEquals("cxf://bean:routerEndpoint", endpoint.getEndpointUri(), "Get a wrong endpoint uri");
         Bus cxf1 = endpoint.getBus();
-        
+
         assertEquals(cxf1, ctx.getBean("cxf1"));
         assertEquals(cxf1, endpoint.getBus());
         assertEquals("barf", endpoint.getBus().getProperty("foo"));
-        
+
         endpoint = camelContext.getEndpoint("cxf:bean:serviceEndpoint", CxfEndpoint.class);
         assertEquals("cxf://bean:serviceEndpoint", endpoint.getEndpointUri(), "Get a wrong endpoint uri");
         Bus cxf2 = endpoint.getBus();
-        
+
         assertEquals(cxf2, ctx.getBean("cxf2"));
         assertEquals(cxf2, endpoint.getBus());
         assertEquals("snarf", endpoint.getBus().getProperty("foo"));
-        
-        
+
     }
-    
+
     @Test
     public void testBusInjectionOnURI() throws Exception {
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         CxfEndpoint endpoint = camelContext.getEndpoint("cxf:bean:serviceEndpoint?bus=#cxf1", CxfEndpoint.class);
         assertEquals(ctx.getBean("cxf1"), endpoint.getBus());
-        
-        endpoint = camelContext.getEndpoint("cxf:http://localhost:" + port1 + "/CxfEndpointBeanBusSettingTest/router1?bus=#cxf1", CxfEndpoint.class);
+
+        endpoint = camelContext.getEndpoint(
+                "cxf:http://localhost:" + port1 + "/CxfEndpointBeanBusSettingTest/router1?bus=#cxf1", CxfEndpoint.class);
         assertEquals(ctx.getBean("cxf1"), endpoint.getBus());
     }
-    
 
 }

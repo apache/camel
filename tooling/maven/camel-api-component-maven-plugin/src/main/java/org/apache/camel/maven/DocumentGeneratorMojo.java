@@ -56,12 +56,12 @@ import org.codehaus.plexus.util.StringUtils;
  * Generates documentation for API Component.
  */
 @Mojo(name = "document", requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true,
-        defaultPhase = LifecyclePhase.SITE, threadSafe = true)
+      defaultPhase = LifecyclePhase.SITE, threadSafe = true)
 public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements MavenReport {
 
     // document output directory
     @Parameter(property = PREFIX + "reportOutputDirectory",
-        defaultValue = "${project.reporting.outputDirectory}/cameldocs")
+               defaultValue = "${project.reporting.outputDirectory}/cameldocs")
     private File reportOutputDirectory;
 
     // name of destination directory
@@ -69,15 +69,15 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
     private String destDir;
 
     /**
-     * The name of the Camel report to be displayed in the Maven Generated Reports page
-     * (i.e. <code>project-reports.html</code>).
+     * The name of the Camel report to be displayed in the Maven Generated Reports page (i.e.
+     * <code>project-reports.html</code>).
      */
     @Parameter(property = "name")
     private String name;
 
     /**
-     * The description of the Camel report to be displayed in the Maven Generated Reports page
-     * (i.e. <code>project-reports.html</code>).
+     * The description of the Camel report to be displayed in the Maven Generated Reports page (i.e.
+     * <code>project-reports.html</code>).
      */
     @Parameter(property = "description")
     private String description;
@@ -173,7 +173,8 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
             BeanIntrospection.ClassInfo classInfo = new DefaultBeanIntrospection().cacheClass(configClass);
             for (BeanIntrospection.MethodInfo method : classInfo.methods) {
                 if (method.isSetter) {
-                    configFields.put(method.getterOrSetterShorthandName, getCanonicalName(method.method.getParameterTypes()[0]));
+                    configFields.put(method.getterOrSetterShorthandName,
+                            getCanonicalName(method.method.getParameterTypes()[0]));
                 }
             }
             configClass = configClass.getSuperclass();
@@ -296,8 +297,9 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         return ResourceBundle.getBundle("cameldoc-report", locale, getClass().getClassLoader());
     }
 
-    public static List<EndpointInfo> getEndpoints(Class<? extends ApiMethod> apiMethod,
-                                                  ApiMethodHelper<?> helper, Class<?> endpointConfig) {
+    public static List<EndpointInfo> getEndpoints(
+            Class<? extends ApiMethod> apiMethod,
+            ApiMethodHelper<?> helper, Class<?> endpointConfig) {
         // get list of valid options
         final Set<String> validOptions = new HashSet<>();
         for (Field field : endpointConfig.getDeclaredFields()) {

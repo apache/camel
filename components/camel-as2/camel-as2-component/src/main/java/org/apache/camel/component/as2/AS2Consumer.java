@@ -112,11 +112,13 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
             if (request instanceof HttpEntityEnclosingRequest) {
                 EntityParser.parseAS2MessageEntity(request);
                 // TODO derive last to parameters from configuration.
-                apiProxy.handleMDNResponse((HttpEntityEnclosingRequest)request, response, context, "MDN Response", "Camel AS2 Server Endpoint");
+                apiProxy.handleMDNResponse((HttpEntityEnclosingRequest) request, response, context, "MDN Response",
+                        "Camel AS2 Server Endpoint");
             }
-            
-            ApplicationEDIEntity ediEntity = HttpMessageUtils.extractEdiPayload(request, as2ServerConnection.getDecryptingPrivateKey());
-            
+
+            ApplicationEDIEntity ediEntity
+                    = HttpMessageUtils.extractEdiPayload(request, as2ServerConnection.getDecryptingPrivateKey());
+
             // Set AS2 Interchange property and EDI message into body of input message.
             Exchange exchange = getEndpoint().createExchange();
             HttpCoreContext coreContext = HttpCoreContext.adapt(context);
@@ -134,7 +136,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
             LOG.info("Failed to process AS2 message", e);
             exception = e;
         }
-        
+
         if (exception != null) {
             throw new HttpException("Failed to process AS2 message: " + exception.getMessage(), exception);
         }

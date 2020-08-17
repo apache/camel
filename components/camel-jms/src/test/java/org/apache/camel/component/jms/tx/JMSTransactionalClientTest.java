@@ -31,7 +31,7 @@ public class JMSTransactionalClientTest extends CamelSpringTestSupport {
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/JMSTransactionalClientTest.xml");
+                "/org/apache/camel/component/jms/tx/JMSTransactionalClientTest.xml");
     }
 
     @Test

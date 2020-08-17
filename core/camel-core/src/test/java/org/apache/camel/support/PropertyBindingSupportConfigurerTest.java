@@ -123,7 +123,8 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("?work.addresss.zip", "1234");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar, prop);
+        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar,
+                prop);
         assertEquals(3, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
@@ -140,13 +141,15 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         // should not fail as we marked the option as optional
         prop.put("?unknown", "123");
-        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar, prop);
+        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar,
+                prop);
         prop.remove("?unknown");
 
         // should fail as its mandatory
         prop.put("unknown", "123");
         try {
-            PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar, prop);
+            PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context,
+                    bar, prop);
             fail("Should fail");
         } catch (PropertyBindingException e) {
             assertEquals("unknown", e.getPropertyName());
@@ -167,7 +170,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Company work; // has no default value but Camel can automatic
-                              // create one if there is a setter
+                             // create one if there is a setter
         private boolean goldCustomer;
 
         public int getAge() {

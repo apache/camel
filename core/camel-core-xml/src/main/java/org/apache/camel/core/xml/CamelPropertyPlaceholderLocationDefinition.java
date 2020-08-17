@@ -30,13 +30,14 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "propertiesLocation")
 public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
-    @XmlAttribute @Metadata(defaultValue = "classpath")
+    @XmlAttribute
+    @Metadata(defaultValue = "classpath")
     public String resolver;
     @XmlAttribute(required = true)
     public String path;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     public Boolean optional;
-
 
     public String getResolver() {
         return resolver;
@@ -86,9 +87,8 @@ public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
 
     public PropertiesLocation toLocation() {
         return new PropertiesLocation(
-            resolver != null ? resolver : "classpath",
-            path,
-            optional != null ? optional : false
-        );
+                resolver != null ? resolver : "classpath",
+                path,
+                optional != null ? optional : false);
     }
 }

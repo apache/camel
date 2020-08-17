@@ -47,8 +47,7 @@ import org.beanio.Unmarshaller;
 import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> (
- * {@link DataFormat}) for beanio data.
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) for beanio data.
  */
 @Dataformat("beanio")
 public class BeanIODataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
@@ -246,7 +245,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
     public Charset getEncoding() {
         return configuration.getEncoding();
     }
-    
+
     public BeanReaderErrorHandler getBeanReaderErrorHandler() {
         return configuration.getBeanReaderErrorHandler();
     }

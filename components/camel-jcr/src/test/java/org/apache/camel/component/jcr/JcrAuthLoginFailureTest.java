@@ -46,8 +46,10 @@ public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
                         constant("node")).setHeader("my.contents.property",
-                        body()).to(
-                        "jcr://not-a-user:nonexisting-password@repository" + BASE_REPO_PATH);
+                                body())
+                        .to(
+                                "jcr://not-a-user:nonexisting-password@repository"
+                            + BASE_REPO_PATH);
                 // END SNIPPET: jcr
             }
         };

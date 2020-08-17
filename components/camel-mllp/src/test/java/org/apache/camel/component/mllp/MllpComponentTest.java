@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpComponentTest {
     Boolean initialLogPhiValue;
@@ -83,7 +83,6 @@ public class MllpComponentTest {
         MllpComponent.setLogPhi(false);
         assertEquals(Boolean.FALSE, MllpComponent.logPhi);
     }
-
 
     @Test
     public void testHasLogPhiMaxBytes() throws Exception {

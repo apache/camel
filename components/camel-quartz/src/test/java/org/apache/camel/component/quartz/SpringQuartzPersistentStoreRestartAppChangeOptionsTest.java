@@ -47,11 +47,11 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
     private AbstractXmlApplicationContext app2;
     private AbstractXmlApplicationContext app3;
 
-
     @BeforeAll
     public static void prepareDB() {
         // boot up the database the two invocations are going to share inside a clustered quartz setup
-        db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
+        db = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
         db.start();
     }
 
@@ -68,7 +68,6 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         IOHelper.close(app3, app2, app);
     }
 
-
     @Test
     public void testRestartAppChangeCronExpression() throws Exception {
 
@@ -77,7 +76,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         // After that it asserts that two cron expressions are not equal.
 
         // load spring app
-        app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest1.xml");
+        app = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest1.xml");
         app.start();
         CamelContext camel = app.getBean("camelContext", CamelContext.class);
         assertNotNull(camel);
@@ -89,7 +89,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         log.info("Restarting ...");
 
         // load spring app
-        app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest2.xml");
+        app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest2.xml");
         app2.start();
         CamelContext camel2 = app2.getBean("camelContext", CamelContext.class);
         assertNotNull(camel2);
@@ -99,7 +100,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         assertNotEquals(cronExpression, cronExpression2);
 
         // load spring app
-        app3 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest3.xml");
+        app3 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest3.xml");
         app3.start();
         CamelContext camel3 = app3.getBean("camelContext3", CamelContext.class);
         assertNotNull(camel3);
@@ -117,7 +119,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         // After that it asserts that two options are not equal.
 
         // load spring app
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeOptionsTest1.xml");
+        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeOptionsTest1.xml");
         app.start();
         CamelContext camel = app.getBean("camelContext", CamelContext.class);
         assertNotNull(camel);
@@ -130,7 +133,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         log.info("Restarting ...");
 
         // load spring app
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
         app2.start();
         CamelContext camel2 = app2.getBean("camelContext", CamelContext.class);
         assertNotNull(camel2);
@@ -154,7 +158,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         // After that it asserts that two options are not equal.
 
         // load spring app
-        app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest1.xml");
+        app = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest1.xml");
         app.start();
         CamelContext camel = app.getBean("camelContext", CamelContext.class);
         assertNotNull(camel);
@@ -166,7 +171,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         log.info("Restarting ...");
 
         // load spring app
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
         app2.start();
         CamelContext camel2 = app2.getBean("camelContext", CamelContext.class);
         assertNotNull(camel2);

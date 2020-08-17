@@ -40,9 +40,9 @@ public class DockerNettyCmdExecFactoryTestIT extends DockerITTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("docker://version?cmdExecFactory=" + NettyDockerCmdExecFactory.class.getName())
-                    .log("${body}")
-                    .to("mock:result");
+                        .to("docker://version?cmdExecFactory=" + NettyDockerCmdExecFactory.class.getName())
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

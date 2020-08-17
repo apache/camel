@@ -35,7 +35,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 public class LevelDBAggregateLoadConcurrentTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateLoadConcurrentTest.class);
-    private static final char[] KEYS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+    private static final char[] KEYS = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
     private static final int SIZE = 500;
 
     @BeforeEach
@@ -84,13 +84,13 @@ public class LevelDBAggregateLoadConcurrentTest extends CamelTestSupport {
                 LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 from("direct:start")
-                    .to("log:input?groupSize=500")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .to("log:input?groupSize=500")
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(repo)
                         .completionSize(SIZE / 10)
                         .to("log:output?showHeaders=true")
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

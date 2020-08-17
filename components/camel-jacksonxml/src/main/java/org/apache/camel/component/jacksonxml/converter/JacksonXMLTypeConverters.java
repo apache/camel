@@ -52,7 +52,6 @@ public final class JacksonXMLTypeConverters {
             return null;
         }
 
-
         if (isNotPojoType(type)) {
             return null;
         }

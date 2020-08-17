@@ -49,7 +49,7 @@ public class SplitStackOverflowIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().tokenize("\n").streaming()
+                        .split().tokenize("\n").streaming()
                         .to("log:result?groupSize=100", "mock:result");
             }
         };

@@ -44,7 +44,8 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential").buildView(BlobStoreContext.class).getBlobStore();
+        BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential")
+                .buildView(BlobStoreContext.class).getBlobStore();
         blobStore.createContainerInLocation(null, "foo");
         blobStore.createContainerInLocation(null, "bar");
     }
@@ -74,37 +75,37 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
         template.sendBody("direct:start-with-url-parameters", "Some message");
         resultBar.assertIsSatisfied();
     }
-    
+
     @Test
     public void testBlobStoreCount() throws InterruptedException {
         Long count = template.requestBody("direct:count", "Some message", Long.class);
         assertEquals(new Long(1), count);
     }
-    
+
     @Test
     public void testBlobStoreRemove() throws InterruptedException {
         Long count = template.requestBody("direct:remove", "Some message", Long.class);
         assertEquals(new Long(0), count);
     }
-    
+
     @Test
     public void testBlobStoreClear() throws InterruptedException {
         Long count = template.requestBody("direct:clear", "Some message", Long.class);
         assertEquals(new Long(0), count);
     }
-    
+
     @Test
     public void testBlobStoreDelete() throws InterruptedException {
         Boolean result = template.requestBody("direct:delete", "Some message", Boolean.class);
         assertEquals(false, result);
     }
-    
+
     @Test
     public void testBlobStoreContainerExists() throws InterruptedException {
         Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
         assertEquals(true, result);
     }
-    
+
     @Test
     public void testBlobStoreRemoveBlobs() throws InterruptedException {
         Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);

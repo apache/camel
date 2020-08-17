@@ -26,8 +26,7 @@ import org.apache.camel.Message;
 /**
  * Use file to handle the result of XSLT transformation.
  * <p/>
- * For example when transforming big files you can stream directly to a file output
- * to avoid consuming to much memory.
+ * For example when transforming big files you can stream directly to a file output to avoid consuming to much memory.
  */
 public class FileResultHandler implements ResultHandler {
 

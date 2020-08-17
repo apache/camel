@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 class BlobContainerOperationsTest {
@@ -87,7 +86,9 @@ class BlobContainerOperationsTest {
 
         assertNotNull(response);
 
-        @SuppressWarnings("unchecked") final List<String> items = ((List<BlobItem>) response.getBody()).stream().map(BlobItem::getName).collect(Collectors.toList());
+        @SuppressWarnings("unchecked")
+        final List<String> items
+                = ((List<BlobItem>) response.getBody()).stream().map(BlobItem::getName).collect(Collectors.toList());
 
         assertTrue(items.contains("item-1"));
         assertTrue(items.contains("item-2"));

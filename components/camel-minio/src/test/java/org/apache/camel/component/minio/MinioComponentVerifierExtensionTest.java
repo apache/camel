@@ -40,7 +40,8 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     public void testParameters() {
         Component component = context().getComponent("minio");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -56,7 +57,8 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivity() {
         Component component = context().getComponent("minio");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -72,7 +74,8 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivityAndRegion() {
         Component component = context().getComponent("minio");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");

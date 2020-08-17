@@ -19,8 +19,8 @@ package org.apache.camel.processor.errorhandler;
 import org.apache.camel.Predicate;
 
 /**
- * Exception policy key is a compound key for storing:
- * <b>route id</b> + <b>exception class</b> + <b>when</b> => <b>exception type</b>.
+ * Exception policy key is a compound key for storing: <b>route id</b> + <b>exception class</b> + <b>when</b> =>
+ * <b>exception type</b>.
  * <p/>
  * This is used by Camel to store the onException types configured that has or has not predicates attached (when).
  */
@@ -33,9 +33,9 @@ public final class ExceptionPolicyKey {
     /**
      * Key for exception clause
      *
-     * @param routeId          the route, or use <tt>null</tt> for a global scoped
-     * @param exceptionClass   the exception class
-     * @param when             optional predicate when the exception clause should trigger
+     * @param routeId        the route, or use <tt>null</tt> for a global scoped
+     * @param exceptionClass the exception class
+     * @param when           optional predicate when the exception clause should trigger
      */
     public ExceptionPolicyKey(String routeId, Class<? extends Throwable> exceptionClass, Predicate when) {
         this.routeId = routeId;
@@ -89,6 +89,7 @@ public final class ExceptionPolicyKey {
 
     @Override
     public String toString() {
-        return "ExceptionPolicyKey[route: " + (routeId != null ? routeId : "<global>") + ", " + exceptionClass + (when != null ? " " + when : "") + "]";
+        return "ExceptionPolicyKey[route: " + (routeId != null ? routeId : "<global>") + ", " + exceptionClass
+               + (when != null ? " " + when : "") + "]";
     }
 }

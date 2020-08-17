@@ -26,10 +26,9 @@ import org.apache.camel.cxf.mtom_feature.Hello;
  */
 
 @WebService(serviceName = "HelloService12")
-@XmlSeeAlso({org.apache.camel.cxf.mtom_feature.types.ObjectFactory.class})
+@XmlSeeAlso({ org.apache.camel.cxf.mtom_feature.types.ObjectFactory.class })
 
-@javax.xml.ws.BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_MTOM_BINDING)  
+@javax.xml.ws.BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 public class HelloImpl12 extends HelloImpl implements Hello {
-        
 
 }

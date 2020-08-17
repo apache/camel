@@ -18,6 +18,16 @@ package org.apache.camel.component.hazelcast;
 
 public enum HazelcastCommand {
 
-    map, multimap, queue, topic, seda, set, atomicvalue, instance, list, replicatedmap, ringbuffer
+    map,
+    multimap,
+    queue,
+    topic,
+    seda,
+    set,
+    atomicvalue,
+    instance,
+    list,
+    replicatedmap,
+    ringbuffer
 
 }

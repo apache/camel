@@ -171,7 +171,8 @@ public class SubscriptionManager {
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     Double samplingInterval = s.getSamplingInterval();
-                    final MonitoringParameters parameters = new MonitoringParameters(entry.getKey(), samplingInterval, null, null, null);
+                    final MonitoringParameters parameters
+                            = new MonitoringParameters(entry.getKey(), samplingInterval, null, null, null);
                     items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
                 }
             }
@@ -197,7 +198,8 @@ public class SubscriptionManager {
             }
 
             if (!this.badSubscriptions.isEmpty()) {
-                SubscriptionManager.this.executor.schedule(this::resubscribe, SubscriptionManager.this.reconnectTimeout, TimeUnit.MILLISECONDS);
+                SubscriptionManager.this.executor.schedule(this::resubscribe, SubscriptionManager.this.reconnectTimeout,
+                        TimeUnit.MILLISECONDS);
             }
         }
 
@@ -250,13 +252,14 @@ public class SubscriptionManager {
 
             LOG.debug("Looking up namespace on server: {}", namespaceUri);
 
-            final CompletableFuture<DataValue> future = this.client.readValue(0, TimestampsToReturn.Neither, Identifiers.Server_NamespaceArray);
+            final CompletableFuture<DataValue> future
+                    = this.client.readValue(0, TimestampsToReturn.Neither, Identifiers.Server_NamespaceArray);
 
             return future.thenApply(value -> {
                 final Object rawValue = value.getValue().getValue();
 
                 if (rawValue instanceof String[]) {
-                    final String[] namespaces = (String[])rawValue;
+                    final String[] namespaces = (String[]) rawValue;
                     for (int i = 0; i < namespaces.length; i++) {
                         if (namespaces[i].equals(namespaceUri)) {
                             final UShort result = Unsigned.ushort(i);
@@ -309,7 +312,8 @@ public class SubscriptionManager {
             });
         }
 
-        public CompletableFuture<CallMethodResult> call(final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Variant[] inputArguments) {
+        public CompletableFuture<CallMethodResult> call(
+                final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Variant[] inputArguments) {
 
             return lookupNamespace(nodeId).thenCompose(node -> {
 
@@ -344,7 +348,8 @@ public class SubscriptionManager {
     private Future<?> reconnectJob;
     private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
 
-    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService executor, final long reconnectTimeout) {
+    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService executor,
+                               final long reconnectTimeout) {
 
         this.configuration = configuration;
         this.executor = executor;
@@ -473,7 +478,8 @@ public class SubscriptionManager {
         client.connect().get();
 
         try {
-            final UaSubscription manager = client.getSubscriptionManager().createSubscription(this.configuration.getRequestedPublishingInterval()).get();
+            final UaSubscription manager = client.getSubscriptionManager()
+                    .createSubscription(this.configuration.getRequestedPublishingInterval()).get();
             client.getSubscriptionManager().addSubscriptionListener(new SubscriptionListenerImpl());
 
             return new Connected(client, manager);
@@ -534,7 +540,8 @@ public class SubscriptionManager {
         final Predicate<String> allowed;
         final Set<String> uris = this.configuration.getAllowedSecurityPolicies();
 
-        if (this.configuration.getAllowedSecurityPolicies() == null || this.configuration.getAllowedSecurityPolicies().isEmpty()) {
+        if (this.configuration.getAllowedSecurityPolicies() == null
+                || this.configuration.getAllowedSecurityPolicies().isEmpty()) {
             allowed = uri -> true;
         } else {
             allowed = uris::contains;
@@ -558,15 +565,13 @@ public class SubscriptionManager {
     }
 
     /**
-     * Optionally override the host of the endpoint URL with the configured one.
-     * <br>
-     * The method will call {@link #overrideHost(String)} if the endpoint is not
-     * {@code null} and {@link MiloClientConfiguration#isOverrideHost()} returns
-     * {@code true}.
+     * Optionally override the host of the endpoint URL with the configured one. <br>
+     * The method will call {@link #overrideHost(String)} if the endpoint is not {@code null} and
+     * {@link MiloClientConfiguration#isOverrideHost()} returns {@code true}.
      * 
-     * @param desc The endpoint descriptor to work on
-     * @return Either the provided or updated endpoint descriptor. Only returns
-     *         {@code null} when the input was {@code null}.
+     * @param  desc               The endpoint descriptor to work on
+     * @return                    Either the provided or updated endpoint descriptor. Only returns {@code null} when the
+     *                            input was {@code null}.
      * @throws URISyntaxException on case the URI is malformed
      */
     private EndpointDescription overrideHost(final EndpointDescription desc) throws URISyntaxException {
@@ -578,16 +583,18 @@ public class SubscriptionManager {
             return desc;
         }
 
-        return new EndpointDescription(overrideHost(desc.getEndpointUrl()), desc.getServer(), desc.getServerCertificate(), desc.getSecurityMode(), desc.getSecurityPolicyUri(),
-                                       desc.getUserIdentityTokens(), desc.getTransportProfileUri(), desc.getSecurityLevel());
+        return new EndpointDescription(
+                overrideHost(desc.getEndpointUrl()), desc.getServer(), desc.getServerCertificate(), desc.getSecurityMode(),
+                desc.getSecurityPolicyUri(),
+                desc.getUserIdentityTokens(), desc.getTransportProfileUri(), desc.getSecurityLevel());
     }
 
     /**
      * Override host part of the endpoint URL with the configured one.
      * 
-     * @param endpointUrl the server provided endpoint URL
-     * @return A new endpoint URL with the host part exchanged by the configured
-     *         host. Will be {@code null} when the input is {@code null}.
+     * @param  endpointUrl        the server provided endpoint URL
+     * @return                    A new endpoint URL with the host part exchanged by the configured host. Will be
+     *                            {@code null} when the input is {@code null}.
      * @throws URISyntaxException on case the URI is malformed
      */
     private String overrideHost(final String endpointUrl) throws URISyntaxException {
@@ -599,7 +606,9 @@ public class SubscriptionManager {
         final URI uri = URI.create(endpointUrl);
         final URI originalUri = URI.create(configuration.getEndpointUri());
 
-        return new URI(uri.getScheme(), uri.getUserInfo(), originalUri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(), uri.getFragment()).toString();
+        return new URI(
+                uri.getScheme(), uri.getUserInfo(), originalUri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(),
+                uri.getFragment()).toString();
     }
 
     protected synchronized void whenConnected(final Worker<Connected> worker) {
@@ -618,7 +627,8 @@ public class SubscriptionManager {
         return result;
     }
 
-    public UInteger registerItem(final ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer) {
+    public UInteger registerItem(
+            final ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer) {
 
         final UInteger clientHandle = Unsigned.uint(this.clientHandleCounter.incrementAndGet());
         final Subscription subscription = new Subscription(nodeId, samplingInterval, valueConsumer);
@@ -642,7 +652,8 @@ public class SubscriptionManager {
         }
     }
 
-    public CompletableFuture<CallMethodResult> call(final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Variant[] inputArguments) {
+    public CompletableFuture<CallMethodResult> call(
+            final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Variant[] inputArguments) {
         synchronized (this) {
             if (this.connected == null) {
                 return newNotConnectedResult();

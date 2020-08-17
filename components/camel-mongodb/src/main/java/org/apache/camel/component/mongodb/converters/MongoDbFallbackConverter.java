@@ -41,7 +41,7 @@ public final class MongoDbFallbackConverter {
     @Converter(fallback = true)
     @SuppressWarnings("unchecked")
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
-        throws InvalidPayloadException {
+            throws InvalidPayloadException {
 
         // if the source is a string and we attempt to convert to one of the known mongodb json classes then try that
         if (String.class == value.getClass()) {

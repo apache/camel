@@ -47,7 +47,8 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
             template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertEquals(cause.getMessage(), "File already exist: hello.txt. Cannot write new file.");
         }
 

@@ -30,7 +30,8 @@ public class SpringLogMaskTest {
 
     @Test
     public void testLogMask() throws Exception {
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
+        final AbstractXmlApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:mask", MockEndpoint.class);
@@ -43,7 +44,8 @@ public class SpringLogMaskTest {
 
     @Test
     public void testLogMaskDisabled() throws Exception {
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
+        final AbstractXmlApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:no-mask", MockEndpoint.class);
@@ -56,9 +58,11 @@ public class SpringLogMaskTest {
 
     @Test
     public void testCustomLogMask() throws Exception {
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringCustomLogMaskTest-context.xml");
+        final AbstractXmlApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringCustomLogMaskTest-context.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
-        MockMaskingFormatter customFormatter = applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
+        MockMaskingFormatter customFormatter
+                = applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("direct:mock", "password=passw0rd@", "headerPassword", "#header-password$");
@@ -68,12 +72,12 @@ public class SpringLogMaskTest {
 
     public static class MockMaskingFormatter implements MaskingFormatter {
         private String received;
+
         @Override
         public String format(String source) {
             received = source;
             return source;
         }
     }
-
 
 }

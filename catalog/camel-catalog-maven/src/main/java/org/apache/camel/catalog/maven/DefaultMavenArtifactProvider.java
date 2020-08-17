@@ -39,8 +39,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     private boolean log;
 
     /**
-     * Sets whether to log errors and warnings to System.out.
-     * By default nothing is logged.
+     * Sets whether to log errors and warnings to System.out. By default nothing is logged.
      */
     public void setLog(boolean log) {
         this.log = log;
@@ -60,8 +59,9 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     }
 
     @Override
-    public Set<String> addArtifactToCatalog(CamelCatalog camelCatalog,
-                                            String groupId, String artifactId, String version) {
+    public Set<String> addArtifactToCatalog(
+            CamelCatalog camelCatalog,
+            String groupId, String artifactId, String version) {
         final Set<String> names = new LinkedHashSet<>();
 
         try {
@@ -98,7 +98,8 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
         } catch (Exception e) {
             if (log) {
-                System.out.println("WARN: Error during add components from artifact " + groupId + ":" + artifactId + ":" + version + " due " + e.getMessage());
+                System.out.println("WARN: Error during add components from artifact " + groupId + ":" + artifactId + ":"
+                                   + version + " due " + e.getMessage());
             }
         }
 
@@ -133,4 +134,3 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     }
 
 }
-

@@ -35,9 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
- * Integration test to check if temporary queue's name change is properly handled after auto recovering
- * caused by connection failure.
- * This test takes advantage of RabbitMQ Management HTTP API provided by RabbitMQ Management Plugin.
+ * Integration test to check if temporary queue's name change is properly handled after auto recovering caused by
+ * connection failure. This test takes advantage of RabbitMQ Management HTTP API provided by RabbitMQ Management Plugin.
  */
 public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQIntTest {
 
@@ -59,7 +58,7 @@ public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQI
     protected ProducerTemplate getExchangeBindingsProducer;
 
     @EndpointInject(uri = "rabbitmq:" + EXCHANGE + "?addresses=localhost:5672&username=cameltest&password=cameltest"
-            + "&autoAck=false&queue=" + QUEUE + "&routingKey=" + ROUTING_KEY)
+                          + "&autoAck=false&queue=" + QUEUE + "&routingKey=" + ROUTING_KEY)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject(uri = "http:localhost:15672/api?authMethod=Basic&authUsername=cameltest&authPassword=cameltest")
@@ -132,18 +131,19 @@ public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQI
     }
 
     /**
-     * <p><b>NOTE:</b>Make sure RabbitMQ Management Plugin is enabled
-     * and ConnectionFactory#automaticRecovery is set to <code>true</code> (default)</p>
+     * <p>
+     * <b>NOTE:</b>Make sure RabbitMQ Management Plugin is enabled and ConnectionFactory#automaticRecovery is set to
+     * <code>true</code> (default)
+     * </p>
      * <ul>
      * <li>Send first PRC request that automatically creates server-named temporary reply queue</li>
-     * <li>Send another PRC request to verify reply-to property stays the same
-     * if no connection failure occurred</li>
-     * <li>Wait a few seconds to ensure all necessary bindings are created
-     * and seen by the RabbitMQ Management HTTP API</li>
-     * <li>Forcibly close temporary reply queue's connection and wait another few seconds
-     * to let it recover automatically</li>
-     * <li>Send one last RPC request and verify reply-to property is changed
-     * (assuming the new server-generated name will not be exactly the same)</li>
+     * <li>Send another PRC request to verify reply-to property stays the same if no connection failure occurred</li>
+     * <li>Wait a few seconds to ensure all necessary bindings are created and seen by the RabbitMQ Management HTTP
+     * API</li>
+     * <li>Forcibly close temporary reply queue's connection and wait another few seconds to let it recover
+     * automatically</li>
+     * <li>Send one last RPC request and verify reply-to property is changed (assuming the new server-generated name
+     * will not be exactly the same)</li>
      * <li>Get new temporary queue's bindings and verify routing key matches queue name</li>
      * </ul>
      *
@@ -156,10 +156,12 @@ public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQI
         producingMockEndpoint.expectedMessageCount(3);
 
         directRabbitMQProducer.requestBody(REQUEST);
-        String replyToOriginal = consumingMockEndpoint.getExchanges().get(0).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
+        String replyToOriginal
+                = consumingMockEndpoint.getExchanges().get(0).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
 
         directRabbitMQProducer.requestBody(REQUEST);
-        String replyToVerify = consumingMockEndpoint.getExchanges().get(1).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
+        String replyToVerify
+                = consumingMockEndpoint.getExchanges().get(1).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
 
         Thread.sleep(7000);
 
@@ -167,9 +169,11 @@ public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQI
         Thread.sleep(7000);
 
         directRabbitMQProducer.requestBody(REQUEST);
-        String replyToRecovered = consumingMockEndpoint.getExchanges().get(2).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
+        String replyToRecovered
+                = consumingMockEndpoint.getExchanges().get(2).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
 
-        String tempQueueRoutingKey = (String) getExchangeBindingsProducer.requestBodyAndHeader(null, TEMP_QUEUE_NAME, replyToRecovered);
+        String tempQueueRoutingKey
+                = (String) getExchangeBindingsProducer.requestBodyAndHeader(null, TEMP_QUEUE_NAME, replyToRecovered);
 
         assertEquals(replyToVerify, replyToOriginal);
         assertNotEquals(replyToRecovered, replyToOriginal);

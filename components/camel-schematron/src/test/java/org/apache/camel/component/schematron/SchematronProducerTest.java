@@ -52,7 +52,8 @@ public class SchematronProducerTest extends CamelTestSupport {
         SchematronEndpoint endpoint = new SchematronEndpoint();
         TransformerFactory fac = new TransformerFactoryImpl();
         fac.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, endpoint.getUriResolver()));
-        Templates templates = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream("sch/schematron-1.sch"), fac);
+        Templates templates = TemplatesFactory.newInstance()
+                .getTemplates(ClassLoader.getSystemResourceAsStream("sch/schematron-1.sch"), fac);
         endpoint.setRules(templates);
         producer = new SchematronProducer(endpoint);
     }
@@ -85,7 +86,8 @@ public class SchematronProducerTest extends CamelTestSupport {
     @Test
     public void testProcessValidXMLAsSource() throws Exception {
         Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
-        exc.getIn().setBody(new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"))));
+        exc.getIn().setBody(
+                new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"))));
 
         // process xml payload
         producer.process(exc);
@@ -97,7 +99,8 @@ public class SchematronProducerTest extends CamelTestSupport {
     @Test
     public void testProcessInValidXMLAsSource() throws Exception {
         Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
-        exc.getIn().setBody(new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"))));
+        exc.getIn().setBody(
+                new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"))));
 
         // process xml payload
         producer.process(exc);

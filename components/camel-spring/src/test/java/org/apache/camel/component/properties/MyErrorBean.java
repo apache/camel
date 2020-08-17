@@ -20,9 +20,9 @@ package org.apache.camel.component.properties;
  *
  */
 public class MyErrorBean {
-    
+
     private int counter;
-    
+
     public void doSomething(String body) {
         counter++;
         throw new IllegalArgumentException("Damn");

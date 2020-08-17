@@ -33,8 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Verifies the signature contained in the header
- * {@link CryptoCmsConstants#CAMEL_CRYPTO_CMS_SIGNED_DATA}.
+ * Verifies the signature contained in the header {@link CryptoCmsConstants#CAMEL_CRYPTO_CMS_SIGNED_DATA}.
  */
 public class SignedDataVerifierFromHeader extends SignedDataVerifier {
 
@@ -49,12 +48,13 @@ public class SignedDataVerifierFromHeader extends SignedDataVerifier {
 
     @Override
     public void process(Exchange exchange) throws Exception { // NOPMD see
-                                                              // method
-                                                              // processSignedDataHader
+                                                             // method
+                                                             // processSignedDataHader
 
         InputStream signature = exchange.getIn().getHeader(CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA, InputStream.class);
         if (signature == null) {
-            LOG.debug("No signed data found in header {}. Assuming signed data contained in message body", CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA);
+            LOG.debug("No signed data found in header {}. Assuming signed data contained in message body",
+                    CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA);
             super.process(exchange);
         } else {
             LOG.debug("Signed data header {} found.", CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA);
@@ -96,7 +96,9 @@ public class SignedDataVerifierFromHeader extends SignedDataVerifier {
 
         CMSSignedDataParser sp;
         try {
-            sp = new CMSSignedDataParser(new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(), new CMSTypedStream(is), signature);
+            sp = new CMSSignedDataParser(
+                    new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(),
+                    new CMSTypedStream(is), signature);
         } catch (CMSException e) {
             throw new CryptoCmsFormatException(getFormatErrorMessage(), e);
         }
@@ -105,7 +107,7 @@ public class SignedDataVerifierFromHeader extends SignedDataVerifier {
             // signature
             sp.getSignedContent().drain();
         } catch (NullPointerException e) { // nullpointer exception is thrown
-                                           // when the signed content is missing
+                                          // when the signed content is missing
             throw getContentMissingException(e);
         }
 

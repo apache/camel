@@ -60,7 +60,8 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/includeexclude/?initialDelay=0&delay=10&include=report.*txt&exclude=hello.*").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/includeexclude/?initialDelay=0&delay=10&include=report.*txt&exclude=hello.*")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

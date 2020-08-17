@@ -48,7 +48,7 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest {
     private MockEndpoint result;
 
     private String expected;
-    
+
     public static String replaceToBar(String fooString) {
         return fooString.replaceAll("Pauline", "Bar");
     }
@@ -65,7 +65,8 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest {
         result.assertIsSatisfied();
 
         // check the model
-        BindySimpleFixedLengthUnmarshallExternalMethodTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallExternalMethodTest.Order.class);
+        BindySimpleFixedLengthUnmarshallExternalMethodTest.Order order = result.getReceivedExchanges().get(0).getIn()
+                .getBody(BindySimpleFixedLengthUnmarshallExternalMethodTest.Order.class);
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertEquals("  Bar", order.getFirstName());
@@ -82,7 +83,7 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest {
         }
 
     }
-    
+
     @FixedLengthRecord(length = 75)
     public static class Order {
 
@@ -92,7 +93,8 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest {
         @DataField(pos = 3, length = 2)
         private String clientNr;
 
-        @DataField(pos = 5, length = 9, method = "org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.method.BindySimpleFixedLengthUnmarshallExternalMethodTest.replaceToBar")
+        @DataField(pos = 5, length = 9,
+                   method = "org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.method.BindySimpleFixedLengthUnmarshallExternalMethodTest.replaceToBar")
         private String firstName;
 
         @DataField(pos = 14, length = 5, align = "L")
@@ -220,8 +222,10 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }

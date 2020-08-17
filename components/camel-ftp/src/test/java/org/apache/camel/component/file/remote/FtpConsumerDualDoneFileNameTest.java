@@ -30,8 +30,10 @@ public class FtpConsumerDualDoneFileNameTest extends FtpServerTestSupport {
     public void testTwoDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Bye World", Exchange.FILE_NAME,
+                "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -40,7 +42,8 @@ public class FtpConsumerDualDoneFileNameTest extends FtpServerTestSupport {
     public void testOneDoneFileMissing() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // give chance to poll 2nd file but it lacks the done file

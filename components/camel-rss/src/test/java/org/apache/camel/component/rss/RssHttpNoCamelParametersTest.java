@@ -26,7 +26,8 @@ public class RssHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
     public void testRssHttpNoCamelParameters() throws Exception {
-        RssEndpoint rss = context.getEndpoint("rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", RssEndpoint.class);
+        RssEndpoint rss = context.getEndpoint(
+                "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", RssEndpoint.class);
         assertNotNull(rss);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml", rss.getFeedUri());
@@ -36,7 +37,9 @@ public class RssHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
     public void testRssHttpNoCamelParametersAndOneFeedParameter() throws Exception {
-        RssEndpoint rss = context.getEndpoint("rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true&foo=bar", RssEndpoint.class);
+        RssEndpoint rss = context.getEndpoint(
+                "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true&foo=bar",
+                RssEndpoint.class);
         assertNotNull(rss);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml?foo=bar", rss.getFeedUri());

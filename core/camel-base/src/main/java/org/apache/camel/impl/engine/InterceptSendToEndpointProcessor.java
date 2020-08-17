@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
- * {@link org.apache.camel.Processor} used to interceptor and detour the routing
- * when using the {@link DefaultInterceptSendToEndpoint} functionality.
+ * {@link org.apache.camel.Processor} used to interceptor and detour the routing when using the
+ * {@link DefaultInterceptSendToEndpoint} functionality.
  */
 public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
@@ -46,7 +46,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private final AsyncProducer producer;
     private final boolean skip;
 
-    public InterceptSendToEndpointProcessor(DefaultInterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip) throws Exception {
+    public InterceptSendToEndpointProcessor(DefaultInterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
+                                            boolean skip) throws Exception {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;
@@ -63,7 +64,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // process the detour so we do the detour routing
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(), endpoint.getBefore(), exchange);
+            LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(),
+                    endpoint.getBefore(), exchange);
         }
         // add header with the real endpoint uri
         exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
@@ -122,7 +124,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
             return doneSync && s;
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);
+                LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}",
+                        getEndpoint(), exchange);
             }
             callback.done(doneSync);
             return doneSync;

@@ -22,17 +22,17 @@ import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
 
 public class JMXMonitorTypeLongCounterTest extends SimpleBeanFixture {
-    
+
     @Test
     public void counter() throws Exception {
 
         ISimpleMXBean simpleBean = getSimpleMXBean();
-        
+
         // we should get an event after the monitor number reaches 3
         simpleBean.setLongNumber(1L);
         // this should trigger a notification
         simpleBean.setLongNumber(3L);
-        
+
         // we should get 1 change from the counter bean
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/monitorNotificationLong.xml"));
@@ -41,11 +41,11 @@ public class JMXMonitorTypeLongCounterTest extends SimpleBeanFixture {
     @Override
     protected JMXUriBuilder buildFromURI() {
         return super.buildFromURI().withMonitorType("counter")
-                                   .withGranularityPeriod(500)
-                                   .withObservedAttribute("LongNumber")
-                                   .withInitThreshold(2)
-                                   .withOffset(2)
-                                   .withModulus(100)
-                                   .withDifferenceMode(false);
+                .withGranularityPeriod(500)
+                .withObservedAttribute("LongNumber")
+                .withInitThreshold(2)
+                .withOffset(2)
+                .withModulus(100)
+                .withDifferenceMode(false);
     }
 }

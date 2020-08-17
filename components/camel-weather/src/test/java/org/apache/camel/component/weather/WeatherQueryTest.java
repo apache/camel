@@ -60,7 +60,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/box/city?bbox=4,52,6,54,8&cluster=yes&lang=en&units=metric&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/box/city?bbox=4,52,6,54,8&cluster=yes&lang=en&units=metric&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -77,7 +78,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/box/station?bbox=4,52,6,54,8&cluster=yes&lang=en&units=metric&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/box/station?bbox=4,52,6,54,8&cluster=yes&lang=en&units=metric&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -91,7 +93,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/weather?lat=52&lon=4&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/weather?lat=52&lon=4&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -104,7 +107,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/weather?zip=2493CJ,nl&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/weather?zip=2493CJ,nl&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -117,7 +121,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/weather?id=524901&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/weather?id=524901&lang=nl&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -131,7 +136,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&lang=nl&cnt=20&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&lang=nl&cnt=20&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -146,7 +152,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast?id=524901&lang=nl&cnt=20&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/forecast?id=524901&lang=nl&cnt=20&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -160,7 +167,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/station?id=52&lang=nl&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query,
+                is("http://api.openweathermap.org/data/2.5/station?id=52&lang=nl&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -173,7 +181,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/group?id=524901,703448&lang=nl&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/group?id=524901,703448&lang=nl&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -188,7 +197,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/find?lat=51.98&lon=4.13&lang=nl&cnt=25&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/find?lat=51.98&lon=4.13&lang=nl&cnt=25&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -204,7 +214,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/station/find?lat=51.98&lon=4.13&lang=nl&cnt=25&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/station/find?lat=51.98&lon=4.13&lang=nl&cnt=25&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -218,7 +229,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast/daily?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/forecast/daily?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -233,7 +245,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/forecast?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
     @Test
@@ -248,8 +261,10 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/forecast/daily?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/forecast/daily?lat=51.98&lon=4.13&lang=nl&cnt=3&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
+
     @Test
     public void testGivenLocation() throws Exception {
         WeatherConfiguration weatherConfiguration = new WeatherConfiguration();
@@ -261,7 +276,8 @@ public class WeatherQueryTest {
         WeatherQuery weatherQuery = new WeatherQuery(weatherConfiguration);
         weatherConfiguration.setGeoLocationProvider(geoLocationProvider);
         String query = weatherQuery.getQuery();
-        assertThat(query, is("http://api.openweathermap.org/data/2.5/weather?q=Scheveningen,NL&lang=nl&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
+        assertThat(query, is(
+                "http://api.openweathermap.org/data/2.5/weather?q=Scheveningen,NL&lang=nl&units=imperial&mode=xml&APPID=9162755b2efa555823cfe0451d7fff38"));
     }
 
 }

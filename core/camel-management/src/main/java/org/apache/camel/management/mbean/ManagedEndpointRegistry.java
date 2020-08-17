@@ -100,7 +100,8 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
                 boolean fromStatic = endpointRegistry.isStatic(url);
                 boolean fromDynamic = endpointRegistry.isDynamic(url);
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "static", "dynamic"}, new Object[]{url, fromStatic, fromDynamic});
+                CompositeData data = new CompositeDataSupport(
+                        ct, new String[] { "url", "static", "dynamic" }, new Object[] { url, fromStatic, fromDynamic });
                 answer.put(data);
             }
             return answer;

@@ -149,7 +149,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         InputStream is = getClass().getResourceAsStream("/SignedMailTestCaseHurz.elm");
         Message hurzMsg = new MimeMessage(sender.getSession(), is);
-        Message[] messages = new Message[] {hurzMsg};
+        Message[] messages = new Message[] { hurzMsg };
 
         // insert one signed message
         folder.appendMessages(messages);
@@ -163,16 +163,16 @@ public class RawMailMessageTest extends CamelTestSupport {
                 from("pop3://davsclaus@apache.org").to("mock:mail");
 
                 from("pop3://jonesRawPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
-                    .to("mock://rawMessagePop3");
+                        .to("mock://rawMessagePop3");
 
                 from("imap://jonesRawImap@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
-                    .to("mock://rawMessageImap");
+                        .to("mock://rawMessageImap");
 
                 from("pop3://jonesPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true")
-                    .to("mock://normalMessagePop3");
+                        .to("mock://normalMessagePop3");
 
                 from("imap://jonesImap@localhost?password=secret&initialDelay=100&delay=100&delete=true")
-                    .to("mock://normalMessageImap");
+                        .to("mock://normalMessageImap");
             }
         };
     }

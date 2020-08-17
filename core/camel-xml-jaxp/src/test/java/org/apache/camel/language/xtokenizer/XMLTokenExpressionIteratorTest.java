@@ -34,55 +34,52 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  */
 public class XMLTokenExpressionIteratorTest {
-    private static final byte[] TEST_BODY = 
-        ("<?xml version='1.0' encoding='UTF-8'?>"
-            + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
-            + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-            + "<c:child some_attr='a' anotherAttr='a'></c:child>"
-            + "<c:child some_attr='b' anotherAttr='b'/>"
-            + "</c:parent>"
-            + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-            + "<c:child some_attr='c' anotherAttr='c'></c:child>"
-            + "<c:child some_attr='d' anotherAttr='d'/>"
-            + "</c:parent>"
-            + "</grandparent>"
-            + "<grandparent><uncle>ben</uncle><aunt/>"
-            + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
-            + "<c:child some_attr='e' anotherAttr='e'></c:child>"
-            + "<c:child some_attr='f' anotherAttr='f'/>"
-            + "</c:parent>"
-            + "</grandparent>"
-            + "</g:greatgrandparent>").getBytes();
+    private static final byte[] TEST_BODY = ("<?xml version='1.0' encoding='UTF-8'?>"
+                                             + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
+                                             + "<c:parent some_attr='1' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                             + "<c:child some_attr='a' anotherAttr='a'></c:child>"
+                                             + "<c:child some_attr='b' anotherAttr='b'/>"
+                                             + "</c:parent>"
+                                             + "<c:parent some_attr='2' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                             + "<c:child some_attr='c' anotherAttr='c'></c:child>"
+                                             + "<c:child some_attr='d' anotherAttr='d'/>"
+                                             + "</c:parent>"
+                                             + "</grandparent>"
+                                             + "<grandparent><uncle>ben</uncle><aunt/>"
+                                             + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                                             + "<c:child some_attr='e' anotherAttr='e'></c:child>"
+                                             + "<c:child some_attr='f' anotherAttr='f'/>"
+                                             + "</c:parent>"
+                                             + "</grandparent>"
+                                             + "</g:greatgrandparent>").getBytes();
 
     // mixing a default namespace with an explicit namespace for child
-    private static final byte[] TEST_BODY_NS_MIXED =
-        ("<?xml version='1.0' encoding='UTF-8'?>"
-            + "<g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-            + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
-            + "<child some_attr='a' anotherAttr='a'></child>"
-            + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/>"
-            + "</parent>"
-            + "<c:parent some_attr='2' xmlns:c='urn:c'>"
-            + "<child some_attr='c' anotherAttr='c' xmlns='urn:c'></child>"
-            + "<c:child some_attr='d' anotherAttr='d'/>"
-            + "</c:parent>"
-            + "</grandparent>"
-            + "</g:greatgrandparent>").getBytes();
+    private static final byte[] TEST_BODY_NS_MIXED = ("<?xml version='1.0' encoding='UTF-8'?>"
+                                                      + "<g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+                                                      + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+                                                      + "<child some_attr='a' anotherAttr='a'></child>"
+                                                      + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/>"
+                                                      + "</parent>"
+                                                      + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+                                                      + "<child some_attr='c' anotherAttr='c' xmlns='urn:c'></child>"
+                                                      + "<c:child some_attr='d' anotherAttr='d'/>"
+                                                      + "</c:parent>"
+                                                      + "</grandparent>"
+                                                      + "</g:greatgrandparent>").getBytes();
 
     // mixing a no namespace with an explicit namespace for child
-    private static final byte[] TEST_BODY_NO_NS_MIXED =
-        ("<?xml version='1.0' encoding='UTF-8'?>"
-            + "<g:greatgrandparent xmlns:g='urn:g'><grandparent>"
-            + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
-            + "<child some_attr='a' anotherAttr='a' xmlns=''></child>"
-            + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/>"
-            + "</parent>"
-            + "<c:parent some_attr='2' xmlns:c='urn:c'>"
-            + "<child some_attr='c' anotherAttr='c'></child>"
-            + "<c:child some_attr='d' anotherAttr='d'/>"
-            + "</c:parent>"
-            + "</grandparent>"
-            + "</g:greatgrandparent>").getBytes();
+    private static final byte[] TEST_BODY_NO_NS_MIXED = ("<?xml version='1.0' encoding='UTF-8'?>"
+                                                         + "<g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+                                                         + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+                                                         + "<child some_attr='a' anotherAttr='a' xmlns=''></child>"
+                                                         + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/>"
+                                                         + "</parent>"
+                                                         + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+                                                         + "<child some_attr='c' anotherAttr='c'></child>"
+                                                         + "<c:child some_attr='d' anotherAttr='d'/>"
+                                                         + "</c:parent>"
+                                                         + "</grandparent>"
+                                                         + "</g:greatgrandparent>").getBytes();
 
     private static final String RESULTS_CW1 = "<?xml version='1.0' encoding='UTF-8'?>"
                                               + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
@@ -124,10 +121,10 @@ public class XMLTokenExpressionIteratorTest {
     };
 
     private static final String[] RESULTS_CHILD_MIXED = {
-        "<child some_attr='a' anotherAttr='a' xmlns=\"urn:c\" xmlns:c=\"urn:c\" xmlns:g=\"urn:g\"></child>",
-        "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:c='urn:c' xmlns:g='urn:g'/>",
-        "<child some_attr='c' anotherAttr='c' xmlns='urn:c' xmlns:g='urn:g' xmlns:c='urn:c'></child>",
-        "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
+            "<child some_attr='a' anotherAttr='a' xmlns=\"urn:c\" xmlns:c=\"urn:c\" xmlns:g=\"urn:g\"></child>",
+            "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:c='urn:c' xmlns:g='urn:g'/>",
+            "<child some_attr='c' anotherAttr='c' xmlns='urn:c' xmlns:g='urn:g' xmlns:c='urn:c'></child>",
+            "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
     };
 
     private static final String RESULTS_CMW1
@@ -154,17 +151,17 @@ public class XMLTokenExpressionIteratorTest {
     };
 
     private static final String[] RESULTS_CHILD = {
-        "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
-        "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>",
-        "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
-        "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>",
-        "<c:child some_attr='e' anotherAttr='e' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
-        "<c:child some_attr='f' anotherAttr='f' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>"
+            "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+            "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>",
+            "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+            "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>",
+            "<c:child some_attr='e' anotherAttr='e' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+            "<c:child some_attr='f' anotherAttr='f' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>"
     };
 
     private static final String[] RESULTS_CHILD_NO_NS_MIXED = {
-        "<child some_attr='a' anotherAttr='a' xmlns='' xmlns:c='urn:c' xmlns:g='urn:g'></child>",
-        "<child some_attr='c' anotherAttr='c' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"></child>",
+            "<child some_attr='a' anotherAttr='a' xmlns='' xmlns:c='urn:c' xmlns:g='urn:g'></child>",
+            "<child some_attr='c' anotherAttr='c' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"></child>",
     };
 
     private static final String RESULT_CNNMW1
@@ -182,8 +179,8 @@ public class XMLTokenExpressionIteratorTest {
     };
 
     private static final String[] RESULTS_CHILD_NS_MIXED = {
-        "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:c='urn:c' xmlns:g='urn:g'/>",
-        "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
+            "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:c='urn:c' xmlns:g='urn:g'/>",
+            "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
     };
 
     private static final String RESULTS_CNMW1
@@ -256,23 +253,22 @@ public class XMLTokenExpressionIteratorTest {
     };
 
     private static final String[] RESULTS_AUNT = {
-        "<aunt xmlns:g=\"urn:g\">emma</aunt>",
-        "<aunt xmlns:g=\"urn:g\"/>"
-    };    
+            "<aunt xmlns:g=\"urn:g\">emma</aunt>",
+            "<aunt xmlns:g=\"urn:g\"/>"
+    };
 
     private static final String[] RESULTS_AUNT_UNWRAPPED = {
-        "emma",
-        ""
+            "emma",
+            ""
     };
 
     private static final String[] RESULTS_GRANDPARENT_TEXT = {
-        "emma",
-        "ben"
+            "emma",
+            "ben"
     };
 
     private static final String[] RESULTS_NULL = {
     };
- 
 
     private Map<String, String> nsmap;
 
@@ -282,7 +278,6 @@ public class XMLTokenExpressionIteratorTest {
         nsmap.put("G", "urn:g");
         nsmap.put("C", "urn:c");
     }
-
 
     @Test
     public void testExtractChild() throws Exception {
@@ -355,98 +350,98 @@ public class XMLTokenExpressionIteratorTest {
 
     @Test
     public void testExtractChildWithAncestorGGPdGP() throws Exception {
-        invokeAndVerify("/G:greatgrandparent/grandparent//C:child", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("/G:greatgrandparent/grandparent//C:child",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     @Test
     public void testExtractChildWithAncestorGGPdP() throws Exception {
-        invokeAndVerify("/G:greatgrandparent//C:parent/C:child", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("/G:greatgrandparent//C:parent/C:child",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     @Test
     public void testExtractChildWithAncestorGPddP() throws Exception {
-        invokeAndVerify("//grandparent//C:parent/C:child", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("//grandparent//C:parent/C:child",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     @Test
     public void testExtractChildWithAncestorGPdP() throws Exception {
-        invokeAndVerify("//grandparent/C:parent/C:child", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("//grandparent/C:parent/C:child",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     @Test
     public void testExtractChildWithAncestorP() throws Exception {
-        invokeAndVerify("//C:parent/C:child", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("//C:parent/C:child",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     @Test
     public void testExtractChildWithAncestorGGPdGPdP() throws Exception {
-        invokeAndVerify("/G:greatgrandparent/grandparent/C:parent/C:child", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("/G:greatgrandparent/grandparent/C:parent/C:child",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
-    
+
     @Test
     public void testExtractParent() throws Exception {
-        invokeAndVerify("//C:parent", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT_WRAPPED);
+        invokeAndVerify("//C:parent",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT_WRAPPED);
     }
-    
+
     @Test
     public void testExtractParentInjected() throws Exception {
-        invokeAndVerify("//C:parent", 
-                        'i', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT);
+        invokeAndVerify("//C:parent",
+                'i', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT);
     }
-    
+
     @Test
     public void testExtractAuntWC1() throws Exception {
-        invokeAndVerify("//a*t", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
+        invokeAndVerify("//a*t",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
     @Test
     public void testExtractAuntWC2() throws Exception {
-        invokeAndVerify("//au?t", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
+        invokeAndVerify("//au?t",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
     @Test
     public void testExtractAunt() throws Exception {
-        invokeAndVerify("//aunt", 
-                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
+        invokeAndVerify("//aunt",
+                'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
     @Test
     public void testExtractAuntInjected() throws Exception {
-        invokeAndVerify("//aunt", 
-                        'i', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT);
+        invokeAndVerify("//aunt",
+                'i', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT);
     }
 
     @Test
     public void testExtractAuntUnwrapped() throws Exception {
-        invokeAndVerify("//aunt", 
-                        'u', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_UNWRAPPED);
+        invokeAndVerify("//aunt",
+                'u', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_UNWRAPPED);
     }
 
     @Test
     public void testExtractGrandParentText() throws Exception {
-        invokeAndVerify("//grandparent", 
-                        't', new ByteArrayInputStream(TEST_BODY), RESULTS_GRANDPARENT_TEXT);
+        invokeAndVerify("//grandparent",
+                't', new ByteArrayInputStream(TEST_BODY), RESULTS_GRANDPARENT_TEXT);
     }
 
     private void invokeAndVerify(String path, char mode, InputStream in, String[] expected) throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator(path, mode);
         xtei.setNamespaces(nsmap);
-        
+
         Iterator<?> it = xtei.createIterator(in, "utf-8");
         List<String> results = new ArrayList<>();
         while (it.hasNext()) {
-            results.add((String)it.next());
+            results.add((String) it.next());
         }
-        ((Closeable)it).close();
+        ((Closeable) it).close();
 
         assertEquals(expected.length, results.size(), "token count");
         for (int i = 0; i < expected.length; i++) {

@@ -50,12 +50,13 @@ public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("timer:foo?period=5000").routeId("route-a").setBody().constant("Hello World").onCompletion().process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new MyOnCompletion());
-                    }
-                }).end().to("log:foo").to("direct:b");
+                from("timer:foo?period=5000").routeId("route-a").setBody().constant("Hello World").onCompletion()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.adapt(ExtendedExchange.class).addOnCompletion(new MyOnCompletion());
+                            }
+                        }).end().to("log:foo").to("direct:b");
 
                 from("direct:b").routeId("route-b").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -38,7 +38,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS EC2 instances.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS Elastic Compute Cloud (EC2)", syntax = "aws-ec2:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS Elastic Compute Cloud (EC2)", syntax = "aws-ec2:label",
+             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class EC2Endpoint extends ScheduledPollEndpoint {
 
     private AmazonEC2 ec2Client;
@@ -65,7 +66,8 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        ec2Client = configuration.getAmazonEc2Client() != null ? configuration.getAmazonEc2Client() : (AmazonEC2Client) createEc2Client();
+        ec2Client = configuration.getAmazonEc2Client() != null
+                ? configuration.getAmazonEc2Client() : (AmazonEC2Client) createEc2Client();
     }
 
     @Override
@@ -102,7 +104,8 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonEC2ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonEC2ClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonEC2ClientBuilder.standard().withCredentials(credentialsProvider);
             }

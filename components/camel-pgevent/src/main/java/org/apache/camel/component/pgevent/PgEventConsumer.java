@@ -53,7 +53,6 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
         dbConnection.addNotificationListener(endpoint.getChannel(), endpoint.getChannel(), this);
     }
 
-
     @Override
     public void notification(int processId, String channel, String payload) {
         if (LOG.isDebugEnabled()) {
@@ -68,7 +67,8 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
         try {
             getProcessor().process(exchange);
         } catch (Exception ex) {
-            String cause = "Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='" + channel + "', payload='" + payload + "'";
+            String cause = "Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='"
+                           + channel + "', payload='" + payload + "'";
             getExceptionHandler().handleException(cause, ex);
         }
     }

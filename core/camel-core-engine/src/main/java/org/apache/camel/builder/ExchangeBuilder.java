@@ -26,8 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 
 /**
- * Builder to create {@link Exchange} and add headers and set body on the
- * Exchange {@link Message}.
+ * Builder to create {@link Exchange} and add headers and set body on the Exchange {@link Message}.
  * <p/>
  * Use the {@link #build()} method when done setting up the exchange.
  */
@@ -45,8 +44,8 @@ public final class ExchangeBuilder {
     /**
      * Create the exchange by setting the camel context
      *
-     * @param context the camel context
-     * @return exchange builder
+     * @param  context the camel context
+     * @return         exchange builder
      */
     public static ExchangeBuilder anExchange(CamelContext context) {
         return new ExchangeBuilder(context);
@@ -55,8 +54,8 @@ public final class ExchangeBuilder {
     /**
      * Set the in message body on the exchange
      *
-     * @param body the body
-     * @return exchange builder
+     * @param  body the body
+     * @return      exchange builder
      */
     public ExchangeBuilder withBody(Object body) {
         this.body = body;
@@ -66,9 +65,9 @@ public final class ExchangeBuilder {
     /**
      * Set the message header of the in message on the exchange
      *
-     * @param key the key of the header
-     * @param value the value of the header
-     * @return exchange builder
+     * @param  key   the key of the header
+     * @param  value the value of the header
+     * @return       exchange builder
      */
     public ExchangeBuilder withHeader(String key, Object value) {
         headers.put(key, value);
@@ -78,8 +77,8 @@ public final class ExchangeBuilder {
     /**
      * Set the message exchange pattern on the exchange
      *
-     * @param pattern exchange pattern
-     * @return exchange builder
+     * @param  pattern exchange pattern
+     * @return         exchange builder
      */
     public ExchangeBuilder withPattern(ExchangePattern pattern) {
         this.pattern = pattern;
@@ -89,9 +88,9 @@ public final class ExchangeBuilder {
     /**
      * Set the exchange property
      *
-     * @param key the key of the exchange property
-     * @param value the value of the exchange property
-     * @return exchange builder
+     * @param  key   the key of the exchange property
+     * @param  value the value of the exchange property
+     * @return       exchange builder
      */
     public ExchangeBuilder withProperty(String key, Object value) {
         properties.put(key, value);

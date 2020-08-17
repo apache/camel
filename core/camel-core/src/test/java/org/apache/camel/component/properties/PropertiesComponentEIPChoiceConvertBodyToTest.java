@@ -52,7 +52,8 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(body().isNotNull()).convertBodyTo(byte[].class, "{{myCoolCharset}}").to("mock:result").otherwise().to("mock:null");
+                from("direct:start").choice().when(body().isNotNull()).convertBodyTo(byte[].class, "{{myCoolCharset}}")
+                        .to("mock:result").otherwise().to("mock:null");
             }
         };
     }

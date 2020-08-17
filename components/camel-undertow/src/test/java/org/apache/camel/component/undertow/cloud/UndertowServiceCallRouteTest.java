@@ -49,26 +49,26 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:custom")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .component("undertow")
                         .staticServiceDiscovery()
-                            .servers("myService@localhost:8081")
-                            .servers("myService@localhost:8082")
+                        .servers("myService@localhost:8081")
+                        .servers("myService@localhost:8082")
                         .endParent();
 
                 from("direct:default")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                            .servers("myService@localhost:8081")
-                            .servers("myService@localhost:8082")
+                        .servers("myService@localhost:8081")
+                        .servers("myService@localhost:8082")
                         .endParent();
 
                 from("undertow:http://localhost:8081")
-                    .transform().constant("8081");
+                        .transform().constant("8081");
                 from("undertow:http://localhost:8082")
-                    .transform().constant("8082");
+                        .transform().constant("8082");
             }
         };
     }

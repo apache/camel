@@ -21,6 +21,7 @@ public final class PdfHeaderConstants {
     public static final String PDF_DOCUMENT_HEADER_NAME = "pdf-document";
     public static final String DECRYPTION_MATERIAL_HEADER_NAME = "decryption-material";
 
-    private PdfHeaderConstants() { }
+    private PdfHeaderConstants() {
+    }
 
 }

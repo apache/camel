@@ -57,12 +57,12 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
             public void configure() {
                 // enable async consumer to process messages faster
                 from("activemq:queue:inbox?asyncConsumer=false")
-                    .to("http://0.0.0.0:" + port + "/myapp")
-                    .to("log:result?groupSize=10", "mock:result");
+                        .to("http://0.0.0.0:" + port + "/myapp")
+                        .to("log:result?groupSize=10", "mock:result");
 
                 from("jetty:http://0.0.0.0:" + port + "/myapp")
-                    .delay(100)
-                    .transform(body().prepend("Bye "));
+                        .delay(100)
+                        .transform(body().prepend("Bye "));
             }
         };
     }

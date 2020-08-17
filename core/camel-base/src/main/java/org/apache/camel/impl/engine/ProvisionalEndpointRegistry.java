@@ -23,8 +23,8 @@ import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.support.LRUCacheFactory;
 
 /**
- * A provisional (temporary) {@link EndpointRegistry} that is only used during startup of Apache Camel to
- * make starting Camel faster while {@link LRUCacheFactory} is warming up etc.
+ * A provisional (temporary) {@link EndpointRegistry} that is only used during startup of Apache Camel to make starting
+ * Camel faster while {@link LRUCacheFactory} is warming up etc.
  */
 class ProvisionalEndpointRegistry extends HashMap<EndpointKey, Endpoint> implements EndpointRegistry<EndpointKey> {
 

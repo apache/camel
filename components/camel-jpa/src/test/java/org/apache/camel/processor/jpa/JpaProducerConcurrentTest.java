@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JpaProducerConcurrentTest extends AbstractJpaTest {
 
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaProducerConcurrentTest.class);
 
     @Test
@@ -63,7 +63,8 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
             final int index = i;
             Future<SendEmail> out = executor.submit(new Callable<SendEmail>() {
                 public SendEmail call() throws Exception {
-                    return template.requestBody("direct:start", new SendEmail("user" + index + "@somewhere.org"), SendEmail.class);
+                    return template.requestBody("direct:start", new SendEmail("user" + index + "@somewhere.org"),
+                            SendEmail.class);
                 }
             });
             responses.put(index, out);
@@ -77,7 +78,8 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         for (Future<SendEmail> future : responses.values()) {
             SendEmail sendEmail = future.get();
             assertNotNull(sendEmail);
-            LOGGER.info("Persisted the SendEmail entity with the id {} and the address {}", sendEmail.getId(), sendEmail.getAddress());
+            LOGGER.info("Persisted the SendEmail entity with the id {} and the address {}", sendEmail.getId(),
+                    sendEmail.getAddress());
         }
 
         // assert in the database

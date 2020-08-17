@@ -49,4 +49,3 @@ public class GroovyLanguageConfigurationAndDocumentationTest extends CamelTestSu
     }
 
 }
-

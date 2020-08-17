@@ -44,7 +44,7 @@ public class HipchatProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HipchatProducer.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    
+
     private transient String hipchatProducerToString;
 
     public HipchatProducer(HipchatEndpoint endpoint) {
@@ -124,7 +124,7 @@ public class HipchatProducer extends DefaultProducer {
 
     @Override
     public HipchatEndpoint getEndpoint() {
-        return (HipchatEndpoint)super.getEndpoint();
+        return (HipchatEndpoint) super.getEndpoint();
     }
 
     @Override

@@ -28,9 +28,9 @@ public interface MyBatisProcessingStrategy {
     /**
      * Called when record is being queried.
      *
-     * @param consumer the consumer
-     * @param endpoint the endpoint
-     * @return Results of the query as a {@link List}
+     * @param  consumer  the consumer
+     * @param  endpoint  the endpoint
+     * @return           Results of the query as a {@link List}
      * @throws Exception can be thrown in case of error
      */
     List<?> poll(MyBatisConsumer consumer, MyBatisEndpoint endpoint) throws Exception;
@@ -38,11 +38,12 @@ public interface MyBatisProcessingStrategy {
     /**
      * Commit callback if there are a statements to be run after processing.
      *
-     * @param endpoint          the endpoint
-     * @param exchange          The exchange after it has been processed
-     * @param data              The original data delivered to the route
-     * @param consumeStatements Name of the statement(s) to run, will use SQL update. Use comma to provide multiple statements to run.
-     * @throws Exception can be thrown in case of error
+     * @param  endpoint          the endpoint
+     * @param  exchange          The exchange after it has been processed
+     * @param  data              The original data delivered to the route
+     * @param  consumeStatements Name of the statement(s) to run, will use SQL update. Use comma to provide multiple
+     *                           statements to run.
+     * @throws Exception         can be thrown in case of error
      */
     void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception;
 

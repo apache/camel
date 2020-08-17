@@ -34,8 +34,8 @@ public class JmsPrepareResponse implements Processor {
         } else {
             // throw the Exception
             FaultDetail faultDetail = new FaultDetail();
-            faultDetail.setMajor((short)2);
-            faultDetail.setMinor((short)1);
+            faultDetail.setMajor((short) 2);
+            faultDetail.setMinor((short) 1);
             exchange.getMessage().setBody(new PingMeFault("PingMeFault raised by server", faultDetail));
         }
     }

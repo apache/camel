@@ -46,9 +46,7 @@ public class UnmarshalTest extends CamelTestSupport {
             public void configure() {
                 DataFormat jaxb = new JaxbDataFormat("org.apache.camel.example");
 
-                from("direct:start").
-                        unmarshal(jaxb).
-                        to("mock:result");
+                from("direct:start").unmarshal(jaxb).to("mock:result");
             }
         };
     }

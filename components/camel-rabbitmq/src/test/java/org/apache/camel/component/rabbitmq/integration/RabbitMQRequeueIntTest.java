@@ -33,8 +33,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Integration test to confirm REQUEUE header causes message to be re-queued
- * instead of sent to DLQ.
+ * Integration test to confirm REQUEUE header causes message to be re-queued instead of sent to DLQ.
  */
 public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
@@ -44,7 +43,8 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     protected ProducerTemplate directProducer;
 
     @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
-                    + "&autoAck=false&autoDelete=false&durable=true&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout" + "&deadLetterQueue=" + DEAD_LETTER_QUEUE_NAME
+                    + "&autoAck=false&autoDelete=false&durable=true&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout"
+                    + "&deadLetterQueue=" + DEAD_LETTER_QUEUE_NAME
                     + "&routingKey=" + ROUTING_KEY)
     private Endpoint rabbitMQEndpoint;
 
@@ -83,9 +83,11 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
 
             @Override
             public void configure() {
-                from("direct:rabbitMQ").id("producingRoute").log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").log("Sending message").inOnly(rabbitMQEndpoint)
+                        .to(producingMockEndpoint);
 
-                from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").inOnly(consumingMockEndpoint).throwException(new Exception("Simulated exception"));
+                from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").inOnly(consumingMockEndpoint)
+                        .throwException(new Exception("Simulated exception"));
             }
         };
     }
@@ -172,7 +174,9 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope, com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) {
+        public void handleDelivery(
+                String consumerTag, com.rabbitmq.client.Envelope envelope, com.rabbitmq.client.AMQP.BasicProperties properties,
+                byte[] body) {
             received.add(new String(body));
         }
     }

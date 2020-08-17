@@ -45,12 +45,11 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
         Node node = session.getRootNode().addNode("home").addNode("test");
         node.setProperty("content.approved", APPROVED);
         node.setProperty("my.contents.property", CONTENT);
-        
-        
+
         ValueFactory valFact = session.getValueFactory();
-        Value[] vals = new Value[] {valFact.createValue("value-1"), valFact.createValue("value-2")};
+        Value[] vals = new Value[] { valFact.createValue("value-1"), valFact.createValue("value-2") };
         node.setProperty("my.multi.valued", vals);
-        
+
         identifier = node.getIdentifier();
 
         session.save();
@@ -84,4 +83,3 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
     }
 
 }
-

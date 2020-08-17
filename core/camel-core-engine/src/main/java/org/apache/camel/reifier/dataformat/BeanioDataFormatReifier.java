@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.BeanioDataFormat;
 public class BeanioDataFormatReifier extends DataFormatReifier<BeanioDataFormat> {
 
     public BeanioDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (BeanioDataFormat)definition);
+        super(camelContext, (BeanioDataFormat) definition);
     }
 
     @Override

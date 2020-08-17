@@ -33,12 +33,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 @Disabled // TODO Figure out why this test is failing and fix it.
 public class ApnsConsumerIdleMessageTest extends CamelTestSupport {
-    
+
     ApnsServerStub server;
 
     @BeforeEach
@@ -50,12 +50,12 @@ public class ApnsConsumerIdleMessageTest extends CamelTestSupport {
     public void stop() {
         server.stop();
     }
-    
+
     @Test
     public void testConsumeIdleMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
-        
+
         Thread.sleep(1100);
         // cycling the server after first polling cycle because it can not handle reconnects for fast-cycle polling
         server.stop();
@@ -66,7 +66,7 @@ public class ApnsConsumerIdleMessageTest extends CamelTestSupport {
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -85,9 +85,9 @@ public class ApnsConsumerIdleMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("apns:consumer?initialDelay=1&delay=1&timeUnit=SECONDS&useFixedDelay=true"
-                      + "&sendEmptyMessageWhenIdle=true")
-                    .to("log:com.apache.camel.component.apns?showAll=true&multiline=true")
-                    .to("mock:result");
+                     + "&sendEmptyMessageWhenIdle=true")
+                             .to("log:com.apache.camel.component.apns?showAll=true&multiline=true")
+                             .to("mock:result");
             }
         };
     }

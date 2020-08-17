@@ -57,18 +57,21 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 /**
  * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", category = {Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination",
+             category = { Category.MESSAGING })
 public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private CallbackConnection connection;
     private Stomp stomp;
     private final List<StompConsumer> consumers = new CopyOnWriteArrayList<>();
 
-    @UriPath(description = "Name of the queue") @Metadata(required = true)
+    @UriPath(description = "Name of the queue")
+    @Metadata(required = true)
     private String destination;
     @UriParam
     private StompConfiguration configuration;
-    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    @UriParam(label = "advanced",
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
     public StompEndpoint(String uri, StompComponent component, StompConfiguration configuration, String destination) {
@@ -191,7 +194,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
             // Perform a case insensitive "startsWith" check that works for different locales
             String prefix = "camel";
             if (!headerName.regionMatches(true, 0, prefix, 0, prefix.length())
-                && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
+                    && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                 if (headerValue != null) {
                     frame.addHeader(new AsciiBuffer(headerName), StompFrame.encodeHeader(headerValue.toString()));
                 }
@@ -203,7 +206,8 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         Properties customHeaders = configuration.getCustomHeaders();
         if (customHeaders != null) {
             for (Object key : customHeaders.keySet()) {
-                frame.addHeader(StompFrame.encodeHeader(key.toString()), StompFrame.encodeHeader(customHeaders.get(key).toString()));
+                frame.addHeader(StompFrame.encodeHeader(key.toString()),
+                        StompFrame.encodeHeader(customHeaders.get(key).toString()));
             }
         }
     }

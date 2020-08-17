@@ -60,9 +60,8 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     }
 
     /**
-     * Sets the exception policy strategy to use for resolving the
-     * {@link org.apache.camel.model.OnExceptionDefinition} to use for a given
-     * thrown exception
+     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
+     * to use for a given thrown exception
      *
      * @param exceptionPolicyStrategy the exception policy strategy
      */

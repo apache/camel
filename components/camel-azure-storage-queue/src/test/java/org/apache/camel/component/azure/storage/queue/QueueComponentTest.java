@@ -44,7 +44,8 @@ class QueueComponentTest extends CamelTestSupport {
 
         context.getRegistry().bind("client", client);
 
-        final QueueEndpoint endpoint = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?serviceClient=#client");
+        final QueueEndpoint endpoint
+                = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?serviceClient=#client");
 
         doTestCreateEndpointWithMinConfig(endpoint, true);
     }
@@ -53,7 +54,8 @@ class QueueComponentTest extends CamelTestSupport {
     public void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
-        final QueueEndpoint endpoint = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?credentials=#creds");
+        final QueueEndpoint endpoint
+                = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure/testqueue?credentials=#creds");
 
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
@@ -80,7 +82,7 @@ class QueueComponentTest extends CamelTestSupport {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
         final String uri = "azure-storage-queue://camelazure/testqueue"
-                + "?credentials=#creds&operation=deleteQueue&timeToLive=PT100s&visibilityTimeout=PT10s&maxMessages=1";
+                           + "?credentials=#creds&operation=deleteQueue&timeToLive=PT100s&visibilityTimeout=PT10s&maxMessages=1";
 
         final QueueEndpoint endpoint = (QueueEndpoint) context.getEndpoint(uri);
 
@@ -97,7 +99,8 @@ class QueueComponentTest extends CamelTestSupport {
     public void testNoQueueNameProducerWithOpNeedsQueueName() {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
-        final QueueEndpoint endpoint = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
+        final QueueEndpoint endpoint = (QueueEndpoint) context
+                .getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
 
         assertThrows(IllegalArgumentException.class, () -> endpoint.createProducer().process(new DefaultExchange(context)));
     }
@@ -106,7 +109,8 @@ class QueueComponentTest extends CamelTestSupport {
     public void testNoQueueNameConsumer() {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
-        final QueueEndpoint endpoint = (QueueEndpoint) context.getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
+        final QueueEndpoint endpoint = (QueueEndpoint) context
+                .getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
 
         assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(null));
     }

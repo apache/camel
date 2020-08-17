@@ -47,14 +47,12 @@ public class ActiveMQMessageConverter {
     }
 
     /**
-     * Allows a JMS {@link MessageListener} to be converted to a Camel
-     * {@link Processor} so that we can provide better <a href="">Bean
-     * Integration</a> so that we can use any JMS MessageListener in in Camel as
-     * a bean
+     * Allows a JMS {@link MessageListener} to be converted to a Camel {@link Processor} so that we can provide better
+     * <a href="">Bean Integration</a> so that we can use any JMS MessageListener in in Camel as a bean
      * 
-     * @param listener the JMS message listener
-     * @return a newly created Camel Processor which when invoked will invoke
-     *         {@link MessageListener#onMessage(Message)}
+     * @param  listener the JMS message listener
+     * @return          a newly created Camel Processor which when invoked will invoke
+     *                  {@link MessageListener#onMessage(Message)}
      */
     @Converter
     public Processor toProcessor(final MessageListener listener) {
@@ -75,11 +73,11 @@ public class ActiveMQMessageConverter {
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
             ActiveMQTextMessage answer = new ActiveMQTextMessage();
-            answer.setText((String)body);
+            answer.setText((String) body);
             return answer;
         } else if (body instanceof Serializable) {
             ActiveMQObjectMessage answer = new ActiveMQObjectMessage();
-            answer.setObject((Serializable)body);
+            answer.setObject((Serializable) body);
             return answer;
         } else {
             return new ActiveMQMessage();

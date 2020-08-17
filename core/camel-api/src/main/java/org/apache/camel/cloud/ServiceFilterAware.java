@@ -17,8 +17,7 @@
 package org.apache.camel.cloud;
 
 /**
- * An interface to represent an object which wishes to be injected with
- * a {@link ServiceFilter}
+ * An interface to represent an object which wishes to be injected with a {@link ServiceFilter}
  */
 public interface ServiceFilterAware {
 

@@ -39,7 +39,8 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         Map<String, Object> jdbcParams = new HashMap<>();
         jdbcParams.put("name", "jstrachan");
 
-        template.sendBodyAndHeaders("direct:start", "select * from customer where id = 'cust1' and name = ? order by ID", jdbcParams);
+        template.sendBodyAndHeaders("direct:start", "select * from customer where id = 'cust1' and name = ? order by ID",
+                jdbcParams);
 
         assertMockEndpointsSatisfied();
 
@@ -57,9 +58,9 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         Map<String, Object> jdbcParams = new HashMap<>();
         jdbcParams.put("name", "jstrachan");
         jdbcParams.put("id", "cust1");
-        
 
-        template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID", jdbcParams);
+        template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID",
+                jdbcParams);
 
         assertMockEndpointsSatisfied();
 
@@ -83,7 +84,8 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         // this header should take precedence so we will not get cust2
         headers.put(JdbcConstants.JDBC_PARAMETERS, jdbcParams);
 
-        template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID", headers);
+        template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID",
+                headers);
 
         assertMockEndpointsSatisfied();
 
@@ -108,4 +110,4 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         };
     }
 
-}       
+}

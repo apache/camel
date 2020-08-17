@@ -47,7 +47,7 @@ public class DelimitedAllowShortTest {
     @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
-    protected String[] expectedItemDescriptions = {"SOME VALVE", "AN ENGINE", "A BELT", "A BOLT"};
+    protected String[] expectedItemDescriptions = { "SOME VALVE", "AN ENGINE", "A BELT", "A BOLT" };
 
     @Test
     public void testCamel() throws Exception {

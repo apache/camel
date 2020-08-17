@@ -44,34 +44,30 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class WSAddressingTest {
-    protected static int port0 = CXFTestSupport.getPort1(); 
-    protected static int port1 = CXFTestSupport.getPort2(); 
+    protected static int port0 = CXFTestSupport.getPort1();
+    protected static int port1 = CXFTestSupport.getPort2();
     protected static int port2 = CXFTestSupport.getPort3();
 
-    
-    
     @Autowired
     protected CamelContext context;
     protected ProducerTemplate template;
-    
+
     private Server serviceEndpoint;
-    
+
     protected String getServerAddress() {
         return "http://localhost:" + port1 + "/" + this.getClass().getSimpleName() + "/SoapContext/SoapPort";
     }
-    
+
     protected String getClientAddress() {
         return "http://localhost:" + port0 + "/" + this.getClass().getSimpleName() + "/SoapContext/SoapPort";
     }
-    
+
     @BeforeEach
-    public void setUp() throws Exception {      
-        
+    public void setUp() throws Exception {
+
         template = context.createProducerTemplate();
         JaxWsServerFactoryBean svrBean = new JaxWsServerFactoryBean();
         svrBean.setAddress(getServerAddress());
@@ -87,7 +83,7 @@ public class WSAddressingTest {
         serviceEndpoint = svrBean.create();
 
     }
-    
+
     @AfterEach
     public void tearDown() throws Exception {
         if (serviceEndpoint != null) {
@@ -97,7 +93,7 @@ public class WSAddressingTest {
 
     @Test
     public void testWSAddressing() throws Exception {
-        JaxWsProxyFactoryBean proxyFactory = new  JaxWsProxyFactoryBean();
+        JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(getClientAddress());
         clientBean.setServiceClass(Greeter.class);
@@ -112,21 +108,21 @@ public class WSAddressingTest {
         String result = client.greetMe("world!");
         assertEquals("Hello world!", result, "Get a wrong response");
     }
-    
+
     /**
      * @return
      */
     protected String getCxfServerConfig() {
         return "server.xml";
     }
-    
+
     /**
      * @return
      */
     protected String getCxfClientConfig() {
         return "client.xml";
     }
-    
+
     public static class RemoveRequestOutHeaderProcessor implements Processor {
 
         @Override
@@ -137,9 +133,7 @@ public class WSAddressingTest {
             // we don't need send the soap headers to the client
             exchange.getIn().removeHeader(Header.HEADER_LIST);
         }
-        
+
     }
-    
-    
 
 }

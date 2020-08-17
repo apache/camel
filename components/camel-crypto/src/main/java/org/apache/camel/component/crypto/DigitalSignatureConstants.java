@@ -17,8 +17,7 @@
 package org.apache.camel.component.crypto;
 
 /**
- * <code>DigitalSignatureConstants</code> contains Constants for use as Message
- * header keys.
+ * <code>DigitalSignatureConstants</code> contains Constants for use as Message header keys.
  */
 public final class DigitalSignatureConstants {
     public static final String SIGNATURE_PRIVATE_KEY = "CamelSignaturePrivateKey";
@@ -26,7 +25,7 @@ public final class DigitalSignatureConstants {
     public static final String SIGNATURE = "CamelDigitalSignature";
     public static final String KEYSTORE_ALIAS = "CamelSignatureKeyStoreAlias";
     public static final String KEYSTORE_PASSWORD = "CamelSignatureKeyStorePassword";
-    
+
     private DigitalSignatureConstants() {
         // Helper Class
     }

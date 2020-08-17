@@ -86,8 +86,9 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/cbr?noop=true&initialDelay=0&delay=10").choice().when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
-                    .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris").otherwise().to("mock:other");
+                from("file://target/data/cbr?noop=true&initialDelay=0&delay=10").choice()
+                        .when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
+                        .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris").otherwise().to("mock:other");
             }
         };
     }

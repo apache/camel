@@ -33,8 +33,7 @@ public class InfinispanRemoteRoutePolicyTest extends InfinispanRoutePolicyTestBa
         props.setProperty("infinispan.client.hotrod.force_return_values", "true");
 
         return new RemoteCacheManager(
-            new ConfigurationBuilder().withProperties(props).build(),
-            true
-        );
+                new ConfigurationBuilder().withProperties(props).build(),
+                true);
     }
 }

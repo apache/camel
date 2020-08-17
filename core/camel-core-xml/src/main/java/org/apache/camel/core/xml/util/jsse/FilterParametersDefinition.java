@@ -24,19 +24,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Represents a set of regular expression based filter patterns for
- * including and excluding content of some type.
+ * Represents a set of regular expression based filter patterns for including and excluding content of some type.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "filterParameters", propOrder = {"include", "exclude"})
+@XmlType(name = "filterParameters", propOrder = { "include", "exclude" })
 public class FilterParametersDefinition {
 
     protected List<String> include;
     protected List<String> exclude;
 
     /**
-     * Returns a live copy of the list of patterns to include.
-     * The list of excludes takes precedence over the include patterns.
+     * Returns a live copy of the list of patterns to include. The list of excludes takes precedence over the include
+     * patterns.
      *
      * @return the list of patterns to include
      */
@@ -48,8 +47,7 @@ public class FilterParametersDefinition {
     }
 
     /**
-     * Returns a live copy of the list of patterns to exclude.
-     * This list takes precedence over the include patterns.
+     * Returns a live copy of the list of patterns to exclude. This list takes precedence over the include patterns.
      *
      * @return the list of patterns to exclude
      */

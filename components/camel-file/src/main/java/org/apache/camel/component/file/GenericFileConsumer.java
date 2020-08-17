@@ -60,7 +60,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     private final Pattern includePattern;
     private final Pattern excludePattern;
 
-    public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations, GenericFileProcessStrategy<T> processStrategy) {
+    public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
+                               GenericFileProcessStrategy<T> processStrategy) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.operations = operations;
@@ -77,12 +78,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Use a custom processor to process the exchange.
      * <p/>
-     * Only set this if you need to do custom processing, instead of the regular
-     * processing.
+     * Only set this if you need to do custom processing, instead of the regular processing.
      * <p/>
-     * This is for example used to browse file endpoints by leveraging the file
-     * consumer to poll the directory to gather the list of exchanges. But to
-     * avoid processing the files regularly we can use a custom processor.
+     * This is for example used to browse file endpoints by leveraging the file consumer to poll the directory to gather
+     * the list of exchanges. But to avoid processing the files regularly we can use a custom processor.
      *
      * @param processor a custom processor
      */
@@ -136,7 +135,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // in case of any exception thrown after this work
             // we must then drain the in progress files before rethrowing the
             // exception
-            LOG.debug("Error occurred during poll directory: {} due {}. Removing {} files marked as in-progress.", name, e.getMessage(), files.size());
+            LOG.debug("Error occurred during poll directory: {} due {}. Removing {} files marked as in-progress.", name,
+                    e.getMessage(), files.size());
             removeExcessiveInProgressFiles(files);
             throw e;
         }
@@ -148,7 +148,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // log if we hit the limit
         if (limitHit) {
-            LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
+            LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.",
+                    maxMessagesPerPoll);
         }
 
         // sort files using file comparator if provided
@@ -180,7 +181,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // list of files
         if (!eagerLimitMaxMessagesPerPoll && maxMessagesPerPoll > 0) {
             if (files.size() > maxMessagesPerPoll) {
-                LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
+                LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.",
+                        maxMessagesPerPoll);
                 // must first remove excessive files from the in progress
                 // repository
                 removeExcessiveInProgressFiles(q, maxMessagesPerPoll);
@@ -207,7 +209,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll,
+                    total);
             total = maxMessagesPerPoll;
         }
 
@@ -215,7 +218,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // only loop if we are started (allowed to run)
             // use poll to remove the head so it does not consume memory even
             // after we have processed it
-            Exchange exchange = (Exchange)exchanges.poll();
+            Exchange exchange = (Exchange) exchanges.poll();
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
@@ -241,7 +244,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // drain any in progress files as we are done with this batch
-        removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>)exchanges, Exchange.class), 0);
+        removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>) exchanges, Exchange.class), 0);
 
         return answer;
     }
@@ -250,7 +253,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * Drain any in progress files as we are done with this batch
      *
      * @param exchanges the exchanges
-     * @param limit the limit
+     * @param limit     the limit
      */
     protected void removeExcessiveInProgressFiles(Deque<Exchange> exchanges, int limit) {
         // remove the file from the in progress list in case the batch was
@@ -279,9 +282,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Whether or not we can continue polling for more files
      *
-     * @param fileList the current list of gathered files
-     * @return <tt>true</tt> to continue, <tt>false</tt> to stop due hitting
-     *         maxMessagesPerPoll limit
+     * @param  fileList the current list of gathered files
+     * @return          <tt>true</tt> to continue, <tt>false</tt> to stop due hitting maxMessagesPerPoll limit
      */
     public boolean canPollMoreFiles(List<?> fileList) {
         // at this point we should not limit if we are not eager
@@ -299,8 +301,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
-     * Override if required. Perform some checks (and perhaps actions) before we
-     * poll.
+     * Override if required. Perform some checks (and perhaps actions) before we poll.
      *
      * @return <tt>true</tt> to poll, <tt>false</tt> to skip this poll.
      */
@@ -309,8 +310,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
-     * Override if required. Perform some checks (and perhaps actions) after we
-     * have polled.
+     * Override if required. Perform some checks (and perhaps actions) after we have polled.
      *
      * @param polledMessages number of polled messages
      */
@@ -321,11 +321,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Polls the given directory for files to process
      *
-     * @param fileName current directory or file
-     * @param fileList current list of files gathered
-     * @param depth the current depth of the directory (will start from 0)
-     * @return whether or not to continue polling, <tt>false</tt> means the
-     *         maxMessagesPerPoll limit has been hit
+     * @param  fileName current directory or file
+     * @param  fileList current list of files gathered
+     * @param  depth    the current depth of the directory (will start from 0)
+     * @return          whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been
+     *                  hit
      */
     protected abstract boolean pollDirectory(String fileName, List<GenericFile<T>> fileList, int depth);
 
@@ -343,15 +343,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Whether to ignore if the file cannot be retrieved.
      * <p/>
-     * By default an {@link GenericFileOperationFailedException} is thrown if
-     * the file cannot be retrieved.
+     * By default an {@link GenericFileOperationFailedException} is thrown if the file cannot be retrieved.
      * <p/>
      * This method allows to suppress this and just ignore that.
      *
-     * @param name the file name
-     * @param exchange the exchange
-     * @param cause optional exception occurred during retrieving file
-     * @return <tt>true</tt> to ignore, <tt>false</tt> is the default.
+     * @param  name     the file name
+     * @param  exchange the exchange
+     * @param  cause    optional exception occurred during retrieving file
+     * @return          <tt>true</tt> to ignore, <tt>false</tt> is the default.
      */
     protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
         return false;
@@ -360,10 +359,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Processes the exchange
      *
-     * @param exchange the exchange
-     * @return <tt>true</tt> if the file was started to be processed,
-     *         <tt>false</tt> if the file was not started to be processed, for
-     *         some reason (not found, or aborted etc)
+     * @param  exchange the exchange
+     * @return          <tt>true</tt> if the file was started to be processed, <tt>false</tt> if the file was not
+     *                  started to be processed, for some reason (not found, or aborted etc)
      */
     protected boolean processExchange(final Exchange exchange) {
         GenericFile<T> file = getExchangeFileProperty(exchange);
@@ -453,7 +451,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                         if (cause instanceof GenericFileOperationFailedException) {
                             throw cause;
                         } else {
-                            throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint, cause);
+                            throw new GenericFileOperationFailedException(
+                                    "Cannot retrieve file: " + file + " from: " + endpoint, cause);
                         }
                     }
                 }
@@ -467,7 +466,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // register on completion callback that does the completion
             // strategies
             // (for instance to move the file after we have processed it)
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(
+                    new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
 
             LOG.debug("About to process file: {} using exchange: {}", target, exchange);
 
@@ -501,10 +501,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
-     * Updates the information on {@link Message} after we have acquired
-     * read-lock and can begin process the file.
+     * Updates the information on {@link Message} after we have acquired read-lock and can begin process the file.
      *
-     * @param file the file
+     * @param file    the file
      * @param message the Camel message to update its headers
      */
     protected abstract void updateFileHeaders(GenericFile<T> file, Message message);
@@ -512,8 +511,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Override if required. Files are retrieved / returns true by default
      *
-     * @return <tt>true</tt> to retrieve files, <tt>false</tt> to skip retrieval
-     *         of files.
+     * @return <tt>true</tt> to retrieve files, <tt>false</tt> to skip retrieval of files.
      */
     protected boolean isRetrieveFile() {
         return true;
@@ -522,7 +520,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Processes the exchange using a custom processor.
      *
-     * @param exchange the exchange
+     * @param exchange  the exchange
      * @param processor the custom processor
      */
     protected boolean customProcessExchange(final Exchange exchange, final Processor processor) {
@@ -539,7 +537,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             processor.process(exchange);
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(endpoint + " error custom processing: " + file + " due to: " + e.getMessage() + ". This exception will be ignored.", e);
+                LOG.debug(endpoint + " error custom processing: " + file + " due to: " + e.getMessage()
+                          + ". This exception will be ignored.",
+                        e);
             }
             handleException(e);
         } finally {
@@ -555,13 +555,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
-     * Strategy for validating if the given remote file should be included or
-     * not
+     * Strategy for validating if the given remote file should be included or not
      *
-     * @param file the file
-     * @param isDirectory whether the file is a directory or a file
-     * @param files files in the directory
-     * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
+     * @param  file        the file
+     * @param  isDirectory whether the file is a directory or a file
+     * @param  files       files in the directory
+     * @return             <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
     protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, List<T> files) {
         String absoluteFilePath = file.getAbsoluteFilePath();
@@ -596,7 +595,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
             }
             if (key != null && endpoint.getIdempotentRepository().contains(key)) {
-                LOG.trace("This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}", key, file);
+                LOG.trace(
+                        "This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}",
+                        key, file);
                 return false;
             }
         }
@@ -617,10 +618,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * </ul>
      * And then <tt>true</tt> for directories.
      *
-     * @param file the file
-     * @param isDirectory whether the file is a directory or a file
-     * @param files files in the directory
-     * @return <tt>true</tt> if the file is matched, <tt>false</tt> if not
+     * @param  file        the file
+     * @param  isDirectory whether the file is a directory or a file
+     * @param  files       files in the directory
+     * @return             <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(GenericFile<T> file, boolean isDirectory, List<T> files) {
         String name = file.getFileNameOnly();
@@ -717,13 +718,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
-     * Strategy to perform file matching based on endpoint configuration in
-     * terms of done file name.
+     * Strategy to perform file matching based on endpoint configuration in terms of done file name.
      *
-     * @param file the file
-     * @param doneFileName the done file name (without any paths)
-     * @param files files in the directory
-     * @return <tt>true</tt> if the file is matched, <tt>false</tt> if not
+     * @param  file         the file
+     * @param  doneFileName the done file name (without any paths)
+     * @param  files        files in the directory
+     * @return              <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
     protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, List<T> files);
 
@@ -742,7 +742,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     @SuppressWarnings("unchecked")
     private GenericFile<T> getExchangeFileProperty(Exchange exchange) {
-        return (GenericFile<T>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        return (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
     }
 
     @Override
@@ -750,7 +750,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         super.doInit();
         // inject CamelContext before starting as it may be needed
         if (processStrategy instanceof CamelContextAware) {
-            ((CamelContextAware)processStrategy).setCamelContext(getEndpoint().getCamelContext());
+            ((CamelContextAware) processStrategy).setCamelContext(getEndpoint().getCamelContext());
         }
     }
 

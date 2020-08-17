@@ -49,9 +49,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.cast;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ObjectHelper.cast;
 
 /**
  * A Consumer of messages from the Minio Storage Service.
@@ -88,7 +88,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         makeBucket(destinationBucketName);
                         LOG.trace("Destination Bucket created");
                     } else {
-                        throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", destinationBucketName);
+                        throw new InvalidBucketNameException(
+                                "Bucket {} does not exists, set autoCreateBucket option for bucket auto creation",
+                                destinationBucketName);
                     }
                 }
             } else {
@@ -102,7 +104,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private void makeBucket(String bucketName) throws Exception {
-        MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
+        MakeBucketArgs.Builder makeBucketRequest
+                = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
         if (isNotEmpty(getConfiguration().getRegion())) {
             makeBucketRequest.region(getConfiguration().getRegion());
         }
@@ -316,7 +319,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    private void removeObject(String srcBucketName, String srcObjectName) throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
+    private void removeObject(String srcBucketName, String srcObjectName)
+            throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
         RemoveObjectArgs.Builder removeObjectRequest = RemoveObjectArgs.builder()
                 .bucket(srcBucketName)
                 .object(srcObjectName)
@@ -329,7 +333,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         getMinioClient().removeObject(removeObjectRequest.build());
     }
 
-    private void copyObject(String srcBucketName, String srcObjectName) throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
+    private void copyObject(String srcBucketName, String srcObjectName)
+            throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
         String destinationBucketName = getConfiguration().getDestinationBucketName();
         if (isEmpty(destinationBucketName)) {
             throw new IllegalArgumentException("Destination Bucket name must be specified to copy operation");
@@ -339,7 +344,6 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         String destinationObjectName = (isNotEmpty(getConfiguration().getDestinationObjectName()))
                 ? getConfiguration().getDestinationObjectName()
                 : srcObjectName;
-
 
         LOG.trace("Copying object from bucket {} with objectName {} to bucket {}...",
                 srcBucketName, srcObjectName, destinationBucketName);

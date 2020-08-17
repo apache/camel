@@ -60,7 +60,7 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[]{true}, new String[]{"boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] { true }, new String[] { "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -83,8 +83,8 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
             @Override
             public void configure() throws Exception {
                 from("{{start}}").routeId("myRoute")
-                    .log("Got ${body}")
-                    .to("{{result}}");
+                        .log("Got ${body}")
+                        .to("{{result}}");
             }
         };
     }

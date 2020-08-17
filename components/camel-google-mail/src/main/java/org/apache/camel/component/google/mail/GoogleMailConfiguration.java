@@ -29,7 +29,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 @Configurer
 public class GoogleMailConfiguration {
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private GoogleMailApiName apiName;
 
     @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,stop,trash,untrash,update,watch")
@@ -111,7 +112,8 @@ public class GoogleMailConfiguration {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

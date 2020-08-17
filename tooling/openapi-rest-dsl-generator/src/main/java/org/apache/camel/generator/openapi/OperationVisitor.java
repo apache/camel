@@ -51,7 +51,8 @@ class OperationVisitor<T> {
 
     private final String path;
 
-    OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path, final DestinationGenerator destinationGenerator) {
+    OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path,
+                     final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
         this.filter = filter;
         this.path = path;
@@ -129,7 +130,7 @@ class OperationVisitor<T> {
                     }
 
                     if ("array".equals(dataType) && schema.items != null
-                        && schema.items instanceof Oas30ItemsSchema) {
+                            && schema.items instanceof Oas30ItemsSchema) {
                         emit("arrayType", ((Oas30ItemsSchema) schema.items).type);
                     }
                 }
@@ -151,7 +152,7 @@ class OperationVisitor<T> {
             return emitter;
         }
 
-        return emitter.emit(method, new Object[] {values.toArray(new String[values.size()])});
+        return emitter.emit(method, new Object[] { values.toArray(new String[values.size()]) });
     }
 
     CodeEmitter<T> emit(final String method, final Object value) {
@@ -175,7 +176,7 @@ class OperationVisitor<T> {
             } else if (operation instanceof Oas30Operation) {
                 final Oas30Operation oas30Operation = (Oas30Operation) operation;
                 if (oas30Operation.requestBody != null
-                    && oas30Operation.requestBody.content != null) {
+                        && oas30Operation.requestBody.content != null) {
                     for (final String ct : oas30Operation.requestBody.content.keySet()) {
                         operationLevelConsumes.add(ct);
                     }

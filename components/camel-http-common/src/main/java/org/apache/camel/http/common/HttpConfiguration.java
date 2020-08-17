@@ -23,9 +23,11 @@ import org.apache.camel.spi.Metadata;
 public class HttpConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Metadata(label = "producer,security", description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
+    @Metadata(label = "producer,security",
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
     private String authMethod;
-    @Metadata(label = "producer,security", enums = "Basic,Digest,NTLM", description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
+    @Metadata(label = "producer,security", enums = "Basic,Digest,NTLM",
+              description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
     private String authMethodPriority;
     @Metadata(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;

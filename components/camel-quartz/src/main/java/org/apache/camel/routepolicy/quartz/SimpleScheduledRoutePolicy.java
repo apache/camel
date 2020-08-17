@@ -67,8 +67,11 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
             }
 
             // validate time options has been configured
-            if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null) && (getRouteResumeDate() == null)) {
-                throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId() + " has no start/stop/suspend/resume times specified");
+            if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null)
+                    && (getRouteResumeDate() == null)) {
+                throw new IllegalArgumentException(
+                        "Scheduled Route Policy for route " + route.getId()
+                                                   + " has no start/stop/suspend/resume times specified");
             }
 
             registerRouteToScheduledRouteDetails(route);
@@ -96,8 +99,8 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
             trigger = TriggerBuilder.newTrigger()
                     .withIdentity(TRIGGER_START + route.getId(), TRIGGER_GROUP + route.getId())
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withRepeatCount(getRouteStartRepeatCount())
-                        .withIntervalInMilliseconds(getRouteStartRepeatInterval()))
+                            .withRepeatCount(getRouteStartRepeatCount())
+                            .withIntervalInMilliseconds(getRouteStartRepeatInterval()))
                     .startAt(routeStartDate == null ? new Date() : routeStartDate)
                     .build();
         } else if (action == Action.STOP) {

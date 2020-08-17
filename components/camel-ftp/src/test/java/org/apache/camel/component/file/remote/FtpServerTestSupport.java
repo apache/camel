@@ -144,7 +144,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
     }
-    
+
     protected void disconnectAllSessions() throws IOException {
         // stop all listeners
         Map<String, Listener> listeners = ((DefaultFtpServer) ftpServer).getListeners();

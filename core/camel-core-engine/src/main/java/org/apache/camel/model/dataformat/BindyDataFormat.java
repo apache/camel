@@ -28,8 +28,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Marshal and unmarshal Java beans from and to flat payloads (such as CSV,
- * delimited, fixed length formats, or FIX messages).
+ * Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX
+ * messages).
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy")
 @XmlRootElement(name = "bindy")
@@ -111,8 +111,7 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To configure a default locale to use, such as <tt>us</tt> for united
-     * states.
+     * To configure a default locale to use, such as <tt>us</tt> for united states.
      * <p/>
      * To use the JVM platform default locale then use the name <tt>default</tt>
      */
@@ -125,8 +124,8 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * When unmarshalling should a single instance be unwrapped and returned
-     * instead of wrapped in a <tt>java.util.List</tt>.
+     * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
+     * <tt>java.util.List</tt>.
      */
     public void setUnwrapSingleInstance(String unwrapSingleInstance) {
         this.unwrapSingleInstance = unwrapSingleInstance;
@@ -137,9 +136,9 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     /**
-   * Whether to allow empty streams in the unmarshal process. If true, no
-   * exception will be thrown when a body without records is provided.
-   */
+     * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without
+     * records is provided.
+     */
     public void setAllowEmptyStream(String allowEmptyStream) {
         this.allowEmptyStream = allowEmptyStream;
     }
@@ -206,6 +205,5 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.allowEmptyStream = allowEmptyStream;
         return this;
     }
-
 
 }

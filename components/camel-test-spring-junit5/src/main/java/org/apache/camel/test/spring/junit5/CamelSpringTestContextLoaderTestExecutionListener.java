@@ -20,19 +20,16 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 /**
- * Helper for {@link CamelSpringTestContextLoader} that sets the test class
- * state in {@link CamelSpringTestHelper} almost immediately before the loader
- * initializes the Spring context.
+ * Helper for {@link CamelSpringTestContextLoader} that sets the test class state in {@link CamelSpringTestHelper}
+ * almost immediately before the loader initializes the Spring context.
  * <p/>
- * Implemented as a listener as the state can be set on a {@code ThreadLocal}
- * and we are pretty sure that the same thread will be used to initialize the
- * Spring context.
+ * Implemented as a listener as the state can be set on a {@code ThreadLocal} and we are pretty sure that the same
+ * thread will be used to initialize the Spring context.
  */
 public class CamelSpringTestContextLoaderTestExecutionListener extends AbstractTestExecutionListener {
 
     /**
-     * Returns the precedence that is used by Spring to choose the appropriate
-     * execution order of test listeners.
+     * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
      * 
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */

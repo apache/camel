@@ -20,8 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.util.function.ThrowingConsumer;
 
 /**
- * Functional interface for adding routes to a context using a lambda expression. It can be used as
- * following:
+ * Functional interface for adding routes to a context using a lambda expression. It can be used as following:
  *
  * <pre>
  * RouteBuilder.addRoutes(context, rb ->

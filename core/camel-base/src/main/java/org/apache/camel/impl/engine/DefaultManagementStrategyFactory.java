@@ -46,7 +46,8 @@ public class DefaultManagementStrategyFactory implements ManagementStrategyFacto
         if (!camelContext.getLifecycleStrategies().isEmpty()) {
             // camel-spring/camel-blueprint may re-initialize JMX during startup,
             // so remove any previous JMX initialized lifecycle strategy
-            camelContext.getLifecycleStrategies().removeIf(s -> s.getClass().getName().startsWith("org.apache.camel.management"));
+            camelContext.getLifecycleStrategies()
+                    .removeIf(s -> s.getClass().getName().startsWith("org.apache.camel.management"));
         }
     }
 }

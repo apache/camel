@@ -26,7 +26,13 @@ public class WekaConfiguration {
 
     // Available commands
     public enum Command {
-        filter, model, read, write, push, pop, version 
+        filter,
+        model,
+        read,
+        write,
+        push,
+        pop,
+        version
     }
 
     @UriPath(description = "The command to use.", enums = "filter,model,read,write,push,pop,version")
@@ -40,7 +46,7 @@ public class WekaConfiguration {
     // Filter parameters
     @UriParam(description = "The filter spec (i.e. Name [Options])", label = "filter")
     private String apply;
-    
+
     // Model parameters
     @UriParam(description = "The classifier spec (i.e. Name [Options])", label = "model")
     private String build;
@@ -56,7 +62,6 @@ public class WekaConfiguration {
     private String saveTo;
     @UriParam(description = "Path to load the model from", label = "model")
     private String loadFrom;
-    
 
     Command getCommand() {
         return command;

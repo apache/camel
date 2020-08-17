@@ -22,11 +22,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display
- * the default letter-keyboard.
+ * Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display the
+ * default letter-keyboard.
  *
  * @see <a href="https://core.telegram.org/bots/api#replykeyboardremove">
- * https://core.telegram.org/bots/api#replykeyboardremove</a>
+ *      https://core.telegram.org/bots/api#replykeyboardremove</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReplyKeyboardRemove implements Serializable, ReplyMarkup {

@@ -66,7 +66,8 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
         if (transport == null) {
             LOG.info("Connecting to the Thrift server on port: {}", THRIFT_TEST_PORT);
             transport = new TNonblockingSocket("localhost", THRIFT_TEST_PORT);
-            thriftClient = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory())).getAsyncClient(transport);
+            thriftClient = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
+                    .getAsyncClient(transport);
         }
     }
 
@@ -173,23 +174,25 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
 
         final CountDownLatch latch = new CountDownLatch(1);
 
-        thriftClient.alltypes(true, (byte)THRIFT_TEST_NUM1, (short)THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, "empty",
-                              ByteBuffer.allocate(10), new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY), new ArrayList<Integer>(), new HashSet<String>(),
-                              new HashMap<String, Long>(), new AsyncMethodCallback<Integer>() {
+        thriftClient.alltypes(true, (byte) THRIFT_TEST_NUM1, (short) THRIFT_TEST_NUM1, THRIFT_TEST_NUM1, THRIFT_TEST_NUM1,
+                THRIFT_TEST_NUM1, "empty",
+                ByteBuffer.allocate(10), new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY),
+                new ArrayList<Integer>(), new HashSet<String>(),
+                new HashMap<String, Long>(), new AsyncMethodCallback<Integer>() {
 
-                                  @Override
-                                  public void onComplete(Integer response) {
-                                      allTypesResult = response;
-                                      latch.countDown();
-                                  }
+                    @Override
+                    public void onComplete(Integer response) {
+                        allTypesResult = response;
+                        latch.countDown();
+                    }
 
-                                  @Override
-                                  public void onError(Exception exception) {
-                                      LOG.info("Exception", exception);
-                                      latch.countDown();
-                                  }
+                    @Override
+                    public void onError(Exception exception) {
+                        LOG.info("Exception", exception);
+                        latch.countDown();
+                    }
 
-                              });
+                });
         latch.await(5, TimeUnit.SECONDS);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:thrift-service");
@@ -199,7 +202,7 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
 
         assertEquals(THRIFT_TEST_NUM1, allTypesResult);
     }
-    
+
     @Test
     public void testEchoMethodInvocation() throws Exception {
         CountDownLatch latch = new CountDownLatch(1);
@@ -239,16 +242,19 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator")
-                    .to("mock:thrift-service").choice()
-                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate")).setBody(simple(new Integer(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
+                        .to("mock:thrift-service").choice()
+                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
+                        .setBody(simple(new Integer(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("ping"))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("zip"))
-                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("alltypes")).setBody(simple(new Integer(THRIFT_TEST_NUM1).toString()))
-                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo")).setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
+                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("alltypes"))
+                        .setBody(simple(new Integer(THRIFT_TEST_NUM1).toString()))
+                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo")).setBody(simple("${body[0]}"))
+                        .bean(new CalculatorMessageBuilder(), "echo");
             }
         };
     }
-    
+
     public class CalculatorMessageBuilder {
         public Work echo(Work work) {
             return work.deepCopy();

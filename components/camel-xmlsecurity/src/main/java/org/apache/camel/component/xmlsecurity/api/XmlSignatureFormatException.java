@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
-
 /**
- * Exception thrown when the input for signing or verifying does not have the correct
- * format.
+ * Exception thrown when the input for signing or verifying does not have the correct format.
  */
 public class XmlSignatureFormatException extends XmlSignatureException {
 
@@ -34,4 +32,3 @@ public class XmlSignatureFormatException extends XmlSignatureException {
     }
 
 }
-

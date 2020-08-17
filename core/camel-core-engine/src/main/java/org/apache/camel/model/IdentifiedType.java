@@ -25,11 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The unique identifier for a bean. The scope of the identifier is the
- * enclosing bean factory.
+ * The unique identifier for a bean. The scope of the identifier is the enclosing bean factory.
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="identifiedType">

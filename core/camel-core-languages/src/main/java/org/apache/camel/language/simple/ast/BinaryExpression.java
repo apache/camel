@@ -93,7 +93,8 @@ public class BinaryExpression extends BaseSimpleNode {
         } else if (operator == BinaryOperatorType.NOT_EQ) {
             return createExpression(leftExp, rightExp, PredicateBuilder.isNotEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_EQ_IGNORE) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp)));
+            return createExpression(leftExp, rightExp,
+                    PredicateBuilder.not(PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS) {
             return createExpression(leftExp, rightExp, PredicateBuilder.contains(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
@@ -101,7 +102,8 @@ public class BinaryExpression extends BaseSimpleNode {
         } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
             return createExpression(leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.containsIgnoreCase(leftExp, rightExp)));
+            return createExpression(leftExp, rightExp,
+                    PredicateBuilder.not(PredicateBuilder.containsIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.IS || operator == BinaryOperatorType.NOT_IS) {
             return createIsExpression(expression, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.REGEX || operator == BinaryOperatorType.NOT_REGEX) {
@@ -126,11 +128,15 @@ public class BinaryExpression extends BaseSimpleNode {
                 Predicate predicate;
                 String name = rightExp.evaluate(exchange, String.class);
                 if (name == null || "null".equals(name)) {
-                    throw new SimpleIllegalSyntaxException(expression, right.getToken().getIndex(), operator + " operator cannot accept null. A class type must be provided.");
+                    throw new SimpleIllegalSyntaxException(
+                            expression, right.getToken().getIndex(),
+                            operator + " operator cannot accept null. A class type must be provided.");
                 }
                 Class<?> rightType = exchange.getContext().getClassResolver().resolveClass(name);
                 if (rightType == null) {
-                    throw new SimpleIllegalSyntaxException(expression, right.getToken().getIndex(), operator + " operator cannot find class with name: " + name);
+                    throw new SimpleIllegalSyntaxException(
+                            expression, right.getToken().getIndex(),
+                            operator + " operator cannot find class with name: " + name);
                 }
 
                 predicate = PredicateBuilder.isInstanceOf(leftExp, rightType);
@@ -215,7 +221,9 @@ public class BinaryExpression extends BaseSimpleNode {
                     predicate = PredicateBuilder.isGreaterThanOrEqualTo(leftExp, from);
                     predicate = PredicateBuilder.and(predicate, PredicateBuilder.isLessThanOrEqualTo(leftExp, to));
                 } else {
-                    throw new SimpleIllegalSyntaxException(expression, right.getToken().getIndex(), operator + " operator is not valid. Valid syntax:'from..to' (where from and to are numbers).");
+                    throw new SimpleIllegalSyntaxException(
+                            expression, right.getToken().getIndex(),
+                            operator + " operator is not valid. Valid syntax:'from..to' (where from and to are numbers).");
                 }
                 if (operator == BinaryOperatorType.NOT_RANGE) {
                     predicate = PredicateBuilder.not(predicate);

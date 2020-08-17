@@ -58,25 +58,24 @@ public class TarFileDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the tar file has more then one entry, the setting this option to true,
-     * allows to work with the splitter EIP, to split the data using an iterator
-     * in a streaming mode.
+     * If the tar file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
+     * to split the data using an iterator in a streaming mode.
      */
     public void setUsingIterator(String usingIterator) {
         this.usingIterator = usingIterator;
     }
 
     /**
-     * If the tar file has more then one entry, setting this option to true,
-     * allows to get the iterator even if the directory is empty
+     * If the tar file has more then one entry, setting this option to true, allows to get the iterator even if the
+     * directory is empty
      */
     public void setAllowEmptyDirectory(String allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
     /**
-     * If the file name contains path elements, setting this option to true,
-     * allows the path to be maintained in the tar file.
+     * If the file name contains path elements, setting this option to true, allows the path to be maintained in the tar
+     * file.
      */
     public void setPreservePathElements(String preservePathElements) {
         this.preservePathElements = preservePathElements;

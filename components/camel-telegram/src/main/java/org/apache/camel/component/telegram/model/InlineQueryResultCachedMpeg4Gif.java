@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultcachedmpeg4gif">
- * https://core.telegram.org/bots/api#inlinequeryresultcachedmpeg4gif</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultcachedmpeg4gif</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultCachedMpeg4Gif extends InlineQueryResult {

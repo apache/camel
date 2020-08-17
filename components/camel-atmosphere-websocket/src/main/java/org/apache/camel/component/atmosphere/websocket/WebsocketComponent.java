@@ -30,20 +30,21 @@ import org.apache.camel.spi.annotations.Component;
 @Component("atmosphere-websocket")
 public class WebsocketComponent extends ServletComponent {
     private Map<String, WebSocketStore> stores;
-    
+
     public WebsocketComponent() {
         // override the default servlet name of ServletComponent
         super(WebsocketEndpoint.class);
         setServletName("CamelWsServlet");
-        
+
         this.stores = new HashMap<>();
     }
-    
+
     @Override
-    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri) throws Exception {
-        return new WebsocketEndpoint(endpointUri, (WebsocketComponent)component, httpUri);
+    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri)
+            throws Exception {
+        return new WebsocketEndpoint(endpointUri, (WebsocketComponent) component, httpUri);
     }
-    
+
     WebSocketStore getWebSocketStore(String name) {
         WebSocketStore store;
         synchronized (stores) {

@@ -39,7 +39,7 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
         Map tmp = new HashMap<>();
         tmp.put(DdbConstants.BATCH_RESPONSE, result.getResponses());
         tmp.put(DdbConstants.UNPROCESSED_KEYS, result.getUnprocessedKeys());
-        addToResults(tmp);        
+        addToResults(tmp);
     }
 
     @SuppressWarnings("unchecked")
@@ -47,4 +47,3 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
         return exchange.getIn().getHeader(DdbConstants.BATCH_ITEMS, Map.class);
     }
 }
-

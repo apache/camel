@@ -23,7 +23,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupport {
-    
+
     @Test
     public void testObjectFactoryTrue() throws Exception {
         Message in = new Message("Hello World");

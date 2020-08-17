@@ -45,7 +45,9 @@ import org.apache.camel.spi.UriParams;
 public final class ApprovalRequest implements Serializable {
 
     public enum Action {
-        Submit, Approve, Reject
+        Submit,
+        Approve,
+        Reject
     }
 
     /**
@@ -57,7 +59,8 @@ public final class ApprovalRequest implements Serializable {
         public final List<Field> fields;
 
         private FieldHolder() {
-            fields = Arrays.stream(ApprovalRequest.class.getDeclaredFields()).filter(f -> !Modifier.isFinal(f.getModifiers())).collect(Collectors.toList());
+            fields = Arrays.stream(ApprovalRequest.class.getDeclaredFields()).filter(f -> !Modifier.isFinal(f.getModifiers()))
+                    .collect(Collectors.toList());
         }
     }
 
@@ -99,15 +102,13 @@ public final class ApprovalRequest implements Serializable {
     }
 
     /**
-     * Creates new {@link ApprovalRequest} by combining values from the given
-     * template with the values currently present. If the value is not present
-     * and the template has the corresponding value, then the template value is
-     * set. The net result is that all set values of an {@link ApprovalRequest}
-     * are preserved, while the values set on template are used for undefined (
-     * <code>null</code>) values.
+     * Creates new {@link ApprovalRequest} by combining values from the given template with the values currently
+     * present. If the value is not present and the template has the corresponding value, then the template value is
+     * set. The net result is that all set values of an {@link ApprovalRequest} are preserved, while the values set on
+     * template are used for undefined ( <code>null</code>) values.
      *
-     * @param template template to apply
-     * @return newly created object with applied template
+     * @param  template template to apply
+     * @return          newly created object with applied template
      */
     public ApprovalRequest applyTemplate(final ApprovalRequest template) {
         if (template == null) {
@@ -149,11 +150,13 @@ public final class ApprovalRequest implements Serializable {
             return false;
         }
 
-        final ApprovalRequest other = (ApprovalRequest)obj;
+        final ApprovalRequest other = (ApprovalRequest) obj;
 
-        return Objects.equals(actionType, other.actionType) && Objects.equals(contextActorId, other.contextActorId) && Objects.equals(contextId, other.contextId)
-               && Objects.equals(comments, other.comments) && Objects.equals(nextApproverIds, other.nextApproverIds)
-               && Objects.equals(processDefinitionNameOrId, other.processDefinitionNameOrId) && Objects.equals(skipEntryCriteria, other.skipEntryCriteria);
+        return Objects.equals(actionType, other.actionType) && Objects.equals(contextActorId, other.contextActorId)
+                && Objects.equals(contextId, other.contextId)
+                && Objects.equals(comments, other.comments) && Objects.equals(nextApproverIds, other.nextApproverIds)
+                && Objects.equals(processDefinitionNameOrId, other.processDefinitionNameOrId)
+                && Objects.equals(skipEntryCriteria, other.skipEntryCriteria);
     }
 
     public Action getActionType() {
@@ -182,7 +185,9 @@ public final class ApprovalRequest implements Serializable {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new Object[] {actionType, contextActorId, contextId, comments, nextApproverIds, processDefinitionNameOrId, skipEntryCriteria});
+        return Arrays.hashCode(new Object[] {
+                actionType, contextActorId, contextId, comments, nextApproverIds, processDefinitionNameOrId,
+                skipEntryCriteria });
     }
 
     public boolean isSkipEntryCriteria() {

@@ -96,10 +96,11 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         Message message = result.getExchanges().get(0).getIn();
 
-        assertNotNull(message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS), "Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS);
-        assertNotNull(message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS), "Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS);
+        assertNotNull(message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS),
+                "Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS);
+        assertNotNull(message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS),
+                "Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS);
     }
-
 
     @Test
     public void testHl7HeadersDisabled() throws Exception {
@@ -117,18 +118,26 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         Message message = result.getExchanges().get(0).getIn();
 
-        assertNotNull(message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS), "Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS);
-        assertNotNull(message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS), "Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS);
+        assertNotNull(message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS),
+                "Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS);
+        assertNotNull(message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS),
+                "Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS);
 
-        assertNull(message.getHeader(MllpConstants.MLLP_SENDING_APPLICATION), "Should NOT have header" + MllpConstants.MLLP_SENDING_APPLICATION);
-        assertNull(message.getHeader(MllpConstants.MLLP_SENDING_FACILITY), "Should NOT have header" + MllpConstants.MLLP_SENDING_FACILITY);
-        assertNull(message.getHeader(MllpConstants.MLLP_RECEIVING_APPLICATION), "Should NOT have header" + MllpConstants.MLLP_RECEIVING_APPLICATION);
+        assertNull(message.getHeader(MllpConstants.MLLP_SENDING_APPLICATION),
+                "Should NOT have header" + MllpConstants.MLLP_SENDING_APPLICATION);
+        assertNull(message.getHeader(MllpConstants.MLLP_SENDING_FACILITY),
+                "Should NOT have header" + MllpConstants.MLLP_SENDING_FACILITY);
+        assertNull(message.getHeader(MllpConstants.MLLP_RECEIVING_APPLICATION),
+                "Should NOT have header" + MllpConstants.MLLP_RECEIVING_APPLICATION);
         assertNull(message.getHeader(MllpConstants.MLLP_TIMESTAMP), "Should NOT have header" + MllpConstants.MLLP_TIMESTAMP);
         assertNull(message.getHeader(MllpConstants.MLLP_SECURITY), "Should NOT have header" + MllpConstants.MLLP_SECURITY);
-        assertNull(message.getHeader(MllpConstants.MLLP_MESSAGE_TYPE), "Should NOT have header" + MllpConstants.MLLP_MESSAGE_TYPE);
+        assertNull(message.getHeader(MllpConstants.MLLP_MESSAGE_TYPE),
+                "Should NOT have header" + MllpConstants.MLLP_MESSAGE_TYPE);
         assertNull(message.getHeader(MllpConstants.MLLP_EVENT_TYPE), "Should NOT have header" + MllpConstants.MLLP_EVENT_TYPE);
-        assertNull(message.getHeader(MllpConstants.MLLP_MESSAGE_CONTROL), "Should NOT have header" + MllpConstants.MLLP_MESSAGE_CONTROL);
-        assertNull(message.getHeader(MllpConstants.MLLP_PROCESSING_ID), "Should NOT have header" + MllpConstants.MLLP_PROCESSING_ID);
+        assertNull(message.getHeader(MllpConstants.MLLP_MESSAGE_CONTROL),
+                "Should NOT have header" + MllpConstants.MLLP_MESSAGE_CONTROL);
+        assertNull(message.getHeader(MllpConstants.MLLP_PROCESSING_ID),
+                "Should NOT have header" + MllpConstants.MLLP_PROCESSING_ID);
         assertNull(message.getHeader(MllpConstants.MLLP_VERSION_ID), "Should NOT have header" + MllpConstants.MLLP_VERSION_ID);
     }
 
@@ -142,15 +151,15 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
-                    .to("mock://on-completion-result")
-                    .toF("log:%s?level=INFO&showAll=true", routeId)
-                    .log(LoggingLevel.INFO, routeId, "Test route complete");
+                        .to("mock://on-completion-result")
+                        .toF("log:%s?level=INFO&showAll=true", routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route complete");
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d&hl7Headers=%b",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout, hl7Headers)
-                    .routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Test route received message")
-                    .to(result);
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout, hl7Headers)
+                                .routeId(routeId)
+                                .log(LoggingLevel.INFO, routeId, "Test route received message")
+                                .to(result);
 
             }
         };
@@ -159,4 +168,3 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
     }
 
 }
-

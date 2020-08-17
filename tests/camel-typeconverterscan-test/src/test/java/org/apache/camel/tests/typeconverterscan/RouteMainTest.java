@@ -43,7 +43,7 @@ public class RouteMainTest {
             Object out = context.createProducerTemplate().requestBody("direct:start", "foo:bar");
             assertNotNull(out);
 
-            MyBean my = (MyBean)out;
+            MyBean my = (MyBean) out;
             assertEquals("foo", my.getA());
             assertEquals("bar", my.getB());
         }

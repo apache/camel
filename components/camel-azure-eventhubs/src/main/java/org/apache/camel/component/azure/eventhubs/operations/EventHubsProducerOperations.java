@@ -37,7 +37,8 @@ public class EventHubsProducerOperations {
     private final EventHubProducerAsyncClient producerAsyncClient;
     private final EventHubsConfigurationOptionsProxy configurationOptionsProxy;
 
-    public EventHubsProducerOperations(final EventHubProducerAsyncClient producerAsyncClient, final EventHubsConfiguration configuration) {
+    public EventHubsProducerOperations(final EventHubProducerAsyncClient producerAsyncClient,
+                                       final EventHubsConfiguration configuration) {
         ObjectHelper.notNull(producerAsyncClient, "client cannot be null");
 
         this.producerAsyncClient = producerAsyncClient;
@@ -48,13 +49,16 @@ public class EventHubsProducerOperations {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
         ObjectHelper.notNull(callback, "callback cannot be null");
 
-        final SendOptions sendOptions = createSendOptions(configurationOptionsProxy.getPartitionKey(exchange), configurationOptionsProxy.getPartitionId(exchange));
+        final SendOptions sendOptions = createSendOptions(configurationOptionsProxy.getPartitionKey(exchange),
+                configurationOptionsProxy.getPartitionId(exchange));
         final Iterable<EventData> eventData = createEventData(exchange);
 
         return sendAsyncEvents(eventData, sendOptions, exchange, callback);
     }
 
-    private boolean sendAsyncEvents(final Iterable<EventData> eventData, final SendOptions sendOptions, final Exchange exchange, final AsyncCallback asyncCallback) {
+    private boolean sendAsyncEvents(
+            final Iterable<EventData> eventData, final SendOptions sendOptions, final Exchange exchange,
+            final AsyncCallback asyncCallback) {
         sendAsyncEventsWithSuitableMethod(eventData, sendOptions)
                 .subscribe(unused -> LOG.debug("Processed one event..."), error -> {
                     // error but we continue
@@ -97,8 +101,10 @@ public class EventHubsProducerOperations {
         final byte[] data = exchange.getIn().getBody(byte[].class);
 
         if (ObjectHelper.isEmpty(data)) {
-            throw new IllegalArgumentException(String.format("Cannot convert message body %s to byte[]. You will need "
-                    + "to make sure the data encoded in byte[] or add a Camel TypeConverter to convert the data to byte[]", exchange.getIn().getBody()));
+            throw new IllegalArgumentException(
+                    String.format("Cannot convert message body %s to byte[]. You will need "
+                                  + "to make sure the data encoded in byte[] or add a Camel TypeConverter to convert the data to byte[]",
+                            exchange.getIn().getBody()));
         }
         // for now we only support single event
         return Collections.singletonList(new EventData(data));

@@ -37,7 +37,7 @@ public class CBORMarshalAllowJMSTypeTest extends CamelTestSupport {
         Author author = new Author();
         author.setName("David");
         author.setSurname("Foster Wallace");
-        
+
         CBORFactory factory = new CBORFactory();
         ObjectMapper objectMapper = new ObjectMapper(factory);
         byte[] payload = objectMapper.writeValueAsBytes(author);

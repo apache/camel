@@ -32,8 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * A crude unit test to navigate the route and build a Java DSL from the route
- * definition
+ * A crude unit test to navigate the route and build a Java DSL from the route definition
  */
 public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
@@ -54,7 +53,8 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         navigateRoute(nav, sb);
 
         // output the Java DSL
-        assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")", sb.toString());
+        assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")",
+                sb.toString());
     }
 
     @Test
@@ -72,7 +72,8 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         navigateDefinition(route, sb);
 
         // output the Java DSL
-        assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")", sb.toString());
+        assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")",
+                sb.toString());
     }
 
     private void navigateRoute(Navigate<Processor> nav, StringBuilder sb) {
@@ -85,8 +86,8 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         }
 
         if (nav instanceof DefaultChannel) {
-            DefaultChannel channel = (DefaultChannel)nav;
-            ProcessorDefinition<?> def = (ProcessorDefinition<?>)channel.getProcessorDefinition();
+            DefaultChannel channel = (DefaultChannel) nav;
+            ProcessorDefinition<?> def = (ProcessorDefinition<?>) channel.getProcessorDefinition();
             navigateDefinition(def, sb);
         }
     }
@@ -94,19 +95,19 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
     private void navigateDefinition(ProcessorDefinition<?> def, StringBuilder sb) {
 
         // must do this ugly cast to avoid compiler error on HP-UX
-        ProcessorDefinition<?> defn = (ProcessorDefinition<?>)def;
+        ProcessorDefinition<?> defn = (ProcessorDefinition<?>) def;
 
         if (defn instanceof LoadBalanceDefinition) {
             sb.append(".loadBalance()");
 
-            LoadBalanceDefinition lbd = (LoadBalanceDefinition)defn;
+            LoadBalanceDefinition lbd = (LoadBalanceDefinition) defn;
             if (lbd.getLoadBalancerType() instanceof RandomLoadBalancerDefinition) {
                 sb.append(".random()");
             }
         }
 
         if (defn instanceof SendDefinition) {
-            SendDefinition<?> send = (SendDefinition<?>)defn;
+            SendDefinition<?> send = (SendDefinition<?>) defn;
             sb.append(".to(\"" + send.getUri() + "\")");
         }
 

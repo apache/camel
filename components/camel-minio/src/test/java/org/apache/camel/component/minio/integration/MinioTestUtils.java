@@ -30,7 +30,8 @@ public final class MinioTestUtils {
         final Properties properties = new Properties();
         final String fileName = "minio_key.properties";
 
-        final InputStream inputStream = Objects.requireNonNull(MinioTestUtils.class.getClassLoader().getResourceAsStream(fileName));
+        final InputStream inputStream
+                = Objects.requireNonNull(MinioTestUtils.class.getClassLoader().getResourceAsStream(fileName));
 
         properties.load(inputStream);
 
@@ -39,7 +40,8 @@ public final class MinioTestUtils {
 
     public static Properties loadMinioAccessFromJvmEnv() throws Exception {
         final Properties properties = new Properties();
-        if (System.getProperty("endpoint") == null || System.getProperty("accessKey") == null || System.getProperty("secretKey") == null) {
+        if (System.getProperty("endpoint") == null || System.getProperty("accessKey") == null
+                || System.getProperty("secretKey") == null) {
             throw new Exception("Make sure to supply minio endpoint and credentials");
         }
         properties.setProperty("endpoint", System.getProperty("endpoint"));

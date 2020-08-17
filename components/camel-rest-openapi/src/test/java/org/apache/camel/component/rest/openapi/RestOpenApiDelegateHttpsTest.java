@@ -29,7 +29,7 @@ public class RestOpenApiDelegateHttpsTest extends HttpsTest {
 
         // since camel context is not started, then we need to manually initialize the delegate
         final Component delegate = ((DefaultCamelContext) camelContext).getComponentResolver()
-            .resolveComponent(componentName, camelContext);
+                .resolveComponent(componentName, camelContext);
         delegate.setCamelContext(camelContext);
         delegate.init();
 

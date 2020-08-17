@@ -28,8 +28,9 @@ public class HttpRestHeaderFilterStrategyTest {
 
     @Test
     public void shouldDecideOnApplingHeaderFilterToTemplateTokens() {
-        final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy("{uriToken1}{uriToken2}",
-            "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%7D%26");
+        final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy(
+                "{uriToken1}{uriToken2}",
+                "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%7D%26");
 
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken1", "value", NOT_USED));
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken2", "value", NOT_USED));

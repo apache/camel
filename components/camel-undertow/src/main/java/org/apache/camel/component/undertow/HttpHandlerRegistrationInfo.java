@@ -58,8 +58,8 @@ public class HttpHandlerRegistrationInfo {
         }
         HttpHandlerRegistrationInfo that = (HttpHandlerRegistrationInfo) o;
         return Objects.equals(matchOnUriPrefix, that.matchOnUriPrefix)
-            && Objects.equals(methodRestrict, that.methodRestrict)
-            && Objects.equals(uri, that.uri);
+                && Objects.equals(methodRestrict, that.methodRestrict)
+                && Objects.equals(uri, that.uri);
     }
 
     @Override

@@ -36,8 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon ECS Service
- * <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
+ * A Producer which sends messages to the Amazon ECS Service <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
  */
 public class ECSProducer extends DefaultProducer {
 
@@ -91,7 +90,7 @@ public class ECSProducer extends DefaultProducer {
 
     @Override
     public ECSEndpoint getEndpoint() {
-        return (ECSEndpoint)super.getEndpoint();
+        return (ECSEndpoint) super.getEndpoint();
     }
 
     private void listClusters(AmazonECS ecsClient, Exchange exchange) {

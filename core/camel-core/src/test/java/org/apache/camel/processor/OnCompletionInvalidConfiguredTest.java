@@ -43,7 +43,9 @@ public class OnCompletionInvalidConfiguredTest extends ContextTestSupport {
             });
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: onCompletion[[]]", e.getMessage());
+            assertEquals(
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: onCompletion[[]]",
+                    e.getMessage());
         }
     }
 }

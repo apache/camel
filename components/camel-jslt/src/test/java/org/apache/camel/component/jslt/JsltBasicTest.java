@@ -33,10 +33,10 @@ public class JsltBasicTest extends CamelTestSupport {
     public void testJsltAsInputStream() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            IOHelper.loadText(
-                ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context, "org/apache/camel/component/jslt/demoPlayground/output.json")
-            ).trim() // Remove the last newline added by IOHelper.loadText()
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://start",
@@ -60,10 +60,10 @@ public class JsltBasicTest extends CamelTestSupport {
     public void testJsltAsText() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            IOHelper.loadText(
-                ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context, "org/apache/camel/component/jslt/demoPlayground/output.json")
-            ).trim() // Remove the last newline added by IOHelper.loadText()
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://start",
@@ -73,38 +73,36 @@ public class JsltBasicTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Test
     public void testJsltAsInputStreamPrettyPrint() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived(
                 IOHelper.loadText(
                         ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/demoPlayground/outputPrettyPrint.json")
-                ).trim() // Remove the last newline added by IOHelper.loadText()
+                                context, "org/apache/camel/component/jslt/demoPlayground/outputPrettyPrint.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://startPrettyPrint",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json"),
-                Collections.singletonMap(JsltConstants.HEADER_JSLT_RESOURCE_URI, "org/apache/camel/component/jslt/demoPlayground/transformation.json"));
+                Collections.singletonMap(JsltConstants.HEADER_JSLT_RESOURCE_URI,
+                        "org/apache/camel/component/jslt/demoPlayground/transformation.json"));
 
         assertMockEndpointsSatisfied();
     }
-
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .to("jslt:org/apache/camel/component/jslt/demoPlayground/transformation.json")
-                    .to("mock:result");
+                        .to("jslt:org/apache/camel/component/jslt/demoPlayground/transformation.json")
+                        .to("mock:result");
 
                 from("direct://startPrettyPrint")
-                    .to("jslt:dummy?prettyPrint=true&allowTemplateFromHeader=true")
-                    .to("mock:result");
+                        .to("jslt:dummy?prettyPrint=true&allowTemplateFromHeader=true")
+                        .to("mock:result");
             }
         };
     }

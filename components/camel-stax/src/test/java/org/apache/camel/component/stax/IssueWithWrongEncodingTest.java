@@ -34,15 +34,15 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 public class IssueWithWrongEncodingTest extends CamelTestSupport {
 
     private static final String XML_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<products>\n"
-            + "    <product>\n"
-            + "        <name>first product ";
+                                        + "    <product>\n"
+                                        + "        <name>first product ";
 
     private static final String XML_2 = "</name>\n"
-            + "    </product>\n"
-            + "    <product>\n"
-            + "        <name>second product</name>\n"
-            + "    </product>\n"
-            + "</products>";
+                                        + "    </product>\n"
+                                        + "    <product>\n"
+                                        + "        <name>second product</name>\n"
+                                        + "    </product>\n"
+                                        + "</products>";
 
     @Override
     @BeforeEach
@@ -87,8 +87,8 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/encoding?moveFailed=error")
-                    .split(stax(Product.class))
-                    .to("mock:result");
+                        .split(stax(Product.class))
+                        .to("mock:result");
             }
         };
     }

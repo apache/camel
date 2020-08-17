@@ -23,7 +23,7 @@ import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.DeferServiceFactory;
 
 public final class DefaultDeferServiceFactory implements DeferServiceFactory {
-    
+
     @Override
     public Producer createProducer(Endpoint endpoint) throws Exception {
         Producer producer = new DeferProducer(endpoint);

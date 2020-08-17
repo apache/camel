@@ -69,14 +69,17 @@ public class TryProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:processor").doTry().process(new ProcessorFail()).to("mock:result").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally()
-                    .to("mock:finally").end().to("mock:last");
+                from("direct:processor").doTry().process(new ProcessorFail()).to("mock:result").doCatch(CamelException.class)
+                        .process(new ProcessorHandle()).doFinally()
+                        .to("mock:finally").end().to("mock:last");
 
-                from("direct:expression").doTry().setBody(new ProcessorFail()).to("mock:result").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally()
-                    .to("mock:finally").end().to("mock:last");
+                from("direct:expression").doTry().setBody(new ProcessorFail()).to("mock:result").doCatch(CamelException.class)
+                        .process(new ProcessorHandle()).doFinally()
+                        .to("mock:finally").end().to("mock:last");
 
-                from("direct:predicate").doTry().to("direct:sub-predicate").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally().to("mock:finally").end()
-                    .to("mock:last");
+                from("direct:predicate").doTry().to("direct:sub-predicate").doCatch(CamelException.class)
+                        .process(new ProcessorHandle()).doFinally().to("mock:finally").end()
+                        .to("mock:last");
 
                 from("direct:sub-predicate").errorHandler(noErrorHandler()).filter(new ProcessorFail()).to("mock:result");
             }
@@ -111,7 +114,7 @@ public class TryProcessorTest extends ContextTestSupport {
 
             assertEquals(false, exchange.isFailed(), "Should not be marked as failed");
 
-            Exception e = (Exception)exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
+            Exception e = (Exception) exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
             assertNotNull(e, "There should be an exception");
 
             // If we handle CamelException it is what we should have as an

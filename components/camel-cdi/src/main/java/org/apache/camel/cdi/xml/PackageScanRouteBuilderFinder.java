@@ -40,7 +40,8 @@ final class PackageScanRouteBuilderFinder {
 
     private final PackageScanClassResolver resolver;
 
-    PackageScanRouteBuilderFinder(CamelContext camelContext, String[] packages, ClassLoader classLoader, PackageScanClassResolver resolver) {
+    PackageScanRouteBuilderFinder(CamelContext camelContext, String[] packages, ClassLoader classLoader,
+                                  PackageScanClassResolver resolver) {
         this.camelContext = camelContext;
         this.packages = packages;
         this.resolver = resolver;
@@ -82,8 +83,8 @@ final class PackageScanRouteBuilderFinder {
 
     private boolean isValidClass(Class<?> type) {
         return Modifier.isPublic(type.getModifiers())
-            && !Modifier.isAbstract(type.getModifiers())
-            && !type.isInterface();
+                && !Modifier.isAbstract(type.getModifiers())
+                && !type.isInterface();
     }
 
     private RoutesBuilder instantiateBuilder(Class<? extends RoutesBuilder> type) {

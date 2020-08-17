@@ -25,8 +25,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * An {@link AggregationStrategy} which are used when the option <tt>shareUnitOfWork</tt> is enabled
- * on EIPs such as multicast, splitter or recipientList.
+ * An {@link AggregationStrategy} which are used when the option <tt>shareUnitOfWork</tt> is enabled on EIPs such as
+ * multicast, splitter or recipientList.
  * <p/>
  * This strategy wraps the actual in use strategy to provide the logic needed for making shareUnitOfWork work.
  * <p/>
@@ -120,7 +120,8 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
                 answer.setProperty(Exchange.FAILURE_ROUTE_ID, newExchange.getProperty(Exchange.FAILURE_ROUTE_ID));
             }
             if (newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled() != null) {
-                answer.adapt(ExtendedExchange.class).setErrorHandlerHandled(newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
+                answer.adapt(ExtendedExchange.class)
+                        .setErrorHandlerHandled(newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
             }
             if (newExchange.getProperty(Exchange.FAILURE_HANDLED) != null) {
                 answer.setProperty(Exchange.FAILURE_HANDLED, newExchange.getProperty(Exchange.FAILURE_HANDLED));

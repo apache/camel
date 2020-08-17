@@ -26,9 +26,9 @@ public interface ConfigurerResolver {
     /**
      * Resolves the given configurer.
      *
-     * @param name    the name of the configurer (timer-component or timer-endpoint etc)
-     * @param context the camel context
-     * @return the resolved configurer, or <tt>null</tt> if no configurer could be found
+     * @param  name    the name of the configurer (timer-component or timer-endpoint etc)
+     * @param  context the camel context
+     * @return         the resolved configurer, or <tt>null</tt> if no configurer could be found
      */
     GeneratedPropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context);
 }

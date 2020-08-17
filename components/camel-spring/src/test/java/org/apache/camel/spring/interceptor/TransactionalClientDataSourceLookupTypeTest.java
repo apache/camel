@@ -49,14 +49,12 @@ public class TransactionalClientDataSourceLookupTypeTest extends TransactionalCl
 
                 // START SNIPPET: e2
                 // set the required policy for this route
-                from("direct:okay").policy(required).
-                    setBody(constant("Tiger in Action")).bean("bookService").
-                    setBody(constant("Elephant in Action")).bean("bookService");
+                from("direct:okay").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 // set the required policy for this route
-                from("direct:fail").policy(required).
-                    setBody(constant("Tiger in Action")).bean("bookService").
-                    setBody(constant("Donkey in Action")).bean("bookService");
+                from("direct:fail").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e2
             }
         };

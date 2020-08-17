@@ -73,7 +73,8 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 // we can also attach a predicate to the endpoint interceptor.
                 // So in this example the exchange is
                 // only intercepted if the body is Hello World
-                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour")
+                        .transform(constant("Bye World"));
 
                 from("direct:second").to("mock:bar").to("mock:foo").to("mock:result");
                 // END SNIPPET: e2
@@ -112,7 +113,8 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 // is skipped and continued in the original route, so
                 // mock:result will receive
                 // the message.
-                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(constant("Bye World")).to("mock:detour");
+                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(constant("Bye World"))
+                        .to("mock:detour");
 
                 from("direct:third").to("mock:bar").to("mock:foo").to("mock:result");
                 // END SNIPPET: e3

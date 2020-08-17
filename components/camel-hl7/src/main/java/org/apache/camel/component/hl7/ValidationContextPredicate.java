@@ -32,7 +32,7 @@ public class ValidationContextPredicate implements Predicate {
     private Expression validatorExpression;
 
     public ValidationContextPredicate() {
-        this((Expression)null);
+        this((Expression) null);
     }
 
     public ValidationContextPredicate(HapiContext hapiContext) {
@@ -53,7 +53,8 @@ public class ValidationContextPredicate implements Predicate {
             Message message = exchange.getIn().getBody(Message.class);
             ValidationContext context = validatorExpression != null
                     ? validatorExpression.evaluate(exchange, ValidationContext.class)
-                    : dynamicValidationContext(message, exchange.getIn().getHeader(HL7Constants.HL7_CONTEXT, HapiContext.class));
+                    : dynamicValidationContext(message,
+                            exchange.getIn().getHeader(HL7Constants.HL7_CONTEXT, HapiContext.class));
             MessageValidator validator = new MessageValidator(context, false);
             return validator.validate(message);
         } catch (HL7Exception e) {

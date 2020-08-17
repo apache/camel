@@ -22,11 +22,10 @@ import java.util.function.Predicate;
 import org.apache.camel.Ordered;
 
 /**
- * A source for properties that can be loaded all at once during initialization,
- * such as loading .properties files.
+ * A source for properties that can be loaded all at once during initialization, such as loading .properties files.
  * <p/>
- * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel
- * properties component. The source with the highest precedence (lowest number) will be used first.
+ * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel properties
+ * component. The source with the highest precedence (lowest number) will be used first.
  */
 public interface LoadablePropertiesSource extends PropertiesSource {
 
@@ -40,8 +39,8 @@ public interface LoadablePropertiesSource extends PropertiesSource {
     /**
      * Loads the properties from the source filtering them out according to a predicate.
      *
-     * @param filter the predicate used to filter out properties based on the key.
-     * @return the properties loaded.
+     * @param  filter the predicate used to filter out properties based on the key.
+     * @return        the properties loaded.
      */
     Properties loadProperties(Predicate<String> filter);
 }

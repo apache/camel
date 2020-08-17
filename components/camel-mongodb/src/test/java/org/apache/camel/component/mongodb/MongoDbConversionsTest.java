@@ -66,7 +66,8 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     public void testInsertJsonString() {
         assertEquals(0, testCollection.countDocuments());
         // Object result =
-        template.requestBody("direct:insertJsonString", "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
+        template.requestBody("direct:insertJsonString",
+                "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
         // assertTrue(result instanceof WriteResult);
         Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonString")).first();
         assertNotNull(b, "No record with 'testInsertJsonString' _id");
@@ -77,7 +78,9 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.countDocuments());
         // Object result =
         template.requestBody("direct:insertJsonString",
-                             IOConverter.toInputStream("{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n", null));
+                IOConverter.toInputStream(
+                        "{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n",
+                        null));
         Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonString")).first();
         assertNotNull(b, "No record with 'testInsertJsonString' _id");
     }
@@ -85,7 +88,8 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     @Test
     public void testInsertJsonInputStreamWithSpaces() throws Exception {
         assertEquals(0, testCollection.countDocuments());
-        template.requestBody("direct:insertJsonString", IOConverter.toInputStream("    {\"test\": [\"test\"], \"_id\": \"testInsertJsonStringWithSpaces\"}\n", null));
+        template.requestBody("direct:insertJsonString",
+                IOConverter.toInputStream("    {\"test\": [\"test\"], \"_id\": \"testInsertJsonStringWithSpaces\"}\n", null));
         Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonStringWithSpaces")).first();
         assertNotNull(b, "No record with 'testInsertJsonStringWithSpaces' _id");
     }
@@ -107,11 +111,15 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:insertMap").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
-                from("direct:insertPojo").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
-                from("direct:insertJsonString").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
-                from("direct:insertJsonStringWriteResultInString").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
-                    .convertBodyTo(String.class);
+                from("direct:insertMap")
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                from("direct:insertPojo")
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                from("direct:insertJsonString")
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                from("direct:insertJsonStringWriteResultInString")
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
+                        .convertBodyTo(String.class);
 
             }
         };
@@ -121,7 +129,7 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     private class MyPojoTest {
         public int number = 123;
         public String text = "hello";
-        public String[] array = {"daVinci", "copernico", "einstein"};
+        public String[] array = { "daVinci", "copernico", "einstein" };
         // CHECKSTYLE:OFF
         public String _id = "testInsertPojo";
         // CHECKSTYLE:ON

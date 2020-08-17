@@ -33,7 +33,7 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
     private static final String MOCK_RESULT = "mock:result";
     private static String beforeThreadName;
     private static String afterThreadName;
-    
+
     @Test
     public void testInOnlyConsumerAsyncTrue() throws Exception {
         getMockEndpoint(MOCK_RESULT).expectedBodiesReceived("Hello Camel", "Hello World");

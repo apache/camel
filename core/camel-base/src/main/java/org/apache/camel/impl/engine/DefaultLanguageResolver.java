@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b> and
- * language resolvers in <b>META-INF/services/org/apache/camel/language/resolver/</b>.
+ * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b>
+ * and language resolvers in <b>META-INF/services/org/apache/camel/language/resolver/</b>.
  */
 public class DefaultLanguageResolver implements LanguageResolver {
     public static final String LANGUAGE_RESOURCE_PATH = "META-INF/services/org/apache/camel/language/";
@@ -61,14 +61,15 @@ public class DefaultLanguageResolver implements LanguageResolver {
             if (Language.class.isAssignableFrom(type)) {
                 return (Language) context.getInjector().newInstance(type, false);
             } else {
-                throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a Language implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Resolving language: " + name + " detected type conflict: Not a Language implementation. Found: "
+                                                   + type.getName());
             }
         } else {
             // no specific language found then try fallback
             return noSpecificLanguageFound(name, context);
         }
     }
-
 
     protected Language noSpecificLanguageFound(String name, CamelContext context) {
         Class<?> type = null;
@@ -86,7 +87,10 @@ public class DefaultLanguageResolver implements LanguageResolver {
                 LanguageResolver resolver = (LanguageResolver) context.getInjector().newInstance(type, false);
                 return resolver.resolveLanguage(name, context);
             } else {
-                throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a LanguageResolver implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Resolving language: " + name
+                                                   + " detected type conflict: Not a LanguageResolver implementation. Found: "
+                                                   + type.getName());
             }
         }
         throw new NoSuchLanguageException(name);

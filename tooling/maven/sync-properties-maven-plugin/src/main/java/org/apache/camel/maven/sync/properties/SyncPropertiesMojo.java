@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.nio.file.Files;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -102,7 +101,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
             // write lines
             FileOutputStream outputStream = new FileOutputStream(targetPom);
             byte[] strToBytes = out.getBytes();
-            outputStream.write(strToBytes);     
+            outputStream.write(strToBytes);
             outputStream.close();
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);

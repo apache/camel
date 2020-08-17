@@ -34,7 +34,7 @@ public class JAXBConvertTest extends ExchangeTestSupport {
     @Test
     public void testConverter() throws Exception {
         PurchaseOrder purchaseOrder = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
-            "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
+                "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
         assertNotNull(purchaseOrder, "Purchase order should not be null!");
         assertEquals("foo", purchaseOrder.getName(), "name");
@@ -45,7 +45,7 @@ public class JAXBConvertTest extends ExchangeTestSupport {
     @Test
     public void testConverterTwice() throws Exception {
         PurchaseOrder purchaseOrder = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
-            "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
+                "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
         assertNotNull(purchaseOrder, "Purchase order should not be null!");
         assertEquals("foo", purchaseOrder.getName(), "name");
@@ -53,7 +53,7 @@ public class JAXBConvertTest extends ExchangeTestSupport {
         assertEquals(2.22, purchaseOrder.getPrice(), 0, "price");
 
         PurchaseOrder purchaseOrder2 = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
-            "<purchaseOrder name='bar' amount='5.12' price='3.33'/>");
+                "<purchaseOrder name='bar' amount='5.12' price='3.33'/>");
 
         assertNotNull(purchaseOrder2, "Purchase order should not be null!");
         assertEquals("bar", purchaseOrder2.getName(), "name");
@@ -84,7 +84,7 @@ public class JAXBConvertTest extends ExchangeTestSupport {
         }
         assertEquals(-1, is.read());
     }
-    
+
     @Test
     public void testNoConversionForStreamCache() throws Exception {
         PurchaseOrder order = new PurchaseOrder();

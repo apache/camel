@@ -68,7 +68,8 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
 
         CMSSignedDataParser sp;
         try {
-            sp = new CMSSignedDataParser(new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(), is);
+            sp = new CMSSignedDataParser(
+                    new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(), is);
         } catch (CMSException e) {
             throw new CryptoCmsFormatException(getFormatErrorMessage(), e);
         }
@@ -91,8 +92,8 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
         try {
             data = sp.getSignedContent().getContentStream();
         } catch (NullPointerException e) { // nullpointer exception is
-                                           // thrown when the signed content
-                                           // is missing
+                                          // thrown when the signed content
+                                          // is missing
             throw getContentMissingException(e);
         }
 
@@ -116,8 +117,10 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
     }
 
     protected CryptoCmsException getContentMissingException(NullPointerException e) {
-        return new CryptoCmsException("PKCS7/CMS signature validation not possible: The content for which the hash-value must be calculated is missing in the PKCS7/CMS signed data instance. "
-                                      + "Please check the configuration of the sender of the PKCS7/CMS signature.", e);
+        return new CryptoCmsException(
+                "PKCS7/CMS signature validation not possible: The content for which the hash-value must be calculated is missing in the PKCS7/CMS signed data instance. "
+                                      + "Please check the configuration of the sender of the PKCS7/CMS signature.",
+                e);
     }
 
     protected void debugLog(CMSSignedDataParser sp) throws CMSException {
@@ -134,7 +137,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
         int i = 0;
         for (SignerInformation signer : signers.getSigners()) {
             i++;
-            LOG.debug("    Signer {}: {}", new Object[] {i, signerInformationToString(signer)});
+            LOG.debug("    Signer {}: {}", new Object[] { i, signerInformationToString(signer) });
             if (signer.getSignedAttributes() != null) {
                 @SuppressWarnings("unchecked")
                 Hashtable<String, Attribute> authAttTable = signer.getSignedAttributes().toHashtable();
@@ -158,7 +161,8 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
 
         Collection<X509Certificate> allowedVerifyCerts = conf.getCertificates(exchange);
         if (allowedVerifyCerts.isEmpty()) {
-            throw new CryptoCmsNoCertificateForSignerInfosException("Cannot verify the signatures of the PKCS7/CMS Signed Data object: No verifier certificate is configured.");
+            throw new CryptoCmsNoCertificateForSignerInfosException(
+                    "Cannot verify the signatures of the PKCS7/CMS Signed Data object: No verifier certificate is configured.");
         }
 
         JcaCertStore certStore = new JcaCertStore(allowedVerifyCerts);
@@ -170,8 +174,10 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
 
             if (certCollection.isEmpty()) {
                 if (conf.isVerifySignaturesOfAllSigners()) {
-                    throw new CryptoCmsNoCertificateForSignerInfoException("KCS7/CMS signature verification failed. The public key for the signer information with"
-                                                                           + signerInformationToString(signer) + " cannot be found in the configured certificates: "
+                    throw new CryptoCmsNoCertificateForSignerInfoException(
+                            "KCS7/CMS signature verification failed. The public key for the signer information with"
+                                                                           + signerInformationToString(signer)
+                                                                           + " cannot be found in the configured certificates: "
                                                                            + certsToString(allowedVerifyCerts));
                 } else {
                     continue;
@@ -181,29 +187,38 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
             X509CertificateHolder cert = certIt.next();
 
             try {
-                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(cert))) {
+                if (signer.verify(
+                        new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(cert))) {
                     LOG.debug("Verification successful");
                     atLeastOneSignatureVerified = true;
                     if (!conf.isVerifySignaturesOfAllSigners()) {
                         return;
                     }
                 } else {
-                    throw new CryptoCmsSignatureException("PKCS7/CMS signature verification failed for signer information with " + issuerSerialNumberSubject(cert));
+                    throw new CryptoCmsSignatureException(
+                            "PKCS7/CMS signature verification failed for signer information with "
+                                                          + issuerSerialNumberSubject(cert));
                 }
             } catch (CMSSignerDigestMismatchException e) {
-                throw new CryptoCmsSignatureInvalidContentHashException("PKCS7/CMS signature verification failed for signer information with " + issuerSerialNumberSubject(cert)
+                throw new CryptoCmsSignatureInvalidContentHashException(
+                        "PKCS7/CMS signature verification failed for signer information with " + issuerSerialNumberSubject(cert)
                                                                         + ". Calculated hash differs from the signed hash value. Either the message content does not correspond "
-                                                                        + "to the signature or the message might be tampered.", e);
+                                                                        + "to the signature or the message might be tampered.",
+                        e);
             } catch (CMSVerifierCertificateNotValidException e) {
-                throw new CryptoCmsVerifierCertificateNotValidException("PKCS7/CMS signature verification failed for signer information with " + issuerSerialNumberSubject(cert)
-                                                                        + ". Certificate was not valid at the signing time.", e);
+                throw new CryptoCmsVerifierCertificateNotValidException(
+                        "PKCS7/CMS signature verification failed for signer information with " + issuerSerialNumberSubject(cert)
+                                                                        + ". Certificate was not valid at the signing time.",
+                        e);
             }
         }
 
         if (!atLeastOneSignatureVerified) {
-            throw new CryptoCmsNoCertificateForSignerInfosException("Cannot verify the signature of the PKCS7/CMS signed data object with the certificates "
+            throw new CryptoCmsNoCertificateForSignerInfosException(
+                    "Cannot verify the signature of the PKCS7/CMS signed data object with the certificates "
                                                                     + certsToString(allowedVerifyCerts)
-                                                                    + " specified in the configuration. The signers in the signed data object are: " + signersToString(signers));
+                                                                    + " specified in the configuration. The signers in the signed data object are: "
+                                                                    + signersToString(signers));
 
         }
     }
@@ -211,7 +226,8 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
     SignerInformationStore getNonEmptySenderInfos(CMSSignedDataParser signed) throws CryptoCmsException, CMSException {
         SignerInformationStore senders = signed.getSignerInfos();
         if (senders.size() == 0) {
-            throw new CryptoCmsException("Sent CMS/PKCS7 signed data message is incorrect. No signer info found in signed data. Correct the sent message.");
+            throw new CryptoCmsException(
+                    "Sent CMS/PKCS7 signed data message is incorrect. No signer info found in signed data. Correct the sent message.");
         }
         return senders;
     }
@@ -271,7 +287,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
         for (Attribute attr : attributes.values()) {
             sb.append(attr.getAttrType());
             if (CMSAttributes.signingTime.equals(attr.getAttrType()) || CMSAttributes.messageDigest.equals(attr.getAttrType())
-                || CMSAttributes.cmsAlgorithmProtect.equals(attr.getAttrType())) {
+                    || CMSAttributes.cmsAlgorithmProtect.equals(attr.getAttrType())) {
                 // for these attributes we can print the value because we know
                 // they do not contain confidential or personal data
                 sb.append("=");

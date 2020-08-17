@@ -26,13 +26,12 @@ import com.jayway.jsonpath.Option;
 import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
- * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JsonPath</a>
- * expression into a method parameter when using
- * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
+ * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JsonPath</a> expression into a method
+ * parameter when using <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @LanguageAnnotation(language = "jsonpath", factory = JsonPathAnnotationExpressionFactory.class)
 public @interface JsonPath {
 

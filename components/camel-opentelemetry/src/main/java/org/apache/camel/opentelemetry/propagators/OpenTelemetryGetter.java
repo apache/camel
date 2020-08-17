@@ -27,7 +27,8 @@ public class OpenTelemetryGetter implements HttpTextFormat.Getter<ExtractAdapter
         this.adapter = adapter;
     }
 
-    @Override public String get(ExtractAdapter adapter, String key) {
+    @Override
+    public String get(ExtractAdapter adapter, String key) {
         return (String) adapter.get(key);
     }
 }

@@ -55,8 +55,8 @@ public class BackOffTest {
             elapsed += delay;
 
             assertEquals(i, context.getCurrentAttempts());
-            assertEquals((long)(oldDelay * 1.5), delay);
-            assertEquals((long)(oldDelay * 1.5), context.getCurrentDelay());
+            assertEquals((long) (oldDelay * 1.5), delay);
+            assertEquals((long) (oldDelay * 1.5), context.getCurrentDelay());
             assertEquals(elapsed, context.getCurrentElapsedTime(), 0);
         }
     }

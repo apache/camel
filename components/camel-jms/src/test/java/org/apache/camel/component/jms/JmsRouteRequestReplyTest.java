@@ -80,10 +80,10 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         @Override
         public void configure() throws Exception {
             from(endpointUriA)
-                // We are not expect the response here
-                .setExchangePattern(ExchangePattern.InOnly).process(e -> {
-                    // do nothing
-                });
+                    // We are not expect the response here
+                    .setExchangePattern(ExchangePattern.InOnly).process(e -> {
+                        // do nothing
+                    });
         }
     }
 
@@ -137,8 +137,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     public static class ContextBuilderMessageID implements ContextBuilder {
         @Override
         public CamelContext buildContext(CamelContext context) throws Exception {
-            ConnectionFactory connectionFactory =
-                CamelJmsTestHelper.createConnectionFactory();
+            ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
             jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(true);
             jmsComponent.getConfiguration().setConcurrentConsumers(maxServerTasks);
@@ -181,7 +180,6 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 return context;
             };
 
-
             ContextBuilder contextBuilderCorrelationIDDiffComp = context -> {
                 ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
@@ -209,7 +207,6 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 return context;
             };
 
-
             contextBuilders.put("testUseMessageIDAsCorrelationID", contextBuilderMessageID);
 
             contextBuilders.put("testUseCorrelationID", contextBuilderCorrelationID);
@@ -223,10 +220,10 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             // contextBuilders.put("testUseCorrelationIDPersistMultiReplyToMultiNode", contextBuilderCorrelationID);
 
             contextBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
-                                 contextBuilderMessageIDNamedReplyToSelector);
+                    contextBuilderMessageIDNamedReplyToSelector);
 
             contextBuilders.put("testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
-                                 contextBuilderCorrelationIDNamedReplyToSelector);
+                    contextBuilderCorrelationIDNamedReplyToSelector);
 
             contextBuilders.put("testUseCorrelationIDMultiNodeDiffComponents", contextBuilderCorrelationIDDiffComp);
             contextBuilders.put("testUseMessageIDAsCorrelationIDMultiNodeDiffComponents", contextBuilderMessageIDDiffComp);
@@ -234,7 +231,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             contextBuilders.put("testUseCorrelationIDTimeout", contextBuilderMessageID);
 
             routeBuilders.put("testUseMessageIDAsCorrelationID", new SingleNodeRouteBuilder());
-            routeBuilders.put("testUseMessageIDAsCorrelationIDReplyToTempDestinationPerComponent", new SingleNodeRouteBuilder());
+            routeBuilders.put("testUseMessageIDAsCorrelationIDReplyToTempDestinationPerComponent",
+                    new SingleNodeRouteBuilder());
             routeBuilders.put("testUseMessageIDAsCorrelationIDReplyToTempDestinationPerProducer", new SingleNodeRouteBuilder());
             routeBuilders.put("testUseCorrelationID", new SingleNodeRouteBuilder());
             routeBuilders.put("testUseMessageIDAsCorrelationIDMultiNode", new MultiNodeRouteBuilder());
@@ -243,14 +241,15 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             routeBuilders.put("testUseMessageIDAsCorrelationIDPersistReplyToMultiNode", new MultiNodeRouteBuilder());
             routeBuilders.put("testUseCorrelationIDPersistReplyToMultiNode", new MultiNodeRouteBuilder());
 
-            routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode", new MultiNodeReplyToRouteBuilder());
+            routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode",
+                    new MultiNodeReplyToRouteBuilder());
             // routeBuilders.put("testUseCorrelationIDPersistMultiReplyToMultiNode", new MultiNodeReplyToRouteBuilder());
 
             routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
-                               new MultiNodeReplyToRouteBuilder());
+                    new MultiNodeReplyToRouteBuilder());
 
             routeBuilders.put("testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
-                               new MultiNodeReplyToRouteBuilder());
+                    new MultiNodeReplyToRouteBuilder());
 
             routeBuilders.put("testUseCorrelationIDMultiNodeDiffComponents", new MultiNodeDiffCompRouteBuilder());
             routeBuilders.put("testUseMessageIDAsCorrelationIDMultiNodeDiffComponents", new MultiNodeDiffCompRouteBuilder());
@@ -282,8 +281,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 }
                 if (!reply.equals(expectedReply + "-" + callId)) {
                     ok = false;
-                    message = "Unexpected reply. Expected: '" + expectedReply  + "-" + callId
-                              + "'; Received: '" +  reply + "'";
+                    message = "Unexpected reply. Expected: '" + expectedReply + "-" + callId
+                              + "'; Received: '" + reply + "'";
                 }
             }
             return this;
@@ -391,7 +390,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     @Test
     public void testUseCorrelationIDTimeout() throws Exception {
-        JmsComponent c = (JmsComponent)context.getComponent(componentName);
+        JmsComponent c = (JmsComponent) context.getComponent(componentName);
         c.getConfiguration().setRequestTimeout(1000);
 
         Object reply = "";
@@ -406,7 +405,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     @Test
     public void testUseMessageIDAsCorrelationIDTimeout() throws Exception {
-        JmsComponent c = (JmsComponent)context.getComponent(componentName);
+        JmsComponent c = (JmsComponent) context.getComponent(componentName);
         c.getConfiguration().setRequestTimeout(1000);
 
         Object reply = "";

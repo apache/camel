@@ -29,8 +29,8 @@ import org.apache.camel.support.DefaultEndpoint;
  * Access external web services as a client or expose your own web services.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
-        syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
-        category = {Category.SPRING, Category.SOAP, Category.WEBSERVICE})
+             syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
+             category = { Category.SPRING, Category.SOAP, Category.WEBSERVICE })
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam

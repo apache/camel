@@ -38,8 +38,7 @@ import software.amazon.awssdk.services.ecs.model.ListClustersRequest.Builder;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 /**
- * A Producer which sends messages to the Amazon ECS Service SDK v2
- * <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
+ * A Producer which sends messages to the Amazon ECS Service SDK v2 <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
  */
 public class ECS2Producer extends DefaultProducer {
 
@@ -93,7 +92,7 @@ public class ECS2Producer extends DefaultProducer {
 
     @Override
     public ECS2Endpoint getEndpoint() {
-        return (ECS2Endpoint)super.getEndpoint();
+        return (ECS2Endpoint) super.getEndpoint();
     }
 
     private void listClusters(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
@@ -102,7 +101,7 @@ public class ECS2Producer extends DefaultProducer {
             if (payload instanceof ListClustersRequest) {
                 ListClustersResponse result;
                 try {
-                    ListClustersRequest request = (ListClustersRequest)payload;
+                    ListClustersRequest request = (ListClustersRequest) payload;
                     result = ecsClient.listClusters(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -136,7 +135,7 @@ public class ECS2Producer extends DefaultProducer {
             if (payload instanceof CreateClusterRequest) {
                 CreateClusterResponse result;
                 try {
-                    CreateClusterRequest request = (CreateClusterRequest)payload;
+                    CreateClusterRequest request = (CreateClusterRequest) payload;
                     result = ecsClient.createCluster(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -170,7 +169,7 @@ public class ECS2Producer extends DefaultProducer {
             if (payload instanceof DescribeClustersRequest) {
                 DescribeClustersResponse result;
                 try {
-                    DescribeClustersRequest request = (DescribeClustersRequest)payload;
+                    DescribeClustersRequest request = (DescribeClustersRequest) payload;
                     result = ecsClient.describeClusters(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -204,7 +203,7 @@ public class ECS2Producer extends DefaultProducer {
             if (payload instanceof DeleteClusterRequest) {
                 DeleteClusterResponse result;
                 try {
-                    DeleteClusterRequest request = (DeleteClusterRequest)payload;
+                    DeleteClusterRequest request = (DeleteClusterRequest) payload;
                     result = ecsClient.deleteCluster(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());

@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerBuilderRef> {
 
     public ErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
-        super(route, (ErrorHandlerBuilderRef)definition);
+        super(route, (ErrorHandlerBuilderRef) definition);
     }
 
     @Override
@@ -35,8 +35,7 @@ public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerBuil
     }
 
     private ErrorHandlerFactory lookupErrorHandler(Route route) {
-        ErrorHandlerFactory handler =
-                ErrorHandlerReifier.lookupErrorHandlerFactory(route, definition.getRef());
+        ErrorHandlerFactory handler = ErrorHandlerReifier.lookupErrorHandlerFactory(route, definition.getRef());
         ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + "'");
         route.addErrorHandlerFactoryReference(definition, handler);
         return handler;

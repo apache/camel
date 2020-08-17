@@ -45,11 +45,10 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
-    MinioClient minioClient =
-            MinioClient.builder()
-                    .endpoint(properties.getProperty("endpoint"))
-                    .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
-                    .build();
+    MinioClient minioClient = MinioClient.builder()
+            .endpoint(properties.getProperty("endpoint"))
+            .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
+            .build();
     @EndpointInject
     private ProducerTemplate template;
 
@@ -91,7 +90,8 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
     private String readInputStream(InputStream minioObject) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(minioObject, Charset.forName(StandardCharsets.UTF_8.name())))) {
+        try (Reader reader
+                = new BufferedReader(new InputStreamReader(minioObject, Charset.forName(StandardCharsets.UTF_8.name())))) {
             int c;
             while ((c = reader.read()) != -1) {
                 textBuilder.append((char) c);

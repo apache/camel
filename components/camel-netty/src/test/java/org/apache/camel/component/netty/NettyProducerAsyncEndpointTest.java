@@ -67,9 +67,9 @@ public class NettyProducerAsyncEndpointTest extends BaseNettyTest {
                         .to("mock:result");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
-                    .delay(1000)
-                    .validate(body().isInstanceOf(String.class))
-                    .transform(body().regexReplaceAll("Hello", "Bye"));
+                        .delay(1000)
+                        .validate(body().isInstanceOf(String.class))
+                        .transform(body().regexReplaceAll("Hello", "Bye"));
             }
         };
     }

@@ -54,7 +54,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
     }
 
     @Override
-    TokenSecurityRealm createBearerRealm()  {
+    TokenSecurityRealm createBearerRealm() {
         try {
             return TokenSecurityRealm.builder().principalClaimName("username")
                     .validator(JwtValidator.builder().publicKey(getKeyPair().getPublic()).build()).build();
@@ -74,7 +74,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
         String response = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
                 "empty body",
                 Headers.AUTHORIZATION.toString(),
-                "Bearer " + createToken("alice", "user",  new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
+                "Bearer " + createToken("alice", "user", new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
                 String.class);
         assertNotNull(response);
         assertEquals("Hello alice!", response);
@@ -86,7 +86,8 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
             String response = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
                     "empty body",
                     Headers.AUTHORIZATION.toString(),
-                    "Bearer " + createToken("alice", "guest", new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
+                    "Bearer " + createToken("alice", "guest", new Date(new Date().getTime() + 10000),
+                            getKeyPair().getPrivate()),
                     String.class);
             fail("Should throw exception");
 
@@ -106,8 +107,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
         };
     }
 
-
-    private String createToken(String userName, String roles,  Date expirationDate, PrivateKey signingKey) {
+    private String createToken(String userName, String roles, Date expirationDate, PrivateKey signingKey) {
         JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder();
 
         claimsSet.subject("123445667");

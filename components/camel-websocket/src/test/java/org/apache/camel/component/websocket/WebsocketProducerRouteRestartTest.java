@@ -58,7 +58,7 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
         port = AvailablePortFinder.getNextAvailable();
         super.setUp();
         received.clear();
-        latch =  new CountDownLatch(1);
+        latch = new CountDownLatch(1);
     }
 
     @Test
@@ -87,41 +87,42 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketListener() {
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket, int code, String reason) {
-                    }
+                            @Override
+                            public void onClose(WebSocket websocket, int code, String reason) {
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                t.printStackTrace();
+                            }
 
-                    @Override
-                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                        received.add(payload);
-                        log.info("received --> " + payload);
-                        latch.countDown();
-                    }
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                                received.add(payload);
+                                log.info("received --> " + payload);
+                                latch.countDown();
+                            }
 
-                    @Override
-                    public void onPingFrame(byte[] payload) {
-                    }
+                            @Override
+                            public void onPingFrame(byte[] payload) {
+                            }
 
-                    @Override
-                    public void onPongFrame(byte[] payload) {
-                    }
-                }).build()).get();
+                            @Override
+                            public void onPongFrame(byte[] payload) {
+                            }
+                        }).build())
+                .get();
 
         // Send message to the direct endpoint
         producer.sendBodyAndHeader("Beer on stock at Apache Mall", WebsocketConstants.SEND_TO_ALL, "true");
@@ -145,9 +146,9 @@ public class WebsocketProducerRouteRestartTest extends CamelTestSupport {
                 websocketComponent.setMaxThreads(25);
                 websocketComponent.setMinThreads(1);
                 from("direct:shop")
-                    .id(ROUTE_ID)
-                    .log(">>> Message received from Shopping center : ${body}")
-                    .to("websocket://localhost:" + port + "/shop");
+                        .id(ROUTE_ID)
+                        .log(">>> Message received from Shopping center : ${body}")
+                        .to("websocket://localhost:" + port + "/shop");
             }
         };
     }

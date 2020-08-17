@@ -52,8 +52,7 @@ import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 
 /**
- * Represents the runtime objects for a given route so that it can be stopped independently
- * of other routes
+ * Represents the runtime objects for a given route so that it can be stopped independently of other routes
  */
 public class RouteService extends ChildServiceSupport {
 
@@ -84,8 +83,8 @@ public class RouteService extends ChildServiceSupport {
     /**
      * Gather all the endpoints this route service uses
      * <p/>
-     * This implementation finds the endpoints by searching all the child services
-     * for {@link EndpointAware} processors which uses an endpoint.
+     * This implementation finds the endpoints by searching all the child services for {@link EndpointAware} processors
+     * which uses an endpoint.
      */
     public Set<Endpoint> gatherEndpoints() {
         Set<Endpoint> answer = new LinkedHashSet<>();
@@ -232,7 +231,7 @@ public class RouteService extends ChildServiceSupport {
                 strategy.onRoutesRemove(Collections.singletonList(route));
             }
         }
-        
+
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
             // gather list of services to stop as we need to start child services as well
             Set<Service> services = gatherChildServices();
@@ -287,7 +286,7 @@ public class RouteService extends ChildServiceSupport {
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRoutesRemove(Collections.singletonList(route));
         }
-        
+
         // remove the routes from the inflight registry
         camelContext.getInflightRepository().removeRoute(route.getId());
 
@@ -395,8 +394,7 @@ public class RouteService extends ChildServiceSupport {
     }
 
     /**
-     * Gather all other kind of route services from the given route,
-     * except error handler
+     * Gather all other kind of route services from the given route, except error handler
      */
     protected void doGetRouteServices(List<Service> services) {
         for (Processor proc : getRoute().getOnExceptions()) {
@@ -410,7 +408,6 @@ public class RouteService extends ChildServiceSupport {
             }
         }
     }
-
 
     class MDCHelper implements AutoCloseable {
         final Map<String, String> originalContextMap;

@@ -47,7 +47,6 @@ public interface ServiceRegistry extends Service, CamelContextAware, IdAware, Or
      */
     void register(ServiceDefinition definition);
 
-
     /**
      * Remove the service definition.
      *

@@ -35,28 +35,26 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
     @Test
     public void testRetrieveServiceCatalogsAndCategories() throws Exception {
         List<Map<?, ?>> result1 = template.requestBodyAndHeaders(
-            "direct:servicenow",
-            null,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .build(),
-            List.class
-        );
+                "direct:servicenow",
+                null,
+                kvBuilder()
+                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                        .build(),
+                List.class);
 
         assertFalse(result1.isEmpty());
 
         List<Map<?, ?>> result2 = template.requestBodyAndHeaders(
-            "direct:servicenow",
-            null,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_CATEGORIES)
-                .put(ServiceNowParams.PARAM_SYS_ID, result1.get(0).get("sys_id"))
-                .build(),
-            List.class
-        );
+                "direct:servicenow",
+                null,
+                kvBuilder()
+                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                        .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_CATEGORIES)
+                        .put(ServiceNowParams.PARAM_SYS_ID, result1.get(0).get("sys_id"))
+                        .build(),
+                List.class);
 
         assertFalse(result2.isEmpty());
     }
@@ -64,16 +62,15 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
     @Test
     public void testWrongSubject() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.requestBodyAndHeaders(
-            "direct:servicenow",
-            null,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
-                .build(),
-            List.class
-        ));
+                () -> template.requestBodyAndHeaders(
+                        "direct:servicenow",
+                        null,
+                        kvBuilder()
+                                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
+                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                                .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
+                                .build(),
+                        List.class));
     }
 
     // *************************************************************************
@@ -85,9 +82,9 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
-                    .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
-                    .to("mock:servicenow");
+                        .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
+                        .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
+                        .to("mock:servicenow");
             }
         };
     }

@@ -77,9 +77,10 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).discardOnCompletionTimeout().completionSize(3)
-                    // use a 0.1 second timeout
-                    .completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).discardOnCompletionTimeout()
+                        .completionSize(3)
+                        // use a 0.1 second timeout
+                        .completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:aggregated");
             }
         };
     }

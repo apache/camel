@@ -45,8 +45,8 @@ public class JaxbErrorLogTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .bean(new FailingBean())
-                    .to("log:end", "mock:end");
+                        .bean(new FailingBean())
+                        .to("log:end", "mock:end");
             }
         };
     }

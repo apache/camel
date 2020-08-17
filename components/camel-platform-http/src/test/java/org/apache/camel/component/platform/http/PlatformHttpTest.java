@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class PlatformHttpTest {
     private static JettyServerTest server;
     private static CamelContext ctx;

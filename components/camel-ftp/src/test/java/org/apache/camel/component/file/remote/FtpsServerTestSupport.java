@@ -101,23 +101,21 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
     }
 
     /**
-     * Set what client authentication level to use, supported values are "yes"
-     * or "true" for required authentication, "want" for wanted authentication
-     * and "false" or "none" for no authentication. Defaults to "none".
+     * Set what client authentication level to use, supported values are "yes" or "true" for required authentication,
+     * "want" for wanted authentication and "false" or "none" for no authentication. Defaults to "none".
      * 
      * @return clientAuthReqd
      */
     protected abstract String getClientAuth();
 
     /**
-     * Should listeners created by this factory automatically be in SSL mode
-     * automatically or must the client explicitly request to use SSL
+     * Should listeners created by this factory automatically be in SSL mode automatically or must the client explicitly
+     * request to use SSL
      */
     protected abstract boolean useImplicit();
 
     /**
-     * Set the SSL protocol used for this channel. Supported values are "SSL"
-     * and "TLS".
+     * Set the SSL protocol used for this channel. Supported values are "SSL" and "TLS".
      */
     protected abstract String getAuthValue();
 }

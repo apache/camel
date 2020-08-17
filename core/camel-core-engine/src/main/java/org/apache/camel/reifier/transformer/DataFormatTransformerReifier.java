@@ -27,13 +27,15 @@ import org.apache.camel.spi.Transformer;
 public class DataFormatTransformerReifier extends TransformerReifier<DataFormatTransformerDefinition> {
 
     public DataFormatTransformerReifier(CamelContext camelContext, TransformerDefinition definition) {
-        super(camelContext, (DataFormatTransformerDefinition)definition);
+        super(camelContext, (DataFormatTransformerDefinition) definition);
     }
 
     @Override
     protected Transformer doCreateTransformer() {
-        DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType(), definition.getRef());
-        return new DataFormatTransformer(camelContext).setDataFormat(dataFormat).setModel(definition.getScheme()).setFrom(definition.getFromType()).setTo(definition.getToType());
+        DataFormat dataFormat
+                = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType(), definition.getRef());
+        return new DataFormatTransformer(camelContext).setDataFormat(dataFormat).setModel(definition.getScheme())
+                .setFrom(definition.getFromType()).setTo(definition.getToType());
     }
 
 }

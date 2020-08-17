@@ -51,7 +51,7 @@ public class JoltDefaultrTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .to("jolt:org/apache/camel/component/jolt/defaultr.json?transformDsl=Defaultr");
+                        .to("jolt:org/apache/camel/component/jolt/defaultr.json?transformDsl=Defaultr");
             }
         };
     }

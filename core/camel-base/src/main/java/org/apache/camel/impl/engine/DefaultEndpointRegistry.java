@@ -26,7 +26,8 @@ import org.apache.camel.support.CamelContextHelper;
 /**
  * Default implementation of {@link org.apache.camel.spi.EndpointRegistry}
  */
-public class DefaultEndpointRegistry extends AbstractDynamicRegistry<EndpointKey, Endpoint> implements EndpointRegistry<EndpointKey> {
+public class DefaultEndpointRegistry extends AbstractDynamicRegistry<EndpointKey, Endpoint>
+        implements EndpointRegistry<EndpointKey> {
 
     public DefaultEndpointRegistry(CamelContext context) {
         super(context, CamelContextHelper.getMaximumEndpointCacheSize(context));

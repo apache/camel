@@ -37,7 +37,7 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
 
     @Metadata(label = "advanced")
     private TwilioRestClient restClient;
-    
+
     @Metadata(label = "common,security", secret = true)
     private String username;
 
@@ -61,8 +61,9 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, TwilioApiName apiName,
-                                      TwilioConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, TwilioApiName apiName,
+            TwilioConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new TwilioEndpoint(uri, this, apiName, methodName, endpointConfiguration);
@@ -81,8 +82,8 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
             }
 
             restClient = new TwilioRestClient.Builder(username, password)
-                .accountSid(accountSid)
-                .build();
+                    .accountSid(accountSid)
+                    .build();
         }
     }
 
@@ -115,7 +116,7 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
     public void setRestClient(TwilioRestClient restClient) {
         this.restClient = restClient;
     }
-    
+
     public String getUsername() {
         return username;
     }

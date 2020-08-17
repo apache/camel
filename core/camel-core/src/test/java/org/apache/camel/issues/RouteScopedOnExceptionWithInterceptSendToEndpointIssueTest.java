@@ -69,10 +69,11 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends 
                 errorHandler(deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(5000));
 
                 from("direct:start")
-                    // no redelivery delay for faster unit tests
-                    .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.WARN)
-                    // send to mock when we are exhausted
-                    .to("mock:exhausted").end().to("seda:foo");
+                        // no redelivery delay for faster unit tests
+                        .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true)
+                        .retryAttemptedLogLevel(LoggingLevel.WARN)
+                        // send to mock when we are exhausted
+                        .to("mock:exhausted").end().to("seda:foo");
             }
         };
     }

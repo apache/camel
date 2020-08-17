@@ -26,8 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for try .. handle routing where it should handle wrapped exceptions
- * as well.
+ * Unit test for try .. handle routing where it should handle wrapped exceptions as well.
  */
 public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
 
@@ -50,8 +49,9 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result").doCatch(IllegalStateException.class).process(new ProcessorHandle()).doFinally()
-                    .to("mock:finally").end();
+                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result").doCatch(IllegalStateException.class)
+                        .process(new ProcessorHandle()).doFinally()
+                        .to("mock:finally").end();
             }
         };
     }
@@ -70,7 +70,7 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
 
             assertEquals(false, exchange.isFailed(), "Should not be marked as failed");
 
-            Exception e = (Exception)exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
+            Exception e = (Exception) exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
             assertNotNull(e, "There should be an exception");
             boolean b = e instanceof IllegalStateException;
             assertTrue(b);

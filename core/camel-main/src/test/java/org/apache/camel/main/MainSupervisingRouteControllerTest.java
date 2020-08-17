@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class MainSupervisingRouteControllerTest {
 
     @Test
@@ -42,11 +43,11 @@ public class MainSupervisingRouteControllerTest {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
         main.configure().withRouteStartupLoggingLevel(LoggingLevel.OFF)
-                        .withRouteControllerSuperviseEnabled(true)
-                        .withRouteControllerBackOffDelay(25)
-                        .withRouteControllerBackOffMaxAttempts(3)
-                        .withRouteControllerInitialDelay(100)
-                        .withRouteControllerThreadPoolSize(2);
+                .withRouteControllerSuperviseEnabled(true)
+                .withRouteControllerBackOffDelay(25)
+                .withRouteControllerBackOffMaxAttempts(3)
+                .withRouteControllerInitialDelay(100)
+                .withRouteControllerThreadPoolSize(2);
         main.start();
 
         MockEndpoint mock = main.getCamelContext().getEndpoint("mock:foo", MockEndpoint.class);

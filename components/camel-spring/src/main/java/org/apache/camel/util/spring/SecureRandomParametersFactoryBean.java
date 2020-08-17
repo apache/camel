@@ -28,12 +28,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 @XmlRootElement(name = "secureRandomParameters")
-public class SecureRandomParametersFactoryBean extends AbstractSecureRandomParametersFactoryBean 
+public class SecureRandomParametersFactoryBean extends AbstractSecureRandomParametersFactoryBean
         implements FactoryBean<SecureRandomParameters>, ApplicationContextAware {
-    
+
     @XmlTransient
     private ApplicationContext applicationContext;
-    
+
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);

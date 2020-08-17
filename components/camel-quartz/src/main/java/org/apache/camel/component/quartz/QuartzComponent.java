@@ -48,8 +48,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This component will hold a Quartz Scheduler that will provide scheduled timer based
- * endpoint that generate a QuartzMessage to a route. Currently it support Cron and Simple trigger scheduling type.
+ * This component will hold a Quartz Scheduler that will provide scheduled timer based endpoint that generate a
+ * QuartzMessage to a route. Currently it support Cron and Simple trigger scheduling type.
  */
 @Component("quartz")
 public class QuartzComponent extends DefaultComponent implements ExtendedStartupListener {
@@ -144,7 +144,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring quartz.
+     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring
+     * quartz.
      */
     public void setPropertiesRef(String propertiesRef) {
         this.propertiesRef = propertiesRef;
@@ -179,8 +180,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     /**
      * Whether to prefix the Quartz Scheduler instance name with the CamelContext name.
      * <p/>
-     * This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default.
-     * You can set this option to <tt>false</tt> to reuse Quartz scheduler instances between multiple CamelContext's.
+     * This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can
+     * set this option to <tt>false</tt> to reuse Quartz scheduler instances between multiple CamelContext's.
      */
     public void setPrefixInstanceName(boolean prefixInstanceName) {
         this.prefixInstanceName = prefixInstanceName;
@@ -191,8 +192,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs.
-     * If this is enabled then any running jobs can fail due to being interrupted.
+     * Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any
+     * running jobs. If this is enabled then any running jobs can fail due to being interrupted.
      */
     public void setInterruptJobsOnShutdown(boolean interruptJobsOnShutdown) {
         this.interruptJobsOnShutdown = interruptJobsOnShutdown;
@@ -250,7 +251,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             try {
                 prop.load(is);
             } catch (IOException e) {
-                throw new SchedulerException("Error loading Quartz properties file from classpath: org/quartz/quartz.properties", e);
+                throw new SchedulerException(
+                        "Error loading Quartz properties file from classpath: org/quartz/quartz.properties", e);
             } finally {
                 IOHelper.close(is);
             }
@@ -347,8 +349,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * Adds a task to be executed as part of initializing and starting the scheduler; or
-     * executes the task if the scheduler has already been started.
+     * Adds a task to be executed as part of initializing and starting the scheduler; or executes the task if the
+     * scheduler has already been started.
      */
     public void addScheduleInitTask(SchedulerInitTask task) {
         if (schedulerInitTasksDone) {
@@ -377,7 +379,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         if (startDelayedSeconds != null) {
             if (this.startDelayedSeconds != 0 && !(this.startDelayedSeconds == startDelayedSeconds)) {
                 LOG.warn("A Quartz job is already configured with a different 'startDelayedSeconds' configuration! "
-                        + "All Quartz jobs must share the same 'startDelayedSeconds' configuration! Cannot apply the 'startDelayedSeconds' configuration!");
+                         + "All Quartz jobs must share the same 'startDelayedSeconds' configuration! Cannot apply the 'startDelayedSeconds' configuration!");
             } else {
                 this.startDelayedSeconds = startDelayedSeconds;
             }
@@ -505,7 +507,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             } else {
                 AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
                 if (number != null && number.get() > 0) {
-                    LOG.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
+                    LOG.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still "
+                             + number.get() + " jobs registered.");
                 } else {
                     LOG.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
                     scheduler.shutdown(true);

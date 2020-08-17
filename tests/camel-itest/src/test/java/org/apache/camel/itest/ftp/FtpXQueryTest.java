@@ -40,10 +40,12 @@ public class FtpXQueryTest extends CamelTestSupport {
 
         String ftp = ftpServiceExtension.getAddress();
 
-        template.sendBodyAndHeader(ftp, "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
+        template.sendBodyAndHeader(ftp,
+                "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
                 Exchange.FILE_NAME, "claus.xml");
 
-        template.sendBodyAndHeader(ftp, "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
+        template.sendBodyAndHeader(ftp,
+                "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
                 Exchange.FILE_NAME, "janstey.xml");
 
         assertMockEndpointsSatisfied();
@@ -57,11 +59,11 @@ public class FtpXQueryTest extends CamelTestSupport {
                 String ftp = ftpServiceExtension.getAddress();
 
                 from(ftp)
-                    .choice()
+                        .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
-                            .to("mock:davsclaus")
+                        .to("mock:davsclaus")
                         .otherwise()
-                            .to("mock:other");
+                        .to("mock:other");
             }
         };
     }

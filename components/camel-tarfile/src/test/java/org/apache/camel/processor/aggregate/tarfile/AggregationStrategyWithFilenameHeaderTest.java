@@ -71,8 +71,8 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
 
         File resultFile = files[0];
 
-        final TarArchiveInputStream tis = (TarArchiveInputStream)
-                new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR,
+        final TarArchiveInputStream tis
+                = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR,
                         new BufferedInputStream(new FileInputStream(resultFile)));
         try {
             int fileCount = 0;
@@ -95,7 +95,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
                         .aggregate(tar)
                         .constant(true)
                         .completionTimeout(50)
-                            .to("file:target/out")
+                        .to("file:target/out")
                         .to("mock:aggregateToTarEntry")
                         .log("Done processing tar file: ${header.CamelFileName}");
             }

@@ -54,12 +54,12 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
             public void configure() {
 
                 from("oaipmh://localhost:" + JettyTestServer.getInstance().portssl + "/oai/request?"
-                        + "ssl=true&"
-                        + "ignoreSSLWarnings=true&"
-                        + "delay=1000&"
-                        + "verb=Identify&"
-                        + "initialDelay=1000")
-                        .to("mock:result");
+                     + "ssl=true&"
+                     + "ignoreSSLWarnings=true&"
+                     + "delay=1000&"
+                     + "verb=Identify&"
+                     + "initialDelay=1000")
+                             .to("mock:result");
 
             }
         };

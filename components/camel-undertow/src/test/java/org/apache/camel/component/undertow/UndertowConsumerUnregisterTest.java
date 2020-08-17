@@ -37,8 +37,10 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
         UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
         UndertowConsumer consumerBar = (UndertowConsumer) context.getRoute("route-bar").getConsumer();
 
-        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(), consumerFoo.getEndpoint().getSslContext());
-        component.unregisterEndpoint(consumerBar, consumerBar.getEndpoint().getHttpHandlerRegistrationInfo(), consumerBar.getEndpoint().getSslContext());
+        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(),
+                consumerFoo.getEndpoint().getSslContext());
+        component.unregisterEndpoint(consumerBar, consumerBar.getEndpoint().getHttpHandlerRegistrationInfo(),
+                consumerBar.getEndpoint().getSslContext());
 
         try {
             template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
@@ -64,19 +66,20 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
         Exchange ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
         assertEquals(200, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("test", ret.getMessage().getBody(String.class));
-        
+
         ret = template.request("undertow:http://localhost:{{port}}/bar", sender);
         assertEquals(200, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("test", ret.getMessage().getBody(String.class));
 
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
         UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
-        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(), consumerFoo.getEndpoint().getSslContext());
+        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(),
+                consumerFoo.getEndpoint().getSslContext());
 
         ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
         assertEquals(404, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("No matching path found", ret.getMessage().getBody(String.class));
-        
+
         ret = template.request("undertow:http://localhost:{{port}}/bar", sender);
         assertEquals(200, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("test", ret.getMessage().getBody(String.class));
@@ -90,14 +93,14 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/foo")
-                    .id("route-foo")
-                    .setBody().constant("test")
-                    .to("mock:foo");
-                
+                        .id("route-foo")
+                        .setBody().constant("test")
+                        .to("mock:foo");
+
                 from("undertow:http://localhost:{{port}}/bar")
-                    .id("route-bar")
-                    .setBody().constant("test")
-                    .to("mock:bar");
+                        .id("route-bar")
+                        .setBody().constant("test")
+                        .to("mock:bar");
             }
         };
     }

@@ -157,7 +157,8 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         } catch (XMLStreamException e) {
             SAXParseException spe;
             if (e.getLocation() != null) {
-                spe = new SAXParseException(e.getMessage(), null, null,
+                spe = new SAXParseException(
+                        e.getMessage(), null, null,
                         e.getLocation().getLineNumber(),
                         e.getLocation().getColumnNumber(), e);
             } else {
@@ -331,7 +332,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         this.contentHandler = handler;
         if (handler instanceof LexicalHandler
                 && lexicalHandler == null) {
-            lexicalHandler = (LexicalHandler)handler;
+            lexicalHandler = (LexicalHandler) handler;
         }
     }
 

@@ -25,8 +25,8 @@ import java.io.Serializable;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * A helper class which provides a JAXP {@link javax.xml.transform.Source
- * Source} from a byte[] which can be read as many times as required.
+ * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a byte[] which can be read as
+ * many times as required.
  */
 public class BytesSource extends StreamSource implements Serializable {
     private static final long serialVersionUID = 124123201106542082L;

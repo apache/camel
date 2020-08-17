@@ -53,7 +53,8 @@ public class JwtServerInterceptor implements ServerInterceptor {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <ReqT, RespT> Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
+    public <ReqT, RespT> Listener<ReqT> interceptCall(
+            ServerCall<ReqT, RespT> call, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
         String jwtToken = metadata.get(GrpcConstants.GRPC_JWT_METADATA_KEY);
         if (jwtToken == null) {
             call.close(Status.UNAUTHENTICATED.withDescription("JWT Token is missing from metadata"), metadata);
@@ -64,8 +65,9 @@ public class JwtServerInterceptor implements ServerInterceptor {
         try {
             DecodedJWT verified = verifier.verify(jwtToken);
             ctx = Context.current()
-                         .withValue(GrpcConstants.GRPC_JWT_USER_ID_CTX_KEY, verified.getSubject() == null ? "anonymous" : verified.getSubject())
-                         .withValue(GrpcConstants.GRPC_JWT_CTX_KEY, jwtToken);
+                    .withValue(GrpcConstants.GRPC_JWT_USER_ID_CTX_KEY,
+                            verified.getSubject() == null ? "anonymous" : verified.getSubject())
+                    .withValue(GrpcConstants.GRPC_JWT_CTX_KEY, jwtToken);
         } catch (Exception e) {
             LOG.debug("JWT token verification failed - Unauthenticated");
             call.close(Status.UNAUTHENTICATED.withDescription(e.getMessage()).withCause(e), metadata);
@@ -74,7 +76,7 @@ public class JwtServerInterceptor implements ServerInterceptor {
 
         return Contexts.interceptCall(ctx, call, metadata, serverCallHandler);
     }
-    
+
     public static JWTVerifier prepareJwtVerifier(JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
         try {
             Algorithm algorithm = JwtHelper.selectAlgorithm(algorithmName, secret);

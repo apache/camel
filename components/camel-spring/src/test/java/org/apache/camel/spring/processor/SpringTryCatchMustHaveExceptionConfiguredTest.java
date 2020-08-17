@@ -30,7 +30,8 @@ public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSu
     @Override
     protected CamelContext createCamelContext() throws Exception {
         try {
-            createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");
+            createSpringCamelContext(this,
+                    "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");
             fail("Should have thrown exception");
         } catch (Exception e) {
             FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);

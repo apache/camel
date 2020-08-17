@@ -125,9 +125,10 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("bar.gold-customer", "true");
         prop.put("bar.work.name", "{{companyName}}");
 
-        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo).withProperty("name", "James").withProperty("bar.work.id", "123")
-            // and add the rest
-            .withProperties(prop).bind();
+        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo).withProperty("name", "James")
+                .withProperty("bar.work.id", "123")
+                // and add the rest
+                .withProperties(prop).bind();
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -407,7 +408,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('{{companyName}}', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.Animal('{{companyName}}', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
@@ -419,7 +421,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('Donald Duck', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.Animal('Donald Duck', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
@@ -431,7 +434,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Tiger')");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.AnimalFactory#createAnimal('Tiger')");
 
         assertEquals("James", foo.getName());
         assertEquals("Tiger", foo.getAnimal().getName());
@@ -443,7 +447,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Donald Duck', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.AnimalFactory#createAnimal('Donald Duck', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
@@ -455,7 +460,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('{{companyName}}', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.AnimalFactory#createAnimal('{{companyName}}', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
@@ -572,7 +578,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Company work; // has no default value but Camel can automatic
-                              // create one if there is a setter
+                             // create one if there is a setter
         private boolean goldCustomer;
 
         public int getAge() {

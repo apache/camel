@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests that a file move can occur on the server even if the remote stream was
- * only partially read.
+ * Tests that a file move can occur on the server even if the remote stream was only partially read.
  */
 public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSupport {
 
@@ -53,7 +52,7 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        GenericFile<?> remoteFile1 = (GenericFile<?>)mock.getExchanges().get(0).getIn().getBody();
+        GenericFile<?> remoteFile1 = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
         assertTrue(remoteFile1.getBody() instanceof InputStream);
 
         // Wait a little bit for the move to finish.
@@ -69,7 +68,8 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                     + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
                      + "&move=done&moveFailed=failed").routeId("foo").noAutoStartup().process(new Processor() {
 
                          @Override

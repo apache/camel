@@ -67,8 +67,8 @@ public class GrokDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Turns on flattened mode. In flattened mode the exception is thrown when
-     * there are multiple pattern matches with same key.
+     * Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with
+     * same key.
      */
     public void setFlattened(String flattened) {
         this.flattened = flattened;
@@ -79,8 +79,8 @@ public class GrokDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If false, every line of input is matched for pattern only once. Otherwise
-     * the line can be scanned multiple times when non-terminal pattern is used.
+     * If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple times
+     * when non-terminal pattern is used.
      */
     public void setAllowMultipleMatchesPerLine(String allowMultipleMatchesPerLine) {
         this.allowMultipleMatchesPerLine = allowMultipleMatchesPerLine;
@@ -91,8 +91,7 @@ public class GrokDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to capture named expressions only or not (i.e. %{IP:ip} but not
-     * ${IP})
+     * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
      */
     public void setNamedOnly(String namedOnly) {
         this.namedOnly = namedOnly;

@@ -103,10 +103,11 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
             public void configure() throws Exception {
                 // the input file is in utf-8
                 from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true&charset=utf-8")
-                    // now convert the input file from utf-8 to iso-8859-1
-                    .convertBodyTo(byte[].class, "iso-8859-1")
-                    // and write the file using that encoding
-                    .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader")).to("file:target/data/charset/?fileName=output.txt");
+                        // now convert the input file from utf-8 to iso-8859-1
+                        .convertBodyTo(byte[].class, "iso-8859-1")
+                        // and write the file using that encoding
+                        .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader"))
+                        .to("file:target/data/charset/?fileName=output.txt");
             }
         };
     }

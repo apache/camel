@@ -53,11 +53,11 @@ public class ZooKeeperManagedEndpointTest extends ZooKeeperTestSupport {
         verifyManagedAttribute(zepName, "Backoff", 2000L);
 
         getMBeanServer().invoke(zepName, "clearServers",
-            null,
-            JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
+                null,
+                JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
         getMBeanServer().invoke(zepName, "addServer",
-            new Object[]{"someserver:12345"},
-            JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[]{String.class})));
+                new Object[] { "someserver:12345" },
+                JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[] { String.class })));
     }
 
     private void verifyManagedAttribute(ObjectName zepName, String attributeName, String attributeValue) throws Exception {
@@ -79,7 +79,8 @@ public class ZooKeeperManagedEndpointTest extends ZooKeeperTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/node?timeout=1000&backoff=2000").to("mock:test");
+                from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/node?timeout=1000&backoff=2000")
+                        .to("mock:test");
             }
         };
     }

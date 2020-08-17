@@ -45,7 +45,8 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Flowable<Integer> integers = Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
+        Flowable<Integer> integers
+                = Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         CountDownLatch latch = new CountDownLatch(1);
@@ -81,7 +82,6 @@ public class BackpressureStrategyTest extends CamelTestSupport {
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
-
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         final CountDownLatch latch = new CountDownLatch(1);
@@ -128,7 +128,6 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         final CountDownLatch latch = new CountDownLatch(1);
         final CountDownLatch latch2 = new CountDownLatch(2);
@@ -169,7 +168,6 @@ public class BackpressureStrategyTest extends CamelTestSupport {
                         .to("reactive-streams:integers?backpressureStrategy=OLDEST");
             }
         }.addRoutesToCamelContext(context);
-
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         final CountDownLatch latch = new CountDownLatch(1);

@@ -69,8 +69,8 @@ public class FilterCustomPredicateAsFilterTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").filter(filter)
-                    // only good messages will go here
-                    .to("mock:good").end();
+                        // only good messages will go here
+                        .to("mock:good").end();
             }
         };
     }

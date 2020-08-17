@@ -103,11 +103,11 @@ public class ICalDataFormatTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:unmarshal")
-                    .unmarshal("ical")
-                    .to("mock:result");
+                        .unmarshal("ical")
+                        .to("mock:result");
                 from("direct:marshal")
-                    .marshal("ical")
-                    .to("mock:result");
+                        .marshal("ical")
+                        .to("mock:result");
             }
         };
     }
@@ -118,12 +118,12 @@ public class ICalDataFormatTest extends CamelTestSupport {
      * @return ICal calendar object.
      */
     protected Calendar createTestCalendar() throws ParseException {
-     // Create a TimeZone
+        // Create a TimeZone
         TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
         TimeZone timezone = registry.getTimeZone("America/New_York");
         VTimeZone tz = timezone.getVTimeZone();
 
-         // Start Date is on: April 1, 2013, 9:00 am
+        // Start Date is on: April 1, 2013, 9:00 am
         java.util.Calendar startDate = new GregorianCalendar();
         startDate.setTimeZone(timezone);
         startDate.set(java.util.Calendar.MONTH, java.util.Calendar.APRIL);
@@ -133,14 +133,14 @@ public class ICalDataFormatTest extends CamelTestSupport {
         startDate.set(java.util.Calendar.MINUTE, 0);
         startDate.set(java.util.Calendar.SECOND, 0);
 
-         // End Date is on: April 1, 2013, 13:00
+        // End Date is on: April 1, 2013, 13:00
         java.util.Calendar endDate = new GregorianCalendar();
         endDate.setTimeZone(timezone);
         endDate.set(java.util.Calendar.MONTH, java.util.Calendar.APRIL);
         endDate.set(java.util.Calendar.DAY_OF_MONTH, 1);
         endDate.set(java.util.Calendar.YEAR, 2013);
         endDate.set(java.util.Calendar.HOUR_OF_DAY, 21);
-        endDate.set(java.util.Calendar.MINUTE, 0);  
+        endDate.set(java.util.Calendar.MINUTE, 0);
         endDate.set(java.util.Calendar.SECOND, 0);
 
         // Create the event

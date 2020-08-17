@@ -26,8 +26,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * An extension of the {@link RouteBuilder} to provide some additional helper
- * methods
+ * An extension of the {@link RouteBuilder} to provide some additional helper methods
  *
  * @deprecated use plain {@link RouteBuilder}
  */
@@ -36,13 +35,12 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     private ApplicationContext applicationContext;
 
     /**
-     * Looks up the bean with the given name in the application context and
-     * returns it, or throws an exception if the bean is not present or is not
-     * of the given type
+     * Looks up the bean with the given name in the application context and returns it, or throws an exception if the
+     * bean is not present or is not of the given type
      *
-     * @param beanName the name of the bean in the application context
-     * @param type the type of the bean
-     * @return the bean
+     * @param  beanName the name of the bean in the application context
+     * @param  type     the type of the bean
+     * @return          the bean
      */
     public <T> T lookup(String beanName, Class<T> type) {
         ApplicationContext context = getApplicationContext();
@@ -50,12 +48,11 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     }
 
     /**
-     * Looks up the bean with the given type in the application context and
-     * returns it, or throws an exception if the bean is not present or there
-     * are multiple possible beans to choose from for the given type
+     * Looks up the bean with the given type in the application context and returns it, or throws an exception if the
+     * bean is not present or there are multiple possible beans to choose from for the given type
      *
-     * @param type the type of the bean
-     * @return the bean
+     * @param  type the type of the bean
+     * @return      the bean
      */
     public <T> T lookup(Class<T> type) {
         ApplicationContext context = getApplicationContext();
@@ -64,17 +61,17 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
 
     /**
      * Returns the application context which has been configured via the
-     * {@link #setApplicationContext(ApplicationContext)} method or from the
-     * underlying {@link SpringCamelContext}
+     * {@link #setApplicationContext(ApplicationContext)} method or from the underlying {@link SpringCamelContext}
      */
     public ApplicationContext getApplicationContext() {
         if (applicationContext == null) {
             CamelContext camelContext = getContext();
             if (camelContext instanceof SpringCamelContext) {
-                SpringCamelContext springCamelContext = (SpringCamelContext)camelContext;
+                SpringCamelContext springCamelContext = (SpringCamelContext) camelContext;
                 return springCamelContext.getApplicationContext();
             } else {
-                throw new IllegalArgumentException("This SpringBuilder is not being used with a SpringCamelContext and there is no applicationContext property configured");
+                throw new IllegalArgumentException(
+                        "This SpringBuilder is not being used with a SpringCamelContext and there is no applicationContext property configured");
             }
         }
         return applicationContext;
@@ -89,8 +86,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     }
 
     /**
-     * Creates a transaction error handler that will lookup in application context for
-     * an exiting transaction manager.
+     * Creates a transaction error handler that will lookup in application context for an exiting transaction manager.
      *
      * @return the created error handler
      */
@@ -101,8 +97,8 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     /**
      * Creates a transaction error handler.
      *
-     * @param policy   using this transaction policy (eg: required, supports, ...)
-     * @return the created error handler
+     * @param  policy using this transaction policy (eg: required, supports, ...)
+     * @return        the created error handler
      */
     public TransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
         return transactionErrorHandler(policy.getTransactionTemplate());
@@ -111,8 +107,8 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     /**
      * Creates a transaction error handler.
      *
-     * @param template the spring transaction template
-     * @return the created error handler
+     * @param  template the spring transaction template
+     * @return          the created error handler
      */
     public TransactionErrorHandlerBuilder transactionErrorHandler(TransactionTemplate template) {
         TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
@@ -123,8 +119,8 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     /**
      * Creates a transaction error handler.
      *
-     * @param transactionManager the spring transaction manager
-     * @return the created error handler
+     * @param  transactionManager the spring transaction manager
+     * @return                    the created error handler
      */
     public TransactionErrorHandlerBuilder transactionErrorHandler(PlatformTransactionManager transactionManager) {
         TransactionTemplate template = new TransactionTemplate(transactionManager);

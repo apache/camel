@@ -25,14 +25,16 @@ public final class MinioClientFactory {
 
     private MinioClientFactory() {
         // Prevent instantiation of this factory class.
-        throw new RuntimeException("Do not instantiate a Factory class! Refer to the class " + "to learn how to properly use this factory implementation.");
+        throw new RuntimeException(
+                "Do not instantiate a Factory class! Refer to the class "
+                                   + "to learn how to properly use this factory implementation.");
     }
 
     /**
      * Return the correct minio client (based on remote vs local).
      *
-     * @param configuration configuration
-     * @return MinioClient
+     * @param  configuration configuration
+     * @return               MinioClient
      */
     public static MinioCamelInternalClient getClient(MinioConfiguration configuration) {
         return new MinioRemoteClientImpl(configuration);

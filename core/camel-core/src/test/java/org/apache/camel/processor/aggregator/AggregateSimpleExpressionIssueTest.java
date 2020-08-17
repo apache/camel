@@ -93,8 +93,10 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/files").routeId("foo").noAutoStartup().log("Picked up ${file:name}").split().tokenize("\n").streaming()
-                    .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500")).bean(myBean).end().end();
+                from("file:target/data/files").routeId("foo").noAutoStartup().log("Picked up ${file:name}").split()
+                        .tokenize("\n").streaming()
+                        .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500"))
+                        .bean(myBean).end().end();
             }
         };
     }

@@ -44,8 +44,8 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     /**
      * Intercepts sending to the given endpoint
      *
-     * @param destination  the original endpoint
-     * @param skip <tt>true</tt> to skip sending after the detour to the original endpoint
+     * @param destination the original endpoint
+     * @param skip        <tt>true</tt> to skip sending after the detour to the original endpoint
      */
     public DefaultInterceptSendToEndpoint(final Endpoint destination, boolean skip) {
         this.delegate = destination;

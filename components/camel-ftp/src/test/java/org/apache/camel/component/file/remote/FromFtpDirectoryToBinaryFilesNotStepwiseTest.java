@@ -17,13 +17,14 @@
 package org.apache.camel.component.file.remote;
 
 /**
- * Unit test to verify that we can pool a BINARY file in a directory from the
- * FTP Server and store it on a local file path. Based on CAMEL-834.
+ * Unit test to verify that we can pool a BINARY file in a directory from the FTP Server and store it on a local file
+ * path. Based on CAMEL-834.
  */
 public class FromFtpDirectoryToBinaryFilesNotStepwiseTest extends FromFtpDirectoryToBinaryFilesTest {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin" + "&binary=true&useFixedDelay=false&recursive=false&delay=5000&stepwise=false";
+        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin"
+               + "&binary=true&useFixedDelay=false&recursive=false&delay=5000&stepwise=false";
     }
 
 }

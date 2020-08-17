@@ -24,7 +24,9 @@ package org.apache.camel.component.hystrix.metrics.servlet;
  * 1) Including camel-hystrix-*.jar in your classpath.
  * <p/>
  * 2) Adding the following to web.xml:
- * <pre>{@code
+ * 
+ * <pre>
+ * {@code
  * <servlet>
  *  <display-name>HystrixEventStreamServlet</display-name>
  *  <servlet-name>HystrixEventStreamServlet</servlet-name>
@@ -34,7 +36,8 @@ package org.apache.camel.component.hystrix.metrics.servlet;
  *  <servlet-name>HystrixEventStreamServlet</servlet-name>
  *  <url-pattern>/hystrix.stream</url-pattern>
  * </servlet-mapping>
- * } </pre>
+ * }
+ * </pre>
  * <p/>
  * See more details at: https://github.com/Netflix/Hystrix/tree/master/hystrix-contrib/hystrix-metrics-event-stream
  */

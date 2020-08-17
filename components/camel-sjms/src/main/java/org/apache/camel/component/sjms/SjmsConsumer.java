@@ -78,7 +78,8 @@ public class SjmsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        this.scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this, "SjmsConsumer");
+        this.scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this,
+                "SjmsConsumer");
         if (getEndpoint().isAsyncStartListener()) {
             asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
                 @Override
@@ -86,7 +87,9 @@ public class SjmsConsumer extends DefaultConsumer {
                     try {
                         fillConsumersPool();
                     } catch (Throwable e) {
-                        LOG.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        LOG.warn("Error starting listener container on destination: " + getDestinationName()
+                                 + ". This exception will be ignored.",
+                                e);
                         if (getEndpoint().isReconnectOnError()) {
                             scheduleRefill(); //we should try to fill consumer pool on next time
                         }
@@ -152,7 +155,9 @@ public class SjmsConsumer extends DefaultConsumer {
                             consumers.clear();
                         }
                     } catch (Throwable e) {
-                        LOG.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        LOG.warn("Error stopping listener container on destination: " + getDestinationName()
+                                 + ". This exception will be ignored.",
+                                e);
                     }
                 }
 
@@ -173,15 +178,16 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     /**
-     * Creates a {@link MessageConsumerResources} with a dedicated
-     * {@link Session} required for transacted and InOut consumers.
+     * Creates a {@link MessageConsumerResources} with a dedicated {@link Session} required for transacted and InOut
+     * consumers.
      */
     private void addConsumer() throws Exception {
         MessageConsumerResources answer;
         ConnectionResource connectionResource = getOrCreateConnectionResource();
         Connection conn = connectionResource.borrowConnection();
         try {
-            Session session = conn.createSession(isTransacted(), isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
+            Session session = conn.createSession(isTransacted(),
+                    isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
             MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, getEndpoint());
             MessageListener handler = createMessageHandler(session);
             messageConsumer.setMessageListener(handler);
@@ -215,8 +221,8 @@ public class SjmsConsumer extends DefaultConsumer {
     /**
      * Helper factory method used to create a MessageListener based on the MEP
      *
-     * @param session a session is only required if we are a transacted consumer
-     * @return the listener
+     * @param  session a session is only required if we are a transacted consumer
+     * @return         the listener
      */
     protected MessageListener createMessageHandler(Session session) {
 
@@ -232,7 +238,8 @@ public class SjmsConsumer extends DefaultConsumer {
         Synchronization synchronization;
         if (commitStrategy instanceof BatchTransactionCommitStrategy) {
             TimedTaskManager timedTaskManager = getEndpoint().getComponent().getTimedTaskManager();
-            synchronization = new SessionBatchTransactionSynchronization(timedTaskManager, session, commitStrategy, getTransactionBatchTimeout());
+            synchronization = new SessionBatchTransactionSynchronization(
+                    timedTaskManager, session, commitStrategy, getTransactionBatchTimeout());
         } else {
             synchronization = new SessionTransactionSynchronization(session, commitStrategy);
         }
@@ -327,8 +334,7 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     /**
-     * Flag set by the endpoint used by consumers and producers to determine if
-     * the consumer is a JMS Topic.
+     * Flag set by the endpoint used by consumers and producers to determine if the consumer is a JMS Topic.
      *
      * @return the topic true if consumer is a JMS Topic, default is false
      */
@@ -362,8 +368,7 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     /**
-     * If transacted, returns the nubmer of messages to be processed before
-     * committing the transaction.
+     * If transacted, returns the nubmer of messages to be processed before committing the transaction.
      *
      * @return the transactionBatchCount
      */
@@ -387,7 +392,8 @@ public class SjmsConsumer extends DefaultConsumer {
             LOG.info("Refill consumers pool completed (attempt: {})", task.getCurrentAttempts());
             return false;
         } catch (Exception ex) {
-            LOG.warn("Refill consumers pool failed (attempt: {}) due to: {}. Will try again in {} millis. (stacktrace in DEBUG level)",
+            LOG.warn(
+                    "Refill consumers pool failed (attempt: {}) due to: {}. Will try again in {} millis. (stacktrace in DEBUG level)",
                     task.getCurrentAttempts(), ex.getMessage(), task.getCurrentDelay());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Refill consumers pool failed", ex);

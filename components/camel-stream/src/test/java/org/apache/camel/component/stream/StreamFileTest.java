@@ -89,14 +89,14 @@ public class StreamFileTest extends CamelTestSupport {
     public void testFileProducer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("produce")
-                    .to("stream:file?fileName=target/stream/StreamFileTest.txt&autoCloseCount=2");
+                        .to("stream:file?fileName=target/stream/StreamFileTest.txt&autoCloseCount=2");
                 from("file://target/stream?fileName=StreamFileTest.txt&noop=true").routeId("consume").autoStartup(false)
-                    .split().tokenize(LS).to("mock:result");
+                        .split().tokenize(LS).to("mock:result");
             }
         });
         context.start();
@@ -104,7 +104,7 @@ public class StreamFileTest extends CamelTestSupport {
         template.sendBody("direct:start", "Hadrian");
         template.sendBody("direct:start", "Apache");
         template.sendBody("direct:start", "Camel");
-        
+
         context.getRouteController().startRoute("consume");
         assertMockEndpointsSatisfied();
         context.stop();

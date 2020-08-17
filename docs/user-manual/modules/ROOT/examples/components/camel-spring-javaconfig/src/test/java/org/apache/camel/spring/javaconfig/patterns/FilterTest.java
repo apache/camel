@@ -81,4 +81,3 @@ public class FilterTest {
 }
 // end::example[]
 // END SNIPPET: example
-

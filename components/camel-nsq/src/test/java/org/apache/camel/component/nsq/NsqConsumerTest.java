@@ -88,16 +88,17 @@ public class NsqConsumerTest extends NsqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("nsq://%s?servers=%s&lookupInterval=2000&autoFinish=false&requeueInterval=1000", TOPIC, getNsqConsumerUrl()).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        String messageText = exchange.getIn().getBody(String.class);
-                        int attempts = exchange.getIn().getHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, Integer.class);
-                        if (messageText.contains("Requeue") && attempts < 3) {
-                            throw new Exception("Forced error");
-                        }
-                    }
-                }).to(mockResultEndpoint);
+                fromF("nsq://%s?servers=%s&lookupInterval=2000&autoFinish=false&requeueInterval=1000", TOPIC,
+                        getNsqConsumerUrl()).process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String messageText = exchange.getIn().getBody(String.class);
+                                int attempts = exchange.getIn().getHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, Integer.class);
+                                if (messageText.contains("Requeue") && attempts < 3) {
+                                    throw new Exception("Forced error");
+                                }
+                            }
+                        }).to(mockResultEndpoint);
             }
         };
     }

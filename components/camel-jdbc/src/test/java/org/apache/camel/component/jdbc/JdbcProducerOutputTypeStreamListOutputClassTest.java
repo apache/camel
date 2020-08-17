@@ -57,8 +57,12 @@ public class JdbcProducerOutputTypeStreamListOutputClassTest extends AbstractJdb
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("jdbc:testdb?outputType=StreamList&outputClass=org.apache.camel.component.jdbc.CustomerModel").to("mock:result");
-                from("direct:withSplit").to("jdbc:testdb?outputType=StreamList&outputClass=org.apache.camel.component.jdbc.CustomerModel").split(body()).to("mock:result");
+                from("direct:start")
+                        .to("jdbc:testdb?outputType=StreamList&outputClass=org.apache.camel.component.jdbc.CustomerModel")
+                        .to("mock:result");
+                from("direct:withSplit")
+                        .to("jdbc:testdb?outputType=StreamList&outputClass=org.apache.camel.component.jdbc.CustomerModel")
+                        .split(body()).to("mock:result");
             }
         };
     }

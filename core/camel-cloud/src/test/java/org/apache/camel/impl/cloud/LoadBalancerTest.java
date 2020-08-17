@@ -43,7 +43,8 @@ public class LoadBalancerTest {
         DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         loadBalancer.setCamelContext(new DefaultCamelContext());
         loadBalancer.setServiceDiscovery(serviceDiscovery);
-        loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
+        loadBalancer
+                .setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
         loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
         loadBalancer.process("no-name", service -> {
             assertEquals(1001, service.getPort());
@@ -60,7 +61,8 @@ public class LoadBalancerTest {
         DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         loadBalancer.setCamelContext(new DefaultCamelContext());
         loadBalancer.setServiceDiscovery(serviceDiscovery);
-        loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 1000).collect(Collectors.toList()));
+        loadBalancer
+                .setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 1000).collect(Collectors.toList()));
         loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
         assertThrows(RejectedExecutionException.class, () -> {
             loadBalancer.process("no-name", service -> false);

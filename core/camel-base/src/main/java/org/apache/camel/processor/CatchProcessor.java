@@ -45,7 +45,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
     private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;
 
-    public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen, Predicate handled) {
+    public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen,
+                          Predicate handled) {
         super(processor);
         this.exceptions = exceptions;
         this.onWhen = onWhen;
@@ -91,7 +92,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
             return true;
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
+            LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(),
+                    e.getMessage());
         }
 
         // store the last to endpoint as the failure endpoint
@@ -107,7 +109,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("The exception is handled for the exception: {} caused by: {}",
-                    new Object[]{e.getClass().getName(), e.getMessage()});
+                    new Object[] { e.getClass().getName(), e.getMessage() });
         }
 
         // emit event that the failure is being handled
@@ -136,13 +138,12 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
     /**
      * Returns with the exception that is caught by this processor.
      *
-     * This method traverses exception causes, so sometimes the exception
-     * returned from this method might be one of causes of the parameter
-     * passed.
+     * This method traverses exception causes, so sometimes the exception returned from this method might be one of
+     * causes of the parameter passed.
      *
-     * @param exchange  the current exchange
-     * @param exception the thrown exception
-     * @return Throwable that this processor catches. <tt>null</tt> if nothing matches.
+     * @param  exchange  the current exchange
+     * @param  exception the thrown exception
+     * @return           Throwable that this processor catches. <tt>null</tt> if nothing matches.
      */
     protected Throwable catches(Exchange exchange, Throwable exception) {
         // use the exception iterator to walk the caused by hierarchy
@@ -168,12 +169,12 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
      * <p/>
      * This default implementation will match as:
      * <ul>
-     *   <li>Always true if no when predicate on the exception type
-     *   <li>Otherwise the when predicate is matches against the current exchange
+     * <li>Always true if no when predicate on the exception type
+     * <li>Otherwise the when predicate is matches against the current exchange
      * </ul>
      *
-     * @param exchange the current {@link org.apache.camel.Exchange}
-     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
+     * @param  exchange the current {@link org.apache.camel.Exchange}
+     * @return          <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
     protected boolean matchesWhen(Exchange exchange) {
         if (onWhen == null) {

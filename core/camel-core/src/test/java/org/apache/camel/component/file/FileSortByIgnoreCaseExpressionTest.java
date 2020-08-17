@@ -42,7 +42,8 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello London", Exchange.FILE_NAME, "REPORT-2.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen", Exchange.FILE_NAME, "Report-1.xml");
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen", Exchange.FILE_NAME,
+                "Report-1.xml");
     }
 
     @Test
@@ -70,7 +71,8 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=ignoreCase:file:name").convertBodyTo(String.class).to("mock:nocase");
+                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=ignoreCase:file:name").convertBodyTo(String.class)
+                        .to("mock:nocase");
             }
         });
         context.start();
@@ -88,7 +90,8 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "c/?initialDelay=0&delay=10&sortBy=reverse:ignoreCase:file:name").convertBodyTo(String.class).to("mock:nocasereverse");
+                from(fileUrl + "c/?initialDelay=0&delay=10&sortBy=reverse:ignoreCase:file:name").convertBodyTo(String.class)
+                        .to("mock:nocasereverse");
             }
         });
         context.start();

@@ -84,8 +84,10 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup().split(body().tokenize(LS)).parallelProcessing().streaming()
-                    .setBody(body().append(":Status=OK").append(LS)).to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt").to("mock:result").end();
+                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .split(body().tokenize(LS)).parallelProcessing().streaming()
+                        .setBody(body().append(":Status=OK").append(LS))
+                        .to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt").to("mock:result").end();
             }
         };
     }

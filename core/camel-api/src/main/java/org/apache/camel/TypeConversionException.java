@@ -45,8 +45,7 @@ public class TypeConversionException extends RuntimeCamelException {
     }
 
     /**
-     * Returns the required <tt>from</tt> type.
-     * Returns <tt>null</tt> if the provided value was null.
+     * Returns the required <tt>from</tt> type. Returns <tt>null</tt> if the provided value was null.
      */
     public Class<?> getFromType() {
         if (value != null) {
@@ -61,9 +60,8 @@ public class TypeConversionException extends RuntimeCamelException {
      */
     public static String createMessage(Object value, Class<?> type, Throwable cause) {
         return "Error during type conversion from type: " + (value != null ? value.getClass().getCanonicalName() : null)
-                + " to the required type: " + type.getCanonicalName() + " with value " + value + " due to " + cause.getClass().getName() + ": " + cause.getMessage();
+               + " to the required type: " + type.getCanonicalName() + " with value " + value + " due to "
+               + cause.getClass().getName() + ": " + cause.getMessage();
     }
 
 }
-
-

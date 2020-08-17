@@ -26,9 +26,9 @@ import org.slf4j.Logger;
 
 public abstract class CamelTwitterConsumerTestSupport extends CamelTwitterTestSupport {
     protected abstract String getUri();
-    
+
     protected abstract Logger getLogger();
-    
+
     @Test
     public void testDailyTrend() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -38,7 +38,7 @@ public abstract class CamelTwitterConsumerTestSupport extends CamelTwitterTestSu
         for (Exchange e : tweets) {
             getLogger().info("Tweet: " + e.getIn().getBody(String.class));
         }
-        
+
     }
 
     @Override

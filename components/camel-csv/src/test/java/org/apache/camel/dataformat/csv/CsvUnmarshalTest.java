@@ -173,7 +173,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 from("direct:lazy")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true))
                         .split().body()
-                            .to("mock:line");
+                        .to("mock:line");
 
                 // Use maps
                 from("direct:map")
@@ -189,11 +189,12 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 from("direct:lazy_map")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true).setUseMaps(true))
                         .split().body()
-                            .to("mock:line");
+                        .to("mock:line");
 
                 // Use map without first line and headers
                 from("direct:map_headers")
-                        .unmarshal(new CsvDataFormat().setUseMaps(true).setSkipHeaderRecord(true).setHeader(new String[]{"AA", "BB", "CC"}))
+                        .unmarshal(new CsvDataFormat().setUseMaps(true).setSkipHeaderRecord(true)
+                                .setHeader(new String[] { "AA", "BB", "CC" }))
                         .to("mock:output");
             }
         };

@@ -40,16 +40,16 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         assertThrows(PropertyBindingException.class,
-            () -> component.createEndpoint(
-                "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy"));
+                () -> component.createEndpoint(
+                        "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
@@ -61,7 +61,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotSame(awsLambdaClient, endpoint.getConfiguration().getAwsLambdaClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 

@@ -32,15 +32,15 @@ public class MessageCorrelator implements QuickfixjEventListener {
     private final List<MessageCorrelationRule> rules = new CopyOnWriteArrayList<>();
 
     public Callable<Message> getReply(SessionID sessionID, Exchange exchange)
-        throws InterruptedException, ExchangeTimedOutException {
+            throws InterruptedException, ExchangeTimedOutException {
 
         MessagePredicate messageCriteria = (MessagePredicate) exchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY);
         final MessageCorrelationRule correlationRule = new MessageCorrelationRule(exchange, sessionID, messageCriteria);
         rules.add(correlationRule);
 
         final long timeout = exchange.getProperty(
-            QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
-            DEFAULT_CORRELATION_TIMEOUT, Long.class);
+                QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
+                DEFAULT_CORRELATION_TIMEOUT, Long.class);
 
         return new Callable<Message>() {
             @Override

@@ -29,23 +29,23 @@ import org.junit.jupiter.api.Test;
 public class JsonPathSourceTest extends CamelTestSupport {
     private static final String MESSAGE1 = "Joseph und seine Br\u00fcder";
     private static final String MESSAGE2 = "G\u00f6tzend\u00e4mmerung";
-    private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();   
+    private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
     @AfterAll
     public static void setDefaultCharsetBack() {
         switchToDefaultCharset(DEFAULT_CHARSET.displayName());
     }
-     
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").transform().jsonpath("$.store.book[0].title", String.class)
-                    .to("mock:title");
+                        .to("mock:title");
 
                 from("direct:second").transform().jsonpath("$.store.book[1].title", String.class)
-                    .to("mock:title");
+                        .to("mock:title");
             }
         };
     }
@@ -58,11 +58,11 @@ public class JsonPathSourceTest extends CamelTestSupport {
         getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
         template.sendBody("direct:start", FileConsumer
-            .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
+                .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
         template.sendBody("direct:second", FileConsumer
-            .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
+                .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
 
         assertMockEndpointsSatisfied();
     }
@@ -75,11 +75,11 @@ public class JsonPathSourceTest extends CamelTestSupport {
         getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
         template.sendBody("direct:start", FileConsumer
-            .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
+                .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
         template.sendBody("direct:second", FileConsumer
-            .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
+                .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
 
         assertMockEndpointsSatisfied();
     }
@@ -92,11 +92,11 @@ public class JsonPathSourceTest extends CamelTestSupport {
         getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
         template.sendBody("direct:start", FileConsumer
-            .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
-                           new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1", false));
+                .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
+                        new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1", false));
         template.sendBody("direct:second", FileConsumer
-            .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
-                           new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1", false));
+                .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
+                        new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1", false));
 
         assertMockEndpointsSatisfied();
     }

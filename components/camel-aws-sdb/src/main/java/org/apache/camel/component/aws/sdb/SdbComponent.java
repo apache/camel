@@ -32,7 +32,7 @@ public class SdbComponent extends DefaultComponent {
 
     public SdbComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new SdbComponentVerifierExtension());
     }
 
@@ -46,7 +46,8 @@ public class SdbComponent extends DefaultComponent {
         configuration.setDomainName(remaining);
         SdbEndpoint endpoint = new SdbEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (configuration.getAmazonSDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonSDBClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonSDBClient or accessKey and secretKey must be specified");
         }
         return endpoint;

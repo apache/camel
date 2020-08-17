@@ -49,7 +49,7 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBody("direct:start", "<foo/>");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -78,16 +78,16 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
                 onException(InvalidOrderException.class).maximumRedeliveries(0).handled(true)
-                    .to("mock:invalid");
+                        .to("mock:invalid");
 
                 DataFormat jaxb = new JaxbDataFormat("org.apache.camel.example");
 
                 from("direct:start")
-                    .unmarshal(jaxb)
-                    .choice()
+                        .unmarshal(jaxb)
+                        .choice()
                         .when().method(RouteWithErrorHandlerTest.class, "isWine").to("mock:wine")
                         .otherwise().throwException(new InvalidOrderException("We only like wine"))
-                    .end();
+                        .end();
             }
         };
     }

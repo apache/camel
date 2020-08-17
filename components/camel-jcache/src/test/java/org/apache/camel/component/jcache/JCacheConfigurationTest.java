@@ -49,7 +49,8 @@ public class JCacheConfigurationTest extends JCacheComponentTestSupport {
     @BindToRegistry("myCacheLoaderFactory")
     private static final Factory<CacheLoader<Object, Object>> CACHE_LOADER_FACTORY = MyCacheLoader.factory();
 
-    @EndpointInject(value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory" + "&cacheWriterFactory=#myCacheWriterFactory"
+    @EndpointInject(value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory"
+                            + "&cacheWriterFactory=#myCacheWriterFactory"
                             + "&cacheLoaderFactory=#myCacheLoaderFactory")
     JCacheEndpoint from;
 

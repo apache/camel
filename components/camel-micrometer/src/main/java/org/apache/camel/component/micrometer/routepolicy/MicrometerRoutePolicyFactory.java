@@ -25,7 +25,8 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 
 /**
- * A {@link org.apache.camel.spi.RoutePolicyFactory} to plugin and use metrics for gathering route utilization statistics
+ * A {@link org.apache.camel.spi.RoutePolicyFactory} to plugin and use metrics for gathering route utilization
+ * statistics
  */
 public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
 

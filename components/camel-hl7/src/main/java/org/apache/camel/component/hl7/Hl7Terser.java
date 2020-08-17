@@ -26,7 +26,7 @@ import org.apache.camel.support.language.LanguageAnnotation;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @LanguageAnnotation(language = "hl7terser")
 public @interface Hl7Terser {
     String value();

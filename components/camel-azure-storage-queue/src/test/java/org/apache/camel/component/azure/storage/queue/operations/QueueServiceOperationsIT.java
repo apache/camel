@@ -77,7 +77,8 @@ class QueueServiceOperationsIT {
         assertNotNull(queuesResponse);
         assertNotNull(queuesResponse.getBody());
 
-        @SuppressWarnings("unchecked") final List<String> queues = ((List<QueueItem>) queuesResponse.getBody())
+        @SuppressWarnings("unchecked")
+        final List<String> queues = ((List<QueueItem>) queuesResponse.getBody())
                 .stream()
                 .map(QueueItem::getName)
                 .collect(Collectors.toList());

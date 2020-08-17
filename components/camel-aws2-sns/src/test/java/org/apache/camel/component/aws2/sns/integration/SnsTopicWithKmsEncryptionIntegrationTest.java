@@ -60,7 +60,7 @@ public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws2-sns://MyNewTopic1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&subject=The+subject+message&serverSideEncryptionEnabled=true&kmsMasterKeyId=RAW(xxx)");
+                        .to("aws2-sns://MyNewTopic1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&subject=The+subject+message&serverSideEncryptionEnabled=true&kmsMasterKeyId=RAW(xxx)");
             }
         };
     }

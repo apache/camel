@@ -53,7 +53,8 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private GoogleMailStreamConfiguration configuration;
 
-    public GoogleMailStreamEndpoint(String uri, GoogleMailStreamComponent component, GoogleMailStreamConfiguration endpointConfiguration) {
+    public GoogleMailStreamEndpoint(String uri, GoogleMailStreamComponent component,
+                                    GoogleMailStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -91,15 +92,15 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
     }
 
     public Gmail getClient() {
-        return ((GoogleMailStreamComponent)getComponent()).getClient(configuration);
+        return ((GoogleMailStreamComponent) getComponent()).getClient(configuration);
     }
 
     public GoogleMailClientFactory getClientFactory() {
-        return ((GoogleMailStreamComponent)getComponent()).getClientFactory();
+        return ((GoogleMailStreamComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleMailClientFactory clientFactory) {
-        ((GoogleMailStreamComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleMailStreamComponent) getComponent()).setClientFactory(clientFactory);
     }
 
     public GoogleMailStreamConfiguration getConfiguration() {

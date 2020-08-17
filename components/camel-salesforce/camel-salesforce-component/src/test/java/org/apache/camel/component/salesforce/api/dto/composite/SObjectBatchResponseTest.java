@@ -87,7 +87,7 @@ public class SObjectBatchResponseTest {
 
         final XStream xStream = XStreamUtils.createXStream(SObjectBatchResponse.class);
 
-        final SObjectBatchResponse response = (SObjectBatchResponse)xStream.fromXML(xml);
+        final SObjectBatchResponse response = (SObjectBatchResponse) xStream.fromXML(xml);
 
         assertNotNull(response, "Response should be parsed");
 
@@ -98,23 +98,25 @@ public class SObjectBatchResponseTest {
 
         final SObjectBatchResult firstResult = results.get(0);
         assertEquals(204, firstResult.getStatusCode(), "First result should have status code of 204");
-        assertTrue(((Map)firstResult.getResult()).isEmpty(), "First result contain no data");
+        assertTrue(((Map) firstResult.getResult()).isEmpty(), "First result contain no data");
 
         final SObjectBatchResult secondResult = results.get(1);
         assertEquals(200, secondResult.getStatusCode(), "Second result should have status code of 200");
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> secondResultMap = (Map<String, Object>)secondResult.getResult();
+        final Map<String, Object> secondResultMap = (Map<String, Object>) secondResult.getResult();
         @SuppressWarnings("unchecked")
-        final Map<String, Object> account = (Map<String, Object>)secondResultMap.get("Account");
+        final Map<String, Object> account = (Map<String, Object>) secondResultMap.get("Account");
 
         @SuppressWarnings("unchecked")
-        final Map<String, String> attributes = (Map<String, String>)account.get("attributes");
+        final Map<String, String> attributes = (Map<String, String>) account.get("attributes");
         assertEquals("Account", attributes.get("type"), "Second result data should have attribute type set to `Account`");
-        assertEquals("/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"), "Second result data should have attribute url set as expected");
+        assertEquals("/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"),
+                "Second result data should have attribute url set as expected");
 
         assertEquals("NewName", account.get("Name"), "Second result data should have `NewName` set as expected");
-        assertEquals("94105", account.get("BillingPostalCode"), "Second result data should have `BillingPostalCode` set as expected");
+        assertEquals("94105", account.get("BillingPostalCode"),
+                "Second result data should have `BillingPostalCode` set as expected");
         assertEquals("001D000000K0fXOIAZ", account.get("Id"), "Second result data should have `Id` set as expected");
     }
 
@@ -134,14 +136,16 @@ public class SObjectBatchResponseTest {
         assertEquals(200, secondResult.getStatusCode(), "Second result should have status code of 200");
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> secondResultMap = (Map<String, Object>)secondResult.getResult();
+        final Map<String, Object> secondResultMap = (Map<String, Object>) secondResult.getResult();
         @SuppressWarnings("unchecked")
-        final Map<String, String> attributes = (Map<String, String>)secondResultMap.get("attributes");
+        final Map<String, String> attributes = (Map<String, String>) secondResultMap.get("attributes");
         assertEquals("Account", attributes.get("type"), "Second result data should have attribute type set to `Account`");
-        assertEquals("/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"), "Second result data should have attribute url set as expected");
+        assertEquals("/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"),
+                "Second result data should have attribute url set as expected");
 
         assertEquals("NewName", secondResultMap.get("Name"), "Second result data should have `NewName` set as expected");
-        assertEquals("94105", secondResultMap.get("BillingPostalCode"), "Second result data should have `BillingPostalCode` set as expected");
+        assertEquals("94105", secondResultMap.get("BillingPostalCode"),
+                "Second result data should have `BillingPostalCode` set as expected");
         assertEquals("001D000000K0fXOIAZ", secondResultMap.get("Id"), "Second result data should have `Id` set as expected");
     }
 

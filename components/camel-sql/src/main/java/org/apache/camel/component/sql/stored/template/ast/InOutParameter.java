@@ -38,7 +38,8 @@ public class InOutParameter {
         this.outValueMapKey = outValueMapKey;
 
         if (this.scale != null && this.typeName != null) {
-            throw new ParseRuntimeException(String.format("Both scale=%s and typeName=%s cannot be set", this.scale, this.typeName));
+            throw new ParseRuntimeException(
+                    String.format("Both scale=%s and typeName=%s cannot be set", this.scale, this.typeName));
         }
     }
 

@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests the creation of the proper {@link org.apache.commons.csv.CSVFormat} based on the properties of
- * {@link org.apache.camel.dataformat.csv.CsvDataFormat}.
- * It doesn't test the marshalling and unmarshalling based on the CSV format.
+ * {@link org.apache.camel.dataformat.csv.CsvDataFormat}. It doesn't test the marshalling and unmarshalling based on the
+ * CSV format.
  */
 public class CsvDataFormatTest {
     @Test
@@ -165,12 +165,12 @@ public class CsvDataFormatTest {
     void shouldDisableHeader() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setHeaderDisabled(true)
-                .setHeader(new String[]{"a", "b", "c"});
+                .setHeader(new String[] { "a", "b", "c" });
 
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
         assertTrue(dataFormat.isHeaderDisabled());
-        assertArrayEquals(new String[]{"a", "b", "c"}, dataFormat.getHeader());
+        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getHeader());
 
         // Properly used
         assertNull(dataFormat.getActiveFormat().getHeader());
@@ -179,14 +179,14 @@ public class CsvDataFormatTest {
     @Test
     void shouldOverrideHeader() {
         CsvDataFormat dataFormat = new CsvDataFormat()
-                .setHeader(new String[]{"a", "b", "c"});
+                .setHeader(new String[] { "a", "b", "c" });
 
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertArrayEquals(new String[]{"a", "b", "c"}, dataFormat.getHeader());
+        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getHeader());
 
         // Properly used
-        assertArrayEquals(new String[]{"a", "b", "c"}, dataFormat.getActiveFormat().getHeader());
+        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getActiveFormat().getHeader());
     }
 
     @Test
@@ -445,7 +445,7 @@ public class CsvDataFormatTest {
         assertEquals(Boolean.TRUE, dataFormat.getTrim());
         // Properly used
         assertTrue(dataFormat.getActiveFormat().getTrim());
-        
+
         // NOT set
         dataFormat = new CsvDataFormat();
         // Properly saved
@@ -473,7 +473,7 @@ public class CsvDataFormatTest {
         assertEquals(Boolean.TRUE, dataFormat.getIgnoreHeaderCase());
         // Properly used
         assertTrue(dataFormat.getActiveFormat().getIgnoreHeaderCase());
-        
+
         // NOT set
         dataFormat = new CsvDataFormat();
         // Properly saved
@@ -500,7 +500,7 @@ public class CsvDataFormatTest {
         assertEquals(Boolean.TRUE, dataFormat.getTrailingDelimiter());
         // Properly used
         assertTrue(dataFormat.getActiveFormat().getTrailingDelimiter());
-        
+
         // NOT set
         dataFormat = new CsvDataFormat();
         // Properly saved
@@ -517,5 +517,5 @@ public class CsvDataFormatTest {
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());
     }
-    
+
 }

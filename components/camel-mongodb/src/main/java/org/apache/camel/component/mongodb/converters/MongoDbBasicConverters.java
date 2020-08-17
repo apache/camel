@@ -100,9 +100,8 @@ public final class MongoDbBasicConverters {
     }
 
     /**
-     * If the input starts with any number of whitespace characters and then a
-     * '{' character, we assume it is JSON rather than BSON. There are probably
-     * no useful BSON blobs that fit this pattern
+     * If the input starts with any number of whitespace characters and then a '{' character, we assume it is JSON
+     * rather than BSON. There are probably no useful BSON blobs that fit this pattern
      */
     private static boolean isBson(byte[] input) {
         int i = 0;
@@ -121,7 +120,8 @@ public final class MongoDbBasicConverters {
     @Converter
     public static List<Bson> fromStringToList(String value) {
 
-        final CodecRegistry codecRegistry = CodecRegistries.fromProviders(Arrays.asList(new ValueCodecProvider(), new BsonValueCodecProvider(), new DocumentCodecProvider()));
+        final CodecRegistry codecRegistry = CodecRegistries.fromProviders(
+                Arrays.asList(new ValueCodecProvider(), new BsonValueCodecProvider(), new DocumentCodecProvider()));
 
         JsonReader reader = new JsonReader(value);
         BsonArrayCodec arrayReader = new BsonArrayCodec(codecRegistry);

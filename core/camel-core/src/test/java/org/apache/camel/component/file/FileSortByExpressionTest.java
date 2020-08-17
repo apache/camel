@@ -42,7 +42,8 @@ public class FileSortByExpressionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello London", Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen", Exchange.FILE_NAME, "copenhagen.xml");
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen", Exchange.FILE_NAME,
+                "copenhagen.xml");
     }
 
     @Test
@@ -69,7 +70,8 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=reverse:file:ext").convertBodyTo(String.class).to("mock:reverse");
+                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=reverse:file:ext").convertBodyTo(String.class)
+                        .to("mock:reverse");
             }
         });
 

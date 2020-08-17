@@ -43,7 +43,7 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("weka:version");
+                            .to("weka:version");
                 }
             });
             camelctx.start();
@@ -63,8 +63,8 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("file:src/test/resources/data?fileName=sfny.csv&noop=true")
-                        .to("weka:read")
-                        .to("direct:end");
+                            .to("weka:read")
+                            .to("direct:end");
                 }
             });
             camelctx.start();
@@ -84,7 +84,7 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("weka:read");
+                            .to("weka:read");
                 }
             });
             camelctx.start();
@@ -107,7 +107,7 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("weka:read");
+                            .to("weka:read");
                 }
             });
             camelctx.start();
@@ -130,7 +130,7 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("weka:read?path=src/test/resources/data/sfny.arff");
+                            .to("weka:read?path=src/test/resources/data/sfny.arff");
                 }
             });
             camelctx.start();
@@ -150,7 +150,7 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("weka:read");
+                            .to("weka:read");
                 }
             });
             camelctx.start();
@@ -173,7 +173,7 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("file:target/data?fileName=sfny.arff");
+                            .to("file:target/data?fileName=sfny.arff");
                 }
             });
             camelctx.start();
@@ -199,8 +199,8 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("weka:write")
-                        .to("file:target/data?fileName=sfny.arff");
+                            .to("weka:write")
+                            .to("file:target/data?fileName=sfny.arff");
                 }
             });
             camelctx.start();
@@ -226,7 +226,7 @@ public class ReadWriteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .to("weka:write?path=target/data/sfny.arff");
+                            .to("weka:write?path=target/data/sfny.arff");
                 }
             });
             camelctx.start();

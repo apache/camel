@@ -94,7 +94,6 @@ public class ConvertingPublisher<R> implements Publisher<R> {
                     subscriber.onNext(r);
                 }
 
-
             }
 
             @Override

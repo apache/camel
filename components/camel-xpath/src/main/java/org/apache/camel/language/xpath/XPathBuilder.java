@@ -80,25 +80,22 @@ import static org.apache.camel.support.builder.Namespaces.OUT_NAMESPACE;
 import static org.apache.camel.support.builder.Namespaces.isMatchingNamespaceOrEmptyNamespace;
 
 /**
- * Creates an XPath expression builder which creates a nodeset result by
- * default. If you want to evaluate a String expression then call
- * {@link #stringResult()}
+ * Creates an XPath expression builder which creates a nodeset result by default. If you want to evaluate a String
+ * expression then call {@link #stringResult()}
  * <p/>
- * An XPath object is not thread-safe and not reentrant. In other words, it is
- * the application's responsibility to make sure that one XPath object is not
- * used from more than one thread at any given time, and while the evaluate
- * method is invoked, applications may not recursively call the evaluate method.
+ * An XPath object is not thread-safe and not reentrant. In other words, it is the application's responsibility to make
+ * sure that one XPath object is not used from more than one thread at any given time, and while the evaluate method is
+ * invoked, applications may not recursively call the evaluate method.
  * <p/>
- * This implementation is thread safe by using thread locals and pooling to
- * allow concurrency.
+ * This implementation is thread safe by using thread locals and pooling to allow concurrency.
  * <p/>
- * <b>Important:</b> After configuring the {@link XPathBuilder} its advised to
- * invoke {@link #start()} to prepare the builder before using; though the
- * builder will auto-start on first use.
+ * <b>Important:</b> After configuring the {@link XPathBuilder} its advised to invoke {@link #start()} to prepare the
+ * builder before using; though the builder will auto-start on first use.
  *
  * @see XPathConstants#NODESET
  */
-public class XPathBuilder extends ServiceSupport implements CamelContextAware, Expression, Predicate,
+public class XPathBuilder extends ServiceSupport
+        implements CamelContextAware, Expression, Predicate,
         NamespaceAware, ExpressionResultTypeAware, GeneratedPropertyConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
@@ -136,9 +133,8 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     private volatile XPathFunction propertiesFunction;
     private volatile XPathFunction simpleFunction;
     /**
-     * The name of the header we want to apply the XPath expression to, which
-     * when set will cause the xpath to be evaluated on the required header,
-     * otherwise it will be applied to the body
+     * The name of the header we want to apply the XPath expression to, which when set will cause the xpath to be
+     * evaluated on the required header, otherwise it will be applied to the body
      */
     private volatile String headerName;
 
@@ -150,17 +146,17 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * @param text The XPath expression
-     * @return A new XPathBuilder object
+     * @param  text The XPath expression
+     * @return      A new XPathBuilder object
      */
     public static XPathBuilder xpath(String text) {
         return new XPathBuilder(text);
     }
 
     /**
-     * @param text The XPath expression
-     * @param resultType The result type that the XPath expression will return.
-     * @return A new XPathBuilder object
+     * @param  text       The XPath expression
+     * @param  resultType The result type that the XPath expression will return.
+     * @return            A new XPathBuilder object
      */
     public static XPathBuilder xpath(String text, Class<?> resultType) {
         XPathBuilder builder = new XPathBuilder(text);
@@ -182,29 +178,38 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         switch (ignoreCase ? name.toLowerCase() : name) {
             case "documenttype":
             case "documentType":
-                setDocumentType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+                setDocumentType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
             case "resulttype":
             case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
             case "usesaxon":
             case "useSaxon":
-                setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+                setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
             case "xpathfactory":
             case "xPathFactory":
-                setXPathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value)); return true;
+                setXPathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value));
+                return true;
             case "objectmodeluri":
             case "objectModelUri":
-                setObjectModelUri(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+                setObjectModelUri(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
             case "threadsafety":
             case "threadSafety":
-                setThreadSafety(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+                setThreadSafety(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
             case "lognamespaces":
             case "logNamespaces":
-                setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+                setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
             case "headername":
             case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            default: return false;
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -248,9 +253,9 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Matches the given xpath using the provided body.
      *
-     * @param context the camel context
-     * @param body the body
-     * @return <tt>true</tt> if matches, <tt>false</tt> otherwise
+     * @param  context the camel context
+     * @param  body    the body
+     * @return         <tt>true</tt> if matches, <tt>false</tt> otherwise
      */
     public boolean matches(CamelContext context, Object body) {
         ObjectHelper.notNull(context, "CamelContext");
@@ -270,18 +275,17 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Evaluates the given xpath using the provided body.
      * <p/>
-     * The evaluation uses by default
-     * {@link javax.xml.xpath.XPathConstants#NODESET} as the type used during
-     * xpath evaluation. The output from xpath is then afterwards type converted
-     * using Camel's type converter to the given type.
+     * The evaluation uses by default {@link javax.xml.xpath.XPathConstants#NODESET} as the type used during xpath
+     * evaluation. The output from xpath is then afterwards type converted using Camel's type converter to the given
+     * type.
      * <p/>
-     * If you want to evaluate xpath using a different type, then call
-     * {@link #setResultType(Class)} prior to calling this evaluate method.
+     * If you want to evaluate xpath using a different type, then call {@link #setResultType(Class)} prior to calling
+     * this evaluate method.
      *
-     * @param context the camel context
-     * @param body the body
-     * @param type the type to return
-     * @return result of the evaluation
+     * @param  context the camel context
+     * @param  body    the body
+     * @param  type    the type to return
+     * @return         result of the evaluation
      */
     public <T> T evaluate(CamelContext context, Object body, Class<T> type) {
         ObjectHelper.notNull(context, "CamelContext");
@@ -299,12 +303,11 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Evaluates the given xpath using the provided body as a String return
-     * type.
+     * Evaluates the given xpath using the provided body as a String return type.
      *
-     * @param context the camel context
-     * @param body the body
-     * @return result of the evaluation
+     * @param  context the camel context
+     * @param  body    the body
+     * @return         result of the evaluation
      */
     public String evaluate(CamelContext context, Object body) {
         ObjectHelper.notNull(context, "CamelContext");
@@ -413,8 +416,8 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Configures to use Saxon as the XPathFactory which allows you to use XPath
-     * 2.0 functions which may not be part of the build in JDK XPath parser.
+     * Configures to use Saxon as the XPathFactory which allows you to use XPath 2.0 functions which may not be part of
+     * the build in JDK XPath parser.
      *
      * @return the current builder
      */
@@ -426,8 +429,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Sets the {@link XPathFunctionResolver} instance to use on these XPath
-     * expressions
+     * Sets the {@link XPathFunctionResolver} instance to use on these XPath expressions
      *
      * @return the current builder
      */
@@ -437,13 +439,11 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Registers the namespace prefix and URI with the builder so that the
-     * prefix can be used in XPath expressions
+     * Registers the namespace prefix and URI with the builder so that the prefix can be used in XPath expressions
      *
-     * @param prefix is the namespace prefix that can be used in the XPath
-     *            expressions
-     * @param uri is the namespace URI to which the prefix refers
-     * @return the current builder
+     * @param  prefix is the namespace prefix that can be used in the XPath expressions
+     * @param  uri    is the namespace URI to which the prefix refers
+     * @return        the current builder
      */
     public XPathBuilder namespace(String prefix, String uri) {
         namespaces.put(prefix, uri);
@@ -451,12 +451,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Registers namespaces with the builder so that the registered prefixes can
-     * be used in XPath expressions
+     * Registers namespaces with the builder so that the registered prefixes can be used in XPath expressions
      *
-     * @param namespaces is namespaces object that should be used in the XPath
-     *            expression
-     * @return the current builder
+     * @param  namespaces is namespaces object that should be used in the XPath expression
+     * @return            the current builder
      */
     public XPathBuilder namespaces(Namespaces namespaces) {
         namespaces.configure(this);
@@ -464,12 +462,11 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Registers a variable (in the global namespace) which can be referred to
-     * from XPath expressions
+     * Registers a variable (in the global namespace) which can be referred to from XPath expressions
      *
-     * @param name name of variable
-     * @param value value of variable
-     * @return the current builder
+     * @param  name  name of variable
+     * @param  value value of variable
+     * @return       the current builder
      */
     public XPathBuilder variable(String name, Object value) {
         getVariableResolver().addVariable(name, value);
@@ -479,14 +476,14 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Configures the document type to use.
      * <p/>
-     * The document type controls which kind of Class Camel should convert the
-     * payload to before doing the xpath evaluation.
+     * The document type controls which kind of Class Camel should convert the payload to before doing the xpath
+     * evaluation.
      * <p/>
-     * For example you can set it to {@link InputSource} to use SAX streams. By
-     * default Camel uses {@link Document} as the type.
+     * For example you can set it to {@link InputSource} to use SAX streams. By default Camel uses {@link Document} as
+     * the type.
      *
-     * @param documentType the document type
-     * @return the current builder
+     * @param  documentType the document type
+     * @return              the current builder
      */
     public XPathBuilder documentType(Class<?> documentType) {
         setDocumentType(documentType);
@@ -498,8 +495,8 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
      * <p/>
      * Can be used to use Saxon instead of the build in factory from the JDK.
      *
-     * @param xpathFactory the xpath factory to use
-     * @return the current builder.
+     * @param  xpathFactory the xpath factory to use
+     * @return              the current builder.
      */
     public XPathBuilder factory(XPathFactory xpathFactory) {
         setXPathFactory(xpathFactory);
@@ -507,19 +504,15 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Activates trace logging of all discovered namespaces in the message - to
-     * simplify debugging namespace-related issues
+     * Activates trace logging of all discovered namespaces in the message - to simplify debugging namespace-related
+     * issues
      * <p/>
-     * Namespaces are printed in Hashmap style
-     * <code>{xmlns:prefix=[namespaceURI], xmlns:prefix=[namespaceURI]}</code>.
+     * Namespaces are printed in Hashmap style <code>{xmlns:prefix=[namespaceURI], xmlns:prefix=[namespaceURI]}</code>.
      * <p/>
-     * The implicit XML namespace is omitted
-     * (http://www.w3.org/XML/1998/namespace). XML allows for namespace prefixes
-     * to be redefined/overridden due to hierarchical scoping, i.e. prefix abc
-     * can be mapped to http://abc.com, and deeper in the document it can be
-     * mapped to http://def.com. When two prefixes are detected which are equal
-     * but are mapped to different namespace URIs, Camel will show all
-     * namespaces URIs it is mapped to in an array-style.
+     * The implicit XML namespace is omitted (http://www.w3.org/XML/1998/namespace). XML allows for namespace prefixes
+     * to be redefined/overridden due to hierarchical scoping, i.e. prefix abc can be mapped to http://abc.com, and
+     * deeper in the document it can be mapped to http://def.com. When two prefixes are detected which are equal but are
+     * mapped to different namespace URIs, Camel will show all namespaces URIs it is mapped to in an array-style.
      * <p/>
      * This feature is disabled by default.
      *
@@ -531,16 +524,13 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Whether to enable thread-safety for the returned result of the xpath
-     * expression. This applies to when using NODESET as the result type, and
-     * the returned set has multiple elements. In this situation there can be
-     * thread-safety issues if you process the NODESET concurrently such as from
-     * a Camel Splitter EIP in parallel processing mode. This option prevents
-     * concurrency issues by doing defensive copies of the nodes.
+     * Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using
+     * NODESET as the result type, and the returned set has multiple elements. In this situation there can be
+     * thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel
+     * processing mode. This option prevents concurrency issues by doing defensive copies of the nodes.
      * <p/>
-     * It is recommended to turn this option on if you are using camel-saxon or
-     * Saxon in your application. Saxon has thread-safety issues which can be
-     * prevented by turning this option on.
+     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has
+     * thread-safety issues which can be prevented by turning this option on.
      * <p/>
      * Thread-safety is disabled by default
      *
@@ -555,14 +545,12 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     // -------------------------------------------------------------------------
 
     /**
-     * Gets the xpath factory, can be <tt>null</tt> if no custom factory has
-     * been assigned.
+     * Gets the xpath factory, can be <tt>null</tt> if no custom factory has been assigned.
      * <p/>
-     * A default factory will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default factory will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the factory, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the factory, or <tt>null</tt> if this builder has not been started/used before.
      */
     public XPathFactory getXPathFactory() {
         return xpathFactory;
@@ -609,14 +597,12 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Gets the namespace context, can be <tt>null</tt> if no custom context has
-     * been assigned.
+     * Gets the namespace context, can be <tt>null</tt> if no custom context has been assigned.
      * <p/>
-     * A default context will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default context will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the context, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the context, or <tt>null</tt> if this builder has not been started/used before.
      */
     public DefaultNamespaceContext getNamespaceContext() {
         return namespaceContext;
@@ -648,11 +634,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Gets the {@link XPathFunction} for getting the input message body.
      * <p/>
-     * A default function will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default function will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
      */
     public XPathFunction getBodyFunction() {
         return bodyFunction;
@@ -674,11 +659,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Gets the {@link XPathFunction} for getting the input message header.
      * <p/>
-     * A default function will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default function will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
      */
     public XPathFunction getHeaderFunction() {
         return headerFunction;
@@ -707,11 +691,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Gets the {@link XPathFunction} for getting the output message body.
      * <p/>
-     * A default function will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default function will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
      */
     public XPathFunction getOutBodyFunction() {
         return outBodyFunction;
@@ -736,11 +719,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Gets the {@link XPathFunction} for getting the output message header.
      * <p/>
-     * A default function will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default function will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
      */
     public XPathFunction getOutHeaderFunction() {
         return outHeaderFunction;
@@ -769,11 +751,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Gets the {@link XPathFunction} for getting the exchange properties.
      * <p/>
-     * A default function will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default function will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
      */
     public XPathFunction getPropertiesFunction() {
         return propertiesFunction;
@@ -807,15 +788,13 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Gets the {@link XPathFunction} for executing
-     * <a href="http://camel.apache.org/simple">simple</a> language as xpath
-     * function.
+     * Gets the {@link XPathFunction} for executing <a href="http://camel.apache.org/simple">simple</a> language as
+     * xpath function.
      * <p/>
-     * A default function will be assigned (if no custom assigned) when either
-     * starting this builder or on first evaluation.
+     * A default function will be assigned (if no custom assigned) when either starting this builder or on first
+     * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been
-     *         started/used before.
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
      */
     public XPathFunction getSimpleFunction() {
         return simpleFunction;
@@ -878,9 +857,8 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Enables Saxon on this particular XPath expression, as {@link #saxon()}
-     * sets the default static XPathFactory which may have already been
-     * initialised by previous XPath expressions
+     * Enables Saxon on this particular XPath expression, as {@link #saxon()} sets the default static XPathFactory which
+     * may have already been initialised by previous XPath expressions
      */
     public void enableSaxon() {
         this.setObjectModelUri(SAXON_OBJECT_MODEL_URI);
@@ -981,23 +959,23 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             }
             // fetch all namespaces
             if (document instanceof InputSource) {
-                InputSource inputSource = (InputSource)document;
-                answer = (NodeList)xpathExpression.evaluate(inputSource, XPathConstants.NODESET);
+                InputSource inputSource = (InputSource) document;
+                answer = (NodeList) xpathExpression.evaluate(inputSource, XPathConstants.NODESET);
             } else if (document instanceof DOMSource) {
-                DOMSource source = (DOMSource)document;
-                answer = (NodeList)xpathExpression.evaluate(source.getNode(), XPathConstants.NODESET);
+                DOMSource source = (DOMSource) document;
+                answer = (NodeList) xpathExpression.evaluate(source.getNode(), XPathConstants.NODESET);
             } else if (document instanceof SAXSource) {
-                SAXSource source = (SAXSource)document;
+                SAXSource source = (SAXSource) document;
                 // since its a SAXSource it may not return an NodeList (for
                 // example if using Saxon)
                 Object result = xpathExpression.evaluate(source.getInputSource(), XPathConstants.NODESET);
                 if (result instanceof NodeList) {
-                    answer = (NodeList)result;
+                    answer = (NodeList) result;
                 } else {
                     answer = null;
                 }
             } else {
-                answer = (NodeList)xpathExpression.evaluate(document, XPathConstants.NODESET);
+                answer = (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
             }
         } catch (Exception e) {
             LOG.warn("Unable to trace discovered namespaces in XPath expression", e);
@@ -1077,20 +1055,20 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                     document = new XMLConverterHelper().createDocument();
                 }
                 if (document instanceof InputSource) {
-                    InputSource inputSource = (InputSource)document;
+                    InputSource inputSource = (InputSource) document;
                     answer = xpathExpression.evaluate(inputSource, resultQName);
                 } else if (document instanceof DOMSource) {
-                    DOMSource source = (DOMSource)document;
+                    DOMSource source = (DOMSource) document;
                     answer = xpathExpression.evaluate(source.getNode(), resultQName);
                 } else {
                     answer = xpathExpression.evaluate(document, resultQName);
                 }
             } else {
                 if (document instanceof InputSource) {
-                    InputSource inputSource = (InputSource)document;
+                    InputSource inputSource = (InputSource) document;
                     answer = xpathExpression.evaluate(inputSource);
                 } else if (document instanceof DOMSource) {
-                    DOMSource source = (DOMSource)document;
+                    DOMSource source = (DOMSource) document;
                     answer = xpathExpression.evaluate(source.getNode());
                 } else {
                     answer = xpathExpression.evaluate(document);
@@ -1115,7 +1093,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
 
         if (threadSafety && answer instanceof NodeList) {
             try {
-                NodeList list = (NodeList)answer;
+                NodeList list = (NodeList) answer;
 
                 // when the result is NodeList and it has 1 or more elements then its not thread-safe to use concurrently
                 // and we need to clone each node and build a thread-safe list to be used instead
@@ -1123,7 +1101,8 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                 if (threadSafetyNeeded) {
                     answer = new ThreadSafeNodeList(list);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Created thread-safe result from: {} as: {}", list.getClass().getName(), answer.getClass().getName());
+                        LOG.debug("Created thread-safe result from: {} as: {}", list.getClass().getName(),
+                                answer.getClass().getName());
                     }
                 }
             } catch (Exception e) {
@@ -1140,10 +1119,11 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Creates a new xpath expression as there we no available in the pool.
      * <p/>
-     * This implementation must be synchronized to ensure thread safety, as this
-     * XPathBuilder instance may not have been started prior to being used.
+     * This implementation must be synchronized to ensure thread safety, as this XPathBuilder instance may not have been
+     * started prior to being used.
      */
-    protected synchronized XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
+    protected synchronized XPathExpression createXPathExpression()
+            throws XPathExpressionException, XPathFactoryConfigurationException {
         // ensure we are started
         try {
             start();
@@ -1170,7 +1150,8 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         return xPath.compile(text);
     }
 
-    protected synchronized XPathExpression createTraceNamespaceExpression() throws XPathFactoryConfigurationException, XPathExpressionException {
+    protected synchronized XPathExpression createTraceNamespaceExpression()
+            throws XPathFactoryConfigurationException, XPathExpressionException {
         // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
         return xPath.compile(OBTAIN_ALL_NS_XPATH);
@@ -1247,12 +1228,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Checks whether we need an {@link InputStream} to access the message body.
      * <p/>
-     * Depending on the content in the message body, we may not need to convert
-     * to {@link InputStream}.
+     * Depending on the content in the message body, we may not need to convert to {@link InputStream}.
      *
-     * @param exchange the current exchange
-     * @return <tt>true</tt> to convert to {@link InputStream} beforehand
-     *         converting afterwards.
+     * @param  exchange the current exchange
+     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
         Object body = exchange.getIn().getBody();
@@ -1260,15 +1239,12 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     /**
-     * Checks whether we need an {@link InputStream} to access the message
-     * header.
+     * Checks whether we need an {@link InputStream} to access the message header.
      * <p/>
-     * Depending on the content in the message header, we may not need to
-     * convert to {@link InputStream}.
+     * Depending on the content in the message header, we may not need to convert to {@link InputStream}.
      *
-     * @param exchange the current exchange
-     * @return <tt>true</tt> to convert to {@link InputStream} beforehand
-     *         converting afterwards.
+     * @param  exchange the current exchange
+     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
      */
     protected boolean isInputStreamNeeded(Exchange exchange, String headerName) {
         Object header = exchange.getIn().getHeader(headerName);
@@ -1278,12 +1254,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     /**
      * Checks whether we need an {@link InputStream} to access this object
      * <p/>
-     * Depending on the content in the object, we may not need to convert to
-     * {@link InputStream}.
+     * Depending on the content in the object, we may not need to convert to {@link InputStream}.
      *
-     * @param exchange the current exchange
-     * @return <tt>true</tt> to convert to {@link InputStream} beforehand
-     *         converting afterwards.
+     * @param  exchange the current exchange
+     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
      */
     protected boolean isInputStreamNeededForObject(Exchange exchange, Object obj) {
         if (obj == null) {
@@ -1291,7 +1265,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         }
 
         if (obj instanceof WrappedFile) {
-            obj = ((WrappedFile<?>)obj).getFile();
+            obj = ((WrappedFile<?>) obj).getFile();
         }
         if (obj instanceof File) {
             // input stream is needed for File to avoid locking the file in case
@@ -1398,13 +1372,15 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     protected synchronized XPathFactory createXPathFactory() throws XPathFactoryConfigurationException {
         if (objectModelUri != null) {
             String xpathFactoryClassName = factoryClassName;
-            if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI) && (xpathFactoryClassName == null || SAXON_FACTORY_CLASS_NAME.equals(xpathFactoryClassName))) {
+            if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI)
+                    && (xpathFactoryClassName == null || SAXON_FACTORY_CLASS_NAME.equals(xpathFactoryClassName))) {
                 // from Saxon 9.7 onwards you should favour to create the class
                 // directly
                 // https://www.saxonica.com/html/documentation/xpath-api/jaxp-xpath/factory.html
                 try {
                     if (camelContext != null) {
-                        Class<XPathFactory> clazz = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME, XPathFactory.class);
+                        Class<XPathFactory> clazz
+                                = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME, XPathFactory.class);
                         if (clazz != null) {
                             LOG.debug("Creating Saxon XPathFactory using class: {})", clazz);
                             xpathFactory = camelContext.getInjector().newInstance(clazz);
@@ -1413,7 +1389,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                     }
                 } catch (Throwable e) {
                     LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
-                            + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
+                             + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
                     LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                 }
             }
@@ -1421,7 +1397,8 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             if (xpathFactory == null) {
                 LOG.debug("Creating XPathFactory from objectModelUri: {}", objectModelUri);
                 xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
-                        ? XPathFactory.newInstance(objectModelUri) : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+                        ? XPathFactory.newInstance(objectModelUri)
+                        : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
                 LOG.info("Created XPathFactory: {} from objectModelUri: {}", xpathFactory, objectModelUri);
             }
 
@@ -1440,7 +1417,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         // read system property and see if there is a factory set
         Properties properties = System.getProperties();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
-            String key = (String)prop.getKey();
+            String key = (String) prop.getKey();
             if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
                 String uri = StringHelper.after(key, ":");
                 if (uri != null) {

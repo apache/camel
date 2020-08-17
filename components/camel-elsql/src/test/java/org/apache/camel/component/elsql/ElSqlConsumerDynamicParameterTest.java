@@ -39,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
 
     @BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
+            .addScript("sql/createAndPopulateDatabase.sql").build();
     @BindToRegistry("myIdGenerator")
     private MyIdGenerator idGenerator = new MyIdGenerator();
 
@@ -78,8 +79,9 @@ public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("elsql:projectsByIdBean:elsql/projects.elsql?dataSource=#dataSource&initialDelay=0&delay=50").routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                from("elsql:projectsByIdBean:elsql/projects.elsql?dataSource=#dataSource&initialDelay=0&delay=50")
+                        .routeId("foo").noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

@@ -42,8 +42,8 @@ public abstract class BaseSelectorProducer extends DefaultProducer {
     /**
      * Determine the processor to use to handle the exchange.
      *
-     * @param exchange the message exchange
-     * @return the processor to processes the message exchange
+     * @param  exchange the message exchange
+     * @return          the processor to processes the message exchange
      */
     protected abstract Processor getProcessor(Exchange exchange) throws Exception;
 

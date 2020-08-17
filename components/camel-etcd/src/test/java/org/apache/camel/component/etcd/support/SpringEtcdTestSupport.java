@@ -40,9 +40,9 @@ public abstract class SpringEtcdTestSupport extends ContainerAwareSpringTestSupp
 
     protected String getClientUri() {
         return String.format(
-            "http://%s:%d",
-            getContainerHost(EtcdTestSupport.CONTAINER_NAME),
-            getContainerPort(EtcdTestSupport.CONTAINER_NAME, EtcdTestSupport.ETCD_CLIENT_PORT));
+                "http://%s:%d",
+                getContainerHost(EtcdTestSupport.CONTAINER_NAME),
+                getContainerPort(EtcdTestSupport.CONTAINER_NAME, EtcdTestSupport.ETCD_CLIENT_PORT));
     }
 
     protected EtcdClient getClient() {

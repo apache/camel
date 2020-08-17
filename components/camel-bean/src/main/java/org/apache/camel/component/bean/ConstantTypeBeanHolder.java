@@ -70,7 +70,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     }
 
     @Override
-    public Object getBean(Exchange exchange)  {
+    public Object getBean(Exchange exchange) {
         // only create a bean if we have a default no-arg constructor
         if (beanInfo.hasPublicNoArgConstructors()) {
             Object bean = getBeanInfo().getCamelContext().getInjector().newInstance(type, false);

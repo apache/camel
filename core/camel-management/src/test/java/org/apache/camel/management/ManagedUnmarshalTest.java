@@ -66,7 +66,7 @@ public class ManagedUnmarshalTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .unmarshal(new DataFormatServiceTest.MyDataFormat()).id("mysend")
+                        .unmarshal(new DataFormatServiceTest.MyDataFormat()).id("mysend")
                         .to("mock:foo");
             }
         };

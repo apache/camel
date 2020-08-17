@@ -30,13 +30,13 @@ public class Olingo4RouteTest extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
-        return (T)template().requestBody(endpoint, body);
+        return (T) template().requestBody(endpoint, body);
     }
 
     @Test
     public void testRead() throws Exception {
         // Read entity set of the People object
-        final ClientEntitySet entities = (ClientEntitySet)requestBody("direct:readentities", null);
+        final ClientEntitySet entities = (ClientEntitySet) requestBody("direct:readentities", null);
         assertNotNull(entities);
         assertEquals(20, entities.getEntities().size());
     }

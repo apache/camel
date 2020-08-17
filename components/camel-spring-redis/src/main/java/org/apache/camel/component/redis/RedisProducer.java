@@ -25,9 +25,9 @@ import org.apache.camel.support.HeaderSelectorProducer;
 final class RedisProducer extends HeaderSelectorProducer {
 
     RedisProducer(Endpoint endpoint,
-                         String header,
-                         String defaultHeaderValue,
-                         RedisProcessorsCreator redisProcessorsCreator) {
+                  String header,
+                  String defaultHeaderValue,
+                  RedisProcessorsCreator redisProcessorsCreator) {
         super(endpoint, header, defaultHeaderValue);
 
         for (Map.Entry<Command, Processor> entry : redisProcessorsCreator.getRedisProcessors().entrySet()) {

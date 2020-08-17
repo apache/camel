@@ -48,14 +48,12 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 /**
- * A content enricher that enriches input data by first obtaining additional
- * data from a <i>resource</i> represented by an endpoint <code>producer</code>
- * and second by aggregating input data and additional data. Aggregation of
- * input data and additional data is delegated to an {@link AggregationStrategy}
- * object.
+ * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
+ * an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of input data
+ * and additional data is delegated to an {@link AggregationStrategy} object.
  * <p/>
- * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher}
- * that uses a {@link org.apache.camel.Producer}.
+ * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher} that
+ * uses a {@link org.apache.camel.Producer}.
  *
  * @see Enricher
  */
@@ -79,7 +77,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
      * Creates a new {@link PollEnricher}.
      *
      * @param expression expression to use to compute the endpoint to poll from.
-     * @param timeout timeout in millis
+     * @param timeout    timeout in millis
      */
     public PollEnricher(Expression expression, long timeout) {
         this.expression = expression;
@@ -91,7 +89,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
      * Creates a new {@link PollEnricher}.
      *
      * @param destination the endpoint to poll from.
-     * @param timeout timeout in millis
+     * @param timeout     timeout in millis
      */
     public PollEnricher(String destination, long timeout) {
         this.expression = null;
@@ -157,8 +155,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     /**
      * Sets the timeout to use when polling.
      * <p/>
-     * Use 0 to use receiveNoWait,
-     * Use -1 to use receive with no timeout (which will block until data is available).
+     * Use 0 to use receiveNoWait, Use -1 to use receive with no timeout (which will block until data is available).
      *
      * @param timeout timeout in millis.
      */
@@ -210,14 +207,11 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     }
 
     /**
-     * Enriches the input data (<code>exchange</code>) by first obtaining
-     * additional data from an endpoint represented by an endpoint
-     * <code>producer</code> and second by aggregating input data and additional
-     * data. Aggregation of input data and additional data is delegated to an
-     * {@link AggregationStrategy} object set at construction time. If the
-     * message exchange with the resource endpoint fails then no aggregation
-     * will be done and the failed exchange content is copied over to the
-     * original message exchange.
+     * Enriches the input data (<code>exchange</code>) by first obtaining additional data from an endpoint represented
+     * by an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of
+     * input data and additional data is delegated to an {@link AggregationStrategy} object set at construction time. If
+     * the message exchange with the resource endpoint fails then no aggregation will be done and the failed exchange
+     * content is copied over to the original message exchange.
      *
      * @param exchange input data.
      */
@@ -413,15 +407,16 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     }
 
     protected static Endpoint resolveEndpoint(CamelContext camelContext, Object recipient, boolean prototype) {
-        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(camelContext, recipient)
+        return prototype
+                ? ExchangeHelper.resolvePrototypeEndpoint(camelContext, recipient)
                 : ExchangeHelper.resolveEndpoint(camelContext, recipient);
     }
 
     /**
      * Strategy to pre check polling.
      * <p/>
-     * Is currently used to prevent doing poll enrich from a file based endpoint when the current route also
-     * started from a file based endpoint as that is not currently supported.
+     * Is currently used to prevent doing poll enrich from a file based endpoint when the current route also started
+     * from a file based endpoint as that is not currently supported.
      *
      * @param exchange the current exchange
      */

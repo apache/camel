@@ -69,7 +69,7 @@ public class LevelDBAggregateTimeoutCompletionRestartTest extends CamelTestSuppo
 
                 // here is the Camel route where we aggregate
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         // use our created leveldb repo as aggregation repository
                         .completionTimeout(3000).aggregationRepository(repo)
                         .to("mock:aggregated");

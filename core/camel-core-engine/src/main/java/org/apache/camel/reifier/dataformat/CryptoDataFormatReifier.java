@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.CryptoDataFormat;
 public class CryptoDataFormatReifier extends DataFormatReifier<CryptoDataFormat> {
 
     public CryptoDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (CryptoDataFormat)definition);
+        super(camelContext, (CryptoDataFormat) definition);
     }
 
     @Override

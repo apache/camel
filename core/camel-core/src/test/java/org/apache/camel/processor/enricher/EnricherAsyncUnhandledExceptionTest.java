@@ -86,14 +86,14 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in").to("mock:pickedUp")
-                    // using the async utility component to ensure that the
-                    // async routing engine kicks in
-                    .enrich("async:out?reply=Reply", new AggregationStrategy() {
-                        @Override
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            throw new RuntimeException("Bang! Unhandled exception");
-                        }
-                    });
+                        // using the async utility component to ensure that the
+                        // async routing engine kicks in
+                        .enrich("async:out?reply=Reply", new AggregationStrategy() {
+                            @Override
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                throw new RuntimeException("Bang! Unhandled exception");
+                            }
+                        });
 
             }
         };

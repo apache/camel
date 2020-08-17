@@ -29,22 +29,20 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.data.ACL;
 
 /**
- * <code>ZooKeeperUtils</code> contains static utility functions mostly for
- * retrieving optional message properties from Message headers.
+ * <code>ZooKeeperUtils</code> contains static utility functions mostly for retrieving optional message properties from
+ * Message headers.
  */
 public final class ZooKeeperUtils {
 
-    private ZooKeeperUtils() { }
-    
+    private ZooKeeperUtils() {
+    }
+
     /**
-     * Pulls a createMode flag from the header keyed by
-     * {@link ZooKeeperMessage#ZOOKEEPER_CREATE_MODE} in the given message and
-     * attempts to parse a {@link CreateMode} from it.
+     * Pulls a createMode flag from the header keyed by {@link ZooKeeperMessage#ZOOKEEPER_CREATE_MODE} in the given
+     * message and attempts to parse a {@link CreateMode} from it.
      *
-     * @param message the message that may contain a ZOOKEEPER_CREATE_MODE
-     *            header.
-     * @return the parsed {@link CreateMode} or null if the header was null or
-     *         not a valid mode flag.
+     * @param  message the message that may contain a ZOOKEEPER_CREATE_MODE header.
+     * @return         the parsed {@link CreateMode} or null if the header was null or not a valid mode flag.
      */
     public static CreateMode getCreateMode(Message message, CreateMode defaultMode) {
         CreateMode mode = null;
@@ -53,7 +51,7 @@ public final class ZooKeeperUtils {
             mode = message.getHeader(ZooKeeperMessage.ZOOKEEPER_CREATE_MODE, CreateMode.class);
         } catch (Exception e) {
         }
-        
+
         if (mode == null) {
             String modeHeader = message.getHeader(ZooKeeperMessage.ZOOKEEPER_CREATE_MODE, String.class);
             mode = getCreateModeFromString(modeHeader, defaultMode);
@@ -62,7 +60,7 @@ public final class ZooKeeperUtils {
     }
 
     public static CreateMode getCreateModeFromString(String modeHeader, CreateMode defaultMode) {
-        
+
         CreateMode mode = null;
         if (modeHeader != null) {
             try {
@@ -74,12 +72,11 @@ public final class ZooKeeperUtils {
     }
 
     /**
-     * Pulls the target node from the header keyed by
-     * {@link ZooKeeperMessage#ZOOKEEPER_NODE}. This node is then typically used
-     * in place of the configured node extracted from the endpoint uri.
+     * Pulls the target node from the header keyed by {@link ZooKeeperMessage#ZOOKEEPER_NODE}. This node is then
+     * typically used in place of the configured node extracted from the endpoint uri.
      *
-     * @param message the message that may contain a ZOOKEEPER_NODE header.
-     * @return the node property or null if the header was null
+     * @param  message the message that may contain a ZOOKEEPER_NODE header.
+     * @return         the node property or null if the header was null
      */
     public static String getNodeFromMessage(Message message, String defaultNode) {
         return getZookeeperProperty(message, ZooKeeperMessage.ZOOKEEPER_NODE, defaultNode, String.class);
@@ -109,7 +106,7 @@ public final class ZooKeeperUtils {
     public static WatchedEvent getWatchedEvent(ZooKeeperOperation<?> zooKeeperOperation) {
         WatchedEvent watchedEvent = null;
         if (zooKeeperOperation instanceof WatchedEventProvider) {
-            watchedEvent = ((WatchedEventProvider)zooKeeperOperation).getWatchedEvent();
+            watchedEvent = ((WatchedEventProvider) zooKeeperOperation).getWatchedEvent();
         }
         return watchedEvent;
     }

@@ -47,11 +47,16 @@ public class LogCustomLoggerTest extends ContextTestSupport {
         sw1 = new StringWriter();
         sw2 = new StringWriter();
 
-        ConsumingAppender.newAppender(LogCustomLoggerTest.class.getCanonicalName(), "LogCustomLoggerTest", Level.TRACE, event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender("provided.logger1.name", "logger1", Level.TRACE, event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender("provided.logger2.name", "logger2", Level.TRACE, event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender("irrelevant.logger.name", "irrelevant", Level.TRACE, event -> sw1.append(event.getLoggerName()));
-        ConsumingAppender.newAppender(LogComponent.class.getCanonicalName(), "LogComponent", Level.INFO, event -> sw2.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(LogCustomLoggerTest.class.getCanonicalName(), "LogCustomLoggerTest", Level.TRACE,
+                event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender("provided.logger1.name", "logger1", Level.TRACE,
+                event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender("provided.logger2.name", "logger2", Level.TRACE,
+                event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender("irrelevant.logger.name", "irrelevant", Level.TRACE,
+                event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(LogComponent.class.getCanonicalName(), "LogComponent", Level.INFO,
+                event -> sw2.append(event.getLoggerName()));
     }
 
     @Test

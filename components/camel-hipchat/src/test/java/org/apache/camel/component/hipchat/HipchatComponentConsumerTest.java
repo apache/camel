@@ -51,54 +51,55 @@ public class HipchatComponentConsumerTest extends CamelTestSupport {
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
         String expectedResponse = "{\n"
-                +
-                "  \"items\" : [\n"
-                +
-                "    {\n"
-                +
-                "      \"date\" : \"2015-01-19T22:07:11.030740+00:00\",\n"
-                +
-                "      \"from\" : {\n"
-                +
-                "        \"id\" : 1647095,\n"
-                +
-                "        \"links\" : {\n"
-                +
-                "          \"self\" : \"https://api.hipchat.com/v2/user/1647095\"\n"
-                +
-                "        },\n"
-                +
-                "        \"mention_name\" : \"notifier\",\n"
-                +
-                "        \"name\" : \"Message Notifier\"\n"
-                +
-                "      },\n"
-                +
-                "      \"id\" : \"6567c6f7-7c1b-43cf-bed0-792b1d092919\",\n"
-                +
-                "      \"mentions\" : [ ],\n"
-                +
-                "      \"message\" : \"Unit test Alert\",\n"
-                +
-                "      \"type\" : \"message\"\n"
-                +
-                "    }\n"
-                +
-                "  ],\n"
-                +
-                "  \"links\" : {\n"
-                +
-                "    \"self\" : \"https://api.hipchat.com/v2/user/%40ShreyasPurohit/history/latest\"\n"
-                +
-                "  },\n"
-                +
-                "  \"maxResults\" : 1,\n"
-                +
-                "  \"startIndex\" : 0\n"
-                +
-                "}";
+                                  +
+                                  "  \"items\" : [\n"
+                                  +
+                                  "    {\n"
+                                  +
+                                  "      \"date\" : \"2015-01-19T22:07:11.030740+00:00\",\n"
+                                  +
+                                  "      \"from\" : {\n"
+                                  +
+                                  "        \"id\" : 1647095,\n"
+                                  +
+                                  "        \"links\" : {\n"
+                                  +
+                                  "          \"self\" : \"https://api.hipchat.com/v2/user/1647095\"\n"
+                                  +
+                                  "        },\n"
+                                  +
+                                  "        \"mention_name\" : \"notifier\",\n"
+                                  +
+                                  "        \"name\" : \"Message Notifier\"\n"
+                                  +
+                                  "      },\n"
+                                  +
+                                  "      \"id\" : \"6567c6f7-7c1b-43cf-bed0-792b1d092919\",\n"
+                                  +
+                                  "      \"mentions\" : [ ],\n"
+                                  +
+                                  "      \"message\" : \"Unit test Alert\",\n"
+                                  +
+                                  "      \"type\" : \"message\"\n"
+                                  +
+                                  "    }\n"
+                                  +
+                                  "  ],\n"
+                                  +
+                                  "  \"links\" : {\n"
+                                  +
+                                  "    \"self\" : \"https://api.hipchat.com/v2/user/%40ShreyasPurohit/history/latest\"\n"
+                                  +
+                                  "  },\n"
+                                  +
+                                  "  \"maxResults\" : 1,\n"
+                                  +
+                                  "  \"startIndex\" : 0\n"
+                                  +
+                                  "}";
         HttpEntity mockHttpEntity = mock(HttpEntity.class);
-        when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(expectedResponse.getBytes(StandardCharsets.UTF_8)));
+        when(mockHttpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(expectedResponse.getBytes(StandardCharsets.UTF_8)));
         when(closeableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
         when(closeableHttpResponse.getStatusLine()).thenReturn(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, ""));
 
@@ -112,54 +113,55 @@ public class HipchatComponentConsumerTest extends CamelTestSupport {
     public void sendInOnlyMultipleUsers() throws Exception {
         result.expectedMessageCount(1);
         String expectedResponse = "{\n"
-                +
-                "  \"items\" : [\n"
-                +
-                "    {\n"
-                +
-                "      \"date\" : \"2015-01-19T22:07:11.030740+00:00\",\n"
-                +
-                "      \"from\" : {\n"
-                +
-                "        \"id\" : 1647095,\n"
-                +
-                "        \"links\" : {\n"
-                +
-                "          \"self\" : \"https://api.hipchat.com/v2/user/1647095\"\n"
-                +
-                "        },\n"
-                +
-                "        \"mention_name\" : \"notifier\",\n"
-                +
-                "        \"name\" : \"Message Notifier\"\n"
-                +
-                "      },\n"
-                +
-                "      \"id\" : \"6567c6f7-7c1b-43cf-bed0-792b1d092919\",\n"
-                +
-                "      \"mentions\" : [ ],\n"
-                +
-                "      \"message\" : \"Unit test Alert\",\n"
-                +
-                "      \"type\" : \"message\"\n"
-                +
-                "    }\n"
-                +
-                "  ],\n"
-                +
-                "  \"links\" : {\n"
-                +
-                "    \"self\" : \"https://api.hipchat.com/v2/user/%40ShreyasPurohit/history/latest\"\n"
-                +
-                "  },\n"
-                +
-                "  \"maxResults\" : 1,\n"
-                +
-                "  \"startIndex\" : 0\n"
-                +
-                "}";
+                                  +
+                                  "  \"items\" : [\n"
+                                  +
+                                  "    {\n"
+                                  +
+                                  "      \"date\" : \"2015-01-19T22:07:11.030740+00:00\",\n"
+                                  +
+                                  "      \"from\" : {\n"
+                                  +
+                                  "        \"id\" : 1647095,\n"
+                                  +
+                                  "        \"links\" : {\n"
+                                  +
+                                  "          \"self\" : \"https://api.hipchat.com/v2/user/1647095\"\n"
+                                  +
+                                  "        },\n"
+                                  +
+                                  "        \"mention_name\" : \"notifier\",\n"
+                                  +
+                                  "        \"name\" : \"Message Notifier\"\n"
+                                  +
+                                  "      },\n"
+                                  +
+                                  "      \"id\" : \"6567c6f7-7c1b-43cf-bed0-792b1d092919\",\n"
+                                  +
+                                  "      \"mentions\" : [ ],\n"
+                                  +
+                                  "      \"message\" : \"Unit test Alert\",\n"
+                                  +
+                                  "      \"type\" : \"message\"\n"
+                                  +
+                                  "    }\n"
+                                  +
+                                  "  ],\n"
+                                  +
+                                  "  \"links\" : {\n"
+                                  +
+                                  "    \"self\" : \"https://api.hipchat.com/v2/user/%40ShreyasPurohit/history/latest\"\n"
+                                  +
+                                  "  },\n"
+                                  +
+                                  "  \"maxResults\" : 1,\n"
+                                  +
+                                  "  \"startIndex\" : 0\n"
+                                  +
+                                  "}";
         HttpEntity mockHttpEntity = mock(HttpEntity.class);
-        when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(expectedResponse.getBytes(StandardCharsets.UTF_8)));
+        when(mockHttpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(expectedResponse.getBytes(StandardCharsets.UTF_8)));
         when(closeableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
         when(closeableHttpResponse.getStatusLine()).thenReturn(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, ""));
 

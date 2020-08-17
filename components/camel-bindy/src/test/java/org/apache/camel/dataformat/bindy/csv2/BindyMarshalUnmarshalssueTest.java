@@ -44,7 +44,7 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         WeatherModel model = mock.getReceivedExchanges().get(0).getIn().getBody(WeatherModel.class);
-        
+
         assertEquals(123, model.getId());
         assertEquals("Wednesday November 9 2011", model.getDate());
         assertEquals("Central California", model.getPlace());
@@ -56,12 +56,12 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
-                    .to("direct:middle");
+                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .to("direct:middle");
 
                 from("direct:middle")
-                    .unmarshal(new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.csv2.WeatherModel.class))
-                    .to("mock:result");
+                        .unmarshal(new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.csv2.WeatherModel.class))
+                        .to("mock:result");
             }
         };
     }

@@ -88,7 +88,8 @@ public class ChoiceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when().xpath("$foo = 'bar'").to("mock:x").when().xpath("$foo = 'cheese'").to("mock:y").otherwise().to("mock:z").end().to("mock:end");
+                from("direct:start").choice().when().xpath("$foo = 'bar'").to("mock:x").when().xpath("$foo = 'cheese'")
+                        .to("mock:y").otherwise().to("mock:z").end().to("mock:end");
             }
         };
     }

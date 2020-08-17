@@ -17,8 +17,7 @@
 package org.apache.camel.spi;
 
 /**
- * A plugin used to mask a log String, for example security information
- * like password or passphrase.
+ * A plugin used to mask a log String, for example security information like password or passphrase.
  */
 public interface MaskingFormatter {
 
@@ -27,8 +26,8 @@ public interface MaskingFormatter {
     /**
      * Format a given string.
      *
-     * @param source the source string
-     * @return formatted string
+     * @param  source the source string
+     * @return        formatted string
      */
     String format(String source);
 }

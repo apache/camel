@@ -229,10 +229,10 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
      * <p/>
      * This implementation will skip trying to validate OGNL method name expressions.
      *
-     * @param context  camel context
-     * @param bean     the bean instance
-     * @param type     the bean type
-     * @param method   the method, can be <tt>null</tt> if no method name provided
+     * @param  context                                camel context
+     * @param  bean                                   the bean instance
+     * @param  type                                   the bean type
+     * @param  method                                 the method, can be <tt>null</tt> if no method name provided
      * @throws org.apache.camel.RuntimeCamelException is thrown if bean does not have the method
      */
     protected void validateHasMethod(CamelContext context, Object bean, Class<?> type, String method) {
@@ -256,7 +256,8 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         // if invalid OGNL then fail
         if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
             ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
-            throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
+            throw RuntimeCamelException
+                    .wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
         }
 
         if (bean != null) {
@@ -293,15 +294,16 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         if (name == null && beanHolder != null && beanHolder.getBean(exchange) != null) {
             name = beanHolder.getBean(exchange).getClass().getCanonicalName();
         }
-        if (name == null && beanHolder != null && beanHolder.getBeanInfo() != null && beanHolder.getBeanInfo().getType() != null) {
+        if (name == null && beanHolder != null && beanHolder.getBeanInfo() != null
+                && beanHolder.getBeanInfo().getType() != null) {
             name = beanHolder.getBeanInfo().getType().getCanonicalName();
         }
         return name;
     }
 
     /**
-     * Invokes the bean and returns the result. If an exception was thrown while invoking the bean, then the
-     * exception is set on the exchange.
+     * Invokes the bean and returns the result. If an exception was thrown while invoking the bean, then the exception
+     * is set on the exchange.
      */
     private static Object invokeBean(BeanHolder beanHolder, String beanName, String methodName, Exchange exchange) {
         Object result;
@@ -346,8 +348,8 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
     /**
      * To invoke a bean using a OGNL notation which denotes the chain of methods to invoke.
      * <p/>
-     * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic
-     * programming language such as Groovy.
+     * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic programming
+     * language such as Groovy.
      */
     private static Object invokeOgnlMethod(BeanHolder beanHolder, String beanName, String ognl, Exchange exchange) {
 
@@ -373,7 +375,8 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
 
         // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
         if (beanToCall == null && beanType == null) {
-            throw new IllegalArgumentException("Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
+            throw new IllegalArgumentException(
+                    "Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
         }
 
         if (ognl != null) {
@@ -400,7 +403,9 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
 
             if (holder == null) {
                 String name = getBeanName(exchange, null, beanHolder);
-                throw new RuntimeBeanExpressionException(exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method " + methodName + " on a null instance");
+                throw new RuntimeBeanExpressionException(
+                        exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method "
+                                              + methodName + " on a null instance");
             }
 
             // keep up with how far are we doing
@@ -454,7 +459,8 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         return result;
     }
 
-    private static Object lookupResult(Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
+    private static Object lookupResult(
+            Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
         StringHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
 
         // trim key
@@ -495,15 +501,19 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
                 }
                 if (!nullSafe) {
                     // not null safe then its mandatory so thrown out of bounds exception
-                    throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
-                            + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");
+                    throw new IndexOutOfBoundsException(
+                            "Index: " + num + ", Size: " + list.size()
+                                                        + " out of bounds with List from bean: " + bean + "using OGNL path ["
+                                                        + ognlPath + "]");
                 }
             }
         }
 
         if (!nullSafe) {
-            throw new IndexOutOfBoundsException("Key: " + key + " not found in bean: " + bean + " of type: "
-                    + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath + "]");
+            throw new IndexOutOfBoundsException(
+                    "Key: " + key + " not found in bean: " + bean + " of type: "
+                                                + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
+                                                + "]");
         } else {
             // null safe so we can return null
             return null;
