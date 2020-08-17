@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.util.ReflectionHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -101,6 +102,11 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 setJavaType(type.getName());
             }
             setGetterMethod(getter);
+        }
+
+        public void setNestedType(String nestedType) {
+            // trick to use deprecation note for nested type
+            setDeprecationNote(nestedType);
         }
     }
 
@@ -303,9 +309,12 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                         // ignore as its then assumed to be get
                     }
                 }
+
+                Option option = null;
                 String t = Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
                 if (names.add(t)) {
-                    answer.add(new Option(t, type, getter));
+                    option = new Option(t, type, getter);
+                    answer.add(option);
                 } else {
                     boolean replace = false;
                     // try to find out what the real type is of the correspondent field so we chose among the clash
@@ -316,7 +325,25 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     }
                     if (replace) {
                         answer.removeIf(o -> o.getName().equals(t));
-                        answer.add(new Option(t, type, getter));
+                        option = new Option(t, type, getter);
+                        answer.add(option);
+                    }
+                }
+
+                if (option != null) {
+                    String desc = type.isArray() ? type.getComponentType().getName() : m.toGenericString();
+                    if (desc.contains("<") && desc.contains(">")) {
+                        desc = Strings.between(desc, "<", ">");
+                        // if its a map then it has a key/value, so we only want the last part
+                        int pos = desc.indexOf(',');
+                        if (pos != -1) {
+                            desc = desc.substring(pos + 1);
+                        }
+                        desc = desc.replace('$', '.');
+                        desc = desc.trim();
+                        if (!desc.isEmpty()) {
+                            option.setNestedType(desc);
+                        }
                     }
                 }
             }

@@ -176,5 +176,24 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiproperties":
+        case "ApiProperties": return java.lang.Object.class;
+        case "componentproperties":
+        case "ComponentProperties": return java.lang.Object.class;
+        case "consumerproperties":
+        case "ConsumerProperties": return java.lang.Object.class;
+        case "corsheaders":
+        case "CorsHeaders": return java.lang.String.class;
+        case "dataformatproperties":
+        case "DataFormatProperties": return java.lang.Object.class;
+        case "endpointproperties":
+        case "EndpointProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 
