@@ -55,34 +55,27 @@ public class EventHubsProducerOperations {
     }
 
     private boolean sendAsyncEvents(final Iterable<EventData> eventData, final SendOptions sendOptions, final Exchange exchange, final AsyncCallback asyncCallback) {
-        sendAsyncEventsWithSuitableMethod(eventData, sendOptions, asyncCallback)
+        sendAsyncEventsWithSuitableMethod(eventData, sendOptions)
                 .subscribe(unused -> LOG.debug("Processed one event..."), error -> {
                     // error but we continue
                     LOG.debug("Error processing async exchange with error:" + error.getMessage());
                     exchange.setException(error);
+                    asyncCallback.done(false);
                 }, () -> {
                     // we are done from everything, so mark it as sync done
                     LOG.debug("All events with exchange have been sent successfully.");
+                    asyncCallback.done(false);
                 });
 
         return false;
     }
 
-    private Mono<Void> sendAsyncEventsWithSuitableMethod(final Iterable<EventData> eventData, final SendOptions sendOptions,
-                                                         final AsyncCallback asyncCallback) {
-        final Mono<Void> deferredSendResult;
-
+    private Mono<Void> sendAsyncEventsWithSuitableMethod(final Iterable<EventData> eventData, final SendOptions sendOptions) {
         if (ObjectHelper.isEmpty(sendOptions)) {
-            deferredSendResult = producerAsyncClient.send(eventData);
-        } else {
-            deferredSendResult = producerAsyncClient.send(eventData, sendOptions);
+            return producerAsyncClient.send(eventData);
         }
 
-        // call callback on false since this process is running on the scheduler method of reactor and not needed
-        // to have callback to returns true. Also false, will tell camel async to watch method to which it returns
-        asyncCallback.done(false);
-
-        return deferredSendResult;
+        return producerAsyncClient.send(eventData, sendOptions);
     }
 
     private SendOptions createSendOptions(final String partitionKey, final String partitionId) {
