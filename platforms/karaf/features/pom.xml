@@ -30,8 +30,10 @@
   <artifactId>apache-camel</artifactId>
   <packaging>pom</packaging>
   <name>Camel :: Platforms :: Apache Karaf :: Features</name>
+  <version>${revision}</version>
 
   <properties>
+    <revision>${apache-camel.features.tesb.version}</revision>
     <features.file>features.xml</features.file>
   </properties>
 

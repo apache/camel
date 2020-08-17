@@ -41,6 +41,7 @@
 
   <properties>
     <upstream.version>2.25.2</upstream.version>
+    <apache-camel.features.tesb.version>2.25.2.tesb1</apache-camel.features.tesb.version>
 
     <!-- enforce to require using at least this maven version -->
     <maven-enforcer-require-maven-version>3.2.5</maven-enforcer-require-maven-version>
@@ -211,6 +212,7 @@
               <!-- something like :
               <my.custom.property>${my.custom.property}</my.custom.property>
               -->
+              <apache-camel.features.tesb.version>${apache-camel.features.tesb.version}</apache-camel.features.tesb.version>
             </properties>
           </configuration>
           <executions>
