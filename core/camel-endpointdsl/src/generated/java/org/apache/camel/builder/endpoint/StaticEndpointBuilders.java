@@ -2519,6 +2519,59 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure Event Hubs (camel-azure-eventhubs)
+     * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
+     * protocol. Azure EventHubs is a highly scalable publish-subscribe service
+     * that can ingest millions of events per second and stream them to multiple
+     * consumers.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     * 
+     * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
+     * 
+     * Path parameter: namespace
+     * EventHubs namespace created in Azure Portal
+     * 
+     * Path parameter: eventHubName
+     * EventHubs name under a specific namcespace
+     * 
+     * @param path namespace/eventHubName
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder("azure-eventhubs", path);
+    }
+    /**
+     * Azure Event Hubs (camel-azure-eventhubs)
+     * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
+     * protocol. Azure EventHubs is a highly scalable publish-subscribe service
+     * that can ingest millions of events per second and stream them to multiple
+     * consumers.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     * 
+     * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
+     * 
+     * Path parameter: namespace
+     * EventHubs namespace created in Azure Portal
+     * 
+     * Path parameter: eventHubName
+     * EventHubs name under a specific namcespace
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path namespace/eventHubName
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Storage Queue Service (Deprecated) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 

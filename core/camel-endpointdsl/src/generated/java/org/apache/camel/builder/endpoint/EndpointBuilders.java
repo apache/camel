@@ -112,6 +112,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory,
