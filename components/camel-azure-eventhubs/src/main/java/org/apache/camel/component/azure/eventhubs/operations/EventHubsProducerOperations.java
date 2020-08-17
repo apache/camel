@@ -17,7 +17,6 @@
 package org.apache.camel.component.azure.eventhubs.operations;
 
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
@@ -56,36 +55,34 @@ public class EventHubsProducerOperations {
     }
 
     private boolean sendAsyncEvents(final Iterable<EventData> eventData, final SendOptions sendOptions, final Exchange exchange, final AsyncCallback asyncCallback) {
-        final AtomicBoolean done = new AtomicBoolean(false);
-
-        sendAsyncEventsWithSuitableMethod(eventData, sendOptions)
-                .subscribe(unused -> {
-                    // we finished only with one event, keep async check
-                    LOG.debug("Processed one event...");
-                    asyncCallback.done(false);
-                    done.set(false);
-                }, error -> {
+        sendAsyncEventsWithSuitableMethod(eventData, sendOptions, asyncCallback)
+                .subscribe(unused -> LOG.debug("Processed one event..."), error -> {
                     // error but we continue
                     LOG.debug("Error processing async exchange with error:" + error.getMessage());
                     exchange.setException(error);
-                    asyncCallback.done(false);
-                    done.set(false);
                 }, () -> {
                     // we are done from everything, so mark it as sync done
                     LOG.debug("All events with exchange have been sent successfully.");
-                    asyncCallback.done(true);
-                    done.set(true);
                 });
 
-        return done.get();
+        return false;
     }
 
-    private Mono<Void> sendAsyncEventsWithSuitableMethod(final Iterable<EventData> eventData, final SendOptions sendOptions) {
+    private Mono<Void> sendAsyncEventsWithSuitableMethod(final Iterable<EventData> eventData, final SendOptions sendOptions,
+                                                         final AsyncCallback asyncCallback) {
+        final Mono<Void> deferredSendResult;
+
         if (ObjectHelper.isEmpty(sendOptions)) {
-            return producerAsyncClient.send(eventData);
+            deferredSendResult = producerAsyncClient.send(eventData);
+        } else {
+            deferredSendResult = producerAsyncClient.send(eventData, sendOptions);
         }
 
-        return producerAsyncClient.send(eventData, sendOptions);
+        // call callback on false since this process is running on the scheduler method of reactor and not needed
+        // to have callback to returns true. Also false, will tell camel async to watch method to which it returns
+        asyncCallback.done(false);
+
+        return deferredSendResult;
     }
 
     private SendOptions createSendOptions(final String partitionKey, final String partitionId) {

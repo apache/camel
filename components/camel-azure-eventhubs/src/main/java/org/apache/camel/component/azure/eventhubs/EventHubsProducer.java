@@ -58,8 +58,10 @@ public class EventHubsProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        // shutdown async client
-        producerAsyncClient.close();
+        if (producerAsyncClient != null) {
+            // shutdown async client
+            producerAsyncClient.close();
+        }
 
         super.doStop();
     }

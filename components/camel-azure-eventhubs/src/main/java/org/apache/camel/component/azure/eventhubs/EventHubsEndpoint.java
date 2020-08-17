@@ -52,7 +52,10 @@ public class EventHubsEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EventHubsConsumer(this, processor);
+        final Consumer eventHubConsumer = new EventHubsConsumer(this, processor);
+        configureConsumer(eventHubConsumer);
+
+        return eventHubConsumer;
     }
 
     /**

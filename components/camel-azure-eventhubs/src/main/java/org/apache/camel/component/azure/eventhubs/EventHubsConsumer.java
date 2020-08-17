@@ -53,8 +53,10 @@ public class EventHubsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        // shutdown the client
-        processorClient.stop();
+        if (processorClient != null) {
+            // shutdown the client
+            processorClient.stop();
+        }
 
         // shutdown camel consumer
         super.doStop();

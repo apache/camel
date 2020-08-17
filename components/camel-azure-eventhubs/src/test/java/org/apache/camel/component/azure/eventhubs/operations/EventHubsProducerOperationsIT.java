@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.azure.eventhubs.operations;
 
+import java.time.Duration;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeUnit;
 
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
 import com.azure.messaging.eventhubs.EventHubConsumerAsyncClient;
@@ -35,9 +36,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsProducerOperationsIT extends CamelTestSupport {
 
@@ -53,48 +51,34 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testSendSingleEventAsAsync() {
-        final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
-        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
-        final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody("test");
-
-        AtomicBoolean doneFlag = new AtomicBoolean(false);
-
-        operations.sendEvents(exchange, doneFlag::set);
-
-        Awaitility.await()
-                .untilTrue(doneFlag);
-
-        producerAsyncClient.close();
-    }
-
-    @Test
     public void testSendEventWithSpecificPartition() {
         final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
         final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final EventHubConsumerAsyncClient consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
         final Exchange exchange = new DefaultExchange(context);
 
         exchange.getIn().setHeader(EventHubsConstants.PARTITION_ID, firstPartition);
         exchange.getIn().setBody("test should be in firstPartition");
 
-        AtomicBoolean doneFlag = new AtomicBoolean(false);
-
-        operations.sendEvents(exchange, doneFlag::set);
+        operations.sendEvents(exchange, doneSync -> { });
 
         Awaitility.await()
-                .untilTrue(doneFlag);
+                .atMost(30, TimeUnit.SECONDS)
+                .pollDelay(Duration.ofSeconds(2))
+                .pollInterval(Duration.ofSeconds(2))
+                .until(() -> {
+                    final Boolean eventExists = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
+                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition) && partitionEvent.getData().getBodyAsString()
+                                    .contains("test should be in firstPartition"))
+                            .block();
 
-        final EventHubConsumerAsyncClient consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
+                    if (eventExists == null) {
+                        return false;
+                    }
 
-        final Boolean eventExists = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
-                .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition) && partitionEvent.getData().getBodyAsString()
-                        .contains("test should be in firstPartition"))
-                .block();
-
-        assertNotNull(eventExists);
-        assertTrue(eventExists);
+                    return eventExists;
+                });
 
         producerAsyncClient.close();
         consumerAsyncClient.close();
