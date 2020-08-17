@@ -121,7 +121,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     static {
         // NOTE: if adding a new class then update the initial capacity of the
         // HashMap
-        Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map = new HashMap<>(65);
+        Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map
+                = new HashMap<>(65);
         map.put(AggregateDefinition.class, AggregateReifier::new);
         map.put(BeanDefinition.class, BeanReifier::new);
         map.put(CatchDefinition.class, CatchReifier::new);
@@ -203,7 +204,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<?> processorClass, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
+    public static void registerReifier(
+            Class<?> processorClass,
+            BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
         PROCESSORS.put(processorClass, creator);
     }
 
@@ -212,7 +215,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(Route route, ProcessorDefinition<?> definition) {
-        BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier = PROCESSORS.get(definition.getClass());
+        BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier
+                = PROCESSORS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(route, definition);
         }
@@ -222,16 +226,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Determines whether a new thread pool will be created or not.
      * <p/>
-     * This is used to know if a new thread pool will be created, and therefore
-     * is not shared by others, and therefore exclusive to the definition.
+     * This is used to know if a new thread pool will be created, and therefore is not shared by others, and therefore
+     * exclusive to the definition.
      *
-     * @param definition the node definition which may leverage executor
-     *            service.
-     * @param useDefault whether to fallback and use a default thread pool, if
-     *            no explicit configured
-     * @return <tt>true</tt> if a new thread pool will be created,
-     *         <tt>false</tt> if not
-     * @see #getConfiguredExecutorService(String, ExecutorServiceAwareDefinition, boolean)
+     * @param  definition the node definition which may leverage executor service.
+     * @param  useDefault whether to fallback and use a default thread pool, if no explicit configured
+     * @return            <tt>true</tt> if a new thread pool will be created, <tt>false</tt> if not
+     * @see               #getConfiguredExecutorService(String, ExecutorServiceAwareDefinition, boolean)
      */
     public boolean willCreateNewThreadPool(ExecutorServiceAwareDefinition<?> definition, boolean useDefault) {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
@@ -253,35 +254,29 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Will lookup and get the configured
-     * {@link ExecutorService} from the given definition.
+     * Will lookup and get the configured {@link ExecutorService} from the given definition.
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
      * <li>from the definition if any explicit configured executor service.</li>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
-     * ThreadPoolProfile(s)}.</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
      * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
-     * The various {@link ExecutorServiceAwareDefinition} should use this helper
-     * method to ensure they support configured executor services in the same
-     * coherent way.
+     * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
+     * configured executor services in the same coherent way.
      *
-     * @param name name which is appended to the thread name, when the
-     *            {@link ExecutorService} is created based
-     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param definition the node definition which may leverage executor
-     *            service.
-     * @param useDefault whether to fallback and use a default thread pool, if
-     *            no explicit configured
-     * @return the configured executor service, or <tt>null</tt> if none was
-     *         configured.
-     * @throws IllegalArgumentException is thrown if lookup of executor service
-     *             in {@link org.apache.camel.spi.Registry} was not found
+     * @param  name                     name which is appended to the thread name, when the {@link ExecutorService} is
+     *                                  created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param  definition               the node definition which may leverage executor service.
+     * @param  useDefault               whether to fallback and use a default thread pool, if no explicit configured
+     * @return                          the configured executor service, or <tt>null</tt> if none was configured.
+     * @throws IllegalArgumentException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry}
+     *                                  was not found
      */
-    public ExecutorService getConfiguredExecutorService(String name, ExecutorServiceAwareDefinition<?> definition, boolean useDefault)
-        throws IllegalArgumentException {
+    public ExecutorService getConfiguredExecutorService(
+            String name, ExecutorServiceAwareDefinition<?> definition, boolean useDefault)
+            throws IllegalArgumentException {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
 
@@ -290,9 +285,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return definition.getExecutorService();
         } else if (definition.getExecutorServiceRef() != null) {
             // lookup in registry first and use existing thread pool if exists
-            ExecutorService answer = lookupExecutorServiceRef(name, definition, parseString(definition.getExecutorServiceRef()));
+            ExecutorService answer
+                    = lookupExecutorServiceRef(name, definition, parseString(definition.getExecutorServiceRef()));
             if (answer == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef()
+                throw new IllegalArgumentException(
+                        "ExecutorServiceRef " + definition.getExecutorServiceRef()
                                                    + " not found in registry (as an ExecutorService instance) or as a thread pool profile.");
             }
             return answer;
@@ -304,38 +301,32 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Will lookup and get the configured
-     * {@link java.util.concurrent.ScheduledExecutorService} from the given
+     * Will lookup and get the configured {@link java.util.concurrent.ScheduledExecutorService} from the given
      * definition.
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
      * <li>from the definition if any explicit configured executor service.</li>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
-     * ThreadPoolProfile(s)}.</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
      * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
-     * The various {@link ExecutorServiceAwareDefinition} should use this helper
-     * method to ensure they support configured executor services in the same
-     * coherent way.
+     * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
+     * configured executor services in the same coherent way.
      *
-     * @param name name which is appended to the thread name, when the
-     *            {@link ExecutorService} is created based
-     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param definition the node definition which may leverage executor
-     *            service.
-     * @param useDefault whether to fallback and use a default thread pool, if
-     *            no explicit configured
-     * @return the configured executor service, or <tt>null</tt> if none was
-     *         configured.
-     * @throws IllegalArgumentException is thrown if the found instance is not a
-     *             ScheduledExecutorService type, or lookup of executor service
-     *             in {@link org.apache.camel.spi.Registry} was not found
+     * @param  name                     name which is appended to the thread name, when the {@link ExecutorService} is
+     *                                  created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param  definition               the node definition which may leverage executor service.
+     * @param  useDefault               whether to fallback and use a default thread pool, if no explicit configured
+     * @return                          the configured executor service, or <tt>null</tt> if none was configured.
+     * @throws IllegalArgumentException is thrown if the found instance is not a ScheduledExecutorService type, or
+     *                                  lookup of executor service in {@link org.apache.camel.spi.Registry} was not
+     *                                  found
      */
-    public ScheduledExecutorService getConfiguredScheduledExecutorService(String name, ExecutorServiceAwareDefinition<?> definition,
-                                                                                 boolean useDefault)
-        throws IllegalArgumentException {
+    public ScheduledExecutorService getConfiguredScheduledExecutorService(
+            String name, ExecutorServiceAwareDefinition<?> definition,
+            boolean useDefault)
+            throws IllegalArgumentException {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
 
@@ -343,13 +334,17 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (definition.getExecutorService() != null) {
             ExecutorService executorService = definition.getExecutorService();
             if (executorService instanceof ScheduledExecutorService) {
-                return (ScheduledExecutorService)executorService;
+                return (ScheduledExecutorService) executorService;
             }
-            throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " is not an ScheduledExecutorService instance");
+            throw new IllegalArgumentException(
+                    "ExecutorServiceRef " + definition.getExecutorServiceRef()
+                                               + " is not an ScheduledExecutorService instance");
         } else if (definition.getExecutorServiceRef() != null) {
-            ScheduledExecutorService answer = lookupScheduledExecutorServiceRef(name, definition, definition.getExecutorServiceRef());
+            ScheduledExecutorService answer
+                    = lookupScheduledExecutorServiceRef(name, definition, definition.getExecutorServiceRef());
             if (answer == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef()
+                throw new IllegalArgumentException(
+                        "ExecutorServiceRef " + definition.getExecutorServiceRef()
                                                    + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
             }
             return answer;
@@ -361,24 +356,21 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Will lookup in {@link org.apache.camel.spi.Registry} for a
-     * {@link ScheduledExecutorService} registered with the given
-     * <tt>executorServiceRef</tt> name.
+     * Will lookup in {@link org.apache.camel.spi.Registry} for a {@link ScheduledExecutorService} registered with the
+     * given <tt>executorServiceRef</tt> name.
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
-     * ThreadPoolProfile(s)}.</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
      * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
      *
-     * @param name name which is appended to the thread name, when the
-     *            {@link ExecutorService} is created based
-     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param source the source to use the thread pool
-     * @param executorServiceRef reference name of the thread pool
-     * @return the executor service, or <tt>null</tt> if none was found.
+     * @param  name               name which is appended to the thread name, when the {@link ExecutorService} is created
+     *                            based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param  source             the source to use the thread pool
+     * @param  executorServiceRef reference name of the thread pool
+     * @return                    the executor service, or <tt>null</tt> if none was found.
      */
     public ScheduledExecutorService lookupScheduledExecutorServiceRef(String name, Object source, String executorServiceRef) {
 
@@ -397,24 +389,21 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Will lookup in {@link org.apache.camel.spi.Registry} for a
-     * {@link ExecutorService} registered with the given
+     * Will lookup in {@link org.apache.camel.spi.Registry} for a {@link ExecutorService} registered with the given
      * <tt>executorServiceRef</tt> name.
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
-     * ThreadPoolProfile(s)}.</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
      * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
      *
-     * @param name name which is appended to the thread name, when the
-     *            {@link ExecutorService} is created based
-     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param source the source to use the thread pool
-     * @param executorServiceRef reference name of the thread pool
-     * @return the executor service, or <tt>null</tt> if none was found.
+     * @param  name               name which is appended to the thread name, when the {@link ExecutorService} is created
+     *                            based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param  source             the source to use the thread pool
+     * @param  executorServiceRef reference name of the thread pool
+     * @return                    the executor service, or <tt>null</tt> if none was found.
      */
     public ExecutorService lookupExecutorServiceRef(String name, Object source, String executorServiceRef) {
 
@@ -435,16 +424,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Is there any outputs in the given list.
      * <p/>
-     * Is used for check if the route output has any real outputs (non
-     * abstracts)
+     * Is used for check if the route output has any real outputs (non abstracts)
      *
-     * @param outputs the outputs
-     * @param excludeAbstract whether or not to exclude abstract outputs (e.g.
-     *            skip onException etc.)
-     * @return <tt>true</tt> if has outputs, otherwise <tt>false</tt> is
-     *         returned
+     * @param  outputs         the outputs
+     * @param  excludeAbstract whether or not to exclude abstract outputs (e.g. skip onException etc.)
+     * @return                 <tt>true</tt> if has outputs, otherwise <tt>false</tt> is returned
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public boolean hasOutputs(List<ProcessorDefinition<?>> outputs, boolean excludeAbstract) {
         if (outputs == null || outputs.isEmpty()) {
             return false;
@@ -466,8 +452,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Override this in definition class and implement logic to create the
-     * processor based on the definition model.
+     * Override this in definition class and implement logic to create the processor based on the definition model.
      */
     public abstract Processor createProcessor() throws Exception;
 
@@ -482,18 +467,17 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Creates the child processor (outputs) from the current definition
      *
-     * @param mandatory whether or not children is mandatory (ie the definition
-     *            should have outputs)
-     * @return the created children, or <tt>null</tt> if definition had no
-     *         output
-     * @throws Exception is thrown if error creating the child or if it was
-     *             mandatory and there was no output defined on definition
+     * @param  mandatory whether or not children is mandatory (ie the definition should have outputs)
+     * @return           the created children, or <tt>null</tt> if definition had no output
+     * @throws Exception is thrown if error creating the child or if it was mandatory and there was no output defined on
+     *                   definition
      */
     protected Processor createChildProcessor(boolean mandatory) throws Exception {
         Processor children = null;
         // at first use custom factory
         if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            children = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createChildProcessor(route, definition, mandatory);
+            children = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createChildProcessor(route,
+                    definition, mandatory);
         }
         // fallback to default implementation if factory did not create the
         // child
@@ -529,13 +513,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Wraps the child processor in whatever necessary interceptors and error
-     * handlers
+     * Wraps the child processor in whatever necessary interceptors and error handlers
      */
     public Channel wrapProcessor(Processor processor) throws Exception {
         // don't double wrap
         if (processor instanceof Channel) {
-            return (Channel)processor;
+            return (Channel) processor;
         }
         return wrapChannel(processor, null);
     }
@@ -544,7 +527,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return wrapChannel(processor, child, definition.isInheritErrorHandler());
     }
 
-    protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
+    protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler)
+            throws Exception {
         // put a channel in between this and each output to control the route
         // flow logic
         DefaultChannel channel = new DefaultChannel(camelContext);
@@ -587,23 +571,26 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         boolean wrap = false;
         // set the error handler, must be done after init as we can set the
         // error handler as first in the chain
-        if (definition instanceof TryDefinition || definition instanceof CatchDefinition || definition instanceof FinallyDefinition) {
+        if (definition instanceof TryDefinition || definition instanceof CatchDefinition
+                || definition instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it
             // will handle errors itself
             log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
         } else if (ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, definition, true)
-                   || ProcessorDefinitionHelper.isParentOfType(CatchDefinition.class, definition, true)
-                   || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, definition, true)) {
+                || ProcessorDefinitionHelper.isParentOfType(CatchDefinition.class, definition, true)
+                || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, definition, true)) {
             // do not use error handler for try .. catch .. finally blocks as it
             // will handle errors itself
             // by checking that any of our parent(s) is not a try .. catch or
             // finally type
             log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
-        } else if (definition instanceof OnExceptionDefinition || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, definition, true)) {
+        } else if (definition instanceof OnExceptionDefinition
+                || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, definition, true)) {
             log.trace("{} is part of OnException so no error handler is applied", definition);
             // do not use error handler for onExceptions blocks as it will
             // handle errors itself
-        } else if (definition instanceof CircuitBreakerDefinition || ProcessorDefinitionHelper.isParentOfType(CircuitBreakerDefinition.class, definition, true)) {
+        } else if (definition instanceof CircuitBreakerDefinition
+                || ProcessorDefinitionHelper.isParentOfType(CircuitBreakerDefinition.class, definition, true)) {
             // do not use error handler for circuit breaker
             // however if inherit error handler is enabled, we need to wrap an error handler on the parent
             if (inheritErrorHandler != null && inheritErrorHandler && child == null) {
@@ -617,13 +604,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an
             // error handler on the multicast parent
-            MulticastDefinition def = (MulticastDefinition)definition;
+            MulticastDefinition def = (MulticastDefinition) definition;
             boolean isShareUnitOfWork = parseBoolean(def.getShareUnitOfWork(), false);
             if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrap = true;
             } else {
-                log.trace("{} is part of multicast which have special error handling so no error handler is applied", definition);
+                log.trace("{} is part of multicast which have special error handling so no error handler is applied",
+                        definition);
             }
         } else {
             // use error handler by default or if configured to do so
@@ -643,9 +631,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Wraps the given channel in error handler (if error handler is inherited)
      *
-     * @param channel the channel
-     * @param inheritErrorHandler whether to inherit error handler
-     * @throws Exception can be thrown if failed to create error handler builder
+     * @param  channel             the channel
+     * @param  inheritErrorHandler whether to inherit error handler
+     * @throws Exception           can be thrown if failed to create error handler builder
      */
     private void wrapChannelInErrorHandler(DefaultChannel channel, Boolean inheritErrorHandler) throws Exception {
         if (inheritErrorHandler == null || inheritErrorHandler) {
@@ -662,9 +650,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Wraps the given output in an error handler
      *
-     * @param output the output
-     * @param longLived if the processor is longLived or not
-     * @return the output wrapped with the error handler
+     * @param  output    the output
+     * @param  longLived if the processor is longLived or not
+     * @return           the output wrapped with the error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
     protected Processor wrapInErrorHandler(Processor output, boolean longLived) throws Exception {
@@ -684,9 +672,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Creates a new instance of some kind of composite processor which defaults
-     * to using a {@link Pipeline} but derived classes could change the
-     * behaviour
+     * Creates a new instance of some kind of composite processor which defaults to using a {@link Pipeline} but derived
+     * classes could change the behaviour
      */
     protected Processor createCompositeProcessor(List<Processor> list) throws Exception {
         return Pipeline.newInstance(camelContext, list);
@@ -704,10 +691,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // inject id
             if (processor instanceof IdAware) {
                 String id = getId(output);
-                ((IdAware)processor).setId(id);
+                ((IdAware) processor).setId(id);
             }
             if (processor instanceof RouteIdAware) {
-                ((RouteIdAware)processor).setRouteId(route.getRouteId());
+                ((RouteIdAware) processor).setRouteId(route.getRouteId());
             }
 
             if (output instanceof Channel && processor == null) {
@@ -747,8 +734,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Creates the processor and wraps it in any necessary interceptors and
-     * error handlers
+     * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
     protected Channel makeProcessor() throws Exception {
         Processor processor = null;
@@ -769,10 +755,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // inject id
         if (processor instanceof IdAware) {
             String id = getId(definition);
-            ((IdAware)processor).setId(id);
+            ((IdAware) processor).setId(id);
         }
         if (processor instanceof RouteIdAware) {
-            ((RouteIdAware)processor).setRouteId(route.getRouteId());
+            ((RouteIdAware) processor).setRouteId(route.getRouteId());
         }
 
         if (processor == null) {
@@ -783,8 +769,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Strategy to execute any custom logic before the {@link Processor} is
-     * created.
+     * Strategy to execute any custom logic before the {@link Processor} is created.
      */
     protected void preCreateProcessor() {
         definition.preCreateProcessor();

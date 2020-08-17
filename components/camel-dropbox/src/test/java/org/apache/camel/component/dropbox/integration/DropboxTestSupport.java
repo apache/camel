@@ -77,7 +77,8 @@ public class DropboxTestSupport extends CamelTestSupport {
 
     protected void createFile(String fileName, String content) throws IOException {
         try {
-            client.files().uploadBuilder(workdir + "/" + fileName).uploadAndFinish(new ByteArrayInputStream(content.getBytes()));
+            client.files().uploadBuilder(workdir + "/" + fileName)
+                    .uploadAndFinish(new ByteArrayInputStream(content.getBytes()));
             //wait some time for synchronization
             Thread.sleep(1000);
         } catch (DbxException e) {

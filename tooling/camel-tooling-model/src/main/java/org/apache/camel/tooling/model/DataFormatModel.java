@@ -20,6 +20,7 @@ public class DataFormatModel extends ArtifactModel<DataFormatModel.DataFormatOpt
 
     protected String modelName;
     protected String modelJavaType;
+
     public static class DataFormatOptionModel extends BaseOptionModel {
 
     }

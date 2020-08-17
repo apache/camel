@@ -127,7 +127,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         if (vertx == null) {
             Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
             if (vertxes.size() == 1) {
-                vertx  = vertxes.iterator().next();
+                vertx = vertxes.iterator().next();
             }
         }
 
@@ -178,7 +178,8 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return this.vertxHostRegistry;
     }
 
-    protected VertxWebsocketHost createVertxWebsocketHost(VertxWebsocketHostConfiguration hostConfiguration, VertxWebsocketHostKey hostKey) {
+    protected VertxWebsocketHost createVertxWebsocketHost(
+            VertxWebsocketHostConfiguration hostConfiguration, VertxWebsocketHostKey hostKey) {
         return new VertxWebsocketHost(hostConfiguration, hostKey);
     }
 }

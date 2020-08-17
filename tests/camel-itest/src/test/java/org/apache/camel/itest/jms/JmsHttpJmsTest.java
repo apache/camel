@@ -59,7 +59,7 @@ public class JmsHttpJmsTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     void testResultReplyJms() throws Exception {
         Exchange exchange = template.request("jms:reply?replyTo=bar", new Processor() {
@@ -70,8 +70,7 @@ public class JmsHttpJmsTest extends CamelTestSupport {
         assertEquals("Bye World", exchange.getMessage().getBody(String.class));
         assertTrue(exchange.getMessage().hasHeaders(), "Should have headers");
         assertEquals("queue://bar", exchange.getMessage().getHeader("JMSReplyTo", String.class));
-        
-      
+
     }
 
     @Override
@@ -80,10 +79,11 @@ public class JmsHttpJmsTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("jms:in").to("http://localhost:" + port + "/myservice").convertBodyTo(String.class).to("jms:out", "mock:result");
+                from("jms:in").to("http://localhost:" + port + "/myservice").convertBodyTo(String.class).to("jms:out",
+                        "mock:result");
 
                 from("jms:reply").to("http://localhost:" + port + "/myservice");
-                
+
                 from("jetty:http://0.0.0.0:" + port + "/myservice").transform().constant("Bye World");
             }
         };

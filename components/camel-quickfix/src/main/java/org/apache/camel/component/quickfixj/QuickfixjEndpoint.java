@@ -41,7 +41,8 @@ import quickfix.SessionID;
 /**
  * Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", category = {Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName",
+             category = { Category.MESSAGING })
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
     public static final String SESSION_ID_KEY = "SessionID";
@@ -53,7 +54,8 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private final QuickfixjEngine engine;
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String configurationName;
     @UriParam
     private SessionID sessionID;
@@ -82,7 +84,8 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     /**
-     * The configFile is the name of the QuickFIX/J configuration to use for the FIX engine (located as a resource found in your classpath).
+     * The configFile is the name of the QuickFIX/J configuration to use for the FIX engine (located as a resource found
+     * in your classpath).
      */
     public void setConfigurationName(String configurationName) {
         this.configurationName = configurationName;
@@ -93,10 +96,10 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     /**
-     * This option allows to create QuickFIX/J engine on demand.
-     * Value true means the engine is started when first message is send or there's consumer configured in route definition.
-     * When false value is used, the engine is started at the endpoint creation.
-     * When this parameter is missing, the value of component's property lazyCreateEngines is being used.
+     * This option allows to create QuickFIX/J engine on demand. Value true means the engine is started when first
+     * message is send or there's consumer configured in route definition. When false value is used, the engine is
+     * started at the endpoint creation. When this parameter is missing, the value of component's property
+     * lazyCreateEngines is being used.
      */
     public void setLazyCreateEngine(boolean lazyCreateEngine) {
         this.lazyCreateEngine = lazyCreateEngine;
@@ -104,7 +107,8 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
+        LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session",
+                getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
         configureConsumer(consumer);
         consumers.add(consumer);
@@ -124,7 +128,8 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception {
         if (this.sessionID == null || isMatching(sessionID)) {
             for (QuickfixjConsumer consumer : consumers) {
-                Exchange exchange = QuickfixjConverters.toExchange(this, sessionID, message, eventCategory, getExchangePattern());
+                Exchange exchange
+                        = QuickfixjConverters.toExchange(this, sessionID, message, eventCategory, getExchangePattern());
                 consumer.onExchange(exchange);
                 if (exchange.getException() != null) {
                     throw exchange.getException();
@@ -138,12 +143,12 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
             return true;
         }
         return isMatching(this.sessionID.getBeginString(), sessionID.getBeginString())
-            && isMatching(this.sessionID.getSenderCompID(), sessionID.getSenderCompID())
-            && isMatching(this.sessionID.getSenderSubID(), sessionID.getSenderSubID())
-            && isMatching(this.sessionID.getSenderLocationID(), sessionID.getSenderLocationID())
-            && isMatching(this.sessionID.getTargetCompID(), sessionID.getTargetCompID())
-            && isMatching(this.sessionID.getTargetSubID(), sessionID.getTargetSubID())
-            && isMatching(this.sessionID.getTargetLocationID(), sessionID.getTargetLocationID());
+                && isMatching(this.sessionID.getSenderCompID(), sessionID.getSenderCompID())
+                && isMatching(this.sessionID.getSenderSubID(), sessionID.getSenderSubID())
+                && isMatching(this.sessionID.getSenderLocationID(), sessionID.getSenderLocationID())
+                && isMatching(this.sessionID.getTargetCompID(), sessionID.getTargetCompID())
+                && isMatching(this.sessionID.getTargetSubID(), sessionID.getTargetSubID())
+                && isMatching(this.sessionID.getTargetLocationID(), sessionID.getTargetLocationID());
     }
 
     private boolean isMatching(String s1, String s2) {
@@ -155,12 +160,12 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
             return false;
         }
         return sessionID.getBeginString().equals("*")
-            || sessionID.getSenderCompID().equals("*")
-            || sessionID.getSenderSubID().equals("*")
-            || sessionID.getSenderLocationID().equals("*")
-            || sessionID.getTargetCompID().equals("*")
-            || sessionID.getTargetSubID().equals("*")
-            || sessionID.getTargetLocationID().equals("*");
+                || sessionID.getSenderCompID().equals("*")
+                || sessionID.getSenderSubID().equals("*")
+                || sessionID.getSenderLocationID().equals("*")
+                || sessionID.getTargetCompID().equals("*")
+                || sessionID.getTargetSubID().equals("*")
+                || sessionID.getTargetLocationID().equals("*");
     }
 
     @Override

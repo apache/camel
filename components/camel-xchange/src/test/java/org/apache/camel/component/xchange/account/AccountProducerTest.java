@@ -36,15 +36,15 @@ public class AccountProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                
+
                 from("direct:balances")
-                    .to("xchange:binance?service=account&method=balances");
-                
+                        .to("xchange:binance?service=account&method=balances");
+
                 from("direct:wallets")
-                    .to("xchange:binance?service=account&method=wallets");
-                
+                        .to("xchange:binance?service=account&method=wallets");
+
                 from("direct:fundingHistory")
-                    .to("xchange:binance?service=account&method=fundingHistory");
+                        .to("xchange:binance?service=account&method=fundingHistory");
             }
         };
     }
@@ -52,9 +52,9 @@ public class AccountProducerTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     void testBalances() {
-        
+
         assumeTrue(hasAPICredentials());
-        
+
         List<Balance> balances = template.requestBody("direct:balances", null, List.class);
         assertNotNull(balances, "Balances not null");
     }
@@ -62,9 +62,9 @@ public class AccountProducerTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     void testWallets() {
-        
+
         assumeTrue(hasAPICredentials());
-        
+
         List<Wallet> wallets = template.requestBody("direct:wallets", null, List.class);
         assertNotNull(wallets, "Wallets not null");
     }
@@ -72,9 +72,9 @@ public class AccountProducerTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     void testFundingHistory() {
-        
+
         assumeTrue(hasAPICredentials());
-        
+
         List<FundingRecord> records = template.requestBody("direct:fundingHistory", null, List.class);
         assertNotNull(records, "Funding records not null");
     }

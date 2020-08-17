@@ -31,7 +31,8 @@ public class OnExceptionFromChoiceWithDefaultErrorHandlerTest extends OnExceptio
                 onException(MyTechnicalException.class).handled(true).to("mock:tech");
                 onException(MyFunctionalException.class).handled(true).to("mock:func");
 
-                from("direct:start").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise().to("mock:otherwise");
+                from("direct:start").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise()
+                        .to("mock:otherwise");
             }
         };
     }

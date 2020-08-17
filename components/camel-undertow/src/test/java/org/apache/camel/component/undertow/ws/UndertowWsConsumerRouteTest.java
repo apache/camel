@@ -389,7 +389,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
             final WebSocketChannel channel = in.getHeader(UndertowConstants.CHANNEL, WebSocketChannel.class);
             assertNotNull(channel);
             if (in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class) == EventType.ONOPEN) {
-                final WebSocketHttpExchange transportExchange = in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
+                final WebSocketHttpExchange transportExchange
+                        = in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
                 assertNotNull(transportExchange);
             }
             List<String> messages = connections.get(key);

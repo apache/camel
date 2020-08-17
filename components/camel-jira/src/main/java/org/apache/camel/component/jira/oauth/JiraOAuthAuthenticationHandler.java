@@ -31,15 +31,16 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 
 /**
- * This authentication handler uses the 3-legged OAuth approach described in https://developer.atlassian.com/server/jira/platform/oauth/
- * The user must manually retrieve a verification code, access token and consumer key to use this authenticator.
+ * This authentication handler uses the 3-legged OAuth approach described in
+ * https://developer.atlassian.com/server/jira/platform/oauth/ The user must manually retrieve a verification code,
+ * access token and consumer key to use this authenticator.
  */
 public class JiraOAuthAuthenticationHandler implements AuthenticationHandler {
 
     private OAuthParameters parameters;
 
     public JiraOAuthAuthenticationHandler(String consumerKey, String verificationCode, String privateKey, String accessToken,
-            String jiraUrl) {
+                                          String jiraUrl) {
         String accessTokenUrl = jiraUrl + "/plugins/servlet/oauth/access-token";
         JiraOAuthGetAccessToken jiraAccessToken = new JiraOAuthGetAccessToken(accessTokenUrl);
         jiraAccessToken.consumerKey = consumerKey;
@@ -57,8 +58,8 @@ public class JiraOAuthAuthenticationHandler implements AuthenticationHandler {
     @Override
     public void configure(Request.Builder builder) {
         try {
-            OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder oauthBuilder =
-                    (OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder) builder;
+            OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder oauthBuilder
+                    = (OAuthHttpClientDecorator.OAuthAuthenticatedRequestBuilder) builder;
             parameters.computeNonce();
             parameters.computeTimestamp();
             parameters.computeSignature(oauthBuilder.method.name(), new GenericUrl(oauthBuilder.getUri()));

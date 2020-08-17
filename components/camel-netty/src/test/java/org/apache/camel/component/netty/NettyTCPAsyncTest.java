@@ -78,8 +78,8 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?sync=false&decoders=#decoder")
-                    .to("log:result")
-                    .to("mock:result");
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

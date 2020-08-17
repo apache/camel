@@ -25,11 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * On completion strategy that performs the required work after the
- * {@link Exchange} has been processed.
+ * On completion strategy that performs the required work after the {@link Exchange} has been processed.
  * <p/>
- * The work is for example to move the processed file into a backup folder,
- * delete the file or in case of processing failure do a rollback.
+ * The work is for example to move the processed file into a backup folder, delete the file or in case of processing
+ * failure do a rollback.
  */
 public class GenericFileOnCompletion<T> implements Synchronization {
 
@@ -41,7 +40,8 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private GenericFile<T> file;
     private String absoluteFileName;
 
-    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations, GenericFileProcessStrategy processStrategy, GenericFile<T> file,
+    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
+                                   GenericFileProcessStrategy processStrategy, GenericFile<T> file,
                                    String absoluteFileName) {
         this.endpoint = endpoint;
         this.operations = operations;
@@ -105,10 +105,11 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      * Strategy when the file was processed and a commit should be executed.
      *
      * @param processStrategy the strategy to perform the commit
-     * @param exchange the exchange
-     * @param file the file processed
+     * @param exchange        the exchange
+     * @param file            the file processed
      */
-    protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
+    protected void processStrategyCommit(
+            GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
         if (endpoint.isIdempotent()) {
 
             // use absolute file path as default key, but evaluate if an
@@ -136,14 +137,14 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     /**
-     * Strategy when the file was not processed and a rollback should be
-     * executed.
+     * Strategy when the file was not processed and a rollback should be executed.
      *
      * @param processStrategy the strategy to perform the commit
-     * @param exchange the exchange
-     * @param file the file processed
+     * @param exchange        the exchange
+     * @param file            the file processed
      */
-    protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
+    protected void processStrategyRollback(
+            GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
 
         if (LOG.isWarnEnabled()) {
             LOG.warn("Rollback file strategy: {} for file: {}", processStrategy, file);

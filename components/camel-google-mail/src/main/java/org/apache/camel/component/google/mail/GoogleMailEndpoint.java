@@ -37,12 +37,12 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Manage messages in Google Mail.
  */
 @UriEndpoint(
-        firstVersion = "2.15.0",
-        scheme = "google-mail",
-        title = "Google Mail",
-        syntax = "google-mail:apiName/methodName",
-        consumerPrefix = "consumer",
-        category = {Category.CLOUD, Category.API, Category.MAIL})
+             firstVersion = "2.15.0",
+             scheme = "google-mail",
+             title = "Google Mail",
+             syntax = "google-mail:apiName/methodName",
+             consumerPrefix = "consumer",
+             category = { Category.CLOUD, Category.API, Category.MAIL })
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> {
 
     // TODO create and manage API proxy
@@ -51,8 +51,10 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     @UriParam
     private GoogleMailConfiguration configuration;
 
-    public GoogleMailEndpoint(String uri, GoogleMailComponent component, GoogleMailApiName apiName, String methodName, GoogleMailConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleMailApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+    public GoogleMailEndpoint(String uri, GoogleMailComponent component, GoogleMailApiName apiName, String methodName,
+                              GoogleMailConfiguration endpointConfiguration) {
+        super(uri, component, apiName, methodName, GoogleMailApiCollection.getCollection().getHelper(apiName),
+              endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -122,10 +124,10 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     }
 
     public GoogleMailClientFactory getClientFactory() {
-        return ((GoogleMailComponent)getComponent()).getClientFactory();
+        return ((GoogleMailComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleMailClientFactory clientFactory) {
-        ((GoogleMailComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleMailComponent) getComponent()).setClientFactory(clientFactory);
     }
 }

@@ -36,7 +36,8 @@ public abstract class AsyncProcessorSupport extends ServiceSupport implements As
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+        AsyncProcessorAwaitManager awaitManager
+                = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         awaitManager.process(this, exchange);
     }
 

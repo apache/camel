@@ -42,8 +42,9 @@ public class ConnectorConfigFieldsFactoryTest {
         final Set<String> requiredFields = new HashSet<>(Collections.singletonList("test.field.1"));
         final Map<String, Object> overridenFields = Collections.singletonMap("test.field.1", "I am overriden");
 
-        final Map<String, ConnectorConfigField> connectorConfigToField = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
-                configDef, deprecatedFields, requiredFields, overridenFields);
+        final Map<String, ConnectorConfigField> connectorConfigToField
+                = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
+                        configDef, deprecatedFields, requiredFields, overridenFields);
 
         assertEquals(4, connectorConfigToField.size());
 

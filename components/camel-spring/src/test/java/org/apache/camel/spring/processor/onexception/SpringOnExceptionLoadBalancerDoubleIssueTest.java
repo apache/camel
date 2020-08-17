@@ -25,7 +25,8 @@ public class SpringOnExceptionLoadBalancerDoubleIssueTest extends OnExceptionLoa
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/onexception/OnExceptionLoadBalancerDoubleIssueTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/onexception/OnExceptionLoadBalancerDoubleIssueTest.xml");
     }
 
 }

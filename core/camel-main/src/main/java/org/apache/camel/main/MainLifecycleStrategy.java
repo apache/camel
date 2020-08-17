@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link org.apache.camel.spi.LifecycleStrategy} to trigger shutdown of the Main JVM
- * when {@link CamelContext} is stopped from JMX or its stop method is invoked from Java code.
+ * A {@link org.apache.camel.spi.LifecycleStrategy} to trigger shutdown of the Main JVM when {@link CamelContext} is
+ * stopped from JMX or its stop method is invoked from Java code.
  */
 public class MainLifecycleStrategy extends LifecycleStrategySupport {
     private static final Logger LOG = LoggerFactory.getLogger(MainLifecycleStrategy.class);

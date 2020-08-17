@@ -39,7 +39,8 @@ public class PahoTest extends ContextTestSupport {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                PahoEndpointBuilderFactory.PahoEndpointBuilder builder = paho("mytopic").brokerUrl("mybroker:1234").userName("myUser").password("myPassword");
+                PahoEndpointBuilderFactory.PahoEndpointBuilder builder
+                        = paho("mytopic").brokerUrl("mybroker:1234").userName("myUser").password("myPassword");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 PahoEndpoint pe = assertIsInstanceOf(PahoEndpoint.class, endpoint);

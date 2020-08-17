@@ -46,8 +46,9 @@ public final class TestUtils {
         if (System.getProperty(CONNECTION_STRING) == null
                 || System.getProperty(BLOB_ACCOUNT_NAME) == null
                 || System.getProperty(BLOB_ACCESS_KEY) == null) {
-            throw new Exception("Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -PfullTests -DconnectionString=string"
-                    + " -DblobAccountName=blob -DblobAccessKey=key");
+            throw new Exception(
+                    "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -PfullTests -DconnectionString=string"
+                                + " -DblobAccountName=blob -DblobAccessKey=key");
         }
         properties.setProperty(CONNECTION_STRING, System.getProperty(CONNECTION_STRING));
         properties.setProperty(BLOB_ACCOUNT_NAME, System.getProperty(BLOB_ACCOUNT_NAME));

@@ -85,9 +85,8 @@ public class EnrichDefinition extends ExpressionNode {
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the AggregationStrategy to be used to merge the reply from the
-     * external service, into a single outgoing message. By default Camel will
-     * use the reply from the external service as outgoing message.
+     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
+     * message. By default Camel will use the reply from the external service as outgoing message.
      */
     public EnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
@@ -95,9 +94,8 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the AggregationStrategy to be used to merge the reply from the
-     * external service, into a single outgoing message. By default Camel will
-     * use the reply from the external service as outgoing message.
+     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
+     * message. By default Camel will use the reply from the external service as outgoing message.
      */
     public EnrichDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy.get());
@@ -105,9 +103,8 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Refers to an AggregationStrategy to be used to merge the reply from the
-     * external service, into a single outgoing message. By default Camel will
-     * use the reply from the external service as outgoing message.
+     * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
+     * message. By default Camel will use the reply from the external service as outgoing message.
      */
     public EnrichDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setAggregationStrategyRef(aggregationStrategyRef);
@@ -115,8 +112,7 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * This option can be used to explicit declare the method name to use, when
-     * using POJOs as the AggregationStrategy.
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
      */
     public EnrichDefinition aggregationStrategyMethodName(String aggregationStrategyMethodName) {
         setAggregationStrategyMethodName(aggregationStrategyMethodName);
@@ -124,9 +120,8 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * If this option is false then the aggregate method is not used if there
-     * was no data to enrich. If this option is true then null values is used as
-     * the oldExchange (when no data to enrich), when using POJOs as the
+     * If this option is false then the aggregate method is not used if there was no data to enrich. If this option is
+     * true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the
      * AggregationStrategy.
      */
     public EnrichDefinition aggregationStrategyMethodAllowNull(boolean aggregationStrategyMethodAllowNull) {
@@ -135,11 +130,10 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * If this option is false then the aggregate method is not used if there
-     * was an exception thrown while trying to retrieve the data to enrich from
-     * the resource. Setting this option to true allows end users to control
-     * what to do if there was an exception in the aggregate method. For example
-     * to suppress the exception or set a custom message body etc.
+     * If this option is false then the aggregate method is not used if there was an exception thrown while trying to
+     * retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do
+     * if there was an exception in the aggregate method. For example to suppress the exception or set a custom message
+     * body etc.
      */
     public EnrichDefinition aggregateOnException(boolean aggregateOnException) {
         setAggregateOnException(Boolean.toString(aggregateOnException));
@@ -147,10 +141,9 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and
-     * the resource exchange. Enrich will by default not share unit of work
-     * between the parent exchange and the resource exchange. This means the
-     * resource exchange has its own individual unit of work.
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and the resource exchange. Enrich will by
+     * default not share unit of work between the parent exchange and the resource exchange. This means the resource
+     * exchange has its own individual unit of work.
      */
     public EnrichDefinition shareUnitOfWork() {
         setShareUnitOfWork(Boolean.toString(true));
@@ -158,26 +151,23 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the maximum size used by the
-     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
-     * reuse producer when uris are reused.
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
+     * producer when uris are reused.
      *
-     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
-     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
-     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
-     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
-     * are stored in memory in the caches.
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
+     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
+     * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
-     * However if there are a high degree of dynamic endpoints that have been used before, then it can
-     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
-     * can be set accordingly or rely on the default size (1000).
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
+     * the default size (1000).
      *
-     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
-     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
+     * reduce memory usage to avoid storing too many non frequent used producers.
      *
-     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
-     *            or <tt>-1</tt> to turn cache off.
-     * @return the builder
+     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return           the builder
      */
     public EnrichDefinition cacheSize(int cacheSize) {
         setCacheSize(Integer.toString(cacheSize));
@@ -185,26 +175,23 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the maximum size used by the
-     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
-     * reuse producer when uris are reused.
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used to cache and reuse
+     * producer when uris are reused.
      *
-     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
-     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
-     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
-     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
-     * are stored in memory in the caches.
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
+     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
+     * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
-     * However if there are a high degree of dynamic endpoints that have been used before, then it can
-     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
-     * can be set accordingly or rely on the default size (1000).
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on
+     * the default size (1000).
      *
-     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
-     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
+     * reduce memory usage to avoid storing too many non frequent used producers.
      *
-     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
-     *            or <tt>-1</tt> to turn cache off.
-     * @return the builder
+     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return           the builder
      */
     public EnrichDefinition cacheSize(String cacheSize) {
         setCacheSize(cacheSize);
@@ -212,8 +199,7 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer
-     * with that endpoint
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
      *
      * @return the builder
      */
@@ -226,8 +212,7 @@ public class EnrichDefinition extends ExpressionNode {
     // -------------------------------------------------------------------------
 
     /**
-     * Expression that computes the endpoint uri to use as the resource endpoint
-     * to enrich from
+     * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {

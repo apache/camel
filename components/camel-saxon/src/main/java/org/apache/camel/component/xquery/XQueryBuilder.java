@@ -83,7 +83,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Creates an XQuery builder.
  * <p/>
- * The XQueryExpression, as you would expect, can be executed repeatedly, as often as you want, in the same or in different threads.
+ * The XQueryExpression, as you would expect, can be executed repeatedly, as often as you want, in the same or in
+ * different threads.
  */
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor, GeneratedPropertyConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);
@@ -110,14 +111,17 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         switch (ignoreCase ? name.toLowerCase() : name) {
             case "resulttype":
             case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
             case "headername":
             case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
             default:
                 return false;
         }
     }
+
     @Override
     public String toString() {
         return "XQuery[" + expression + "]";
@@ -576,11 +580,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     /**
      * Checks whether we need an {@link InputStream} to access the message body.
      * <p/>
-     * Depending on the content in the message body, we may not need to convert
-     * to {@link InputStream}.
+     * Depending on the content in the message body, we may not need to convert to {@link InputStream}.
      *
-     * @param exchange the current exchange
-     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source} afterwards.
+     * @param  exchange the current exchange
+     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source}
+     *                  afterwards.
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
         Object body = exchange.getIn().getBody();
@@ -607,10 +611,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
      * <p/>
      * This implementation will prefer to source in the following order:
      * <ul>
-     *   <li>StAX - Is StAX is allowed</li>
-     *   <li>SAX - SAX as 2nd choice</li>
-     *   <li>Stream - Stream as 3rd choice</li>
-     *   <li>DOM - DOM as 4th choice</li>
+     * <li>StAX - Is StAX is allowed</li>
+     * <li>SAX - SAX as 2nd choice</li>
+     * <li>Stream - Stream as 3rd choice</li>
+     * <li>DOM - DOM as 4th choice</li>
      * </ul>
      */
     protected Source getSource(Exchange exchange, Object body) {
@@ -647,20 +651,17 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
         dynamicQueryContext.setParameter(
                 StructuredQName.fromClarkName("in.body"),
-                getAsParameter(exchange.getIn().getBody())
-        );
+                getAsParameter(exchange.getIn().getBody()));
 
         addParameters(dynamicQueryContext, getParameters());
 
         dynamicQueryContext.setParameter(
                 StructuredQName.fromClarkName("exchange"),
-                getAsParameter(exchange)
-        );
+                getAsParameter(exchange));
         if (exchange.hasOut() && exchange.getPattern().isOutCapable()) {
             dynamicQueryContext.setParameter(
                     StructuredQName.fromClarkName("out.body"),
-                    getAsParameter(exchange.getOut().getBody())
-            );
+                    getAsParameter(exchange.getOut().getBody()));
 
             addParameters(dynamicQueryContext, exchange.getOut().getHeaders(), "out.headers.");
         }
@@ -677,8 +678,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             if (entry.getValue() != null) {
                 dynamicQueryContext.setParameter(
                         StructuredQName.fromClarkName(parameterPrefix + entry.getKey()),
-                        getAsParameter(entry.getValue())
-                );
+                        getAsParameter(entry.getValue()));
             }
         }
     }
@@ -715,7 +715,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace() ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
+                configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace()
+                        ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
                 LOG.debug("Created new Configuration {}", configuration);
             } else {
                 LOG.debug("Using existing Configuration {}", configuration);

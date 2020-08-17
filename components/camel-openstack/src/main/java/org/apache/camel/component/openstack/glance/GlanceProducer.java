@@ -144,11 +144,13 @@ public class GlanceProducer extends AbstractOpenstackProducer {
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class))) {
-            imageBuilder = getImageBuilder(imageBuilder).diskFormat(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class));
+            imageBuilder = getImageBuilder(imageBuilder)
+                    .diskFormat(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class));
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.class))) {
-            imageBuilder = getImageBuilder(imageBuilder).containerFormat(message.getHeader(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.class));
+            imageBuilder = getImageBuilder(imageBuilder)
+                    .containerFormat(message.getHeader(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.class));
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.SIZE, Long.class))) {
@@ -176,7 +178,8 @@ public class GlanceProducer extends AbstractOpenstackProducer {
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(OpenstackConstants.PROPERTIES))) {
-            imageBuilder = getImageBuilder(imageBuilder).properties(message.getHeader(OpenstackConstants.PROPERTIES, Map.class));
+            imageBuilder
+                    = getImageBuilder(imageBuilder).properties(message.getHeader(OpenstackConstants.PROPERTIES, Map.class));
         }
 
         if (!required && imageBuilder == null) {

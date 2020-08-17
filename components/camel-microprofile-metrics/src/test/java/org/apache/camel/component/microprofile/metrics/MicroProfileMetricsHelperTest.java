@@ -38,24 +38,24 @@ public class MicroProfileMetricsHelperTest {
     @Test
     public void testParseTagForEmptyString() {
         assertThrows(IllegalArgumentException.class,
-            () -> MicroProfileMetricsHelper.parseTag(""));
+                () -> MicroProfileMetricsHelper.parseTag(""));
     }
 
     @Test
     public void testParseTagForInvalidString() {
         assertThrows(IllegalArgumentException.class,
-            () -> MicroProfileMetricsHelper.parseTag("badtag"));
+                () -> MicroProfileMetricsHelper.parseTag("badtag"));
     }
 
     @Test
     public void testParseTagForStringWithNotEnoughElements() {
         assertThrows(IllegalArgumentException.class,
-            () -> MicroProfileMetricsHelper.parseTag("badtag="));
+                () -> MicroProfileMetricsHelper.parseTag("badtag="));
     }
 
     @Test
     public void testParseTags() {
-        Tag[] tags = MicroProfileMetricsHelper.parseTagArray(new String[] {"foo=bar", "cheese=wine"});
+        Tag[] tags = MicroProfileMetricsHelper.parseTagArray(new String[] { "foo=bar", "cheese=wine" });
         assertEquals(2, tags.length);
         assertEquals("foo", tags[0].getTagName());
         assertEquals("bar", tags[0].getTagValue());
@@ -74,6 +74,6 @@ public class MicroProfileMetricsHelperTest {
     @Test
     public void testGetMetricRegistryWhenNoRegistryConfigured() {
         assertThrows(IllegalStateException.class,
-            () -> MicroProfileMetricsHelper.getMetricRegistry(new DefaultCamelContext()));
+                () -> MicroProfileMetricsHelper.getMetricRegistry(new DefaultCamelContext()));
     }
 }

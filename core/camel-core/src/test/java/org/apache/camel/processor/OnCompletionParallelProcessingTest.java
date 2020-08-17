@@ -40,8 +40,9 @@ public class OnCompletionParallelProcessingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:bar").onCompletion().parallelProcessing().transform(body().prepend("I was here ")).to("mock:after").end().to("mock:input")
-                    .transform(body().prepend("Hello ")).to("log:bar");
+                from("seda:bar").onCompletion().parallelProcessing().transform(body().prepend("I was here ")).to("mock:after")
+                        .end().to("mock:input")
+                        .transform(body().prepend("Hello ")).to("log:bar");
             }
         };
     }

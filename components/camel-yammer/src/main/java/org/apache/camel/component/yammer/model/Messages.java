@@ -64,7 +64,8 @@ public class Messages {
 
     @Override
     public String toString() {
-        return "Messages [threadedExtended=" + threadedExtended + ", messages=" + messages + ", references=" + references + ", meta=" + meta + "]";
+        return "Messages [threadedExtended=" + threadedExtended + ", messages=" + messages + ", references=" + references
+               + ", meta=" + meta + "]";
     }
 
 }

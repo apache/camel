@@ -24,7 +24,9 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesReplicationControllersComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesReplicationControllersEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
+    protected KubernetesReplicationControllersEndpoint doCreateEndpoint(
+            String uri, String remaining, KubernetesConfiguration config)
+            throws Exception {
         KubernetesReplicationControllersEndpoint endpoint = new KubernetesReplicationControllersEndpoint(uri, this, config);
         return endpoint;
     }

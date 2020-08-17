@@ -42,7 +42,7 @@ public final class AvailablePortFinder {
      * Gets the next available port.
      *
      * @throws IllegalStateException if there are no ports available
-     * @return the available port
+     * @return                       the available port
      */
     public static int getNextAvailable() {
         try (ServerSocket ss = new ServerSocket()) {

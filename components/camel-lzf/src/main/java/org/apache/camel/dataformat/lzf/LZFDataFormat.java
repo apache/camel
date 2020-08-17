@@ -31,8 +31,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
- * LZF data format.
- * See {@link org.apache.camel.model.dataformat.LZFDataFormat} for "deflate" compression.
+ * LZF data format. See {@link org.apache.camel.model.dataformat.LZFDataFormat} for "deflate" compression.
  */
 @Dataformat("lzf")
 public class LZFDataFormat extends ServiceSupport implements DataFormat, DataFormatName {

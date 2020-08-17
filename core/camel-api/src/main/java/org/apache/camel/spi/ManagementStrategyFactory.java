@@ -28,18 +28,18 @@ public interface ManagementStrategyFactory {
     /**
      * Creates the {@link ManagementStrategy}.
      *
-     * @param context     the camel context
-     * @param properties  optional options to set on {@link ManagementAgent}
-     * @return the created strategy
-     * @throws Exception is thrown if error creating the strategy
+     * @param  context    the camel context
+     * @param  properties optional options to set on {@link ManagementAgent}
+     * @return            the created strategy
+     * @throws Exception  is thrown if error creating the strategy
      */
     ManagementStrategy create(CamelContext context, Map<String, Object> properties) throws Exception;
 
     /**
      * Creates the associated {@link LifecycleStrategy} that the management strategy uses.
      *
-     * @param context     the camel context
-     * @return the created lifecycle strategy
+     * @param  context   the camel context
+     * @return           the created lifecycle strategy
      * @throws Exception is thrown if error creating the lifecycle strategy
      */
     LifecycleStrategy createLifecycle(CamelContext context) throws Exception;
@@ -49,9 +49,9 @@ public interface ManagementStrategyFactory {
      * <p/>
      * This allows implementations to provide the logic for setting up management on Camel.
      *
-     * @param camelContext  the camel context
-     * @param strategy      the management strategy
-     * @param lifecycle      the associated lifecycle strategy (optional)
+     * @param camelContext the camel context
+     * @param strategy     the management strategy
+     * @param lifecycle    the associated lifecycle strategy (optional)
      */
     void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle);
 

@@ -34,33 +34,34 @@ public class KMSComponent extends DefaultComponent {
 
     @Metadata
     private KMSConfiguration configuration = new KMSConfiguration();
-    
+
     public KMSComponent() {
         this(null);
     }
-    
+
     public KMSComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new KMSComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         KMSConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KMSConfiguration();
-        
+
         KMSEndpoint endpoint = new KMSEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getKmsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getKmsClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon kms client or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public KMSConfiguration getConfiguration() {
         return configuration;
     }

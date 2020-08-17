@@ -52,7 +52,7 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
         truststoreParameters.setPassword("storepass");
 
         KeyStore trustStore = truststoreParameters.createKeyStore();
-        Certificate[] certs = new Certificate[] {trustStore.getCertificate(trustStore.aliases().nextElement())};
+        Certificate[] certs = new Certificate[] { trustStore.getCertificate(trustStore.aliases().nextElement()) };
         builder.setTrustStore(certs);
 
         CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();

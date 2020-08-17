@@ -47,26 +47,26 @@ public class SipSubscriber extends DefaultConsumer {
         super.doStart();
         Properties properties = configuration.createInitialProperties();
         sipStack = configuration.getSipFactory().createSipStack(properties);
-        
+
         configuration.parseURI();
         sipSubscriptionListener = new SipSubscriptionListener(this);
-        ListeningPoint listeningPoint = 
-            sipStack.createListeningPoint(configuration.getFromHost(), Integer.valueOf(configuration.getFromPort()).intValue(), configuration.getTransport());
+        ListeningPoint listeningPoint = sipStack.createListeningPoint(configuration.getFromHost(),
+                Integer.valueOf(configuration.getFromPort()).intValue(), configuration.getTransport());
         configuration.setListeningPoint(listeningPoint);
         provider = sipStack.createSipProvider(configuration.getListeningPoint());
         provider.addSipListener(sipSubscriptionListener);
-        
+
         if (configuration.getCallIdHeader() == null) {
             configuration.setCallIdHeader(provider.getNewCallId());
         }
-        
+
         // Create the Subscription request to register with the presence agent and receive notifications.
         configuration.setCallIdHeader(provider.getNewCallId());
         Request request = configuration.createSipRequest(1, Request.SUBSCRIBE, configuration.getEventHeaderName());
-            
+
         // Create the subscriber transaction from request.
         ClientTransaction subscriberTransactionId = provider.getNewClientTransaction(request);
-            
+
         // Add an Event header for the subscription.
         request.addHeader(configuration.getEventHeader());
         subscriberDialog = subscriberTransactionId.getDialog();
@@ -77,7 +77,7 @@ public class SipSubscriber extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop(); 
+        super.doStop();
     }
 
     public SipConfiguration getConfiguration() {

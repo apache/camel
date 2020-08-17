@@ -24,10 +24,10 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public final class SpringTestHelper {
-    
-    private SpringTestHelper() {        
+
+    private SpringTestHelper() {
     }
-    
+
     public static CamelContext createSpringCamelContext(ContextTestSupport test, String classpathUri) throws Exception {
         test.setUseRouteBuilder(false);
 

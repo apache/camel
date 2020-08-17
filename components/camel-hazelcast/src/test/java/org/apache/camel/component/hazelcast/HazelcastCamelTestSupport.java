@@ -53,5 +53,4 @@ public class HazelcastCamelTestSupport extends CamelTestSupport {
         verifyNoMoreInteractions(hazelcastInstance);
     }
 
-
 }

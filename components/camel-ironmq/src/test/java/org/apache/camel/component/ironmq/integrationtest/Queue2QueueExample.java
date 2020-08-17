@@ -34,9 +34,11 @@ public class Queue2QueueExample extends CamelTestSupport {
     // replace with your token
     private String token = "myIronMQToken";
 
-    private final String ironQueue1 = "ironmq:queue1?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
-    private final String ironQueue2 = "ironmq:queue2?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
-    
+    private final String ironQueue1
+            = "ironmq:queue1?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
+    private final String ironQueue2
+            = "ironmq:queue2?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
+
     @BeforeEach
     public void clean() {
         template.sendBodyAndHeader(ironQueue1, "fo", IronMQConstants.OPERATION, IronMQConstants.CLEARQUEUE);

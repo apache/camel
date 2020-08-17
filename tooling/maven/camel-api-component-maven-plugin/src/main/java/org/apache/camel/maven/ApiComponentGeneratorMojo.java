@@ -32,7 +32,7 @@ import org.apache.velocity.VelocityContext;
  * Generates Camel Component based on a collection of APIs.
  */
 @Mojo(name = "fromApis", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
+      defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     /**
@@ -100,7 +100,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                     }
                 }
                 if (!found) {
-                    throw new MojoExecutionException("Missing one of fromSignatureFile or fromJavadoc for "
+                    throw new MojoExecutionException(
+                            "Missing one of fromSignatureFile or fromJavadoc for "
                                                      + proxyClass);
                 }
             }
@@ -122,7 +123,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         // generate ApiName
         mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
     }
-    
+
     private void configureMethodGenerator(AbstractApiMethodGeneratorMojo mojo, ApiProxy apiProxy) {
 
         // set AbstractGeneratorMojo properties
@@ -230,7 +231,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     public static String getEndpointConfig(String proxyClass, String classPrefix) {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
-        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
+               + "EndpointConfiguration";
     }
 
     private static String getProxyClassWithCanonicalName(String proxyClass) {

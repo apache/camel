@@ -25,7 +25,8 @@ public class SpringAggregateCompletionIntervalTest extends AggregateCompletionIn
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateCompletionIntervalTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateCompletionIntervalTest.xml");
     }
 
 }

@@ -62,7 +62,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
 
     @Mock
     JobLauncher alternativeJobLauncher;
-    
+
     @Mock
     JobRegistry jobRegistry;
 
@@ -85,14 +85,10 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("spring-batch:mockJob").to("mock:test");
-                from("direct:dynamic").
-                        to("spring-batch:fake?jobFromHeader=true").
-                        errorHandler(deadLetterChannel("mock:error")).
-                        to("mock:test");
-                from("direct:dynamicWithJobRegistry").
-                        to("spring-batch:fake?jobFromHeader=true&jobRegistry=#jobRegistry").
-                        errorHandler(deadLetterChannel("mock:error")).
-                        to("mock:test");
+                from("direct:dynamic").to("spring-batch:fake?jobFromHeader=true").errorHandler(deadLetterChannel("mock:error"))
+                        .to("mock:test");
+                from("direct:dynamicWithJobRegistry").to("spring-batch:fake?jobFromHeader=true&jobRegistry=#jobRegistry")
+                        .errorHandler(deadLetterChannel("mock:error")).to("mock:test");
             }
         };
     }
@@ -149,13 +145,13 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
         errorEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void dynamicJobWorksIfHeaderPresentWithValidJobLocatedInJobRegistry() throws Exception {
 
         mockEndpoint.expectedMessageCount(1);
         errorEndpoint.expectedMessageCount(0);
-        
+
         Job mockJob = mock(Job.class);
         when(jobRegistry.getJob(eq("dyanmicMockJobFromJobRegistry"))).thenReturn(mockJob);
 
@@ -168,14 +164,14 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
         errorEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void shouldInjectJobToEndpoint() throws IllegalAccessException {
         SpringBatchEndpoint batchEndpoint = getMandatoryEndpoint("spring-batch:mockJob", SpringBatchEndpoint.class);
         Job batchEndpointJob = (Job) FieldUtils.readField(batchEndpoint, "job", true);
         assertSame(job, batchEndpointJob);
     }
-    
+
     @Test
     public void shouldRunJob() throws Exception {
         // When
@@ -202,12 +198,12 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     public void shouldThrowExceptionIfUsedAsConsumer() throws Exception {
         // When
         assertThrows(FailedToStartRouteException.class,
-            () -> context().addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
+                () -> context().addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
                         from("spring-batch:mockJob").to("direct:emptyEndpoint");
                     }
-            }));
+                }));
     }
 
     @Test
@@ -225,8 +221,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         String parameter = jobParameters.getValue().getString(headerKey);
         assertEquals(parameter, headerValue);
     }
-    
-    @Test 
+
+    @Test
     public void setNullValueToJobParams() throws Exception {
         // Given
         String headerKey = "headerKey";
@@ -304,7 +300,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         template.sendBody("direct:launcherRefTest", "Start the job, please.");
 
         // Then
-        SpringBatchEndpoint batchEndpoint = context().getEndpoint("spring-batch:mockJob?jobLauncher=#alternativeJobLauncher", SpringBatchEndpoint.class);
+        SpringBatchEndpoint batchEndpoint
+                = context().getEndpoint("spring-batch:mockJob?jobLauncher=#alternativeJobLauncher", SpringBatchEndpoint.class);
         JobLauncher batchEndpointJobLauncher = (JobLauncher) FieldUtils.readField(batchEndpoint, "jobLauncher", true);
         assertSame(alternativeJobLauncher, batchEndpointJobLauncher);
     }
@@ -324,7 +321,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
 
         // When
         assertThrows(FailedToCreateRouteException.class,
-            () -> camelContext.start());
+                () -> camelContext.start());
     }
 
     @Test
@@ -344,7 +341,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
 
         // When
         assertThrows(FailedToCreateRouteException.class,
-            () -> camelContext.start());
+                () -> camelContext.start());
     }
 
     @Test
@@ -369,7 +366,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         JobLauncher batchEndpointJobLauncher = (JobLauncher) FieldUtils.readField(batchEndpoint, "jobLauncher", true);
         assertSame(jobLauncher, batchEndpointJobLauncher);
     }
-    
+
     @Test
     public void shouldUseJobLauncherFromComponent() throws Exception {
         // Given
@@ -396,7 +393,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         // Given
         Job mockJob = mock(Job.class);
         when(jobRegistry.getJob(eq("mockJob"))).thenReturn(mockJob);
-        
+
         context().addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -408,11 +405,12 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         template.sendBody("direct:jobRegistryRefTest", "Start the job, please.");
 
         // Then
-        SpringBatchEndpoint batchEndpoint = context().getEndpoint("spring-batch:mockJob?jobRegistry=#jobRegistry", SpringBatchEndpoint.class);
+        SpringBatchEndpoint batchEndpoint
+                = context().getEndpoint("spring-batch:mockJob?jobRegistry=#jobRegistry", SpringBatchEndpoint.class);
         JobRegistry batchEndpointJobRegistry = (JobRegistry) FieldUtils.readField(batchEndpoint, "jobRegistry", true);
         assertSame(jobRegistry, batchEndpointJobRegistry);
-    }  
-    
+    }
+
     @Test
     public void shouldUseJobRegistryFromComponent() throws Exception {
         // Given
@@ -433,8 +431,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         SpringBatchEndpoint batchEndpoint = context().getEndpoint("customBatchComponent:mockJob", SpringBatchEndpoint.class);
         JobRegistry batchEndpointJobRegistry = (JobRegistry) FieldUtils.readField(batchEndpoint, "jobRegistry", true);
         assertSame(jobRegistry, batchEndpointJobRegistry);
-    }     
-    
+    }
+
     @Test
     public void shouldGetJobFromJobRegistry() throws Exception {
         // Given
@@ -450,7 +448,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         });
 
         // Then
-        SpringBatchEndpoint batchEndpoint = context().getEndpoint("spring-batch:mockJobFromJobRegistry?jobRegistry=#jobRegistry", SpringBatchEndpoint.class);
+        SpringBatchEndpoint batchEndpoint = context()
+                .getEndpoint("spring-batch:mockJobFromJobRegistry?jobRegistry=#jobRegistry", SpringBatchEndpoint.class);
         Job batchEndpointJob = (Job) FieldUtils.readField(batchEndpoint, "job", true);
         assertSame(mockJobFromJobRegistry, batchEndpointJob);
     }

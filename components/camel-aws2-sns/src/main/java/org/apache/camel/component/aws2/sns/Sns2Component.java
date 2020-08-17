@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
 public class Sns2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Component.class);
-    
+
     @Metadata
     private Sns2Configuration configuration = new Sns2Configuration();
 
@@ -70,7 +70,8 @@ public class Sns2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonSNSClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
 

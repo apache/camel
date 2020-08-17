@@ -36,8 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class SpringFtpEndpointTest {
     @RegisterExtension
-    public static FtpServiceExtension ftpServiceExtension =
-            new FtpServiceExtension("SpringFtpEndpointTest.ftpPort");
+    public static FtpServiceExtension ftpServiceExtension = new FtpServiceExtension("SpringFtpEndpointTest.ftpPort");
 
     protected FtpServer ftpServer;
 

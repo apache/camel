@@ -40,7 +40,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         Expression exp = ExpressionBuilder.constantExpression("foo");
         Exchange exchange = new DefaultExchange(context);
 
-        ExpressionEvaluationException e = new ExpressionEvaluationException(exp, exchange, new IllegalArgumentException("Damn"));
+        ExpressionEvaluationException e
+                = new ExpressionEvaluationException(exp, exchange, new IllegalArgumentException("Damn"));
         assertSame(exchange, e.getExchange());
         assertSame(exp, e.getExpression());
         assertNotNull(e.getCause());
@@ -76,7 +77,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e2.getExchange());
         assertEquals(Integer.class, e2.getType());
 
-        InvalidPayloadRuntimeException e3 = new InvalidPayloadRuntimeException(exchange, Integer.class, exchange.getIn(), new IllegalArgumentException("Damn"));
+        InvalidPayloadRuntimeException e3 = new InvalidPayloadRuntimeException(
+                exchange, Integer.class, exchange.getIn(), new IllegalArgumentException("Damn"));
         assertSame(exchange, e3.getExchange());
         assertEquals(Integer.class, e3.getType());
     }
@@ -308,7 +310,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
 
     @Test
     public void testFailedToStartRouteException() {
-        FailedToStartRouteException e = new FailedToStartRouteException("myRoute", "Forced error", new IllegalArgumentException("Forced"));
+        FailedToStartRouteException e
+                = new FailedToStartRouteException("myRoute", "Forced error", new IllegalArgumentException("Forced"));
         assertNotNull(e.getMessage());
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
     }

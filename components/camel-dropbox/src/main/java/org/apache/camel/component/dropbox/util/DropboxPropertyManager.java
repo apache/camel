@@ -26,7 +26,8 @@ public final class DropboxPropertyManager {
     private static Properties properties;
     private static DropboxPropertyManager instance;
 
-    private DropboxPropertyManager() { }
+    private DropboxPropertyManager() {
+    }
 
     public static synchronized DropboxPropertyManager getInstance() throws Exception {
         if (instance == null) {
@@ -39,7 +40,6 @@ public final class DropboxPropertyManager {
     public String getProperty(String key) {
         return properties.getProperty(key);
     }
-
 
     private static Properties loadProperties() throws Exception {
         URL url = DropboxPropertyManager.class.getResource("/dropbox.properties");

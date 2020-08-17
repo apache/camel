@@ -26,8 +26,7 @@ import java.util.Objects;
  * Helper for working with reflection on classes.
  * <p/>
  * This code is a copy of org.apache.camel.util.ReflectionHelper to avoid cyclic dependencies between artifacts and
- * camel maven plugins.
- * This code is based on org.apache.camel.spring.util.ReflectionUtils class.
+ * camel maven plugins. This code is based on org.apache.camel.spring.util.ReflectionUtils class.
  */
 public final class ReflectionHelper {
 
@@ -81,7 +80,7 @@ public final class ReflectionHelper {
      * Perform the given callback operation on the nested (inner) classes.
      *
      * @param clazz class to start looking at
-     * @param cc the callback to invoke for each inner class (excluding the class itself)
+     * @param cc    the callback to invoke for each inner class (excluding the class itself)
      */
     public static void doWithClasses(Class<?> clazz, ClassCallback cc) throws IllegalArgumentException {
         // and then nested classes
@@ -96,10 +95,11 @@ public final class ReflectionHelper {
     }
 
     /**
-     * Invoke the given callback on all fields in the target class, going up the
-     * class hierarchy to get all declared fields.
+     * Invoke the given callback on all fields in the target class, going up the class hierarchy to get all declared
+     * fields.
+     * 
      * @param clazz the target class to analyze
-     * @param fc the callback to invoke for each field
+     * @param fc    the callback to invoke for each field
      */
     public static void doWithFields(Class<?> clazz, FieldCallback fc) throws IllegalArgumentException {
         // Keep backing up the inheritance hierarchy.
@@ -114,19 +114,18 @@ public final class ReflectionHelper {
                 }
             }
             targetClass = targetClass.getSuperclass();
-        }
-        while (targetClass != null && targetClass != Object.class);
+        } while (targetClass != null && targetClass != Object.class);
     }
 
     /**
-     * Perform the given callback operation on all matching methods of the given
-     * class and superclasses (or given interface and super-interfaces).
+     * Perform the given callback operation on all matching methods of the given class and superclasses (or given
+     * interface and super-interfaces).
      * <p/>
-     * <b>Important:</b> This method does not take the
-     * {@link java.lang.reflect.Method#isBridge() bridge methods} into account.
+     * <b>Important:</b> This method does not take the {@link java.lang.reflect.Method#isBridge() bridge methods} into
+     * account.
      *
      * @param clazz class to start looking at
-     * @param mc the callback to invoke for each method
+     * @param mc    the callback to invoke for each method
      */
     public static void doWithMethods(Class<?> clazz, MethodCallback mc) throws IllegalArgumentException {
         // Keep backing up the inheritance hierarchy.
@@ -153,14 +152,15 @@ public final class ReflectionHelper {
     }
 
     /**
-     * Attempt to find a {@link Method} on the supplied class with the supplied name
-     * and parameter types. Searches all superclasses up to {@code Object}.
-     * <p>Returns {@code null} if no {@link Method} can be found.
-     * @param clazz the class to introspect
-     * @param name the name of the method
-     * @param paramTypes the parameter types of the method
-     * (may be {@code null} to indicate any signature)
-     * @return the Method object, or {@code null} if none found
+     * Attempt to find a {@link Method} on the supplied class with the supplied name and parameter types. Searches all
+     * superclasses up to {@code Object}.
+     * <p>
+     * Returns {@code null} if no {@link Method} can be found.
+     * 
+     * @param  clazz      the class to introspect
+     * @param  name       the name of the method
+     * @param  paramTypes the parameter types of the method (may be {@code null} to indicate any signature)
+     * @return            the Method object, or {@code null} if none found
      */
     public static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
         Objects.requireNonNull(clazz, "Class must not be null");
@@ -169,7 +169,8 @@ public final class ReflectionHelper {
         while (searchType != null) {
             Method[] methods = searchType.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods();
             for (Method method : methods) {
-                if (name.equals(method.getName()) && (paramTypes == null || Arrays.equals(paramTypes, method.getParameterTypes()))) {
+                if (name.equals(method.getName())
+                        && (paramTypes == null || Arrays.equals(paramTypes, method.getParameterTypes()))) {
                     return method;
                 }
             }
@@ -179,12 +180,14 @@ public final class ReflectionHelper {
     }
 
     /**
-     * Attempt to find a {@link Field} on the supplied class with the supplied name.
-     * Searches all superclasses up to {@code Object}.
-     * <p>Returns {@code null} if no {@link Method} can be found.
-     * @param clazz the class to introspect
-     * @param name the name of the field
-     * @return the field object, or {@code null} if none found
+     * Attempt to find a {@link Field} on the supplied class with the supplied name. Searches all superclasses up to
+     * {@code Object}.
+     * <p>
+     * Returns {@code null} if no {@link Method} can be found.
+     * 
+     * @param  clazz the class to introspect
+     * @param  name  the name of the field
+     * @return       the field object, or {@code null} if none found
      */
     public static Field findField(Class<?> clazz, String name) {
         Objects.requireNonNull(clazz, "Class must not be null");

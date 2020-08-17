@@ -66,8 +66,9 @@ public class FileChangedReadLockZeroTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0").to("file:target/data/changed/out",
-                                                                                                                                             "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0")
+                        .to("file:target/data/changed/out",
+                                "mock:result");
             }
         };
     }

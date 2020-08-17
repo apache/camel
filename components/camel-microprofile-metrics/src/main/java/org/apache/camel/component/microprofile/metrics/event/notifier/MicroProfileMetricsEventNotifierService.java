@@ -20,5 +20,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsService;
 
-public final class MicroProfileMetricsEventNotifierService extends MicroProfileMetricsService implements CamelContextAware, StaticService {
+public final class MicroProfileMetricsEventNotifierService extends MicroProfileMetricsService
+        implements CamelContextAware, StaticService {
 }

@@ -41,8 +41,8 @@ public class SqlProducerNamedParameterTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-        
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+
         super.setUp();
     }
 
@@ -50,7 +50,7 @@ public class SqlProducerNamedParameterTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -100,8 +100,8 @@ public class SqlProducerNamedParameterTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:select * from projects where license = :#lic order by id")
-                    .to("mock:result");
+                        .to("sql:select * from projects where license = :#lic order by id")
+                        .to("mock:result");
             }
         };
     }

@@ -148,8 +148,8 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         boolean b = kms[0] instanceof X509KeyManager;
         assertTrue(b);
 
-        kms[0] = new AliasedX509ExtendedKeyManager("localhost", (X509KeyManager)kms[0]);
-        AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager)kms[0];
+        kms[0] = new AliasedX509ExtendedKeyManager("localhost", (X509KeyManager) kms[0]);
+        AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager) kms[0];
         assertNotNull(km.getPrivateKey("localhost"));
     }
 
@@ -157,7 +157,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         assertEquals(1, kms.length);
         boolean b = kms[0] instanceof X509KeyManager;
         assertTrue(b);
-        X509KeyManager km = (X509KeyManager)kms[0];
+        X509KeyManager km = (X509KeyManager) kms[0];
         assertNotNull(km.getPrivateKey("localhost"));
     }
 }

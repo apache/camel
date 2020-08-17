@@ -26,6 +26,6 @@ public abstract class AbstractAtomixClientConsumer<E extends AbstractAtomixClien
 
     @SuppressWarnings("unchecked")
     protected E getAtomixEndpoint() {
-        return (E)super.getEndpoint();
+        return (E) super.getEndpoint();
     }
 }

@@ -36,10 +36,10 @@ public class JoltFirstSampleTest extends CamelTestSupport {
     public void testFirstSampleJolt() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            IOHelper.loadText(
-                ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context, "org/apache/camel/component/jolt/firstSample/output.json")
-            ).trim() // Remove the last newline added by IOHelper.loadText()
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jolt/firstSample/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://start",
@@ -67,8 +67,8 @@ public class JoltFirstSampleTest extends CamelTestSupport {
 
                 from("direct://start")
                         .process(processor)
-                    .to("jolt:org/apache/camel/component/jolt/firstSample/spec.json?inputType=JsonString&outputType=JsonString")
-                    .to("mock:result");
+                        .to("jolt:org/apache/camel/component/jolt/firstSample/spec.json?inputType=JsonString&outputType=JsonString")
+                        .to("mock:result");
             }
         };
     }

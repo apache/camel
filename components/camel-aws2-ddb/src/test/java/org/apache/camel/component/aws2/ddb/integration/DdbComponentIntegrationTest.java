@@ -85,7 +85,8 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
         attributeMap.put("secondary_attribute", AttributeValue.builder().s("new").build());
 
         Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<>();
-        expectedAttributeValueMap.put(attributeName, ExpectedAttributeValue.builder().attributeValueList(AttributeValue.builder().n(randomId).build()).build());
+        expectedAttributeValueMap.put(attributeName,
+                ExpectedAttributeValue.builder().attributeValueList(AttributeValue.builder().n(randomId).build()).build());
 
         Exchange exchange = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -114,7 +115,8 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
         });
 
         assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES));
-        assertEquals(AttributeValue.builder().n(randomId).build(), exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get(attributeName));
+        assertEquals(AttributeValue.builder().n(randomId).build(),
+                exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get(attributeName));
     }
 
     @Test
@@ -137,7 +139,8 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws2-ddb://" + tableName + "?" + "region=" + region + "&accessKey=" + accessKey + "&secretKey=RAW(" + secretKey + ")");
+                from("direct:start").to("aws2-ddb://" + tableName + "?" + "region=" + region + "&accessKey=" + accessKey
+                                        + "&secretKey=RAW(" + secretKey + ")");
             }
         };
     }

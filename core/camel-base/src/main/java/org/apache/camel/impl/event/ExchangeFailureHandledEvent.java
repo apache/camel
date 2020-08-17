@@ -30,12 +30,14 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent implement
     private final String deadLetterUri;
     private final boolean handled;
 
-    public ExchangeFailureHandledEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
+    public ExchangeFailureHandledEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel,
+                                       String deadLetterUri) {
         super(source);
         this.failureHandler = failureHandler;
         this.deadLetterChannel = deadLetterChannel;
         this.deadLetterUri = deadLetterUri;
-        this.handled = source.adapt(ExtendedExchange.class).getErrorHandlerHandled() != null && source.adapt(ExtendedExchange.class).getErrorHandlerHandled();
+        this.handled = source.adapt(ExtendedExchange.class).getErrorHandlerHandled() != null
+                && source.adapt(ExtendedExchange.class).getErrorHandlerHandled();
     }
 
     @Override
@@ -65,9 +67,11 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent implement
     public String toString() {
         if (isDeadLetterChannel()) {
             String uri = URISupport.sanitizeUri(deadLetterUri);
-            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but was handled by dead letter channel: " + uri;
+            return getExchange().getExchangeId() + " exchange failed: " + getExchange()
+                   + " but was handled by dead letter channel: " + uri;
         } else {
-            return getExchange().getExchangeId() + " exchange failed: " + getExchange() + " but was processed by failure processor: " + failureHandler;
+            return getExchange().getExchangeId() + " exchange failed: " + getExchange()
+                   + " but was processed by failure processor: " + failureHandler;
         }
     }
 }

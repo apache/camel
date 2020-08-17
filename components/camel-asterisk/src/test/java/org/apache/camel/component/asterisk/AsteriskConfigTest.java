@@ -32,9 +32,10 @@ public class AsteriskConfigTest extends CamelTestSupport {
 
     @Test
     void asteriskEndpointData() {
-        Endpoint endpoint = context.getEndpoint("asterisk://myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password + "&action=" + action);
+        Endpoint endpoint = context.getEndpoint("asterisk://myVoIP?hostname=" + hostname + "&username=" + username
+                                                + "&password=" + password + "&action=" + action);
         assertTrue(endpoint instanceof AsteriskEndpoint, "Endpoint not an AsteriskEndpoint: " + endpoint);
-        AsteriskEndpoint asteriskEndpoint = (AsteriskEndpoint)endpoint;
+        AsteriskEndpoint asteriskEndpoint = (AsteriskEndpoint) endpoint;
 
         assertEquals(hostname, asteriskEndpoint.getHostname());
         assertEquals(username, asteriskEndpoint.getUsername());

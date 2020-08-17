@@ -32,7 +32,8 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
     /**
      * Create a parser using regular expressions to adapt parameter names.
-     * @param proxyType Proxy class.
+     * 
+     * @param proxyType     Proxy class.
      * @param substitutions an array of <b>ordered</b> Argument adapters.
      */
     public ArgumentSubstitutionParser(Class<T> proxyType, Substitution[] substitutions) {
@@ -115,7 +116,8 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                                                 argument = new ApiMethodArg(newName, argType, typeArgs);
                                             } else {
                                                 // replace name with argument type name
-                                                final String newName = getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
+                                                final String newName
+                                                        = getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
                                                 argument = new ApiMethodArg(newName, argType, typeArgs);
                                             }
                                         }
@@ -127,7 +129,8 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                         updatedArguments.add(argument);
                     }
 
-                    model = new ApiMethodModel(model.getUniqueName(), model.getName(), model.getResultType(),
+                    model = new ApiMethodModel(
+                            model.getUniqueName(), model.getName(), model.getResultType(),
                             updatedArguments, model.getMethod());
                 }
             }
@@ -159,8 +162,9 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Creates a substitution for all argument types.
-         * @param method regex to match method name
-         * @param argName regex to match argument name
+         * 
+         * @param method      regex to match method name
+         * @param argName     regex to match argument name
          * @param replacement replacement text for argument name
          */
         public Substitution(String method, String argName, String replacement) {
@@ -171,9 +175,10 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Creates a substitution for a specific argument type.
-         * @param method regex to match method name
-         * @param argName regex to match argument name
-         * @param argType argument type as String
+         * 
+         * @param method      regex to match method name
+         * @param argName     regex to match argument name
+         * @param argType     argument type as String
          * @param replacement replacement text for argument name
          */
         public Substitution(String method, String argName, String argType, String replacement) {
@@ -183,6 +188,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Create a substitution for a specific argument type and flag to indicate whether the replacement uses
+         * 
          * @param method
          * @param argName
          * @param argType

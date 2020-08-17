@@ -43,9 +43,13 @@ import org.springframework.util.CompositeIterator;
 public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlPrepareStatementStrategy.class);
-    private static final Pattern REPLACE_IN_PATTERN = Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\})", Pattern.MULTILINE);
-    private static final Pattern REPLACE_PATTERN = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}|\\:\\?\\$simple\\{[^\\}]+\\}", Pattern.MULTILINE);
-    private static final Pattern NAME_PATTERN = Pattern.compile("\\:\\?((in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))|(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))", Pattern.MULTILINE);
+    private static final Pattern REPLACE_IN_PATTERN
+            = Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\})", Pattern.MULTILINE);
+    private static final Pattern REPLACE_PATTERN
+            = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}|\\:\\?\\$simple\\{[^\\}]+\\}", Pattern.MULTILINE);
+    private static final Pattern NAME_PATTERN = Pattern.compile(
+            "\\:\\?((in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))|(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))",
+            Pattern.MULTILINE);
     private final char separator;
 
     public DefaultSqlPrepareStatementStrategy() {
@@ -114,11 +118,10 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     /**
      * Finds closing bracket in text for named parameter.
      *
-     * @param   text
-     * @param   openPosition
-     *          position of the opening bracket
+     * @param  text
+     * @param  openPosition position of the opening bracket
      *
-     * @return  index of corresponding closing bracket, or -1, if none was found
+     * @return              index of corresponding closing bracket, or -1, if none was found
      */
     private static int findClosingBracket(String text, int openPosition) {
         if (text.charAt(openPosition) != '{') {
@@ -141,8 +144,10 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     @Override
-    public Iterator<?> createPopulateIterator(final String query, final String preparedQuery, final int expectedParams, final Exchange exchange,
-                                              final Object value) throws SQLException {
+    public Iterator<?> createPopulateIterator(
+            final String query, final String preparedQuery, final int expectedParams, final Exchange exchange,
+            final Object value)
+            throws SQLException {
         if (hasNamedParameters(query)) {
             // create an iterator that returns the value in the named order
             return new PopulateIterator(query, exchange, value);
@@ -261,7 +266,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
         Object answer = null;
         if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
-            answer = exchange.getContext().resolveLanguage("simple").createExpression(nextParam).evaluate(exchange, Object.class);
+            answer = exchange.getContext().resolveLanguage("simple").createExpression(nextParam).evaluate(exchange,
+                    Object.class);
         } else if (bodyMap.containsKey(nextParam)) {
             answer = bodyMap.get(nextParam);
         } else if (headersMap.containsKey(nextParam)) {
@@ -307,8 +313,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     private static final class PopulateIterator implements Iterator<Object> {
-        private static final String MISSING_PARAMETER_EXCEPTION =
-                "Cannot find key [%s] in message body or headers to use when setting named parameter in query [%s]";
+        private static final String MISSING_PARAMETER_EXCEPTION
+                = "Cannot find key [%s] in message body or headers to use when setting named parameter in query [%s]";
         private final String query;
         private final NamedQueryParser parser;
         private final Exchange exchange;

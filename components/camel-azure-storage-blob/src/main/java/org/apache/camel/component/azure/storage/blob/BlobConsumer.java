@@ -37,7 +37,8 @@ public class BlobConsumer extends ScheduledPollConsumer {
         final String containerName = getEndpoint().getConfiguration().getContainerName();
         final String blobName = getEndpoint().getConfiguration().getBlobName();
         final BlobServiceClient serviceClient = getEndpoint().getBlobServiceClient();
-        final BlobClientWrapper clientWrapper = new BlobClientWrapper(serviceClient.getBlobContainerClient(containerName).getBlobClient(blobName));
+        final BlobClientWrapper clientWrapper
+                = new BlobClientWrapper(serviceClient.getBlobContainerClient(containerName).getBlobClient(blobName));
         final BlobOperations operations = new BlobOperations(getEndpoint().getConfiguration(), clientWrapper);
         final Exchange exchange = getEndpoint().createExchange();
 

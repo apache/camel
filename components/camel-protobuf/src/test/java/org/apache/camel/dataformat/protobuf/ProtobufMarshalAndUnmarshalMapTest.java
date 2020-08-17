@@ -80,8 +80,10 @@ public class ProtobufMarshalAndUnmarshalMapTest extends CamelTestSupport {
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
-                from("direct:marshal").marshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person");
-                from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                from("direct:marshal").marshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person");
+                from("direct:unmarshalA").unmarshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
             }
         };
     }

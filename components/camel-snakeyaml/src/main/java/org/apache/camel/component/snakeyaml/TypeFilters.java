@@ -41,9 +41,9 @@ public final class TypeFilters {
 
         public RegExp(Collection<String> patterns) {
             this.predicates = patterns.stream()
-                .map(Pattern::compile)
-                .map(Pattern::asPredicate)
-                .collect(Collectors.toList());
+                    .map(Pattern::compile)
+                    .map(Pattern::asPredicate)
+                    .collect(Collectors.toList());
         }
 
         @Override

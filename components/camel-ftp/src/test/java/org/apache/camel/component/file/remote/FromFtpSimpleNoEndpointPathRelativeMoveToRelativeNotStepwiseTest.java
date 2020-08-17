@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.file.remote;
 
-public class FromFtpSimpleNoEndpointPathRelativeMoveToRelativeNotStepwiseTest extends FromFtpSimpleNoEndpointPathRelativeMoveToRelativeTest {
+public class FromFtpSimpleNoEndpointPathRelativeMoveToRelativeNotStepwiseTest
+        extends FromFtpSimpleNoEndpointPathRelativeMoveToRelativeTest {
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false" + "&move=.done&initialDelay=2500&delay=5000&stepwise=false";
+        return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false"
+               + "&move=.done&initialDelay=2500&delay=5000&stepwise=false";
     }
 
 }

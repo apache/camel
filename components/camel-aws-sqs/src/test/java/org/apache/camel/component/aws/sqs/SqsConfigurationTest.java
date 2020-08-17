@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-
 public class SqsConfigurationTest {
 
     @Test
@@ -31,7 +30,8 @@ public class SqsConfigurationTest {
             sqsConfiguration.setMessageGroupIdStrategy("useUnknownStrategy");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("Unrecognised MessageGroupIdStrategy"), "Bad error message: " + e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unrecognised MessageGroupIdStrategy"),
+                    "Bad error message: " + e.getMessage());
         }
     }
 
@@ -42,7 +42,8 @@ public class SqsConfigurationTest {
             sqsConfiguration.setMessageDeduplicationIdStrategy("useUnknownStrategy");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("Unrecognised MessageDeduplicationIdStrategy"), "Bad error message: " + e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unrecognised MessageDeduplicationIdStrategy"),
+                    "Bad error message: " + e.getMessage());
         }
     }
 

@@ -48,7 +48,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
 
     @Test
     public void testCamelCustomDefaultThreadPoolProfile() throws Exception {
-        DefaultExecutorServiceManager manager = (DefaultExecutorServiceManager)context.getExecutorServiceManager();
+        DefaultExecutorServiceManager manager = (DefaultExecutorServiceManager) context.getExecutorServiceManager();
         ThreadPoolProfile profile = manager.getDefaultThreadPoolProfile();
         assertEquals(5, profile.getPoolSize().intValue());
         assertEquals(15, profile.getMaxPoolSize().intValue());

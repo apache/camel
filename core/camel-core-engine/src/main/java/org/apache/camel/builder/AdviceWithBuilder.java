@@ -21,8 +21,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 
 /**
- * A builder when using the
- * <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
+ * A builder when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
  */
 public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
 
@@ -74,8 +73,8 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     /**
      * Will only apply the n'th node matched.
      *
-     * @param index index of node to match (is 0-based)
-     * @return the builder to build the nodes.
+     * @param  index index of node to match (is 0-based)
+     * @return       the builder to build the nodes.
      */
     public AdviceWithBuilder<T> selectIndex(int index) {
         if (index < 0) {
@@ -89,9 +88,9 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     /**
      * Will only apply the node in the index range matched.
      *
-     * @param from from index of node to start matching (inclusive)
-     * @param to to index of node to stop matching (inclusive)
-     * @return the builder to build the nodes.
+     * @param  from from index of node to start matching (inclusive)
+     * @param  to   to index of node to stop matching (inclusive)
+     * @return      the builder to build the nodes.
      */
     public AdviceWithBuilder<T> selectRange(int from, int to) {
         if (from < 0) {
@@ -108,14 +107,12 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     /**
      * Will only apply for nodes maximum levels deep.
      * <p/>
-     * The first level is <tt>1</tt>, and level <tt>2</tt> is the children of
-     * the first level nodes, and so on.
+     * The first level is <tt>1</tt>, and level <tt>2</tt> is the children of the first level nodes, and so on.
      * <p/>
      * Use zero or negative value for unbounded level.
      *
-     * @param maxDeep the maximum levels to traverse deep in the Camel route
-     *            tree.
-     * @return the builder to build the nodes.
+     * @param  maxDeep the maximum levels to traverse deep in the Camel route tree.
+     * @return         the builder to build the nodes.
      */
     public AdviceWithBuilder<T> maxDeep(int maxDeep) {
         if (maxDeep == 0) {
@@ -135,13 +132,17 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         RouteDefinition route = builder.getOriginalRoute();
         AdviceWithDefinition answer = new AdviceWithDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(
+                    AdviceWithTasks.replaceById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToString(route, toString, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToString(route, toString, answer, selectFirst, selectLast,
+                    selectFrom, selectTo, maxDeep));
         } else if (toUri != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToUri(route, toUri, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToUri(route, toUri, answer, selectFirst, selectLast,
+                    selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(
+                    AdviceWithTasks.replaceByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
         return answer;
     }
@@ -152,13 +153,17 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     public void remove() {
         RouteDefinition route = builder.getOriginalRoute();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeById(route, id, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks()
+                    .add(AdviceWithTasks.removeById(route, id, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToString(route, toString, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(
+                    AdviceWithTasks.removeByToString(route, toString, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toUri != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToUri(route, toUri, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks()
+                    .add(AdviceWithTasks.removeByToUri(route, toUri, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(route, type, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks()
+                    .add(AdviceWithTasks.removeByType(route, type, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
     }
 
@@ -171,13 +176,17 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         RouteDefinition route = builder.getOriginalRoute();
         AdviceWithDefinition answer = new AdviceWithDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks()
+                    .add(AdviceWithTasks.beforeById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToString(route, toString, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToString(route, toString, answer, selectFirst, selectLast,
+                    selectFrom, selectTo, maxDeep));
         } else if (toUri != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToUri(route, toUri, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToUri(route, toUri, answer, selectFirst, selectLast,
+                    selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(
+                    AdviceWithTasks.beforeByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
         return answer;
     }
@@ -191,13 +200,17 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         RouteDefinition route = builder.getOriginalRoute();
         AdviceWithDefinition answer = new AdviceWithDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks()
+                    .add(AdviceWithTasks.afterById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToString(route, toString, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToString(route, toString, answer, selectFirst, selectLast,
+                    selectFrom, selectTo, maxDeep));
         } else if (toUri != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToUri(route, toUri, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(
+                    AdviceWithTasks.afterByToUri(route, toUri, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
+            builder.getAdviceWithTasks().add(
+                    AdviceWithTasks.afterByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
         return answer;
     }

@@ -119,8 +119,10 @@ public final class TelegramConverter {
 
         // If the message is a string, it will be converted to a OutgoingTextMessage
         if (type == null) {
-            throw new IllegalStateException("Binary message require the header " + TelegramConstants.TELEGRAM_MEDIA_TYPE + " to be set with an appropriate org.apache.camel.component.telegram"
-                    + ".TelegramMediaType object");
+            throw new IllegalStateException(
+                    "Binary message require the header " + TelegramConstants.TELEGRAM_MEDIA_TYPE
+                                            + " to be set with an appropriate org.apache.camel.component.telegram"
+                                            + ".TelegramMediaType object");
         }
 
         OutgoingMessage result;
@@ -200,6 +202,5 @@ public final class TelegramConverter {
 
         return mode;
     }
-
 
 }

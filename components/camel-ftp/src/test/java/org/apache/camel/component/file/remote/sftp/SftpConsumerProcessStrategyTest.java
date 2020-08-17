@@ -42,7 +42,9 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
         // create file using regular file
         template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        String out = consumer.receiveBody("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&processStrategy=#myStrategy", 5000, String.class);
+        String out = consumer.receiveBody("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                                          + "?username=admin&password=admin&processStrategy=#myStrategy",
+                5000, String.class);
         assertNotNull(out);
         // Apache SSHD appends \u0000 at last byte in retrieved file
         assertTrue(out.startsWith("Hello World"));
@@ -59,22 +61,28 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
         }
 
         @Override
-        public boolean begin(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public boolean begin(
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             return true;
         }
 
         @Override
-        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             // noop
         }
 
         @Override
-        public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             invoked++;
         }
 
         @Override
-        public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void rollback(
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             // noop
         }
 

@@ -48,10 +48,10 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        AssumeRoleResponse resultGet = (AssumeRoleResponse)exchange.getIn().getBody();
+        AssumeRoleResponse resultGet = (AssumeRoleResponse) exchange.getIn().getBody();
         assertEquals("arn", resultGet.assumedRoleUser().arn());
     }
-    
+
     @Test
     public void stsGetSessionTokenTest() throws Exception {
 
@@ -65,7 +65,7 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GetSessionTokenResponse resultGet = (GetSessionTokenResponse)exchange.getIn().getBody();
+        GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 

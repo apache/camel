@@ -131,8 +131,8 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
             @Override
             public void configure() {
                 from("direct://in")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock://out");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock://out");
             }
         };
     }

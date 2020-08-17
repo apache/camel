@@ -179,7 +179,9 @@ public class MessageHelperTest {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message);
-        assertTrue(out.contains("<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"), "Should contain body");
+        assertTrue(out.contains(
+                "<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"),
+                "Should contain body");
         assertTrue(out.contains(message.getExchange().getExchangeId()), "Should contain exchangeId");
 
         context.stop();
@@ -199,7 +201,8 @@ public class MessageHelperTest {
         String out = MessageHelper.dumpAsXml(message, false);
 
         assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
-                     + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>", out);
+                     + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
+                out);
 
         context.stop();
     }
@@ -218,7 +221,8 @@ public class MessageHelperTest {
         String out = MessageHelper.dumpAsXml(message, false, 2);
 
         assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
-                     + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>", out);
+                     + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>",
+                out);
 
         context.stop();
     }

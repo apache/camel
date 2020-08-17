@@ -33,10 +33,12 @@ public class AmazonSTSClientMock implements StsClient {
     public AssumeRoleResponse assumeRole(AssumeRoleRequest assumeRoleRequest) {
         return AssumeRoleResponse.builder().assumedRoleUser(AssumedRoleUser.builder().arn("arn").build()).build();
     }
-    
+
     @Override
     public GetSessionTokenResponse getSessionToken(GetSessionTokenRequest getSessionTokenRequest) {
-        return GetSessionTokenResponse.builder().credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build()).build();
+        return GetSessionTokenResponse.builder()
+                .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build())
+                .build();
     }
 
     @Override

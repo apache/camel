@@ -60,7 +60,8 @@ public class SpringApnsConsumerTest {
         server.stop();
     }
 
-    @Test @Timeout(5)
+    @Test
+    @Timeout(5)
     public void testConsumer() throws Exception {
 
         byte[] deviceTokenBytes = ApnsUtils.createRandomDeviceTokenBytes();
@@ -76,7 +77,7 @@ public class SpringApnsConsumerTest {
 
         mock.assertIsSatisfied();
 
-        InactiveDevice inactiveDevice = (InactiveDevice)mock.getExchanges().get(0).getIn().getBody();
+        InactiveDevice inactiveDevice = (InactiveDevice) mock.getExchanges().get(0).getIn().getBody();
         assertNotNull(inactiveDevice);
         assertNotNull(inactiveDevice.getDate());
         assertNotNull(inactiveDevice.getDeviceToken());

@@ -42,8 +42,8 @@ public class DebeziumMongodbComponentTest {
 
         final String remaining = "test_name";
         final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
-                + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                + "databaseServerName=test&databaseHistoryFileName=/test";
+                           + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                           + "databaseServerName=test&databaseHistoryFileName=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
@@ -52,7 +52,8 @@ public class DebeziumMongodbComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // test for config
-            final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = (MongoDbConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final MongoDbConnectorEmbeddedDebeziumConfiguration configuration
+                    = (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("localhost", configuration.getMongodbHosts());
@@ -84,7 +85,8 @@ public class DebeziumMongodbComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // assert configurations
-            final MongoDbConnectorEmbeddedDebeziumConfiguration actualConfigurations = (MongoDbConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final MongoDbConnectorEmbeddedDebeziumConfiguration actualConfigurations
+                    = (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertNotNull(actualConfigurations);
             assertEquals(configuration.getName(), actualConfigurations.getName());
             assertEquals(configuration.getMongodbUser(), actualConfigurations.getMongodbUser());

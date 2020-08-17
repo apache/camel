@@ -38,14 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MasterComponentTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterComponentTest.class);
-    private static final List<String> INSTANCES = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
+    private static final List<String> INSTANCES
+            = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(INSTANCES.size());
     private static final CountDownLatch LATCH = new CountDownLatch(INSTANCES.size());
 
     @Test
-    public void test()  throws Exception {
-        for (String instance: INSTANCES) {
+    public void test() throws Exception {
+        for (String instance : INSTANCES) {
             SCHEDULER.submit(() -> run(instance));
         }
 
@@ -79,9 +80,9 @@ public class MasterComponentTest {
                 @Override
                 public void configure() throws Exception {
                     from("master:ns:timer:test?delay=1000&period=1000")
-                        .routeId("route-" + id)
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                            .routeId("route-" + id)
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

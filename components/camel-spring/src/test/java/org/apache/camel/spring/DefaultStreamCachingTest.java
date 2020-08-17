@@ -25,11 +25,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class DefaultStreamCachingTest {
-    
-    
+
     @Test
     public void testStreamCaching() throws Exception {
-        AbstractApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/streamCaching.xml"});
+        AbstractApplicationContext appContext
+                = new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/spring/streamCaching.xml" });
         CamelContext camelContext = appContext.getBean("camelContext", CamelContext.class);
         assertFalse(camelContext.isStreamCaching(), "StreamCaching should not be enabled");
 

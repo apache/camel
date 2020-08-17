@@ -53,7 +53,8 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 /**
  * Generate Endpoint DSL source files for Components.
  */
-@Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ComponentDslMojo extends AbstractGeneratorMojo {
     /**
      * The project build directory
@@ -100,7 +101,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     DynamicClassLoader projectClassLoader;
 
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         baseDir = project.getBasedir();
         componentsDslPackageName = "org.apache.camel.builder.component";
@@ -130,7 +132,9 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         Map<File, Supplier<String>> files;
 
         try {
-            files = Files.find(buildDir.toPath(), Integer.MAX_VALUE, (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
+            files = Files
+                    .find(buildDir.toPath(), Integer.MAX_VALUE,
+                            (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
                     .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -158,7 +162,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             }
 
             // Group the models by implementing classes
-            Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
+            Map<String, List<ComponentModel>> grModels
+                    = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
             for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
                 for (ComponentModel model : compModels) {
@@ -171,23 +176,29 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
     private void createComponentDsl(final ComponentModel model) throws MojoExecutionException, MojoFailureException {
         // Create components DSL factories
-        final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = syncAndGenerateSpecificComponentsBuilderFactories(model);
+        final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator
+                = syncAndGenerateSpecificComponentsBuilderFactories(model);
 
         // Update components metadata
-        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = syncAndUpdateComponentsMetadataRegistry(model, componentDslBuilderFactoryGenerator.getGeneratedClassName());
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry
+                = syncAndUpdateComponentsMetadataRegistry(model, componentDslBuilderFactoryGenerator.getGeneratedClassName());
 
         final Set<ComponentModel> componentCachedModels = new TreeSet<>(
-                Comparator.comparing(ComponentModel::getScheme)
-        );
+                Comparator.comparing(ComponentModel::getScheme));
         componentCachedModels.addAll(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
 
         // Create components DSL entry builder factories
         syncAndGenerateComponentsBuilderFactories(componentCachedModels);
     }
 
-    private ComponentDslBuilderFactoryGenerator syncAndGenerateSpecificComponentsBuilderFactories(final ComponentModel componentModel) throws MojoFailureException {
-        final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator.generateClass(componentModel, projectClassLoader, componentsDslPackageName);
-        boolean updated = writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(), componentsDslFactoriesPackageName.replace('.', '/'), componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
+    private ComponentDslBuilderFactoryGenerator syncAndGenerateSpecificComponentsBuilderFactories(
+            final ComponentModel componentModel)
+            throws MojoFailureException {
+        final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator
+                .generateClass(componentModel, projectClassLoader, componentsDslPackageName);
+        boolean updated = writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(),
+                componentsDslFactoriesPackageName.replace('.', '/'),
+                componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
         if (updated) {
             getLog().info("Updated ComponentDsl: " + componentModel.getScheme());
@@ -196,8 +207,11 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         return componentDslBuilderFactoryGenerator;
     }
 
-    private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final ComponentModel componentModel, final String className) {
-        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(sourcesOutputDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(), componentsMetadata);
+    private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(
+            final ComponentModel componentModel, final String className) {
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(
+                sourcesOutputDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(),
+                componentsMetadata);
         boolean updated = componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
 
         if (updated) {
@@ -207,9 +221,13 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         return componentsDslMetadataRegistry;
     }
 
-    private void syncAndGenerateComponentsBuilderFactories(final Set<ComponentModel> componentCachedModels) throws MojoFailureException {
-        final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator.generateClass(componentCachedModels, projectClassLoader, componentsDslPackageName);
-        boolean updated = writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
+    private void syncAndGenerateComponentsBuilderFactories(final Set<ComponentModel> componentCachedModels)
+            throws MojoFailureException {
+        final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator
+                .generateClass(componentCachedModels, projectClassLoader, componentsDslPackageName);
+        boolean updated = writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(),
+                componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java",
+                sourcesOutputDir);
 
         if (updated) {
             getLog().info("Updated " + componentCachedModels.size() + " ComponentDsl factories");
@@ -261,7 +279,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    protected boolean writeSourceIfChanged(String source, String filePath, String fileName, File outputDir) throws MojoFailureException {
+    protected boolean writeSourceIfChanged(String source, String filePath, String fileName, File outputDir)
+            throws MojoFailureException {
         Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
 
         try {

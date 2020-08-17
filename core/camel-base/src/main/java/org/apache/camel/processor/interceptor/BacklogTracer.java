@@ -36,8 +36,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
  * <p/>
- * This tracer allows to store message tracers per node in the Camel routes. The tracers
- * is stored in a backlog queue (FIFO based) which allows to pull the traced messages on demand.
+ * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
+ * (FIFO based) which allows to pull the traced messages on demand.
  */
 public final class BacklogTracer extends ServiceSupport {
 
@@ -67,8 +67,8 @@ public final class BacklogTracer extends ServiceSupport {
     /**
      * Creates a new backlog tracer.
      *
-     * @param context Camel context
-     * @return a new backlog tracer
+     * @param  context Camel context
+     * @return         a new backlog tracer
      */
     public static BacklogTracer createTracer(CamelContext context) {
         return new BacklogTracer(context);
@@ -77,9 +77,9 @@ public final class BacklogTracer extends ServiceSupport {
     /**
      * Whether or not to trace the given processor definition.
      *
-     * @param definition the processor definition
-     * @param exchange   the exchange
-     * @return <tt>true</tt> to trace, <tt>false</tt> to skip tracing
+     * @param  definition the processor definition
+     * @param  exchange   the exchange
+     * @return            <tt>true</tt> to trace, <tt>false</tt> to skip tracing
      */
     public boolean shouldTrace(NamedNode definition, Exchange exchange) {
         if (!enabled) {
@@ -155,7 +155,8 @@ public final class BacklogTracer extends ServiceSupport {
             throw new IllegalArgumentException("The backlog size must be a positive number, was: " + backlogSize);
         }
         if (backlogSize > MAX_BACKLOG_SIZE) {
-            throw new IllegalArgumentException("The backlog size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + backlogSize);
+            throw new IllegalArgumentException(
+                    "The backlog size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + backlogSize);
         }
         this.backlogSize = backlogSize;
     }

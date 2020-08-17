@@ -74,13 +74,15 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         // only if JMX is enabled
         if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            this.extendedStatistics
+                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         } else {
             this.extendedStatistics = false;
         }
 
         // internal processor used for sending
-        internalProcessor = new SharedCamelInternalProcessor(camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, camelContext));
+        internalProcessor = new SharedCamelInternalProcessor(
+                camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, camelContext));
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
@@ -136,12 +138,14 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                         if (!done) {
                             Thread.sleep(5);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Waiting {} ms for producer to finish starting: {} state: {}", watch.taken(), producer, ss.getStatus());
+                                LOG.trace("Waiting {} ms for producer to finish starting: {} state: {}", watch.taken(),
+                                        producer, ss.getStatus());
                             }
                         }
                     }
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", watch.taken(), producer, ss.getStatus());
+                        LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", watch.taken(), producer,
+                                ss.getStatus());
                     }
                 }
             }
@@ -201,54 +205,56 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     /**
-     * Asynchronously sends an exchange to an endpoint using a supplied
-     * {@link Processor} to populate the exchange
+     * Asynchronously sends an exchange to an endpoint using a supplied {@link Processor} to populate the exchange
      * <p>
-     * This method will <b>neither</b> throw an exception <b>nor</b> complete future exceptionally.
-     * If processing of the given Exchange failed then the exception is stored on the return Exchange
+     * This method will <b>neither</b> throw an exception <b>nor</b> complete future exceptionally. If processing of the
+     * given Exchange failed then the exception is stored on the return Exchange
      *
-     * @param endpoint        the endpoint to send the exchange to
-     * @param pattern         the message {@link ExchangePattern} such as
-     *                        {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
-     * @param processor       the transformer used to populate the new exchange
-     * @param resultProcessor a processor to process the exchange when the send is complete.
-     * @param future          the preexisting future to complete when processing is done or null if to create new one
-     * @return future that completes with exchange when processing is done. Either passed into future parameter
-     *              or new one if parameter was null
+     * @param  endpoint        the endpoint to send the exchange to
+     * @param  pattern         the message {@link ExchangePattern} such as {@link ExchangePattern#InOnly} or
+     *                         {@link ExchangePattern#InOut}
+     * @param  processor       the transformer used to populate the new exchange
+     * @param  resultProcessor a processor to process the exchange when the send is complete.
+     * @param  future          the preexisting future to complete when processing is done or null if to create new one
+     * @return                 future that completes with exchange when processing is done. Either passed into future
+     *                         parameter or new one if parameter was null
      */
     @Deprecated
-    public CompletableFuture<Exchange> asyncSend(Endpoint endpoint,
-                                                 ExchangePattern pattern,
-                                                 Processor processor,
-                                                 Processor resultProcessor,
-                                                 CompletableFuture<Exchange> future) {
+    public CompletableFuture<Exchange> asyncSend(
+            Endpoint endpoint,
+            ExchangePattern pattern,
+            Processor processor,
+            Processor resultProcessor,
+            CompletableFuture<Exchange> future) {
         return asyncSendExchange(endpoint, pattern, processor, resultProcessor, null, future);
     }
 
     @Override
-    public CompletableFuture<Exchange> asyncSendExchange(Endpoint endpoint,
-                                                         ExchangePattern pattern,
-                                                         Processor processor,
-                                                         Processor resultProcessor,
-                                                         Exchange exchange,
-                                                         CompletableFuture<Exchange> future) {
+    public CompletableFuture<Exchange> asyncSendExchange(
+            Endpoint endpoint,
+            ExchangePattern pattern,
+            Processor processor,
+            Processor resultProcessor,
+            Exchange exchange,
+            CompletableFuture<Exchange> future) {
         if (exchange == null) {
             exchange = pattern != null ? endpoint.createExchange(pattern) : endpoint.createExchange();
         }
         return doAsyncSendExchange(endpoint, processor, resultProcessor, exchange, future);
     }
 
-    protected CompletableFuture<Exchange> doAsyncSendExchange(Endpoint endpoint,
-                                                              Processor processor,
-                                                              Processor resultProcessor,
-                                                              Exchange exchange,
-                                                              CompletableFuture<Exchange> f) {
+    protected CompletableFuture<Exchange> doAsyncSendExchange(
+            Endpoint endpoint,
+            Processor processor,
+            Processor resultProcessor,
+            Exchange exchange,
+            CompletableFuture<Exchange> f) {
         CompletableFuture<Exchange> future = f != null ? f : new CompletableFuture<>();
         AsyncProducerCallback cb = (p, e, c) -> asyncDispatchExchange(endpoint, p, resultProcessor, e, c);
         try {
             if (processor instanceof AsyncProcessor) {
                 ((AsyncProcessor) processor).process(exchange,
-                    doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
+                        doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
             } else {
                 if (processor != null) {
                     processor.process(exchange);
@@ -264,10 +270,11 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     @Override
-    public boolean doInAsyncProducer(Endpoint endpoint,
-                                     Exchange exchange,
-                                     AsyncCallback callback,
-                                     AsyncProducerCallback producerCallback) {
+    public boolean doInAsyncProducer(
+            Endpoint endpoint,
+            Exchange exchange,
+            AsyncCallback callback,
+            AsyncProducerCallback producerCallback) {
 
         AsyncProducer producer;
         try {
@@ -280,7 +287,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                     callback.done(true);
                     return true;
                 } else {
-                    exchange.setException(new IllegalStateException("No producer, this processor has not been started: " + this));
+                    exchange.setException(
+                            new IllegalStateException("No producer, this processor has not been started: " + this));
                     callback.done(true);
                     return true;
                 }
@@ -330,8 +338,9 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
-    protected boolean asyncDispatchExchange(Endpoint endpoint, AsyncProducer producer,
-                                            Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
+    protected boolean asyncDispatchExchange(
+            Endpoint endpoint, AsyncProducer producer,
+            Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
         // now lets dispatch
         LOG.debug(">>>> {} {}", endpoint, exchange);
 

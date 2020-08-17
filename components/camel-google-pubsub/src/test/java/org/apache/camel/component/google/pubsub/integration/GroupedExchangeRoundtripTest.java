@@ -65,8 +65,9 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from(aggregator).routeId("Group_Send").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2).completionTimeout(5000L).to(topic)
-                    .to(sendResult);
+                from(aggregator).routeId("Group_Send").aggregate(new GroupedExchangeAggregationStrategy()).constant(true)
+                        .completionSize(2).completionTimeout(5000L).to(topic)
+                        .to(sendResult);
 
                 from(pubsubSubscription).routeId("Group_Receive").to(receiveResult);
 

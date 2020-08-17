@@ -59,13 +59,13 @@ public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
         mockResultEndpoint.assertIsSatisfied();
     }
 
-
     public class PullRequestCommentProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Comment comment = (Comment) in.getBody();
-            LOG.debug("Got Comment " + comment.getId() + " [" + comment.getBody() + "] from User [" + comment.getUser().getLogin() + "]");
+            LOG.debug("Got Comment " + comment.getId() + " [" + comment.getBody() + "] from User ["
+                      + comment.getUser().getLogin() + "]");
         }
     }
 }

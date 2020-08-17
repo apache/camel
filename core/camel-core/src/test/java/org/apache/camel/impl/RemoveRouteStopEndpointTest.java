@@ -32,8 +32,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertNotNull(seda);
         Endpoint log = context.hasEndpoint("log://bar");
         assertNotNull(log);
-        assertTrue(((ServiceSupport)seda).isStarted(), "Should be started");
-        assertTrue(((ServiceSupport)log).isStarted(), "Should be started");
+        assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
+        assertTrue(((ServiceSupport) log).isStarted(), "Should be started");
 
         assertTrue(context.hasEndpoint("seda:foo") != null);
         assertTrue(context.hasEndpoint("seda:bar") != null);
@@ -55,8 +55,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("seda://stop") != null);
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
-        assertTrue(((ServiceSupport)seda).isStarted(), "Should be started");
-        assertTrue(((ServiceSupport)log).isStopped(), "Should be stopped");
+        assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
+        assertTrue(((ServiceSupport) log).isStopped(), "Should be stopped");
 
         // stop and remove baz route
         context.getRouteController().stopRoute("baz");
@@ -81,8 +81,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertFalse(context.hasEndpoint("seda://stop") != null);
         assertFalse(context.hasEndpoint("mock://stop") != null);
 
-        assertFalse(((ServiceSupport)seda).isStarted(), "Should not be started");
-        assertFalse(((ServiceSupport)log).isStarted(), "Should not be started");
+        assertFalse(((ServiceSupport) seda).isStarted(), "Should not be started");
+        assertFalse(((ServiceSupport) log).isStarted(), "Should not be started");
     }
 
     @Test
@@ -91,8 +91,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertNotNull(seda);
         Endpoint log = context.hasEndpoint("log://bar");
         assertNotNull(log);
-        assertTrue(((ServiceSupport)seda).isStarted(), "Should be started");
-        assertTrue(((ServiceSupport)log).isStarted(), "Should be started");
+        assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
+        assertTrue(((ServiceSupport) log).isStarted(), "Should be started");
 
         assertTrue(context.hasEndpoint("seda://foo") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
@@ -106,8 +106,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
-        assertTrue(((ServiceSupport)seda).isStarted(), "Should be started");
-        assertTrue(((ServiceSupport)log).isStopped(), "Should be stopped");
+        assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
+        assertTrue(((ServiceSupport) log).isStopped(), "Should be stopped");
 
         assertTrue(context.hasEndpoint("seda:foo") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
@@ -133,8 +133,8 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
 
         context.stop();
 
-        assertFalse(((ServiceSupport)seda).isStarted(), "Should not be started");
-        assertFalse(((ServiceSupport)log).isStarted(), "Should not be started");
+        assertFalse(((ServiceSupport) seda).isStarted(), "Should not be started");
+        assertFalse(((ServiceSupport) log).isStarted(), "Should not be started");
     }
 
     @Override

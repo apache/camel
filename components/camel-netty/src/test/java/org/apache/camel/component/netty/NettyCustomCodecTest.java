@@ -37,7 +37,7 @@ public class NettyCustomCodecTest extends BaseNettyTest {
                          + "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoders=#myCustomEncoder";
 
     // use reaadble bytes
-    private byte[] data = new byte[] {65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0};
+    private byte[] data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0 };
 
     @Test
     public void testCustomCodec() throws Exception {

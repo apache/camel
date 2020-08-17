@@ -24,7 +24,7 @@ public interface LumberjackMessageProcessor {
     /**
      * Called when a message is received. The {@code callback} must be called with the status of the processing
      *
-     * @param payload Lumberjack message payload
+     * @param payload  Lumberjack message payload
      * @param callback Callback to call when the processing is complete
      */
     void onMessageReceived(Object payload, Callback callback);

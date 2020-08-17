@@ -70,9 +70,11 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:expression").choice().when().expression(method(MyBean.class, "isGradeA")).to("mock:gradeA").otherwise().to("mock:otherGrade").end();
+                from("direct:expression").choice().when().expression(method(MyBean.class, "isGradeA")).to("mock:gradeA")
+                        .otherwise().to("mock:otherGrade").end();
 
-                from("direct:method").choice().when().method(MyBean.class).to("mock:gradeA").otherwise().to("mock:otherGrade").end();
+                from("direct:method").choice().when().method(MyBean.class).to("mock:gradeA").otherwise().to("mock:otherGrade")
+                        .end();
             }
         };
     }

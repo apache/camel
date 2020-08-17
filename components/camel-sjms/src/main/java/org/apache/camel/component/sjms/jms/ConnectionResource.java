@@ -21,24 +21,21 @@ import javax.jms.ConnectionFactory;
 
 /**
  * <p>
- * The ConnectionResource is the contract used to provide {@link Connection}
- * pools to the SJMS component. A user should use this to provide access to an
- * alternative pooled connection resource such as a {@link Connection} pool that
- * is managed by a J2EE container.
+ * The ConnectionResource is the contract used to provide {@link Connection} pools to the SJMS component. A user should
+ * use this to provide access to an alternative pooled connection resource such as a {@link Connection} pool that is
+ * managed by a J2EE container.
  * </p>
  * <p>
- * It is recommended though that for standard {@link ConnectionFactory}
- * providers you use the {@link ConnectionFactoryResource) implementation that
- * is provided with SJMS as it is optimized for this component.
+ * It is recommended though that for standard {@link ConnectionFactory} providers you use the
+ * {@link ConnectionFactoryResource) implementation that is provided with SJMS as it is optimized for this component.
  * </p>
  */
 public interface ConnectionResource {
 
     /**
-     * Borrows a {@link Connection} from the connection pool. An exception
-     * should be thrown if no resource is available.
+     * Borrows a {@link Connection} from the connection pool. An exception should be thrown if no resource is available.
      *
-     * @return {@link Connection}
+     * @return           {@link Connection}
      * @throws Exception when no resource is available
      */
     Connection borrowConnection() throws Exception;
@@ -46,7 +43,7 @@ public interface ConnectionResource {
     /**
      * Returns the {@link Connection} to the connection pool.
      *
-     * @param connection the borrowed {@link Connection}
+     * @param  connection the borrowed {@link Connection}
      * @throws Exception
      */
     void returnConnection(Connection connection) throws Exception;

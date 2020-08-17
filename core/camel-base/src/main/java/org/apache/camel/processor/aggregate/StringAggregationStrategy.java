@@ -22,10 +22,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
- * Aggregate result of pick expression into a single combined Exchange holding all the
- * aggregated bodies in a {@link String} as the message body.
+ * Aggregate result of pick expression into a single combined Exchange holding all the aggregated bodies in a
+ * {@link String} as the message body.
  *
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
+ * 
  * @since 3.0.0
  */
 public class StringAggregationStrategy implements AggregationStrategy {
@@ -35,7 +36,8 @@ public class StringAggregationStrategy implements AggregationStrategy {
 
     /**
      * Set delimiter used for joining aggregated String
-     * @param delimiter The delimiter to join with. Default empty String
+     * 
+     * @param  delimiter The delimiter to join with. Default empty String
      * @return
      */
     public StringAggregationStrategy delimiter(String delimiter) {
@@ -47,8 +49,9 @@ public class StringAggregationStrategy implements AggregationStrategy {
      * Set an expression to extract the element to be aggregated from the incoming {@link Exchange}.
      * <p/>
      * By default, it picks the full IN message body of the incoming exchange.
-     * @param expression The picking expression.
-     * @return This instance.
+     * 
+     * @param  expression The picking expression.
+     * @return            This instance.
      */
     public StringAggregationStrategy pick(Expression expression) {
         this.pickExpression = expression;

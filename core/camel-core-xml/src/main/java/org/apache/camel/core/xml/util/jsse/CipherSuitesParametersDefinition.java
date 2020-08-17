@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cipherSuitesParameters", propOrder = {"cipherSuite"})
+@XmlType(name = "cipherSuitesParameters", propOrder = { "cipherSuite" })
 public class CipherSuitesParametersDefinition {
 
     private List<String> cipherSuite;

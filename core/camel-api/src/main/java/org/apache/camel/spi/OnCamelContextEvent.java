@@ -19,8 +19,7 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * Marker interface used to make it easy to discover {@link CamelContext} related event handlers
- * from the registry.
+ * Marker interface used to make it easy to discover {@link CamelContext} related event handlers from the registry.
  *
  * @see OnCamelContextInitialized
  * @see OnCamelContextStart

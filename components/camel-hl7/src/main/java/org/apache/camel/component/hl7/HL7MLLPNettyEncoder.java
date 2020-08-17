@@ -53,8 +53,9 @@ class HL7MLLPNettyEncoder extends MessageToByteEncoder<Object> {
         } else if (message instanceof byte[]) {
             body = (byte[]) message;
         } else {
-            throw new IllegalArgumentException("The message to encode is not a supported type: "
-                    + message.getClass().getCanonicalName());
+            throw new IllegalArgumentException(
+                    "The message to encode is not a supported type: "
+                                               + message.getClass().getCanonicalName());
         }
         byteBuf.writeByte(config.getStartByte());
         byteBuf.writeBytes(body);

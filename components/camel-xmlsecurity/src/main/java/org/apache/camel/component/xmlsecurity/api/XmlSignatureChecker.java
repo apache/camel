@@ -29,29 +29,24 @@ import org.w3c.dom.Element;
 import org.apache.camel.Message;
 
 /**
- * This interface gives the application the possibility to check whether the
- * expected parts are signed.
+ * This interface gives the application the possibility to check whether the expected parts are signed.
  * <p>
  * Only relevant for the XML signature verifier.
  * <p>
  * See http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
  * <p>
- * The checker is called for each XML signature contained in the XM document.
- * You can get the total and current count of the XML signatures via the methods
- * {@link Input#getTotalCountOfSignatures()} and
+ * The checker is called for each XML signature contained in the XM document. You can get the total and current count of
+ * the XML signatures via the methods {@link Input#getTotalCountOfSignatures()} and
  * {@link Input#getCurrentCountOfSignatures()}.
  */
 public interface XmlSignatureChecker {
 
     /**
-     * Checks whether the signature document has the expected structure and
-     * contains the expected transformations and references. See
-     * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
+     * Checks whether the signature document has the expected structure and contains the expected transformations and
+     * references. See http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
      * 
-     * @param input
-     *            input parameters
-     * @throws Exception
-     *             when XML signature does not pass the check
+     * @param  input     input parameters
+     * @throws Exception when XML signature does not pass the check
      */
     void checkBeforeCoreValidation(Input input) throws Exception;
 
@@ -76,8 +71,7 @@ public interface XmlSignatureChecker {
         Message getMessage();
 
         /**
-         * Returns true if a XML schema validation was executed during the
-         * parsing of the XML document.
+         * Returns true if a XML schema validation was executed during the parsing of the XML document.
          * 
          */
         boolean isXmlSchemaValidationExecuted();

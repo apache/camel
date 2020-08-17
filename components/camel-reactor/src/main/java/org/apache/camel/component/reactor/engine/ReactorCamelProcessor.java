@@ -121,8 +121,7 @@ final class ReactorCamelProcessor implements Closeable {
 
     private void onBackPressure(Exchange exchange) {
         ReactiveStreamsHelper.invokeDispatchCallback(
-            exchange,
-            new ReactiveStreamsDiscardedException("Discarded by back pressure strategy", exchange, name)
-        );
+                exchange,
+                new ReactiveStreamsDiscardedException("Discarded by back pressure strategy", exchange, name));
     }
 }

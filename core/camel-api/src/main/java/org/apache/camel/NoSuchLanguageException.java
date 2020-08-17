@@ -17,8 +17,7 @@
 package org.apache.camel;
 
 /**
- * A runtime exception thrown if an attempt is made to resolve an unknown
- * language definition.
+ * A runtime exception thrown if an attempt is made to resolve an unknown language definition.
  * 
  * @see org.apache.camel.CamelContext#resolveLanguage(String)
  */

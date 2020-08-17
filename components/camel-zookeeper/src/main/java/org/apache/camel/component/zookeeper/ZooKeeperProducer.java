@@ -43,14 +43,13 @@ import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getPayloadFrom
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getVersionFromMessage;
 
 /**
- * <code>ZooKeeperProducer</code> attempts to set the content of nodes in the
- * {@link ZooKeeper} cluster with the payloads of the of the exchanges it
- * receives.
+ * <code>ZooKeeperProducer</code> attempts to set the content of nodes in the {@link ZooKeeper} cluster with the
+ * payloads of the of the exchanges it receives.
  */
 @SuppressWarnings("rawtypes")
 public class ZooKeeperProducer extends DefaultProducer {
 
-    public static final String ZK_OPERATION_WRITE  = "WRITE";
+    public static final String ZK_OPERATION_WRITE = "WRITE";
     public static final String ZK_OPERATION_DELETE = "DELETE";
 
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperProducer.class);
@@ -141,7 +140,8 @@ public class ZooKeeperProducer extends DefaultProducer {
     }
 
     private void updateExchangeWithResult(ProductionContext context, OperationResult result) {
-        ZooKeeperMessage out = new ZooKeeperMessage(getEndpoint().getCamelContext(), context.node, result.getStatistics(), context.in.getHeaders());
+        ZooKeeperMessage out = new ZooKeeperMessage(
+                getEndpoint().getCamelContext(), context.node, result.getStatistics(), context.in.getHeaders());
         if (result.isOk()) {
             out.setBody(result.getResult());
         } else {
@@ -181,7 +181,7 @@ public class ZooKeeperProducer extends DefaultProducer {
             if (Code.NONODE.equals(Code.get(rc))) {
                 if (configuration.isCreate()) {
                     LOG.warn(format("Node '%s' did not exist, creating it...", node));
-                    ProductionContext context = (ProductionContext)ctx;
+                    ProductionContext context = (ProductionContext) ctx;
                     OperationResult<String> result = null;
                     try {
                         result = createNode(context);
@@ -221,7 +221,8 @@ public class ZooKeeperProducer extends DefaultProducer {
         if (modeString != null) {
             try {
                 mode = getCreateModeFromString(modeString, CreateMode.EPHEMERAL);
-            } catch (Exception e) { }
+            } catch (Exception e) {
+            }
         } else {
             mode = getCreateMode(ctx.exchange.getIn(), CreateMode.EPHEMERAL);
         }
@@ -231,8 +232,7 @@ public class ZooKeeperProducer extends DefaultProducer {
     }
 
     /**
-     * Tries to set the data first and if a no node error is received then an
-     * attempt will be made to create it instead.
+     * Tries to set the data first and if a no node error is received then an attempt will be made to create it instead.
      */
     private OperationResult synchronouslySetData(ProductionContext ctx) throws Exception {
 
@@ -260,7 +260,6 @@ public class ZooKeeperProducer extends DefaultProducer {
         }
         return result;
     }
-
 
     private void logStoreComplete(String path, Stat statistics) {
         if (LOG.isDebugEnabled()) {

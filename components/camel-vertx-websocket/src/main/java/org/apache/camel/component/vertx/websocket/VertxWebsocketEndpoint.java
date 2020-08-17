@@ -39,7 +39,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket", syntax = "vertx-websocket:host:port/path", category = {Category.WEBSOCKET})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
+             syntax = "vertx-websocket:host:port/path", category = { Category.WEBSOCKET })
 public class VertxWebsocketEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketEndpoint.class);

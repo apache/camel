@@ -40,23 +40,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/throttler.html">Throttler</a>
- * will set a limit on the maximum number of message exchanges which can be sent
- * to a processor within a specific time period. <p/> This pattern can be
- * extremely useful if you have some external system which meters access; such
- * as only allowing 100 requests per second; or if huge load can cause a
- * particular system to malfunction or to reduce its throughput you might want
- * to introduce some throttling.
+ * A <a href="http://camel.apache.org/throttler.html">Throttler</a> will set a limit on the maximum number of message
+ * exchanges which can be sent to a processor within a specific time period.
+ * <p/>
+ * This pattern can be extremely useful if you have some external system which meters access; such as only allowing 100
+ * requests per second; or if huge load can cause a particular system to malfunction or to reduce its throughput you
+ * might want to introduce some throttling.
  *
- * This throttle implementation is thread-safe and is therefore safe to be used
- * by multiple concurrent threads in a single route.
+ * This throttle implementation is thread-safe and is therefore safe to be used by multiple concurrent threads in a
+ * single route.
  *
- * The throttling mechanism is a DelayQueue with maxRequestsPerPeriod permits on
- * it. Each permit is set to be delayed by timePeriodMillis (except when the
- * throttler is initialized or the throttle rate increased, then there is no delay
- * for those permits). Callers trying to acquire a permit from the DelayQueue will
- * block if necessary. The end result is a rolling window of time. Where from the
- * callers point of view in the last timePeriodMillis no more than
+ * The throttling mechanism is a DelayQueue with maxRequestsPerPeriod permits on it. Each permit is set to be delayed by
+ * timePeriodMillis (except when the throttler is initialized or the throttle rate increased, then there is no delay for
+ * those permits). Callers trying to acquire a permit from the DelayQueue will block if necessary. The end result is a
+ * rolling window of time. Where from the callers point of view in the last timePeriodMillis no more than
  * maxRequestsPerPeriod have been allowed to be acquired.
  */
 public class Throttler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
@@ -68,7 +65,11 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     private static final String PROPERTY_EXCHANGE_QUEUED_TIMESTAMP = "CamelThrottlerExchangeQueuedTimestamp";
     private static final String PROPERTY_EXCHANGE_STATE = "CamelThrottlerExchangeState";
 
-    private enum State { SYNC, ASYNC, ASYNC_REJECTED }
+    private enum State {
+        SYNC,
+        ASYNC,
+        ASYNC_REJECTED
+    }
 
     private final CamelContext camelContext;
     private final ScheduledExecutorService asyncExecutor;
@@ -85,8 +86,10 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     private Expression correlationExpression;
     private Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
-    public Throttler(final CamelContext camelContext, final Expression maxRequestsPerPeriodExpression, final long timePeriodMillis,
-                     final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor, final boolean rejectExecution, Expression correlation) {
+    public Throttler(final CamelContext camelContext, final Expression maxRequestsPerPeriodExpression,
+                     final long timePeriodMillis,
+                     final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
+                     final boolean rejectExecution, Expression correlation) {
         this.camelContext = camelContext;
         this.rejectExecution = rejectExecution;
         this.shutdownAsyncExecutor = shutdownAsyncExecutor;
@@ -130,13 +133,17 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
 
             if (permit == null) {
                 if (isRejectExecution()) {
-                    throw new ThrottlerRejectedExecutionException("Exceeded the max throttle rate of "
-                            + throttlingState.getThrottleRate() + " within " + timePeriodMillis + "ms");
+                    throw new ThrottlerRejectedExecutionException(
+                            "Exceeded the max throttle rate of "
+                                                                  + throttlingState.getThrottleRate() + " within "
+                                                                  + timePeriodMillis + "ms");
                 } else {
                     // delegate to async pool
                     if (isAsyncDelayed() && !exchange.isTransacted() && state == State.SYNC) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Throttle rate exceeded but AsyncDelayed enabled, so queueing for async processing, exchangeId: {}", exchange.getExchangeId());
+                            LOG.debug(
+                                    "Throttle rate exceeded but AsyncDelayed enabled, so queueing for async processing, exchangeId: {}",
+                                    exchange.getExchangeId());
                         }
                         return processAsynchronously(exchange, callback, throttlingState);
                     }
@@ -157,7 +164,8 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                         if (LOG.isTraceEnabled()) {
                             long queuedTime = start - queuedStart;
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed, exchange.getExchangeId());
+                                LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed,
+                                        exchange.getExchangeId());
                             }
                         }
                     } else {
@@ -172,7 +180,8 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                 if (state == State.ASYNC) {
                     if (LOG.isTraceEnabled()) {
                         long queuedTime = System.currentTimeMillis() - queuedStart;
-                        LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}", queuedTime, exchange.getExchangeId());
+                        LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
+                                queuedTime, exchange.getExchangeId());
                     }
                 } else {
                     if (LOG.isTraceEnabled()) {
@@ -188,7 +197,8 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
             // determine if we can still run, or the camel context is forcing a shutdown
             boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
             if (forceShutdown) {
-                String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
+                String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
+                             + exchange;
                 LOG.debug(msg);
                 exchange.setException(new RejectedExecutionException(msg, e));
             } else {
@@ -204,11 +214,12 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     }
 
     /**
-     * Delegate blocking on the DelayQueue to an asyncExecutor. Except if the executor rejects the submission
-     * and isCallerRunsWhenRejected() is enabled, then this method will delegate back to process(), but not
-     * before changing the exchange state to stop any recursion.
+     * Delegate blocking on the DelayQueue to an asyncExecutor. Except if the executor rejects the submission and
+     * isCallerRunsWhenRejected() is enabled, then this method will delegate back to process(), but not before changing
+     * the exchange state to stop any recursion.
      */
-    protected boolean processAsynchronously(final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
+    protected boolean processAsynchronously(
+            final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
         try {
             if (LOG.isTraceEnabled()) {
                 exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, System.currentTimeMillis());
@@ -220,7 +231,8 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
         } catch (final RejectedExecutionException e) {
             if (isCallerRunsWhenRejected()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}", exchange.getExchangeId());
+                    LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",
+                            exchange.getExchangeId());
                 }
                 exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC_REJECTED);
                 return process(exchange, callback);
@@ -311,7 +323,9 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
             }
 
             if (newThrottle == null && throttleRate == 0) {
-                throw new RuntimeExchangeException("The maxRequestsPerPeriodExpression was evaluated as null: " + maxRequestsPerPeriodExpression, exchange);
+                throw new RuntimeExchangeException(
+                        "The maxRequestsPerPeriodExpression was evaluated as null: " + maxRequestsPerPeriodExpression,
+                        exchange);
             }
 
             if (newThrottle != null) {
@@ -325,11 +339,13 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                             delayQueue.take();
                             delta--;
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}", exchange.getExchangeId());
+                                LOG.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}",
+                                        exchange.getExchangeId());
                             }
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                            LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate,
+                                    newThrottle, exchange.getExchangeId());
                         }
 
                         // increase
@@ -340,11 +356,13 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                         }
                         if (throttleRate == 0) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle, exchange.getExchangeId());
+                                LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle,
+                                        exchange.getExchangeId());
                             }
                         } else {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                                LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate,
+                                        newThrottle, exchange.getExchangeId());
                             }
                         }
                     }
@@ -375,7 +393,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
 
         @Override
         public int compareTo(final Delayed o) {
-            return (int)(getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
+            return (int) (getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
         }
     }
 
@@ -435,8 +453,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     }
 
     /**
-     * Gets the current maximum request per period value.
-     * If it is grouped throttling applied with correlationExpression
+     * Gets the current maximum request per period value. If it is grouped throttling applied with correlationExpression
      * than the max per period within the group will return
      */
     public int getCurrentMaximumRequestsPerPeriod() {

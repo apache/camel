@@ -79,8 +79,7 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         assertNotNull(result.getPayload(JsonNode.class).get("type"));
 
         LOGGER.debug(
-            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
-        );
+                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
     }
 
     @Test
@@ -99,8 +98,7 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
 
         LOGGER.debug(
-            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
-        );
+                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
     }
 
     @Test
@@ -110,6 +108,6 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         parameters.put("objectName", "incident");
 
         assertThrows(UnsupportedOperationException.class,
-            () -> getExtension().meta(parameters));
+                () -> getExtension().meta(parameters));
     }
 }

@@ -75,7 +75,7 @@ public class CMISProducer extends DefaultProducer {
 
         CamelCMISActions action = exchange.getIn().getHeader(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.class);
 
-        Class[] paramMethod = {Exchange.class};
+        Class[] paramMethod = { Exchange.class };
         Method method = ReflectionHelper.findMethod(this.getClass(), action.getMethodName(), paramMethod);
         Object object = ObjectHelper.invokeMethod(method, this, exchange);
 
@@ -84,9 +84,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public CmisObject findObjectById(Exchange exchange) throws Exception {
@@ -99,9 +98,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public CmisObject findObjectByPath(Exchange exchange) throws Exception {
@@ -118,9 +116,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public ContentStream downloadDocument(Exchange exchange) throws Exception {
@@ -139,9 +136,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public Folder getFolder(Exchange exchange) throws Exception {
@@ -185,9 +181,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public CmisObject createNode(Exchange exchange) throws Exception {
@@ -212,9 +207,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public Folder createFolderByPath(Exchange exchange) throws Exception {
@@ -235,9 +229,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public List<String> deleteFolder(Exchange exchange) throws Exception {
@@ -251,9 +244,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public void deleteDocument(Exchange exchange) throws Exception {
@@ -270,9 +262,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public CmisObject moveDocument(Exchange exchange) throws Exception {
@@ -286,7 +277,6 @@ public class CMISProducer extends DefaultProducer {
         String sourceFolderId = message.getHeader(CamelCMISConstants.CMIS_SOURCE_FOLDER_ID, String.class);
         String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
 
-
         Folder sourceFolder = (Folder) getSessionFacade().getObjectById(sourceFolderId);
         Folder targetFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
 
@@ -294,14 +284,16 @@ public class CMISProducer extends DefaultProducer {
 
         if (document != null) {
             if (!document.getAllowableActions().getAllowableActions().contains(Action.CAN_MOVE_OBJECT)) {
-                throw new CamelCmisUnauthorizedException("Current user does not have permission to move " + objectId + document.getName());
+                throw new CamelCmisUnauthorizedException(
+                        "Current user does not have permission to move " + objectId + document.getName());
             }
 
             try {
                 LOG.info("Moving document from " + sourceFolder.getName() + " to " + targetFolder.getName());
-                return  document.move(sourceFolder, targetFolder);
+                return document.move(sourceFolder, targetFolder);
             } catch (Exception e) {
-                throw new CamelCmisException("Cannot move document to folder " + targetFolder.getName() + " : " + e.getMessage(), e);
+                throw new CamelCmisException(
+                        "Cannot move document to folder " + targetFolder.getName() + " : " + e.getMessage(), e);
             }
         } else {
             throw new CamelCmisException("Document is null, cannot move!");
@@ -309,9 +301,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public FileableCmisObject moveFolder(Exchange exchange) throws Exception {
@@ -329,9 +320,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public Document copyDocument(Exchange exchange) throws Exception {
@@ -350,9 +340,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public Map<String, CmisObject> copyFolder(Exchange exchange) throws Exception {
@@ -372,9 +361,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public ItemIterable<CmisObject> listFolder(Exchange exchange) throws Exception {
@@ -388,7 +376,8 @@ public class CMISProducer extends DefaultProducer {
         return sourceFolder.getChildren();
     }
 
-    private Map<String, CmisObject> copyFolderRecursive(Folder destinationFolder, Folder toCopyFolder, Map<String, CmisObject> result) {
+    private Map<String, CmisObject> copyFolderRecursive(
+            Folder destinationFolder, Folder toCopyFolder, Map<String, CmisObject> result) {
         Map<String, Object> folderProperties = new HashMap<>();
         folderProperties.put(PropertyIds.NAME, toCopyFolder.getName());
         folderProperties.put(PropertyIds.OBJECT_TYPE_ID, toCopyFolder.getBaseTypeId().value());
@@ -411,9 +400,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public CmisObject rename(Exchange exchange) throws Exception {
@@ -435,9 +423,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public ObjectId checkIn(Exchange exchange) throws Exception {
@@ -469,9 +456,8 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
     public ObjectId checkOut(Exchange exchange) throws Exception {
@@ -487,12 +473,11 @@ public class CMISProducer extends DefaultProducer {
     }
 
     /**
-     * This method is called via reflection.
-     * It is not safe to delete it or rename it!
-     * Method's name are defined and retrieved from {@link CamelCMISActions}.
+     * This method is called via reflection. It is not safe to delete it or rename it! Method's name are defined and
+     * retrieved from {@link CamelCMISActions}.
      */
     @SuppressWarnings("unused")
-    public void cancelCheckOut(Exchange exchange)throws Exception {
+    public void cancelCheckOut(Exchange exchange) throws Exception {
         validateRequiredHeader(exchange, CamelCMISConstants.CMIS_OBJECT_ID);
 
         Message message = exchange.getIn();
@@ -519,7 +504,8 @@ public class CMISProducer extends DefaultProducer {
         return parentFolder.createFolder(cmisProperties);
     }
 
-    private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream) throws Exception {
+    private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream)
+            throws Exception {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         }

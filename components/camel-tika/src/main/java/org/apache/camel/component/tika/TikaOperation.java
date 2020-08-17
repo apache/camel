@@ -17,5 +17,6 @@
 package org.apache.camel.component.tika;
 
 public enum TikaOperation {
-    parse, detect;
+    parse,
+    detect;
 }

@@ -86,7 +86,7 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[]{true}, new String[]{"boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] { true }, new String[] { "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -118,7 +118,8 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[]{true, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] { true, true },
+                new String[] { "boolean", "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -152,9 +153,9 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
                         .log("${exception.stacktrace}").logStackTrace(true).handled(true);
 
                 from("direct:start").routeId("myRoute")
-                    .log("Got ${body}")
-                    .to("ref:bar")
-                    .to("{{result}}");
+                        .log("Got ${body}")
+                        .to("ref:bar")
+                        .to("{{result}}");
             }
         };
     }

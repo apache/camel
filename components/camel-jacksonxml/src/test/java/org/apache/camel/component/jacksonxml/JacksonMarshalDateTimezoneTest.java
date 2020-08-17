@@ -39,7 +39,7 @@ public class JacksonMarshalDateTimezoneTest extends CamelTestSupport {
         Object marshalled = template.requestBody("direct:in", in.getTime());
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         assertEquals("<Date>1493139610000</Date>", marshalledAsString);
-        
+
         mock.expectedMessageCount(1);
 
         mock.assertIsSatisfied();

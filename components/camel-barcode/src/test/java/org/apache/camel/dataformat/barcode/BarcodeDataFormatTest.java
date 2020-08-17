@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This class tests all Camel independent test cases for
- * {@link BarcodeDataFormat}.
+ * This class tests all Camel independent test cases for {@link BarcodeDataFormat}.
  */
 public class BarcodeDataFormatTest {
 
@@ -41,7 +40,8 @@ public class BarcodeDataFormatTest {
     @Test
     final void testDefaultConstructor() throws IOException {
         try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat()) {
-            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT,
+                    BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
         }
     }
 
@@ -51,7 +51,8 @@ public class BarcodeDataFormatTest {
     @Test
     final void testConstructorWithBarcodeFormat() throws IOException {
         try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeFormat.AZTEC)) {
-            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT,
+                    BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
         }
     }
 
@@ -71,7 +72,8 @@ public class BarcodeDataFormatTest {
     @Test
     final void testConstructorWithImageType() throws IOException {
         try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeImageType.JPG)) {
-            this.checkParams(BarcodeImageType.JPG, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+            this.checkParams(BarcodeImageType.JPG, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT,
+                    barcodeDataFormat.getParams());
         }
     }
 
@@ -102,7 +104,8 @@ public class BarcodeDataFormatTest {
     @Test
     final void testOptimizieHintsForDataMatrix() throws IOException {
         try (BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX)) {
-            assertTrue(instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE), "data matrix shape hint incorrect.");
+            assertTrue(instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE),
+                    "data matrix shape hint incorrect.");
             assertTrue(instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER), "try harder hint incorrect.");
         }
     }
@@ -212,7 +215,8 @@ public class BarcodeDataFormatTest {
     /**
      * Helper to check the saved parameters.
      */
-    private void checkParams(BarcodeImageType imageType, int width, int height, BarcodeFormat format, BarcodeParameters params) {
+    private void checkParams(
+            BarcodeImageType imageType, int width, int height, BarcodeFormat format, BarcodeParameters params) {
         assertEquals(params.getType(), imageType);
         assertTrue(params.getWidth() == width);
         assertTrue(params.getHeight() == height);

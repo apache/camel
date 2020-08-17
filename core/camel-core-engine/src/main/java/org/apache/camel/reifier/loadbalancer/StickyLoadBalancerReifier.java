@@ -25,7 +25,7 @@ import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 public class StickyLoadBalancerReifier extends LoadBalancerReifier<StickyLoadBalancerDefinition> {
 
     public StickyLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
-        super(route, (StickyLoadBalancerDefinition)definition);
+        super(route, (StickyLoadBalancerDefinition) definition);
     }
 
     @Override

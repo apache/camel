@@ -72,24 +72,27 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         }
     }
 
-
     private void getUserImages(Exchange exchange) throws Exception {
-        Images images = getEndpoint().getDigitalOceanClient().getUserImages(configuration.getPage(), configuration.getPerPage());
-        LOG.trace("User images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(), images.getImages());
+        Images images
+                = getEndpoint().getDigitalOceanClient().getUserImages(configuration.getPage(), configuration.getPerPage());
+        LOG.trace("User images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+                images.getImages());
         exchange.getOut().setBody(images.getImages());
     }
-
 
     private void getImages(Exchange exchange) throws Exception {
         DigitalOceanImageTypes type = exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanImageTypes.class);
         Images images;
 
         if (ObjectHelper.isNotEmpty(type)) {
-            images = getEndpoint().getDigitalOceanClient().getAvailableImages(configuration.getPage(), configuration.getPerPage(), ActionType.valueOf(type.name()));
+            images = getEndpoint().getDigitalOceanClient().getAvailableImages(configuration.getPage(),
+                    configuration.getPerPage(), ActionType.valueOf(type.name()));
         } else {
-            images = getEndpoint().getDigitalOceanClient().getAvailableImages(configuration.getPage(), configuration.getPerPage());
+            images = getEndpoint().getDigitalOceanClient().getAvailableImages(configuration.getPage(),
+                    configuration.getPerPage());
         }
-        LOG.trace("All Images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(), images.getImages());
+        LOG.trace("All Images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+                images.getImages());
         exchange.getOut().setBody(images.getImages());
     }
 
@@ -104,13 +107,13 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         } else if (ObjectHelper.isNotEmpty(slug)) {
             image = getEndpoint().getDigitalOceanClient().getImageInfo(slug);
         } else {
-            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.DROPLET_IMAGE + " must be specified");
+            throw new IllegalArgumentException(
+                    DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.DROPLET_IMAGE + " must be specified");
         }
 
         LOG.trace("Image [{}] ", image);
         exchange.getOut().setBody(image);
     }
-
 
     private void getImageActions(Exchange exchange) throws Exception {
         Integer imageId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
@@ -119,8 +122,10 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
         }
 
-        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableImageActions(imageId, configuration.getPage(), configuration.getPerPage());
-        LOG.trace("Actions for Image {} : page {} / {} per page [{}] ", imageId, configuration.getPage(), configuration.getPerPage(), actions.getActions());
+        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableImageActions(imageId, configuration.getPage(),
+                configuration.getPerPage());
+        LOG.trace("Actions for Image {} : page {} / {} per page [{}] ", imageId, configuration.getPage(),
+                configuration.getPerPage(), actions.getActions());
         exchange.getOut().setBody(actions.getActions());
     }
 

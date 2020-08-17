@@ -25,7 +25,8 @@ public class SpringAggregateCompleteAllOnStopTest extends AggregateCompleteAllOn
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateCompleteAllOnStopTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateCompleteAllOnStopTest.xml");
     }
 
 }

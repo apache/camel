@@ -24,8 +24,8 @@ import org.apache.ivy.util.url.BasicURLHandler;
 import org.apache.ivy.util.url.HttpClientHandler;
 
 /**
- * A {@link HttpClientHandler} which uses HttpClient for downloading via http/https
- * and have support for connection timeouts which otherwise is not supported by default in Apache Ivy.
+ * A {@link HttpClientHandler} which uses HttpClient for downloading via http/https and have support for connection
+ * timeouts which otherwise is not supported by default in Apache Ivy.
  */
 public class TimeoutHttpClientHandler extends HttpClientHandler {
 

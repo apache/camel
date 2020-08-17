@@ -17,7 +17,8 @@
 package org.apache.camel.spi;
 
 /**
- * The name of the {@link org.apache.camel.spi.DataFormat} which allows to know which kind of data format the implementation is.
+ * The name of the {@link org.apache.camel.spi.DataFormat} which allows to know which kind of data format the
+ * implementation is.
  */
 public interface DataFormatName {
 

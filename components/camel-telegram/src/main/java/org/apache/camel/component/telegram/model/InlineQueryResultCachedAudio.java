@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to an MP3 audio file stored on the Telegram servers.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultcachedaudio">
- * https://core.telegram.org/bots/api#inlinequeryresultcachedaudio</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultcachedaudio</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultCachedAudio extends InlineQueryResult {

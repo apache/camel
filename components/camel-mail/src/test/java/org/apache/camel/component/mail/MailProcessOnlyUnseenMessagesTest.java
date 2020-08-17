@@ -90,7 +90,8 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://claus@localhost");
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&initialDelay=100&delay=100").to("mock:result");
+                from("imap://localhost?username=claus&password=secret&unseen=true&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

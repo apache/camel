@@ -111,40 +111,42 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     }
 
     /**
-     * Useful to simulate the presence of an authenticated user with
-     * name {@value #USER} and password {@value #PASSWORD}
+     * Useful to simulate the presence of an authenticated user with name {@value #USER} and password {@value #PASSWORD}
      */
     protected void createAuthorizationUser() {
         MongoDatabase admin = mongo.getDatabase("admin");
         MongoCollection<Document> usersCollection = admin.getCollection("system.users");
         if (usersCollection.countDocuments() == 0) {
             usersCollection.insertOne(Document.parse("{\n"
-                    + "    \"_id\": \"admin.test-user\",\n"
-                    + "    \"user\": \"test-user\",\n"
-                    + "    \"db\": \"admin\",\n"
-                    + "    \"credentials\": {\n"
-                    + "        \"SCRAM-SHA-1\": {\n"
-                    + "            \"iterationCount\": 10000,\n"
-                    + "            \"salt\": \"gmmPAoNdvFSWCV6PGnNcAw==\",\n"
-                    + "            \"storedKey\": \"qE9u1Ax7Y40hisNHL2b8/LAvG7s=\",\n"
-                    + "            \"serverKey\": \"RefeJcxClt9JbOP/VnrQ7YeQh6w=\"\n"
-                    + "        }\n" + "    },\n"
-                    + "    \"roles\": [\n" + "        {\n"
-                    + "            \"role\": \"readWrite\",\n"
-                    + "            \"db\": \"test\"\n"
-                    + "        }\n"
-                    + "    ]\n"
-                    + "}"));
+                                                     + "    \"_id\": \"admin.test-user\",\n"
+                                                     + "    \"user\": \"test-user\",\n"
+                                                     + "    \"db\": \"admin\",\n"
+                                                     + "    \"credentials\": {\n"
+                                                     + "        \"SCRAM-SHA-1\": {\n"
+                                                     + "            \"iterationCount\": 10000,\n"
+                                                     + "            \"salt\": \"gmmPAoNdvFSWCV6PGnNcAw==\",\n"
+                                                     + "            \"storedKey\": \"qE9u1Ax7Y40hisNHL2b8/LAvG7s=\",\n"
+                                                     + "            \"serverKey\": \"RefeJcxClt9JbOP/VnrQ7YeQh6w=\"\n"
+                                                     + "        }\n" + "    },\n"
+                                                     + "    \"roles\": [\n" + "        {\n"
+                                                     + "            \"role\": \"readWrite\",\n"
+                                                     + "            \"db\": \"test\"\n"
+                                                     + "        }\n"
+                                                     + "    ]\n"
+                                                     + "}"));
         }
     }
 
     protected void pumpDataIntoTestCollection() {
         // there should be 100 of each
-        String[] scientists = {"Einstein", "Darwin", "Copernicus", "Pasteur", "Curie", "Faraday", "Newton", "Bohr", "Galilei", "Maxwell"};
+        String[] scientists
+                = { "Einstein", "Darwin", "Copernicus", "Pasteur", "Curie", "Faraday", "Newton", "Bohr", "Galilei", "Maxwell" };
         for (int i = 1; i <= 1000; i++) {
             int index = i % scientists.length;
             Formatter f = new Formatter();
-            String doc = f.format("{\"_id\":\"%d\", \"scientist\":\"%s\", \"fixedField\": \"fixedValue\"}", i, scientists[index]).toString();
+            String doc
+                    = f.format("{\"_id\":\"%d\", \"scientist\":\"%s\", \"fixedField\": \"fixedValue\"}", i, scientists[index])
+                            .toString();
             IOHelper.close(f);
             testCollection.insertOne(Document.parse(doc));
         }
@@ -154,7 +156,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected CamelMongoDbException extractAndAssertCamelMongoDbException(Object result, String message) {
         assertTrue(result instanceof Throwable, "Result is not an Exception");
         assertTrue(result instanceof CamelExecutionException, "Result is not an CamelExecutionException");
-        Throwable exc = ((CamelExecutionException)result).getCause();
+        Throwable exc = ((CamelExecutionException) result).getCause();
         assertTrue(exc instanceof CamelMongoDbException, "Result is not an CamelMongoDbException");
         CamelMongoDbException camelExc = ObjectHelper.cast(CamelMongoDbException.class, exc);
         if (message != null) {

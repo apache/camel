@@ -51,7 +51,7 @@ public class JoltRemovrTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .to("jolt:org/apache/camel/component/jolt/removr.json?transformDsl=Removr");
+                        .to("jolt:org/apache/camel/component/jolt/removr.json?transformDsl=Removr");
             }
         };
     }

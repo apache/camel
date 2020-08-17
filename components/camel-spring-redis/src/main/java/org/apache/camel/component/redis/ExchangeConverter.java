@@ -89,7 +89,7 @@ class ExchangeConverter {
     Map<String, Object> getValuesAsMap(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.VALUES, Map.class);
     }
-    
+
     Collection<Object> getValuesAsCollection(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.VALUES, Collection.class);
     }
@@ -141,15 +141,15 @@ class ExchangeConverter {
     Boolean getWithScore(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.WITHSCORE, Boolean.class);
     }
-    
+
     Double getLatitude(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.LATITUDE, Double.class);
     }
-    
+
     Double getLongitude(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.LONGITUDE, Double.class);
     }
-    
+
     Double getRadius(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.RADIUS, Double.class);
     }

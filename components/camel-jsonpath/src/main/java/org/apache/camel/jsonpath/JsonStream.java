@@ -24,27 +24,26 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
- * Special stream for JSON streams. Determines from the first 4 bytes the JSON
- * encoding according to JSON specification RFC-4627 or newer. In addition BOMs
- * are taken into account.
+ * Special stream for JSON streams. Determines from the first 4 bytes the JSON encoding according to JSON specification
+ * RFC-4627 or newer. In addition BOMs are taken into account.
  * <p>
  * This class is not thread safe.
  */
 public class JsonStream extends FilterInputStream {
 
-    private static final byte[] BOM_UTF_32BE = new byte[] {0x00, 0x00, (byte) 0xFE, (byte) 0xFF };
+    private static final byte[] BOM_UTF_32BE = new byte[] { 0x00, 0x00, (byte) 0xFE, (byte) 0xFF };
 
-    private static final byte[] BOM_UTF_32LE = new byte[] {(byte) 0xFF, (byte) 0xFE, 0x00, 0x00 };
+    private static final byte[] BOM_UTF_32LE = new byte[] { (byte) 0xFF, (byte) 0xFE, 0x00, 0x00 };
 
-    private static final byte[] BOM_UTF_32_2143 = new byte[] {0x00, 0x00, (byte) 0xFF, (byte) 0xFE };
+    private static final byte[] BOM_UTF_32_2143 = new byte[] { 0x00, 0x00, (byte) 0xFF, (byte) 0xFE };
 
-    private static final byte[] BOM_UTF_32_3412 = new byte[] {(byte) 0xFE, (byte) 0xFF, 0x00, 0x00 };
+    private static final byte[] BOM_UTF_32_3412 = new byte[] { (byte) 0xFE, (byte) 0xFF, 0x00, 0x00 };
 
-    private static final byte[] BOM_UTF_16BE = new byte[] {(byte) 0xFE, (byte) 0xFF };
+    private static final byte[] BOM_UTF_16BE = new byte[] { (byte) 0xFE, (byte) 0xFF };
 
-    private static final byte[] BOM_UTF_16LE = new byte[] {(byte) 0xFF, (byte) 0xFE };
+    private static final byte[] BOM_UTF_16LE = new byte[] { (byte) 0xFF, (byte) 0xFE };
 
-    private static final byte[] BOM_UTF_8 = new byte[] {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+    private static final byte[] BOM_UTF_8 = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
 
     private final byte[] fourByteBuffer = new byte[4];
 
@@ -57,18 +56,13 @@ public class JsonStream extends FilterInputStream {
     private final Charset encoding;
 
     /**
-     * Constructor. Determines the encoding during the instantiation according
-     * to JSON specification RFC-4627 or newer. In addition BOMs are taken into
-     * account.
+     * Constructor. Determines the encoding during the instantiation according to JSON specification RFC-4627 or newer.
+     * In addition BOMs are taken into account.
      * 
-     * @param in
-     *            input stream must contain a JSON content
-     * @throws IOException
-     *             if an error occurs during the determination of the encoding
-     * @throws CharConversionException
-     *             if the UCS4 endianess 2143 or 3412 is used
-     * @throws IllegalArgumentException
-     *             if the input stream is <code>null</code>
+     * @param  in                       input stream must contain a JSON content
+     * @throws IOException              if an error occurs during the determination of the encoding
+     * @throws CharConversionException  if the UCS4 endianess 2143 or 3412 is used
+     * @throws IllegalArgumentException if the input stream is <code>null</code>
      */
     public JsonStream(InputStream in) throws IOException {
         super(in);

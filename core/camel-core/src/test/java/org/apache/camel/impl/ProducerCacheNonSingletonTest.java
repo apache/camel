@@ -48,7 +48,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         cache.start();
 
         Endpoint endpoint = context.getEndpoint("dummy:foo");
-        DefaultAsyncProducer producer = (DefaultAsyncProducer)cache.acquireProducer(endpoint);
+        DefaultAsyncProducer producer = (DefaultAsyncProducer) cache.acquireProducer(endpoint);
         assertNotNull(producer);
         assertTrue(producer.getStatus().isStarted(), "Should be started");
 

@@ -31,7 +31,8 @@ public class MulticastParallelFineGrainedErrorHandlingTest extends ContextTestSu
             public void configure() throws Exception {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").multicast().stopOnException().parallelProcessing().to("mock:foo", "mock:bar", "mock:baz");
+                from("direct:start").to("mock:a").multicast().stopOnException().parallelProcessing().to("mock:foo", "mock:bar",
+                        "mock:baz");
             }
         });
         context.start();
@@ -53,8 +54,9 @@ public class MulticastParallelFineGrainedErrorHandlingTest extends ContextTestSu
             public void configure() throws Exception {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").multicast().stopOnException().parallelProcessing().to("mock:foo", "mock:bar").throwException(new IllegalArgumentException("Damn"))
-                    .to("mock:baz");
+                from("direct:start").to("mock:a").multicast().stopOnException().parallelProcessing().to("mock:foo", "mock:bar")
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .to("mock:baz");
             }
         });
         context.start();

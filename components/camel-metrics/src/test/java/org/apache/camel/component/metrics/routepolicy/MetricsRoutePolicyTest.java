@@ -64,10 +64,10 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo").routeId("foo")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("seda:bar").routeId("bar")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

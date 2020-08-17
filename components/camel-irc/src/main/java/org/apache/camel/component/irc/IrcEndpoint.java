@@ -36,12 +36,12 @@ import org.slf4j.LoggerFactory;
  * Send and receive messages to/from and IRC chat.
  */
 @UriEndpoint(
-    firstVersion = "1.1.0",
-    scheme = "irc",
-    title = "IRC",
-    syntax = "irc:hostname:port",
-    alternativeSyntax = "irc:username:password@hostname:port",
-    category = {Category.CHAT})
+             firstVersion = "1.1.0",
+             scheme = "irc",
+             title = "IRC",
+             syntax = "irc:hostname:port",
+             alternativeSyntax = "irc:username:password@hostname:port",
+             category = { Category.CHAT })
 public class IrcEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
@@ -225,4 +225,3 @@ public class IrcEndpoint extends DefaultEndpoint {
         }
     }
 }
-

@@ -33,9 +33,8 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This test validates that header and footer records are successfully
- * marshalled / unmarshalled in conjunction with the primary data records
- * defined for the bindy data format.
+ * This test validates that header and footer records are successfully marshalled / unmarshalled in conjunction with the
+ * primary data records defined for the bindy data format.
  */
 public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
@@ -67,7 +66,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         // check the model
         Exchange exchange = unmarshallResult.getReceivedExchanges().get(0);
         Order order = exchange.getIn().getBody(Order.class);
-        
+
         assertEquals("AAA", order.fieldA);
         assertEquals("CCC", order.fieldC);
         assertEquals("BBB", order.subRec.fieldB);
@@ -159,7 +158,6 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         public void setSubRec(SubRec subRec) {
             this.subRec = subRec;
         }
-
 
     }
 

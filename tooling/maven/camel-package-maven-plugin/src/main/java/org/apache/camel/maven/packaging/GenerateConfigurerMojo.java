@@ -30,8 +30,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Generate configurer classes from @Configuer annotated classes for main sources.
  */
 @Mojo(name = "generate-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-        requiresDependencyCollection = ResolutionScope.COMPILE,
-        requiresDependencyResolution = ResolutionScope.COMPILE)
+      requiresDependencyCollection = ResolutionScope.COMPILE,
+      requiresDependencyResolution = ResolutionScope.COMPILE)
 // must include runtime dependencies to generate configurer source
 public class GenerateConfigurerMojo extends AbstractGenerateConfigurerMojo {
 
@@ -48,9 +48,8 @@ public class GenerateConfigurerMojo extends AbstractGenerateConfigurerMojo {
     protected File resourcesOutputDir;
 
     /**
-     * To generate configurer for these classes.
-     * The syntax is either <tt>fqn</tt> or </tt>fqn=targetFqn</tt>.
-     * This allows to map source class to target class to generate the source code using a different classname.
+     * To generate configurer for these classes. The syntax is either <tt>fqn</tt> or </tt>fqn=targetFqn</tt>. This
+     * allows to map source class to target class to generate the source code using a different classname.
      */
     @Parameter
     protected List<String> classes;

@@ -50,10 +50,11 @@ public final class CxfUtilsTestHelper {
         return converter.toString(converter.toDOMSource(writer.getDocument()), null);
     }
 
-    private static void writeElement(Element e,
-                                     XMLStreamWriter writer,
-                                     Map<String, String> namespaces)
-        throws XMLStreamException {
+    private static void writeElement(
+            Element e,
+            XMLStreamWriter writer,
+            Map<String, String> namespaces)
+            throws XMLStreamException {
         String prefix = e.getPrefix();
         String ns = e.getNamespaceURI();
         String localName = e.getLocalName();
@@ -105,7 +106,7 @@ public final class CxfUtilsTestHelper {
                     if (attr.getNodeValue().equals(ns)) {
                         declareNamespace = false;
                     } else if (StringUtils.isEmpty(attr.getNodeValue())
-                        && StringUtils.isEmpty(ns)) {
+                            && StringUtils.isEmpty(ns)) {
                         declareNamespace = false;
                     }
                 } else {
@@ -148,7 +149,7 @@ public final class CxfUtilsTestHelper {
 
     private static void visitNodesForNameSpace(Node node, Map<String, String> namespaces) {
         if (node instanceof Element) {
-            Element element = (Element)node;
+            Element element = (Element) node;
             if (element.getPrefix() != null && element.getNamespaceURI() != null) {
                 namespaces.put(element.getPrefix(), element.getNamespaceURI());
             }
@@ -160,7 +161,6 @@ public final class CxfUtilsTestHelper {
             }
         }
     }
-
 
     public static void closeCamelUnitOfWork(Message message) {
         Exchange cxfExchange = null;

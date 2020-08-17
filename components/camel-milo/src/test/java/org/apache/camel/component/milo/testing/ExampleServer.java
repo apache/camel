@@ -22,8 +22,7 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * This is a simple example application which tests a few ways of mapping data
- * to an OPC UA server instance.
+ * This is a simple example application which tests a few ways of mapping data to an OPC UA server instance.
  */
 public final class ExampleServer {
     private ExampleServer() {
@@ -37,8 +36,8 @@ public final class ExampleServer {
 
         // configure milo
 
-        ((MiloServerComponent)context.getComponent("milo-server"))
-            .setUserAuthenticationCredentials("foo:bar");
+        ((MiloServerComponent) context.getComponent("milo-server"))
+                .setUserAuthenticationCredentials("foo:bar");
 
         // add routes
 
@@ -54,7 +53,7 @@ public final class ExampleServer {
                  * on the OPC UA item.
                  */
                 from("paho:my/foo/bar?brokerUrl=tcp://iot.eclipse.org:1883").log("Temp update: ${body}")
-                    .convertBodyTo(String.class).to("milo-server:MyItem");
+                        .convertBodyTo(String.class).to("milo-server:MyItem");
 
                 /*
                  * Creating a simple item which has not data but logs anything
@@ -67,14 +66,14 @@ public final class ExampleServer {
                  * to an MQTT topic
                  */
                 from("milo-server:MyItem2").log("MyItem2: ${body}").convertBodyTo(String.class)
-                    .to("paho:de/dentrassi/camel/milo/temperature?brokerUrl=tcp://iot.eclipse.org:1883");
+                        .to("paho:de/dentrassi/camel/milo/temperature?brokerUrl=tcp://iot.eclipse.org:1883");
 
                 /*
                  * Re-read the output from the previous route from MQTT to the
                  * local logging
                  */
                 from("paho:de/dentrassi/camel/milo/temperature?brokerUrl=tcp://iot.eclipse.org:1883")
-                    .log("Back from MQTT: ${body}");
+                        .log("Back from MQTT: ${body}");
             }
         });
 

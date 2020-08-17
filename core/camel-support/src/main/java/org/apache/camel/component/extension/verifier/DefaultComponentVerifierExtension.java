@@ -83,8 +83,9 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
         // Camel context is mandatory
         if (this.camelContext == null) {
             return ResultBuilder.withStatusAndScope(Result.Status.ERROR, scope)
-                .error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.INTERNAL, "Missing camel-context").build())
-                .build();
+                    .error(ResultErrorBuilder
+                            .withCodeAndDescription(VerificationError.StandardCode.INTERNAL, "Missing camel-context").build())
+                    .build();
         }
 
         if (scope == Scope.PARAMETERS) {
@@ -118,7 +119,8 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
         verifyParametersAgainstCatalog(builder, parameters, new CatalogVerifierCustomizer());
     }
 
-    protected void verifyParametersAgainstCatalog(ResultBuilder builder, Map<String, Object> parameters, CatalogVerifierCustomizer customizer) {
+    protected void verifyParametersAgainstCatalog(
+            ResultBuilder builder, Map<String, Object> parameters, CatalogVerifierCustomizer customizer) {
         String scheme = defaultScheme;
         if (parameters.containsKey("scheme")) {
             scheme = parameters.get("scheme").toString();
@@ -130,49 +132,45 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
         // Convert from Map<String, Object> to  Map<String, String> as required
         // by the Camel Catalog
         EndpointValidationResult result = catalog.validateProperties(
-            scheme,
-            parameters.entrySet().stream()
-                .collect(
-                    Collectors.toMap(
-                        Map.Entry::getKey,
-                        e -> camelContext.getTypeConverter().convertTo(String.class, e.getValue())
-                    )
-                )
-        );
+                scheme,
+                parameters.entrySet().stream()
+                        .collect(
+                                Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        e -> camelContext.getTypeConverter().convertTo(String.class, e.getValue()))));
 
         if (!result.isSuccess()) {
             if (customizer.isIncludeUnknown()) {
                 stream(result.getUnknown())
-                    .map(option -> ResultErrorBuilder.withUnknownOption(option).build())
-                    .forEach(builder::error);
+                        .map(option -> ResultErrorBuilder.withUnknownOption(option).build())
+                        .forEach(builder::error);
             }
             if (customizer.isIncludeRequired()) {
                 stream(result.getRequired())
-                    .map(option -> ResultErrorBuilder.withMissingOption(option).build())
-                    .forEach(builder::error);
+                        .map(option -> ResultErrorBuilder.withMissingOption(option).build())
+                        .forEach(builder::error);
             }
             if (customizer.isIncludeInvalidBoolean()) {
                 stream(result.getInvalidBoolean())
-                    .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
-                    .forEach(builder::error);
+                        .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                        .forEach(builder::error);
             }
             if (customizer.isIncludeInvalidInteger()) {
                 stream(result.getInvalidInteger())
-                    .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
-                    .forEach(builder::error);
+                        .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                        .forEach(builder::error);
             }
             if (customizer.isIncludeInvalidNumber()) {
                 stream(result.getInvalidNumber())
-                    .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
-                    .forEach(builder::error);
+                        .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                        .forEach(builder::error);
             }
             if (customizer.isIncludeInvalidEnum()) {
                 stream(result.getInvalidEnum())
-                    .map(entry ->
-                        ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue())
-                            .detail("enum.values", result.getEnumChoices(entry.getKey()))
-                            .build())
-                    .forEach(builder::error);
+                        .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue())
+                                .detail("enum.values", result.getEnumChoices(entry.getKey()))
+                                .build())
+                        .forEach(builder::error);
             }
         }
     }
@@ -180,7 +178,6 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
     // *************************************
     // Helpers
     // *************************************
-
 
     protected <T> T setProperties(T instance, Map<String, Object> properties) throws Exception {
         if (camelContext == null) {
@@ -212,6 +209,6 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
     }
 
     protected <T> T getMandatoryOption(Map<String, Object> parameters, String key, Class<T> type) throws NoSuchOptionException {
-        return getOption(parameters, key, type).orElseThrow(() ->  new NoSuchOptionException(key));
+        return getOption(parameters, key, type).orElseThrow(() -> new NoSuchOptionException(key));
     }
 }

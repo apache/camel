@@ -39,7 +39,8 @@ public class RestJettyOptionsTest extends BaseJettyTest {
         assertEquals("GET,OPTIONS", exchange.getOut().getHeader("ALLOW"));
         assertEquals("", exchange.getOut().getBody(String.class));
 
-        exchange = fluentTemplate.to("http://localhost:" + getPort() + "/users/v1/id/123").withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
+        exchange = fluentTemplate.to("http://localhost:" + getPort() + "/users/v1/id/123")
+                .withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
         assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("PUT,OPTIONS", exchange.getOut().getHeader("ALLOW"));
         assertEquals("", exchange.getOut().getBody(String.class));
@@ -68,7 +69,8 @@ public class RestJettyOptionsTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("v1/customers").to("mock:customers").put("v1/id/{id}").to("mock:id").get("v2/options").to("mock:options").post("v2/options").to("mock:options");
+                rest("/users/").get("v1/customers").to("mock:customers").put("v1/id/{id}").to("mock:id").get("v2/options")
+                        .to("mock:options").post("v2/options").to("mock:options");
             }
         };
     }

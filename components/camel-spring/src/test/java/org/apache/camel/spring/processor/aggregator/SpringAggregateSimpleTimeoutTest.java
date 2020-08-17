@@ -25,7 +25,8 @@ public class SpringAggregateSimpleTimeoutTest extends AggregateSimpleTimeoutTest
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateSimpleTimeoutTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateSimpleTimeoutTest.xml");
     }
 
 }

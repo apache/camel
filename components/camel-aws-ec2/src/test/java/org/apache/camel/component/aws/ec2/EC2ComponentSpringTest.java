@@ -43,7 +43,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
 
     @Test
     public void createAndRunInstances() {
-        
+
         Exchange exchange = template.request("direct:createAndRun", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
@@ -53,16 +53,16 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
             }
         });
-        
-        RunInstancesResult resultGet = (RunInstancesResult)exchange.getMessage().getBody();
+
+        RunInstancesResult resultGet = (RunInstancesResult) exchange.getMessage().getBody();
         assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
         assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
         assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
     }
-    
+
     @Test
     public void ec2CreateAndRunTestWithKeyPair() throws Exception {
-        
+
         Exchange exchange = template.request("direct:createAndRun", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -74,8 +74,8 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_KEY_PAIR, "keypair-1");
             }
         });
-        
-        RunInstancesResult resultGet = (RunInstancesResult)exchange.getMessage().getBody();
+
+        RunInstancesResult resultGet = (RunInstancesResult) exchange.getMessage().getBody();
         assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
         assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
         assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
@@ -83,10 +83,10 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
         assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-3");
         assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-4");
     }
-    
+
     @Test
     public void startInstances() {
-        
+
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -95,16 +95,17 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
-        StartInstancesResult resultGet = (StartInstancesResult)exchange.getMessage().getBody();
+
+        StartInstancesResult resultGet = (StartInstancesResult) exchange.getMessage().getBody();
         assertEquals(resultGet.getStartingInstances().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getStartingInstances().get(0).getPreviousState().getName(), InstanceStateName.Stopped.toString());
+        assertEquals(resultGet.getStartingInstances().get(0).getPreviousState().getName(),
+                InstanceStateName.Stopped.toString());
         assertEquals(resultGet.getStartingInstances().get(0).getCurrentState().getName(), InstanceStateName.Running.toString());
     }
-    
+
     @Test
     public void stopInstances() {
-        
+
         Exchange exchange = template.request("direct:stop", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -113,16 +114,17 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
-        StopInstancesResult resultGet = (StopInstancesResult)exchange.getMessage().getBody();
+
+        StopInstancesResult resultGet = (StopInstancesResult) exchange.getMessage().getBody();
         assertEquals(resultGet.getStoppingInstances().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getStoppingInstances().get(0).getPreviousState().getName(), InstanceStateName.Running.toString());
+        assertEquals(resultGet.getStoppingInstances().get(0).getPreviousState().getName(),
+                InstanceStateName.Running.toString());
         assertEquals(resultGet.getStoppingInstances().get(0).getCurrentState().getName(), InstanceStateName.Stopped.toString());
     }
-    
+
     @Test
     public void terminateInstances() {
-        
+
         Exchange exchange = template.request("direct:terminate", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -131,18 +133,20 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
-        TerminateInstancesResult resultGet = (TerminateInstancesResult)exchange.getMessage().getBody();
+
+        TerminateInstancesResult resultGet = (TerminateInstancesResult) exchange.getMessage().getBody();
         assertEquals(resultGet.getTerminatingInstances().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getTerminatingInstances().get(0).getPreviousState().getName(), InstanceStateName.Running.toString());
-        assertEquals(resultGet.getTerminatingInstances().get(0).getCurrentState().getName(), InstanceStateName.Terminated.toString());
+        assertEquals(resultGet.getTerminatingInstances().get(0).getPreviousState().getName(),
+                InstanceStateName.Running.toString());
+        assertEquals(resultGet.getTerminatingInstances().get(0).getCurrentState().getName(),
+                InstanceStateName.Terminated.toString());
     }
-    
+
     @Test
     public void ec2DescribeSpecificInstancesTest() throws Exception {
-        
+
         Exchange exchange = template.request("direct:describe", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -150,17 +154,17 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
-        DescribeInstancesResult resultGet = (DescribeInstancesResult)exchange.getMessage().getBody();
+
+        DescribeInstancesResult resultGet = (DescribeInstancesResult) exchange.getMessage().getBody();
         assertEquals(resultGet.getReservations().size(), 1);
         assertEquals(resultGet.getReservations().get(0).getInstances().size(), 1);
     }
-    
+
     @Test
     public void ec2DescribeStatusSpecificInstancesTest() throws Exception {
-        
+
         Exchange exchange = template.request("direct:describeStatus", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -168,19 +172,19 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
-        DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult)exchange.getMessage().getBody();
+
+        DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getMessage().getBody();
         assertEquals(resultGet.getInstanceStatuses().size(), 1);
         assertEquals(resultGet.getInstanceStatuses().get(0).getInstanceState().getName(), InstanceStateName.Running.toString());
     }
-    
+
     @Test
     public void ec2RebootInstancesTest() throws Exception {
-        
+
         template.request("direct:reboot", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -189,12 +193,12 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2MonitorInstancesTest() throws Exception {
-        
+
         Exchange exchange = template.request("direct:monitor", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -202,19 +206,19 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
-        MonitorInstancesResult resultGet = (MonitorInstancesResult)exchange.getMessage().getBody();
-        
+
+        MonitorInstancesResult resultGet = (MonitorInstancesResult) exchange.getMessage().getBody();
+
         assertEquals(resultGet.getInstanceMonitorings().size(), 1);
         assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
         assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Enabled.toString());
     }
-    
+
     @Test
     public void ec2UnmonitorInstancesTest() throws Exception {
-        
+
         Exchange exchange = template.request("direct:unmonitor", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -222,14 +226,14 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
-        UnmonitorInstancesResult resultGet = (UnmonitorInstancesResult)exchange.getMessage().getBody();
-        
+
+        UnmonitorInstancesResult resultGet = (UnmonitorInstancesResult) exchange.getMessage().getBody();
+
         assertEquals(resultGet.getInstanceMonitorings().size(), 1);
         assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
         assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Disabled.toString());
     }
-    
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/ec2/EC2ComponentSpringTest-context.xml");

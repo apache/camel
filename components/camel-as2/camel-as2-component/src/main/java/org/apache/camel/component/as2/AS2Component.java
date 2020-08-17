@@ -50,8 +50,9 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, AS2ApiName apiName,
-                                      AS2Configuration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, AS2ApiName apiName,
+            AS2Configuration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new AS2Endpoint(uri, this, apiName, methodName, endpointConfiguration);

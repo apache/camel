@@ -27,11 +27,11 @@ import org.w3c.dom.Text;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 
 /**
- * A simple thread-safe {@link NodeList} that is used by XPathBuilder
- * to return thread-safe {@link NodeList} instances as its result.
+ * A simple thread-safe {@link NodeList} that is used by XPathBuilder to return thread-safe {@link NodeList} instances
+ * as its result.
  * <p/>
- * This is needed to ensure that end users do not hit any concurrency issues while working
- * with xpath expressions using built-in from the JDK or via camel-saxon.
+ * This is needed to ensure that end users do not hit any concurrency issues while working with xpath expressions using
+ * built-in from the JDK or via camel-saxon.
  */
 class ThreadSafeNodeList implements NodeList {
 

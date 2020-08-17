@@ -42,8 +42,8 @@ public class DirectBeanToBeanPersonTypeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(MyPersonService.class, "createPerson")
-                    .bean(MyPersonService.class, "sendPerson");
+                        .bean(MyPersonService.class, "createPerson")
+                        .bean(MyPersonService.class, "sendPerson");
             }
         };
     }

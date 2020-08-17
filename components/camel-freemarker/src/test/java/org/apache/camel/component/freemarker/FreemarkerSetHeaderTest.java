@@ -55,5 +55,4 @@ public class FreemarkerSetHeaderTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/freemarker/camel-context.xml");
     }
 
-
 }

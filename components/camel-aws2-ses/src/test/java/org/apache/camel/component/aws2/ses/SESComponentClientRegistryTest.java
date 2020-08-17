@@ -32,7 +32,7 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = new Ses2Component(context);
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
         component.close();
@@ -47,25 +47,27 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
         });
         component.close();
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        Ses2Endpoint endpoint = (Ses2Endpoint) component
+                .createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+        Ses2Endpoint endpoint
+                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
 
         assertSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
     }

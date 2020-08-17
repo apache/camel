@@ -65,37 +65,37 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
             public void configure() throws Exception {
 
                 from("direct:toProducer1")
-                    .to(getProducer1Uri());
+                        .to(getProducer1Uri());
 
                 from("direct:toProducer2")
-                    .to(getProducer2Uri());
+                        .to(getProducer2Uri());
 
                 from(getConsumerUri())
-                    .removeHeader(XmppConstants.TO)
-                    .to(getConsumerUri());
+                        .removeHeader(XmppConstants.TO)
+                        .to(getConsumerUri());
 
                 from(getProducer1Uri())
-                    .to("mock:good");
+                        .to("mock:good");
 
                 from(getProducer2Uri())
-                    .to("mock:bad");
+                        .to("mock:bad");
             }
         };
     }
 
     protected String getProducer1Uri() {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
+               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getProducer2Uri() {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&user=camel_producer1&password=secret&serviceName=apache.camel";
+               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&user=camel_producer1&password=secret&serviceName=apache.camel";
     }
-    
+
     protected String getConsumerUri() {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
+               + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 
     @Override

@@ -87,10 +87,10 @@ public class ErrorHandlerTest extends TestSupport {
             public void configure() {
                 // this route is using a nested logging error handler
                 from("seda:a")
-                    // here we configure the logging error handler
-                    .errorHandler(deadLetterChannel("log:com.mycompany.foo"))
-                    // and we continue with the routing here
-                    .to("seda:b");
+                        // here we configure the logging error handler
+                        .errorHandler(deadLetterChannel("log:com.mycompany.foo"))
+                        // and we continue with the routing here
+                        .to("seda:b");
 
                 // this route will use the default error handler
                 // (DeadLetterChannel)
@@ -170,7 +170,8 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").errorHandler(deadLetterChannel("log:FOO.BAR")).filter(body().isInstanceOf(String.class)).to("seda:b");
+                from("seda:a").errorHandler(deadLetterChannel("log:FOO.BAR")).filter(body().isInstanceOf(String.class))
+                        .to("seda:b");
             }
         };
         // END SNIPPET: e5

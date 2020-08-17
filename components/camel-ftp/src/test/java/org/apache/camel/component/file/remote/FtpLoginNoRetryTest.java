@@ -49,7 +49,8 @@ public class FtpLoginNoRetryTest extends FtpServerTestSupport {
     }
 
     private void uploadFile(String username, String password) throws Exception {
-        Endpoint endpoint = context.getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password=" + password + "&maximumReconnectAttempts=0");
+        Endpoint endpoint = context.getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password=" + password
+                                                + "&maximumReconnectAttempts=0");
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");

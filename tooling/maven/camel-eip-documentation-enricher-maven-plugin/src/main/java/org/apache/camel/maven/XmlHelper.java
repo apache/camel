@@ -36,9 +36,11 @@ import org.xml.sax.SAXException;
 
 public final class XmlHelper {
 
-    private XmlHelper() { }
+    private XmlHelper() {
+    }
 
-    public static Document buildNamespaceAwareDocument(File xml) throws SAXException, ParserConfigurationException, IOException {
+    public static Document buildNamespaceAwareDocument(File xml)
+            throws SAXException, ParserConfigurationException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);

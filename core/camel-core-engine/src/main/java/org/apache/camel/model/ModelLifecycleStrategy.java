@@ -19,8 +19,8 @@ package org.apache.camel.model;
 /**
  * Strategy for model definitions notifications.
  *
- * A custom strategy must be added to {@link ModelCamelContext} before any routes or route templates are added.
- * In other words add your custom strategy as early as possible.
+ * A custom strategy must be added to {@link ModelCamelContext} before any routes or route templates are added. In other
+ * words add your custom strategy as early as possible.
  */
 public interface ModelLifecycleStrategy {
 

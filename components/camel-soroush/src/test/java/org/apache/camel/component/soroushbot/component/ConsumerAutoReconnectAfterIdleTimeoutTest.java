@@ -31,8 +31,9 @@ public class ConsumerAutoReconnectAfterIdleTimeoutTest extends SoroushBotTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush://" + SoroushAction.getMessage + "/7 delay 100?reconnectIdleConnectionTimeout=200&maxConnectionRetry=0")
-                        .to("mock:result");
+                from("soroush://" + SoroushAction.getMessage
+                     + "/7 delay 100?reconnectIdleConnectionTimeout=200&maxConnectionRetry=0")
+                             .to("mock:result");
             }
         };
     }

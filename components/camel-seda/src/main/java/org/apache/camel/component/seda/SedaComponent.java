@@ -29,7 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/seda.html">SEDA Component</a> is for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
+ * The <a href="http://camel.apache.org/seda.html">SEDA Component</a> is for asynchronous SEDA exchanges on a
+ * {@link BlockingQueue} within a CamelContext
  */
 @org.apache.camel.spi.annotations.Component("seda")
 public class SedaComponent extends DefaultComponent {
@@ -92,19 +93,18 @@ public class SedaComponent extends DefaultComponent {
     }
 
     /**
-     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
-     * By default, an exception will be thrown stating that the queue is full.
-     * By enabling this option, the calling thread will instead block and wait until the message can be accepted.
+     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer
+     * exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the
+     * calling thread will instead block and wait until the message can be accepted.
      */
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
 
     /**
-     * Whether a thread that sends messages to a full SEDA queue will be discarded.
-     * By default, an exception will be thrown stating that the queue is full.
-     * By enabling this option, the calling thread will give up sending and continue,
-     * meaning that the message was not sent to the SEDA queue.
+     * Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be
+     * thrown stating that the queue is full. By enabling this option, the calling thread will give up sending and
+     * continue, meaning that the message was not sent to the SEDA queue.
      */
     public boolean isDefaultDiscardWhenFull() {
         return defaultDiscardWhenFull;
@@ -119,15 +119,17 @@ public class SedaComponent extends DefaultComponent {
     }
 
     /**
-     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
-     * By default, an exception will be thrown stating that the queue is full.
-     * By enabling this option, where a configured timeout can be added to the block case.  Utilizing the .offer(timeout) method of the underlining java queue
+     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer
+     * exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where
+     * a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java
+     * queue
      */
     public void setDefaultOfferTimeout(long defaultOfferTimeout) {
         this.defaultOfferTimeout = defaultOfferTimeout;
     }
 
-    public synchronized QueueReference getOrCreateQueue(SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory) {
+    public synchronized QueueReference getOrCreateQueue(
+            SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory) {
         String key = getQueueKey(endpoint.getEndpointUri());
 
         QueueReference ref = getQueues().get(key);
@@ -136,8 +138,10 @@ public class SedaComponent extends DefaultComponent {
             // if the given size is not provided, we just use the existing queue as is
             if (size != null && !size.equals(ref.getSize())) {
                 // there is already a queue, so make sure the size matches
-                throw new IllegalArgumentException("Cannot use existing queue " + key + " as the existing queue size "
-                        + (ref.getSize() != null ? ref.getSize() : SedaConstants.QUEUE_SIZE) + " does not match given queue size " + size);
+                throw new IllegalArgumentException(
+                        "Cannot use existing queue " + key + " as the existing queue size "
+                                                   + (ref.getSize() != null ? ref.getSize() : SedaConstants.QUEUE_SIZE)
+                                                   + " does not match given queue size " + size);
             }
             // add the reference before returning queue
             ref.addReference(endpoint);
@@ -195,11 +199,14 @@ public class SedaComponent extends DefaultComponent {
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        int consumers = getAndRemoveOrResolveReferenceParameter(parameters, "concurrentConsumers", Integer.class, concurrentConsumers);
-        boolean limitConcurrentConsumers = getAndRemoveOrResolveReferenceParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
-        if (limitConcurrentConsumers && consumers >  maxConcurrentConsumers) {
-            throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
-                    + maxConcurrentConsumers + " was " + consumers);
+        int consumers = getAndRemoveOrResolveReferenceParameter(parameters, "concurrentConsumers", Integer.class,
+                concurrentConsumers);
+        boolean limitConcurrentConsumers
+                = getAndRemoveOrResolveReferenceParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
+        if (limitConcurrentConsumers && consumers > maxConcurrentConsumers) {
+            throw new IllegalArgumentException(
+                    "The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
+                                               + maxConcurrentConsumers + " was " + consumers);
         }
 
         // Resolve queue reference
@@ -207,7 +214,8 @@ public class SedaComponent extends DefaultComponent {
         SedaEndpoint answer;
         // Resolve queue factory when no queue specified
         if (queue == null) {
-            BlockingQueueFactory<Exchange> queueFactory = resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
+            BlockingQueueFactory<Exchange> queueFactory
+                    = resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
             // defer creating queue till endpoint is started, so we pass the queue factory
             answer = createEndpoint(uri, this, queueFactory, consumers);
         } else {
@@ -230,11 +238,13 @@ public class SedaComponent extends DefaultComponent {
         return answer;
     }
 
-    protected SedaEndpoint createEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+    protected SedaEndpoint createEndpoint(
+            String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
         return new SedaEndpoint(endpointUri, component, queueFactory, concurrentConsumers);
     }
 
-    protected SedaEndpoint createEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+    protected SedaEndpoint createEndpoint(
+            String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         return new SedaEndpoint(endpointUri, component, queue, concurrentConsumers);
     }
 

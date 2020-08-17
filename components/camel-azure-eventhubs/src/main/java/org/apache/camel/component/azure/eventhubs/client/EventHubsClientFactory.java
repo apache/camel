@@ -60,8 +60,9 @@ public final class EventHubsClientFactory {
                 .buildAsyncConsumerClient();
     }
 
-    public static EventProcessorClient createEventProcessorClient(final EventHubsConfiguration configuration, final Consumer<EventContext> processEvent,
-                                                                  final Consumer<ErrorContext> processError) {
+    public static EventProcessorClient createEventProcessorClient(
+            final EventHubsConfiguration configuration, final Consumer<EventContext> processEvent,
+            final Consumer<ErrorContext> processError) {
         return new EventProcessorClientBuilder()
                 .initialPartitionEventPosition(configuration.getEventPosition())
                 .connectionString(buildConnectionString(configuration))
@@ -92,8 +93,9 @@ public final class EventHubsClientFactory {
         // first we check if we have all required params for BlobCheckpointStore
         if (ObjectHelper.isEmpty(configuration.getBlobContainerName())
                 || !isCredentialsSet(configuration)) {
-            throw new IllegalArgumentException("Since there is no provided CheckpointStore, you will need to set blobAccountName, blobAccessName"
-                    + " or blobContainerName in order to use the default BlobCheckpointStore");
+            throw new IllegalArgumentException(
+                    "Since there is no provided CheckpointStore, you will need to set blobAccountName, blobAccessName"
+                                               + " or blobContainerName in order to use the default BlobCheckpointStore");
         }
 
         // second build the BlobContainerAsyncClient
@@ -105,7 +107,8 @@ public final class EventHubsClientFactory {
             return true;
         }
 
-        return ObjectHelper.isNotEmpty(configuration.getBlobAccessKey()) && ObjectHelper.isNotEmpty(configuration.getBlobAccountName());
+        return ObjectHelper.isNotEmpty(configuration.getBlobAccessKey())
+                && ObjectHelper.isNotEmpty(configuration.getBlobAccountName());
     }
 
     private static String buildConnectionString(final EventHubsConfiguration configuration) {
@@ -114,7 +117,8 @@ public final class EventHubsClientFactory {
         }
 
         return String.format(Locale.ROOT, "Endpoint=sb://%s.%s/;SharedAccessKeyName=%s;SharedAccessKey=%s;EntityPath=%s",
-                configuration.getNamespace(), SERVICE_URI_SEGMENT, configuration.getSharedAccessName(), configuration.getSharedAccessKey(),
+                configuration.getNamespace(), SERVICE_URI_SEGMENT, configuration.getSharedAccessName(),
+                configuration.getSharedAccessKey(),
                 configuration.getEventHubName());
     }
 

@@ -67,7 +67,7 @@ public class ManagedRouteShutdownAndStartTest extends ManagementTestSupport {
 
         // the managed route object should be removed
         assertFalse(mbeanServer.isRegistered(on), "The managed route should be removed");
-        
+
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
         // wait a bit while route is stopped to verify that file was not consumed

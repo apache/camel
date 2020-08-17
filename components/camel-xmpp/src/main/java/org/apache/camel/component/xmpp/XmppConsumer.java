@@ -165,7 +165,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     private ScheduledExecutorService getExecutor() {
         if (this.scheduledExecutor == null) {
-            scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "connectionPoll");
+            scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "connectionPoll");
         }
         return scheduledExecutor;
     }
@@ -210,7 +211,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     public void processMessage(Chat chat, Message message) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received XMPP message for {} from {} : {}", new Object[] {endpoint.getUser(), endpoint.getParticipant(), message.getBody()});
+            LOG.debug("Received XMPP message for {} from {} : {}",
+                    new Object[] { endpoint.getUser(), endpoint.getParticipant(), message.getBody() });
         }
 
         Exchange exchange = endpoint.createExchange(message);

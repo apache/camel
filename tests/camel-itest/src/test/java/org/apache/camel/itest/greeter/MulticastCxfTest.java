@@ -43,8 +43,6 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:output")
     protected MockEndpoint outputEndpoint;
-    
-    
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -58,17 +56,20 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
         outputEndpoint.expectedBodiesReceived("Bye Willem", "Bye Claus", "Bye Jonathan");
 
         // returns the last message from the recipient list
-        String out = template.requestBodyAndHeader("direct:start", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out
+                = template.requestBodyAndHeader("direct:start", "Willem", CxfConstants.OPERATION_NAME, "greetMe", String.class);
         assertEquals("Bye Willem", out);
 
         // call again to ensure that works also
         // returns the last message from the recipient list
-        String out2 = template.requestBodyAndHeader("direct:start", "Claus", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out2
+                = template.requestBodyAndHeader("direct:start", "Claus", CxfConstants.OPERATION_NAME, "greetMe", String.class);
         assertEquals("Bye Claus", out2);
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
-        String out3 = template.requestBodyAndHeader("direct:start", "Jonathan", CxfConstants.OPERATION_NAME, "greetMe", String.class);
+        String out3 = template.requestBodyAndHeader("direct:start", "Jonathan", CxfConstants.OPERATION_NAME, "greetMe",
+                String.class);
         assertEquals("Bye Jonathan", out3);
 
         replyEndpoint.assertIsSatisfied();

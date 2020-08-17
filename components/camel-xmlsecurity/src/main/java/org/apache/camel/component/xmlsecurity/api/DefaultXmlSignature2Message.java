@@ -42,47 +42,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Maps the XML signature to a camel message. A output node is determined from
- * the XML signature document via a node search and then serialized and set to
- * the output message body.
+ * Maps the XML signature to a camel message. A output node is determined from the XML signature document via a node
+ * search and then serialized and set to the output message body.
  * <p>
- * There are three output node search types supported: "Default", "ElementName",
- * and "XPath". All these search types support enveloped XML signature or
- * enveloping XML signature.
+ * There are three output node search types supported: "Default", "ElementName", and "XPath". All these search types
+ * support enveloped XML signature or enveloping XML signature.
  * <p>
  * <ul>
- * <li>The "ElementName" search uses the local name and namespace specified in
- * the search value to determine the output element from the XML signature
- * document. With the input parameter 'RemoveSignatureElements", you can specify
- * whether the signature elements should be removed from the resulting output
- * document. This flag shall be used for enveloped XML signatures.
- * <li>The "XPath" search uses an XPath expression to evaluate the output node.
- * In this case the output node can be of type Element, TextNode, or Document.
- * With the input parameter 'RemoveSignatureElements", you can specify whether
- * the signature elements should be removed from the resulting output document.
- * This flag shall be used for enveloped XML signatures.
+ * <li>The "ElementName" search uses the local name and namespace specified in the search value to determine the output
+ * element from the XML signature document. With the input parameter 'RemoveSignatureElements", you can specify whether
+ * the signature elements should be removed from the resulting output document. This flag shall be used for enveloped
+ * XML signatures.
+ * <li>The "XPath" search uses an XPath expression to evaluate the output node. In this case the output node can be of
+ * type Element, TextNode, or Document. With the input parameter 'RemoveSignatureElements", you can specify whether the
+ * signature elements should be removed from the resulting output document. This flag shall be used for enveloped XML
+ * signatures.
  * <li>The "Default" search is explained in more detail below.
  * </ul>
  * <p>
  * Default Output Node Search:
  * <ul>
- * In the enveloped XML signature case, the XML document without the signature
- * part is returned in the message body.
+ * In the enveloped XML signature case, the XML document without the signature part is returned in the message body.
  * <p>
- * In the enveloping XML signature case, the message body is determined from a
- * referenced Object element in the following way:
+ * In the enveloping XML signature case, the message body is determined from a referenced Object element in the
+ * following way:
  * <ul>
- * <li>Only same document references are taken into account (URI must start with
- * '#').
- * <li>Also indirect same document references to an object via manifest are
- * taken into account.
+ * <li>Only same document references are taken into account (URI must start with '#').
+ * <li>Also indirect same document references to an object via manifest are taken into account.
  * <li>The resulting number of object references must be 1.
  * <li>The referenced object must contain exactly 1 {@link DOMStructure}.
- * <li>The node of the DOMStructure is serialized to a byte array and added as
- * body to the message.
+ * <li>The node of the DOMStructure is serialized to a byte array and added as body to the message.
  * </ul>
- * This does mean that the enveloping XML signature must have either the
- * structure
+ * This does mean that the enveloping XML signature must have either the structure
  * 
  * <pre>
  *     {@code
@@ -146,8 +137,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     public static final String OUTPUT_NODE_SEARCH_TYPE_ELEMENT_NAME = "ElementName";
 
     /**
-     * Search type 'XPath' for determining the output node. Search value must be
-     * of type {@link XPathFilterParameterSpec}.
+     * Search type 'XPath' for determining the output node. Search value must be of type
+     * {@link XPathFilterParameterSpec}.
      * 
      */
     public static final String OUTPUT_NODE_SEARCH_TYPE_XPATH = "XPath";
@@ -173,8 +164,9 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         } else if (OUTPUT_NODE_SEARCH_TYPE_XPATH.equals(input.getOutputNodeSearchType())) {
             node = getOutputNodeViaXPath(input);
         } else {
-            throw new XmlSignatureException(String.format("Wrong configuration: The output node search type %s is not supported.",
-                    input.getOutputNodeSearchType()));
+            throw new XmlSignatureException(
+                    String.format("Wrong configuration: The output node search type %s is not supported.",
+                            input.getOutputNodeSearchType()));
         }
 
         LOG.debug("Output node with local name {} and namespace {} found", node.getLocalName(), node.getNamespaceURI());
@@ -191,7 +183,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     protected void transformNodeToByteArrayAndSetToOutputMessage(Input input, Message output, Node node)
-        throws Exception {
+            throws Exception {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input), input.getOutputXmlEncoding());
@@ -200,7 +192,6 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
             output.setHeader(Exchange.CHARSET_NAME, input.getOutputXmlEncoding());
         }
     }
-
 
     protected Node getOutputNodeViaXPath(Input input) throws Exception {
         checkSearchValueNotNull(input);
@@ -226,8 +217,10 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 || Node.DOCUMENT_NODE == result.getNodeType()) {
             return result;
         }
-        throw new XmlSignatureException(String.format("Cannot extract root node for the output document from the XML signature document. "
-                + "XPATH %s as specified in the output node search results into a node which has the wrong type.", xpathFilter.getXPath()));
+        throw new XmlSignatureException(
+                String.format("Cannot extract root node for the output document from the XML signature document. "
+                              + "XPATH %s as specified in the output node search results into a node which has the wrong type.",
+                        xpathFilter.getXPath()));
     }
 
     protected Node getOutputElementViaLocalNameAndNamespace(Input input) throws Exception {
@@ -241,7 +234,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 throw new XmlSignatureException(
                         String.format(
                                 "Wrong configuration: Value %s for the output node search %s has wrong format. "
-                                        + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                                      + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
                                 search, input.getOutputNodeSearchType()));
             }
             namespace = search.substring(1, index);
@@ -249,7 +242,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 throw new XmlSignatureException(
                         String.format(
                                 "Wrong configuration: Value %s for the output node search %s has wrong format. "
-                                        + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                                      + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
                                 search, input.getOutputNodeSearchType()));
             }
             localName = search.substring(index + 1);
@@ -283,17 +276,21 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     protected void checkSearchValueOfType(Class<?> cl, Input input) throws Exception {
         if (!cl.isAssignableFrom(input.getOutputNodeSearch().getClass())) {
-            throw new XMLSignatureException(String.format(
-                    "Wrong configuration: Search value is of class %s, the output node search %s requires class %s.", input
-                            .getOutputNodeSearch().getClass().getName(), input.getOutputNodeSearchType(), cl.getName()));
+            throw new XMLSignatureException(
+                    String.format(
+                            "Wrong configuration: Search value is of class %s, the output node search %s requires class %s.",
+                            input
+                                    .getOutputNodeSearch().getClass().getName(),
+                            input.getOutputNodeSearchType(), cl.getName()));
         }
 
     }
 
     protected void checkStringSarchValueNotEmpty(String searchValue, String outputNodeSearchType) throws Exception {
         if (searchValue.isEmpty()) {
-            throw new XMLSignatureException(String.format("Wrong configuration: Value for output node search %s is empty.",
-                    outputNodeSearchType));
+            throw new XMLSignatureException(
+                    String.format("Wrong configuration: Value for output node search %s is empty.",
+                            outputNodeSearchType));
         }
     }
 
@@ -301,8 +298,9 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         LOG.debug("Searching for output element with search value '{}' and sarch type {}", input.getOutputNodeSearch(),
                 input.getOutputNodeSearchType());
         if (input.getOutputNodeSearch() == null) {
-            throw new XMLSignatureException(String.format("Wrong configuration: Value is missing for output node search %s.",
-                    input.getOutputNodeSearchType()));
+            throw new XMLSignatureException(
+                    String.format("Wrong configuration: Value is missing for output node search %s.",
+                            input.getOutputNodeSearchType()));
         }
     }
 
@@ -337,13 +335,11 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     /**
-     * Checks whether the XML document has as root element the signature
-     * element.
+     * Checks whether the XML document has as root element the signature element.
      * 
-     * @param input
-     *            XML signature input
-     * @return <code>true</code> if the root element of the xml signature
-     *         document is the signature element; otherwise <code>false</code>
+     * @param  input     XML signature input
+     * @return           <code>true</code> if the root element of the xml signature document is the signature element;
+     *                   otherwise <code>false</code>
      * @throws Exception
      */
     protected boolean isEnveloping(Input input) throws Exception {
@@ -366,57 +362,46 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     /**
-     * Returns the references whose referenced objects are taken into account
-     * for the message body. This message you can use to filter the relevant
-     * references from the references provided by the input parameter.
+     * Returns the references whose referenced objects are taken into account for the message body. This message you can
+     * use to filter the relevant references from the references provided by the input parameter.
      * 
      * 
-     * @param input
-     *            references and objects
-     * @return relevant references for the mapping to the camel message
-     * @throws Exception
-     *             if an error occurs
+     * @param  input     references and objects
+     * @return           relevant references for the mapping to the camel message
+     * @throws Exception if an error occurs
      */
     protected List<Reference> getReferencesForMessageMapping(Input input) throws Exception {
         return input.getReferences();
     }
 
     /**
-     * Returns the objects which must be taken into account for the mapping to
-     * the camel message.
+     * Returns the objects which must be taken into account for the mapping to the camel message.
      * 
-     * @param input
-     *            references and objects
-     * @return relevant objects for the mapping to camel message
-     * @throws Exception
-     *             if an error occurs
+     * @param  input     references and objects
+     * @return           relevant objects for the mapping to camel message
+     * @throws Exception if an error occurs
      */
     protected List<XMLObject> getObjectsForMessageMapping(Input input) throws Exception {
         return input.getObjects();
     }
 
     /**
-     * Returns the DOM structure which is transformed to a byte array and set to
-     * the camel message body.
+     * Returns the DOM structure which is transformed to a byte array and set to the camel message body.
      * 
-     * @param relevantReferences
-     *            input from method
-     *            {@link #getReferencesForMessageMapping(ReferencesAndObjects)}
-     * @param relevantObjects
-     *            input from method
-     *            {@link #getObjectsForMessageMapping(ReferencesAndObjects)}
-     * @return dom structure
-     * @throws Exception
-     *             if an error occurs
+     * @param  relevantReferences input from method {@link #getReferencesForMessageMapping(ReferencesAndObjects)}
+     * @param  relevantObjects    input from method {@link #getObjectsForMessageMapping(ReferencesAndObjects)}
+     * @return                    dom structure
+     * @throws Exception          if an error occurs
      */
     protected DOMStructure getDomStructureForMessageBody(List<Reference> relevantReferences, List<XMLObject> relevantObjects)
-        throws Exception {
+            throws Exception {
 
         List<XMLObject> referencedObjects = getReferencedSameDocumentObjects(relevantReferences, relevantObjects);
 
         if (referencedObjects.isEmpty()) {
             throw new XmlSignatureException(
-                    String.format("Unsupported XML signature document: Content object not found in the enveloping XML signature."));
+                    String.format(
+                            "Unsupported XML signature document: Content object not found in the enveloping XML signature."));
         }
 
         if (referencedObjects.size() > 1) {
@@ -428,8 +413,10 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                     sb.append(", ");
                 }
             }
-            throw new XmlSignatureException(String.format(
-                    "Unsupported XML signature document: More than one content objects found. Object IDs: %s", sb.toString()));
+            throw new XmlSignatureException(
+                    String.format(
+                            "Unsupported XML signature document: More than one content objects found. Object IDs: %s",
+                            sb.toString()));
         }
 
         @SuppressWarnings("unchecked")
@@ -439,7 +426,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                     "Unsupported XML signature: XML signature is not enveloping; content not found in XML signature: structure list is empty.");
         }
         if (structures.size() > 1) {
-            throw new XmlSignatureException("Unsupported XML signature: more than one structure elements in referenced content object.");
+            throw new XmlSignatureException(
+                    "Unsupported XML signature: more than one structure elements in referenced content object.");
         }
         XMLStructure structure = structures.get(0);
         // only dom currently supported
@@ -447,7 +435,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         return domStruc;
     }
 
-    protected List<XMLObject> getReferencedSameDocumentObjects(List<Reference> relevantReferences, List<XMLObject> relevantObjects) {
+    protected List<XMLObject> getReferencedSameDocumentObjects(
+            List<Reference> relevantReferences, List<XMLObject> relevantObjects) {
         List<XMLObject> referencedObjects = new ArrayList<>(1);
 
         for (Reference ref : relevantReferences) {
@@ -467,7 +456,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     @SuppressWarnings("unchecked")
-    protected void addManifestReferencedObjects(List<XMLObject> allObjects, List<XMLObject> referencedObjects, String manifestId) {
+    protected void addManifestReferencedObjects(
+            List<XMLObject> allObjects, List<XMLObject> referencedObjects, String manifestId) {
         Manifest manifest = getReferencedManifest(allObjects, manifestId);
         if (manifest == null) {
             return;

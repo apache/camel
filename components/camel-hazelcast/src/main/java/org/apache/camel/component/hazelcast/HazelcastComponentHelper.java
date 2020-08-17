@@ -63,5 +63,4 @@ public final class HazelcastComponentHelper {
         return ObjectHelper.isEmpty(operationName) ? defaultOperation : HazelcastOperation.getHazelcastOperation(operationName);
     }
 
-
 }

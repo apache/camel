@@ -36,7 +36,7 @@ public class ChildData<T> implements Comparable<ChildData> {
     /**
      * @inheritDoc
      *
-     * Note: this class has a natural ordering that is inconsistent with equals.
+     *             Note: this class has a natural ordering that is inconsistent with equals.
      */
     @Override
     public int compareTo(ChildData rhs) {
@@ -102,10 +102,14 @@ public class ChildData<T> implements Comparable<ChildData> {
     }
 
     /**
-     * <p>Returns the node data for this child when the cache mode is set to cache data.</p>
+     * <p>
+     * Returns the node data for this child when the cache mode is set to cache data.
+     * </p>
      *
-     * <p><b>NOTE:</b> the byte array returned is the raw reference of this instance's field. If you change
-     * the values in the array any other callers to this method will see the change.</p>
+     * <p>
+     * <b>NOTE:</b> the byte array returned is the raw reference of this instance's field. If you change the values in
+     * the array any other callers to this method will see the change.
+     * </p>
      *
      * @return node data or null
      */
@@ -114,7 +118,9 @@ public class ChildData<T> implements Comparable<ChildData> {
     }
 
     /**
-     * <p>Returns the node for this group member.</p>
+     * <p>
+     * Returns the node for this group member.
+     * </p>
      *
      * @return the node or null
      */

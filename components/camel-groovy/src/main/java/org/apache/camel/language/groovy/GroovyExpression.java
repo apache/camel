@@ -69,8 +69,10 @@ public class GroovyExpression extends ExpressionSupport {
         Class<Script> scriptClass = language.getScriptFromCache(key);
         if (scriptClass == null) {
             ClassLoader cl = exchange.getContext().getApplicationContextClassLoader();
-            GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange) : cl != null ? new GroovyShell(cl) : new GroovyShell();
-            scriptClass = fileName != null ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
+            GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange)
+                    : cl != null ? new GroovyShell(cl) : new GroovyShell();
+            scriptClass = fileName != null
+                    ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
             language.addScriptToCache(key, scriptClass);
         }
 

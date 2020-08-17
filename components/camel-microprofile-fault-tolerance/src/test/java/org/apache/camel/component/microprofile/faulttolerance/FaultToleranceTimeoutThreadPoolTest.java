@@ -54,7 +54,8 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
         Object out = template.requestBody("direct:start", "fast");
         assertEquals("Fast response", out);
 
-        SizedScheduledExecutorService pte = context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
+        SizedScheduledExecutorService pte
+                = context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
         assertNotNull(pte);
         assertEquals(2, pte.getCorePoolSize());
 
@@ -73,7 +74,8 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
             assertIsInstanceOf(TimeoutException.class, e.getCause());
         }
 
-        SizedScheduledExecutorService pte = context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
+        SizedScheduledExecutorService pte
+                = context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
         assertNotNull(pte);
         assertEquals(2, pte.getCorePoolSize());
 
@@ -94,7 +96,8 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
                 fail("Should fail due to timeout");
             } catch (Exception e) {
                 // expected a timeout or that the CB is open
-                assertTrue(e.getCause() instanceof CircuitBreakerOpenException || e.getCause() instanceof org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException);
+                assertTrue(e.getCause() instanceof CircuitBreakerOpenException
+                        || e.getCause() instanceof org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException);
             }
         }
     }
@@ -105,17 +108,21 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").circuitBreaker()
-                    // enable and use 2 second timeout
-                    .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000).timeoutScheduledExecutorServiceRef("myThreadPool").end()
-                    .log("FaultTolerance processing start: ${threadName}").toD("direct:${body}").log("FaultTolerance processing end: ${threadName}").end().log("After Fault Tolerance ${body}");
+                        // enable and use 2 second timeout
+                        .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000)
+                        .timeoutScheduledExecutorServiceRef("myThreadPool").end()
+                        .log("FaultTolerance processing start: ${threadName}").toD("direct:${body}")
+                        .log("FaultTolerance processing end: ${threadName}").end().log("After Fault Tolerance ${body}");
 
                 from("direct:fast")
-                    // this is a fast route and takes 1 second to respond
-                    .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response").log("Fast processing end: ${threadName}");
+                        // this is a fast route and takes 1 second to respond
+                        .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
+                        .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
-                    // this is a slow route and takes 3 second to respond
-                    .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response").log("Slow processing end: ${threadName}");
+                        // this is a slow route and takes 3 second to respond
+                        .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response")
+                        .log("Slow processing end: ${threadName}");
             }
         };
     }

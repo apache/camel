@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class WSSecurityRouteTest extends CamelTestSupport {
     static final int PORT = CXFTestSupport.getPort1();
     static CxfServer cxfServer;
-    
+
     private static AbstractXmlApplicationContext applicationContext;
 
     @BeforeAll
@@ -49,14 +49,14 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         cxfServer = new CxfServer();
         applicationContext = createApplicationContext();
     }
-    
+
     @AfterAll
     public static void shutdownService() {
         if (applicationContext != null) {
             applicationContext.stop();
         }
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
@@ -65,7 +65,7 @@ public class WSSecurityRouteTest extends CamelTestSupport {
     private static ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/wssecurity/camel/camel-context.xml");
     }
-    
+
     @Test
     public void testSignature() throws Exception {
         SpringBusFactory bf = new SpringBusFactory();
@@ -74,19 +74,18 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         Bus bus = bf.createBus(busFile.toString());
         BusFactory.setDefaultBus(bus);
         BusFactory.setThreadDefaultBus(bus);
-        
+
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterSignaturePort();
-         
-        ((BindingProvider)greeter).getRequestContext().put(
+
+        ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2() 
-                + "/WSSecurityRouteTest/GreeterSignaturePort"
-        );
-        
+                "http://localhost:" + CXFTestSupport.getPort2()
+                                                           + "/WSSecurityRouteTest/GreeterSignaturePort");
+
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
-    
+
     @Test
     public void testUsernameToken() throws Exception {
         SpringBusFactory bf = new SpringBusFactory();
@@ -95,19 +94,18 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         Bus bus = bf.createBus(busFile.toString());
         BusFactory.setDefaultBus(bus);
         BusFactory.setThreadDefaultBus(bus);
-        
+
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterUsernameTokenPort();
-         
-        ((BindingProvider)greeter).getRequestContext().put(
+
+        ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2() 
-                + "/WSSecurityRouteTest/GreeterUsernameTokenPort"
-        );
-        
+                "http://localhost:" + CXFTestSupport.getPort2()
+                                                           + "/WSSecurityRouteTest/GreeterUsernameTokenPort");
+
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
-    
+
     @Test
     public void testEncryption() throws Exception {
         SpringBusFactory bf = new SpringBusFactory();
@@ -116,19 +114,18 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         Bus bus = bf.createBus(busFile.toString());
         BusFactory.setDefaultBus(bus);
         BusFactory.setThreadDefaultBus(bus);
-        
+
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterEncryptionPort();
-         
-        ((BindingProvider)greeter).getRequestContext().put(
+
+        ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2() 
-                + "/WSSecurityRouteTest/GreeterEncryptionPort"
-        );
-        
+                "http://localhost:" + CXFTestSupport.getPort2()
+                                                           + "/WSSecurityRouteTest/GreeterEncryptionPort");
+
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
-   
+
     @Test
     public void testSecurityPolicy() throws Exception {
         SpringBusFactory bf = new SpringBusFactory();
@@ -137,17 +134,16 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         Bus bus = bf.createBus(busFile.toString());
         BusFactory.setDefaultBus(bus);
         BusFactory.setThreadDefaultBus(bus);
-        
+
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterSecurityPolicyPort();
-         
-        ((BindingProvider)greeter).getRequestContext().put(
+
+        ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2() 
-                + "/WSSecurityRouteTest/GreeterSecurityPolicyPort"
-        );
-        
+                "http://localhost:" + CXFTestSupport.getPort2()
+                                                           + "/WSSecurityRouteTest/GreeterSecurityPolicyPort");
+
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
- 
+
 }

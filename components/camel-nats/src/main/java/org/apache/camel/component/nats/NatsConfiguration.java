@@ -81,8 +81,7 @@ public class NatsConfiguration {
     private SSLContextParameters sslContextParameters;
 
     /**
-     * URLs to one or more NAT servers. Use comma to separate URLs when
-     * specifying multiple servers.
+     * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
      */
     public String getServers() {
         return servers;
@@ -102,10 +101,10 @@ public class NatsConfiguration {
     public void setTopic(String topic) {
         this.topic = topic;
     }
-    
+
     /**
      * Reference an already instantiated connection to Nats server
-     */  
+     */
     public Connection getConnection() {
         return connection;
     }
@@ -170,8 +169,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * maximum number of pings have not received a response allowed by the
-     * client
+     * maximum number of pings have not received a response allowed by the client
      */
     public int getMaxPingsOut() {
         return maxPingsOut;
@@ -182,7 +180,7 @@ public class NatsConfiguration {
     }
 
     /**
-     *  Interval to clean up cancelled/timed out requests.
+     * Interval to clean up cancelled/timed out requests.
      */
     public int getRequestCleanupInterval() {
         return requestCleanupInterval;
@@ -226,8 +224,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Whether or not randomizing the order of servers for the connection
-     * attempts
+     * Whether or not randomizing the order of servers for the connection attempts
      */
     public boolean isNoRandomizeServers() {
         return noRandomizeServers;
@@ -238,9 +235,8 @@ public class NatsConfiguration {
     }
 
     /**
-     * Turn off echo. If supported by the gnatsd version you are connecting to
-     * this flag will prevent the server from echoing messages back to the
-     * connection if it has subscriptions on the subject being published to.
+     * Turn off echo. If supported by the gnatsd version you are connecting to this flag will prevent the server from
+     * echoing messages back to the connection if it has subscriptions on the subject being published to.
      */
     public boolean isNoEcho() {
         return noEcho;
@@ -273,8 +269,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Stop receiving messages from a topic we are subscribing to after
-     * maxMessages
+     * Stop receiving messages from a topic we are subscribing to after maxMessages
      */
     public String getMaxMessages() {
         return maxMessages;

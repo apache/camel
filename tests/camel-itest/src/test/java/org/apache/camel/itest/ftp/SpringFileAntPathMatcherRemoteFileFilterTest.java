@@ -38,8 +38,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class SpringFileAntPathMatcherRemoteFileFilterTest {
     @RegisterExtension
-    public static FtpServiceExtension ftpServiceExtension =
-            new FtpServiceExtension("SpringFileAntPathMatcherRemoteFileFilterTest.ftpPort");
+    public static FtpServiceExtension ftpServiceExtension
+            = new FtpServiceExtension("SpringFileAntPathMatcherRemoteFileFilterTest.ftpPort");
 
     protected FtpServer ftpServer;
 
@@ -51,7 +51,7 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest {
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 
-    @DisabledOnOs({OS.AIX, OS.WINDOWS, OS.SOLARIS})
+    @DisabledOnOs({ OS.AIX, OS.WINDOWS, OS.SOLARIS })
     @Test
     void testAntPatchMatherFilter() throws Exception {
 
@@ -66,4 +66,3 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest {
         result.assertIsSatisfied();
     }
 }
-

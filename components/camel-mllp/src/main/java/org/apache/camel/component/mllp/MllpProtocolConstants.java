@@ -56,7 +56,7 @@ public final class MllpProtocolConstants {
 
         /*
           // These are defined in the HL7 Spec, but I don't know how to map them to Java charset names
-
+        
           MSH18_VALUES.put("JAS2020", "????");
           MSH18_VALUES.put("JIS X 0202", "????");
           MSH18_VALUES.put("JIS X 0201-1976", "????");

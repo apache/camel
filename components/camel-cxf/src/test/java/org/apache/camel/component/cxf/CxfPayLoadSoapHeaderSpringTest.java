@@ -28,16 +28,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
     protected AbstractXmlApplicationContext applicationContext;
-    
+
     @Override
     protected String getRouterEndpointURI() {
         return "cxf:bean:routerEndpoint?dataFormat=PAYLOAD";
     }
+
     @Override
     protected String getServiceEndpointURI() {
         return "cxf:bean:serviceEndpoint?dataFormat=PAYLOAD";
     }
-   
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -52,7 +53,7 @@ public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-      
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
@@ -61,7 +62,5 @@ public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/PizzaEndpoints.xml");
     }
-    
-    
 
 }

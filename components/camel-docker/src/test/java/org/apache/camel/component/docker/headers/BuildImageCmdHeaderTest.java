@@ -44,7 +44,7 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
 
     @Mock
     private BuildImageResultCallback callback;
-    
+
     @Mock
     private File file;
 

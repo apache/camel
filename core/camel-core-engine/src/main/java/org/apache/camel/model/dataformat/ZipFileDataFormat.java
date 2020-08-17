@@ -58,25 +58,24 @@ public class ZipFileDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the zip file has more then one entry, the setting this option to true,
-     * allows to work with the splitter EIP, to split the data using an iterator
-     * in a streaming mode.
+     * If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
+     * to split the data using an iterator in a streaming mode.
      */
     public void setUsingIterator(String usingIterator) {
         this.usingIterator = usingIterator;
     }
 
     /**
-     * If the zip file has more then one entry, setting this option to true,
-     * allows to get the iterator even if the directory is empty
+     * If the zip file has more then one entry, setting this option to true, allows to get the iterator even if the
+     * directory is empty
      */
     public void setAllowEmptyDirectory(String allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
     /**
-     * If the file name contains path elements, setting this option to true,
-     * allows the path to be maintained in the zip file.
+     * If the file name contains path elements, setting this option to true, allows the path to be maintained in the zip
+     * file.
      */
     public void setPreservePathElements(String preservePathElements) {
         this.preservePathElements = preservePathElements;

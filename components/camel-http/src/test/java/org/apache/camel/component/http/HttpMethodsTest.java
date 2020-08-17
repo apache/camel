@@ -50,23 +50,21 @@ public class HttpMethodsTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/get", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
-                registerHandler("/patch", new BasicValidationHandler(PATCH.name(), null, null, getExpectedContent())).
-                registerHandler("/patch1", new BasicValidationHandler(PATCH.name(), null, "rocks camel?", getExpectedContent())).
-                registerHandler("/post", new BasicValidationHandler(POST.name(), null, null, getExpectedContent())).
-                registerHandler("/post1", new BasicValidationHandler(POST.name(), null, "rocks camel?", getExpectedContent())).
-                registerHandler("/put", new BasicValidationHandler(PUT.name(), null, null, getExpectedContent())).
-                registerHandler("/trace", new BasicValidationHandler(TRACE.name(), null, null, getExpectedContent())).
-                registerHandler("/options", new BasicValidationHandler(OPTIONS.name(), null, null, getExpectedContent())).
-                registerHandler("/delete", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent())).
-                registerHandler("/delete1", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent())).
-                registerHandler("/head", new BasicValidationHandler(HEAD.name(), null, null, getExpectedContent())).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/get", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .registerHandler("/patch", new BasicValidationHandler(PATCH.name(), null, null, getExpectedContent()))
+                .registerHandler("/patch1",
+                        new BasicValidationHandler(PATCH.name(), null, "rocks camel?", getExpectedContent()))
+                .registerHandler("/post", new BasicValidationHandler(POST.name(), null, null, getExpectedContent()))
+                .registerHandler("/post1", new BasicValidationHandler(POST.name(), null, "rocks camel?", getExpectedContent()))
+                .registerHandler("/put", new BasicValidationHandler(PUT.name(), null, null, getExpectedContent()))
+                .registerHandler("/trace", new BasicValidationHandler(TRACE.name(), null, null, getExpectedContent()))
+                .registerHandler("/options", new BasicValidationHandler(OPTIONS.name(), null, null, getExpectedContent()))
+                .registerHandler("/delete", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
+                .registerHandler("/delete1", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
+                .registerHandler("/head", new BasicValidationHandler(HEAD.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
@@ -96,7 +94,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpGetWithUriParam() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/get?httpMethod=GET", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
+        Exchange exchange = template.request(baseUrl + "/get?httpMethod=GET",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
 
         assertExchange(exchange);
     }
@@ -104,7 +103,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPatch() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/patch?throwExceptionOnFailure=false", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PATCH"));
+        Exchange exchange = template.request(baseUrl + "/patch?throwExceptionOnFailure=false",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PATCH"));
 
         assertNotNull(exchange);
         assertTrue(exchange.hasOut());
@@ -121,7 +121,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPatchWithBody() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/patch1?throwExceptionOnFailure=false", exchange1 -> exchange1.getIn().setBody("rocks camel?"));
+        Exchange exchange = template.request(baseUrl + "/patch1?throwExceptionOnFailure=false",
+                exchange1 -> exchange1.getIn().setBody("rocks camel?"));
 
         assertNotNull(exchange);
         assertTrue(exchange.hasOut());
@@ -136,7 +137,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPost() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/post", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
+        Exchange exchange
+                = template.request(baseUrl + "/post", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
 
         assertExchange(exchange);
     }
@@ -152,7 +154,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPut() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/put", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PUT"));
+        Exchange exchange
+                = template.request(baseUrl + "/put", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PUT"));
 
         assertExchange(exchange);
     }
@@ -160,7 +163,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpTrace() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/trace", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "TRACE"));
+        Exchange exchange
+                = template.request(baseUrl + "/trace", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "TRACE"));
 
         assertExchange(exchange);
     }
@@ -168,7 +172,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpOptions() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/options", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
+        Exchange exchange = template.request(baseUrl + "/options",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
         assertExchange(exchange);
     }
@@ -176,7 +181,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpDelete() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/delete", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE"));
+        Exchange exchange = template.request(baseUrl + "/delete",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE"));
 
         assertExchange(exchange);
     }
@@ -210,7 +216,8 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpHead() throws Exception {
 
-        Exchange exchange = template.request(baseUrl + "/head", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "HEAD"));
+        Exchange exchange
+                = template.request(baseUrl + "/head", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "HEAD"));
 
         assertNotNull(exchange);
 

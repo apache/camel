@@ -83,7 +83,7 @@ public final class JettyTestServer {
                 } else {
                     entryDestination.getParentFile().mkdirs();
                     try (InputStream in = zipFile.getInputStream(entry);
-                            OutputStream out = new FileOutputStream(entryDestination)) {
+                         OutputStream out = new FileOutputStream(entryDestination)) {
                         IOUtils.copy(in, out);
                     }
                 }
@@ -107,12 +107,13 @@ public final class JettyTestServer {
                     "/jettyKS/localhost.p12").toExternalForm());
             sslContextFactory.setKeyStorePassword(PASSWORD);
             sslContextFactory.setKeyManagerPassword(PASSWORD);
-            ServerConnector sslConnector = new ServerConnector(server,
+            ServerConnector sslConnector = new ServerConnector(
+                    server,
                     new SslConnectionFactory(sslContextFactory, "http/1.1"),
                     new HttpConnectionFactory(https));
 
             sslConnector.setPort(PORT_SSL);
-            server.setConnectors(new Connector[]{connector, sslConnector});
+            server.setConnectors(new Connector[] { connector, sslConnector });
         }
 
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -162,7 +163,8 @@ public final class JettyTestServer {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             String qs = req.getRequestURI() + "?" + req.getQueryString();
             String sha256Hex = DigestUtils.sha256Hex(qs);
-            resp.getWriter().write(FileUtils.readFileToString(new File("src/test/resources/data/" + this.context + "/" + sha256Hex + ".xml"), StandardCharsets.UTF_8));
+            resp.getWriter().write(FileUtils.readFileToString(
+                    new File("src/test/resources/data/" + this.context + "/" + sha256Hex + ".xml"), StandardCharsets.UTF_8));
         }
     }
 

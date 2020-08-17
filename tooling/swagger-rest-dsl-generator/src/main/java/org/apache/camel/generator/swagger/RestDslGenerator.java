@@ -26,8 +26,8 @@ import org.apache.camel.model.rest.RestsDefinition;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Source code and {@link RestsDefinition} generator that generates Camel REST
- * DSL implementations from Swagger (OpenAPI) specifications.
+ * Source code and {@link RestsDefinition} generator that generates Camel REST DSL implementations from Swagger
+ * (OpenAPI) specifications.
  */
 public abstract class RestDslGenerator<G> {
 
@@ -94,7 +94,7 @@ public abstract class RestDslGenerator<G> {
 
         return that;
     }
-    
+
     public G withApiContextPath(String contextPath) {
         this.apiContextPath = contextPath;
 

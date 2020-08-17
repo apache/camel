@@ -37,8 +37,7 @@ public interface MessageHistory {
     long getTime();
 
     /**
-     * Gets the elapsed time in millis processing the node took
-     * (this is 0 until the node processing is done)
+     * Gets the elapsed time in millis processing the node took (this is 0 until the node processing is done)
      */
     long getElapsed();
 

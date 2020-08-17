@@ -65,7 +65,8 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
 
     protected ComponentVerifierExtension getExtension() {
         Component component = context().getComponent("salesforce");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         return verifier;
     }
@@ -77,7 +78,8 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
     @Test
     public void testConnectivity() {
         Map<String, Object> parameters = getParameters();
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
@@ -87,17 +89,20 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
         Map<String, Object> parameters = getParameters();
         parameters.put("userName", "not-a-salesforce-user");
 
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(2, result.getErrors().size());
 
         // Exception
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        assertNotNull(result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
         assertTrue(result.getErrors().get(0).getDetails()
-            .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
-        assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
+                .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
+        assertEquals(400, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
         assertEquals("invalid_grant", result.getErrors().get(1).getDetail("salesforce_code"));
@@ -109,7 +114,8 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
         parameters.put("clientId", "wrong-client-id");
         parameters.put("clientSecret", "wrong-client-secret");
 
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
 
@@ -118,10 +124,12 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
 
         // Exception
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        assertNotNull(result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
         assertTrue(result.getErrors().get(0).getDetails()
-            .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
-        assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
+                .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
+        assertEquals(400, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
         assertEquals("invalid_client_id", result.getErrors().get(1).getDetail("salesforce_code"));

@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultProducer;
 public class Jt400MsgQueueProducer extends DefaultProducer {
 
     private final Jt400Endpoint endpoint;
-    
+
     /**
      * Performs the lifecycle logic of this producer.
      */
@@ -37,8 +37,7 @@ public class Jt400MsgQueueProducer extends DefaultProducer {
     }
 
     /**
-     * Sends the {@link Exchange}'s in body to the message queue as an informational message.
-     * Data will be sent as a
+     * Sends the {@link Exchange}'s in body to the message queue as an informational message. Data will be sent as a
      * <code>String</code>.
      */
     @Override

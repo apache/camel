@@ -64,7 +64,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public void setEndpoint(GenericFileEndpoint<ScpFile> endpoint) {
-        this.endpoint = (ScpEndpoint)endpoint;
+        this.endpoint = (ScpEndpoint) endpoint;
     }
 
     @Override
@@ -111,13 +111,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         }
         String file = getRemoteFile(name, cfg);
 
-
         InputStream is = null;
         if (exchange.getIn().getBody() == null) {
             // Do an explicit test for a null body and decide what to do
             if (endpoint.isAllowNullBody()) {
                 LOG.trace("Writing empty file.");
-                is = new ByteArrayInputStream(new byte[]{});
+                is = new ByteArrayInputStream(new byte[] {});
             } else {
                 throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
             }
@@ -181,13 +180,15 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     @Override
-    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
+            throws GenericFileOperationFailedException {
         if (!isConnected()) {
-            session = createSession(configuration instanceof ScpConfiguration ? (ScpConfiguration)configuration : null);
+            session = createSession(configuration instanceof ScpConfiguration ? (ScpConfiguration) configuration : null);
             // TODO: deal with reconnection attempts
             if (!isConnected()) {
                 session = null;
-                throw new GenericFileOperationFailedException("Failed to connect to " + configuration.remoteServerInformation());
+                throw new GenericFileOperationFailedException(
+                        "Failed to connect to " + configuration.remoteServerInformation());
             }
         }
         return true;
@@ -255,7 +256,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                     byte[] data = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
                     jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
                 } catch (Exception e) {
-                    throw new GenericFileOperationFailedException("Cannot load private keyfile: " + config.getPrivateKeyFile(), e);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot load private keyfile: " + config.getPrivateKeyFile(), e);
                 }
             } else if (ObjectHelper.isNotEmpty(config.getPrivateKeyBytes())) {
                 LOG.trace("Using private key bytes: {}", config.getPrivateKeyBytes());
@@ -267,10 +269,10 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 try {
                     jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
                 } catch (Exception e) {
-                    throw new GenericFileOperationFailedException("Cannot load private key bytes: " + Arrays.toString(config.getPrivateKeyBytes()), e);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot load private key bytes: " + Arrays.toString(config.getPrivateKeyBytes()), e);
                 }
             }
-
 
             String knownHostsFile = config.getKnownHostsFile();
             if (knownHostsFile == null && config.isUseUserKnownHostsFile()) {
@@ -287,7 +289,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                     knownHostsFile = "file:" + knownHostsFile;
                 }
                 try {
-                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), knownHostsFile);
+                    InputStream is
+                            = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), knownHostsFile);
                     jsch.setKnownHosts(is);
                 } catch (Exception e) {
                     throw new GenericFileOperationFailedException("Cannot load known host file: " + knownHostsFile, e);
@@ -335,7 +338,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         }
     }
 
-    private void writeFile(String filename, InputStream data, OutputStream os, InputStream is, ScpConfiguration cfg) throws IOException {
+    private void writeFile(String filename, InputStream data, OutputStream os, InputStream is, ScpConfiguration cfg)
+            throws IOException {
         final int lineFeed = '\n';
         String bytes;
         int pos = filename.indexOf('/');
@@ -458,6 +462,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     protected static final class SessionUserInfo implements UserInfo, UIKeyboardInteractive {
         private final ScpConfiguration config;
+
         public SessionUserInfo(ScpConfiguration config) {
             ObjectHelper.notNull(config, "config");
             this.config = config;
@@ -468,34 +473,40 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             LOG.warn("Private Key authentication not supported");
             return null;
         }
+
         @Override
         public String getPassword() {
             LOG.debug("Providing password for ssh authentication of user '{}'", config.getUsername());
             return config.getPassword();
         }
+
         @Override
         public boolean promptPassword(String message) {
             LOG.debug(message);
             return true;
         }
+
         @Override
         public boolean promptPassphrase(String message) {
             LOG.debug(message);
             return true;
         }
+
         @Override
         public boolean promptYesNo(String message) {
             LOG.debug(message);
             return false;
         }
+
         @Override
         public void showMessage(String message) {
             LOG.debug(message);
         }
 
         @Override
-        public String[] promptKeyboardInteractive(String destination, String name,
-                                                  String instruction, String[] prompt, boolean[] echo) {
+        public String[] promptKeyboardInteractive(
+                String destination, String name,
+                String instruction, String[] prompt, boolean[] echo) {
             LOG.debug(instruction);
             // Called for either SSH_MSG_USERAUTH_INFO_REQUEST or SSH_MSG_USERAUTH_PASSWD_CHANGEREQ
             // The most secure choice (especially for the second case) is to return null

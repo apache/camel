@@ -30,8 +30,7 @@ import org.apache.camel.spi.StreamCachingStrategy;
 import org.junit.jupiter.api.Test;
 
 /**
- * The original message body is a StreamCache. Therefore the stream cache must
- * be reset before the aggregator is called.
+ * The original message body is a StreamCache. Therefore the stream cache must be reset before the aggregator is called.
  */
 public class EnricherAggregateStreamingTest extends ContextTestSupport {
 

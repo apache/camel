@@ -53,26 +53,27 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
     @Test
     public void testPostBodyAsString() {
         String result = template.requestBody(getProducerUri(), BODY_PAYLOAD, String.class);
-        assertEquals("Got body: "  + BODY_PAYLOAD, result);
+        assertEquals("Got body: " + BODY_PAYLOAD, result);
     }
 
     @Test
     public void testPostBodyAsStringWithEncoding() {
         String suffix = "åäö";
-        String result = template.requestBodyAndHeader(getProducerUri(), BODY_PAYLOAD + suffix, Exchange.CONTENT_TYPE, "text/plain; charset=iso-8859-1", String.class);
-        assertEquals("Got body: "  + BODY_PAYLOAD + suffix, result);
+        String result = template.requestBodyAndHeader(getProducerUri(), BODY_PAYLOAD + suffix, Exchange.CONTENT_TYPE,
+                "text/plain; charset=iso-8859-1", String.class);
+        assertEquals("Got body: " + BODY_PAYLOAD + suffix, result);
     }
 
     @Test
     public void testPostBodyAsByteArray() {
         String result = template.requestBody(getProducerUri(), BODY_PAYLOAD.getBytes(StandardCharsets.UTF_8), String.class);
-        assertEquals("Got body: "  + BODY_PAYLOAD, result);
+        assertEquals("Got body: " + BODY_PAYLOAD, result);
     }
 
     @Test
     public void testPostBodyAsBuffer() {
         String result = template.requestBody(getProducerUri(), Buffer.buffer(BODY_PAYLOAD), String.class);
-        assertEquals("Got body: "  + BODY_PAYLOAD, result);
+        assertEquals("Got body: " + BODY_PAYLOAD, result);
     }
 
     @Test
@@ -105,7 +106,8 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
         mockEndpoint.expectedHeaderReceived("organization", "Apache");
         mockEndpoint.expectedHeaderReceived("project", "Camel");
 
-        template.sendBodyAndHeader(getProducerUri() + "/form", "organization=Apache&project=Camel", Exchange.CONTENT_TYPE, CONTENT_TYPE_FORM_URLENCODED);
+        template.sendBodyAndHeader(getProducerUri() + "/form", "organization=Apache&project=Camel", Exchange.CONTENT_TYPE,
+                CONTENT_TYPE_FORM_URLENCODED);
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -155,9 +157,9 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
                 from(getTestServerUri())
                         .choice()
                         .when(simple("${body} == ''"))
-                            .setBody(constant("Got empty body"))
+                        .setBody(constant("Got empty body"))
                         .otherwise()
-                            .setBody(simple("Got body: ${body}"));
+                        .setBody(simple("Got body: ${body}"));
 
                 from(getTestServerUri() + "/form")
                         .process(new Processor() {
@@ -166,7 +168,7 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
                                 exchange.toString();
                             }
                         })
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from(getTestServerUri() + "/upload")
                         .process(exchange -> {
@@ -177,7 +179,7 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
                         });
 
                 from(getTestServerUri() + "/stream")
-                    .log("foo");
+                        .log("foo");
             }
         };
     }

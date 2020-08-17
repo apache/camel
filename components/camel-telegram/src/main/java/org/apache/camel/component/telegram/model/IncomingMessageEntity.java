@@ -82,11 +82,11 @@ public class IncomingMessageEntity {
     @Override
     public String toString() {
         return "MessageEntity{"
-            + "type='" + type + '\''
-            + ", offset=" + offset
-            + ", length=" + length
-            + ", url='" + url + '\''
-            + ", user=" + user
-            + '}';
+               + "type='" + type + '\''
+               + ", offset=" + offset
+               + ", length=" + length
+               + ", url='" + url + '\''
+               + ", user=" + user
+               + '}';
     }
 }

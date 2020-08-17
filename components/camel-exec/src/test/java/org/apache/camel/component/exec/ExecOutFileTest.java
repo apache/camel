@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CamelSpringTest
-@ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
+@ContextConfiguration(locations = { "exec-mock-executor-context.xml" })
 public class ExecOutFileTest {
 
     private static final String FILE_CONTENT = buildFileContent();

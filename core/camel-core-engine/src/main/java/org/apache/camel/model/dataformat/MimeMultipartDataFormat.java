@@ -69,8 +69,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Defines whether a message without attachment is also marshaled into a
-     * MIME Multipart (with only one body part).
+     * Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part).
      * <p>
      * Default is "false".
      */
@@ -83,8 +82,8 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Defines whether the MIME-Multipart headers are part of the message body
-     * (true) or are set as Camel headers (false).
+     * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers
+     * (false).
      * <p>
      * Default is "false".
      */
@@ -97,9 +96,8 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * A regex that defines which Camel headers are also included as MIME
-     * headers into the MIME multipart. This will only work if headersInline is
-     * set to true.
+     * A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will
+     * only work if headersInline is set to true.
      * <p>
      * Default is to include no headers
      */
@@ -112,8 +110,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Defines whether the content of binary parts in the MIME multipart is
-     * binary (true) or Base-64 encoded (false)
+     * Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false)
      * <p>
      * Default is "false".
      */

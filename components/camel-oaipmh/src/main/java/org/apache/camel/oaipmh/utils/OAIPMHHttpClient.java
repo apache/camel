@@ -47,7 +47,10 @@ public class OAIPMHHttpClient {
 
     private boolean ignoreSSLWarnings;
 
-    public String doRequest(URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token, String identifier) throws IOException, URISyntaxException {
+    public String doRequest(
+            URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token,
+            String identifier)
+            throws IOException, URISyntaxException {
 
         try (CloseableHttpClient httpclient = getCloseableHttpClient()) {
             URIBuilder builder = new URIBuilder();

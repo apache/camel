@@ -41,7 +41,8 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Translate texts using AWS Translate and AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS 2 Translate", syntax = "aws2-translate:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS 2 Translate", syntax = "aws2-translate:label",
+             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class Translate2Endpoint extends ScheduledPollEndpoint {
 
     private TranslateClient translateClient;
@@ -68,7 +69,8 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        translateClient = configuration.getTranslateClient() != null ? configuration.getTranslateClient() : createTranslateClient();
+        translateClient
+                = configuration.getTranslateClient() != null ? configuration.getTranslateClient() : createTranslateClient();
     }
 
     @Override
@@ -97,7 +99,8 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -105,7 +108,8 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -122,8 +126,7 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

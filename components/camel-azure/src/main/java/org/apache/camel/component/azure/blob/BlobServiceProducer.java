@@ -131,9 +131,8 @@ public class BlobServiceProducer extends DefaultProducer {
         } else if (detailsObject instanceof BlobListingDetails) {
             details = EnumSet.of((BlobListingDetails) detailsObject);
         }
-        Iterable<ListBlobItem> items =
-                client.listBlobs(cfg.getBlobPrefix(), cfg.isUseFlatListing(),
-                        details, opts.getRequestOpts(), opts.getOpContext());
+        Iterable<ListBlobItem> items = client.listBlobs(cfg.getBlobPrefix(), cfg.isUseFlatListing(),
+                details, opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(items);
     }
 
@@ -246,8 +245,8 @@ public class BlobServiceProducer extends DefaultProducer {
         if (filter == null) {
             filter = BlockListingFilter.COMMITTED;
         }
-        List<BlockEntry> blockEntries =
-                client.downloadBlockList(filter, opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+        List<BlockEntry> blockEntries
+                = client.downloadBlockList(filter, opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(blockEntries);
     }
 
@@ -311,7 +310,6 @@ public class BlobServiceProducer extends DefaultProducer {
         CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(exchange, getConfiguration());
         doDeleteBlock(client, exchange);
     }
-
 
     private void createPageBlob(Exchange exchange) throws Exception {
         CloudPageBlob client = BlobServiceUtil.createPageBlobClient(exchange, getConfiguration());
@@ -432,8 +430,7 @@ public class BlobServiceProducer extends DefaultProducer {
             String blobName = getBlobName(exchange, getConfiguration());
             LOG.trace("Getting the page blob ranges [{}] from exchange [{}]...", blobName, exchange);
         }
-        List<PageRange> ranges =
-                client.downloadPageRanges(opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+        List<PageRange> ranges = client.downloadPageRanges(opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(ranges);
     }
 
@@ -449,7 +446,6 @@ public class BlobServiceProducer extends DefaultProducer {
         }
         return pageSize;
     }
-
 
     private void doDeleteBlock(CloudBlob client, Exchange exchange) throws Exception {
         if (LOG.isTraceEnabled()) {
@@ -469,7 +465,8 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private BlobServiceOperations determineOperation(Exchange exchange) {
-        BlobServiceOperations operation = exchange.getIn().getHeader(BlobServiceConstants.OPERATION, BlobServiceOperations.class);
+        BlobServiceOperations operation
+                = exchange.getIn().getHeader(BlobServiceConstants.OPERATION, BlobServiceOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }

@@ -17,5 +17,10 @@
 package org.apache.camel.oaipmh.component.model;
 
 public enum OAIPMHVerb {
-    ListRecords, Identify, ListIdentifiers, ListMetadataFormats, GetRecord, ListSets
+    ListRecords,
+    Identify,
+    ListIdentifiers,
+    ListMetadataFormats,
+    GetRecord,
+    ListSets
 }

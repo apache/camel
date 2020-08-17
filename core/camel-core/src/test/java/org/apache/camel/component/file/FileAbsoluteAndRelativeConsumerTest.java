@@ -70,9 +70,11 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filerelative?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:relative");
+                from("file://target/data/filerelative?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class)
+                        .to("mock:relative");
 
-                from("file://" + base + "?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:absolute");
+                from("file://" + base + "?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class)
+                        .to("mock:absolute");
             }
         };
     }

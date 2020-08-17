@@ -85,7 +85,7 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
 
-        byte[] body = {1, 2, 3};
+        byte[] body = { 1, 2, 3 };
 
         exchange.getIn().setBody(body);
 

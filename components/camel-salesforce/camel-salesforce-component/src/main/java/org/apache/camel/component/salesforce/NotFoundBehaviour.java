@@ -17,5 +17,6 @@
 package org.apache.camel.component.salesforce;
 
 public enum NotFoundBehaviour {
-    EXCEPTION, NULL
+    EXCEPTION,
+    NULL
 }

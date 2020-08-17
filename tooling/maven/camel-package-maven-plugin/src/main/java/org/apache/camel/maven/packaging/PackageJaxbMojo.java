@@ -54,15 +54,14 @@ import org.jboss.jandex.IndexView;
 import org.jboss.jandex.Indexer;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor
- * information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
+ * Camel.
  */
 @Mojo(name = "generate-jaxb-list", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class PackageJaxbMojo extends AbstractGeneratorMojo {
 
     /**
-     * The name of the index file. Default's to
-     * 'target/classes/META-INF/jandex.idx'
+     * The name of the index file. Default's to 'target/classes/META-INF/jandex.idx'
      */
     @Parameter(defaultValue = "${project.build.directory}/META-INF/jandex.idx")
     protected File index;
@@ -76,9 +75,8 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws MojoExecutionException execution of the main class or one of the
-     *             threads it generated failed.
-     * @throws MojoFailureException something bad happened...
+     * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -100,19 +98,22 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     private void processClasses(IndexView index) {
         Map<String, Set<String>> byPackage = new HashMap<>();
 
-        Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class).map(Class::getName).map(DotName::createSimple).map(index::getAnnotations).flatMap(Collection::stream)
-            .map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name).map(DotName::toString).forEach(name -> {
-                int idx = name.lastIndexOf('.');
-                String p = name.substring(0, idx);
-                String c = name.substring(idx + 1);
-                byPackage.computeIfAbsent(p, s -> new TreeSet<>()).add(c);
-            });
+        Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class).map(Class::getName).map(DotName::createSimple)
+                .map(index::getAnnotations).flatMap(Collection::stream)
+                .map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name).map(DotName::toString)
+                .forEach(name -> {
+                    int idx = name.lastIndexOf('.');
+                    String p = name.substring(0, idx);
+                    String c = name.substring(idx + 1);
+                    byPackage.computeIfAbsent(p, s -> new TreeSet<>()).add(c);
+                });
 
         Path jaxbIndexDir = jaxbIndexOutDir.toPath();
         int count = 0;
         for (Map.Entry<String, Set<String>> entry : byPackage.entrySet()) {
             String fn = entry.getKey().replace('.', '/') + "/jaxb.index";
-            if (project.getCompileSourceRoots().stream().map(Paths::get).map(p -> p.resolve(fn)).anyMatch(Files::isRegularFile)) {
+            if (project.getCompileSourceRoots().stream().map(Paths::get).map(p -> p.resolve(fn))
+                    .anyMatch(Files::isRegularFile)) {
                 continue;
             }
             StringBuilder sb = new StringBuilder();
@@ -142,7 +143,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
         try {
             Indexer indexer = new Indexer();
             locations.stream().map(this::asFolder).filter(Files::isDirectory).flatMap(this::walk).filter(Files::isRegularFile)
-                .filter(p -> p.getFileName().toString().endsWith(".class")).forEach(p -> index(indexer, p));
+                    .filter(p -> p.getFileName().toString().endsWith(".class")).forEach(p -> index(indexer, p));
             return indexer.complete();
         } catch (IOError e) {
             throw new MojoExecutionException("Error", e);

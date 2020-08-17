@@ -61,7 +61,8 @@ public class ZooKeeperTestSupport extends ContainerAwareTestSupport {
     }
 
     public String getConnectionString() {
-        return getContainerHost(ZooKeeperContainer.CONTAINER_NAME) + ":" + getContainerPort(ZooKeeperContainer.CONTAINER_NAME, ZooKeeperContainer.CLIENT_PORT);
+        return getContainerHost(ZooKeeperContainer.CONTAINER_NAME) + ":"
+               + getContainerPort(ZooKeeperContainer.CONTAINER_NAME, ZooKeeperContainer.CLIENT_PORT);
     }
 
     public ZooKeeper getConnection() {
@@ -76,7 +77,6 @@ public class ZooKeeperTestSupport extends ContainerAwareTestSupport {
         private final Logger log = LoggerFactory.getLogger(getClass());
         private ZooKeeper zk;
         private CountDownLatch connected = new CountDownLatch(1);
-
 
         public TestZookeeperClient(String connectString, int timeout) throws Exception {
             zk = new ZooKeeper(connectString, timeout, this);

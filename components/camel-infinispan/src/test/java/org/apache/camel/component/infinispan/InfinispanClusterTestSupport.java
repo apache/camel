@@ -95,7 +95,7 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
 
         super.setUp();
     }
-    
+
     @BindToRegistry("cacheContainer")
     public EmbeddedCacheManager loadContainer() {
         return clusteredCacheContainers.get(0);
@@ -106,7 +106,7 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
         super.tearDown();
 
         // Has to be done later, maybe CamelTestSupport should
-        for (BasicCacheContainer container: clusteredCacheContainers) {
+        for (BasicCacheContainer container : clusteredCacheContainers) {
             container.stop();
         }
     }

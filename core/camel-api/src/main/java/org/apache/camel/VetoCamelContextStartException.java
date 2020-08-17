@@ -19,8 +19,8 @@ package org.apache.camel;
 /**
  * An exception to veto starting {@link CamelContext}.
  * <p/>
- * The option rethrowException can be used to control whether to rethrow this exception
- * when starting CamelContext or not.
+ * The option rethrowException can be used to control whether to rethrow this exception when starting CamelContext or
+ * not.
  *
  * @see org.apache.camel.spi.LifecycleStrategy
  */
@@ -54,8 +54,8 @@ public class VetoCamelContextStartException extends Exception {
     }
 
     /**
-     * Whether to rethrow this exception when starting CamelContext, to cause an exception
-     * to be thrown from the start method.
+     * Whether to rethrow this exception when starting CamelContext, to cause an exception to be thrown from the start
+     * method.
      * <p/>
      * This option is default <tt>true</tt>.
      */

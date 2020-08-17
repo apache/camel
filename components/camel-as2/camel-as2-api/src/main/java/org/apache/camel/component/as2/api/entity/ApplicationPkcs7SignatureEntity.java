@@ -43,11 +43,13 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
 
     private byte[] signature;
 
-    public ApplicationPkcs7SignatureEntity(MimeEntity data, CMSSignedDataGenerator signer, String charset, String contentTransferEncoding, boolean isMainBody) throws HttpException {
+    public ApplicationPkcs7SignatureEntity(MimeEntity data, CMSSignedDataGenerator signer, String charset,
+                                           String contentTransferEncoding, boolean isMainBody) throws HttpException {
         Args.notNull(data, "Data");
         Args.notNull(signer, "Signer");
 
-        ContentType contentType = ContentType.parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset",  charset));
+        ContentType contentType
+                = ContentType.parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset));
         setContentType(contentType.toString());
         setContentTransferEncoding(contentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
@@ -64,9 +66,9 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
                                            String charset,
                                            String contentTransferEncoding,
                                            boolean isMainBody)
-            throws HttpException {
+                                                               throws HttpException {
         this.signature = Args.notNull(signature, "signature");
-        
+
         ContentType contentType = ContentType
                 .parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset));
         setContentType(contentType.toString());
@@ -94,8 +96,8 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
                     canonicalOutstream.writeln(header.toString());
                 }
                 canonicalOutstream.writeln(); // ensure empty line between
-                                              // headers and body; RFC2046 -
-                                              // 5.1.1
+                                             // headers and body; RFC2046 -
+                                             // 5.1.1
             }
         }
 
@@ -115,7 +117,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
             bos.flush();
 
             CMSTypedData contentData = new CMSProcessableByteArray(bos.toByteArray());
-            CMSSignedData  signedData = signer.generate(contentData, false);
+            CMSSignedData signedData = signer.generate(contentData, false);
             return signedData.getEncoded();
         } catch (Exception e) {
             throw new Exception("", e);

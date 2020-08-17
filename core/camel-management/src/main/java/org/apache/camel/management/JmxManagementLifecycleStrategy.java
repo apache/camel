@@ -180,7 +180,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         try {
             boolean done = false;
             while (!done) {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(managementName, name);
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+                        .getObjectNameForCamelContext(managementName, name);
                 boolean exists = getManagementStrategy().isManagedName(on);
                 if (!exists) {
                     done = true;
@@ -197,11 +198,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                     }
                     // we could not fix it so veto starting camel
                     if (!fixed) {
-                        throw new VetoCamelContextStartException("CamelContext (" + context.getName() + ") with ObjectName[" + on + "] is already registered."
-                            + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.", context);
+                        throw new VetoCamelContextStartException(
+                                "CamelContext (" + context.getName() + ") with ObjectName[" + on + "] is already registered."
+                                                                 + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.",
+                                context);
                     } else {
-                        LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
-                            + " due to clash with an existing name already registered in MBeanServer.");
+                        LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: "
+                                 + managementName
+                                 + " due to clash with an existing name already registered in MBeanServer.");
                     }
                 }
             }
@@ -251,7 +255,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         try {
-            Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext, camelContext.getRouteController());
+            Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext,
+                    camelContext.getRouteController());
             if (me == null) {
                 // endpoint should not be managed
                 return;
@@ -274,7 +279,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         while (!done) {
             // compute the next name
             newName = strategy.getNextName();
-            ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
+            ObjectName on
+                    = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManagedName(on);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
@@ -285,8 +291,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     /**
      * After {@link CamelContext} has been enlisted in JMX using {@link #onContextStart(org.apache.camel.CamelContext)}
-     * then we can enlist any pre registered services as well, as we had to wait for {@link CamelContext} to be
-     * enlisted first.
+     * then we can enlist any pre registered services as well, as we had to wait for {@link CamelContext} to be enlisted
+     * first.
      * <p/>
      * A component/endpoint/service etc. can be pre registered when using dependency injection and annotations such as
      * {@link org.apache.camel.Produce}, {@link org.apache.camel.EndpointInject}. Therefore we need to capture those
@@ -380,9 +386,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     /**
-     * If the endpoint is an instance of ManagedResource then register it with the
-     * mbean server, if it is not then wrap the endpoint in a {@link ManagedEndpoint} and
-     * register that with the mbean server.
+     * If the endpoint is an instance of ManagedResource then register it with the mbean server, if it is not then wrap
+     * the endpoint in a {@link ManagedEndpoint} and register that with the mbean server.
      *
      * @param endpoint the Endpoint attempted to be added
      */
@@ -552,11 +557,11 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         } else if (service instanceof EventNotifier) {
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service instanceof TransformerRegistry) {
-            answer = new ManagedTransformerRegistry(context, (TransformerRegistry)service);
+            answer = new ManagedTransformerRegistry(context, (TransformerRegistry) service);
         } else if (service instanceof ValidatorRegistry) {
-            answer = new ManagedValidatorRegistry(context, (ValidatorRegistry)service);
+            answer = new ManagedValidatorRegistry(context, (ValidatorRegistry) service);
         } else if (service instanceof CamelClusterService) {
-            answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService)service);
+            answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService) service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
@@ -582,7 +587,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         // get the managed object as it can be a specialized type such as a Delayer/Throttler etc.
-        Object managedObject = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
+        Object managedObject
+                = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
         // only manage if we have a name for it as otherwise we do not want to manage it anyway
         if (managedObject != null) {
             // is it a performance counter then we need to set our counter
@@ -605,8 +611,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             // if we are starting CamelContext or either of the two options has been
             // enabled, then enlist the route as a known route
             if (getCamelContext().getStatus().isStarting()
-                || getManagementStrategy().getManagementAgent().getRegisterAlways()
-                || getManagementStrategy().getManagementAgent().getRegisterNewRoutes()) {
+                    || getManagementStrategy().getManagementAgent().getRegisterAlways()
+                    || getManagementStrategy().getManagementAgent().getRegisterNewRoutes()) {
                 // register as known route id
                 knowRouteIds.add(route.getId());
             }
@@ -697,7 +703,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return;
         }
 
-        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler, errorHandlerBuilder);
+        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler,
+                errorHandlerBuilder);
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(me)) {
@@ -718,7 +725,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return;
         }
 
-        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler, errorHandlerBuilder);
+        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler,
+                errorHandlerBuilder);
         if (me != null) {
             try {
                 unmanageObject(me);
@@ -729,8 +737,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-                                String sourceId, String routeId, String threadPoolProfileId) {
+    public void onThreadPoolAdd(
+            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
+            String sourceId, String routeId, String threadPoolProfileId) {
 
         if (!initialized) {
             // pre register so we can register later when we have been initialized
@@ -743,7 +752,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return;
         }
 
-        Object mtp = getManagementObjectStrategy().getManagedObjectForThreadPool(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
+        Object mtp = getManagementObjectStrategy().getManagedObjectForThreadPool(camelContext, threadPool, id, sourceId,
+                routeId, threadPoolProfileId);
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(mtp)) {
@@ -826,11 +836,12 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 }
             }
         }
-        
+
     }
 
-    private void registerPerformanceCounters(Route route, ProcessorDefinition<?> processor,
-                                             Map<NamedNode, PerformanceCounter> registeredCounters) {
+    private void registerPerformanceCounters(
+            Route route, ProcessorDefinition<?> processor,
+            Map<NamedNode, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition<?>> children = processor.getOutputs();
@@ -902,7 +913,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     /**
      * Strategy for managing the object
      *
-     * @param me the managed object
+     * @param  me        the managed object
      * @throws Exception is thrown if error registering the object for management
      */
     protected void manageObject(Object me) throws Exception {
@@ -916,7 +927,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     /**
      * Un-manages the object.
      *
-     * @param me the managed object
+     * @param  me        the managed object
      * @throws Exception is thrown if error unregistering the managed object
      */
     protected void unmanageObject(Object me) throws Exception {
@@ -930,14 +941,13 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     /**
      * Whether or not to register the mbean.
      * <p/>
-     * The {@link ManagementAgent} has options which controls when to register.
-     * This allows us to only register mbeans accordingly. For example by default any
-     * dynamic endpoints is not registered. This avoids to register excessive mbeans, which
-     * most often is not desired.
+     * The {@link ManagementAgent} has options which controls when to register. This allows us to only register mbeans
+     * accordingly. For example by default any dynamic endpoints is not registered. This avoids to register excessive
+     * mbeans, which most often is not desired.
      *
-     * @param service the object to register
-     * @param route   an optional route the mbean is associated with, can be <tt>null</tt>
-     * @return <tt>true</tt> to register, <tt>false</tt> to skip registering
+     * @param  service the object to register
+     * @param  route   an optional route the mbean is associated with, can be <tt>null</tt>
+     * @return         <tt>true</tt> to register, <tt>false</tt> to skip registering
      */
     protected boolean shouldRegister(Object service, Route route) {
         // the agent hasn't been started
@@ -999,7 +1009,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             // we are disabled either if configured explicit, or if level is off
             boolean load = camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled() != null
                     && camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
-            boolean disabled = !load || camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel() == ManagementStatisticsLevel.Off;
+            boolean disabled = !load || camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel()
+                                        == ManagementStatisticsLevel.Off;
 
             LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {
@@ -1090,4 +1101,3 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
 }
-

@@ -34,24 +34,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @WebTest
 public class ResteasyRestDSLProxyCamelTest {
-    
+
     @Resource
     URI baseUri;
-    
+
     @Deployment
     public static Archive<?> createTestArchive() {
-        
+
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("org.apache.camel.component.resteasy")
                 .addPackage("org.apache.camel.component.resteasy.servlet")
                 .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-                .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile())
+                        .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile())
                 .addAsWebInfResource(new File("src/test/resources/contexts/restDSLProxyCamel.xml"), "applicationContext.xml")
                 .addAsWebInfResource("web.xml");
-        
+
         return war;
     }
 
@@ -65,7 +64,5 @@ public class ResteasyRestDSLProxyCamelTest {
         assertEquals("Only message from Camel", response.readEntity(String.class));
 
     }
-
-
 
 }

@@ -37,44 +37,44 @@ public class GrpcConfiguration {
     @UriPath
     @Metadata(required = true)
     private int port;
-    
+
     @UriPath
     @Metadata(required = true)
     private String service;
-    
+
     @UriParam(label = "producer")
     private String method;
-            
+
     @UriParam(label = "security", defaultValue = "PLAINTEXT")
     private NegotiationType negotiationType = NegotiationType.PLAINTEXT;
-    
+
     @UriParam(label = "security", defaultValue = "NONE")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
-    
+
     @UriParam(label = "security", defaultValue = "HMAC256")
     private JwtAlgorithm jwtAlgorithm = JwtAlgorithm.HMAC256;
-    
+
     @UriParam(label = "security", secret = true)
     private String jwtSecret;
-    
+
     @UriParam(label = "security")
     private String jwtIssuer;
-    
+
     @UriParam(label = "security")
     private String jwtSubject;
-    
+
     @UriParam(label = "security")
     private String serviceAccountResource;
-    
+
     @UriParam(label = "security")
     private String keyCertChainResource;
-    
+
     @UriParam(label = "security")
     private String keyResource;
-    
+
     @UriParam(label = "security", secret = true)
     private String keyPassword;
-    
+
     @UriParam(label = "security")
     private String trustCertCollectionResource;
 
@@ -83,31 +83,30 @@ public class GrpcConfiguration {
 
     @UriParam(label = "producer")
     private String streamRepliesTo;
-    
+
     @UriParam(label = "producer")
     private String userAgent;
 
     @UriParam(label = "consumer", defaultValue = "PROPAGATION")
     private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
-    
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnCompleted;
 
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnError;
-    
+
     @UriParam(defaultValue = "" + NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW)
     private int flowControlWindow = NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW;
-    
+
     @UriParam(defaultValue = "" + GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE)
     private int maxMessageSize = GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE;
-    
+
     @UriParam(label = "consumer", defaultValue = "" + Integer.MAX_VALUE)
     private int maxConcurrentCallsPerConnection = Integer.MAX_VALUE;
-    
+
     /**
-     * Fully qualified service name from the protocol buffer descriptor file
-     * (package dot service definition name)
+     * Fully qualified service name from the protocol buffer descriptor file (package dot service definition name)
      */
     public String getService() {
         return service;
@@ -129,8 +128,8 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-     * consumer or remote server host name when using producer.
+     * The gRPC server host name. This is localhost or 0.0.0.0 when being a consumer or remote server host name when
+     * using producer.
      */
     public String getHost() {
         return host;
@@ -150,18 +149,18 @@ public class GrpcConfiguration {
     public void setPort(int port) {
         this.port = port;
     }
-    
+
     /**
      * Identifies the security negotiation type used for HTTP/2 communication
      */
     public void setNegotiationType(NegotiationType negotiationType) {
         this.negotiationType = negotiationType;
     }
-    
+
     public NegotiationType getNegotiationType() {
         return negotiationType;
     }
-    
+
     /**
      * Authentication method type in advance to the SSL/TLS negotiation
      */
@@ -172,7 +171,7 @@ public class GrpcConfiguration {
     public void setAuthenticationType(GrpcAuthType authenticationType) {
         this.authenticationType = authenticationType;
     }
-    
+
     /**
      * JSON Web Token sign algorithm
      */
@@ -183,7 +182,7 @@ public class GrpcConfiguration {
     public void setJwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
         this.jwtAlgorithm = jwtAlgorithm;
     }
-    
+
     /**
      * JSON Web Token secret
      */
@@ -216,7 +215,7 @@ public class GrpcConfiguration {
     public void setJwtSubject(String jwtSubject) {
         this.jwtSubject = jwtSubject;
     }
-    
+
     /**
      * Service Account key file in JSON format resource link supported by the Google Cloud SDK
      */
@@ -229,27 +228,27 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The X.509 certificate chain file resource in PEM format link 
+     * The X.509 certificate chain file resource in PEM format link
      */
     public void setKeyCertChainResource(String keyCertChainResource) {
         this.keyCertChainResource = keyCertChainResource;
     }
-    
+
     public String getKeyCertChainResource() {
         return keyCertChainResource;
     }
 
     /**
-     * The PKCS#8 private key file resource in PEM format link 
+     * The PKCS#8 private key file resource in PEM format link
      */
     public void setKeyResource(String keyResource) {
         this.keyResource = keyResource;
     }
-    
+
     public String getKeyResource() {
         return keyResource;
     }
-    
+
     /**
      * The PKCS#8 private key file password
      */
@@ -267,18 +266,16 @@ public class GrpcConfiguration {
     public void setTrustCertCollectionResource(String trustCertCollectionResource) {
         this.trustCertCollectionResource = trustCertCollectionResource;
     }
-    
+
     public String getTrustCertCollectionResource() {
         return trustCertCollectionResource;
     }
 
     /**
-     * This option specifies the top-level strategy for processing service
-     * requests and responses in streaming mode. If an aggregation strategy is
-     * selected, all requests will be accumulated in the list, then transferred
-     * to the flow, and the accumulated responses will be sent to the sender. If
-     * a propagation strategy is selected, request is sent to the stream, and the
-     * response will be immediately sent back to the sender.
+     * This option specifies the top-level strategy for processing service requests and responses in streaming mode. If
+     * an aggregation strategy is selected, all requests will be accumulated in the list, then transferred to the flow,
+     * and the accumulated responses will be sent to the sender. If a propagation strategy is selected, request is sent
+     * to the stream, and the response will be immediately sent back to the sender.
      */
     public GrpcConsumerStrategy getConsumerStrategy() {
         return consumerStrategy;
@@ -300,8 +297,7 @@ public class GrpcConfiguration {
     }
 
     /**
-     * Determines if onError events should be pushed to the Camel route.
-     * Exceptions will be set as message body.
+     * Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body.
      */
     public void setForwardOnError(boolean forwardOnError) {
         this.forwardOnError = forwardOnError;
@@ -316,9 +312,9 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The mode used to communicate with a remote gRPC server.
-     * In SIMPLE mode a single exchange is translated into a remote procedure call.
-     * In STREAMING mode all exchanges will be sent within the same request (input and output of the recipient gRPC service must be of type 'stream').
+     * The mode used to communicate with a remote gRPC server. In SIMPLE mode a single exchange is translated into a
+     * remote procedure call. In STREAMING mode all exchanges will be sent within the same request (input and output of
+     * the recipient gRPC service must be of type 'stream').
      */
     public void setProducerStrategy(GrpcProducerStrategy producerStrategy) {
         this.producerStrategy = producerStrategy;
@@ -334,10 +330,10 @@ public class GrpcConfiguration {
     public void setStreamRepliesTo(String streamRepliesTo) {
         this.streamRepliesTo = streamRepliesTo;
     }
-    
+
     /**
      * The user agent header passed to the server
-     */    
+     */
     public String getUserAgent() {
         return userAgent;
     }
@@ -363,7 +359,7 @@ public class GrpcConfiguration {
     public void setMaxMessageSize(int maxMessageSize) {
         this.maxMessageSize = maxMessageSize;
     }
-    
+
     public int getMaxMessageSize() {
         return maxMessageSize;
     }
@@ -374,18 +370,18 @@ public class GrpcConfiguration {
     public void setMaxConcurrentCallsPerConnection(int maxConcurrentCallsPerConnection) {
         this.maxConcurrentCallsPerConnection = maxConcurrentCallsPerConnection;
     }
-    
+
     public int getMaxConcurrentCallsPerConnection() {
         return maxConcurrentCallsPerConnection;
     }
 
     public void parseURI(URI uri) {
         setHost(uri.getHost());
-        
+
         if (uri.getPort() != -1) {
             setPort(uri.getPort());
         }
-        
+
         setService(uri.getPath().substring(1));
-    }    
+    }
 }

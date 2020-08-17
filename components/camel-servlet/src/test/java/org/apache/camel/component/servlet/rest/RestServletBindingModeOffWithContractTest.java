@@ -39,7 +39,8 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
         assertEquals(200, response.getResponseCode());
@@ -69,17 +70,17 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
                 jsondf.setAllowUnmarshallType(Boolean.toString(true));
                 jsondf.setUnmarshalType(UserPojoEx.class);
                 transformer()
-                    .fromType("json")
-                    .toType(UserPojoEx.class)
-                    .withDataFormat(jsondf);
+                        .fromType("json")
+                        .toType(UserPojoEx.class)
+                        .withDataFormat(jsondf);
                 transformer()
-                    .fromType(UserPojoEx.class)
-                    .toType("json")
-                    .withDataFormat(jsondf);
+                        .fromType(UserPojoEx.class)
+                        .toType("json")
+                        .withDataFormat(jsondf);
                 rest("/users/")
-                    // REST binding does nothing
-                    .post("new")
-                    .route()
+                        // REST binding does nothing
+                        .post("new")
+                        .route()
                         // contract advice converts betweeen JSON and UserPojoEx directly
                         .inputType(UserPojoEx.class)
                         .outputType("json")

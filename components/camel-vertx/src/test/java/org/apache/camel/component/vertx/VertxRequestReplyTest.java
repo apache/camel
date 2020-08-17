@@ -53,7 +53,7 @@ public class VertxRequestReplyTest extends VertxBaseTestSupport {
                 from(startUri).to(middleUri).to(resultUri);
 
                 from(middleUri)
-                    .transform(simple("Bye ${body}"));
+                        .transform(simple("Bye ${body}"));
             }
         };
     }

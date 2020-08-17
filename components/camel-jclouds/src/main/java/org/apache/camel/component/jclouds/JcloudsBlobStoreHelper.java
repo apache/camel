@@ -80,7 +80,8 @@ public final class JcloudsBlobStoreHelper {
     public static void writeBlob(BlobStore blobStore, String container, String blobName, Payload payload) {
         if (blobName != null && payload != null) {
             mkDirs(blobStore, container, blobName);
-            Blob blob = blobStore.blobBuilder(blobName).payload(payload).contentType(MediaType.APPLICATION_OCTET_STREAM).contentDisposition(blobName).build();
+            Blob blob = blobStore.blobBuilder(blobName).payload(payload).contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentDisposition(blobName).build();
             blobStore.putBlob(container, blob, multipart());
         }
     }
@@ -98,7 +99,7 @@ public final class JcloudsBlobStoreHelper {
         }
         return is;
     }
-    
+
     /**
      * Return the count of all the blobs in the container
      */
@@ -106,31 +107,30 @@ public final class JcloudsBlobStoreHelper {
         long blobsCount = blobStore.countBlobs(container);
         return blobsCount;
     }
-    
 
     /**
      * Remove a specific blob from a {@link BlobStore}
      */
     public static void removeBlob(BlobStore blobStore, String container, String blobName) throws IOException {
         if (!Strings.isNullOrEmpty(blobName)) {
-            blobStore.removeBlob(container, blobName);            
+            blobStore.removeBlob(container, blobName);
         }
     }
-    
+
     /**
      * Clear a {@link BlobStore} specific container
      */
     public static void clearContainer(BlobStore blobStore, String container) throws IOException {
-        blobStore.clearContainer(container);           
+        blobStore.clearContainer(container);
     }
-    
+
     /**
      * Delete a {@link BlobStore} specific container
      */
     public static void deleteContainer(BlobStore blobStore, String container) throws IOException {
         blobStore.deleteContainer(container);
     }
-    
+
     /**
      * Check if a {@link BlobStore} specific container exists or not
      */
@@ -138,7 +138,7 @@ public final class JcloudsBlobStoreHelper {
         boolean result = blobStore.containerExists(container);
         return result;
     }
-    
+
     /**
      * Delete a list of {@link BlobStore} blob
      */

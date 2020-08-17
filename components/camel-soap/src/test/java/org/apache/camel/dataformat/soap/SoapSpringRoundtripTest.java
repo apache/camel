@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @CamelSpringTest
 @ContextConfiguration
 public class SoapSpringRoundtripTest {
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 

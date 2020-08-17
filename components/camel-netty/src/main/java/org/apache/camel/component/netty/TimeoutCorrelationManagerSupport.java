@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A base class for using {@link NettyCamelStateCorrelationManager} that supports timeout.
  */
-public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport implements CamelContextAware, NettyCamelStateCorrelationManager {
+public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
+        implements CamelContextAware, NettyCamelStateCorrelationManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimeoutCorrelationManagerSupport.class);
 
@@ -82,8 +83,8 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport im
     }
 
     /**
-     * Time in millis how frequent to check for timeouts. Set this to a lower value if you want
-     * to react faster upon timeouts. The default value is 1000.
+     * Time in millis how frequent to check for timeouts. Set this to a lower value if you want to react faster upon
+     * timeouts. The default value is 1000.
      */
     public void setTimeoutChecker(long timeoutChecker) {
         this.timeoutChecker = timeoutChecker;
@@ -124,9 +125,10 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport im
     /**
      * Override this to implement a custom timeout response message.
      *
-     * @param correlationId  the correlation id
-     * @param request        the request message
-     * @return the response message or <tt>null</tt> to use an {@link ExchangeTimedOutException} exception.
+     * @param  correlationId the correlation id
+     * @param  request       the request message
+     * @return               the response message or <tt>null</tt> to use an {@link ExchangeTimedOutException}
+     *                       exception.
      */
     public String getTimeoutResponse(String correlationId, Object request) {
         return null;
@@ -175,7 +177,8 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport im
         timeoutLogger = new CamelLogger(LOG, timeoutLoggingLevel);
 
         if (scheduledExecutorService == null) {
-            scheduledExecutorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "NettyTimeoutCorrelationManager");
+            scheduledExecutorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "NettyTimeoutCorrelationManager");
         }
         if (workerPool == null) {
             workerPool = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "NettyTimeoutWorkerPool");

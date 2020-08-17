@@ -20,8 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Used to delete a message, including service messages.
- * On success, returns a {@link MessageResult} object.
+ * Used to delete a message, including service messages. On success, returns a {@link MessageResult} object.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EditMessageDelete extends OutgoingMessage {
@@ -47,8 +46,8 @@ public class EditMessageDelete extends OutgoingMessage {
     @Override
     public String toString() {
         return "EditMessageDelete{"
-            + "messageId=" + messageId
-            + ", chatId='" + chatId + '\''
-            + '}';
+               + "messageId=" + messageId
+               + ", chatId='" + chatId + '\''
+               + '}';
     }
 }

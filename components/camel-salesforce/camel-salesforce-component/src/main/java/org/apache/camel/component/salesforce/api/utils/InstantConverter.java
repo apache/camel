@@ -48,7 +48,7 @@ final class InstantConverter implements SingleValueConverter {
             return null;
         }
 
-        final Instant instant = (Instant)value;
+        final Instant instant = (Instant) value;
 
         return ISO_OFFSET_DATE_TIME.format(instant.atZone(ZoneId.systemDefault()));
     }

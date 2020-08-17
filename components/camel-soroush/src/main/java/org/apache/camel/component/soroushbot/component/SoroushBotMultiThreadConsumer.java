@@ -23,10 +23,9 @@ import org.apache.camel.component.soroushbot.utils.CongestionException;
 import org.apache.camel.component.soroushbot.utils.MultiQueueWithTopicThreadPool;
 
 /**
- * create a thread pool and process each message using one of threads,
- * it is guaranteed that all message from a same person will processed by the same thread.
- * thread pool size could be configured using {@link SoroushBotEndpoint#getConcurrentConsumers()}
- * this consumer support both Sync and Async processors.
+ * create a thread pool and process each message using one of threads, it is guaranteed that all message from a same
+ * person will processed by the same thread. thread pool size could be configured using
+ * {@link SoroushBotEndpoint#getConcurrentConsumers()} this consumer support both Sync and Async processors.
  */
 //CHECKSTYLE:OFF
 public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {

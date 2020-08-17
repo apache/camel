@@ -80,7 +80,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         FileEndpoint fe = context.getEndpoint(uri, FileEndpoint.class);
         assertNotNull(fe);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)fe.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) fe.getInProgressRepository();
         assertEquals(0, repo.getCacheSize(), "Should be no in-progress files");
     }
 

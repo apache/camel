@@ -40,8 +40,8 @@ public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/Shopping?matchOnUriPrefix=true")
-                    .to("mock:input")
-                    .transform(body().prepend("Bye "));
+                        .to("mock:input")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

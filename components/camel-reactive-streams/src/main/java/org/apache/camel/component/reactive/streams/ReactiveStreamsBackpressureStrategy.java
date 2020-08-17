@@ -39,8 +39,7 @@ public enum ReactiveStreamsBackpressureStrategy {
     },
 
     /**
-     * Keeps only the oldest onNext value, discarding any future value
-     * until it's consumed by the downstream subscriber.
+     * Keeps only the oldest onNext value, discarding any future value until it's consumed by the downstream subscriber.
      */
     OLDEST {
         @Override
@@ -58,8 +57,7 @@ public enum ReactiveStreamsBackpressureStrategy {
     },
 
     /**
-     * Keeps only the latest onNext value, overwriting any previous value if the
-     * downstream can't keep up.
+     * Keeps only the latest onNext value, overwriting any previous value if the downstream can't keep up.
      */
     LATEST {
         @Override
@@ -80,10 +78,10 @@ public enum ReactiveStreamsBackpressureStrategy {
     /**
      * Updates the buffer and returns a list of discarded elements (if any).
      *
-     * @param buffer the buffer to update
-     * @param newItem the elment that should possibly be inserted
-     * @param <T> the generic type of the element
-     * @return the list of discarded elements
+     * @param  buffer  the buffer to update
+     * @param  newItem the elment that should possibly be inserted
+     * @param  <T>     the generic type of the element
+     * @return         the list of discarded elements
      */
     public abstract <T> Collection<T> update(Deque<T> buffer, T newItem);
 

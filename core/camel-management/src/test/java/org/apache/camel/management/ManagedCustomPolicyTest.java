@@ -71,12 +71,12 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 // custom policy but processors should be registered
                 from("direct:start").policy(new MyPolicy())
-                    .to("log:foo").id("foo")
-                    .to("mock:result").id("result");
+                        .to("log:foo").id("foo")
+                        .to("mock:result").id("result");
 
                 // no policy but processors should be registered
                 from("direct:bar")
-                    .to("log:bar").id("bar");
+                        .to("log:bar").id("bar");
             }
         };
     }

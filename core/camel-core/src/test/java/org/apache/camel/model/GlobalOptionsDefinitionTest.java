@@ -72,8 +72,7 @@ public class GlobalOptionsDefinitionTest {
     @Test
     public void asMapWithNullGlobalOptionsShouldThrowNullPointerException() {
         instance.setGlobalOptions(null);
-        assertThrows(NullPointerException.class, () ->
-            instance.asMap());
+        assertThrows(NullPointerException.class, () -> instance.asMap());
     }
 
     @Test

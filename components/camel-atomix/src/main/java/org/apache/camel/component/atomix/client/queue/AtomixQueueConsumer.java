@@ -49,13 +49,12 @@ public final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<Atom
         super.doStart();
 
         this.queue = getAtomixEndpoint()
-            .getAtomix()
-            .getQueue(
-                resourceName,
-                new DistributedQueue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
-                new DistributedQueue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
-            .join();
-
+                .getAtomix()
+                .getQueue(
+                        resourceName,
+                        new DistributedQueue.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(resourceName)),
+                        new DistributedQueue.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(resourceName)))
+                .join();
 
         LOG.debug("Subscribe to events for queue: {}", resourceName);
         this.listeners.add(this.queue.onAdd(this::onEvent).join());

@@ -62,7 +62,6 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
                 }).localAddress(new InetSocketAddress(getPort()));
     }
 
-
     public void bind() {
         serverChannel = bootstrap.bind().syncUninterruptibly().channel();
     }
@@ -110,7 +109,8 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
 
     public class UdpHandler extends MessageToMessageDecoder<DatagramPacket> {
         @Override
-        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects) throws Exception {
+        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects)
+                throws Exception {
             objects.add(datagramPacket.content().toString(CharsetUtil.UTF_8));
         }
     }

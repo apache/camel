@@ -25,7 +25,6 @@ public final class TelegramMessageHelper {
     private TelegramMessageHelper() {
     }
 
-
     public static void populateExchange(Exchange exchange, Update update) {
         if (update.getMessage() != null) {
             exchange.getMessage().setBody(update.getMessage());

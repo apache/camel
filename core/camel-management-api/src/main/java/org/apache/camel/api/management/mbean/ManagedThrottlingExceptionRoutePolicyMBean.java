@@ -26,13 +26,13 @@ public interface ManagedThrottlingExceptionRoutePolicyMBean extends ManagedServi
 
     @ManagedAttribute(description = "How long to wait before moving open circuit to half open")
     void setHalfOpenAfter(Long milliseconds);
-    
+
     @ManagedAttribute(description = "The range of time that failures should occur within")
     Long getFailureWindow();
 
     @ManagedAttribute(description = "The range of time that failures should occur within")
     void setFailureWindow(Long milliseconds);
-    
+
     @ManagedAttribute(description = "Number of failures before opening circuit")
     Integer getFailureThreshold();
 
@@ -41,16 +41,16 @@ public interface ManagedThrottlingExceptionRoutePolicyMBean extends ManagedServi
 
     @ManagedOperation(description = "The current state of the circuit")
     String currentState();
-    
+
     @ManagedAttribute(description = "The half open handler registered (if any)")
     String getHalfOpenHandlerName();
-    
+
     @ManagedAttribute(description = "The number of failures caught")
     Integer getCurrentFailures();
-    
+
     @ManagedAttribute(description = "Number of ms since the last failure was recorded")
     Long getLastFailure();
-    
+
     @ManagedAttribute(description = "Number ms since the circuit was opened")
     Long getOpenAt();
 }

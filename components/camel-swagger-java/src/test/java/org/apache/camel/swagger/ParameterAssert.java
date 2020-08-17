@@ -33,7 +33,8 @@ public final class ParameterAssert extends ObjectAssert<Parameter> {
         super(actual);
     }
 
-    public <T> ParameterAssert hasArrayEnumSpecifiedWith(@SuppressWarnings("unchecked") final T... values) {
+    public <T> ParameterAssert hasArrayEnumSpecifiedWith(@SuppressWarnings("unchecked")
+    final T... values) {
         isSerializable();
 
         final SerializableParameter serializableParameter = (SerializableParameter) actual;
@@ -65,7 +66,7 @@ public final class ParameterAssert extends ObjectAssert<Parameter> {
     public ParameterAssert isGivenIn(final String in) {
         final String actualIn = actual.getIn();
         Assertions.assertThat(actualIn).as("Parameter should be specified in %s, but it's in %s", in, actualIn)
-            .isEqualTo(in);
+                .isEqualTo(in);
 
         return this;
     }
@@ -78,7 +79,7 @@ public final class ParameterAssert extends ObjectAssert<Parameter> {
         Assertions.assertThat(items).isNotNull();
         final String actualArrayType = items.getType();
         Assertions.assertThat(actualArrayType).as("Parameter array should be of %s type, but it's of %s", type,
-            actualArrayType);
+                actualArrayType);
 
         return this;
     }

@@ -55,9 +55,9 @@ public interface SegmentDecorator {
     /**
      * This method returns the operation name to use with the segment representing this exchange and endpoint.
      *
-     * @param exchange The exchange
-     * @param endpoint The endpoint
-     * @return The operation name
+     * @param  exchange The exchange
+     * @param  endpoint The endpoint
+     * @return          The operation name
      */
     String getOperationName(Exchange exchange, Endpoint endpoint);
 
@@ -65,7 +65,7 @@ public interface SegmentDecorator {
      * This method adds appropriate details (tags/logs) to the supplied segment based on the pre processing of the
      * exchange.
      *
-     * @param segment The segment
+     * @param segment  The segment
      * @param exchange The exchange
      * @param endpoint The endpoint
      */
@@ -75,7 +75,7 @@ public interface SegmentDecorator {
      * This method adds appropriate details (tags/logs) to the supplied segment based on the post processing of the
      * exchange.
      *
-     * @param segment The segment
+     * @param segment  The segment
      * @param exchange The exchange
      * @param endpoint The endpoint
      */

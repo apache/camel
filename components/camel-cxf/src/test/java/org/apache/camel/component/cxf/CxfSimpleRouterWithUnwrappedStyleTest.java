@@ -26,19 +26,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("As the refelection can't tell the paramenter name from SEI without annonation, "
-    + "CXF cannot send a meaningful request for unwrapped message."
-    + " We need to use the annontated SEI for testing")
-public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {    
-   
+          + "CXF cannot send a meaningful request for unwrapped message."
+          + " We need to use the annontated SEI for testing")
+public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
+
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&wrappedStyle=false";
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&wrappedStyle=false";
-    
-    
+
     @Override
     protected void configureFactory(ServerFactoryBean svrBean) {
         svrBean.getServiceFactory().setWrapped(false);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -48,27 +47,27 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
             }
         };
     }
-    
+
     @Override
     protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(getRouterAddress());
-        clientBean.setServiceClass(HelloService.class); 
+        clientBean.setServiceClass(HelloService.class);
         clientBean.getServiceFactory().setWrapped(false);
         HelloService client = (HelloService) proxyFactory.create();
         return client;
     }
-    
+
     @Override
     @Test
     public void testOnwayInvocation() throws Exception {
         // ignore the invocation without parameter, as the document-literal doesn't support the invocation without parameter.
     }
-    
+
     @Override
     @Test
-    public void testInvokingServiceFromCXFClient() throws Exception {        
+    public void testInvokingServiceFromCXFClient() throws Exception {
         HelloService client = getCXFClient();
         Boolean result = client.echoBoolean(true);
         assertEquals(true, result, "we should get the right answer from router");

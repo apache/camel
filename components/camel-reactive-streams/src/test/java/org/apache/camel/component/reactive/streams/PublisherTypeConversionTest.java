@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PublisherTypeConversionTest extends CamelTestSupport {
 
-
     @Test
     public void testConversion() throws Exception {
 

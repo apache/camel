@@ -34,8 +34,8 @@ public class ServerOptions extends BaseOptions<ServerOptions> {
     private DataModuleOptions.Builder dataModuleOptions;
 
     /**
-     * A time period in "ms" the protocol layer will buffer change events in
-     * order to send out aggregated change messages
+     * A time period in "ms" the protocol layer will buffer change events in order to send out aggregated change
+     * messages
      */
     @UriParam(label = "data")
     private Integer bufferingPeriod;
@@ -58,8 +58,8 @@ public class ServerOptions extends BaseOptions<ServerOptions> {
     /**
      * Number of spontaneous events to keep in the buffer.
      * <p>
-     * When there are more than this number of spontaneous in events in the
-     * buffer, then events will be dropped in order to maintain the buffer size.
+     * When there are more than this number of spontaneous in events in the buffer, then events will be dropped in order
+     * to maintain the buffer size.
      * </p>
      */
     @UriParam(label = "data", defaultValue = "10")
@@ -69,8 +69,7 @@ public class ServerOptions extends BaseOptions<ServerOptions> {
     /**
      * The period in "ms" between background transmission cycles.
      * <p>
-     * If this is set to zero or less, background transmissions will be
-     * disabled.
+     * If this is set to zero or less, background transmissions will be disabled.
      * </p>
      */
     @UriParam(label = "data", defaultValue = "60000")

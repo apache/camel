@@ -26,13 +26,12 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.slf4j.LoggerFactory;
 
 /**
- * A default implementation of {@link ExceptionHandler} which uses a {@link CamelLogger} to
- * log the exception.
+ * A default implementation of {@link ExceptionHandler} which uses a {@link CamelLogger} to log the exception.
  * <p/>
  * This implementation will by default log the exception with stack trace at WARN level.
  * <p/>
- * This implementation honors the {@link org.apache.camel.spi.ShutdownStrategy#isSuppressLoggingOnTimeout()}
- * option to avoid logging if the logging should be suppressed.
+ * This implementation honors the {@link org.apache.camel.spi.ShutdownStrategy#isSuppressLoggingOnTimeout()} option to
+ * avoid logging if the logging should be suppressed.
  */
 public class LoggingExceptionHandler implements ExceptionHandler {
     private final CamelLogger logger;
@@ -99,7 +98,8 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     protected boolean isSuppressLogging() {
         if (camelContext != null) {
             return (camelContext.getStatus().isStopping() || camelContext.getStatus().isStopped())
-                    && camelContext.getShutdownStrategy().hasTimeoutOccurred() && camelContext.getShutdownStrategy().isSuppressLoggingOnTimeout();
+                    && camelContext.getShutdownStrategy().hasTimeoutOccurred()
+                    && camelContext.getShutdownStrategy().isSuppressLoggingOnTimeout();
         } else {
             return false;
         }

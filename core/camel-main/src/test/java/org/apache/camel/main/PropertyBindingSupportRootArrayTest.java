@@ -23,7 +23,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

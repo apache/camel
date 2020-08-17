@@ -20,8 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 
 /**
- * An <a href="http://camel.apache.org/event.html">Event Consumer</a>
- * for working with Spring ApplicationEvents
+ * An <a href="http://camel.apache.org/event.html">Event Consumer</a> for working with Spring ApplicationEvents
  */
 public class EventConsumer extends DefaultConsumer {
     private EventEndpoint endpoint;

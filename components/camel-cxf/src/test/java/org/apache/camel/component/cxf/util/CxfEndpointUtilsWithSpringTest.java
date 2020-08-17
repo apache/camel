@@ -39,7 +39,7 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        applicationContext = createApplicationContext();        
+        applicationContext = createApplicationContext();
         assertNotNull(applicationContext, "Should have created a valid spring context");
 
     }
@@ -70,26 +70,25 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
 
     @Test
     public void testGetServiceClass() throws Exception {
-        CxfEndpoint endpoint = createEndpoint("cxf:bean:helloServiceEndpoint?serviceClass=#helloServiceImpl");      
+        CxfEndpoint endpoint = createEndpoint("cxf:bean:helloServiceEndpoint?serviceClass=#helloServiceImpl");
         assertEquals("org.apache.camel.component.cxf.HelloServiceImpl",
-                     endpoint.getServiceClass().getName());
+                endpoint.getServiceClass().getName());
     }
-    
+
     @Override
     public char sepChar() {
         return '?';
     }
 
-
     @Override
     @Test
     public void testGetProperties() throws Exception {
-        CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());
+        CxfSpringEndpoint endpoint = (CxfSpringEndpoint) createEndpoint(getEndpointURI());
         QName service = endpoint.getServiceNameAsQName();
         assertEquals(SERVICE_NAME, service, "We should get the right service name");
         assertEquals(DataFormat.RAW, endpoint.getDataFormat().dealias(), "The cxf endpoint's DataFromat should be RAW");
-        
-        endpoint = (CxfSpringEndpoint)createEndpoint("cxf:bean:testPropertiesEndpoint");
+
+        endpoint = (CxfSpringEndpoint) createEndpoint("cxf:bean:testPropertiesEndpoint");
         service = CxfEndpointUtils.getServiceName(endpoint);
         assertEquals(SERVICE_NAME, service, "We should get the right service name");
         QName port = CxfEndpointUtils.getPortName(endpoint);
@@ -101,7 +100,5 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "?dataFormat=PAYLOAD");
         assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat(), "We should get the PAYLOAD DataFormat");
     }
-
-
 
 }

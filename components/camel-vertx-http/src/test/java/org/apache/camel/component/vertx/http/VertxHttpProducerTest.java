@@ -66,7 +66,8 @@ public class VertxHttpProducerTest extends VertxHttpTestSupport {
         assertEquals(String.valueOf(expectedBody.length()), headers.get(Exchange.CONTENT_LENGTH));
         assertEquals(200, headers.get(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("OK", headers.get(Exchange.HTTP_RESPONSE_TEXT));
-        assertEquals(expectedBody, message.getBody(String.class));    }
+        assertEquals(expectedBody, message.getBody(String.class));
+    }
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

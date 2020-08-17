@@ -42,7 +42,7 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSplitterWithWrongFile() throws Exception {
         getMockEndpoint("mock:entry").expectedMessageCount(0);
@@ -50,7 +50,7 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
         //Send a file which is not exit
         template.sendBody("direct:decompressFiles", new File("src/test/resources/data"));
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -60,9 +60,9 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:errors"));
-                
+
                 from("direct:decompressFiles")
-                    .split(new ZipSplitter()).streaming().shareUnitOfWork()
+                        .split(new ZipSplitter()).streaming().shareUnitOfWork()
                         .to("log:entry")
                         .to("mock:entry");
             }

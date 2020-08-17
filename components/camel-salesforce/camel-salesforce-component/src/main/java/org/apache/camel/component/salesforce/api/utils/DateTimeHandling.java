@@ -27,32 +27,32 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 final class DateTimeHandling {
 
     static final DateTimeFormatter ISO_OFFSET_DATE_TIME = new DateTimeFormatterBuilder()//
-        .parseCaseInsensitive()//
-        .append(DateTimeFormatter.ISO_LOCAL_DATE)//
-        .appendLiteral('T')//
-        .appendValue(HOUR_OF_DAY, 2)//
-        .appendLiteral(':')//
-        .appendValue(MINUTE_OF_HOUR, 2)//
-        .appendLiteral(':')//
-        .appendValue(SECOND_OF_MINUTE, 2)//
-        .optionalStart()//
-        .appendFraction(NANO_OF_SECOND, 3, 3, true)//
-        .optionalEnd()//
-        .appendOffset("+HHMM", "Z")//
-        .toFormatter();
+            .parseCaseInsensitive()//
+            .append(DateTimeFormatter.ISO_LOCAL_DATE)//
+            .appendLiteral('T')//
+            .appendValue(HOUR_OF_DAY, 2)//
+            .appendLiteral(':')//
+            .appendValue(MINUTE_OF_HOUR, 2)//
+            .appendLiteral(':')//
+            .appendValue(SECOND_OF_MINUTE, 2)//
+            .optionalStart()//
+            .appendFraction(NANO_OF_SECOND, 3, 3, true)//
+            .optionalEnd()//
+            .appendOffset("+HHMM", "Z")//
+            .toFormatter();
 
     static final DateTimeFormatter ISO_OFFSET_TIME = new DateTimeFormatterBuilder()//
-        .parseCaseInsensitive()//
-        .appendValue(HOUR_OF_DAY, 2)//
-        .appendLiteral(':')//
-        .appendValue(MINUTE_OF_HOUR, 2)//
-        .appendLiteral(':')//
-        .appendValue(SECOND_OF_MINUTE, 2)//
-        .optionalStart()//
-        .appendFraction(NANO_OF_SECOND, 3, 3, true)//
-        .optionalEnd()//
-        .appendOffset("+HHMM", "Z")//
-        .toFormatter();
+            .parseCaseInsensitive()//
+            .appendValue(HOUR_OF_DAY, 2)//
+            .appendLiteral(':')//
+            .appendValue(MINUTE_OF_HOUR, 2)//
+            .appendLiteral(':')//
+            .appendValue(SECOND_OF_MINUTE, 2)//
+            .optionalStart()//
+            .appendFraction(NANO_OF_SECOND, 3, 3, true)//
+            .optionalEnd()//
+            .appendOffset("+HHMM", "Z")//
+            .toFormatter();
 
     private DateTimeHandling() {
     }

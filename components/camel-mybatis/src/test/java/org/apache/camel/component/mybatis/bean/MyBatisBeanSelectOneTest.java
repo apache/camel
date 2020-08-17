@@ -64,11 +64,10 @@ public class MyBatisBeanSelectOneTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis-bean:AccountService:selectBeanAccountById")
-                    .to("mock:result");
+                        .to("mybatis-bean:AccountService:selectBeanAccountById")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

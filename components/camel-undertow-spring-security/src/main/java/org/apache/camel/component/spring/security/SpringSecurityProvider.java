@@ -66,7 +66,8 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
                 Collection<GrantedAuthority> grantedAuthorities = ((JwtAuthenticationToken) a).getAuthorities();
                 for (GrantedAuthority grantedAuthority : grantedAuthorities) {
                     if (allowedRoles.contains(grantedAuthority.getAuthority())) {
-                        LOG.debug("Authenticated principal {} has authority to access resource.", ((JwtAuthenticationToken) a).getName());
+                        LOG.debug("Authenticated principal {} has authority to access resource.",
+                                ((JwtAuthenticationToken) a).getName());
                         allowed = true;
                         break;
                     }
@@ -77,7 +78,8 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
                     httpExchange.setStatusCode(StatusCodes.OK);
                     return;
                 } else {
-                    LOG.debug("Authenticated principal {} doesn't have authority to access resource.", ((JwtAuthenticationToken) a).getName());
+                    LOG.debug("Authenticated principal {} doesn't have authority to access resource.",
+                            ((JwtAuthenticationToken) a).getName());
                 }
 
             } else {
@@ -91,7 +93,6 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
 
         return httpExchange.getStatusCode();
     }
-
 
     @Override
     public boolean acceptConfiguration(Object configuration, String endpointUri) throws Exception {

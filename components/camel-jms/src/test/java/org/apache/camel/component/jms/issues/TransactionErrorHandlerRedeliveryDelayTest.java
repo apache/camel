@@ -34,7 +34,8 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestS
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/issues/TransactionErrorHandlerRedeliveryDelayTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jms/issues/TransactionErrorHandlerRedeliveryDelayTest-context.xml");
     }
 
     @Test

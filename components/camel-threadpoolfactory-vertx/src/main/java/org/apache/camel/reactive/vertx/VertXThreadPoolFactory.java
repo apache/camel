@@ -151,7 +151,8 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
         }
 
         @Override
-        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
+        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+                throws InterruptedException {
             return null;
         }
 
@@ -161,7 +162,8 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
         }
 
         @Override
-        public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+                throws InterruptedException, ExecutionException, TimeoutException {
             return null;
         }
 

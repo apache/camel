@@ -39,8 +39,7 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
     protected final int port = AvailablePortFinder.getNextAvailable();
 
     /**
-     * Returns the randomized port used for the Vert.x server if no port
-     * was provided to the consumer.
+     * Returns the randomized port used for the Vert.x server if no port was provided to the consumer.
      */
     public int getVertxServerRandomPort() {
         VertxWebsocketComponent component = context.getComponent("vertx-websocket", VertxWebsocketComponent.class);

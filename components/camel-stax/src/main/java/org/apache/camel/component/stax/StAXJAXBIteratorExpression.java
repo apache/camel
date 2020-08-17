@@ -41,12 +41,11 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.stax.StAXUtil.getTagName;
 
 /**
- * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body
- * using an {@link Iterator}, which uses StAX to walk in streaming mode.
- * The elements returned is a POJO which is bound using JAXB annotations.
+ * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body using an {@link Iterator}, which
+ * uses StAX to walk in streaming mode. The elements returned is a POJO which is bound using JAXB annotations.
  * <p/>
- * The message body must be able to convert to {@link XMLEventReader} type which is used as stream
- * to access the message body. And there must be a JAXB annotated class to use as binding.
+ * The message body must be able to convert to {@link XMLEventReader} type which is used as stream to access the message
+ * body. And there must be a JAXB annotated class to use as binding.
  */
 public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     private static final Map<Class<?>, JAXBContext> JAX_CONTEXTS = LRUCacheFactory.newLRUSoftCache(1000);
@@ -117,7 +116,8 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     public Object evaluate(Exchange exchange) {
         try {
             InputStream inputStream = null;
-            XMLEventReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLEventReader.class, exchange, exchange.getIn().getBody());
+            XMLEventReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLEventReader.class, exchange,
+                    exchange.getIn().getBody());
             if (reader == null) {
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -202,7 +202,8 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
             while (!found && reader.hasNext()) {
                 try {
                     xmlEvent = reader.peek();
-                    if (xmlEvent != null && xmlEvent.isStartElement() && name.equals(xmlEvent.asStartElement().getName().getLocalPart())) {
+                    if (xmlEvent != null && xmlEvent.isStartElement()
+                            && name.equals(xmlEvent.asStartElement().getName().getLocalPart())) {
                         found = true;
                     } else {
                         reader.nextEvent();

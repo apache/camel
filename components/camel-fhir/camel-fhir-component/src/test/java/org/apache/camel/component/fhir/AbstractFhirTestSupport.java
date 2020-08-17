@@ -42,7 +42,7 @@ import org.junit.jupiter.api.TestInstance;
 public abstract class AbstractFhirTestSupport extends CamelTestSupport {
 
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
-    private static final ThreadLocal<FhirContext> FHIR_CONTEXT_THREAD_LOCAL =  new ThreadLocal<>();
+    private static final ThreadLocal<FhirContext> FHIR_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<IGenericClient> GENERIC_CLIENT_THREAD_LOCAL = new ThreadLocal<>();
     protected Patient patient;
     FhirContext fhirContext;
@@ -58,7 +58,8 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
 
     boolean patientExists() {
         try {
-            Bundle bundle = fhirClient.search().byUrl("Patient?given=Vincent&family=Freeman").returnBundle(Bundle.class).execute();
+            Bundle bundle
+                    = fhirClient.search().byUrl("Patient?given=Vincent&family=Freeman").returnBundle(Bundle.class).execute();
             return !bundle.getEntry().isEmpty();
         } catch (ResourceGoneException e) {
             return false;
@@ -74,7 +75,6 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
         this.patient.setId(fhirClient.create().resource(patient).execute().getId());
     }
 
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
 
@@ -85,8 +85,9 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
         try {
             properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
         } catch (Exception e) {
-            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                e);
+            throw new IOException(
+                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
+                    e);
         }
 
         Map<String, Object> options = new HashMap<>();
@@ -119,7 +120,7 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")
     <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
-        throws CamelExecutionException {
+            throws CamelExecutionException {
         return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 

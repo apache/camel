@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Object to send when answering to an inline query.
  *
  * @see <a href="https://core.telegram.org/bots/api#answerinlinequery">
- * https://core.telegram.org/bots/api#answerinlinequery</a>
+ *      https://core.telegram.org/bots/api#answerinlinequery</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OutgoingAnswerInlineQuery extends OutgoingMessage {
@@ -51,7 +51,6 @@ public class OutgoingAnswerInlineQuery extends OutgoingMessage {
 
     @JsonProperty("switch_pm_parameter")
     private String switchPmParameter;
-
 
     public OutgoingAnswerInlineQuery(String inlineQueryId, List<InlineQueryResult> results, Integer cacheTime,
                                      Boolean personal, String nextOffset, String switchPmText,

@@ -71,8 +71,9 @@ public class BlobClientWrapper {
         return client.getBlobUrl();
     }
 
-    public Response<Void> delete(final DeleteSnapshotsOptionType deleteBlobSnapshotOptions,
-                                 final BlobRequestConditions requestConditions, final Duration timeout) {
+    public Response<Void> delete(
+            final DeleteSnapshotsOptionType deleteBlobSnapshotOptions,
+            final BlobRequestConditions requestConditions, final Duration timeout) {
         return client.deleteWithResponse(deleteBlobSnapshotOptions, requestConditions, timeout, Context.NONE);
     }
 
@@ -88,77 +89,98 @@ public class BlobClientWrapper {
         return results;
     }
 
-    public ResponseBase<BlobDownloadHeaders, Void> downloadWithResponse(final OutputStream stream, final BlobRange range,
-                                                                        final DownloadRetryOptions options, final BlobRequestConditions requestConditions, final boolean getRangeContentMd5,
-                                                                        final Duration timeout) {
-        return client.downloadWithResponse(stream, range, options, requestConditions, getRangeContentMd5, timeout, Context.NONE);
+    public ResponseBase<BlobDownloadHeaders, Void> downloadWithResponse(
+            final OutputStream stream, final BlobRange range,
+            final DownloadRetryOptions options, final BlobRequestConditions requestConditions, final boolean getRangeContentMd5,
+            final Duration timeout) {
+        return client.downloadWithResponse(stream, range, options, requestConditions, getRangeContentMd5, timeout,
+                Context.NONE);
     }
 
-    public Response<BlobProperties> downloadToFileWithResponse(final String filePath, final BlobRange range,
-                                                               final ParallelTransferOptions parallelTransferOptions, final DownloadRetryOptions downloadRetryOptions,
-                                                               final BlobRequestConditions requestConditions,
-                                                               final boolean rangeGetContentMd5, final Duration timeout) {
-        return client.downloadToFileWithResponse(filePath, range, parallelTransferOptions, downloadRetryOptions, requestConditions, rangeGetContentMd5, timeout, Context.NONE);
+    public Response<BlobProperties> downloadToFileWithResponse(
+            final String filePath, final BlobRange range,
+            final ParallelTransferOptions parallelTransferOptions, final DownloadRetryOptions downloadRetryOptions,
+            final BlobRequestConditions requestConditions,
+            final boolean rangeGetContentMd5, final Duration timeout) {
+        return client.downloadToFileWithResponse(filePath, range, parallelTransferOptions, downloadRetryOptions,
+                requestConditions, rangeGetContentMd5, timeout, Context.NONE);
     }
 
-    public Response<BlockBlobItem> uploadBlockBlob(final InputStream data, final long length, final BlobHttpHeaders headers,
-                                                   final Map<String, String> metadata, AccessTier tier, final byte[] contentMd5, final BlobRequestConditions requestConditions,
-                                                   final Duration timeout) {
-        return getBlockBlobClient().uploadWithResponse(data, length, headers, metadata, tier, contentMd5, requestConditions, timeout, Context.NONE);
+    public Response<BlockBlobItem> uploadBlockBlob(
+            final InputStream data, final long length, final BlobHttpHeaders headers,
+            final Map<String, String> metadata, AccessTier tier, final byte[] contentMd5,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        return getBlockBlobClient().uploadWithResponse(data, length, headers, metadata, tier, contentMd5, requestConditions,
+                timeout, Context.NONE);
     }
 
-    public HttpHeaders stageBlockBlob(final String base64BlockId, final InputStream data, final long length, final byte[] contentMd5,
-                                      final String leaseId, final Duration timeout) {
-        return client.getBlockBlobClient().stageBlockWithResponse(base64BlockId, data, length, contentMd5, leaseId, timeout, Context.NONE).getHeaders();
+    public HttpHeaders stageBlockBlob(
+            final String base64BlockId, final InputStream data, final long length, final byte[] contentMd5,
+            final String leaseId, final Duration timeout) {
+        return client.getBlockBlobClient()
+                .stageBlockWithResponse(base64BlockId, data, length, contentMd5, leaseId, timeout, Context.NONE).getHeaders();
     }
 
-    public Response<BlockBlobItem> commitBlockBlob(final List<String> base64BlockIds, final BlobHttpHeaders headers,
-                                                   final Map<String, String> metadata, final AccessTier tier, final BlobRequestConditions requestConditions, final Duration timeout) {
-        return getBlockBlobClient().commitBlockListWithResponse(base64BlockIds, headers, metadata, tier, requestConditions, timeout, Context.NONE);
+    public Response<BlockBlobItem> commitBlockBlob(
+            final List<String> base64BlockIds, final BlobHttpHeaders headers,
+            final Map<String, String> metadata, final AccessTier tier, final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        return getBlockBlobClient().commitBlockListWithResponse(base64BlockIds, headers, metadata, tier, requestConditions,
+                timeout, Context.NONE);
     }
 
     public Response<BlockList> listBlobBlocks(final BlockListType listType, final String leaseId, final Duration timeout) {
         return getBlockBlobClient().listBlocksWithResponse(listType, leaseId, timeout, Context.NONE);
     }
 
-    public Response<AppendBlobItem> createAppendBlob(final BlobHttpHeaders headers, final Map<String, String> metadata,
-                                                     final BlobRequestConditions requestConditions, final Duration timeout) {
+    public Response<AppendBlobItem> createAppendBlob(
+            final BlobHttpHeaders headers, final Map<String, String> metadata,
+            final BlobRequestConditions requestConditions, final Duration timeout) {
 
         return getAppendBlobClient().createWithResponse(headers, metadata, requestConditions, timeout, Context.NONE);
     }
 
-    public Response<AppendBlobItem> appendBlobBlock(final InputStream data, final long length, final byte[] contentMd5,
-                                                    final AppendBlobRequestConditions appendBlobRequestConditions, final Duration timeout) {
-        return getAppendBlobClient().appendBlockWithResponse(data, length, contentMd5, appendBlobRequestConditions, timeout, Context.NONE);
+    public Response<AppendBlobItem> appendBlobBlock(
+            final InputStream data, final long length, final byte[] contentMd5,
+            final AppendBlobRequestConditions appendBlobRequestConditions, final Duration timeout) {
+        return getAppendBlobClient().appendBlockWithResponse(data, length, contentMd5, appendBlobRequestConditions, timeout,
+                Context.NONE);
     }
 
-    public Response<PageBlobItem> createPageBlob(final long size, final Long sequenceNumber, final BlobHttpHeaders headers,
-                                                 final Map<String, String> metadata, final BlobRequestConditions requestConditions, final Duration timeout) {
-        return getPageBlobClient().createWithResponse(size, sequenceNumber, headers, metadata, requestConditions, timeout, Context.NONE);
+    public Response<PageBlobItem> createPageBlob(
+            final long size, final Long sequenceNumber, final BlobHttpHeaders headers,
+            final Map<String, String> metadata, final BlobRequestConditions requestConditions, final Duration timeout) {
+        return getPageBlobClient().createWithResponse(size, sequenceNumber, headers, metadata, requestConditions, timeout,
+                Context.NONE);
     }
 
-    public Response<PageBlobItem> uploadPageBlob(final PageRange pageRange, final InputStream body, final byte[] contentMd5,
-                                                 final PageBlobRequestConditions pageBlobRequestConditions, final Duration timeout) {
-        return getPageBlobClient().uploadPagesWithResponse(pageRange, body, contentMd5, pageBlobRequestConditions, timeout, Context.NONE);
+    public Response<PageBlobItem> uploadPageBlob(
+            final PageRange pageRange, final InputStream body, final byte[] contentMd5,
+            final PageBlobRequestConditions pageBlobRequestConditions, final Duration timeout) {
+        return getPageBlobClient().uploadPagesWithResponse(pageRange, body, contentMd5, pageBlobRequestConditions, timeout,
+                Context.NONE);
     }
 
-    public Response<PageBlobItem> resizePageBlob(final long size, final BlobRequestConditions requestConditions, final Duration timeout) {
+    public Response<PageBlobItem> resizePageBlob(
+            final long size, final BlobRequestConditions requestConditions, final Duration timeout) {
         return getPageBlobClient().resizeWithResponse(size, requestConditions, timeout, Context.NONE);
     }
 
-    public Response<PageBlobItem> clearPagesBlob(final PageRange pageRange, final PageBlobRequestConditions pageBlobRequestConditions, final Duration timeout) {
+    public Response<PageBlobItem> clearPagesBlob(
+            final PageRange pageRange, final PageBlobRequestConditions pageBlobRequestConditions, final Duration timeout) {
         return getPageBlobClient().clearPagesWithResponse(pageRange, pageBlobRequestConditions, timeout, Context.NONE);
     }
 
-    public Response<PageList> getPageBlobRanges(final BlobRange blobRange, final BlobRequestConditions requestConditions,
-                                                final Duration timeout) {
+    public Response<PageList> getPageBlobRanges(
+            final BlobRange blobRange, final BlobRequestConditions requestConditions,
+            final Duration timeout) {
         return getPageBlobClient().getPageRangesWithResponse(blobRange, requestConditions, timeout, Context.NONE);
     }
 
     public String generateSas(final BlobServiceSasSignatureValues blobServiceSasSignatureValues) {
         return client.generateSas(blobServiceSasSignatureValues);
     }
-
 
     private BlockBlobClient getBlockBlobClient() {
         return client.getBlockBlobClient();

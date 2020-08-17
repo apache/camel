@@ -61,6 +61,7 @@ public class GetItemCommandTest {
         assertEquals(attrNames, ddbClient.getItemRequest.attributesToGet());
         assertEquals(true, ddbClient.getItemRequest.consistentRead());
         assertEquals(key, ddbClient.getItemRequest.key());
-        assertEquals(AttributeValue.builder().s("attrValue").build(), exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
+        assertEquals(AttributeValue.builder().s("attrValue").build(),
+                exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

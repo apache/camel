@@ -39,7 +39,6 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
     private static final String JIRA_URL = "jiraUrl";
     private static final String JIRA_URL_VALUE = "http://my_jira_server:8080";
 
-
     @Test
     public void createEndpointWithBasicAuthentication() throws Exception {
         JiraComponent component = new JiraComponent(context);
@@ -47,8 +46,7 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
         String query = Joiner.on("&").join(
                 concat(JIRA_URL, JIRA_URL_VALUE),
                 concat(USERNAME, USERNAME_VALUE),
-                concat(PASSWORD, PASSWORD_VALUE)
-        );
+                concat(PASSWORD, PASSWORD_VALUE));
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://newIssues?" + query);
 
         assertEquals("newissues", endpoint.getType().name().toLowerCase());
@@ -66,8 +64,7 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
                 concat(VERIF_CODE, VERIF_CODE_VALUE),
                 concat(ACCESS_TOKEN, ACCESS_TOKEN_VALUE),
                 concat(CONS_KEY, CONS_KEY_VALUE),
-                concat(PRIV_KEY, PRIV_KEY_VALUE)
-        );
+                concat(PRIV_KEY, PRIV_KEY_VALUE));
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://newComments?" + query);
 
         assertEquals("newcomments", endpoint.getType().name().toLowerCase());

@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * Bean validator that uses the JSR 303 reference implementation (Hibernate Validator).
- * Throws {@link BeanValidationException} if constrain violations are detected.
+ * Bean validator that uses the JSR 303 reference implementation (Hibernate Validator). Throws
+ * {@link BeanValidationException} if constrain violations are detected.
  */
 public class BeanValidatorProducer extends DefaultProducer {
 
@@ -41,13 +41,13 @@ public class BeanValidatorProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object bean = exchange.getIn().getBody();
         Set<ConstraintViolation<Object>> constraintViolations;
-        
+
         if (this.group != null) {
             constraintViolations = validatorFactory.getValidator().validate(bean, group);
         } else {
             constraintViolations = validatorFactory.getValidator().validate(bean);
         }
-        
+
         if (!constraintViolations.isEmpty()) {
             throw new BeanValidationException(exchange, constraintViolations, exchange.getIn().getBody());
         }

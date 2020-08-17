@@ -49,7 +49,8 @@ public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // create thread pool profile and register to camel
-                ThreadPoolProfile profile = new ThreadPoolProfileBuilder("myPool").poolSize(2).maxPoolSize(5).maxQueueSize(10).build();
+                ThreadPoolProfile profile
+                        = new ThreadPoolProfileBuilder("myPool").poolSize(2).maxPoolSize(5).maxQueueSize(10).build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
                 from("direct:start").throttle(constant(2)).executorServiceRef("myPool").to("mock:result");

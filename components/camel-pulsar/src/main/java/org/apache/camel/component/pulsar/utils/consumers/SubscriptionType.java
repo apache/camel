@@ -17,5 +17,8 @@
 package org.apache.camel.component.pulsar.utils.consumers;
 
 public enum SubscriptionType {
-    EXCLUSIVE, SHARED, FAILOVER, KEY_SHARED
+    EXCLUSIVE,
+    SHARED,
+    FAILOVER,
+    KEY_SHARED
 }

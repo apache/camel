@@ -118,7 +118,8 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             super(pojo, beanInfo);
         }
 
-        public DelegateBeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
+        public DelegateBeanProcessor(Object pojo, CamelContext camelContext,
+                                     ParameterMappingStrategy parameterMappingStrategy) {
             super(pojo, camelContext, parameterMappingStrategy);
         }
 

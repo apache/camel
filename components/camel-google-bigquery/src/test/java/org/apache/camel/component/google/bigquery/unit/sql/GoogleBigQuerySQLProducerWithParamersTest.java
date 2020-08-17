@@ -80,7 +80,8 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
         assertEquals(2, request.getQueryParameters().size());
 
         assertEquals("id", request.getQueryParameters().get(1).getName());
-        assertEquals("Body data must have higher priority", "100", request.getQueryParameters().get(1).getParameterValue().getValue());
+        assertEquals("Body data must have higher priority", "100",
+                request.getQueryParameters().get(1).getParameterValue().getValue());
 
         assertEquals("data", request.getQueryParameters().get(0).getName());
         assertEquals("some data", request.getQueryParameters().get(0).getParameterValue().getValue());
@@ -89,6 +90,6 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
     @Test
     public void sendMessageWithoutParameters() throws Exception {
         assertThrows(RuntimeExchangeException.class,
-            () -> producer.process(createExchangeWithBody(new HashMap<>())));
+                () -> producer.process(createExchangeWithBody(new HashMap<>())));
     }
 }

@@ -28,7 +28,8 @@ public class SpringMultipleErrorHandlerOnExceptionIssueTest extends MultipleErro
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringMultipleErrorHandlerOnExceptionIssueTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/issues/SpringMultipleErrorHandlerOnExceptionIssueTest.xml");
     }
 
 }

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetricsTestSupport {
 
-    private static final Tag[] TAGS = new Tag[] {new Tag("foo", "bar")};
+    private static final Tag[] TAGS = new Tag[] { new Tag("foo", "bar") };
     private MicroProfileMetricsExchangeRecorder recorder;
 
     @BeforeEach
@@ -59,7 +59,8 @@ public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetrics
         Counter exchangesTotal = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_TOTAL_METRIC_NAME, TAGS);
         assertEquals(1, exchangesTotal.getCount());
 
-        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
+        AtomicIntegerGauge exchangesInflight
+                = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
         assertEquals(0, exchangesInflight.getValue().intValue());
 
         Counter externalRedeliveries = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, TAGS);
@@ -72,7 +73,8 @@ public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetrics
     @Test
     public void testMetricsRecorderExchangeInflight() {
         recorder.recordExchangeBegin();
-        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
+        AtomicIntegerGauge exchangesInflight
+                = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
         assertEquals(1, exchangesInflight.getValue().intValue());
 
         Exchange exchange = ExchangeBuilder.anExchange(context).build();
@@ -83,8 +85,8 @@ public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetrics
     @Test
     public void testMetricsRecorderFailuresHandled() {
         Exchange exchange = ExchangeBuilder.anExchange(context)
-            .withProperty(Exchange.FAILURE_HANDLED, true)
-            .build();
+                .withProperty(Exchange.FAILURE_HANDLED, true)
+                .build();
         recorder.recordExchangeComplete(exchange);
         Counter failuresHandled = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_FAILURES_HANDLED_METRIC_NAME, TAGS);
         assertEquals(1, failuresHandled.getCount());

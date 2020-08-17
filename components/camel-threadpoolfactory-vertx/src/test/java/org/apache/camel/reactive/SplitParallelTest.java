@@ -57,17 +57,17 @@ public class SplitParallelTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:foo")
-                    .split(body()).parallelProcessing()
+                        .to("log:foo")
+                        .split(body()).parallelProcessing()
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();
                             assertTrue(name.startsWith("vert.x-worker-thread"), "Should use vertx thread");
                         })
                         .to("mock:split")
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

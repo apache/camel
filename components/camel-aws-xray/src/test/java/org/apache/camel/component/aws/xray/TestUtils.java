@@ -50,8 +50,8 @@ public final class TestUtils {
 
     private static void verifyTraces(TestTrace expected, TestTrace actual) {
         assertThat("Incorrect number of segment for trace. Expected traces: "
-                        + expected.getSegments().stream().map(s -> s.name).collect(Collectors.toList())
-                        + " but found " + actual.getSegments().stream().map(s -> s.name).collect(Collectors.toList()),
+                   + expected.getSegments().stream().map(s -> s.name).collect(Collectors.toList())
+                   + " but found " + actual.getSegments().stream().map(s -> s.name).collect(Collectors.toList()),
                 actual.getSegments().size(), is(equalTo(expected.getSegments().size())));
         List<TestSegment> expectedSegments = new ArrayList<>(expected.getSegments());
         List<TestSegment> actualSegments = new ArrayList<>(actual.getSegments());
@@ -81,7 +81,7 @@ public final class TestUtils {
 
     private static void verifySegments(TestSegment expected, TestSegment actual) {
         assertThat("Incorrect name of segment. Expected segment name: "
-                        + expected.getName() + " but found: " + actual.getName(),
+                   + expected.getName() + " but found: " + actual.getName(),
                 actual.getName(), is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
@@ -108,7 +108,7 @@ public final class TestUtils {
 
     private static void verifySubsegments(TestSubsegment expected, TestSubsegment actual) {
         assertThat("Incorrect name of subsegment. Expected " + actual.getName()
-                        + " but found: " + actual.getName(),
+                   + " but found: " + actual.getName(),
                 actual.getName(), is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
@@ -156,8 +156,9 @@ public final class TestUtils {
         }
     }
 
-    private static void verifyMetadata(Map<String, Map<String, Object>> expected,
-                                       Map<String, Map<String, Object>> actual) {
+    private static void verifyMetadata(
+            Map<String, Map<String, Object>> expected,
+            Map<String, Map<String, Object>> actual) {
 
         assertThat("Insufficient number of metadata found",
                 actual.size(), is(greaterThanOrEqualTo(expected.size())));

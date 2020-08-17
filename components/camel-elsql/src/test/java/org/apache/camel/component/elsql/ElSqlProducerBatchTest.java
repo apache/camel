@@ -33,7 +33,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 public class ElSqlProducerBatchTest extends CamelTestSupport {
 
     @BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
+            .addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Override
     @AfterEach
@@ -83,7 +84,8 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:batch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource&batch=true").to("mock:result");
+                from("direct:batch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource&batch=true")
+                        .to("mock:result");
 
                 from("direct:nonBatch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
 

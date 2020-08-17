@@ -78,9 +78,8 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Receives an entry from a message queue and returns an {@link Exchange} to
-     * send this data, which will be received/sent as
-     * a <code>String</code>.
+     * Receives an entry from a message queue and returns an {@link Exchange} to send this data, which will be
+     * received/sent as a <code>String</code>.
      * <p/>
      * The following message headers may be set by the receiver
      * <ul>
@@ -90,8 +89,7 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
      * <li>jt400.MESSAGE_TYPE: The message type (corresponds to constants defined in the AS400Message class)</li>
      * </ul>
      *
-     * @param timeout time to wait when reading from message queue. A value of -1
-     *                indicates an infinite wait time.
+     * @param timeout time to wait when reading from message queue. A value of -1 indicates an infinite wait time.
      */
     public Exchange receive(long timeout) {
         MessageQueue queue = queueService.getMsgQueue();
@@ -105,13 +103,14 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
     private synchronized Exchange receive(MessageQueue queue, long timeout) throws Exception {
         QueuedMessage entry;
         int seconds = (timeout >= 0) ? (int) timeout / 1000 : -1;
-        LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(), -1 == seconds ? "infinite" : seconds);
+        LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(),
+                -1 == seconds ? "infinite" : seconds);
 
         Jt400Configuration.MessageAction messageAction = getEndpoint().getMessageAction();
         entry = queue.receive(messageKey, //message key
-                              seconds,    //timeout
-                              messageAction.getJt400Value(),  // message action
-                              null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages
+                seconds,    //timeout
+                messageAction.getJt400Value(),  // message action
+                null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages
 
         if (null == entry) {
             return null;
@@ -123,13 +122,15 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         }
 
         Exchange exchange = getEndpoint().createExchange();
-        exchange.getIn().setHeader(Jt400Constants.SENDER_INFORMATION, entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
+        exchange.getIn().setHeader(Jt400Constants.SENDER_INFORMATION,
+                entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_ID, entry.getID());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_FILE, entry.getFileName());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_TYPE, entry.getType());
         exchange.getIn().setBody(entry.getText());
         return exchange;
     }
+
     private static void setHeaderIfValueNotNull(final Message message, final String header, final Object value) {
         if (null == value) {
             return;

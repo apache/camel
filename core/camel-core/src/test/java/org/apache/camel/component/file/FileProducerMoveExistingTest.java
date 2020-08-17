@@ -40,7 +40,9 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
 
     @Test
     public void testExistingFileDoesNotExists() throws Exception {
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists("target/data/file/hello.txt");
         assertFileNotExists("target/data/file/renamed-hello.txt");
@@ -48,52 +50,69 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
 
     @Test
     public void testExistingFileExists() throws Exception {
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists("target/data/file/hello.txt");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
 
         assertFileExists("target/data/file/renamed-hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
     }
 
     @Test
     public void testExistingFileExistsTempFileName() throws Exception {
-        template.sendBodyAndHeader("file://target/data/file?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
-                                   Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World",
-                                   Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists("target/data/file/hello.txt");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
 
         assertFileExists("target/data/file/renamed-hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
     }
 
     @Test
     public void testExistingFileExistsMoveSubDir() throws Exception {
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=backup", "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=backup", "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists("target/data/file/hello.txt");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
 
         // would move into sub directory and keep existing name as is
         assertFileExists("target/data/file/backup/hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/backup/hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/backup/hello.txt")));
     }
 
     @Test
     public void testFailOnMoveExistingFileExistsEagerDeleteTrue() throws Exception {
         template.sendBodyAndHeader("file://target/data/file", "Old file", Exchange.FILE_NAME, "renamed-hello.txt");
 
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Hello World",
-                                   Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true",
+                "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
         // we should be okay as we will just delete any existing file
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Bye World",
-                                   Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true",
+                "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         // we could write the new file so the old context should be there
         assertFileExists("target/data/file/hello.txt");
@@ -101,21 +120,27 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
 
         // and the renamed file should be overridden
         assertFileExists("target/data/file/renamed-hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
     }
 
     @Test
     public void testFailOnMoveExistingFileExistsEagerDeleteFalse() throws Exception {
         template.sendBodyAndHeader("file://target/data/file", "Old file", Exchange.FILE_NAME, "renamed-hello.txt");
 
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false", "Hello World",
-                                   Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false",
+                "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
         try {
-            template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false", "Bye World",
-                                       Exchange.FILE_NAME, "hello.txt");
+            template.sendBodyAndHeader(
+                    "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false",
+                    "Bye World",
+                    Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
         }
 
@@ -126,7 +151,8 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
 
         // and the renamed file should be untouched
         assertFileExists("target/data/file/renamed-hello.txt");
-        assertEquals("Old file", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
+        assertEquals("Old file",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello.txt")));
     }
 
 }

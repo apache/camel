@@ -44,7 +44,7 @@ public class SaxonXsltEndpointConfigurationTest extends CamelSpringTestSupport {
 
         for (Endpoint ep : context.getEndpoints()) {
             if (ep instanceof XsltSaxonEndpoint) {
-                endpoint = (XsltSaxonEndpoint)ep;
+                endpoint = (XsltSaxonEndpoint) ep;
                 break;
             }
         }

@@ -65,13 +65,15 @@ public class AbstractMetricsProducerTest {
     public void setUp() throws Exception {
         okProducer = new AbstractMetricsProducer(endpoint) {
             @Override
-            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+                    throws Exception {
             }
         };
         failProducer = new AbstractMetricsProducer(endpoint) {
 
             @Override
-            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+                    throws Exception {
                 throw new Exception("Muchos problemos");
             }
         };

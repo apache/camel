@@ -64,7 +64,8 @@ public class HdfsAppendTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file1?append=true&fileSystemType=HDFS");
+                from("direct:start1")
+                        .to("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file1?append=true&fileSystemType=HDFS");
             }
         });
         startCamelContext();

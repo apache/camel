@@ -54,12 +54,12 @@ public class MainExample {
         @Override
         public void configure() throws Exception {
             from("timer:foo?delay={{millisecs}}")
-                .process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        System.out.println("Invoked timer at " + new Date());
-                    }
-                })
-                .bean("foo");
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            System.out.println("Invoked timer at " + new Date());
+                        }
+                    })
+                    .bean("foo");
         }
     }
 

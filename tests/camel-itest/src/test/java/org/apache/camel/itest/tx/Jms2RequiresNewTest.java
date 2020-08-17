@@ -31,8 +31,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * Unit test will look for the spring .xml file with the same class name
- * but postfixed with -config.xml as filename.
+ * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
  * <p/>
  */
 @CamelSpringTest
@@ -76,8 +75,8 @@ public class Jms2RequiresNewTest {
                         .to("activemq:queue:result1")
                         .to("direct:route2")
                         .choice()
-                            .when(body().contains("Neverland"))
-                                .throwException(new RuntimeException("Expected!"));
+                        .when(body().contains("Neverland"))
+                        .throwException(new RuntimeException("Expected!"));
 
                 from("direct:route2")
                         .transacted("PROPAGATION_REQUIRES_NEW")

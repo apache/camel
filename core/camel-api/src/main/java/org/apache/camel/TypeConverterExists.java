@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlEnum;
 @XmlEnum
 public enum TypeConverterExists {
 
-    Override, Ignore, Fail
+    Override,
+    Ignore,
+    Fail
 
 }

@@ -38,7 +38,8 @@ public class AsteriskProducer extends DefaultProducer {
     private final AsteriskEndpoint endpoint;
     private final AsteriskConnection connection;
 
-    public AsteriskProducer(AsteriskEndpoint endpoint) throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
+    public AsteriskProducer(AsteriskEndpoint endpoint) throws IllegalStateException, IOException, AuthenticationFailedException,
+                                                       TimeoutException, CamelAsteriskException {
         super(endpoint);
 
         this.endpoint = endpoint;

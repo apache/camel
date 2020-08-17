@@ -17,8 +17,7 @@
 package org.apache.camel.builder;
 
 /**
- * A helper class for working with
- * <a href="http://camel.apache.org/expression.html">expressions</a>.
+ * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  */
 public final class ExpressionBuilder extends org.apache.camel.support.builder.ExpressionBuilder {
 

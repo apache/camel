@@ -44,13 +44,13 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
      * will be defined within the payload (and everything works fine).
      */
 
-    protected static final String RESPONSE_MESSAGE = 
-        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
-        + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse></soap:Body></soap:Envelope>";
+    protected static final String RESPONSE_MESSAGE
+            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
+              + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse></soap:Body></soap:Envelope>";
     protected static final String REQUEST_PAYLOAD = "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
 
     private AbstractXmlApplicationContext applicationContext;
-    
+
     // Don't remove this, it initializes the CXFTestSupport class
     static {
         CXFTestSupport.getPort1();

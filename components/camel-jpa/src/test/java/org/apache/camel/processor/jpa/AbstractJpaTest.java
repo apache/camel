@@ -46,7 +46,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         EntityManagerFactory entityManagerFactory = applicationContext.getBean("entityManagerFactory",
-                                                                               EntityManagerFactory.class);
+                EntityManagerFactory.class);
         transactionTemplate = applicationContext.getBean("transactionTemplate", TransactionTemplate.class);
         entityManager = entityManagerFactory.createEntityManager();
         cleanupRepository();
@@ -102,8 +102,8 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
             }
         });
     }
-    
+
     protected abstract String routeXml();
-    
+
     protected abstract String selectAllString();
 }

@@ -26,7 +26,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Used by Apache Camel project itself - do NOT use as end user.
  */
 @Mojo(name = "generate", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class GenerateMojo extends AbstractGenerateMojo {
 
     protected void doExecute() throws MojoFailureException, MojoExecutionException {

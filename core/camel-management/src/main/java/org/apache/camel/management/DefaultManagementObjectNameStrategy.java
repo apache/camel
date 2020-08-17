@@ -236,7 +236,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForRouteController(CamelContext context, RouteController routeController) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForRouteController(CamelContext context, RouteController routeController)
+            throws MalformedObjectNameException {
         // prefer to use the given management name if previously assigned
         String managementName = context.getManagementName();
         if (managementName == null) {
@@ -263,7 +264,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat dataFormat) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat dataFormat)
+            throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -286,7 +288,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition)
+            throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -296,7 +299,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForStep(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForStep(CamelContext context, Processor processor, NamedNode definition)
+            throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -306,7 +310,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder)
+            throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(route.getCamelContext())).append(",");
@@ -347,8 +352,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else {
             // create a name based on its instance
             buffer.append(KEY_NAME + "=")
-                .append(builder.getClass().getSimpleName())
-                .append("(").append(ObjectHelper.getIdentityHashCode(builder)).append(")");
+                    .append(builder.getClass().getSimpleName())
+                    .append("(").append(ObjectHelper.getIdentityHashCode(builder)).append(")");
         }
 
         return createObjectName(buffer);
@@ -366,8 +371,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             name = "Consumer";
         }
         buffer.append(KEY_NAME + "=")
-            .append(name)
-            .append("(").append(ObjectHelper.getIdentityHashCode(consumer)).append(")");
+                .append(name)
+                .append("(").append(ObjectHelper.getIdentityHashCode(consumer)).append(")");
         return createObjectName(buffer);
     }
 
@@ -383,8 +388,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             name = "Producer";
         }
         buffer.append(KEY_NAME + "=")
-            .append(name)
-            .append("(").append(ObjectHelper.getIdentityHashCode(producer)).append(")");
+                .append(name)
+                .append("(").append(ObjectHelper.getIdentityHashCode(producer)).append(")");
         return createObjectName(buffer);
     }
 
@@ -402,7 +407,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier)
+            throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -414,8 +420,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else {
             // others can be per instance
             buffer.append(KEY_NAME + "=")
-                .append("EventNotifier")
-                .append("(").append(ObjectHelper.getIdentityHashCode(eventNotifier)).append(")");
+                    .append("EventNotifier")
+                    .append("(").append(ObjectHelper.getIdentityHashCode(eventNotifier)).append(")");
         }
         return createObjectName(buffer);
     }
@@ -447,7 +453,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForClusterService(CamelContext context, CamelClusterService service) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForClusterService(CamelContext context, CamelClusterService service)
+            throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -460,7 +467,9 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForThreadPool(
+            CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId)
+            throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -501,7 +510,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     protected String getContextId(String name) {
-        boolean includeHostName = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName();
+        boolean includeHostName
+                = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName();
         if (includeHostName) {
             return hostName + "/" + (name != null ? name : VALUE_UNKNOWN);
         } else {

@@ -72,7 +72,9 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
         private static int count;
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
 
             return new DelegateAsyncProcessor(new Processor() {
 

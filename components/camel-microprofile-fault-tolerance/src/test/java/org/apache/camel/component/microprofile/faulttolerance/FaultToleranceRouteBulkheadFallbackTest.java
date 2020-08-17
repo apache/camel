@@ -39,7 +39,8 @@ public class FaultToleranceRouteBulkheadFallbackTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:start").circuitBreaker().faultToleranceConfiguration().bulkheadEnabled(true).end().throwException(new IllegalArgumentException("Forced"))
+                from("direct:start").to("log:start").circuitBreaker().faultToleranceConfiguration().bulkheadEnabled(true).end()
+                        .throwException(new IllegalArgumentException("Forced"))
                         .onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
             }
         };

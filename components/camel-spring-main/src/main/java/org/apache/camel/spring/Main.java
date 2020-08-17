@@ -43,12 +43,12 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * A command line tool for booting up a CamelContext using an optional Spring
  * {@link org.springframework.context.ApplicationContext}.
  * <p/>
- * By placing a file in the {@link #LOCATION_PROPERTIES} directory of any JARs on the classpath,
- * allows this Main class to load those additional Spring XML files as Spring
- * {@link org.springframework.context.ApplicationContext} to be included.
+ * By placing a file in the {@link #LOCATION_PROPERTIES} directory of any JARs on the classpath, allows this Main class
+ * to load those additional Spring XML files as Spring {@link org.springframework.context.ApplicationContext} to be
+ * included.
  * <p/>
- * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include,
- * which by default gets loaded from classpath.
+ * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include, which by default gets
+ * loaded from classpath.
  */
 public class Main extends MainCommandLineSupport {
 
@@ -65,14 +65,16 @@ public class Main extends MainCommandLineSupport {
 
     public Main() {
 
-        addOption(new ParameterOption("ac", "applicationContext",
+        addOption(new ParameterOption(
+                "ac", "applicationContext",
                 "Sets the classpath based spring ApplicationContext", "applicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setApplicationContextUri(parameter);
             }
         });
 
-        addOption(new ParameterOption("fa", "fileApplicationContext",
+        addOption(new ParameterOption(
+                "fa", "fileApplicationContext",
                 "Sets the filesystem based spring ApplicationContext", "fileApplicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setFileApplicationContextUri(parameter);
@@ -151,7 +153,8 @@ public class Main extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         Map<String, SpringCamelContext> camels = applicationContext.getBeansOfType(SpringCamelContext.class);
         if (camels.size() > 1) {
-            throw new IllegalArgumentException("Multiple CamelContext detected. This Main class only supports single CamelContext");
+            throw new IllegalArgumentException(
+                    "Multiple CamelContext detected. This Main class only supports single CamelContext");
         } else if (camels.size() == 1) {
             return camels.values().iterator().next();
         }

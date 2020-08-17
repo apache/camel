@@ -32,7 +32,7 @@ public class SpringBatchJobLauncherTest extends CamelSpringTestSupport {
     @EndpointInject("mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
-    String[] inputMessages = new String[]{"foo", "bar", "baz", null};
+    String[] inputMessages = new String[] { "foo", "bar", "baz", null };
 
     @Override
     @BeforeEach
@@ -64,6 +64,7 @@ public class SpringBatchJobLauncherTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/batch/springBatchtestJobLauncherContext.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/spring/batch/springBatchtestJobLauncherContext.xml");
     }
 }

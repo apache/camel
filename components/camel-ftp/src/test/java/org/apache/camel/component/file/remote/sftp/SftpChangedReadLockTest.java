@@ -38,7 +38,8 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SftpChangedReadLockTest.class);
 
     protected String getFtpUrl() {
-        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/changed?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
+        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+               + "/changed?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
     }
 
     @Override

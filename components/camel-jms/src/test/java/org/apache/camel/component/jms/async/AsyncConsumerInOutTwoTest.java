@@ -57,8 +57,8 @@ public class AsyncConsumerInOutTwoTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // enable async in only mode on the consumer
                 from("activemq:queue:start?asyncConsumer=true")
-                    .to("async:camel?delay=2000")
-                    .transform(constant("Bye World"));
+                        .to("async:camel?delay=2000")
+                        .transform(constant("Bye World"));
             }
         };
     }

@@ -252,7 +252,8 @@ public class JsonPathEngine {
 
             if (map != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("JacksonJsonAdapter converted object from: {} to: java.util.Map", ObjectHelper.classCanonicalName(json));
+                    LOG.debug("JacksonJsonAdapter converted object from: {} to: java.util.Map",
+                            ObjectHelper.classCanonicalName(json));
                 }
                 return path.read(map, configuration);
             }
@@ -277,7 +278,8 @@ public class JsonPathEngine {
                 }
             } catch (Throwable e) {
                 LOG.debug("Cannot load " + JACKSON_JSON_ADAPTER + " from classpath to enable JacksonJsonAdapter due "
-                    + e.getMessage() + ". JacksonJsonAdapter is not enabled.", e);
+                          + e.getMessage() + ". JacksonJsonAdapter is not enabled.",
+                        e);
             }
             initJsonAdapter = true;
         }

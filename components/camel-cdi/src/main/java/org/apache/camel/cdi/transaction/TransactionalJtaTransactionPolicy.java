@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper methods for transaction handling
  *
- * This class requires the resource {@link TransactionManager} to be available
- * through JNDI url &quot;java:/TransactionManager&quot;
+ * This class requires the resource {@link TransactionManager} to be available through JNDI url
+ * &quot;java:/TransactionManager&quot;
  */
 public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPolicy {
 

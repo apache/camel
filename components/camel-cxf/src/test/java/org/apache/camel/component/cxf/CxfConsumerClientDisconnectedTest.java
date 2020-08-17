@@ -50,23 +50,23 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from(cxfRsEndpointUri)
-                    // should be able to convert to Customer
-                    .to("mock:result")
-                    .process(exchange-> {
-                        Thread.sleep(100);
+                        // should be able to convert to Customer
+                        .to("mock:result")
+                        .process(exchange -> {
+                            Thread.sleep(100);
 
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
-                            @Override
-                            public void onComplete(Exchange exchange) {
-                                template.sendBody("mock:onComplete", "");
-                            }
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                                @Override
+                                public void onComplete(Exchange exchange) {
+                                    template.sendBody("mock:onComplete", "");
+                                }
 
-                            @Override
-                            public void onFailure(Exchange exchange) {
+                                @Override
+                                public void onFailure(Exchange exchange) {
 
-                            }
+                                }
+                            });
                         });
-                    });
 
             }
         };

@@ -46,7 +46,7 @@ public class SmppConnectionFactoryTest {
             }
         }
     }
-    
+
     @Test
     @Disabled("Must be manually tested")
     public void createConnectionWithProxyHost() throws IOException {
@@ -65,7 +65,7 @@ public class SmppConnectionFactoryTest {
             }
         }
     }
-    
+
     @Test
     @Disabled("Must be manually tested")
     public void createConnectionWithProxyUsername() throws IOException {
@@ -85,5 +85,5 @@ public class SmppConnectionFactoryTest {
                 connection.close();
             }
         }
-    }     
+    }
 }

@@ -50,13 +50,14 @@ public final class GenericFileConverter {
     }
 
     @Converter(fallback = true)
-    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws IOException, NoTypeConversionAvailableException {
+    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
+            throws IOException, NoTypeConversionAvailableException {
 
         // use a fallback type converter so we can convert the embedded body if
         // the value is GenericFile
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
 
-            GenericFile<?> file = (GenericFile<?>)value;
+            GenericFile<?> file = (GenericFile<?>) value;
             Class<?> from = file.getBody().getClass();
 
             // maybe from is already the type we want
@@ -116,7 +117,7 @@ public final class GenericFileConverter {
     public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
-            File f = (File)file.getFile();
+            File f = (File) file.getFile();
             // the file must exists
             if (f.exists()) {
                 // read the file using the specified charset
@@ -141,7 +142,8 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static String genericFileToString(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException {
+    public static String genericFileToString(GenericFile<?> file, Exchange exchange)
+            throws IOException, NoTypeConversionAvailableException {
         // use reader first as it supports the file charset
         BufferedReader reader = genericFileToReader(file, exchange);
         if (reader != null) {
@@ -178,7 +180,7 @@ public final class GenericFileConverter {
     private static BufferedReader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
-            File f = (File)file.getFile();
+            File f = (File) file.getFile();
             // the file must exists
             if (!f.exists()) {
                 return null;

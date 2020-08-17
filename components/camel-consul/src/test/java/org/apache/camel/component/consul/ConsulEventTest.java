@@ -40,7 +40,8 @@ public class ConsulEventTest extends ConsulTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE).withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:event").send();
+        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE)
+                .withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:event").send();
 
         mock.assertIsSatisfied();
 

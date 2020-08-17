@@ -22,7 +22,7 @@ import org.apache.camel.Pattern;
 public interface MyProxySender {
 
     String hello(String name);
-    
+
     @Pattern(value = ExchangePattern.InOnly)
     void greeting(String message);
 

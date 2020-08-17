@@ -32,8 +32,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("TODO: investigate for Camel 3.0.  The test actally works fine, but the " + "test needs to be verified as http supports gzip by default, so some tests may "
-        + "have to be changed to stay meaningful.")
+@Disabled("TODO: investigate for Camel 3.0.  The test actally works fine, but the "
+          + "test needs to be verified as http supports gzip by default, so some tests may "
+          + "have to be changed to stay meaningful.")
 public class HttpGZipEncodingTest extends BaseJettyTest {
 
     private int port1;
@@ -42,27 +43,29 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
     @Test
     public void testHttpProducerWithGzip() throws Exception {
         String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer",
-                                                        new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
+                new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
         assertEquals("<b>Hello World</b>", response, "The response is wrong");
     }
 
     @Test
     public void testGzipProxy() throws Exception {
         String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/route?httpClientConfigurer=#configurer",
-                                                        new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
+                new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
         assertEquals("<b>Hello World</b>", response, "The response is wrong");
     }
 
     @Test
     public void testGzipProducerWithGzipData() throws Exception {
-        String response = template.requestBodyAndHeader("direct:gzip", new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip",
-                                                        String.class);
+        String response = template.requestBodyAndHeader("direct:gzip",
+                new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip",
+                String.class);
         assertEquals("<b>Hello World</b>", response, "The response is wrong");
     }
 
     @Test
     public void testGzipGet() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip", null, "Accept-Encoding", "gzip", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip", null, "Accept-Encoding", "gzip",
+                String.class);
         assertEquals("<b>Hello World for gzip</b>", response, "The response is wrong");
     }
 
@@ -82,13 +85,15 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                     }
                 });
 
-                from("direct:gzip").marshal().gzipDeflater().setProperty(Exchange.SKIP_GZIP_ENCODING, ExpressionBuilder.constantExpression(Boolean.TRUE))
-                    .to("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer").unmarshal().gzipDeflater();
+                from("direct:gzip").marshal().gzipDeflater()
+                        .setProperty(Exchange.SKIP_GZIP_ENCODING, ExpressionBuilder.constantExpression(Boolean.TRUE))
+                        .to("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer").unmarshal().gzipDeflater();
 
                 from("jetty:http://localhost:" + port1 + "/gzip").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // check the request method
-                        HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
+                        HttpServletRequest request
+                                = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
                         if ("POST".equals(request.getMethod())) {
                             String requestBody = exchange.getIn().getBody(String.class);
                             assertEquals("<Hello>World</Hello>", requestBody, "Get a wrong request string");
@@ -105,7 +110,7 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                 });
 
                 from("jetty:http://localhost:" + port2 + "/route?bridgeEndpoint=true&httpClientConfigurer=#configurer")
-                    .to("http://localhost:" + port1 + "/gzip?bridgeEndpoint=true&httpClientConfigurer=#configurer");
+                        .to("http://localhost:" + port1 + "/gzip?bridgeEndpoint=true&httpClientConfigurer=#configurer");
             }
         };
     }

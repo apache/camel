@@ -43,7 +43,8 @@ public class LogMaskTest {
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword", "#header-password$");
-        template.sendBodyAndProperty("log:mask?showProperties=true", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
+        template.sendBodyAndProperty("log:mask?showProperties=true", "password=passw0rd@", "propertyPassphrase",
+                "#property-passphrase$");
         context.stop();
     }
 
@@ -54,7 +55,8 @@ public class LogMaskTest {
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword", "#header-password$");
-        template.sendBodyAndProperty("log:no-mask?showProperties=true&logMask=false", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
+        template.sendBodyAndProperty("log:no-mask?showProperties=true&logMask=false", "password=passw0rd@",
+                "propertyPassphrase", "#property-passphrase$");
         context.stop();
     }
 

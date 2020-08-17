@@ -53,7 +53,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     @Override
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
-        Boolean object = (Boolean)request.getAttribute(MultiPartFilter.MULTIPART);
+        Boolean object = (Boolean) request.getAttribute(MultiPartFilter.MULTIPART);
         if (object != null && object) {
             Collection<Part> parts;
             try {
@@ -72,8 +72,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                     Object value = am.getAttachment(name);
                     Map<String, Object> headers = message.getHeaders();
                     if (getHeaderFilterStrategy() != null
-                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())
-                        && name != null) {
+                            && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())
+                            && name != null) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
 
@@ -91,7 +91,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         Map<String, Object> headers = message.getHeaders();
         // remove Content-Encoding from request
         if (request instanceof org.eclipse.jetty.server.Request) {
-            org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request)request;
+            org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request) request;
             jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
         }
 
@@ -99,14 +99,15 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
+            String name = (String) names.nextElement();
             if (am.getAttachment(name) != null) {
                 DataHandler dh = am.getAttachment(name);
                 Object value = dh;
                 if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
                     value = request.getParameter(name);
                 }
-                if (getHeaderFilterStrategy() != null && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                if (getHeaderFilterStrategy() != null
+                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
                     HttpHelper.appendHeader(headers, name, value);
                 }
                 continue;
@@ -118,7 +119,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
             if (values != null) {
                 for (String value : values) {
-                    if (getHeaderFilterStrategy() != null && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    if (getHeaderFilterStrategy() != null
+                            && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
                 }

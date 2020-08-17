@@ -33,7 +33,10 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String apiVersion, String action, String tableName, String sysId) throws Exception {
+    protected void doProcess(
+            Exchange exchange, Class<?> requestModel, Class<?> responseModel, String apiVersion, String action,
+            String tableName, String sysId)
+            throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
             response = retrieveRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
@@ -57,118 +60,128 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * https://instance.service-now.com/api/now/table/{tableName}
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response retrieveRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
+    private Response retrieveRecord(
+            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            throws Exception {
         return ObjectHelper.isEmpty(sysId)
-            ? client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(apiVersion)
-                .path("table")
-                .path(tableName)
-                .query(ServiceNowParams.SYSPARM_QUERY, in)
-                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-                .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
-                .query(ServiceNowParams.SYSPARM_FIELDS, in)
-                .query(ServiceNowParams.SYSPARM_LIMIT, in)
-                .query(ServiceNowParams.SYSPARM_VIEW, in)
-                .query(responseModel)
-                .invoke(HttpMethod.GET)
-            : client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(apiVersion)
-                .path("table")
-                .path(tableName)
-                .path(sysId)
-                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-                .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
-                .query(ServiceNowParams.SYSPARM_FIELDS, in)
-                .query(ServiceNowParams.SYSPARM_VIEW, in)
-                .query(responseModel)
-                .invoke(HttpMethod.GET);
+                ? client.reset()
+                        .types(MediaType.APPLICATION_JSON_TYPE)
+                        .path("now")
+                        .path(apiVersion)
+                        .path("table")
+                        .path(tableName)
+                        .query(ServiceNowParams.SYSPARM_QUERY, in)
+                        .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                        .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
+                        .query(ServiceNowParams.SYSPARM_FIELDS, in)
+                        .query(ServiceNowParams.SYSPARM_LIMIT, in)
+                        .query(ServiceNowParams.SYSPARM_VIEW, in)
+                        .query(responseModel)
+                        .invoke(HttpMethod.GET)
+                : client.reset()
+                        .types(MediaType.APPLICATION_JSON_TYPE)
+                        .path("now")
+                        .path(apiVersion)
+                        .path("table")
+                        .path(tableName)
+                        .path(sysId)
+                        .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                        .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
+                        .query(ServiceNowParams.SYSPARM_FIELDS, in)
+                        .query(ServiceNowParams.SYSPARM_VIEW, in)
+                        .query(responseModel)
+                        .invoke(HttpMethod.GET);
     }
 
     /*
      * POST
      * https://instance.service-now.com/api/now/table/{tableName}
      */
-    private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName) throws Exception {
+    private Response createRecord(
+            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName)
+            throws Exception {
         validateBody(in, requestModel);
         return client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("table")
-            .path(tableName)
-            .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-            .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
-            .query(ServiceNowParams.SYSPARM_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
-            .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
-            .query(ServiceNowParams.SYSPARM_VIEW, in)
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody());
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("table")
+                .path(tableName)
+                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
+                .query(ServiceNowParams.SYSPARM_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
+                .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
+                .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
     }
 
     /*
      * PUT
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response modifyRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
+    private Response modifyRecord(
+            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            throws Exception {
         validateBody(in, requestModel);
         return client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("table")
-            .path(tableName)
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-            .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
-            .query(ServiceNowParams.SYSPARM_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
-            .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
-            .query(ServiceNowParams.SYSPARM_VIEW, in)
-            .query(responseModel)
-            .invoke(HttpMethod.PUT, in.getMandatoryBody());
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("table")
+                .path(tableName)
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
+                .query(ServiceNowParams.SYSPARM_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
+                .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
+                .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
+                .invoke(HttpMethod.PUT, in.getMandatoryBody());
     }
 
     /*
      * DELETE
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response deleteRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
+    private Response deleteRecord(
+            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            throws Exception {
         return client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("table")
-            .path(tableName)
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .query(responseModel)
-            .invoke(HttpMethod.DELETE);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("table")
+                .path(tableName)
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .query(responseModel)
+                .invoke(HttpMethod.DELETE);
     }
 
     /*
      * PATCH
      * http://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response updateRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
+    private Response updateRecord(
+            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            throws Exception {
         validateBody(in, requestModel);
         return client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("table")
-            .path(tableName)
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-            .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
-            .query(ServiceNowParams.SYSPARM_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
-            .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
-            .query(ServiceNowParams.SYSPARM_VIEW, in)
-            .query(responseModel)
-            .invoke("PATCH", in.getMandatoryBody());
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("table")
+                .path(tableName)
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
+                .query(ServiceNowParams.SYSPARM_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
+                .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
+                .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
+                .invoke("PATCH", in.getMandatoryBody());
     }
 }

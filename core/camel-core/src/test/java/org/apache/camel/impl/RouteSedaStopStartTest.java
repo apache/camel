@@ -46,7 +46,7 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Stopped", ((StatefulService)route).getStatus().name());
+            assertEquals("Stopped", ((StatefulService) route).getStatus().name());
         }
 
         template.sendBody("seda:foo", "B");
@@ -63,7 +63,7 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Started", ((StatefulService)route).getStatus().name());
+            assertEquals("Started", ((StatefulService) route).getStatus().name());
         }
     }
 

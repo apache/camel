@@ -228,5 +228,3 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         }
     }
 }
-
-

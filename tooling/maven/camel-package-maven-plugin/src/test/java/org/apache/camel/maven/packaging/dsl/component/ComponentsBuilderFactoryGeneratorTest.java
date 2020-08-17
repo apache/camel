@@ -34,12 +34,14 @@ class ComponentsBuilderFactoryGeneratorTest {
 
     @Test
     public void testIfCreatesClassCorrectly() throws IOException {
-        final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
+        final String json = PackageHelper.loadText(new File(
+                Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
-        final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator.generateClass(new HashSet<>(Collections.singletonList(componentModel)),
-                getClass().getClassLoader(),
-                "org.apache.camel.builder.component");
+        final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator
+                = ComponentsBuilderFactoryGenerator.generateClass(new HashSet<>(Collections.singletonList(componentModel)),
+                        getClass().getClassLoader(),
+                        "org.apache.camel.builder.component");
 
         final String classCode = componentsBuilderFactoryGenerator.printClassAsString();
 
@@ -47,7 +49,8 @@ class ComponentsBuilderFactoryGeneratorTest {
 
         assertTrue(classCode.contains("package org.apache.camel.builder.component;"));
 
-        assertTrue(classCode.contains("static org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.KafkaComponentBuilder kafka()"));
+        assertTrue(classCode.contains(
+                "static org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.KafkaComponentBuilder kafka()"));
         assertTrue(classCode.contains("return org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.kafka();"));
     }
 }

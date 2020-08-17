@@ -28,7 +28,7 @@ import org.apache.camel.model.dataformat.UniVocityHeader;
 public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataFormat> extends DataFormatReifier<T> {
 
     public UniVocityAbstractDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (T)definition);
+        super(camelContext, (T) definition);
     }
 
     @Override
@@ -50,8 +50,7 @@ public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataF
     }
 
     /**
-     * Gets only the headers with non-null and non-empty names. It returns
-     * {@code null} if there's no such headers.
+     * Gets only the headers with non-null and non-empty names. It returns {@code null} if there's no such headers.
      *
      * @return The headers with non-null and non-empty names
      */

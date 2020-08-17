@@ -68,8 +68,10 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-        assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
         assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
 
         GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
@@ -90,7 +92,8 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
 
         GetQueryResultsIterable result = message.getBody(GetQueryResultsIterable.class);
         List<GetQueryResultsResponse> responses = new ArrayList<>();
@@ -112,7 +115,8 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
 
         GetQueryResultsResponse result = message.getBody(GetQueryResultsResponse.class);
         assertEquals(1, result.resultSet().rows().size());
@@ -132,8 +136,10 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-        assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
         assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
 
         String result = message.getBody(String.class);
@@ -158,9 +164,9 @@ public class AthenaComponentTest extends CamelTestSupport {
 
         ListQueryExecutionsResponse result = message.getBody(ListQueryExecutionsResponse.class);
         assertEquals(Arrays.asList(
-            "11111111-1111-1111-1111-111111111111",
-            "22222222-2222-2222-2222-222222222222"),
-            result.queryExecutionIds());
+                "11111111-1111-1111-1111-111111111111",
+                "22222222-2222-2222-2222-222222222222"),
+                result.queryExecutionIds());
         assertEquals("next-token", result.nextToken());
 
         assertMockEndpointsSatisfied();
@@ -178,7 +184,8 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
         assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
         assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) >= 0);
 
@@ -202,9 +209,10 @@ public class AthenaComponentTest extends CamelTestSupport {
         }).getMessage();
 
         assertEquals("11111111-1111-1111-1111-111111111111",
-            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
         assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-        assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
         assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
@@ -218,23 +226,25 @@ public class AthenaComponentTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
-        client.setStartQueryExecutionResults(new LinkedList<>(Arrays.asList(
-            "11111111-1111-1111-1111-111111111111",
-            "22222222-2222-2222-2222-222222222222"
-        )));
+        client.setStartQueryExecutionResults(new LinkedList<>(
+                Arrays.asList(
+                        "11111111-1111-1111-1111-111111111111",
+                        "22222222-2222-2222-2222-222222222222")));
 
-        client.setGetQueryExecutionResults(new LinkedList<>(Arrays.asList(
-            QueryExecution.builder()
-                .queryExecutionId("11111111-1111-1111-1111-111111111111")
-                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
-                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-                .build(),
-            QueryExecution.builder()
-                .queryExecutionId("22222222-2222-2222-2222-222222222222")
-                .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
-                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-                .build()
-        )));
+        client.setGetQueryExecutionResults(new LinkedList<>(
+                Arrays.asList(
+                        QueryExecution.builder()
+                                .queryExecutionId("11111111-1111-1111-1111-111111111111")
+                                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
+                                .resultConfiguration(
+                                        ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                                .build(),
+                        QueryExecution.builder()
+                                .queryExecutionId("22222222-2222-2222-2222-222222222222")
+                                .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
+                                .resultConfiguration(
+                                        ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                                .build())));
 
         Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
             @Override
@@ -249,9 +259,11 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("22222222-2222-2222-2222-222222222222", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("22222222-2222-2222-2222-222222222222",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
         assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-        assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         assertEquals(2, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
         assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
@@ -265,23 +277,25 @@ public class AthenaComponentTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
-        client.setStartQueryExecutionResults(new LinkedList<>(Arrays.asList(
-            "11111111-1111-1111-1111-111111111111",
-            "22222222-2222-2222-2222-222222222222"
-        )));
+        client.setStartQueryExecutionResults(new LinkedList<>(
+                Arrays.asList(
+                        "11111111-1111-1111-1111-111111111111",
+                        "22222222-2222-2222-2222-222222222222")));
 
-        client.setGetQueryExecutionResults(new LinkedList<>(Arrays.asList(
-            QueryExecution.builder()
-                .queryExecutionId("11111111-1111-1111-1111-111111111111")
-                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
-                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-                .build(),
-            QueryExecution.builder()
-                .queryExecutionId("22222222-2222-2222-2222-222222222222")
-                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
-                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-                .build()
-        )));
+        client.setGetQueryExecutionResults(new LinkedList<>(
+                Arrays.asList(
+                        QueryExecution.builder()
+                                .queryExecutionId("11111111-1111-1111-1111-111111111111")
+                                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
+                                .resultConfiguration(
+                                        ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                                .build(),
+                        QueryExecution.builder()
+                                .queryExecutionId("22222222-2222-2222-2222-222222222222")
+                                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
+                                .resultConfiguration(
+                                        ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                                .build())));
 
         Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
             @Override
@@ -296,9 +310,11 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("22222222-2222-2222-2222-222222222222", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("22222222-2222-2222-2222-222222222222",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
         assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-        assertEquals(QueryExecutionState.FAILED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.FAILED,
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         assertEquals(2, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
         assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
@@ -312,17 +328,18 @@ public class AthenaComponentTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         // 3333... will be returned on the first call to startQueryExecution
-        client.setStartQueryExecutionResults(new LinkedList<>(Collections.singletonList(
-            "33333333-3333-3333-3333-333333333333"
-        )));
+        client.setStartQueryExecutionResults(new LinkedList<>(
+                Collections.singletonList(
+                        "33333333-3333-3333-3333-333333333333")));
 
-        client.setGetQueryExecutionResults(new LinkedList<>(Collections.singletonList(
-            QueryExecution.builder()
-                .queryExecutionId("33333333-3333-3333-3333-333333333333") // causes 500ms sleep
-                .status(QueryExecutionStatus.builder().state(QueryExecutionState.RUNNING).build()) // not complete
-                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-                .build()
-        )));
+        client.setGetQueryExecutionResults(new LinkedList<>(
+                Collections.singletonList(
+                        QueryExecution.builder()
+                                .queryExecutionId("33333333-3333-3333-3333-333333333333") // causes 500ms sleep
+                                .status(QueryExecutionStatus.builder().state(QueryExecutionState.RUNNING).build()) // not complete
+                                .resultConfiguration(
+                                        ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                                .build())));
 
         Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
             @Override
@@ -337,9 +354,11 @@ public class AthenaComponentTest extends CamelTestSupport {
             }
         }).getMessage();
 
-        assertEquals("33333333-3333-3333-3333-333333333333", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("33333333-3333-3333-3333-333333333333",
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
         assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-        assertEquals(QueryExecutionState.RUNNING, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals(QueryExecutionState.RUNNING,
+                message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
         assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
         assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 500);
@@ -354,20 +373,20 @@ public class AthenaComponentTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:getQueryExecution")
-                    .to("aws2-athena://label?operation=getQueryExecution")
-                    .to("mock:result");
+                        .to("aws2-athena://label?operation=getQueryExecution")
+                        .to("mock:result");
 
                 from("direct:getQueryResults")
-                    .to("aws2-athena://label?operation=getQueryResults")
-                    .to("mock:result");
+                        .to("aws2-athena://label?operation=getQueryResults")
+                        .to("mock:result");
 
                 from("direct:listQueryExecutions")
-                    .to("aws2-athena://label?operation=listQueryExecutions")
-                    .to("mock:result");
+                        .to("aws2-athena://label?operation=listQueryExecutions")
+                        .to("mock:result");
 
                 from("direct:startQueryExecution")
-                    .to("aws2-athena://label")
-                    .to("mock:result");
+                        .to("aws2-athena://label")
+                        .to("mock:result");
             }
         };
     }

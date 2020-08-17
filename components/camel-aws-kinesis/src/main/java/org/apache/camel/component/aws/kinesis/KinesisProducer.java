@@ -58,7 +58,7 @@ public class KinesisProducer extends DefaultProducer {
         }
         return putRecordRequest;
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

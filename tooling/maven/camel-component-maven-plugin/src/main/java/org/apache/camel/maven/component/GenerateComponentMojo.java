@@ -39,7 +39,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * To be used by 3rd party Camel component developers to generate metadata.
  */
 @Mojo(name = "generate", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class GenerateComponentMojo extends AbstractGenerateMojo {
 
     @Parameter(property = "project", required = true, readonly = true)
@@ -63,7 +63,7 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         // do not sync pom file for this goal as we are standalone
         project.setContextValue("syncPomFile", "false");
 
-       // jandex
+        // jandex
         invoke(PackageJandexMojo.class);
         // generate-type-converter-loader
         invoke(TypeConverterLoaderGeneratorMojo.class);

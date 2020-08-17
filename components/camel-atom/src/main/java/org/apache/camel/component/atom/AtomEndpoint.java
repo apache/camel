@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
  * Poll Atom RSS feeds.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true,
-        category = {Category.RSS}, lenientProperties = true)
+             category = { Category.RSS }, lenientProperties = true)
 public class AtomEndpoint extends FeedEndpoint {
 
     public AtomEndpoint() {
@@ -44,7 +44,7 @@ public class AtomEndpoint extends FeedEndpoint {
     @Override
     public Exchange createExchange(Object feed) {
         Exchange exchange = createExchangeWithFeedHeader(feed, AtomConstants.ATOM_FEED);
-        exchange.getIn().setBody(((Feed)feed).getEntries());
+        exchange.getIn().setBody(((Feed) feed).getEntries());
         return exchange;
     }
 
@@ -56,7 +56,9 @@ public class AtomEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) throws Exception {
+    protected FeedPollingConsumer createEntryPollingConsumer(
+            FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries)
+            throws Exception {
         AtomEntryPollingConsumer answer = new AtomEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
         configureConsumer(answer);
         return answer;

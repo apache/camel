@@ -102,7 +102,8 @@ public class VertXReactiveExecutor extends ServiceSupport implements CamelContex
         vertx.executeBlocking(future -> {
             task.run();
             future.complete();
-        }, res -> { });
+        }, res -> {
+        });
     }
 
     @Override

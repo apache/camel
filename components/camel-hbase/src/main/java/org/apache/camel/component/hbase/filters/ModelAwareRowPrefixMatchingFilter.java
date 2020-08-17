@@ -33,8 +33,7 @@ public class ModelAwareRowPrefixMatchingFilter extends ModelAwareFilterList {
     }
 
     /**
-     * Applies the message to {@link org.apache.hadoop.hbase.filter.Filter} to
-     * context.
+     * Applies the message to {@link org.apache.hadoop.hbase.filter.Filter} to context.
      */
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {

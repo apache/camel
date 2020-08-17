@@ -80,7 +80,8 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
         // still no policy found then try lookup the platform transaction
         // manager and use it as policy
         if (answer == null && type == TransactedPolicy.class) {
-            Class<?> tmClazz = camelContext.getClassResolver().resolveClass("org.springframework.transaction.PlatformTransactionManager");
+            Class<?> tmClazz = camelContext.getClassResolver()
+                    .resolveClass("org.springframework.transaction.PlatformTransactionManager");
             if (tmClazz != null) {
                 // see if we can find the platform transaction manager in the
                 // registry
@@ -100,28 +101,34 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
                     // route building
                     Object transactionManager = maps.values().iterator().next();
                     LOG.debug("One instance of PlatformTransactionManager found in registry: {}", transactionManager);
-                    Class<?> txClazz = camelContext.getClassResolver().resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
+                    Class<?> txClazz = camelContext.getClassResolver()
+                            .resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
                     if (txClazz != null) {
-                        LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}", transactionManager);
-                        TransactedPolicy txPolicy = org.apache.camel.support.ObjectHelper.newInstance(txClazz, TransactedPolicy.class);
+                        LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}",
+                                transactionManager);
+                        TransactedPolicy txPolicy
+                                = org.apache.camel.support.ObjectHelper.newInstance(txClazz, TransactedPolicy.class);
                         Method method;
                         try {
                             method = txClazz.getMethod("setTransactionManager", tmClazz);
                         } catch (NoSuchMethodException e) {
-                            throw new RuntimeCamelException("Cannot get method setTransactionManager(PlatformTransactionManager) on class: " + txClazz);
+                            throw new RuntimeCamelException(
+                                    "Cannot get method setTransactionManager(PlatformTransactionManager) on class: " + txClazz);
                         }
                         org.apache.camel.support.ObjectHelper.invokeMethod(method, txPolicy, transactionManager);
                         return txPolicy;
                     } else {
                         // camel-spring is missing on the classpath
-                        throw new RuntimeCamelException("Cannot create a transacted policy as camel-spring.jar is not on the classpath!");
+                        throw new RuntimeCamelException(
+                                "Cannot create a transacted policy as camel-spring.jar is not on the classpath!");
                     }
                 } else {
                     if (maps.isEmpty()) {
                         throw new NoSuchBeanException(null, "PlatformTransactionManager");
                     } else {
-                        throw new IllegalArgumentException("Found " + maps.size() + " PlatformTransactionManager in registry. "
-                                + "Cannot determine which one to use. Please configure a TransactionTemplate on the transacted policy.");
+                        throw new IllegalArgumentException(
+                                "Found " + maps.size() + " PlatformTransactionManager in registry. "
+                                                           + "Cannot determine which one to use. Please configure a TransactionTemplate on the transacted policy.");
                     }
                 }
             }

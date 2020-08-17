@@ -17,7 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 public enum MongoDbOperation {
-    
+
     // read operations
     findById,
     findOneByQuery,
@@ -28,22 +28,22 @@ public enum MongoDbOperation {
 
     // create/update operations
     insert,
-    save, 
-    update, 
-    
+    save,
+    update,
+
     // delete operations
-    remove, 
+    remove,
 
     //Bulk operations
     bulkWrite,
 
     // aggregate
     aggregate,
-    
+
     // others
-    getDbStats, 
-    getColStats, 
+    getDbStats,
+    getColStats,
     count,
     command
-    
+
 }

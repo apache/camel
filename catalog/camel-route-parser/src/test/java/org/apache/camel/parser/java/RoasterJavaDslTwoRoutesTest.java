@@ -42,10 +42,11 @@ public class RoasterJavaDslTwoRoutesTest extends CamelTestSupport {
 
     @Test
     void parseTree() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java"));
 
         List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, ".",
-            "src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java", true);
+                "src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java", true);
         assertEquals(2, list.size());
 
         CamelNodeDetails details = list.get(0);

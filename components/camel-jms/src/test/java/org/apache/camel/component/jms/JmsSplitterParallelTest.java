@@ -59,17 +59,17 @@ public class JmsSplitterParallelTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(body().tokenize(",")).parallelProcessing()
+                        .split(body().tokenize(",")).parallelProcessing()
                         .to("log:before")
                         .to(ExchangePattern.InOut, getUri())
                         .to("log:after")
                         .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from(getUri())
-                    .transform(body().prepend("Bye "))
-                    .to("mock:reply");
+                        .transform(body().prepend("Bye "))
+                        .to("mock:reply");
             }
         };
     }

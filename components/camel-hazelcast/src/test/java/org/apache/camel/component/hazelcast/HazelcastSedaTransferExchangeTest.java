@@ -59,7 +59,7 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
         template.send("direct:foo", exchange);
 
         assertThrows(AssertionError.class,
-            () -> assertMockEndpointsSatisfied());
+                () -> assertMockEndpointsSatisfied());
 
         mock.reset();
     }

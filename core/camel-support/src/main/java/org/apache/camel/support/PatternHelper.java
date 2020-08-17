@@ -38,9 +38,9 @@ public final class PatternHelper {
      * <li>otherwise returns false</li>
      * </ul>
      *
-     * @param name    the name
-     * @param pattern a pattern to match
-     * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @param  name    the name
+     * @param  pattern a pattern to match
+     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
     public static boolean matchPattern(String name, String pattern) {
         if (name == null || pattern == null) {
@@ -73,9 +73,9 @@ public final class PatternHelper {
      * <li>otherwise returns false</li>
      * </ul>
      *
-     * @param name    the name
-     * @param pattern a pattern to match
-     * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @param  name    the name
+     * @param  pattern a pattern to match
+     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
     private static boolean matchWildcard(String name, String pattern) {
         // we have wildcard support in that hence you can match with: file* to match any file endpoints
@@ -95,9 +95,9 @@ public final class PatternHelper {
      * <li>otherwise returns false</li>
      * </ul>
      *
-     * @param name    the name
-     * @param pattern a pattern to match
-     * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @param  name    the name
+     * @param  pattern a pattern to match
+     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
     private static boolean matchRegex(String name, String pattern) {
         // match by regular expression

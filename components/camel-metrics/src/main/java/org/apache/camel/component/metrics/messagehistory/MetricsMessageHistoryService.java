@@ -42,7 +42,8 @@ import org.apache.camel.support.service.ServiceSupport;
  * Service holding the {@link MetricsMessageHistory} which registers all message history metrics.
  */
 @ManagedResource(description = "MetricsMessageHistory")
-public final class MetricsMessageHistoryService extends ServiceSupport implements CamelContextAware, StaticService, MetricsMessageHistoryMBean {
+public final class MetricsMessageHistoryService extends ServiceSupport
+        implements CamelContextAware, StaticService, MetricsMessageHistoryMBean {
 
     private CamelContext camelContext;
     private MetricRegistry metricsRegistry;
@@ -132,7 +133,8 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
             // they both use same units so reuse
             this.secondsMapper = this.mapper;
         } else {
-            this.secondsMapper = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
+            this.secondsMapper
+                    = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
         }
     }
 

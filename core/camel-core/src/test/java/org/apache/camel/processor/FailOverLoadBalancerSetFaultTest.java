@@ -47,7 +47,8 @@ public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").loadBalance().failover(1, false, false, IOException.class).to("seda:failover1", "seda:failover2").end();
+                from("direct:start").loadBalance().failover(1, false, false, IOException.class)
+                        .to("seda:failover1", "seda:failover2").end();
 
                 from("seda:failover1").to("mock:failover1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -86,11 +86,11 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
             public void configure() throws Exception {
                 from("direct:start")
                         .aggregate(new ZipAggregationStrategy(false, true))
-                            .constant(true)
-                            .completionTimeout(50)
-                            .to("file:" + TEST_DIR)
-                            .to("mock:aggregateToZipEntry")
-                            .log("Done processing zip file: ${header.CamelFileName}");
+                        .constant(true)
+                        .completionTimeout(50)
+                        .to("file:" + TEST_DIR)
+                        .to("mock:aggregateToZipEntry")
+                        .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
 

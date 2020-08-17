@@ -37,7 +37,8 @@ public class CamelActivityImplementation extends ActivityImplementationBase {
     private final SWFActivityConsumer swfWorkflowConsumer;
     private final ActivityExecutionContextProviderImpl contextProvider = new ActivityExecutionContextProviderImpl();
 
-    public CamelActivityImplementation(SWFActivityConsumer swfWorkflowConsumer, ActivityTypeRegistrationOptions activityTypeRegistrationOptions,
+    public CamelActivityImplementation(SWFActivityConsumer swfWorkflowConsumer,
+                                       ActivityTypeRegistrationOptions activityTypeRegistrationOptions,
                                        ActivityTypeExecutionOptions activityTypeExecutionOptions, DataConverter converter) {
         this.swfWorkflowConsumer = swfWorkflowConsumer;
         this.registrationOptions = activityTypeRegistrationOptions;
@@ -56,7 +57,8 @@ public class CamelActivityImplementation extends ActivityImplementationBase {
     }
 
     @Override
-    protected String execute(String input, ActivityExecutionContext context) throws ActivityFailureException, CancellationException {
+    protected String execute(String input, ActivityExecutionContext context)
+            throws ActivityFailureException, CancellationException {
         Object[] inputParameters = converter.fromData(input, Object[].class);
         CurrentActivityExecutionContext.set(context);
         Object result = null;
@@ -67,7 +69,8 @@ public class CamelActivityImplementation extends ActivityImplementationBase {
         try {
             result = swfWorkflowConsumer.processActivity(inputParameters, taskToken);
         } catch (InvocationTargetException invocationException) {
-            throwActivityFailureException(invocationException.getTargetException() != null ? invocationException.getTargetException() : invocationException);
+            throwActivityFailureException(invocationException.getTargetException() != null
+                    ? invocationException.getTargetException() : invocationException);
         } catch (IllegalArgumentException illegalArgumentException) {
             throwActivityFailureException(illegalArgumentException);
         } catch (IllegalAccessException illegalAccessException) {

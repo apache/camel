@@ -65,7 +65,7 @@ public class ServiceComponent extends DefaultComponent {
         // definition
         final Map<String, String> params = new HashMap<>();
 
-        for (Map.Entry<String, Object> entry: parameters.entrySet()) {
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (!entry.getKey().startsWith(ServiceDefinition.SERVICE_META_PREFIX)) {
                 continue;
             }
@@ -84,12 +84,11 @@ public class ServiceComponent extends DefaultComponent {
         parameters.keySet().removeAll(params.keySet());
 
         return new ServiceEndpoint(
-            uri,
-            this,
-            service,
-            params,
-            URISupport.appendParametersToURI(delegateUri, parameters)
-        );
+                uri,
+                this,
+                service,
+                params,
+                URISupport.appendParametersToURI(delegateUri, parameters));
     }
 
     public ServiceRegistry getService() {
@@ -122,8 +121,7 @@ public class ServiceComponent extends DefaultComponent {
     private ServiceRegistry getServiceRegistry() {
         if (service == null) {
             return ServiceRegistryHelper.lookupService(getCamelContext(), serviceSelector).orElseThrow(
-                () -> new IllegalStateException("No cluster service found")
-            );
+                    () -> new IllegalStateException("No cluster service found"));
         }
 
         return service;

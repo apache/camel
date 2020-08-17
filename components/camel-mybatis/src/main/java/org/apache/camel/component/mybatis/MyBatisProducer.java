@@ -241,7 +241,8 @@ public class MyBatisProducer extends DefaultProducer {
             MappedStatement ms = session.getConfiguration().getMappedStatement(statement);
             if (ms != null && ms.getStatementType() == org.apache.ibatis.mapping.StatementType.CALLABLE) {
                 if (result == null) {
-                    LOG.trace("Setting result as existing body as MyBatis statement type is Callable, and there was no result.");
+                    LOG.trace(
+                            "Setting result as existing body as MyBatis statement type is Callable, and there was no result.");
                     answer.setBody(exchange.getIn().getBody());
                 } else {
                     if (outputHeader != null) {

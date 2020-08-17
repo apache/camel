@@ -47,39 +47,38 @@ public class SnakeYAMLTest extends CamelTestSupport {
     @Parameters
     public static Collection yamlCases() {
         return Arrays.asList(new Object[][] {
-            {
-                createDataFormat(null),
-                createTestMap(),
-                "{name: Camel}"
-            },
-            {
-                createDataFormat(TestPojo.class),
-                createTestPojo(),
-                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"
-            },
-            {
-                createPrettyFlowDataFormat(TestPojo.class, true),
-                createTestPojo(),
-                "!!org.apache.camel.component.snakeyaml.model.TestPojo {\n  name: Camel\n}"
-            },
-            {
-                createClassTagDataFormat(TestPojo.class, new Tag("!tpojo")),
-                createTestPojo(),
-                "!tpojo {name: Camel}"
-            }
+                {
+                        createDataFormat(null),
+                        createTestMap(),
+                        "{name: Camel}"
+                },
+                {
+                        createDataFormat(TestPojo.class),
+                        createTestPojo(),
+                        "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"
+                },
+                {
+                        createPrettyFlowDataFormat(TestPojo.class, true),
+                        createTestPojo(),
+                        "!!org.apache.camel.component.snakeyaml.model.TestPojo {\n  name: Camel\n}"
+                },
+                {
+                        createClassTagDataFormat(TestPojo.class, new Tag("!tpojo")),
+                        createTestPojo(),
+                        "!tpojo {name: Camel}"
+                }
         });
     }
 
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
         SnakeYAMLTestHelper.marshalAndUnmarshal(
-            context(),
-            body,
-            "mock:reverse",
-            "direct:in",
-            "direct:back",
-            expected
-        );
+                context(),
+                body,
+                "mock:reverse",
+                "direct:in",
+                "direct:back",
+                expected);
     }
 
     @Override
@@ -88,10 +87,10 @@ public class SnakeYAMLTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                    .marshal(format);
+                        .marshal(format);
                 from("direct:back")
-                    .unmarshal(format)
-                    .to("mock:reverse");
+                        .unmarshal(format)
+                        .to("mock:reverse");
             }
         };
     }

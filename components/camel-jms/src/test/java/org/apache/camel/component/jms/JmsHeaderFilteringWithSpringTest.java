@@ -23,15 +23,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
-    
+
     private ClassPathXmlApplicationContext applicationContext;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {   
+    protected CamelContext createCamelContext() throws Exception {
         applicationContext = createApplicationContext();
         return SpringCamelContext.springCamelContext(applicationContext, true);
-    }    
-    
+    }
+
     private ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsHeaderFilteringWithSpring.xml");
     }
@@ -42,6 +42,5 @@ public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
-}
 
+}

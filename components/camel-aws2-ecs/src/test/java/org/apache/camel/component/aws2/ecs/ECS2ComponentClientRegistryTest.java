@@ -32,7 +32,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain");
+        ECS2Endpoint endpoint = (ECS2Endpoint) component.createEndpoint("aws2-ecs://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getEcsClient());
     }
@@ -45,25 +45,26 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
             component.createEndpoint("aws2-ecs://TestDomain");
         });
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        ECS2Endpoint endpoint = (ECS2Endpoint) component
+                .createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
+        ECS2Endpoint endpoint = (ECS2Endpoint) component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }

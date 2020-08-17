@@ -31,7 +31,8 @@ public class CounterProducer extends AbstractMetricsProducer {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
+            throws Exception {
         Message in = exchange.getIn();
         Counter counter = registry.counter(metricsName);
         Long increment = endpoint.getIncrement();

@@ -33,7 +33,7 @@ public class EventNotifierCallback implements AsyncCallback {
     private final boolean sending;
 
     public EventNotifierCallback(AsyncCallback originalCallback, Exchange exchange,
-            Endpoint endpoint) {
+                                 Endpoint endpoint) {
         this.originalCallback = originalCallback;
         this.exchange = exchange;
         this.endpoint = endpoint;

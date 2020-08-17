@@ -143,7 +143,8 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
                         hits = 0L;
                     }
 
-                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    CompositeData data
+                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
                     answer.put(data);
                 }
             }

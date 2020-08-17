@@ -45,8 +45,8 @@ public class VmConsumer extends SedaConsumer implements CamelContextAware {
     /**
      * Strategy to prepare exchange for being processed by this consumer
      *
-     * @param exchange the exchange
-     * @return the exchange to process by this consumer.
+     * @param  exchange the exchange
+     * @return          the exchange to process by this consumer.
      */
     @Override
     protected Exchange prepareExchange(Exchange exchange) {

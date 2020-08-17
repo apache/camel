@@ -34,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSupport {
 
     /**
-     * Mapping of socket hashcode to two element tab ([connect() called, close()
-     * called])
+     * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
     private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
@@ -49,7 +48,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
 
     @Test
     public void testConnectionLeak() throws Exception {
-        for (String filename : new String[] {"claus.txt", "grzegorz.txt"}) {
+        for (String filename : new String[] { "claus.txt", "grzegorz.txt" }) {
             try {
                 sendFile(getFtpUrl(), "Hello World", filename);
             } catch (Exception ignored) {
@@ -66,8 +65,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
     }
 
     /**
-     * {@link SocketFactory} which creates {@link Socket}s that expose
-     * statistics about
+     * {@link SocketFactory} which creates {@link Socket}s that expose statistics about
      * {@link Socket#connect(SocketAddress)}/{@link Socket#close()} invocations
      */
     private class AuditingSocketFactory extends SocketFactory {
@@ -90,7 +88,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
         @Override
         public Socket createSocket() throws IOException {
             AuditingSocket socket = new AuditingSocket();
-            socketAudits.put(System.identityHashCode(socket), new boolean[] {false, false});
+            socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
             return socket;
         }
 

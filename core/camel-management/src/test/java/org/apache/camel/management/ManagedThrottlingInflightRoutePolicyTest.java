@@ -73,7 +73,7 @@ public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupp
             @Override
             public void configure() throws Exception {
                 from("direct:start").routePolicy(new ThrottlingInflightRoutePolicy())
-                    .to("log:foo").to("mock:result");
+                        .to("log:foo").to("mock:result");
             }
         };
     }

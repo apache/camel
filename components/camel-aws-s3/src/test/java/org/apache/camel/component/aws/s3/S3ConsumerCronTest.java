@@ -45,8 +45,9 @@ public class S3ConsumerCronTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client" + "&scheduler=spring&scheduler.cron=0/2+*+*+*+*+?" + "&sendEmptyMessageWhenIdle=true")
-                    .to("mock:result");
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client" + "&scheduler=spring&scheduler.cron=0/2+*+*+*+*+?"
+                     + "&sendEmptyMessageWhenIdle=true")
+                             .to("mock:result");
             }
         };
     }

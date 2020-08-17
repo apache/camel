@@ -54,11 +54,12 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100).choice().when(body().isEqualTo("A")).to("direct:a")
-                    .when(body().isEqualTo("B")).to("direct:b").when(body().isEqualTo("C")).to("direct:c").end() // end
-                                                                                                                 // choice
-                    .end() // end split
-                    .to("mock:result");
+                from("direct:start").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100)
+                        .choice().when(body().isEqualTo("A")).to("direct:a")
+                        .when(body().isEqualTo("B")).to("direct:b").when(body().isEqualTo("C")).to("direct:c").end() // end
+                        // choice
+                        .end() // end split
+                        .to("mock:result");
 
                 from("direct:a").delay(200).setBody(constant("A"));
 

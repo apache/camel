@@ -60,4 +60,3 @@ public class CustomIdIssuesTest extends SpringTestSupport {
         assertFalse(log.hasCustomIdAssigned());
     }
 }
-

@@ -22,10 +22,10 @@ public class IMAPProvider extends Provider {
 
     public IMAPProvider() {
         super(Type.STORE,
-                "imap",
-                "org.jvnet.mock_javamail.MockStore",
-                "Apache Software Foundation",
-                "1.0");
+              "imap",
+              "org.jvnet.mock_javamail.MockStore",
+              "Apache Software Foundation",
+              "1.0");
     }
 
 }

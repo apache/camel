@@ -43,7 +43,7 @@ public class OutgoingTextMessage extends OutgoingMessage {
     }
 
     public OutgoingTextMessage(String text, String parseMode, Boolean disableWebPagePreview,
-            ReplyMarkup replyMarkup) {
+                               ReplyMarkup replyMarkup) {
 
         this.text = text;
         this.parseMode = parseMode;
@@ -82,7 +82,7 @@ public class OutgoingTextMessage extends OutgoingMessage {
     public void setReplyMarkup(ReplyMarkup replyMarkup) {
         this.replyMarkup = replyMarkup;
     }
-    
+
     public static Builder builder() {
 
         return new Builder();

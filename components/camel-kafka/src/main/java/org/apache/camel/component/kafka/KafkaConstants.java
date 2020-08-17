@@ -46,4 +46,3 @@ public final class KafkaConstants {
         // Utility class
     }
 }
-

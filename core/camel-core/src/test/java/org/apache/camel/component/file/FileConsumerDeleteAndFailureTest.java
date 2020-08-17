@@ -51,15 +51,17 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).handled(true).useOriginalMessage().to("file://target/data/failed/error");
-                from("file://target/data/failed?delete=true&initialDelay=0&delay=10").setBody(simple("${body} IS processed!")).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if (body != null && body.startsWith("Kabom")) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                }).to("mock:result");
+                onException(IllegalArgumentException.class).handled(true).useOriginalMessage()
+                        .to("file://target/data/failed/error");
+                from("file://target/data/failed?delete=true&initialDelay=0&delay=10").setBody(simple("${body} IS processed!"))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if (body != null && body.startsWith("Kabom")) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        }).to("mock:result");
             }
         };
     }

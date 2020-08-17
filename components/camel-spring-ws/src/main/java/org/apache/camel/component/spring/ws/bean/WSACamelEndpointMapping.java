@@ -35,11 +35,10 @@ import org.springframework.ws.soap.addressing.server.AnnotationActionEndpointMap
 import org.springframework.ws.transport.WebServiceMessageSender;
 
 /**
- * Provides support for full WS-Addressing. Supported are faultAction and
- * response action. For more details look at @see
+ * Provides support for full WS-Addressing. Supported are faultAction and response action. For more details look at @see
  * {@link AbstractAddressingEndpointMapping}. Implementation of the
- * {@link org.springframework.ws.server.EndpointMapping} consumer interface that
- * uses the camel uri to map to a WS-Addressing {@code Action} header.
+ * {@link org.springframework.ws.server.EndpointMapping} consumer interface that uses the camel uri to map to a
+ * WS-Addressing {@code Action} header.
  * <p/>
  */
 public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping implements CamelSpringWSEndpointMapping {
@@ -67,7 +66,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
                 default:
                     throw new RuntimeCamelException(
                             "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+                                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             }
             // lookup for specific endpoint
             if (compositeOrSimpleKey != null && key.getLookupKey().equals(compositeOrSimpleKey)) {
@@ -93,7 +92,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
                 default:
                     throw new RuntimeCamelException(
                             "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+                                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             }
             // look up for less specific endpoint
             if (simpleKey != null && key.getLookupKey().equals(simpleKey)) {
@@ -105,14 +104,13 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     }
 
     /**
-     * Generate a lookupKey for a given WS-Addressing message using action
-     * property. The possible combination are:
+     * Generate a lookupKey for a given WS-Addressing message using action property. The possible combination are:
      * <ul>
      * <li>wsaAction</li>
      * <li>wsaAction:wsaGetTo</li>
      * </ul>
      *
-     * @param map
+     * @param  map
      * @return
      */
     protected String getActionCompositeLookupKey(MessageAddressingProperties map) {
@@ -130,14 +128,13 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     }
 
     /**
-     * Generate a lookupKey for a given WS-Addressing message using getTo
-     * property. The possible combination are:
+     * Generate a lookupKey for a given WS-Addressing message using getTo property. The possible combination are:
      * <ul>
      * <li>wsaGetTo</li>
      * <li>wsaGetTo:wsaAction</li>
      * </ul>
      *
-     * @param map
+     * @param  map
      * @return
      */
     protected String getToCompositeLookupKey(MessageAddressingProperties map) {
@@ -169,23 +166,22 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     }
 
     /**
-     * Configure message sender for wsa:replyTo from a camel route definition.
-     * The route definition has priority over this endpoint.
+     * Configure message sender for wsa:replyTo from a camel route definition. The route definition has priority over
+     * this endpoint.
      */
     @Override
     protected WebServiceMessageSender[] getMessageSenders(Object endpoint) {
         SpringWebserviceEndpoint camelEndpoint = getSpringWebserviceEndpoint(endpoint);
 
         if (camelEndpoint.getConfiguration().getMessageSender() != null) {
-            return new WebServiceMessageSender[] {camelEndpoint.getConfiguration().getMessageSender()};
+            return new WebServiceMessageSender[] { camelEndpoint.getConfiguration().getMessageSender() };
         }
 
         return super.getMessageSenders(endpoint);
     }
 
     /**
-     * Configure message id strategy for wsa:replyTo The route definition has
-     * priority over this endpoint.
+     * Configure message id strategy for wsa:replyTo The route definition has priority over this endpoint.
      */
     @Override
     protected MessageIdStrategy getMessageIdStrategy(Object endpoint) {
@@ -214,10 +210,11 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     }
 
     private SpringWebserviceEndpoint getSpringWebserviceEndpoint(Object endpoint) {
-        Assert.isInstanceOf(SpringWebserviceConsumer.class, endpoint, "Endpoint needs to be an instance of SpringWebserviceConsumer");
+        Assert.isInstanceOf(SpringWebserviceConsumer.class, endpoint,
+                "Endpoint needs to be an instance of SpringWebserviceConsumer");
 
-        SpringWebserviceConsumer springWebserviceConsumer = (SpringWebserviceConsumer)endpoint;
-        return (SpringWebserviceEndpoint)springWebserviceConsumer.getEndpoint();
+        SpringWebserviceConsumer springWebserviceConsumer = (SpringWebserviceConsumer) endpoint;
+        return (SpringWebserviceEndpoint) springWebserviceConsumer.getEndpoint();
     }
 
     protected URI getDefaultResponseAction(Object endpoint, MessageAddressingProperties requestMap) {
@@ -249,16 +246,14 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     }
 
     /**
-     * Returns the suffix to add to request <code>Action</code>s for reply
-     * messages.
+     * Returns the suffix to add to request <code>Action</code>s for reply messages.
      */
     public String getOutputActionSuffix() {
         return outputActionSuffix;
     }
 
     /**
-     * Sets the suffix to add to request <code>Action</code>s for reply
-     * messages.
+     * Sets the suffix to add to request <code>Action</code>s for reply messages.
      *
      * @see #DEFAULT_OUTPUT_ACTION_SUFFIX
      */
@@ -268,16 +263,14 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     }
 
     /**
-     * Returns the suffix to add to request <code>Action</code>s for reply fault
-     * messages.
+     * Returns the suffix to add to request <code>Action</code>s for reply fault messages.
      */
     public String getFaultActionSuffix() {
         return faultActionSuffix;
     }
 
     /**
-     * Sets the suffix to add to request <code>Action</code>s for reply fault
-     * messages.
+     * Sets the suffix to add to request <code>Action</code>s for reply fault messages.
      *
      * @see #DEFAULT_FAULT_ACTION_SUFFIX
      */

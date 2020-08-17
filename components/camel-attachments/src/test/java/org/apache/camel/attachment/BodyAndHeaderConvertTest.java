@@ -71,6 +71,7 @@ public class BodyAndHeaderConvertTest {
         AttachmentMessage message = exchange.getIn(AttachmentMessage.class);
         message.setBody("<hello>world!</hello>");
         message.setHeader("bar", 567);
-        message.addAttachmentObject("att", new DefaultAttachment(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
+        message.addAttachmentObject("att",
+                new DefaultAttachment(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
     }
 }

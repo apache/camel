@@ -103,10 +103,10 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:start?cacheLevelName=CACHE_NONE&selector=brand='beer'").routeId("foo").to("log:foo").to("mock:result");
+                from("activemq:queue:start?cacheLevelName=CACHE_NONE&selector=brand='beer'").routeId("foo").to("log:foo")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

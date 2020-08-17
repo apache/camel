@@ -119,7 +119,8 @@ public class AsyncLoopTest extends ContextTestSupport {
 
                 from("direct:d").loop(2).to("async:hello:camel?append=true").to("mock:result").end().to("mock:last");
 
-                from("direct:e").loop(10).to("async:hello:camel?append=true").process(loopTest).to("mock:result").end().to("mock:last");
+                from("direct:e").loop(10).to("async:hello:camel?append=true").process(loopTest).to("mock:result").end()
+                        .to("mock:last");
             }
         };
     }

@@ -81,7 +81,8 @@ public class ChunkComponentTest extends CamelTestSupport {
             startSimpleProducerTemplate.sendBodyAndHeader("The Body", "name", "Andrew");
         }
         assertMockEndpointsSatisfied();
-        LoggerFactory.getLogger(getClass()).info("Chunk performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
+        LoggerFactory.getLogger(getClass())
+                .info("Chunk performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
 
     }
 
@@ -97,4 +98,3 @@ public class ChunkComponentTest extends CamelTestSupport {
         };
     }
 }
-

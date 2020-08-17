@@ -68,11 +68,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
- * using JAXB2 to marshal to and from XML
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using JAXB2 to marshal to
+ * and from XML
  */
 @Dataformat("jaxb")
-public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
+public class JaxbDataFormat extends ServiceSupport
+        implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
 
@@ -183,7 +184,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-    void doMarshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller, String charset) throws Exception {
+    void doMarshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller, String charset)
+            throws Exception {
 
         Object element = graph;
         QName partNamespaceOnDataFormat = getPartNamespace();
@@ -249,8 +251,10 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                     if (MarshalException.class.isAssignableFrom(e.getClass()) && schema != null) {
                         throw e;
                     }
-                    
-                    LOG.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
+
+                    LOG.debug(
+                            "Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(),
+                            e);
                 }
             }
         }
@@ -259,7 +263,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (!mustBeJAXBElement) {
             // write the graph as is to the output stream
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));
+                LOG.debug("Attempt to marshalling non JAXBElement with type {} as InputStream",
+                        ObjectHelper.classCanonicalName(graph));
             }
             InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
             IOHelper.copyAndCloseInput(is, stream);
@@ -267,7 +272,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             throw new InvalidPayloadException(exchange, JAXBElement.class);
         }
     }
-    
+
     private boolean asXmlStreamWriter(Exchange exchange) {
         return needFiltering(exchange) || (xmlStreamWriterWrapper != null);
     }
@@ -279,7 +284,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
 
             final XMLStreamReader xmlReader;
             if (needFiltering(exchange)) {
-                xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, stream));
+                xmlReader
+                        = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, stream));
             } else {
                 xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, stream);
             }
@@ -299,7 +305,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
 
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
-                answer = ((JAXBElement<?>)answer).getValue();
+                answer = ((JAXBElement<?>) answer).getValue();
             }
             return answer;
         } catch (JAXBException e) {
@@ -307,13 +313,15 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-    private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, InputStream stream) throws UnsupportedEncodingException {
+    private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, InputStream stream)
+            throws UnsupportedEncodingException {
         return new NonXmlFilterReader(new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange)));
     }
 
     protected boolean needFiltering(Exchange exchange) {
         // exchange property takes precedence over data format property
-        return exchange == null ? filterNonXmlChars : exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, filterNonXmlChars, Boolean.class);
+        return exchange == null
+                ? filterNonXmlChars : exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, filterNonXmlChars, Boolean.class);
     }
 
     // Properties
@@ -538,11 +546,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
                 if (contextPathIsClassName) {
-                    LOG.debug("Creating JAXBContext with className: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                    LOG.debug("Creating JAXBContext with className: " + contextPath + " and ApplicationContextClassLoader: "
+                              + cl);
                     Class clazz = camelContext.getClassResolver().resolveMandatoryClass(contextPath, cl);
                     return JAXBContext.newInstance(clazz);
                 } else {
-                    LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                    LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: "
+                              + cl);
                     return JAXBContext.newInstance(contextPath, cl);
                 }
             } else {

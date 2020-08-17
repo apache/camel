@@ -44,7 +44,6 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();

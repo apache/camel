@@ -28,7 +28,9 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
 
     @Test
     public void testThreadUsedForEveryAggregatorWhenDefaultExecutorServiceUsed() throws Exception {
-        assertTrue(AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount() >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS, "There should be a thread for every aggregator when using defaults");
+        assertTrue(AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount()
+                   >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS,
+                "There should be a thread for every aggregator when using defaults");
 
         // sanity check to make sure were testing routes that work
         for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {
@@ -52,8 +54,9 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
             public void configure() throws Exception {
                 for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
-                        // aggregate timeout after 0.1 second
-                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:result" + i);
+                            // aggregate timeout after 0.1 second
+                            .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                            .completionTimeoutCheckerInterval(10).to("mock:result" + i);
                 }
             }
         };

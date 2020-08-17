@@ -78,4 +78,3 @@ public class CamelSpringDelegatingTestContextLoaderTest {
 }
 // end::example[]
 //END SNIPPET: example
-

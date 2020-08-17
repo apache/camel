@@ -52,25 +52,30 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testSendEventWithSpecificPartition() {
-        final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        final EventHubProducerAsyncClient producerAsyncClient
+                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
         final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
-        final EventHubConsumerAsyncClient consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
+        final EventHubConsumerAsyncClient consumerAsyncClient
+                = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
         final Exchange exchange = new DefaultExchange(context);
 
         exchange.getIn().setHeader(EventHubsConstants.PARTITION_ID, firstPartition);
         exchange.getIn().setBody("test should be in firstPartition");
 
-        operations.sendEvents(exchange, doneSync -> { });
+        operations.sendEvents(exchange, doneSync -> {
+        });
 
         Awaitility.await()
                 .atMost(30, TimeUnit.SECONDS)
                 .pollDelay(Duration.ofSeconds(2))
                 .pollInterval(Duration.ofSeconds(2))
                 .until(() -> {
-                    final Boolean eventExists = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
-                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition) && partitionEvent.getData().getBodyAsString()
-                                    .contains("test should be in firstPartition"))
+                    final Boolean eventExists = consumerAsyncClient
+                            .receiveFromPartition(firstPartition, EventPosition.earliest())
+                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
+                                    && partitionEvent.getData().getBodyAsString()
+                                            .contains("test should be in firstPartition"))
                             .block();
 
                     if (eventExists == null) {

@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link Tracer} implementation that will log traced messages
- * to the logger named <tt>org.apache.camel.Tracing</tt>.
+ * Default {@link Tracer} implementation that will log traced messages to the logger named
+ * <tt>org.apache.camel.Tracing</tt>.
  */
 public class DefaultTracer extends ServiceSupport implements CamelContextAware, Tracer {
 

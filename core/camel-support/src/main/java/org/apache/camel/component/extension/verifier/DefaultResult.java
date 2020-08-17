@@ -25,7 +25,8 @@ public class DefaultResult implements ComponentVerifierExtension.Result {
     private final Status status;
     private final List<ComponentVerifierExtension.VerificationError> verificationErrors;
 
-    public DefaultResult(ComponentVerifierExtension.Scope scope, Status status, List<ComponentVerifierExtension.VerificationError> verificationErrors) {
+    public DefaultResult(ComponentVerifierExtension.Scope scope, Status status,
+                         List<ComponentVerifierExtension.VerificationError> verificationErrors) {
         this.scope = scope;
         this.status = status;
         this.verificationErrors = verificationErrors;

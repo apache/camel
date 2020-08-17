@@ -26,7 +26,8 @@ public interface ManagedEnricherMBean extends ManagedProcessorMBean, ManagedExte
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to enrich from", mask = true)
+    @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+                      mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")

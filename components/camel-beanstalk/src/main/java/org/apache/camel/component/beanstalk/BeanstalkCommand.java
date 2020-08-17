@@ -18,6 +18,11 @@ package org.apache.camel.component.beanstalk;
 
 public enum BeanstalkCommand {
 
-    bury, release, put, touch, delete, kick
+    bury,
+    release,
+    put,
+    touch,
+    delete,
+    kick
 
 }

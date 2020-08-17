@@ -24,7 +24,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultCode;
 
 public class DropboxFileUploadResult {
 
-
     private final Map<String, DropboxResultCode> results;
 
     public DropboxFileUploadResult(Map<String, DropboxResultCode> results) {

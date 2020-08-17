@@ -40,7 +40,8 @@ public class GoogleSheetsConsumer extends AbstractApiConsumer<GoogleSheetsApiNam
     protected Object doInvokeMethod(Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest) super.doInvokeMethod(properties);
         try {
-            BeanIntrospection beanIntrospection = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection
+                    = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }

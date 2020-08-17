@@ -49,7 +49,8 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
+                1);
         MongoDbTailTrackingManager trackingManager = initTailTracking();
         tailingThread = new MongoDbTailingThread(endpoint, this, trackingManager);
         tailingThread.init();
@@ -57,7 +58,8 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
     }
 
     protected MongoDbTailTrackingManager initTailTracking() {
-        MongoDbTailTrackingManager answer = new MongoDbTailTrackingManager(endpoint.getMongoConnection(), endpoint.getTailTrackingConfig());
+        MongoDbTailTrackingManager answer
+                = new MongoDbTailTrackingManager(endpoint.getMongoConnection(), endpoint.getTailTrackingConfig());
         answer.initialize();
         return answer;
     }

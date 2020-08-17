@@ -45,7 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SheetsSpreadsheetsIntegrationTest extends AbstractGoogleSheetsTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
 
     @Test
     public void testCreate() throws Exception {
@@ -111,10 +112,11 @@ public class SheetsSpreadsheetsIntegrationTest extends AbstractGoogleSheetsTestS
         headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
         // parameter type is com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
         headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "batchUpdateSpreadsheetRequest", new BatchUpdateSpreadsheetRequest()
-                                                                            .setIncludeSpreadsheetInResponse(true)
-                                                                            .setRequests(Collections.singletonList(new Request().setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
-                                                                                    .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
-                                                                                    .setFields("title")))));
+                .setIncludeSpreadsheetInResponse(true)
+                .setRequests(Collections
+                        .singletonList(new Request().setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
+                                .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
+                                .setFields("title")))));
 
         final BatchUpdateSpreadsheetResponse result = requestBodyAndHeaders("direct://BATCHUPDATE", null, headers);
 

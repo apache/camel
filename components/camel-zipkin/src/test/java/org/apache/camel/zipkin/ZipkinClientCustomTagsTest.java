@@ -35,6 +35,7 @@ public class ZipkinClientCustomTagsTest extends CamelTestSupport {
     protected void setSpanReporter(ZipkinTracer zipkin) {
         zipkin.setSpanReporter(Reporter.NOOP);
     }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -48,10 +49,12 @@ public class ZipkinClientCustomTagsTest extends CamelTestSupport {
         zipkin.init(context);
         return context;
     }
+
     @Test
     public void testZipkinRoute() throws Exception {
         template.requestBody("direct:start", "Camel client sends custom tags");
     }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

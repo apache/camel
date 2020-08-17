@@ -26,7 +26,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringEtcdServiceCallDefaultRouteTest extends SpringEtcdTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/etcd/cloud/SpringEtcdServiceCallDefaultRouteTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/etcd/cloud/SpringEtcdServiceCallDefaultRouteTest.xml");
     }
 
     // *************************************************************************
@@ -36,13 +37,13 @@ public class SpringEtcdServiceCallDefaultRouteTest extends SpringEtcdTestSupport
     @Override
     public void doPreSetup() throws Exception {
         JsonNode service1 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9091");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9091");
         JsonNode service2 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9092");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9092");
 
         EtcdClient client = getClient();
         client.put(CONFIGURATION.getServicePath() + "service-1", MAPPER.writeValueAsString(service1)).send().get();

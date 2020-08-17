@@ -80,18 +80,17 @@ public class ActiveMQOriginalDestinationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .to("activemq:queue:bar")
-                    .to("mock:result");
+                        .to("activemq:queue:bar")
+                        .to("mock:result");
             }
         };
     }
 
     /**
-     * A strategy to enrich JMS message with their original destination if the Camel
-     * route originates from a JMS destination.
+     * A strategy to enrich JMS message with their original destination if the Camel route originates from a JMS
+     * destination.
      * <p/>
-     * This implementation uses ActiveMQ specific code which can be moved to activemq-camel
-     * when it supports Camel 2.16
+     * This implementation uses ActiveMQ specific code which can be moved to activemq-camel when it supports Camel 2.16
      */
     private class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
 

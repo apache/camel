@@ -101,22 +101,22 @@ public class EtcdWatchTest extends EtcdTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("etcd-watch:myKey1")
-                    .process(NODE_TO_VALUE_IN)
-                    .to("mock:watch-with-path");
+                        .process(NODE_TO_VALUE_IN)
+                        .to("mock:watch-with-path");
                 fromF("etcd-watch:myKeyRecovery?timeout=%s&fromIndex=%s", 1000 * 60 * 5, 1)
-                    .id("watchRecovery")
-                    .autoStartup(false)
-                    .process(NODE_TO_VALUE_IN)
-                    .to("mock:watch-recovery");
+                        .id("watchRecovery")
+                        .autoStartup(false)
+                        .process(NODE_TO_VALUE_IN)
+                        .to("mock:watch-recovery");
                 from("etcd-watch:recursive?recursive=true")
-                   .process(NODE_TO_VALUE_IN)
-                    .to("log:org.apache.camel.component.etcd?level=INFO")
-                    .to("mock:watch-recursive");
+                        .process(NODE_TO_VALUE_IN)
+                        .to("log:org.apache.camel.component.etcd?level=INFO")
+                        .to("mock:watch-recursive");
                 from("etcd-watch:myKey2")
-                    .process(NODE_TO_VALUE_IN)
-                    .to("mock:watch-with-config-path");
+                        .process(NODE_TO_VALUE_IN)
+                        .to("mock:watch-with-config-path");
                 from("etcd-watch:timeoutKey?timeout=250&sendEmptyExchangeOnTimeout=true")
-                    .to("mock:watch-with-timeout");
+                        .to("mock:watch-with-timeout");
             }
         };
     }

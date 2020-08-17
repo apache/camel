@@ -48,28 +48,28 @@ public class AthenaEndpointTest {
     @Test
     public void allTheEndpointParams() {
         Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-            "aws2-athena://label"
-                + "?amazonAthenaClient=#athenaClient"
-                + "&operation=startQueryExecution"
-                + "&database=db"
-                + "&queryExecutionId=id"
-                + "&workGroup=wg"
-                + "&nextToken=nt"
-                + "&maxResults=42"
-                + "&includeTrace=true"
-                + "&outputLocation=bucket"
-                + "&outputType=SelectList"
-                + "&clientRequestToken=crt"
-                + "&queryString=select"
-                + "&encryptionOption=SSE_S3"
-                + "&kmsKey=key"
-                + "&waitTimeout=1"
-                + "&initialDelay=2"
-                + "&delay=3"
-                + "&maxAttempts=4"
-                + "&retry=always"
-                + "&resetWaitTimeoutOnRetry=false"
-        )).getConfiguration();
+                "aws2-athena://label"
+                                                                                         + "?amazonAthenaClient=#athenaClient"
+                                                                                         + "&operation=startQueryExecution"
+                                                                                         + "&database=db"
+                                                                                         + "&queryExecutionId=id"
+                                                                                         + "&workGroup=wg"
+                                                                                         + "&nextToken=nt"
+                                                                                         + "&maxResults=42"
+                                                                                         + "&includeTrace=true"
+                                                                                         + "&outputLocation=bucket"
+                                                                                         + "&outputType=SelectList"
+                                                                                         + "&clientRequestToken=crt"
+                                                                                         + "&queryString=select"
+                                                                                         + "&encryptionOption=SSE_S3"
+                                                                                         + "&kmsKey=key"
+                                                                                         + "&waitTimeout=1"
+                                                                                         + "&initialDelay=2"
+                                                                                         + "&delay=3"
+                                                                                         + "&maxAttempts=4"
+                                                                                         + "&retry=always"
+                                                                                         + "&resetWaitTimeoutOnRetry=false"))
+                                                                                                 .getConfiguration();
 
         assertEquals(amazonAthenaClient, configuration.getAmazonAthenaClient());
         assertEquals(Athena2Operations.startQueryExecution, configuration.getOperation());
@@ -96,8 +96,7 @@ public class AthenaEndpointTest {
     @Test
     public void defaultEndpointParams() {
         Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-            "aws2-athena://label"
-        )).getConfiguration();
+                "aws2-athena://label")).getConfiguration();
 
         assertEquals(amazonAthenaClient, configuration.getAmazonAthenaClient());
         assertEquals(Athena2Operations.startQueryExecution, configuration.getOperation());
@@ -124,10 +123,10 @@ public class AthenaEndpointTest {
     @Test
     public void getQueryExecutionOperationParams() {
         Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-            "aws2-athena://label"
-                + "?operation=getQueryExecution"
-                + "&queryExecutionId=123"
-        )).getConfiguration();
+                "aws2-athena://label"
+                                                                                         + "?operation=getQueryExecution"
+                                                                                         + "&queryExecutionId=123"))
+                                                                                                 .getConfiguration();
 
         assertEquals(Athena2Operations.getQueryExecution, configuration.getOperation());
         assertEquals("123", configuration.getQueryExecutionId());
@@ -136,13 +135,12 @@ public class AthenaEndpointTest {
     @Test
     public void getQueryResultsOperationParams() {
         Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-            "aws2-athena://label"
-                + "?operation=getQueryResults"
-                + "&queryExecutionId=123"
-                + "&outputType=SelectList"
-                + "&maxResults=1"
-                + "&nextToken=nt"
-        )).getConfiguration();
+                "aws2-athena://label"
+                                                                                         + "?operation=getQueryResults"
+                                                                                         + "&queryExecutionId=123"
+                                                                                         + "&outputType=SelectList"
+                                                                                         + "&maxResults=1"
+                                                                                         + "&nextToken=nt")).getConfiguration();
 
         assertEquals(Athena2Operations.getQueryResults, configuration.getOperation());
         assertEquals("123", configuration.getQueryExecutionId());
@@ -154,12 +152,11 @@ public class AthenaEndpointTest {
     @Test
     public void listQueryExecutionsOperationParams() {
         Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-            "aws2-athena://label"
-                + "?operation=listQueryExecutions"
-                + "&maxResults=1"
-                + "&nextToken=nt"
-                + "&workGroup=wg"
-        )).getConfiguration();
+                "aws2-athena://label"
+                                                                                         + "?operation=listQueryExecutions"
+                                                                                         + "&maxResults=1"
+                                                                                         + "&nextToken=nt"
+                                                                                         + "&workGroup=wg")).getConfiguration();
 
         assertEquals(Athena2Operations.listQueryExecutions, configuration.getOperation());
         assertEquals(1, configuration.getMaxResults());

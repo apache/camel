@@ -24,8 +24,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
- * Creates MinIO client object according to the
- * given endpoint, port, access key, secret key, region and secure option.
+ * Creates MinIO client object according to the given endpoint, port, access key, secret key, region and secure option.
  */
 public class MinioRemoteClientImpl implements MinioCamelInternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(MinioRemoteClientImpl.class);
@@ -50,7 +49,8 @@ public class MinioRemoteClientImpl implements MinioCamelInternalClient {
             MinioClient.Builder minioClientRequest = MinioClient.builder();
 
             if (isNotEmpty(configuration.getProxyPort())) {
-                minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
+                minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(),
+                        configuration.isSecure());
             } else {
                 minioClientRequest.endpoint(configuration.getEndpoint());
             }

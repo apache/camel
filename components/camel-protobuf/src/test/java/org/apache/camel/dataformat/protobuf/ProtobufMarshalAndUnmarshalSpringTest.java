@@ -36,7 +36,7 @@ public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSuppor
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/protobuf/springDataFormat.xml");
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
         marshalAndUnmarshal("direct:in", "direct:back");

@@ -30,14 +30,14 @@ public class ExchangePatternProcessor extends AsyncProcessorSupport implements I
     private String id;
     private String routeId;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
-    
+
     public ExchangePatternProcessor() {
     }
-    
+
     public ExchangePatternProcessor(ExchangePattern ep) {
         setExchangePattern(ep);
     }
-    
+
     public void setExchangePattern(ExchangePattern ep) {
         exchangePattern = ep;
     }

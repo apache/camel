@@ -160,7 +160,8 @@ public class RabbitMQComponent extends DefaultComponent {
         String exchangeName = remaining;
 
         if (remaining.contains(":") || remaining.contains("/")) {
-            LOG.warn("The old syntax rabbitmq://hostname:port/exchangeName is deprecated. You should configure the hostname on the component or ConnectionFactory");
+            LOG.warn(
+                    "The old syntax rabbitmq://hostname:port/exchangeName is deprecated. You should configure the hostname on the component or ConnectionFactory");
             try {
                 URI u = new URI("http://" + remaining);
                 host = u.getHost();
@@ -176,7 +177,8 @@ public class RabbitMQComponent extends DefaultComponent {
         }
 
         // ConnectionFactory reference
-        ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory", ConnectionFactory.class, getConnectionFactory());
+        ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory",
+                ConnectionFactory.class, getConnectionFactory());
 
         // try to lookup if there is a single instance in the registry of the
         // ConnectionFactory
@@ -189,13 +191,17 @@ public class RabbitMQComponent extends DefaultComponent {
                 if (name == null) {
                     name = "anonymous";
                 }
-                LOG.info("Auto-detected single instance: {} of type ConnectionFactory in Registry to be used as ConnectionFactory when creating endpoint: {}", name, uri);
+                LOG.info(
+                        "Auto-detected single instance: {} of type ConnectionFactory in Registry to be used as ConnectionFactory when creating endpoint: {}",
+                        name, uri);
             }
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> clientProperties = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class, getClientProperties());
-        TrustManager trustManager = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class, getTrustManager());
+        Map<String, Object> clientProperties
+                = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class, getClientProperties());
+        TrustManager trustManager
+                = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class, getTrustManager());
         RabbitMQEndpoint endpoint;
         if (connectionFactory == null) {
             endpoint = new RabbitMQEndpoint(uri, this);
@@ -253,7 +259,7 @@ public class RabbitMQComponent extends DefaultComponent {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
-                      new Object[] {endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
+                    new Object[] { endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName() });
         }
 
         Map<String, Object> localArgs = new HashMap<>();
@@ -335,9 +341,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * If this option is set, camel-rabbitmq will try to create connection based
-     * on the setting of option addresses. The addresses value is a string which
-     * looks like "server1:12345, server2:12345"
+     * If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The
+     * addresses value is a string which looks like "server1:12345, server2:12345"
      */
     public void setAddresses(String addresses) {
         this.addresses = addresses;
@@ -352,9 +357,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * To use a custom RabbitMQ connection factory. When this option is set, all
-     * connection options (connectionTimeout, requestedChannelMax...) set on URI
-     * are not used
+     * To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout,
+     * requestedChannelMax...) set on URI are not used
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
@@ -365,8 +369,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * The consumer uses a Thread Pool Executor with a fixed number of threads.
-     * This setting allows you to set that number of threads.
+     * The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that
+     * number of threads.
      */
     public void setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
@@ -377,9 +381,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Whether to auto-detect looking up RabbitMQ connection factory from the
-     * registry. When enabled and a single instance of the connection factory is
-     * found then it will be used. An explicit connection factory can be
+     * Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single
+     * instance of the connection factory is found then it will be used. An explicit connection factory can be
      * configured on the component or endpoint level which takes precedence.
      */
     public void setAutoDetectConnectionFactory(boolean autoDetectConnectionFactory) {
@@ -435,9 +438,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Enables connection automatic recovery (uses connection implementation
-     * that performs automatic recovery when connection shutdown is not
-     * initiated by the application)
+     * Enables connection automatic recovery (uses connection implementation that performs automatic recovery when
+     * connection shutdown is not initiated by the application)
      */
     public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
         this.automaticRecoveryEnabled = automaticRecoveryEnabled;
@@ -448,8 +450,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Network recovery interval in milliseconds (interval used when recovering
-     * from network failure)
+     * Network recovery interval in milliseconds (interval used when recovering from network failure)
      */
     public void setNetworkRecoveryInterval(Integer networkRecoveryInterval) {
         this.networkRecoveryInterval = networkRecoveryInterval;
@@ -460,8 +461,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Enables connection topology recovery (should topology recovery be
-     * performed?)
+     * Enables connection topology recovery (should topology recovery be performed?)
      */
     public void setTopologyRecoveryEnabled(Boolean topologyRecoveryEnabled) {
         this.topologyRecoveryEnabled = topologyRecoveryEnabled;
@@ -472,18 +472,16 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Enables the quality of service on the RabbitMQConsumer side. You need to
-     * specify the option of prefetchSize, prefetchCount, prefetchGlobal at the
-     * same time
+     * Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize,
+     * prefetchCount, prefetchGlobal at the same time
      */
     public void setPrefetchEnabled(boolean prefetchEnabled) {
         this.prefetchEnabled = prefetchEnabled;
     }
 
     /**
-     * The maximum amount of content (measured in octets) that the server will
-     * deliver, 0 if unlimited. You need to specify the option of prefetchSize,
-     * prefetchCount, prefetchGlobal at the same time
+     * The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited. You need to
+     * specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time
      */
     public void setPrefetchSize(int prefetchSize) {
         this.prefetchSize = prefetchSize;
@@ -494,9 +492,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * The maximum number of messages that the server will deliver, 0 if
-     * unlimited. You need to specify the option of prefetchSize, prefetchCount,
-     * prefetchGlobal at the same time
+     * The maximum number of messages that the server will deliver, 0 if unlimited. You need to specify the option of
+     * prefetchSize, prefetchCount, prefetchGlobal at the same time
      */
     public void setPrefetchCount(int prefetchCount) {
         this.prefetchCount = prefetchCount;
@@ -507,9 +504,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * If the settings should be applied to the entire channel rather than each
-     * consumer You need to specify the option of prefetchSize, prefetchCount,
-     * prefetchGlobal at the same time
+     * If the settings should be applied to the entire channel rather than each consumer You need to specify the option
+     * of prefetchSize, prefetchCount, prefetchGlobal at the same time
      */
     public void setPrefetchGlobal(boolean prefetchGlobal) {
         this.prefetchGlobal = prefetchGlobal;
@@ -535,16 +531,14 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Set the maximum number of milliseconds to wait for a channel from the
-     * pool
+     * Set the maximum number of milliseconds to wait for a channel from the pool
      */
     public void setChannelPoolMaxWait(long channelPoolMaxWait) {
         this.channelPoolMaxWait = channelPoolMaxWait;
     }
 
     /**
-     * Set timeout for waiting for a reply when using the InOut Exchange Pattern
-     * (in milliseconds)
+     * Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds)
      */
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
@@ -566,8 +560,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * When true and an inOut Exchange failed on the consumer side send the
-     * caused Exception back in the response
+     * When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
@@ -578,8 +571,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * When true, the message will be published with
-     * <a href="https://www.rabbitmq.com/confirms.html">publisher
+     * When true, the message will be published with <a href="https://www.rabbitmq.com/confirms.html">publisher
      * acknowledgements</a> turned on
      */
     public boolean isPublisherAcknowledgements() {
@@ -591,8 +583,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * The amount of time in milliseconds to wait for a basic.ack response from
-     * RabbitMQ server
+     * The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server
      */
     public long getPublisherAcknowledgementsTimeout() {
         return publisherAcknowledgementsTimeout;
@@ -603,11 +594,9 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * When true, an exception will be thrown when the message cannot be
-     * delivered (basic.return) and the message is marked as mandatory.
-     * PublisherAcknowledgement will also be activated in this case. See also <a
-     * href=https://www.rabbitmq.com/confirms.html">publisher
-     * acknowledgements</a> - When will messages be confirmed.
+     * When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is
+     * marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also <a
+     * href=https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> - When will messages be confirmed.
      */
     public boolean isGuaranteedDeliveries() {
         return guaranteedDeliveries;
@@ -622,10 +611,9 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * This flag tells the server how to react if the message cannot be routed
-     * to a queue. If this flag is set, the server will return an unroutable
-     * message with a Return method. If this flag is zero, the server silently
-     * drops the message.
+     * This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the
+     * server will return an unroutable message with a Return method. If this flag is zero, the server silently drops
+     * the message.
      * <p/>
      * If the header is present rabbitmq.MANDATORY it will override this option.
      */
@@ -638,11 +626,9 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * This flag tells the server how to react if the message cannot be routed
-     * to a queue consumer immediately. If this flag is set, the server will
-     * return an undeliverable message with a Return method. If this flag is
-     * zero, the server will queue the message, but with no guarantee that it
-     * will ever be consumed.
+     * This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this
+     * flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the
+     * server will queue the message, but with no guarantee that it will ever be consumed.
      * <p/>
      * If the header is present rabbitmq.IMMEDIATE it will override this option.
      */
@@ -651,8 +637,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Specify arguments for configuring the different RabbitMQ concepts, a
-     * different prefix is required for each:
+     * Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each:
      * <ul>
      * <li>Exchange: arg.exchange.</li>
      * <li>Queue: arg.queue.</li>
@@ -676,8 +661,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Connection client properties (client info used in negotiating with the
-     * server)
+     * Connection client properties (client info used in negotiating with the server)
      */
     public void setClientProperties(Map<String, Object> clientProperties) {
         this.clientProperties = clientProperties;
@@ -699,8 +683,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Configure SSL trust manager, SSL should be enabled for this option to be
-     * effective
+     * Configure SSL trust manager, SSL should be enabled for this option to be effective
      */
     public void setTrustManager(TrustManager trustManager) {
         this.trustManager = trustManager;
@@ -733,8 +716,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * If we are declaring a durable exchange (the exchange will survive a
-     * server restart)
+     * If we are declaring a durable exchange (the exchange will survive a server restart)
      */
     public void setDurable(boolean durable) {
         this.durable = durable;
@@ -745,8 +727,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Exclusive queues may only be accessed by the current connection, and are
-     * deleted when that connection closes.
+     * Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes.
      */
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
@@ -757,9 +738,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Request exclusive access to the queue (meaning only this consumer can
-     * access the queue). This is useful when you want a long-lived shared queue
-     * to be temporarily accessible by just one consumer.
+     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you
+     * want a long-lived shared queue to be temporarily accessible by just one consumer.
      */
     public void setExclusiveConsumer(boolean exclusiveConsumer) {
         this.exclusiveConsumer = exclusiveConsumer;
@@ -777,8 +757,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * If true the producer will not declare and bind a queue. This can be used
-     * for directing messages via an existing routing key.
+     * If true the producer will not declare and bind a queue. This can be used for directing messages via an existing
+     * routing key.
      */
     public void setSkipQueueDeclare(boolean skipQueueDeclare) {
         this.skipQueueDeclare = skipQueueDeclare;
@@ -815,9 +795,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * If the option is true, camel declare the exchange and queue name and bind
-     * them together. If the option is false, camel won't declare the exchange
-     * and queue name on the server.
+     * If the option is true, camel declare the exchange and queue name and bind them together. If the option is false,
+     * camel won't declare the exchange and queue name on the server.
      */
     public void setDeclare(boolean declare) {
         this.declare = declare;

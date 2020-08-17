@@ -36,18 +36,22 @@ class ComponentsDslMetadataRegistryTest {
 
     @Test
     public void testIfSyncCorrectly() throws IOException {
-        final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component2.json")).getFile()));
-        final File metadata = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/component_metadata.json")).getFile());
+        final String json = PackageHelper.loadText(new File(
+                Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component2.json")).getFile()));
+        final File metadata = new File(
+                Objects.requireNonNull(getClass().getClassLoader().getResource("json/component_metadata.json")).getFile());
         final File metadataWork = metadata.toPath().resolveSibling("component_metadata_work.json").toFile();
 
         Files.copy(metadata.toPath(), metadataWork.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         final String metadataJson = PackageHelper.loadText(metadataWork);
 
-        final File classesDir = FileSystems.getDefault().getPath(".").resolve("src/test/java/org/apache/camel/maven/packaging/dsl/component").toFile();
+        final File classesDir = FileSystems.getDefault().getPath(".")
+                .resolve("src/test/java/org/apache/camel/maven/packaging/dsl/component").toFile();
 
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
-        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(classesDir, metadataWork);
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry
+                = new ComponentsDslMetadataRegistry(classesDir, metadataWork);
 
         // check for size
         assertEquals(2, componentsDslMetadataRegistry.getComponentCacheFromMemory().size());
@@ -60,7 +64,8 @@ class ComponentsDslMetadataRegistryTest {
 
         // check behavior when we add component to memory
         // first it adds to he memory cache and then it sync the metadata file by checking existing classes and delete whatever not presented there
-        componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, "ComponentsDslMetadataRegistryTest");
+        componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel,
+                "ComponentsDslMetadataRegistryTest");
 
         final String updatedMetadataJson = PackageHelper.loadText(metadataWork);
 
@@ -71,7 +76,8 @@ class ComponentsDslMetadataRegistryTest {
         assertTrue(updatedMetadataJson.contains("ComponentsDslMetadataRegistryTest"));
 
         // check for the model
-        final ComponentModel componentModelUpdated = componentsDslMetadataRegistry.getComponentCacheFromMemory().get("ComponentsDslMetadataRegistryTest");
+        final ComponentModel componentModelUpdated
+                = componentsDslMetadataRegistry.getComponentCacheFromMemory().get("ComponentsDslMetadataRegistryTest");
 
         assertNotNull(componentModelUpdated);
     }

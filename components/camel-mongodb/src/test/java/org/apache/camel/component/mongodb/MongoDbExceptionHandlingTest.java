@@ -69,7 +69,8 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
         pumpDataIntoTestCollection();
 
         try {
-            template.requestBodyAndHeader("direct:findOneByQuery", new Document("scientist", "Einstein").toJson(), MongoDbConstants.OPERATION_HEADER, "dummyOp");
+            template.requestBodyAndHeader("direct:findOneByQuery", new Document("scientist", "Einstein").toJson(),
+                    MongoDbConstants.OPERATION_HEADER, "dummyOp");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             extractAndAssertCamelMongoDbException(e, "Operation specified on header is not supported. Value: dummyOp");
@@ -82,14 +83,17 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:findAll").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
-                    .to("mock:resultFindAll");
+                from("direct:findAll").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
+                        .to("mock:resultFindAll");
 
-                from("direct:findOneByQuery").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
-                    .to("mock:resultFindOneByQuery");
+                from("direct:findOneByQuery").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
+                        .to("mock:resultFindOneByQuery");
 
-                from("direct:findById").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
-                    .to("mock:resultFindById");
+                from("direct:findById").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
+                        .to("mock:resultFindById");
 
             }
         };

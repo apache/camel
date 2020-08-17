@@ -42,7 +42,7 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         Throwable ex = message.getContent(Throwable.class);
         if (ex != null) {
             if (ex instanceof Fault) {
-                throw (Fault)ex;
+                throw (Fault) ex;
             } else {
                 throw new Fault(ex);
             }
@@ -50,7 +50,7 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
 
         List<?> params = message.getContent(List.class);
         if (null != params) {
-            InputStream is = (InputStream)params.get(0);
+            InputStream is = (InputStream) params.get(0);
             OutputStream os = message.getContent(OutputStream.class);
             Writer writer = message.getContent(Writer.class);
             if (os == null && writer == null) {
@@ -62,7 +62,7 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
                     IOUtils.copyAndCloseInput(new InputStreamReader(is), writer);
                 } else {
                     if (is instanceof StreamCache) {
-                        ((StreamCache)is).writeTo(os);
+                        ((StreamCache) is).writeTo(os);
                     } else {
                         IOUtils.copy(is, os);
                     }

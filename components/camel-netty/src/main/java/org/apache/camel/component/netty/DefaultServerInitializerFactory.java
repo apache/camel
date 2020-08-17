@@ -119,7 +119,8 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         pipeline.addLast(executor, name, handler);
     }
 
-    private SSLContext createSSLContext(CamelContext camelContext, NettyServerBootstrapConfiguration configuration) throws Exception {
+    private SSLContext createSSLContext(CamelContext camelContext, NettyServerBootstrapConfiguration configuration)
+            throws Exception {
         if (!configuration.isSsl()) {
             return null;
         }

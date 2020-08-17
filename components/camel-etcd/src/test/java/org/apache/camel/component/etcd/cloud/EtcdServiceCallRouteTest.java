@@ -94,19 +94,17 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .serviceCall()
+                        .serviceCall()
                         .name(SERVICE_NAME)
                         .etcdServiceDiscovery()
-                            .uris(getClientUri())
-                            .type("on-demand")
+                        .uris(getClientUri())
+                        .type("on-demand")
                         .endParent()
-                    .to("log:org.apache.camel.component.etcd.processor.service?level=INFO&showAll=true&multiline=true")
-                    .to("mock:result");
+                        .to("log:org.apache.camel.component.etcd.processor.service?level=INFO&showAll=true&multiline=true")
+                        .to("mock:result");
 
-                servers.forEach(s ->
-                    fromF("jetty:http://%s:%d", s.get("address"), s.get("port"))
-                        .transform().simple("${in.body} on " + s.get("port"))
-                );
+                servers.forEach(s -> fromF("jetty:http://%s:%d", s.get("address"), s.get("port"))
+                        .transform().simple("${in.body} on " + s.get("port")));
             }
         };
     }

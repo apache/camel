@@ -33,7 +33,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_CONTENT_TYPE;
 import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
 
-public class GridFsProducer extends DefaultProducer {    
+public class GridFsProducer extends DefaultProducer {
     private final GridFsEndpoint endpoint;
 
     public GridFsProducer(GridFsEndpoint endpoint) {
@@ -126,20 +126,21 @@ public class GridFsProducer extends DefaultProducer {
                 count = endpoint.getFilesCollection().countDocuments(eq(GRIDFS_FILE_KEY_FILENAME, filename));
             }
             exchange.getIn().setBody(count, Long.class);
-        } 
+        }
     }
 
     private class DBCursorFilenameReader extends Reader {
         MongoCursor<GridFSFile> cursor;
         StringBuilder current;
         int pos;
-        
+
         DBCursorFilenameReader(MongoCursor<GridFSFile> c) {
             cursor = c;
             current = new StringBuilder(4096);
             pos = 0;
             fill();
         }
+
         void fill() {
             if (pos > 0) {
                 current.delete(0, pos);
@@ -150,6 +151,7 @@ public class GridFsProducer extends DefaultProducer {
                 current.append(file.getFilename()).append("\t").append(file.getId()).append("\n");
             }
         }
+
         @Override
         public int read(char[] cbuf, int off, int len) throws IOException {
             if (pos == current.length()) {

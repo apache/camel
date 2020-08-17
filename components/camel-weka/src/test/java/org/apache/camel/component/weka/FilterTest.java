@@ -43,22 +43,22 @@ public class FilterTest {
                 @Override
                 public void configure() throws Exception {
 
-                        // Use the file component to read the CSV file
-                        from("file:src/test/resources/data?fileName=sfny.csv&noop=true")
+                    // Use the file component to read the CSV file
+                    from("file:src/test/resources/data?fileName=sfny.csv&noop=true")
 
-                        // Convert the 'in_sf' attribute to nominal
-                        .to("weka:filter?apply=NumericToNominal -R first")
+                            // Convert the 'in_sf' attribute to nominal
+                            .to("weka:filter?apply=NumericToNominal -R first")
 
-                        // Move the 'in_sf' attribute to the end
-                        .to("weka:filter?apply=Reorder -R 2-last,1")
+                            // Move the 'in_sf' attribute to the end
+                            .to("weka:filter?apply=Reorder -R 2-last,1")
 
-                        // Rename the relation
-                        .to("weka:filter?apply=RenameRelation -modify sfny")
+                            // Rename the relation
+                            .to("weka:filter?apply=RenameRelation -modify sfny")
 
-                        // Use the file component to write the Arff file
-                        .to("file:target/data?fileName=sfny.arff")
+                            // Use the file component to write the Arff file
+                            .to("file:target/data?fileName=sfny.arff")
 
-                        .to("direct:end");
+                            .to("direct:end");
                 }
             });
             camelctx.start();
@@ -66,7 +66,7 @@ public class FilterTest {
             ConsumerTemplate consumer = camelctx.createConsumerTemplate();
             Dataset dataset = consumer.receiveBody("direct:end", Dataset.class);
             assertEquals("sfny", dataset.getInstances().relationName());
-            
+
             Instances instances = DatasetUtils.read("target/data/sfny.arff");
             assertEquals("sfny", instances.relationName());
         }
@@ -81,21 +81,21 @@ public class FilterTest {
 
                 @Override
                 public void configure() throws Exception {
-                    
-                        // Use weka to read the CSV file
-                        from("direct:start")
-                    
-                        // Convert the 'in_sf' attribute to nominal
-                        .to("weka:filter?apply=NumericToNominal -R first")
-                        
-                        // Move the 'in_sf' attribute to the end
-                        .to("weka:filter?apply=Reorder -R 2-last,1")
-                        
-                        // Rename the relation
-                        .to("weka:filter?apply=RenameRelation -modify sfny")
-                        
-                        // Use weka to write the Arff file
-                        .to("weka:write?path=target/data/sfny.arff");
+
+                    // Use weka to read the CSV file
+                    from("direct:start")
+
+                            // Convert the 'in_sf' attribute to nominal
+                            .to("weka:filter?apply=NumericToNominal -R first")
+
+                            // Move the 'in_sf' attribute to the end
+                            .to("weka:filter?apply=Reorder -R 2-last,1")
+
+                            // Rename the relation
+                            .to("weka:filter?apply=RenameRelation -modify sfny")
+
+                            // Use weka to write the Arff file
+                            .to("weka:write?path=target/data/sfny.arff");
                 }
             });
             camelctx.start();
@@ -105,7 +105,7 @@ public class FilterTest {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
             assertEquals("sfny", dataset.getInstances().relationName());
-            
+
             Instances instances = DatasetUtils.read("target/data/sfny.arff");
             assertEquals("sfny", instances.relationName());
         }

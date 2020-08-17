@@ -26,8 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Event notifier which is executed just after Camel has been started,
- * and before Camel is being stopped.
+ * Event notifier which is executed just after Camel has been started, and before Camel is being stopped.
  */
 public class StartAndStopEventNotifier extends EventNotifierSupport implements CamelContextAware {
 

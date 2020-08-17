@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Namespaces and get notified on Namespace changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces", syntax = "kubernetes-namespaces:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces",
+             syntax = "kubernetes-namespaces:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNamespacesEndpoint(String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {

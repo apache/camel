@@ -16,12 +16,9 @@
  */
 package org.apache.camel.processor;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -136,7 +133,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                         postAwareProcessor = dynamicAware.createPostProcessor(exchange, entry);
                         if (staticUri != null) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, URISupport.sanitizeUri(staticUri));
+                                LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme,
+                                        URISupport.sanitizeUri(staticUri));
                             }
                         }
                     }
@@ -291,7 +289,9 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {
-        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
+        return prototype
+                ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient)
+                : ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern, Endpoint endpoint) {
@@ -322,7 +322,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                     dynamicAware = resolver.resolve(camelContext, scheme);
                     if (dynamicAware != null) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Detected SendDynamicAware component: {} optimising toD: {}", scheme, URISupport.sanitizeUri(uri));
+                            LOG.debug("Detected SendDynamicAware component: {} optimising toD: {}", scheme,
+                                    URISupport.sanitizeUri(uri));
                         }
                     }
                 }
@@ -330,7 +331,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 // ignore
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Error creating optimised SendDynamicAwareResolver for uri: " + URISupport.sanitizeUri(uri)
-                            + " due to " + e.getMessage() + ". This exception is ignored", e);
+                              + " due to " + e.getMessage() + ". This exception is ignored",
+                            e);
                 }
             }
         }

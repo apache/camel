@@ -24,7 +24,7 @@ public class MyProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         // Do nothing here
-        
+
     }
 
 }

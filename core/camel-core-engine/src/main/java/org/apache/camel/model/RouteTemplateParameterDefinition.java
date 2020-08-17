@@ -79,5 +79,3 @@ public class RouteTemplateParameterDefinition {
         this.description = description;
     }
 }
-
-

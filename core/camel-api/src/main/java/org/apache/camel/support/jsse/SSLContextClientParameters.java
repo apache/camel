@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Configuration model for client side JSSE options.
  */
 public class SSLContextClientParameters extends BaseSSLContextParameters {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextClientParameters.class);
 
     private List<SNIServerName> sniHostNames = new ArrayList<>();
@@ -63,7 +63,8 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
         LOG.trace("Configuring client-side SSLContext parameters on SSLContext [{}]...", context);
         if (this.getSessionTimeout() != null) {
-            LOG.info("Configuring client-side SSLContext session timeout on SSLContext [{}] to [{}].", context, this.getSessionTimeout());
+            LOG.info("Configuring client-side SSLContext session timeout on SSLContext [{}] to [{}].", context,
+                    this.getSessionTimeout());
             this.configureSessionContext(context.getClientSessionContext(), this.getSessionTimeout());
         }
         LOG.trace("Configured client-side SSLContext parameters on SSLContext [{}].", context);
@@ -72,11 +73,9 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     /**
      * {@inheritDoc}
      * <p/>
-     * This implementation returns the empty list as the enabled cipher suites
-     * and protocols are not client and server side specific in an
-     * {@code SSLEngine}. Consequently, overriding them here would be a bit odd
-     * as the client side specific configuration shouldn't really override a
-     * shared client/server configuration option.
+     * This implementation returns the empty list as the enabled cipher suites and protocols are not client and server
+     * side specific in an {@code SSLEngine}. Consequently, overriding them here would be a bit odd as the client side
+     * specific configuration shouldn't really override a shared client/server configuration option.
      */
     @Override
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
@@ -84,10 +83,10 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
         // cipher suites and protocols, this method needs to address that.
         return Collections.emptyList();
     }
-    
+
     /**
-     * This class has no bearing on {@code SSLServerSocketFactory} instances and therefore provides no
-     * configurers for that purpose.
+     * This class has no bearing on {@code SSLServerSocketFactory} instances and therefore provides no configurers for
+     * that purpose.
      */
     @Override
     protected List<Configurer<SSLServerSocketFactory>> getSSLServerSocketFactoryConfigurers(SSLContext context) {

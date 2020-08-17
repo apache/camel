@@ -26,8 +26,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterWithXqureyTest extends ContextTestSupport {
-    private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" " + "xmlns:two=\"http://camel.apache.org/schema/two\">"
-                                    + "<person><name>Willem</name></person> " + "<other><two:test>One</two:test></other>" + "<other><two:test>Two</two:test></other>"
+    private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
+                                    + "xmlns:two=\"http://camel.apache.org/schema/two\">"
+                                    + "<person><name>Willem</name></person> " + "<other><two:test>One</two:test></other>"
+                                    + "<other><two:test>Two</two:test></other>"
                                     + "<other><test>Three</test></other>" + "<other><test>Foure</test></other></workflow>";
 
     @Override

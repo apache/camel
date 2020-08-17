@@ -40,7 +40,7 @@ public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("file:target/data/foo?fileName=foo.txt&initialDelay=0&delay=10");
         PollingConsumer consumer = cache.acquirePollingConsumer(endpoint);
         assertNotNull(consumer);
-        assertEquals("Started", ((ServiceSupport)consumer).getStatus().name());
+        assertEquals("Started", ((ServiceSupport) consumer).getStatus().name());
 
         // let it run a poll
         consumer.receive(50);
@@ -51,12 +51,13 @@ public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
         cache.releasePollingConsumer(endpoint, consumer);
 
         // takes a little to stop
-        assertTrue(((ServiceSupport)consumer).isStarted(), "Should still be started");
+        assertTrue(((ServiceSupport) consumer).isStarted(), "Should still be started");
 
         cache.stop();
 
         // takes a little to stop
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Stopped", ((ServiceSupport)consumer).getStatus().name()));
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Stopped", ((ServiceSupport) consumer).getStatus().name()));
 
         // should not be a file consumer thread
         found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/data/foo"));

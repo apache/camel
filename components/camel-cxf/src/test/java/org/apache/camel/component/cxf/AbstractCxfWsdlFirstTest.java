@@ -43,31 +43,32 @@ import static org.junit.jupiter.api.Assertions.fail;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     static int port1 = CXFTestSupport.getPort1();
-    
+
     public static int getPort1() {
         return port1;
     }
+
     public static int getPort2() {
         return CXFTestSupport.getPort2();
     }
-    
+
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
 
         JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
         fromHandler.reset();
-        
+
         JaxwsTestHandler toHandler = getMandatoryBean(JaxwsTestHandler.class, "toEndpointJaxwsHandler");
         toHandler.reset();
 
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
-        ((BindingProvider)client).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
-                 + "/PersonService/");
-                                                          
+        ((BindingProvider) client).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
+                                                                + "/PersonService/");
+
         Holder<String> personId = new Holder<>();
         personId.value = "hello";
         Holder<String> ssn = new Holder<>();
@@ -82,15 +83,15 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         } catch (UnknownPersonFault fault) {
             // We expect to get fault here
         }
-        
+
         personId.value = "Invoking getPerson with invalid length string, expecting exception...xxxxxxxxx";
-        try {            
+        try {
             client.getPerson(personId, ssn, name);
-            fail("We expect to get the WebSerivceException here");        
+            fail("We expect to get the WebSerivceException here");
         } catch (WebServiceException ex) {
             // Caught expected WebServiceException here
             assertTrue(ex.getMessage().indexOf("MyStringType") > 0
-                       || ex.getMessage().indexOf("Could not parse the XML stream") != -1,
+                    || ex.getMessage().indexOf("Could not parse the XML stream") != -1,
                     "Should get the xml vaildate error! " + ex.getMessage());
         }
 
@@ -111,7 +112,7 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         Exchange exchange = sendJaxWsMessageWithHolders("hello");
         assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
         org.apache.camel.Message out = exchange.getOut();
-        List<Object> result =  out.getBody(List.class);
+        List<Object> result = out.getBody(List.class);
         assertEquals(result.size(), 4, "The result list should not be empty");
         Holder<String> name = (Holder<String>) result.get(3);
         assertEquals("Bonjour", name.value, "we should get the right answer from router");

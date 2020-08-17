@@ -62,7 +62,8 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
                     break;
                 case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME: {
                     Counter counter = (Counter) meter;
-                    assertEquals(count, counter.count(), 0.01D, "Counter " + counter.getId() + " should have count of " + count);
+                    assertEquals(count, counter.count(), 0.01D,
+                            "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
                 case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME: {

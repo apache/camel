@@ -23,7 +23,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -45,7 +44,7 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
         PropertyBindingSupport.build()
                 .withCamelContext(context)
                 .withTarget(target)
-// TODO: this should not be needed anymore with newly generated configurers
+                // TODO: this should not be needed anymore with newly generated configurers
                 .withProperty("bars[0]", "#class:" + MySecondBar.class.getName())
                 .withProperty("bars[0].names[0]", "a")
                 .withProperty("bars[0].names[1]", "b")

@@ -64,7 +64,8 @@ public class JSR356Producer extends DefaultAsyncProducer {
         super.doStart();
         final URI uri = getEndpoint().getUri();
         if (uri.getScheme() != null && !uri.getScheme().equals("ws")) {
-            throw new IllegalArgumentException("WebSocket endpoint URI must be in the format: websocket-jsr356:ws://host:port/path");
+            throw new IllegalArgumentException(
+                    "WebSocket endpoint URI must be in the format: websocket-jsr356:ws://host:port/path");
         }
         final ClientEndpointConfig.Builder clientConfig = ClientEndpointConfig.Builder.create();
         manager = new ClientSessions(getEndpoint().getSessionCount(), uri, clientConfig.build(), null);

@@ -57,7 +57,8 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
 
         try {
-            final List<QueueMessageItem> messageItems = clientWrapper.receiveMessages(getConfiguration().getMaxMessages(), getConfiguration().getVisibilityTimeout(),
+            final List<QueueMessageItem> messageItems = clientWrapper.receiveMessages(getConfiguration().getMaxMessages(),
+                    getConfiguration().getVisibilityTimeout(),
                     getConfiguration().getTimeout());
 
             LOG.trace("Receiving messages [{}]...", messageItems);
@@ -136,10 +137,12 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
      */
     private void processCommit(final Exchange exchange) {
         try {
-            LOG.trace("Deleting message with pop receipt handle {}...", QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
+            LOG.trace("Deleting message with pop receipt handle {}...",
+                    QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
             queueOperations.deleteMessage(exchange);
         } catch (QueueStorageException ex) {
-            getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.", exchange, ex);
+            getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.",
+                    exchange, ex);
         }
     }
 
@@ -151,7 +154,8 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     private void processRollback(Exchange exchange) {
         final Exception cause = exchange.getException();
         if (cause != null) {
-            getExceptionHandler().handleException("Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            getExceptionHandler().handleException(
+                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
     }
 }

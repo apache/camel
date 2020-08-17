@@ -36,7 +36,7 @@ public class OAIPMHComponentProducerOnlyFirstTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(104);
         resultEndpoint.assertIsSatisfied(3 * 1000);
     }
-    
+
     @BeforeClass
     public static void startServer() throws IOException {
         //Mocked data  taken from https://dspace.ucuenca.edu.ec/oai/request - July 21, 2020
@@ -59,7 +59,8 @@ public class OAIPMHComponentProducerOnlyFirstTest extends CamelTestSupport {
                         .setHeader("CamelOaimphOnlyFirst", constant("true"))
                         .to("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request")
                         .split(body())
-                        .split(xpath("/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
+                        .split(xpath(
+                                "/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
                                 new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
                                         .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
                                         .add("dc", "http://purl.org/dc/elements/1.1/")))

@@ -30,7 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component providing support for JGroups-raft leader election and shared state machine implementation ({@code org.jgroups.raft.RaftHandle}).
+ * Component providing support for JGroups-raft leader election and shared state machine implementation
+ * ({@code org.jgroups.raft.RaftHandle}).
  */
 @Component("jgroups-raft")
 public class JGroupsRaftComponent extends DefaultComponent {
@@ -51,7 +52,8 @@ public class JGroupsRaftComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
-        return new JGroupsRaftEndpoint(uri, remaining, this, remaining, parameters, raftId, channelProperties, stateMachine, raftHandle);
+        return new JGroupsRaftEndpoint(
+                uri, remaining, this, remaining, parameters, raftId, channelProperties, stateMachine, raftHandle);
     }
 
     public RaftHandle getRaftHandle() {
@@ -94,7 +96,8 @@ public class JGroupsRaftComponent extends DefaultComponent {
     }
 
     /**
-     * Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is provided).
+     * Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is
+     * provided).
      */
     public void setChannelProperties(String channelProperties) {
         this.channelProperties = channelProperties;

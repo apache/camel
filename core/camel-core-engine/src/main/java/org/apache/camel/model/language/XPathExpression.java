@@ -201,16 +201,13 @@ public class XPathExpression extends NamespaceAwareExpression {
     }
 
     /**
-     * Whether to enable thread-safety for the returned result of the xpath
-     * expression. This applies to when using NODESET as the result type, and
-     * the returned set has multiple elements. In this situation there can be
-     * thread-safety issues if you process the NODESET concurrently such as from
-     * a Camel Splitter EIP in parallel processing mode. This option prevents
-     * concurrency issues by doing defensive copies of the nodes.
+     * Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using
+     * NODESET as the result type, and the returned set has multiple elements. In this situation there can be
+     * thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel
+     * processing mode. This option prevents concurrency issues by doing defensive copies of the nodes.
      * <p/>
-     * It is recommended to turn this option on if you are using camel-saxon or
-     * Saxon in your application. Saxon has thread-safety issues which can be
-     * prevented by turning this option on.
+     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has
+     * thread-safety issues which can be prevented by turning this option on.
      */
     public void setThreadSafety(String threadSafety) {
         this.threadSafety = threadSafety;
@@ -224,14 +221,17 @@ public class XPathExpression extends NamespaceAwareExpression {
         // XML because the order of invocation of the setters by JAXB may cause
         // undeterministic behaviour
         if ((ObjectHelper.isNotEmpty(factoryRef) || ObjectHelper.isNotEmpty(objectModel)) && (saxon != null)) {
-            throw new IllegalArgumentException("The saxon attribute cannot be set on the xpath element if any of the following is also set: factory, objectModel" + this);
+            throw new IllegalArgumentException(
+                    "The saxon attribute cannot be set on the xpath element if any of the following is also set: factory, objectModel"
+                                               + this);
         }
 
         // Validate the factory class
         if (ObjectHelper.isNotEmpty(factoryRef)) {
             xpathFactory = camelContext.getRegistry().lookupByNameAndType(factoryRef, XPathFactory.class);
             if (xpathFactory == null) {
-                throw new IllegalArgumentException("The provided XPath Factory is invalid; either it cannot be resolved or it is not an XPathFactory instance");
+                throw new IllegalArgumentException(
+                        "The provided XPath Factory is invalid; either it cannot be resolved or it is not an XPathFactory instance");
             }
         }
     }

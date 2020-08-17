@@ -90,8 +90,10 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION, "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
+                "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
+                "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, "mustBeRemoved");
 
         exchange.getOut().getHeaders().put("breadcrumbId", "mustBeRemoved");
@@ -144,7 +146,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void producerWithAttachment() throws Exception {
-        exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment",
+                new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterProducer(exchange, message);
 
@@ -154,7 +157,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void consumerWithAttachment() throws Exception {
-        exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment",
+                new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterConsumer(exchange, message);
 

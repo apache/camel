@@ -51,7 +51,7 @@ public class BonitaAuthFilterTest {
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", "port", "", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         assertThrows(IllegalArgumentException.class,
-            () -> bonitaAuthFilter.filter(requestContext));
+                () -> bonitaAuthFilter.filter(requestContext));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class BonitaAuthFilterTest {
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", "port", "username", "");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         assertThrows(IllegalArgumentException.class,
-            () -> bonitaAuthFilter.filter(requestContext));
+                () -> bonitaAuthFilter.filter(requestContext));
     }
 
 }

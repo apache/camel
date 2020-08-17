@@ -48,16 +48,16 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        
+
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
-    
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jms/camel-context.xml");
     }
@@ -77,16 +77,16 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
             }
         };
     }
-    
+
     @Test
     public void testInvocation() {
         // Here we just the address with JMS URI
         String address = "jms:jndi:dynamicQueues/test.cxf.jmstransport.queue"
-            + "?jndiInitialContextFactory"
-            + "=org.apache.activemq.jndi.ActiveMQInitialContextFactory"
-            + "&jndiConnectionFactoryName=ConnectionFactory&jndiURL="
-            + "vm://localhost";
-   
+                         + "?jndiInitialContextFactory"
+                         + "=org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                         + "&jndiConnectionFactoryName=ConnectionFactory&jndiURL="
+                         + "vm://localhost";
+
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(Greeter.class);
         factory.setAddress(address);
@@ -94,6 +94,5 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
         String response = greeter.greetMe("Willem");
         assertEquals("Hello Willem", response, "Get a wrong response");
     }
-    
-    
+
 }

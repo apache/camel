@@ -77,18 +77,20 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody(
+                                        "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                            }
+                        });
             }
         });
         context.start();
 
         String response = template.requestBody(
                 "netty:tcp://localhost:{{port}}?sync=true&ssl=true",
-                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
+                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
+                String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
 

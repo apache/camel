@@ -51,7 +51,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
     private int bufferpos;
     private int bufferlen;
     private CharBuffer cbuf;
-    
+
     private boolean lastLineReadTerminatedByLineFeed;
 
     public AS2SessionInputBuffer(final HttpTransportMetricsImpl metrics,
@@ -233,7 +233,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
             // end of stream reached with no further data in line buffer
             return -1;
         }
-        
+
         return lineFromLineBuffer(charbuffer);
     }
 
@@ -281,7 +281,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                 }
             }
         }
-        
+
         if (this.decoder == null) {
             charbuffer.append(this.linebuffer, 0, len);
         } else {
@@ -303,11 +303,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
             pos--;
         }
         len = pos - off;
-        
+
         if (this.decoder == null) {
             charbuffer.append(this.buffer, off, len);
         } else {
-            final ByteBuffer bbuf =  ByteBuffer.wrap(this.buffer, off, len);
+            final ByteBuffer bbuf = ByteBuffer.wrap(this.buffer, off, len);
             len = appendDecoded(charbuffer, bbuf);
         }
         return len;

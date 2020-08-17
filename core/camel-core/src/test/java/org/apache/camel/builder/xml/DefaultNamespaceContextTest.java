@@ -67,7 +67,8 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     @Test
     public void testDefaultNamespaceContextDualNamespaces() throws Exception {
-        XPathBuilder builder = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
+        XPathBuilder builder
+                = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
         builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
         assertNotNull(context);

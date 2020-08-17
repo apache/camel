@@ -42,15 +42,16 @@ import org.slf4j.LoggerFactory;
 /**
  * Provide data for load & soak testing of your Camel application.
  *
- * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the data set is received.
- * Camel will use the throughput logger when sending dataset's.
+ * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the
+ * data set is received. Camel will use the throughput logger when sending dataset's.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
-        category = {Category.CORE, Category.TESTING}, lenientProperties = true)
+             category = { Category.CORE, Category.TESTING }, lenientProperties = true)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
-    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry") @Metadata(required = true)
+    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry")
+    @Metadata(required = true)
     private volatile DataSet dataSet;
     @UriParam(label = "consumer", defaultValue = "0")
     private int minRate;
@@ -75,7 +76,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
         if (!ObjectHelper.equal(expected, actual)) {
-            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on " + exchange + " with headers: " + exchange.getIn().getHeaders());
+            throw new AssertionError(
+                    description + " does not match. Expected: " + expected + " but was: " + actual + " on " + exchange
+                                     + " with headers: " + exchange.getIn().getHeaders());
         }
     }
 
@@ -175,7 +178,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Allows a delay to be specified which causes a delay when a message is consumed by the producer (to simulate slow processing)
+     * Allows a delay to be specified which causes a delay when a message is consumed by the producer (to simulate slow
+     * processing)
      */
     public void setConsumeDelay(long consumeDelay) {
         this.consumeDelay = consumeDelay;
@@ -186,7 +190,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Allows a delay to be specified which causes a delay when a message is sent by the consumer (to simulate slow processing)
+     * Allows a delay to be specified which causes a delay when a message is sent by the consumer (to simulate slow
+     * processing)
      */
     public void setProduceDelay(long produceDelay) {
         this.produceDelay = produceDelay;
@@ -204,14 +209,10 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Controls the behaviour of the CamelDataSetIndex header.
-     * For Consumers:
-     * - off => the header will not be set
-     * - strict/lenient => the header will be set
-     * For Producers:
-     * - off => the header value will not be verified, and will not be set if it is not present
-     * = strict => the header value must be present and will be verified
-     * = lenient => the header value will be verified if it is present, and will be set if it is not present
+     * Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off => the header will not be set -
+     * strict/lenient => the header will be set For Producers: - off => the header value will not be verified, and will
+     * not be set if it is not present = strict => the header value must be present and will be verified = lenient =>
+     * the header value will be verified if it is present, and will be set if it is not present
      */
     public void setDataSetIndex(String dataSetIndex) {
         switch (dataSetIndex) {
@@ -221,8 +222,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
                 this.dataSetIndex = dataSetIndex;
                 break;
             default:
-                throw new IllegalArgumentException("Invalid value specified for the dataSetIndex URI parameter:" + dataSetIndex
-                        + "Supported values are strict, lenient and off ");
+                throw new IllegalArgumentException(
+                        "Invalid value specified for the dataSetIndex URI parameter:" + dataSetIndex
+                                                   + "Supported values are strict, lenient and off ");
         }
     }
 
@@ -243,10 +245,10 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         if (log.isDebugEnabled()) {
             if (copy.getIn().getHeader(Exchange.DATASET_INDEX) != null) {
                 log.debug("Received message: {} (DataSet index={}) = {}",
-                        new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});
+                        new Object[] { index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy });
             } else {
                 log.debug("Received message: {} = {}",
-                        new Object[]{index, copy});
+                        new Object[] { index, copy });
             }
         }
 

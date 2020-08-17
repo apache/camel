@@ -45,7 +45,7 @@ public class RouteModelLifecycleTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:one")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         });
 

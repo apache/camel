@@ -38,8 +38,8 @@ import org.apache.camel.util.ObjectHelper;
  * Receive messages from AWS DynamoDB Stream service.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "aws-ddbstream", title = "AWS DynamoDB Streams",
-        consumerOnly = true, syntax = "aws-ddbstream:tableName",
-        label = "cloud,messaging,streams")
+             consumerOnly = true, syntax = "aws-ddbstream:tableName",
+             label = "cloud,messaging,streams")
 public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -76,7 +76,8 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null ? configuration.getAmazonDynamoDbStreamsClient()
+        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null
+                ? configuration.getAmazonDynamoDbStreamsClient()
                 : createDdbStreamClient();
     }
 
@@ -103,9 +104,10 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
             case AFTER_SEQUENCE_NUMBER:
             case AT_SEQUENCE_NUMBER:
                 if (null == configuration.getSequenceNumberProvider()) {
-                    throw new IllegalStateException("sequenceNumberProvider must be"
-                            + " provided, either as an implementation of"
-                            + " SequenceNumberProvider or a literal String.");
+                    throw new IllegalStateException(
+                            "sequenceNumberProvider must be"
+                                                    + " provided, either as an implementation of"
+                                                    + " SequenceNumberProvider or a literal String.");
                 } else {
                     return configuration.getSequenceNumberProvider().getSequenceNumber();
                 }
@@ -129,7 +131,8 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonDynamoDBStreamsClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonDynamoDBStreamsClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonDynamoDBStreamsClientBuilder.standard().withCredentials(credentialsProvider);
             }
@@ -150,11 +153,11 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     @Override
     public String toString() {
         return "DdbStreamEndpoint{"
-                + "tableName=" + configuration.getTableName()
-                + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest=" + configuration.getMaxResultsPerRequest()
-                + ", iteratorType=" + configuration.getIteratorType()
-                + ", sequenceNumberProvider=" + configuration.getSequenceNumberProvider()
-                + ", uri=" + getEndpointUri()
-                + '}';
+               + "tableName=" + configuration.getTableName()
+               + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest=" + configuration.getMaxResultsPerRequest()
+               + ", iteratorType=" + configuration.getIteratorType()
+               + ", sequenceNumberProvider=" + configuration.getSequenceNumberProvider()
+               + ", uri=" + getEndpointUri()
+               + '}';
     }
 }

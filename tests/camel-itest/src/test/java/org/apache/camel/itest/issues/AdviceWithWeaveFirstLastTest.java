@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Advice with tests
  */
 public class AdviceWithWeaveFirstLastTest extends CamelTestSupport {
- 
+
     @Override
     public boolean isUseAdviceWith() {
         return true;
     }
- 
+
     @Test
     void testWeaveAddFirst() throws Exception {
         // START SNIPPET: e1
@@ -45,19 +45,19 @@ public class AdviceWithWeaveFirstLastTest extends CamelTestSupport {
             }
         });
         // END SNIPPET: e1
- 
+
         context.start();
- 
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
- 
+
         template.sendBody("direct:start", "Hello World");
- 
+
         assertMockEndpointsSatisfied();
     }
- 
+
     @Test
     void testWeaveAddLast() throws Exception {
         // START SNIPPET: e2
@@ -69,21 +69,20 @@ public class AdviceWithWeaveFirstLastTest extends CamelTestSupport {
             }
         });
         // END SNIPPET: e2
- 
+
         context.start();
-        
- 
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
- 
+
         Object out = template.requestBody("direct:start", "Hello World");
         assertEquals("Bye World", out);
- 
+
         assertMockEndpointsSatisfied();
     }
- 
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

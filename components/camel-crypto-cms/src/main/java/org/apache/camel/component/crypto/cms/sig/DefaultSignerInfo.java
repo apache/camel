@@ -34,8 +34,8 @@ import org.bouncycastle.cms.CMSAttributeTableGenerator;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 
 /**
- * Reads the signer information from a Java keystore. You have to specify an
- * alias for the private key entry, the signature algorithm, and the keystore.
+ * Reads the signer information from a Java keystore. You have to specify an alias for the private key entry, the
+ * signature algorithm, and the keystore.
  */
 @UriParams
 public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements SignerInfo {
@@ -57,8 +57,7 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
     private CMSAttributeTableGenerator unsignedAttributeGenerator;
 
     /**
-     * Password of the private key. If not set then the password set in the
-     * parameter 'keystoreParameters' is used.
+     * Password of the private key. If not set then the password set in the parameter 'keystoreParameters' is used.
      */
     public void setPassword(char[] password) {
         this.password = password;
@@ -74,7 +73,8 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
             pw = getKeyStoreParameters().getPassword();
         }
         if (pw == null) {
-            throw new CryptoCmsException("No password for accessing the private key from the keystore found for the singer infor " + this);
+            throw new CryptoCmsException(
+                    "No password for accessing the private key from the keystore found for the singer infor " + this);
         }
         return pw.toCharArray();
     }
@@ -103,9 +103,8 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
     }
 
     /**
-     * If <tt>true</tt> then the certificate chain corresponding to the alias of
-     * the private key is added to the certificate list of the Signed Data
-     * instance.
+     * If <tt>true</tt> then the certificate chain corresponding to the alias of the private key is added to the
+     * certificate list of the Signed Data instance.
      */
     public void setIncludeCertificates(boolean includeCertificates) {
         this.includeCertificates = includeCertificates;
@@ -122,12 +121,15 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
         try {
             Key key = getKeyStore().getKey(alias, getPassword(exchange));
             if (key instanceof PrivateKey) {
-                return (PrivateKey)key;
+                return (PrivateKey) key;
             }
         } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
-            throw new CryptoCmsException("Problem occured during accessing the private key for the alias '" + alias + "' in the keystore of signer " + this);
+            throw new CryptoCmsException(
+                    "Problem occured during accessing the private key for the alias '" + alias + "' in the keystore of signer "
+                                         + this);
         }
-        throw new CryptoCmsNoKeyOrCertificateForAliasException("No private key found  for the alias '" + alias + "' in the keystore of signer " + this);
+        throw new CryptoCmsNoKeyOrCertificateForAliasException(
+                "No private key found  for the alias '" + alias + "' in the keystore of signer " + this);
     }
 
     @Override
@@ -138,12 +140,14 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
         try {
             cert = getKeyStore().getCertificate(alias);
         } catch (KeyStoreException e) {
-            throw new CryptoCmsException("Problem during accessing the certificate for the alias '" + alias + "' in the signer " + this, e);
+            throw new CryptoCmsException(
+                    "Problem during accessing the certificate for the alias '" + alias + "' in the signer " + this, e);
         }
         if (cert instanceof X509Certificate) {
-            return (X509Certificate)cert;
+            return (X509Certificate) cert;
         }
-        throw new CryptoCmsNoKeyOrCertificateForAliasException("No X.509 certificate found for alias '" + alias + "' in the keystore of signer " + this);
+        throw new CryptoCmsNoKeyOrCertificateForAliasException(
+                "No X.509 certificate found for alias '" + alias + "' in the keystore of signer " + this);
     }
 
     @Override
@@ -154,7 +158,10 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
             try {
                 certs = getKeyStore().getCertificateChain(alias);
             } catch (KeyStoreException e) {
-                throw new CryptoCmsException("Problem during accessing the certificate chain for the alias '" + alias + "' in the keystore of signer " + this, e);
+                throw new CryptoCmsException(
+                        "Problem during accessing the certificate chain for the alias '" + alias
+                                             + "' in the keystore of signer " + this,
+                        e);
             }
             if (certs == null) {
                 return new Certificate[0];
@@ -167,16 +174,15 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
     }
 
     /**
-     * Signed attributes of the Signed Data instance. By default contentType,
-     * signingTime, messageDigest, and id-aa-CMSAlgorithmProtection are set.
+     * Signed attributes of the Signed Data instance. By default contentType, signingTime, messageDigest, and
+     * id-aa-CMSAlgorithmProtection are set.
      */
     public void setSignedAttributeGenerator(CMSAttributeTableGenerator signedAttributeGenerator) {
         this.signedAttributeGenerator = signedAttributeGenerator;
     }
 
     /**
-     * Unsigned attributes of the Signed Data instance. By default no unsigned
-     * attribute is set.
+     * Unsigned attributes of the Signed Data instance. By default no unsigned attribute is set.
      */
     public void setUnsignedAttributeGenerator(CMSAttributeTableGenerator unsignedAttributeGenerator) {
         this.unsignedAttributeGenerator = unsignedAttributeGenerator;
@@ -194,6 +200,7 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
 
     @Override
     public String toString() {
-        return "private key alias=" + privateKeyAlias + ", signature algorithm=" + signatureAlgorithm + ", isIncludeCertificates=" + includeCertificates;
+        return "private key alias=" + privateKeyAlias + ", signature algorithm=" + signatureAlgorithm
+               + ", isIncludeCertificates=" + includeCertificates;
     }
 }

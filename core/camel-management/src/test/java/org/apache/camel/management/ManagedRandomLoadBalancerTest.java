@@ -66,7 +66,7 @@ public class ManagedRandomLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().random().id("mysend")
+                        .loadBalance().random().id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };

@@ -39,7 +39,6 @@ public class EipDocumentationEnricherMojoTest {
     @Mock
     private File mockInputSchema;
 
-
     @BeforeEach
     public void setUp() throws Exception {
         eipDocumentationEnricherMojo.camelCoreDir = mockCamelCore;

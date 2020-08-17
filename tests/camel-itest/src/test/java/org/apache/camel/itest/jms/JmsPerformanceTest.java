@@ -47,7 +47,8 @@ public class JmsPerformanceTest extends CamelTestSupport {
 
         sendLoop(getMessageCount());
 
-        LOG.info("Sending {} messages completed, now will assert on their content as well as the order of their receipt", getMessageCount());
+        LOG.info("Sending {} messages completed, now will assert on their content as well as the order of their receipt",
+                getMessageCount());
 
         // should wait a bit to make sure all messages have been received by the MyBean#onMessage() method
         // as this happens asynchronously, that's not inside the 'main' thread

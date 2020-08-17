@@ -30,7 +30,7 @@ public class XQueryExampleTest extends CamelSpringTestSupport {
                                     + "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
 
         template.sendBody("direct:start", "<person user='James'><firstName>James</firstName>"
-                          + "<lastName>Strachan</lastName><city>London</city></person>");
+                                          + "<lastName>Strachan</lastName><city>London</city></person>");
 
         assertMockEndpointsSatisfied();
     }

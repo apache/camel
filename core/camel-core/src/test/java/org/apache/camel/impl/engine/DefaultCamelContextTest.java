@@ -75,7 +75,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         ctx.start();
 
-        BeanComponent component = (BeanComponent)ctx.getComponent("bean", true, false);
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, false);
         // should be stopped
         assertTrue(component.getStatus().isStopped());
     }
@@ -86,7 +86,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         ctx.start();
 
-        BeanComponent component = (BeanComponent)ctx.getComponent("bean", true, true);
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, true);
         // should be started
         assertTrue(component.getStatus().isStarted());
     }
@@ -135,7 +135,9 @@ public class DefaultCamelContextTest extends TestSupport {
             camelContext.getEndpoint("xxx", Endpoint.class);
             fail();
         } catch (NoSuchEndpointException e) {
-            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.", e.getMessage());
+            assertEquals(
+                    "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
+                    e.getMessage());
         }
     }
 

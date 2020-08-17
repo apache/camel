@@ -47,7 +47,7 @@ public class RootObject {
 
     public Message getRequest() {
         return exchange.getIn();
-    }   
+    }
 
     public Message getResponse() {
         return exchange.getOut();

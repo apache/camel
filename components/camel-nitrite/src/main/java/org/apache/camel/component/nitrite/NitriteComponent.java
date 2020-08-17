@@ -88,7 +88,7 @@ public class NitriteComponent extends DefaultComponent {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        for (String path: databaseCache.keySet()) {
+        for (String path : databaseCache.keySet()) {
             closeDb(path);
         }
         databaseCache.clear();

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a file stored on the Telegram servers.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultcacheddocument">
- * https://core.telegram.org/bots/api#inlinequeryresultcacheddocument</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultcacheddocument</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultCachedDocument extends InlineQueryResult {

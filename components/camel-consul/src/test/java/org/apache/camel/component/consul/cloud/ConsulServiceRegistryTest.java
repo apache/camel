@@ -43,7 +43,8 @@ public class ConsulServiceRegistryTest extends ConsulTestSupport {
         registry.setOverrideServiceHost(true);
         registry.start();
 
-        registry.register(DefaultServiceDefinition.builder().withId("my-id").withName("service-name").withHost("my-host").withPort(9091).build());
+        registry.register(DefaultServiceDefinition.builder().withId("my-id").withName("service-name").withHost("my-host")
+                .withPort(9091).build());
 
         final CatalogClient catalog = getConsul().catalogClient();
         final HealthClient health = getConsul().healthClient();

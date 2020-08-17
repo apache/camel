@@ -25,7 +25,8 @@ public class SpringDeadLetterChannelUseOriginalBodyWithFileTest extends DeadLett
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringDeadLetterChannelUseOriginalExchangeWithFileTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/SpringDeadLetterChannelUseOriginalExchangeWithFileTest.xml");
     }
 
 }

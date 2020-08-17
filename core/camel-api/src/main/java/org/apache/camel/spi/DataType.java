@@ -21,15 +21,13 @@ import org.apache.camel.util.StringHelper;
 /**
  * Represents the data type URN which is used for message data type contract.
  * <p/>
- * Java class doesn't always explain the data type completely, for example XML and JSON
- * data format is sometimes serialized as a {@code String}, {@code InputStream} or etc.
- * The {@link DataTypeAware} message stores the DataType as a part of the message to carry
- * those data type information even if it's marshaled, so that it could be
- * leveraged to detect required {@link Transformer} and {@link Validator}.
- * DataType consists of two parts, 'model' and 'name'. Its string representation is
- * 'model:name' connected with colon. For example 'java:com.example.Order', 'xml:ABCOrder'
- * or 'json:XYZOrder'. These type name other than java class name allows the message to
- * carry the name of the message data structure even if it's marshaled.
+ * Java class doesn't always explain the data type completely, for example XML and JSON data format is sometimes
+ * serialized as a {@code String}, {@code InputStream} or etc. The {@link DataTypeAware} message stores the DataType as
+ * a part of the message to carry those data type information even if it's marshaled, so that it could be leveraged to
+ * detect required {@link Transformer} and {@link Validator}. DataType consists of two parts, 'model' and 'name'. Its
+ * string representation is 'model:name' connected with colon. For example 'java:com.example.Order', 'xml:ABCOrder' or
+ * 'json:XYZOrder'. These type name other than java class name allows the message to carry the name of the message data
+ * structure even if it's marshaled.
  * 
  * @see DataTypeAware
  * @see Transformer
@@ -43,7 +41,7 @@ public class DataType {
     private String name;
     private boolean isJavaType;
     private String typeString;
-    
+
     public DataType(String urn) {
         if (urn != null) {
             String[] split = StringHelper.splitOnCharacter(urn, ":", 2);
@@ -54,21 +52,21 @@ public class DataType {
             }
         }
     }
-    
+
     public DataType(Class<?> clazz) {
         model = JAVA_TYPE_PREFIX;
         isJavaType = true;
         name = clazz.getName();
     }
-    
+
     public String getModel() {
         return model;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public boolean isJavaType() {
         return isJavaType;
     }
@@ -84,7 +82,7 @@ public class DataType {
     @Override
     public boolean equals(Object target) {
         if (target instanceof DataType) {
-            DataType targetdt = (DataType)target;
+            DataType targetdt = (DataType) target;
             String targetModel = targetdt.getModel();
             String targetName = targetdt.getName();
             if (targetModel == null) {

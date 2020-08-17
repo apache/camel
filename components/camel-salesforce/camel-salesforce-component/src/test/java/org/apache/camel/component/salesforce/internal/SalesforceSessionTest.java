@@ -52,9 +52,11 @@ public class SalesforceSessionTest {
 
     @Test
     public void shouldGenerateJwtTokens() {
-        final SalesforceLoginConfig config = new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username", parameters, true);
+        final SalesforceLoginConfig config
+                = new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username", parameters, true);
 
-        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config);
+        final SalesforceSession session
+                = new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config);
 
         final String jwtAssertion = session.generateJwtAssertion();
 
@@ -63,7 +65,8 @@ public class SalesforceSessionTest {
 
     @Test
     public void shouldUseTheOverridenInstanceUrl() throws Exception {
-        final SalesforceLoginConfig config = new SalesforceLoginConfig("https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
+        final SalesforceLoginConfig config = new SalesforceLoginConfig(
+                "https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
         config.setInstanceUrl("https://custom.salesforce.com:8443");
 
         final SalesforceSession session = login(config);
@@ -73,14 +76,16 @@ public class SalesforceSessionTest {
 
     @Test
     public void shouldUseTheSalesforceSuppliedInstanceUrl() throws Exception {
-        final SalesforceLoginConfig config = new SalesforceLoginConfig("https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
+        final SalesforceLoginConfig config = new SalesforceLoginConfig(
+                "https://login.salesforce.com", "clientId", "clientSecret", "username", "password", true);
 
         final SalesforceSession session = login(config);
 
         assertEquals("https://eu11.salesforce.com", session.getInstanceUrl());
     }
 
-    static SalesforceSession login(final SalesforceLoginConfig config) throws InterruptedException, TimeoutException, ExecutionException, SalesforceException {
+    static SalesforceSession login(final SalesforceLoginConfig config)
+            throws InterruptedException, TimeoutException, ExecutionException, SalesforceException {
         final SalesforceHttpClient client = mock(SalesforceHttpClient.class);
 
         final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), client, TIMEOUT, config);

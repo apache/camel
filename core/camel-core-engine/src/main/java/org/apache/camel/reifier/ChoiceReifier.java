@@ -47,7 +47,7 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
             }
             Predicate pre = exp.getPredicate();
             if (pre instanceof ExpressionClause) {
-                ExpressionClause<?> clause = (ExpressionClause<?>)pre;
+                ExpressionClause<?> clause = (ExpressionClause<?>) pre;
                 if (clause.getExpressionType() != null) {
                     // if using the Java DSL then the expression may have been
                     // set using the
@@ -59,13 +59,13 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                     // ExpressionClause did build for us
                     ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
-                        whenClause.setExpression((ExpressionDefinition)model);
+                        whenClause.setExpression((ExpressionDefinition) model);
                     }
                 }
                 exp = whenClause.getExpression();
             }
 
-            FilterProcessor filter = (FilterProcessor)createProcessor(whenClause);
+            FilterProcessor filter = (FilterProcessor) createProcessor(whenClause);
             filters.add(filter);
         }
         Processor otherwiseProcessor = null;

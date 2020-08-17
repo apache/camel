@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(SubscriptionGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(SubscriptionGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for cancel
     @Disabled
@@ -143,28 +144,28 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
             public void configure() {
                 // test route for cancel
                 from("direct://CANCEL")
-                    .to("braintree://" + PATH_PREFIX + "/cancel?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/cancel?inBody=id");
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 // test route for delete
                 from("direct://DELETE")
-                    .to("braintree://" + PATH_PREFIX + "/delete");
+                        .to("braintree://" + PATH_PREFIX + "/delete");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for retryCharge
                 from("direct://RETRYCHARGE")
-                    .to("braintree://" + PATH_PREFIX + "/retryCharge?inBody=subscriptionId");
+                        .to("braintree://" + PATH_PREFIX + "/retryCharge?inBody=subscriptionId");
                 // test route for retryCharge
                 from("direct://RETRYCHARGE_1")
-                    .to("braintree://" + PATH_PREFIX + "/retryCharge");
+                        .to("braintree://" + PATH_PREFIX + "/retryCharge");
                 // test route for search
                 from("direct://SEARCH")
-                    .to("braintree://" + PATH_PREFIX + "/search?inBody=searchRequest");
+                        .to("braintree://" + PATH_PREFIX + "/search?inBody=searchRequest");
                 // test route for update
                 from("direct://UPDATE")
-                    .to("braintree://" + PATH_PREFIX + "/update");
+                        .to("braintree://" + PATH_PREFIX + "/update");
             }
         };
     }

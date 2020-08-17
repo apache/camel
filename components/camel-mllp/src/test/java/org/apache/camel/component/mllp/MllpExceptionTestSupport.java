@@ -19,15 +19,14 @@ package org.apache.camel.component.mllp;
 import org.junit.jupiter.api.AfterEach;
 
 public class MllpExceptionTestSupport {
-    public static final String HL7_MESSAGE =
-        "MSH|^~\\&|APP_A|FAC_A|^org^sys||20161206193919||ADT^A04|00001||2.6" + '\r'
-            + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S" + '\r'
-            + '\n';
+    public static final String HL7_MESSAGE = "MSH|^~\\&|APP_A|FAC_A|^org^sys||20161206193919||ADT^A04|00001||2.6" + '\r'
+                                             + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S"
+                                             + '\r'
+                                             + '\n';
 
-    public static final String HL7_ACKNOWLEDGEMENT =
-        "MSH|^~\\&|APP_A|FAC_A|^org^sys||20161206193919||ACK^A04|00002||2.6" + '\r'
-            + "MSA|AA|00001" + '\r'
-            + '\n';
+    public static final String HL7_ACKNOWLEDGEMENT = "MSH|^~\\&|APP_A|FAC_A|^org^sys||20161206193919||ACK^A04|00002||2.6" + '\r'
+                                                     + "MSA|AA|00001" + '\r'
+                                                     + '\n';
 
     public static final byte[] HL7_MESSAGE_BYTES = HL7_MESSAGE.getBytes();
     public static final byte[] HL7_ACKNOWLEDGEMENT_BYTES = HL7_ACKNOWLEDGEMENT.getBytes();

@@ -47,18 +47,19 @@ public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use netty-http on localhost with the given port
-                restConfiguration().component("netty-http").host("localhost").port(getPort()).endpointProperty("nettyHttpBinding", "#mybinding");
+                restConfiguration().component("netty-http").host("localhost").port(getPort())
+                        .endpointProperty("nettyHttpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("{id}/{query}")
+                        .get("{id}/{query}")
                         .route()
                         .to("log:query")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getMessage().setBody(id + ";Goofy");
                         }).endRest()
-                    .get("{id}/basic")
+                        .get("{id}/basic")
                         .route()
                         .to("log:input")
                         .process(exchange -> {

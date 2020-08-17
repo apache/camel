@@ -48,7 +48,7 @@ public class FixedBackOffProducerConnectionRetryTest extends SoroushBotTestSuppo
             @Override
             public void configure() throws Exception {
                 from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/retry 5?maxConnectionRetry=5"
-                        + "&retryWaitingTime=500&backOffStrategy=fixed")
+                                          + "&retryWaitingTime=500&backOffStrategy=fixed")
                         .to("mock:afterAllRetry")
                         .to("mock:beforeAllRetry");
             }

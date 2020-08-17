@@ -21,7 +21,8 @@ package org.apache.camel.language.simple.types;
  */
 public enum LogicalOperatorType {
 
-    AND, OR;
+    AND,
+    OR;
 
     public static LogicalOperatorType asOperator(String text) {
         switch (text) {

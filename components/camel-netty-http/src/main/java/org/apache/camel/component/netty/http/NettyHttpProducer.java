@@ -142,7 +142,8 @@ public class NettyHttpProducer extends NettyProducer {
                             boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
                             if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
                                 // operation failed so populate exception to throw
-                                Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl, response, code, getConfiguration().isTransferException());
+                                Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl,
+                                        response, code, getConfiguration().isTransferException());
                                 exchange.setException(cause);
                             }
                         }

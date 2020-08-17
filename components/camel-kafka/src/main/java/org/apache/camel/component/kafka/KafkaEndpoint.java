@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Sent and receive messages to/from an Apache Kafka broker.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", category = {Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic",
+             category = { Category.MESSAGING })
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
@@ -62,7 +63,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public KafkaComponent getComponent() {
-        return (KafkaComponent)super.getComponent();
+        return (KafkaComponent) super.getComponent();
     }
 
     public KafkaConfiguration getConfiguration() {
@@ -101,7 +102,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     <T> Class<T> loadClass(Object o, ClassResolver resolver, Class<T> type) {
         if (o == null || o instanceof Class) {
-            return CastUtils.cast((Class<?>)o);
+            return CastUtils.cast((Class<?>) o);
         }
         String name = o.toString();
         Class<T> c = resolver.resolveClass(name, type);
@@ -155,13 +156,15 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
     }
 
     public ExecutorService createProducerExecutor() {
         int core = getConfiguration().getWorkerPoolCoreSize();
         int max = getConfiguration().getWorkerPoolMaxSize();
-        return getCamelContext().getExecutorServiceManager().newThreadPool(this, "KafkaProducer[" + configuration.getTopic() + "]", core, max);
+        return getCamelContext().getExecutorServiceManager().newThreadPool(this,
+                "KafkaProducer[" + configuration.getTopic() + "]", core, max);
     }
 
     @SuppressWarnings("rawtypes")

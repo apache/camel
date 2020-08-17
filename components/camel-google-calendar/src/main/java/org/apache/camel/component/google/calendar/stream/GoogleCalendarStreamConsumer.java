@@ -54,12 +54,13 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     public GoogleCalendarStreamEndpoint getEndpoint() {
-        return (GoogleCalendarStreamEndpoint)super.getEndpoint();
+        return (GoogleCalendarStreamEndpoint) super.getEndpoint();
     }
 
     @Override
     protected int poll() throws Exception {
-        com.google.api.services.calendar.Calendar.Events.List request = getClient().events().list(getConfiguration().getCalendarId()).setOrderBy("updated");
+        com.google.api.services.calendar.Calendar.Events.List request
+                = getClient().events().list(getConfiguration().getCalendarId()).setOrderBy("updated");
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
         }

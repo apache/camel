@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This test suite is testing different scenarios where a disruptor is forced to
- * buffer exchanges locally until a consumer is registered.
+ * This test suite is testing different scenarios where a disruptor is forced to buffer exchanges locally until a
+ * consumer is registered.
  */
 public class DisruptorBufferingTest extends CamelTestSupport {
 

@@ -33,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
-@ContextConfiguration(locations = {"/org/apache/camel/component/netty/http/SpringNettyHttpSSLTest.xml"})
+@ContextConfiguration(locations = { "/org/apache/camel/component/netty/http/SpringNettyHttpSSLTest.xml" })
 public class SpringNettyHttpSSLTest {
 
     @Produce
@@ -79,4 +79,3 @@ public class SpringNettyHttpSSLTest {
     }
 
 }
-

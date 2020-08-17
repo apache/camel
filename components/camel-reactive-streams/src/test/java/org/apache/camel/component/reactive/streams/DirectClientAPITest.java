@@ -130,7 +130,8 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
 
         BlockingQueue<String> queue = new LinkedBlockingDeque<>();
 
-        Flowable.just(1, 2, 3).flatMap(camel.to("bean:hello")::apply).map(ex -> ex.getMessage().getBody(String.class)).doOnNext(queue::add).subscribe();
+        Flowable.just(1, 2, 3).flatMap(camel.to("bean:hello")::apply).map(ex -> ex.getMessage().getBody(String.class))
+                .doOnNext(queue::add).subscribe();
 
         check3HelloInQueue(queue);
     }
@@ -150,7 +151,8 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
 
         BlockingQueue<String> queue = new LinkedBlockingDeque<>();
 
-        Flowable.just(1, 2, 3).flatMap(e -> camel.to("bean:hello", e)).map(ex -> ex.getMessage().getBody(String.class)).doOnNext(queue::add).subscribe();
+        Flowable.just(1, 2, 3).flatMap(e -> camel.to("bean:hello", e)).map(ex -> ex.getMessage().getBody(String.class))
+                .doOnNext(queue::add).subscribe();
 
         check3HelloInQueue(queue);
     }

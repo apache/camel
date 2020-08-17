@@ -98,13 +98,14 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf").id("sslclient")
-                    .process(new Processor() {
-                        public void process(final Exchange exchange) {
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody("Bye " + body);
-                        }
-                    }).to("mock:receive").noAutoStartup();
+                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf")
+                        .id("sslclient")
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                exchange.getOut().setBody("Bye " + body);
+                            }
+                        }).to("mock:receive").noAutoStartup();
             }
         };
     }
@@ -192,7 +193,8 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
                 sslContext = SSLContext.getInstance("TLS");
 
                 sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-            } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | UnrecoverableKeyException | KeyManagementException e) {
+            } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException
+                     | UnrecoverableKeyException | KeyManagementException e) {
                 e.printStackTrace();
             }
         }

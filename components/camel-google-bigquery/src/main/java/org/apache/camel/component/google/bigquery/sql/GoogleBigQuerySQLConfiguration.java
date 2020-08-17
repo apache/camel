@@ -46,8 +46,7 @@ public class GoogleBigQuerySQLConfiguration {
     }
 
     /**
-     * ConnectionFactory to obtain connection to Bigquery Service. If non
-     * provided the default will be used.
+     * ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used.
      */
     public GoogleBigQueryConnectionFactory getConnectionFactory() {
         return connectionFactory;

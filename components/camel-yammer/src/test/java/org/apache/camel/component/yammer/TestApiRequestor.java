@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.yammer;
 
-
 public class TestApiRequestor implements ApiRequestor {
 
     String body;
-    
+
     public TestApiRequestor(String body) {
         this.body = body;
     }
-    
+
     private String send() {
         return body;
     }

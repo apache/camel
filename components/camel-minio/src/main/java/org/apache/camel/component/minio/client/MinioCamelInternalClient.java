@@ -24,8 +24,7 @@ import io.minio.MinioClient;
 public interface MinioCamelInternalClient {
 
     /**
-     * Returns an minio client after a factory method determines which one to
-     * return.
+     * Returns an minio client after a factory method determines which one to return.
      *
      * @return Minio Minio
      */

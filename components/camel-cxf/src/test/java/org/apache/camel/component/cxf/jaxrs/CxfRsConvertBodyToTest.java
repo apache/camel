@@ -36,7 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CxfRsConvertBodyToTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConvertBodyToTest";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String CXF_RS_ENDPOINT_URI
+            = "cxfrs://http://localhost:" + CXT
+              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -45,11 +47,11 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
                 Response ok = Response.ok().build();
 
                 from(CXF_RS_ENDPOINT_URI)
-                    // should be able to convert to Customer
-                    .convertBodyTo(Customer.class)
-                    .to("mock:result")
-                    // respond with OK
-                    .transform(constant(ok));
+                        // should be able to convert to Customer
+                        .convertBodyTo(Customer.class)
+                        .to("mock:result")
+                        // respond with OK
+                        .transform(constant(ok));
             }
         };
     }

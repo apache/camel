@@ -98,10 +98,14 @@ public class MyServiceProxyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(body().isEqualTo("Tiger in Action")).throwException(new MyApplicationException("No tigers", 9))
-                    .when(body().isEqualTo("Donkey in Action")).throwException(new RuntimeCamelException(new MyApplicationException("No donkeys", 8)))
-                    .when(body().isEqualTo("Elephant in Action")).throwException(new MyCustomException("Damn", new MyApplicationException("No elephants", 7)))
-                    .when(body().isEqualTo("Kaboom")).throwException(new IllegalArgumentException("Damn")).otherwise().transform(constant("Camel in Action"));
+                from("direct:start").choice().when(body().isEqualTo("Tiger in Action"))
+                        .throwException(new MyApplicationException("No tigers", 9))
+                        .when(body().isEqualTo("Donkey in Action"))
+                        .throwException(new RuntimeCamelException(new MyApplicationException("No donkeys", 8)))
+                        .when(body().isEqualTo("Elephant in Action"))
+                        .throwException(new MyCustomException("Damn", new MyApplicationException("No elephants", 7)))
+                        .when(body().isEqualTo("Kaboom")).throwException(new IllegalArgumentException("Damn")).otherwise()
+                        .transform(constant("Camel in Action"));
 
                 from("direct:request").process(new Processor() {
 

@@ -43,10 +43,11 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, Seque
                     SequenceFile.Writer.bufferSize(endpointConfig.getBufferSize()),
                     SequenceFile.Writer.replication(endpointConfig.getReplication()),
                     SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
-                    SequenceFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    SequenceFile.Writer.progressable(() -> { }),
-                    SequenceFile.Writer.metadata(new SequenceFile.Metadata())
-            );
+                    SequenceFile.Writer.compression(endpointConfig.getCompressionType(),
+                            endpointConfig.getCompressionCodec().getCodec()),
+                    SequenceFile.Writer.progressable(() -> {
+                    }),
+                    SequenceFile.Writer.metadata(new SequenceFile.Metadata()));
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

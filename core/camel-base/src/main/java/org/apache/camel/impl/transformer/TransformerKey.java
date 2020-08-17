@@ -21,8 +21,8 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Key used in {@link org.apache.camel.spi.TransformerRegistry} in {@link org.apache.camel.impl.engine.AbstractCamelContext},
- * to ensure a consistent lookup.
+ * Key used in {@link org.apache.camel.spi.TransformerRegistry} in
+ * {@link org.apache.camel.impl.engine.AbstractCamelContext}, to ensure a consistent lookup.
  */
 public final class TransformerKey extends ValueHolder<String> {
 

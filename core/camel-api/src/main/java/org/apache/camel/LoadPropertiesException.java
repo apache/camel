@@ -26,7 +26,7 @@ public class LoadPropertiesException extends CamelException {
     private final URL url;
 
     public LoadPropertiesException(URL url, Exception cause) {
-        super("Failed to load URL: " + url + ". Reason: " + cause,  cause);
+        super("Failed to load URL: " + url + ". Reason: " + cause, cause);
         this.url = url;
     }
 

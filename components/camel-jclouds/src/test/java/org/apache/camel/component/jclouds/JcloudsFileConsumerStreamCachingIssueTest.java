@@ -52,7 +52,7 @@ public class JcloudsFileConsumerStreamCachingIssueTest extends CamelTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file:target/foo").streamCaching()
-                    .to("mock:foo");
+                        .to("mock:foo");
             }
         };
     }

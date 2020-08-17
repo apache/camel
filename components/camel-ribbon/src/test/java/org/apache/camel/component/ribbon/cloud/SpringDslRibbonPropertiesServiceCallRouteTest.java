@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SpringDslRibbonPropertiesServiceCallRouteTest extends SpringRibbonServiceCallRouteTest {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/ribbon/cloud/SpringDslRibbonPropertiesServiceCallRouteTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/ribbon/cloud/SpringDslRibbonPropertiesServiceCallRouteTest.xml");
     }
 
     @Test
@@ -40,8 +41,7 @@ public class SpringDslRibbonPropertiesServiceCallRouteTest extends SpringRibbonS
         assertNotNull(processor.getLoadBalancer());
         assertTrue(processor.getLoadBalancer() instanceof RibbonServiceLoadBalancer);
 
-        RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer)processor.getLoadBalancer();
+        RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer) processor.getLoadBalancer();
         assertNull(loadBalancer.getServiceDiscovery());
     }
 }
-

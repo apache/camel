@@ -27,9 +27,8 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.body;
 
 /**
- * Integration test that verifies the ability of SJMS to correctly process
- * synchronous InOut exchanges from both the Producer and Consumer perspective
- * using a temporary destination.
+ * Integration test that verifies the ability of SJMS to correctly process synchronous InOut exchanges from both the
+ * Producer and Consumer perspective using a temporary destination.
  */
 public class SyncJmsInOutTempDestIT extends JmsTestSupport {
 
@@ -57,12 +56,12 @@ public class SyncJmsInOutTempDestIT extends JmsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .to("sjms:in.foo.tempQ?exchangePattern=InOut")
-                    .to("mock:result");
+                        .to("sjms:in.foo.tempQ?exchangePattern=InOut")
+                        .to("mock:result");
 
                 from("sjms:in.foo.tempQ?exchangePattern=InOut")
-                    .log("Using ${threadName} to process ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

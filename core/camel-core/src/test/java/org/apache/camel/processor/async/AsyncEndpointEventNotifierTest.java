@@ -60,7 +60,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(CamelEvent event) throws Exception {
                 try {
-                    ExchangeSentEvent sent = (ExchangeSentEvent)event;
+                    ExchangeSentEvent sent = (ExchangeSentEvent) event;
                     time.set(sent.getTimeTaken());
                 } finally {
                     latch.countDown();
@@ -70,7 +70,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
             public boolean isEnabled(CamelEvent event) {
                 // we only want the async endpoint
                 if (event instanceof ExchangeSentEvent) {
-                    ExchangeSentEvent sent = (ExchangeSentEvent)event;
+                    ExchangeSentEvent sent = (ExchangeSentEvent) event;
                     return sent.getEndpoint().getEndpointUri().startsWith("async");
                 }
                 return false;

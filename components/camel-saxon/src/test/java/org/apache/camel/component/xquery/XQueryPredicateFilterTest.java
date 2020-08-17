@@ -28,26 +28,26 @@ import org.junit.jupiter.api.Test;
 
 @Disabled("Fixed me later")
 public class XQueryPredicateFilterTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:result")
-    protected MockEndpoint resultEndpoint; 
+    protected MockEndpoint resultEndpoint;
 
     @Produce("direct:xpath")
-    protected ProducerTemplate template; 
+    protected ProducerTemplate template;
 
     @Test
-    public void testXQuerySplitter() throws Exception { 
-        resultEndpoint.expectedMessageCount(1); 
-        template.sendBody("<records><record><type>1</type></record><record><type>2</type></record></records>"); 
+    public void testXQuerySplitter() throws Exception {
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("<records><record><type>1</type></record><record><type>2</type></record></records>");
         resultEndpoint.assertIsSatisfied();
-       
+
         resultEndpoint.reset();
-        template.sendBody("<records><record><type>3</type></record><record><type>4</type></record></records>"); 
+        template.sendBody("<records><record><type>3</type></record><record><type>4</type></record></records>");
         resultEndpoint.expectedMessageCount(0);
         resultEndpoint.assertIsSatisfied();
-    } 
+    }
 
-    @Override 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -57,7 +57,7 @@ public class XQueryPredicateFilterTest extends CamelTestSupport {
                 context.setTracing(true);
 
                 from("direct:xpath").split(splitter).filter().xquery("//record[type=2]")
-                    .to("mock:result");
+                        .to("mock:result");
 
             }
         };

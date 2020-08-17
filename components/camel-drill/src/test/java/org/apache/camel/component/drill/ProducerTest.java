@@ -46,8 +46,9 @@ public class ProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query)).to("drill://" + host + "?mode=" + mode.name() + "&port=" + port).log("${body}")
-                    .to("mock:result");
+                from("direct:in").setHeader(DrillConstants.DRILL_QUERY, constant(query))
+                        .to("drill://" + host + "?mode=" + mode.name() + "&port=" + port).log("${body}")
+                        .to("mock:result");
             }
         };
     }

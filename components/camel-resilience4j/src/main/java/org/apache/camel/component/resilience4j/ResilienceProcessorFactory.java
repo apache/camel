@@ -22,8 +22,7 @@ import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.CircuitBreakerDefinition;
 
 /**
- * To integrate camel-resilience4j with the Camel routes using the Circuit
- * Breaker EIP.
+ * To integrate camel-resilience4j with the Camel routes using the Circuit Breaker EIP.
  */
 public class ResilienceProcessorFactory extends TypedProcessorFactory<CircuitBreakerDefinition> {
 

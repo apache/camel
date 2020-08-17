@@ -64,23 +64,23 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
         final String sysId = getSysID(in);
 
         Response response = ObjectHelper.isEmpty(sysId)
-            ? client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(apiVersion)
-                .path("attachment")
-                .query(ServiceNowParams.SYSPARM_QUERY, in)
-                .query(ServiceNowParams.SYSPARM_LIMIT, in)
-                .query(ServiceNowParams.SYSPARM_OFFSET, in)
-                .query(ServiceNowParams.SYSPARM_SUPPRESS_PAGINATION_HEADER, in)
-                .invoke(HttpMethod.GET)
-            : client.reset()
-                .types(MediaType.APPLICATION_JSON_TYPE)
-                .path("now")
-                .path(apiVersion)
-                .path("attachment")
-                .path(ObjectHelper.notNull(sysId, "sysId"))
-                .invoke(HttpMethod.GET);
+                ? client.reset()
+                        .types(MediaType.APPLICATION_JSON_TYPE)
+                        .path("now")
+                        .path(apiVersion)
+                        .path("attachment")
+                        .query(ServiceNowParams.SYSPARM_QUERY, in)
+                        .query(ServiceNowParams.SYSPARM_LIMIT, in)
+                        .query(ServiceNowParams.SYSPARM_OFFSET, in)
+                        .query(ServiceNowParams.SYSPARM_SUPPRESS_PAGINATION_HEADER, in)
+                        .invoke(HttpMethod.GET)
+                : client.reset()
+                        .types(MediaType.APPLICATION_JSON_TYPE)
+                        .path("now")
+                        .path(apiVersion)
+                        .path("attachment")
+                        .path(ObjectHelper.notNull(sysId, "sysId"))
+                        .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -100,14 +100,14 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
         final String sysId = getSysID(in);
 
         Response response = client.reset()
-            .type(MediaType.APPLICATION_JSON_TYPE)
-            .accept("*/*")
-            .path("now")
-            .path(apiVersion)
-            .path("attachment")
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .path("file")
-            .invoke(HttpMethod.GET);
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .accept("*/*")
+                .path("now")
+                .path(apiVersion)
+                .path("attachment")
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .path("file")
+                .invoke(HttpMethod.GET);
 
         // Header
         setHeaders(in, null, response);
@@ -131,20 +131,20 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
         final Class<?> responseModel = getResponseModel(in, tableName);
 
         Response response = client.reset()
-            .type(ObjectHelper.notNull(
-                in.getHeader(ServiceNowConstants.CONTENT_TYPE, String.class),
-                ServiceNowConstants.CONTENT_TYPE))
-            .accept(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("attachment")
-            .path("file")
-            .query(ServiceNowParams.PARAM_FILE_NAME, in)
-            .query(ServiceNowParams.PARAM_TABLE_NAME, in)
-            .query(ServiceNowParams.PARAM_TABLE_SYS_ID, in)
-            .query(ServiceNowParams.PARAM_ENCRYPTION_CONTEXT, in)
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody(InputStream.class));
+                .type(ObjectHelper.notNull(
+                        in.getHeader(ServiceNowConstants.CONTENT_TYPE, String.class),
+                        ServiceNowConstants.CONTENT_TYPE))
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("attachment")
+                .path("file")
+                .query(ServiceNowParams.PARAM_FILE_NAME, in)
+                .query(ServiceNowParams.PARAM_TABLE_NAME, in)
+                .query(ServiceNowParams.PARAM_TABLE_SYS_ID, in)
+                .query(ServiceNowParams.PARAM_ENCRYPTION_CONTEXT, in)
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody(InputStream.class));
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -166,13 +166,13 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
         final String sysId = getSysID(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("attachment")
-            .path(ObjectHelper.notNull(sysId, "sysId"))
-            .query(responseModel)
-            .invoke(HttpMethod.DELETE);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("attachment")
+                .path(ObjectHelper.notNull(sysId, "sysId"))
+                .query(responseModel)
+                .invoke(HttpMethod.DELETE);
 
         setBodyAndHeaders(in, responseModel, response);
     }

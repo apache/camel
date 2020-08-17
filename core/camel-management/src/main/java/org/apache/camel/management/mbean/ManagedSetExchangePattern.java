@@ -26,7 +26,8 @@ import org.apache.camel.processor.ExchangePatternProcessor;
 public class ManagedSetExchangePattern extends ManagedProcessor implements ManagedSetExchangePatternMBean {
     private final ExchangePatternProcessor processor;
 
-    public ManagedSetExchangePattern(CamelContext context, ExchangePatternProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedSetExchangePattern(CamelContext context, ExchangePatternProcessor processor,
+                                     ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }

@@ -25,7 +25,8 @@ import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 
-public final class HostnameVerifierCxfRsConfigurer extends AbstractHostnameVerifierEndpointConfigurer implements CxfRsConfigurer {
+public final class HostnameVerifierCxfRsConfigurer extends AbstractHostnameVerifierEndpointConfigurer
+        implements CxfRsConfigurer {
 
     private HostnameVerifierCxfRsConfigurer(HostnameVerifier hostnameVerifier) {
         super(hostnameVerifier);
@@ -38,6 +39,7 @@ public final class HostnameVerifierCxfRsConfigurer extends AbstractHostnameVerif
             return new HostnameVerifierCxfRsConfigurer(hostnameVerifier);
         }
     }
+
     @Override
     public void configure(AbstractJAXRSFactoryBean factoryBean) {
     }

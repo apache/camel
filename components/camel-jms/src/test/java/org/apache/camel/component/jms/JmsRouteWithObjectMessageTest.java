@@ -25,5 +25,5 @@ public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
     public void testSendAndReceiveMessage() throws Exception {
         assertSendAndReceiveBody(new PurchaseOrder("Beer", 10));
     }
-    
+
 }

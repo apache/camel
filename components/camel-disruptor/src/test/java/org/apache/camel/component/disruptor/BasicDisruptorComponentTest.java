@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  */
 public class BasicDisruptorComponentTest extends CamelTestSupport {
     private static final Integer VALUE = 42;
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 

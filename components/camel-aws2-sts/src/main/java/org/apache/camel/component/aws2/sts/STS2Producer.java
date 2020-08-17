@@ -34,8 +34,7 @@ import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 /**
- * A Producer which sends messages to the Amazon STS Service SDK v2
- * <a href="http://aws.amazon.com/sts/">AWS STS</a>
+ * A Producer which sends messages to the Amazon STS Service SDK v2 <a href="http://aws.amazon.com/sts/">AWS STS</a>
  */
 public class STS2Producer extends DefaultProducer {
 
@@ -83,7 +82,7 @@ public class STS2Producer extends DefaultProducer {
 
     @Override
     public STS2Endpoint getEndpoint() {
-        return (STS2Endpoint)super.getEndpoint();
+        return (STS2Endpoint) super.getEndpoint();
     }
 
     private void assumeRole(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
@@ -92,7 +91,7 @@ public class STS2Producer extends DefaultProducer {
             if (payload instanceof AssumeRoleRequest) {
                 AssumeRoleResponse result;
                 try {
-                    AssumeRoleRequest request = (AssumeRoleRequest)payload;
+                    AssumeRoleRequest request = (AssumeRoleRequest) payload;
                     result = stsClient.assumeRole(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -126,14 +125,14 @@ public class STS2Producer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
+
     private void getSessionToken(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetSessionTokenRequest) {
                 GetSessionTokenResponse result;
                 try {
-                    GetSessionTokenRequest request = (GetSessionTokenRequest)payload;
+                    GetSessionTokenRequest request = (GetSessionTokenRequest) payload;
                     result = stsClient.getSessionToken(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Session Token command returned the error code {}", ase.awsErrorDetails().errorCode());

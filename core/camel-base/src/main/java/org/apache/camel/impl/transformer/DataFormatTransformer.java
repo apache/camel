@@ -48,15 +48,16 @@ public class DataFormatTransformer extends Transformer {
 
     /**
      * Perform data transformation with specified from/to type using DataFormat.
+     * 
      * @param message message to apply transformation
-     * @param from 'from' data type
-     * @param to 'to' data type
+     * @param from    'from' data type
+     * @param to      'to' data type
      */
     @Override
     public void transform(Message message, DataType from, DataType to) throws Exception {
         Exchange exchange = message.getExchange();
         CamelContext context = exchange.getContext();
-        
+
         // Unmarshaling into Java Object
         if ((to == null || to.isJavaType()) && (from.equals(getFrom()) || from.getModel().equals(getModel()))) {
             LOG.debug("Unmarshaling with: {}", dataFormat);
@@ -69,8 +70,8 @@ public class DataFormatTransformer extends Transformer {
                 }
             }
             message.setBody(answer);
-            
-        // Marshaling from Java Object
+
+            // Marshaling from Java Object
         } else if ((from == null || from.isJavaType()) && (to.equals(getTo()) || to.getModel().equals(getModel()))) {
             Object input = message.getBody();
             if (from != null && from.getName() != null) {
@@ -84,7 +85,7 @@ public class DataFormatTransformer extends Transformer {
             LOG.debug("Marshaling with: {}", dataFormat);
             dataFormat.marshal(exchange, message.getBody(), osb);
             message.setBody(osb.build());
-            
+
         } else {
             throw new IllegalArgumentException("Unsupported transformation: from='" + from + ", to='" + to + "'");
         }
@@ -92,6 +93,7 @@ public class DataFormatTransformer extends Transformer {
 
     /**
      * Set DataFormat.
+     * 
      * @return this DataFormatTransformer instance
      */
     public DataFormatTransformer setDataFormat(DataFormat dataFormat) {
@@ -103,8 +105,7 @@ public class DataFormatTransformer extends Transformer {
     @Override
     public String toString() {
         if (transformerString == null) {
-            transformerString =
-                String.format("DataFormatTransformer[scheme='%s', from='%s', to='%s', dataFormat='%s']",
+            transformerString = String.format("DataFormatTransformer[scheme='%s', from='%s', to='%s', dataFormat='%s']",
                     getModel(), getFrom(), getTo(), dataFormat);
         }
         return transformerString;

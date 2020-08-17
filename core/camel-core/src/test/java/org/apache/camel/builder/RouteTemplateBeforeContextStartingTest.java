@@ -21,7 +21,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {

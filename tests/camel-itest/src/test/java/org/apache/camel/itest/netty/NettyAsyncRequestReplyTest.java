@@ -26,7 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
@@ -75,7 +74,8 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    String reply = template.requestBody("netty:tcp://localhost:" + port + "?textline=true&sync=true", index, String.class);
+                    String reply = template.requestBody("netty:tcp://localhost:" + port + "?textline=true&sync=true", index,
+                            String.class);
                     LOG.info("Sent {} received {}", index, reply);
                     assertEquals("Bye " + index, reply);
                     return reply;
@@ -105,11 +105,11 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
                 port = AvailablePortFinder.getNextAvailable();
 
                 from("netty:tcp://localhost:" + port + "?textline=true&sync=true&reuseAddress=true&synchronous=false")
-                    .to("activemq:queue:NettyAsyncRequestReplyTest")
-                    .log("Writing reply ${body}");
+                        .to("activemq:queue:NettyAsyncRequestReplyTest")
+                        .log("Writing reply ${body}");
 
                 from("activemq:queue:NettyAsyncRequestReplyTest")
-                    .transform(simple("Bye ${body}"));
+                        .transform(simple("Bye ${body}"));
             }
         };
     }

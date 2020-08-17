@@ -34,66 +34,66 @@ import weka.core.Instances;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PredictionTest extends AbstractWekaTest {
-    
+
     @Test
     public void testJ48() throws Exception {
-        
+
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
-                
+
                 @Override
                 public void configure() throws Exception {
-                    
-                        // Use the file component to read the CSV file
-                        from("file:src/test/resources/data?fileName=sfny-test.arff&noop=true")
-                        
-                        // Push these instances for later use
-                        .to("weka:push?dsname=sfny-test")
-                        
-                        // Remove the class attribute 
-                        .to("weka:filter?apply=Remove -R last")
-                        
-                        // Add the 'prediction' placeholder attribute 
-                        .to("weka:filter?apply=Add -N predicted -T NOM -L 0,1")
-                        
-                        // Rename the relation 
-                        .to("weka:filter?apply=RenameRelation -modify sfny-predicted")
-                        
-                        // Load an already existing model
-                        .to("weka:model?loadFrom=src/test/resources/data/sfny-j48.model")
-                        
-                        // Use a processor to do the prediction
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                Dataset dataset = exchange.getMessage().getBody(Dataset.class);
-                                dataset.applyToInstances(new NominalPredictor());
-                            }
-                        })
-                        
-                        // Write the data file
-                        .to("weka:write?path=src/test/resources/data/sfny-predicted.arff")
-                        
-                        .to("direct:end");
+
+                    // Use the file component to read the CSV file
+                    from("file:src/test/resources/data?fileName=sfny-test.arff&noop=true")
+
+                            // Push these instances for later use
+                            .to("weka:push?dsname=sfny-test")
+
+                            // Remove the class attribute 
+                            .to("weka:filter?apply=Remove -R last")
+
+                            // Add the 'prediction' placeholder attribute 
+                            .to("weka:filter?apply=Add -N predicted -T NOM -L 0,1")
+
+                            // Rename the relation 
+                            .to("weka:filter?apply=RenameRelation -modify sfny-predicted")
+
+                            // Load an already existing model
+                            .to("weka:model?loadFrom=src/test/resources/data/sfny-j48.model")
+
+                            // Use a processor to do the prediction
+                            .process(new Processor() {
+                                public void process(Exchange exchange) throws Exception {
+                                    Dataset dataset = exchange.getMessage().getBody(Dataset.class);
+                                    dataset.applyToInstances(new NominalPredictor());
+                                }
+                            })
+
+                            // Write the data file
+                            .to("weka:write?path=src/test/resources/data/sfny-predicted.arff")
+
+                            .to("direct:end");
                 }
             });
             camelctx.start();
-            
+
             ConsumerTemplate consumer = camelctx.createConsumerTemplate();
             Dataset dataset = consumer.receiveBody("direct:end", Dataset.class);
-            
+
             Instances wasdata = dataset.getInstances();
             Instances expdata = dataset.pop("sfny-test").getInstances();
             int numInstances = expdata.numInstances();
-            
+
             int correct = numCorrectlyClassified(expdata, wasdata);
-            
+
             double accuracy = 100.0 * correct / numInstances;
             int incorrect = numInstances - correct;
-            
+
             logInfo(String.format("Correctly Classified Instances   %d %.4f %%", correct, accuracy));
             logInfo(String.format("Incorrectly Classified Instances %d %.4f %%", incorrect, 100 - accuracy));
-            
+
             assertEquals("88.8889", String.format(Locale.ENGLISH, "%.4f", accuracy));
         }
     }

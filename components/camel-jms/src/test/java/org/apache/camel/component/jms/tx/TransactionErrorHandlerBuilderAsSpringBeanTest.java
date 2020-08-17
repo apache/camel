@@ -31,7 +31,7 @@ public class TransactionErrorHandlerBuilderAsSpringBeanTest extends CamelSpringT
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/TransactionErrorHandlerBuilderAsSpringBeanTest.xml");
+                "/org/apache/camel/component/jms/tx/TransactionErrorHandlerBuilderAsSpringBeanTest.xml");
     }
 
     @Test

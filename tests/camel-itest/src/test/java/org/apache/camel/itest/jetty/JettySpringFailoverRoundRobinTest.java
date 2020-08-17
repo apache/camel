@@ -30,7 +30,7 @@ public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
     private static int port2 = AvailablePortFinder.getNextAvailable();
     private static int port3 = AvailablePortFinder.getNextAvailable();
     private static int port4 = AvailablePortFinder.getNextAvailable();
-    
+
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 

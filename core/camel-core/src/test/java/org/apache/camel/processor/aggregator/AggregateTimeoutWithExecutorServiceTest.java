@@ -36,7 +36,8 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
 
     @Test
     public void testThreadNotUsedForEveryAggregatorWithCustomExecutorService() throws Exception {
-        assertTrue(aggregateThreadsCount() < NUM_AGGREGATORS, "There should not be a thread for every aggregator when using a shared thread pool");
+        assertTrue(aggregateThreadsCount() < NUM_AGGREGATORS,
+                "There should not be a thread for every aggregator when using a shared thread pool");
 
         // sanity check to make sure were testing routes that work
         for (int i = 0; i < NUM_AGGREGATORS; ++i) {
@@ -72,12 +73,14 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 // share 8 threads among the 20 routes
-                ScheduledExecutorService threadPool = context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
+                ScheduledExecutorService threadPool
+                        = context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
                 for (int i = 0; i < NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
-                        // aggregate timeout after 0.1 second
-                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).timeoutCheckerExecutorService(threadPool)
-                        .completionTimeoutCheckerInterval(10).to("mock:result" + i);
+                            // aggregate timeout after 0.1 second
+                            .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                            .timeoutCheckerExecutorService(threadPool)
+                            .completionTimeoutCheckerInterval(10).to("mock:result" + i);
                 }
             }
         };

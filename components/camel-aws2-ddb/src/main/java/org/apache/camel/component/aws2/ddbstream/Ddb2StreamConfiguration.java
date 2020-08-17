@@ -45,15 +45,21 @@ public class Ddb2StreamConfiguration implements Cloneable {
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll")
     private int maxResultsPerRequest = 100;
 
-    @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream" + " to start getting records. Note that using TRIM_HORIZON can cause a"
-                                                + " significant delay before the stream has caught up to real-time."
-                                                + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider" + " MUST be supplied.", defaultValue = "LATEST")
+    @UriParam(label = "consumer",
+              description = "Defines where in the DynaboDB stream"
+                            + " to start getting records. Note that using TRIM_HORIZON can cause a"
+                            + " significant delay before the stream has caught up to real-time."
+                            + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider" + " MUST be supplied.",
+              defaultValue = "LATEST")
     private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
 
-    @UriParam(label = "consumer", description = "Provider for the sequence number when" + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
-                                                + " iterator types. Can be a registry reference or a literal sequence number.")
+    @UriParam(label = "consumer",
+              description = "Provider for the sequence number when"
+                            + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
+                            + " iterator types. Can be a registry reference or a literal sequence number.")
     private SequenceNumberProvider sequenceNumberProvider;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the DDBStreams client")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "To define a proxy protocol when instantiating the DDBStreams client")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
     private String proxyHost;
@@ -61,8 +67,9 @@ public class Ddb2StreamConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true", description = "Setting the autoDiscoverClient mechanism, if true, the component will "  
-            + " look for a client instance in the registry automatically otherwise it will skip that checking")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Setting the autoDiscoverClient mechanism, if true, the component will "
+                            + " look for a client instance in the registry automatically otherwise it will skip that checking")
     private boolean autoDiscoverClient = true;
 
     public DynamoDbStreamsClient getAmazonDynamoDbStreamsClient() {
@@ -152,7 +159,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public boolean isTrustAllCertificates() {
         return trustAllCertificates;
     }
@@ -160,7 +167,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
-    
+
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
     }
@@ -175,7 +182,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
 
     public Ddb2StreamConfiguration copy() {
         try {
-            return (Ddb2StreamConfiguration)super.clone();
+            return (Ddb2StreamConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

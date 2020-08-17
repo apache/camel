@@ -28,9 +28,9 @@ public final class Wait {
     }
 
     /**
-     * @param ec Condition that has to be met after the timeout
+     * @param ec      Condition that has to be met after the timeout
      * @param timeout Overall timeout - how long to wait for the condition
-     * @param loops How many times to check the condition before the timeout expires.
+     * @param loops   How many times to check the condition before the timeout expires.
      */
     public static void waitFor(Condition ec, long timeout, int loops) {
         if (loops <= 0) {

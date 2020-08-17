@@ -37,7 +37,7 @@ public class EchoSpringRemotingThrowingRuntimeExceptionTest extends SpringTestSu
         String out = template.requestBody("direct:echo", "Claus", String.class);
         assertEquals("Claus Claus", out);
     }
-    
+
     @Test
     public void testEchoKabom() throws Exception {
         try {

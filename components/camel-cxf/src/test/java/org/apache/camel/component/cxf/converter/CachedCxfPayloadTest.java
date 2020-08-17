@@ -42,7 +42,8 @@ public class CachedCxfPayloadTest extends ExchangeTestSupport {
     private static final String PAYLOAD_AMPED = "<foo>bar &amp; a cdata section </foo>";
 
     @Test
-    public void testCachedCxfPayloadSAXSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
+    public void testCachedCxfPayloadSAXSource()
+            throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         SAXSource source = context.getTypeConverter().mandatoryConvertTo(SAXSource.class, PAYLOAD);
         // this conversion uses org.apache.camel.converter.jaxp.XmlConverter.toDOMNodeFromSAX which uses Transformer
         // to convert SAXSource to DOM. This conversion preserves the content but loses its original representation.
@@ -50,26 +51,30 @@ public class CachedCxfPayloadTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testCachedCxfPayloadStAXSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
+    public void testCachedCxfPayloadStAXSource()
+            throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         StAXSource source = context.getTypeConverter().mandatoryConvertTo(StAXSource.class, PAYLOAD);
         doTest(source, PAYLOAD);
     }
 
     @Test
-    public void testCachedCxfPayloadStaxSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
+    public void testCachedCxfPayloadStaxSource()
+            throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         XMLStreamReader streamReader = StaxUtils.createXMLStreamReader(new StreamSource(new StringReader(PAYLOAD)));
         StaxSource source = new StaxSource(streamReader);
         doTest(source, PAYLOAD);
     }
 
     @Test
-    public void testCachedCxfPayloadDOMSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
+    public void testCachedCxfPayloadDOMSource()
+            throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         DOMSource source = context.getTypeConverter().mandatoryConvertTo(DOMSource.class, PAYLOAD);
         doTest(source, PAYLOAD);
     }
 
     @Test
-    public void testCachedCxfPayloadStreamSource() throws TypeConversionException, NoTypeConversionAvailableException, IOException {
+    public void testCachedCxfPayloadStreamSource()
+            throws TypeConversionException, NoTypeConversionAvailableException, IOException {
         StreamSource source = context.getTypeConverter().mandatoryConvertTo(StreamSource.class, PAYLOAD);
         doTest(source, PAYLOAD);
     }

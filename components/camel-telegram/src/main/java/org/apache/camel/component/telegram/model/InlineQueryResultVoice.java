@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a voice recording in an .ogg container encoded with OPUS.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultvoice">
- * https://core.telegram.org/bots/api#inlinequeryresultvoice</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultvoice</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultVoice extends InlineQueryResult {

@@ -22,15 +22,14 @@ package org.apache.camel.spi;
 public interface CamelBeanPostProcessor {
 
     /**
-     * Apply this post processor to the given new bean instance <i>before</i> any bean
-     * initialization callbacks (like <code>afterPropertiesSet</code>
-     * or a custom init-method). The bean will already be populated with property values.
-     * The returned bean instance may be a wrapper around the original.
+     * Apply this post processor to the given new bean instance <i>before</i> any bean initialization callbacks (like
+     * <code>afterPropertiesSet</code> or a custom init-method). The bean will already be populated with property
+     * values. The returned bean instance may be a wrapper around the original.
      *
-     * @param bean the new bean instance
-     * @param beanName the name of the bean
-     * @return the bean instance to use, either the original or a wrapped one; if
-     * <code>null</code>, no subsequent BeanPostProcessors will be invoked
+     * @param  bean      the new bean instance
+     * @param  beanName  the name of the bean
+     * @return           the bean instance to use, either the original or a wrapped one; if <code>null</code>, no
+     *                   subsequent BeanPostProcessors will be invoked
      * @throws Exception is thrown if error post processing bean
      */
     default Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
@@ -38,15 +37,14 @@ public interface CamelBeanPostProcessor {
     }
 
     /**
-     * Apply this post processor to the given new bean instance <i>after</i> any bean
-     * initialization callbacks (like <code>afterPropertiesSet</code>
-     * or a custom init-method). The bean will already be populated with property values.
-     * The returned bean instance may be a wrapper around the original.
+     * Apply this post processor to the given new bean instance <i>after</i> any bean initialization callbacks (like
+     * <code>afterPropertiesSet</code> or a custom init-method). The bean will already be populated with property
+     * values. The returned bean instance may be a wrapper around the original.
      *
-     * @param bean the new bean instance
-     * @param beanName the name of the bean
-     * @return the bean instance to use, either the original or a wrapped one; if
-     * <code>null</code>, no subsequent BeanPostProcessors will be invoked
+     * @param  bean      the new bean instance
+     * @param  beanName  the name of the bean
+     * @return           the bean instance to use, either the original or a wrapped one; if <code>null</code>, no
+     *                   subsequent BeanPostProcessors will be invoked
      * @throws Exception is thrown if error post processing bean
      */
     default Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {

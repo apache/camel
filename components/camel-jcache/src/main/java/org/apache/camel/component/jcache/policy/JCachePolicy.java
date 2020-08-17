@@ -34,17 +34,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Policy for routes. It caches the final body of a route and next time takes it from the cache instead of executing the route.
- * The cache key is determined by the keyExpression (message body by default).
- * If there is an object in the cache under that key the rest of the route is not executed, but the cached object is added to the Exchange.
+ * Policy for routes. It caches the final body of a route and next time takes it from the cache instead of executing the
+ * route. The cache key is determined by the keyExpression (message body by default). If there is an object in the cache
+ * under that key the rest of the route is not executed, but the cached object is added to the Exchange.
  *
- * Fields:
- * cache: JCache to use
- * cacheManager: If cache is not set, a new one is get or created using this cacheManager. If cacheManager is not set, we try to lookup one from CamelContext.
- * cacheName: Name of the cache to use or create. RouteId is used by default.
- * cacheConfiguration: CacheConfiguration used if a new cache is created. Using default MutableConfiguration if not set.
- * keyExpression: The Expression to generate the key for the cache. E.g simple("${header.username}")
- * enabled: If JCachePolicy is not enabled, no policy is added to the route. Has an impact only during startup.
+ * Fields: cache: JCache to use cacheManager: If cache is not set, a new one is get or created using this cacheManager.
+ * If cacheManager is not set, we try to lookup one from CamelContext. cacheName: Name of the cache to use or create.
+ * RouteId is used by default. cacheConfiguration: CacheConfiguration used if a new cache is created. Using default
+ * MutableConfiguration if not set. keyExpression: The Expression to generate the key for the cache. E.g
+ * simple("${header.username}") enabled: If JCachePolicy is not enabled, no policy is added to the route. Has an impact
+ * only during startup.
  */
 public class JCachePolicy implements Policy {
     private static final Logger LOG = LoggerFactory.getLogger(JCachePolicy.class);
@@ -109,7 +108,6 @@ public class JCachePolicy implements Policy {
         //Create processor
         return new JCachePolicyProcessor(cache, keyExpression, processor);
 
-
     }
 
     public Cache getCache() {
@@ -163,8 +161,8 @@ public class JCachePolicy implements Policy {
     @Override
     public String toString() {
         return "JCachePolicy{"
-                + "keyExpression=" + keyExpression
-                + ", enabled=" + enabled
-                + '}';
+               + "keyExpression=" + keyExpression
+               + ", enabled=" + enabled
+               + '}';
     }
 }

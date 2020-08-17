@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.OrderedProperties;
 
-public class RefPropertiesSource implements LocationPropertiesSource  {
+public class RefPropertiesSource implements LocationPropertiesSource {
 
     private final PropertiesComponent propertiesComponent;
     private final PropertiesLocation location;
@@ -65,7 +65,8 @@ public class RefPropertiesSource implements LocationPropertiesSource  {
             answer = new OrderedProperties();
             answer.putAll((Map<?, ?>) obj);
         } else if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
+            throw RuntimeCamelException
+                    .wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
         }
 
         return answer;

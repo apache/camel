@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
-
 /**
- * This exception is thrown if the verification of an XML signature fails
- * because the signature value is invalid.
+ * This exception is thrown if the verification of an XML signature fails because the signature value is invalid.
  */
 public class XmlSignatureInvalidValueException extends XmlSignatureInvalidException {
 

@@ -32,7 +32,7 @@ public class SWFComponent extends DefaultComponent {
 
     @Metadata
     private SWFConfiguration configuration = new SWFConfiguration();
-    
+
     public SWFComponent() {
         this(null);
     }
@@ -45,36 +45,39 @@ public class SWFComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> clientConfigurationParameters = PropertiesHelper.extractProperties(parameters, "clientConfiguration.");
+        Map<String, Object> clientConfigurationParameters
+                = PropertiesHelper.extractProperties(parameters, "clientConfiguration.");
         Map<String, Object> sWClientParameters = PropertiesHelper.extractProperties(parameters, "sWClient.");
-        Map<String, Object> startWorkflowOptionsParameters = PropertiesHelper.extractProperties(parameters, "startWorkflowOptions.");
+        Map<String, Object> startWorkflowOptionsParameters
+                = PropertiesHelper.extractProperties(parameters, "startWorkflowOptions.");
 
         SWFConfiguration configuration = this.configuration != null ? this.configuration.copy() : new SWFConfiguration();
         configuration.setType(remaining);
         configuration.setClientConfigurationParameters(clientConfigurationParameters);
         configuration.setSWClientParameters(sWClientParameters);
         configuration.setStartWorkflowOptionsParameters(startWorkflowOptionsParameters);
-        
+
         SWFEndpoint endpoint = new SWFEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
-        if (configuration.getAmazonSWClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonSWClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSWClient or accessKey and secretKey must be specified.");
         }
         return new SWFEndpoint(uri, this, configuration);
     }
-    
+
     public SWFConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
      * The component configuration
-     */    
+     */
     public void setConfiguration(SWFConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     private void checkAndSetRegistryClient(SWFConfiguration configuration) {
         Set<AmazonSimpleWorkflow> clients = getCamelContext().getRegistry().findByType(AmazonSimpleWorkflow.class);
         if (clients.size() == 1) {

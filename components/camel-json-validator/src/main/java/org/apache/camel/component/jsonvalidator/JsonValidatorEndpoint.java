@@ -38,8 +38,9 @@ import org.apache.camel.spi.UriParam;
  * Validate JSON payloads using NetworkNT JSON Schema.
  */
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
-@UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator", syntax = "json-validator:resourceUri",
-    producerOnly = true, category = {Category.VALIDATION})
+@UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator",
+             syntax = "json-validator:resourceUri",
+             producerOnly = true, category = { Category.VALIDATION })
 public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private volatile JsonSchema schema;
@@ -108,7 +109,8 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                     cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, content);
                 }
                 ObjectMapper mapper = new ObjectMapper();
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, cache != null ? cache : content);
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange,
+                        cache != null ? cache : content);
                 JsonNode node = mapper.readTree(is);
                 if (node == null) {
                     throw new NoJsonBodyValidationException(exchange);
@@ -186,7 +188,8 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * To use a custom schema loader allowing for adding custom format validation. The default implementation will create a schema loader with draft v4 support.
+     * To use a custom schema loader allowing for adding custom format validation. The default implementation will
+     * create a schema loader with draft v4 support.
      */
     public void setSchemaLoader(JsonSchemaLoader schemaLoader) {
         this.schemaLoader = schemaLoader;

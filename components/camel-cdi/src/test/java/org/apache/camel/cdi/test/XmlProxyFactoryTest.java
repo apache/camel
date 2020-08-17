@@ -48,14 +48,14 @@ public class XmlProxyFactoryTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-proxy.xml").toFile(),
-                "imported-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-proxy.xml").toFile(),
+                        "imported-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -63,6 +63,6 @@ public class XmlProxyFactoryTest {
         String response = proxy.service("request");
 
         assertThat("Proxy response is incorrect!",
-            response, is(equalTo("Service called with: [request]")));
+                response, is(equalTo("Service called with: [request]")));
     }
 }

@@ -32,13 +32,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DriveRevisionsIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveRevisionsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveRevisionsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveRevisionsApiMethod.class).getName();
 
     @Test
     public void testList() throws Exception {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
-        
+
         // using String message body for single parameter "fileId"
         final com.google.api.services.drive.model.RevisionList result = requestBody("direct://LIST", fileId);
 
@@ -52,27 +53,27 @@ public class DriveRevisionsIntegrationTest extends AbstractGoogleDriveTestSuppor
             public void configure() {
                 // test route for delete
                 from("direct://DELETE")
-                    .to("google-drive://" + PATH_PREFIX + "/delete");
+                        .to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get");
+                        .to("google-drive://" + PATH_PREFIX + "/get");
 
                 // test route for list
                 from("direct://LIST")
-                    .to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
+                        .to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
 
                 // test route for patch
                 from("direct://PATCH")
-                    .to("google-drive://" + PATH_PREFIX + "/patch");
+                        .to("google-drive://" + PATH_PREFIX + "/patch");
 
                 // test route for update
                 from("direct://UPDATE")
-                    .to("google-drive://" + PATH_PREFIX + "/update");
+                        .to("google-drive://" + PATH_PREFIX + "/update");
 
                 // just used to upload file for test
                 from("direct://INSERT_1")
-                    .to("google-drive://drive-files/insert");
+                        .to("google-drive://drive-files/insert");
             }
         };
     }

@@ -48,6 +48,7 @@ public class OgnlTest extends LanguageTestSupport {
         exchange.getContext().setClassResolver(new MyClassResolver(context));
         assertExpression("@org.apache.camel.language.ognl.Animal1@getClassName()", "Animal");
     }
+
     @Test
     public void testGetOutFalseKeepsNullOutMessage() throws Exception {
         assertExpression("exchange.hasOut()", false);

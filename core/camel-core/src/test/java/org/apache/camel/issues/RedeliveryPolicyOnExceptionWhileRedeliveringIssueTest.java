@@ -72,7 +72,8 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:source").onException(FirstException.class).redeliveryDelay(0).maximumRedeliveries(-1).handled(true).end().onException(SecondException.class)
+                from("direct:source").onException(FirstException.class).redeliveryDelay(0).maximumRedeliveries(-1).handled(true)
+                        .end().onException(SecondException.class)
                         .handled(true).to("mock:error").end().process(new ExceptionThrowingProcessor()).to("mock:destination");
             }
         };

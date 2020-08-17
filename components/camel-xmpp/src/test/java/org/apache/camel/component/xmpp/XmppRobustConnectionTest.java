@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 
 /**
- * Test to verify that the XMPP consumer will reconnect when the connection is lost.
- * Also verifies that the XMPP producer will lazily re-establish a lost connection.
+ * Test to verify that the XMPP consumer will reconnect when the connection is lost. Also verifies that the XMPP
+ * producer will lazily re-establish a lost connection.
  */
 public class XmppRobustConnectionTest extends CamelTestSupport {
 
@@ -94,23 +94,23 @@ public class XmppRobustConnectionTest extends CamelTestSupport {
                 onException(RuntimeException.class).handled(true).to("mock:error");
 
                 from("direct:start").id("direct:start")
-                    .to(getProducerUri());
+                        .to(getProducerUri());
 
                 from(getConsumerUri())
-                    .to("mock:out");
+                        .to("mock:out");
             }
         };
     }
 
     protected String getProducerUri() {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
+               + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getConsumerUri() {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel"
-            + "&connectionPollDelay=1";
+               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel"
+               + "&connectionPollDelay=1";
     }
 
     @Override

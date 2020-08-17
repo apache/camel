@@ -25,14 +25,12 @@ import org.apache.http.protocol.HttpExpectationVerifier;
 import org.apache.http.protocol.HttpProcessor;
 
 /**
- * Abstract base class for unit testing using a http server.
- * This class contains an empty configuration to be used.
+ * Abstract base class for unit testing using a http server. This class contains an empty configuration to be used.
  */
 public abstract class HttpServerTestSupport extends CamelTestSupport {
 
     /**
-     * Returns the org.apache.http.protocol.BasicHttpProcessor which should be
-     * used by the server.
+     * Returns the org.apache.http.protocol.BasicHttpProcessor which should be used by the server.
      *
      * @return HttpProcessor
      */
@@ -41,8 +39,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Returns the org.apache.http.ConnectionReuseStrategy which should be used
-     * by the server.
+     * Returns the org.apache.http.ConnectionReuseStrategy which should be used by the server.
      *
      * @return connectionReuseStrategy
      */
@@ -51,8 +48,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Returns the org.apache.http.HttpResponseFactory which should be used
-     * by the server.
+     * Returns the org.apache.http.HttpResponseFactory which should be used by the server.
      *
      * @return httpResponseFactory
      */
@@ -61,8 +57,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Returns the org.apache.http.protocol.HttpExpectationVerifier which should be used
-     * by the server.
+     * Returns the org.apache.http.protocol.HttpExpectationVerifier which should be used by the server.
      *
      * @return httpExpectationVerifier
      */
@@ -73,7 +68,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     /**
      * Returns the javax.net.ssl.SSLContext which should be used by the server.
      *
-     * @return sslContext
+     * @return           sslContext
      * @throws Exception
      */
     protected SSLContext getSSLContext() throws Exception {

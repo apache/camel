@@ -22,8 +22,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Upon receiving a message with this object, Telegram clients will display a reply interface to the user
- * (act as if the user has selected the bot‘s message and tapped ’Reply')
+ * Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the
+ * user has selected the bot‘s message and tapped ’Reply')
  *
  * @see <a href="https://core.telegram.org/bots/api#forcereply">https://core.telegram.org/bots/api#forcereply</a>
  */

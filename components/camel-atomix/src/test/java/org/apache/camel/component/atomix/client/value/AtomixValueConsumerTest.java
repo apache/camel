@@ -93,7 +93,7 @@ public class AtomixValueConsumerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-value:%s", VALUE_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

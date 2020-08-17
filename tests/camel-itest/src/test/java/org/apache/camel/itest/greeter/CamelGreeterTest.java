@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration
 public class CamelGreeterTest {
     @RegisterExtension
-    public static GreeterServiceExtension greeterServiceExtension =
-            GreeterServiceExtension.createExtension("CamelGreeterTest.port");
+    public static GreeterServiceExtension greeterServiceExtension
+            = GreeterServiceExtension.createExtension("CamelGreeterTest.port");
 
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
@@ -50,7 +50,6 @@ public class CamelGreeterTest {
 
     @EndpointInject("mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
-
 
     @Test
     void testMocksAreValid() throws Exception {

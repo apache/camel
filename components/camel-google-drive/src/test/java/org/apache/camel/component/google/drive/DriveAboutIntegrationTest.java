@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveAboutIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveAboutApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveAboutApiMethod.class).getName();
 
     @Test
     public void testGet() throws Exception {
@@ -47,7 +48,7 @@ public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get");
+                        .to("google-drive://" + PATH_PREFIX + "/get");
 
             }
         };

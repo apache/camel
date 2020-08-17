@@ -90,24 +90,24 @@ public class PerformanceRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:inbox?concurrentConsumers=10")
-                    .to("activemq:topic:audit")
-                    .choice()
+                        .to("activemq:topic:audit")
+                        .choice()
                         .when(header("type").isEqualTo("gold"))
-                            .to("direct:gold")
+                        .to("direct:gold")
                         .when(header("type").isEqualTo("silver"))
-                            .to("direct:silver")
+                        .to("direct:silver")
                         .otherwise()
-                            .to("direct:bronze")
+                        .to("direct:bronze")
                         .end();
 
                 from("direct:gold")
-                    .to("mock:gold");
+                        .to("mock:gold");
 
                 from("direct:silver")
-                    .to("mock:silver");
+                        .to("mock:silver");
 
                 from("direct:bronze")
-                    .to("mock:bronze");
+                        .to("mock:bronze");
 
                 from("activemq:topic:audit").to("mock:audit");
             }

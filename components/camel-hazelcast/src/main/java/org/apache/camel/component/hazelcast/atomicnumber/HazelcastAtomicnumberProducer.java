@@ -32,7 +32,8 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
     private final IAtomicLong atomicnumber;
 
-    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
+    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
+                                         String cacheName) {
         super(endpoint);
         this.atomicnumber = hazelcastInstance.getCPSubsystem().getAtomicLong(cacheName);
     }
@@ -81,7 +82,9 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the ATOMICNUMBER.", operation, HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the ATOMICNUMBER.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

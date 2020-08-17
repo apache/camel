@@ -79,7 +79,8 @@ public class GoraConsumerTest extends GoraTestSupport {
     private Query<Object, Persistent> mockQuery;
 
     @Test
-    public void consumerInstantiationWithMocksShouldSucceed() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void consumerInstantiationWithMocksShouldSucceed()
+            throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         when(mockDatastore.newQuery()).thenReturn(mockQuery);
         new GoraConsumer(mockGoraEndpoint, mockGoraProcessor, mockGoraConfiguration, mockDatastore);
     }

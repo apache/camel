@@ -17,8 +17,8 @@
 package org.apache.camel.component.zookeepermaster;
 
 /**
- * Factory to create container ids which are used in the ZooKeeper cluster group
- * as unique ids among all the nodes that runs in the cluster.
+ * Factory to create container ids which are used in the ZooKeeper cluster group as unique ids among all the nodes that
+ * runs in the cluster.
  * <p/>
  * A custom factory can be used that uses hostname or some other unique way of identifying the container
  */

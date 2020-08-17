@@ -109,11 +109,11 @@ public final class RouteCoverageNode {
     @Override
     public String toString() {
         return "RouteCoverageNode["
-            + "lineNumber=" + lineNumber
-            + ", count=" + count
-            + ", name='" + name + '\''
-            + ", level=" + level
-            + ", className='" + className + '\''
-            + ']';
+               + "lineNumber=" + lineNumber
+               + ", count=" + count
+               + ", name='" + name + '\''
+               + ", level=" + level
+               + ", className='" + className + '\''
+               + ']';
     }
 }

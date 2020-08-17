@@ -43,17 +43,18 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Execute scripts in any of the languages supported by Camel.
  *
- * By having a component to execute language scripts, it allows more dynamic routing capabilities.
- * For example by using the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints
- * where the script is dynamic defined as well.
+ * By having a component to execute language scripts, it allows more dynamic routing capabilities. For example by using
+ * the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints where the script is dynamic
+ * defined as well.
  */
-@UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri", producerOnly = true, category = {Category.CORE, Category.SCRIPT})
+@UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri",
+             producerOnly = true, category = { Category.CORE, Category.SCRIPT })
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
     private boolean contentResolvedFromResource;
     @UriPath(enums = "bean,constant,exchangeProperty,file,groovy,header,javascript,jsonpath,mvel,ognl,"
-            + ",ref,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize")
+                     + ",ref,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize")
     @Metadata(required = true)
     private String languageName;
     // resourceUri is optional in the language endpoint
@@ -76,7 +77,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
         setContentCache(true);
     }
 
-    public LanguageEndpoint(String endpointUri, Component component, Language language, Expression expression, String resourceUri) {
+    public LanguageEndpoint(String endpointUri, Component component, Language language, Expression expression,
+                            String resourceUri) {
         super(endpointUri, component, resourceUri);
         this.language = language;
         this.expression = expression;
@@ -109,8 +111,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     /**
      * Resolves the script.
      *
-     * @param script script or uri for a script to load
-     * @return the script
+     * @param  script      script or uri for a script to load
+     * @return             the script
      * @throws IOException is thrown if error loading the script
      */
     protected String resolveScript(String script) throws IOException {
@@ -164,7 +166,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
      * <p/>
      * This options is default <tt>true</tt>.
      *
-     * @param transform <tt>true</tt> to use result as new message body, <tt>false</tt> to keep the existing message body
+     * @param transform <tt>true</tt> to use result as new message body, <tt>false</tt> to keep the existing message
+     *                  body
      */
     public void setTransform(boolean transform) {
         this.transform = transform;
@@ -197,7 +200,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     /**
      * Path to the resource, or a reference to lookup a bean in the Registry to use as the resource
      *
-     * @param resourceUri  the resource path
+     * @param resourceUri the resource path
      */
     @Override
     public void setResourceUri(String resourceUri) {
@@ -237,8 +240,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     /**
      * Whether to cache the compiled script and reuse
      * <p/>
-     * Notice reusing the script can cause side effects from processing one Camel
-     * {@link org.apache.camel.Exchange} to the next {@link org.apache.camel.Exchange}.
+     * Notice reusing the script can cause side effects from processing one Camel {@link org.apache.camel.Exchange} to
+     * the next {@link org.apache.camel.Exchange}.
      */
     public void setCacheScript(boolean cacheScript) {
         this.cacheScript = cacheScript;

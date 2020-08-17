@@ -108,7 +108,7 @@ public class ApnsProducer extends DefaultProducer {
     }
 
     public MessageType getHeaderMessageType(Exchange exchange, MessageType defaultMessageType) {
-        String messageTypeStr = (String)exchange.getIn().getHeader(ApnsConstants.HEADER_MESSAGE_TYPE);
+        String messageTypeStr = (String) exchange.getIn().getHeader(ApnsConstants.HEADER_MESSAGE_TYPE);
 
         if (messageTypeStr == null) {
             return defaultMessageType;

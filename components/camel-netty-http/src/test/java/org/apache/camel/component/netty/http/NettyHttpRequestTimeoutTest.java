@@ -32,7 +32,8 @@ public class NettyHttpRequestTimeoutTest extends BaseNettyTest {
     @Test
     public void testRequestTimeout() throws Exception {
         try {
-            template.requestBody("netty-http:http://localhost:{{port}}/timeout?requestTimeout=1000", "Hello Camel", String.class);
+            template.requestBody("netty-http:http://localhost:{{port}}/timeout?requestTimeout=1000", "Hello Camel",
+                    String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
@@ -46,17 +47,17 @@ public class NettyHttpRequestTimeoutTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/timeout")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
 
-                            if (body.contains("Camel")) {
-                                Thread.sleep(3000);
+                                if (body.contains("Camel")) {
+                                    Thread.sleep(3000);
+                                }
                             }
-                        }
-                    })
-                    .transform().constant("Bye World");
+                        })
+                        .transform().constant("Bye World");
 
             }
         };

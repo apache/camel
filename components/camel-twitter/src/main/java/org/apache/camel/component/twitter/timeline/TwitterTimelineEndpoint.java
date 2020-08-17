@@ -33,8 +33,9 @@ import org.apache.camel.spi.UriPath;
 /**
  * Send tweets and receive tweets from user's timeline.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-timeline", title = "Twitter Timeline", syntax = "twitter-timeline:timelineType",
-        category = {Category.API, Category.CLOUD, Category.SOCIAL})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-timeline", title = "Twitter Timeline",
+             syntax = "twitter-timeline:timelineType",
+             category = { Category.API, Category.CLOUD, Category.SOCIAL })
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")
@@ -43,7 +44,8 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
     @UriParam(description = "The username when using timelineType=user")
     private String user;
 
-    public TwitterTimelineEndpoint(String uri, String remaining, String user, TwitterTimelineComponent component, TwitterConfiguration properties) {
+    public TwitterTimelineEndpoint(String uri, String remaining, String user, TwitterTimelineComponent component,
+                                   TwitterConfiguration properties) {
         super(uri, component, properties);
         if (remaining == null) {
             throw new IllegalArgumentException(String.format("The timeline type must be specified for '%s'", uri));
@@ -66,8 +68,9 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
             case USER:
                 return new UserProducer(this);
             default:
-                throw new IllegalArgumentException("Cannot create any producer with uri " + getEndpointUri()
-                        + ". A producer type was not provided (or an incorrect pairing was used).");
+                throw new IllegalArgumentException(
+                        "Cannot create any producer with uri " + getEndpointUri()
+                                                   + ". A producer type was not provided (or an incorrect pairing was used).");
         }
     }
 
@@ -97,8 +100,9 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
         if (handler != null) {
             return TwitterHelper.createConsumer(processor, this, handler);
         }
-        throw new IllegalArgumentException("Cannot create any consumer with uri " + getEndpointUri()
-                + ". A consumer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException(
+                "Cannot create any consumer with uri " + getEndpointUri()
+                                           + ". A consumer type was not provided (or an incorrect pairing was used).");
 
     }
 

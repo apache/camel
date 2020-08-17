@@ -96,9 +96,9 @@ public class ArangoCollectionSaveTest extends AbstractArangoDbTest {
         });
 
         assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
-        DocumentCreateEntity<TestDocumentEntity> docCreated = (DocumentCreateEntity<TestDocumentEntity>) result.getMessage().getBody();
+        DocumentCreateEntity<TestDocumentEntity> docCreated
+                = (DocumentCreateEntity<TestDocumentEntity>) result.getMessage().getBody();
         assertNotNull(docCreated.getKey());
-
 
         TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(),
                 TestDocumentEntity.class);
@@ -119,7 +119,6 @@ public class ArangoCollectionSaveTest extends AbstractArangoDbTest {
         DocumentCreateEntity<TestEntity> docCreated = (DocumentCreateEntity<TestEntity>) result.getMessage().getBody();
         assertNotNull(docCreated.getKey());
 
-
         TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(),
                 TestDocumentEntity.class);
         assertEquals("bar", actualResult.getFoo());
@@ -137,7 +136,6 @@ public class ArangoCollectionSaveTest extends AbstractArangoDbTest {
         assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
         DocumentCreateEntity<VPackSlice> docCreated = (DocumentCreateEntity<VPackSlice>) result.getMessage().getBody();
         assertNotNull(docCreated.getKey());
-
 
         TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(),
                 TestDocumentEntity.class);
@@ -205,6 +203,5 @@ public class ArangoCollectionSaveTest extends AbstractArangoDbTest {
         });
 
     }
-
 
 }

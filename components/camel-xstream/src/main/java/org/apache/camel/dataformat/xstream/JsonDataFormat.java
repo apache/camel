@@ -40,8 +40,8 @@ import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a>
- * ({@link org.apache.camel.spi.DataFormat}) using XStream and Jettison to marshal to and from JSON
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link org.apache.camel.spi.DataFormat}) using
+ * XStream and Jettison to marshal to and from JSON
  */
 @Dataformat("json-xstream")
 @Metadata(includeProperties = "prettyPrint,dropRootNode,contentTypeHeader")
@@ -100,11 +100,13 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     }
 
     @Override
-    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
+    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream)
+            throws XMLStreamException {
         if (isPrettyPrint()) {
             // the json spec. expects UTF-8 as the default encoding
             if (isDropRootNode()) {
-                return new JsonWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8), AbstractJsonWriter.DROP_ROOT_MODE);
+                return new JsonWriter(
+                        new OutputStreamWriter(stream, StandardCharsets.UTF_8), AbstractJsonWriter.DROP_ROOT_MODE);
             } else {
                 return new JsonWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8));
             }
@@ -114,7 +116,8 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     }
 
     @Override
-    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
+    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream)
+            throws XMLStreamException {
         return new StaxReader(new QNameMap(), mif.createXMLStreamReader(stream));
     }
 

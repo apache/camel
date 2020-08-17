@@ -43,7 +43,8 @@ public class AttachFileProducer extends DefaultProducer {
     public void process(Exchange exchange) throws InvalidPayloadException {
         String issueKey = exchange.getIn().getHeader(ISSUE_KEY, String.class);
         if (issueKey == null) {
-            throw new IllegalArgumentException("Missing exchange input header named \'IssueKey\', it should specify the issue key to attach a file.");
+            throw new IllegalArgumentException(
+                    "Missing exchange input header named \'IssueKey\', it should specify the issue key to attach a file.");
         }
         File file = exchange.getIn().getMandatoryBody(File.class);
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();

@@ -18,10 +18,11 @@ package org.apache.camel.component.jasypt;
 
 public class Test {
     private String data = "";
+
     public void setData(String data) {
         this.data = data;
     }
-    
+
     public String handleRequst(String request) {
         return request + " " + data;
     }

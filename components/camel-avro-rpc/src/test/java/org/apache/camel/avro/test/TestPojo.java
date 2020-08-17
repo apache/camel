@@ -26,5 +26,5 @@ public class TestPojo {
 
     public void setPojoName(String pojoName) {
         this.pojoName = pojoName;
-    } 
+    }
 }

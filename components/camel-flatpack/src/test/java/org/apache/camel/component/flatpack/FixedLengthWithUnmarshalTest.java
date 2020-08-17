@@ -41,7 +41,7 @@ public class FixedLengthWithUnmarshalTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
+    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
 
     @Test
     public void testCamel() throws Exception {

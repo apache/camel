@@ -70,7 +70,7 @@ public class ArangoDbConfiguration implements Cloneable {
     }
 
     /**
-     * port if  host and/or port different from default
+     * port if host and/or port different from default
      *
      * @param port
      */
@@ -103,7 +103,6 @@ public class ArangoDbConfiguration implements Cloneable {
     public void setPassword(String password) {
         this.password = password;
     }
-
 
     public String getCollection() {
         return collection;

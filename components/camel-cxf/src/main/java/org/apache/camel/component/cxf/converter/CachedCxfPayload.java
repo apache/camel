@@ -90,7 +90,9 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                     } catch (Exception e2) {
                         // ignore did not work so we will fallback to DOM mode
                         // this can happens in some rare cases such as reported by CAMEL-11681
-                        LOG.debug("Error during parsing XMLStreamReader from StaxSource/StAXSource. Will fallback to using DOM mode. This exception is ignored", e2);
+                        LOG.debug(
+                                "Error during parsing XMLStreamReader from StaxSource/StAXSource. Will fallback to using DOM mode. This exception is ignored",
+                                e2);
                     }
                 }
             }
@@ -127,8 +129,9 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                 outputProperties.put("omit-xml-declaration", "yes");
 
                 transformer.setOutputProperties(outputProperties);
-                if (factory.getClass().getName().equals("org.apache.xalan.processor.TransformerFactoryImpl") && source instanceof StAXSource) {
-                    source = new StAX2SAXSource(((StAXSource)source).getXMLStreamReader());
+                if (factory.getClass().getName().equals("org.apache.xalan.processor.TransformerFactoryImpl")
+                        && source instanceof StAXSource) {
+                    source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
                 }
 
                 transformer.transform(source, result);

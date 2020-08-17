@@ -167,18 +167,24 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
             if (isUseFixedDelay()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                            new Object[]{currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
+                            new Object[] {
+                                    currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                                    consumer.getEndpoint() });
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
-                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay, getTimeUnit()));
+                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay,
+                            getTimeUnit()));
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                            new Object[]{currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
+                            new Object[] {
+                                    currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                                    consumer.getEndpoint() });
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
-                    futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay, getTimeUnit()));
+                    futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay,
+                            getTimeUnit()));
                 }
             }
         }

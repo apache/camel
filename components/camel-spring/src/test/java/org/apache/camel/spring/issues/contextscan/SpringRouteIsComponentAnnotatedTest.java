@@ -25,7 +25,8 @@ public class SpringRouteIsComponentAnnotatedTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/contextscan/SpringRouteIsComponentAnnotatedTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/contextscan/SpringRouteIsComponentAnnotatedTest.xml");
     }
 
     @Test

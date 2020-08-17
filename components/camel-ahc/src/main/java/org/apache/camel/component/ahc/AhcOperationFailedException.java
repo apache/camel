@@ -31,9 +31,11 @@ public class AhcOperationFailedException extends CamelException {
     private final Map<String, String> responseHeaders;
     private final String responseBody;
 
-    public AhcOperationFailedException(String url, int statusCode, String statusText, String location, Map<String, String> responseHeaders, String responseBody) {
+    public AhcOperationFailedException(String url, int statusCode, String statusText, String location,
+                                       Map<String, String> responseHeaders, String responseBody) {
         // sanitize url so we do not show sensitive information such as passwords
-        super("HTTP operation failed invoking " + URISupport.sanitizeUri(url) + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
+        super("HTTP operation failed invoking " + URISupport.sanitizeUri(url) + " with statusCode: " + statusCode
+              + (location != null ? ", redirectLocation: " + location : ""));
         this.url = URISupport.sanitizeUri(url);
         this.statusCode = statusCode;
         this.statusText = statusText;

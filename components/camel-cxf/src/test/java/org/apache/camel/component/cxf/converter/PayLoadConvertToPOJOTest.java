@@ -40,16 +40,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PayLoadConvertToPOJOTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
-    
+
     @BeforeAll
     public static void setUpSystemProperty() {
         // just force the CXFTestSupport to load before running the test
         getPort1();
     }
+
     public static int getPort1() {
         return CXFTestSupport.getPort1();
     }
-   
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -64,31 +65,28 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
-    
     @Test
     public void testClient() throws Exception {
-        
+
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setAddress("http://localhost:" + getPort1() + "/"
-                        + getClass().getSimpleName() + "/CamelContext/RouterPort");
+                           + getClass().getSimpleName() + "/CamelContext/RouterPort");
         factory.setServiceClass(Person.class);
         Person person = factory.create(Person.class);
         GetPerson payload = new GetPerson();
         payload.setPersonId("1234");
-        
-        GetPersonResponse reply = person.getPerson(payload);
-        assertEquals("1234",  reply.getPersonId(), "Get the wrong person id.");
-        
-    }
-    
 
-    
+        GetPersonResponse reply = person.getPerson(payload);
+        assertEquals("1234", reply.getPersonId(), "Get the wrong person id.");
+
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -110,10 +108,9 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
             }
         };
     }
-    
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/converter/PayloadConverterBeans.xml");
     }
-
 
 }

@@ -17,10 +17,10 @@
 package org.apache.camel.converter.crypto;
 
 public class PGPDataFormatWithProvider extends PGPDataFormatTest {
-    
+
     @Override
     protected String getProvider() {
         return "BC"; //"IAIK"; 
     }
-   
+
 }

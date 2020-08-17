@@ -44,7 +44,9 @@ public class RefInvalidTest extends ContextTestSupport {
             template.sendBody("ref:xxx", "Hello World");
             fail("Should have thrown an exception");
         } catch (ResolveEndpointFailedException e) {
-            assertEquals("Failed to resolve endpoint: ref://xxx due to: No bean could be found in the registry for: xxx of type: org.apache.camel.Endpoint", e.getMessage());
+            assertEquals(
+                    "Failed to resolve endpoint: ref://xxx due to: No bean could be found in the registry for: xxx of type: org.apache.camel.Endpoint",
+                    e.getMessage());
             NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
             assertEquals("xxx", cause.getName());
         }

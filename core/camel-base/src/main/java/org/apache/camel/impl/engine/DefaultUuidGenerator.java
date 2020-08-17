@@ -91,8 +91,7 @@ public class DefaultUuidGenerator implements UuidGenerator {
     }
 
     /**
-     * As we have to find the hostname as a side-affect of generating a unique
-     * stub, we allow it's easy retrieval here
+     * As we have to find the hostname as a side-affect of generating a unique stub, we allow it's easy retrieval here
      * 
      * @return the local host name
      */
@@ -142,8 +141,8 @@ public class DefaultUuidGenerator implements UuidGenerator {
     /**
      * Ensures that the id is friendly for a URL or file system
      *
-     * @param id the unique id
-     * @return the id as file friendly id
+     * @param  id the unique id
+     * @return    the id as file friendly id
      */
     public static String generateSanitizedId(String id) {
         id = id.replace(':', '-');

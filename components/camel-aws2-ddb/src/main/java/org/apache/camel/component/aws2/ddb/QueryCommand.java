@@ -34,9 +34,11 @@ public class QueryCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        QueryRequest.Builder query = QueryRequest.builder().tableName(determineTableName()).attributesToGet(determineAttributeNames()).consistentRead(determineConsistentRead())
-            .exclusiveStartKey(determineStartKey()).keyConditions(determineKeyConditions()).exclusiveStartKey(determineStartKey()).limit(determineLimit())
-            .scanIndexForward(determineScanIndexForward());
+        QueryRequest.Builder query = QueryRequest.builder().tableName(determineTableName())
+                .attributesToGet(determineAttributeNames()).consistentRead(determineConsistentRead())
+                .exclusiveStartKey(determineStartKey()).keyConditions(determineKeyConditions())
+                .exclusiveStartKey(determineStartKey()).limit(determineLimit())
+                .scanIndexForward(determineScanIndexForward());
 
         // Check if we have set an Index Name
         if (exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class) != null) {

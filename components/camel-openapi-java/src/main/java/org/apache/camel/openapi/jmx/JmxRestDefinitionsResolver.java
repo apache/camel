@@ -62,13 +62,14 @@ public class JmxRestDefinitionsResolver implements RestDefinitionsResolver {
         }
 
         if (found != null) {
-            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[]{true},
-                    new String[]{"boolean"});
+            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[] { true },
+                    new String[] { "boolean" });
             if (xml != null) {
                 LOG.debug("DumpRestAsXml:\n{}", xml);
                 InputStream xmlis = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
                 ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-                RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, xmlis);
+                RestsDefinition rests
+                        = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, xmlis);
                 if (rests != null) {
                     return rests.getRests();
                 }

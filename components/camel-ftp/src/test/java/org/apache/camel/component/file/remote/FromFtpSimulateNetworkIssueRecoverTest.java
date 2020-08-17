@@ -27,8 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Simulate network issues by using a custom poll strategy to force exceptions
- * occurring during poll.
+ * Simulate network issues by using a custom poll strategy to force exceptions occurring during poll.
  */
 public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport {
 

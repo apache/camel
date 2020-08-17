@@ -48,8 +48,8 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 @ImportResource({
-    "imported-context-restContext.xml",
-    "imported-context-restContextRef.xml"
+        "imported-context-restContext.xml",
+        "imported-context-restContextRef.xml"
 })
 public class XmlRestContextTest {
 
@@ -71,17 +71,17 @@ public class XmlRestContextTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-restContext.xml").toFile(),
-                "imported-context-restContext.xml")
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-restContextRef.xml").toFile(),
-                "imported-context-restContextRef.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-restContext.xml").toFile(),
+                        "imported-context-restContext.xml")
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-restContextRef.xml").toFile(),
+                        "imported-context-restContextRef.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

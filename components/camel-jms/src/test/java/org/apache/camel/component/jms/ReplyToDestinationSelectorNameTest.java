@@ -62,12 +62,12 @@ public class ReplyToDestinationSelectorNameTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=queue:bar&replyToDestinationSelectorName=replyId")
-                    .to("mock:result");
+                        .to("activemq:queue:foo?replyTo=queue:bar&replyToDestinationSelectorName=replyId")
+                        .to("mock:result");
 
                 from("activemq:queue:foo")
-                    .log("Using header named replyId with value as correlation - ${header.replyId}")
-                    .transform(body().prepend("Bye "));
+                        .log("Using header named replyId with value as correlation - ${header.replyId}")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

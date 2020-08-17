@@ -76,7 +76,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
 
         testEndpointConfiguration();
     }
-    
+
     @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
@@ -86,7 +86,8 @@ public class EndpointReferenceTest extends SpringTestSupport {
             CamelContextHelper.resolveEndpoint(context, null, "endpoint1");
             fail("Should have thrown exception");
         } catch (NoSuchEndpointException exception) {
-            assertTrue(exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"), "Get a wrong exception message");
+            assertTrue(exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"),
+                    "Get a wrong exception message");
         }
     }
 

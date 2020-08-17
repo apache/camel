@@ -34,30 +34,31 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @MockitoSettings
 public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
-    
+
     private int port;
-    
+
     @Mock
     private Processor processor;
 
     @Test
     public void testSetServletInitalparameters() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
-        String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000&maxTextMessageSize=500&maxBinaryMessageSize=550";
-        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
+        String uri = "websocket://localhost:" + port
+                     + "/bar?bufferSize=25000&maxIdleTime=3000&maxTextMessageSize=500&maxBinaryMessageSize=550";
+        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint) context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
         component.setMinThreads(1);
         component.setMaxThreads(25);
         Consumer consumer = websocketEndpoint.createConsumer(processor);
         component.connect((WebsocketProducerConsumer) consumer);
-        
+
         assertNotNull(consumer);
         assertEquals(WebsocketConsumer.class, consumer.getClass());
-        
+
         // just check the servlet initial parameters
         ConnectorRef conector = WebsocketComponent.getConnectors().values().iterator().next();
-        
-        ServletContextHandler context = (ServletContextHandler)conector.server.getHandler();
+
+        ServletContextHandler context = (ServletContextHandler) conector.server.getHandler();
         String buffersize = context.getInitParameter("bufferSize");
         assertEquals("25000", buffersize, "Got a wrong buffersize");
         String maxIdleTime = context.getInitParameter("maxIdleTime");
@@ -66,8 +67,9 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("500", maxTextMessageSize, "Got a wrong maxTextMessageSize");
         String maxBinaryMessageSize = context.getInitParameter("maxBinaryMessageSize");
         assertEquals("550", maxBinaryMessageSize, "Got a wrong maxBinaryMessageSize");
-        
-        WebSocketServletFactory factory = (WebSocketServletFactory)context.getServletContext().getAttribute(WebSocketServletFactory.class.getName());
+
+        WebSocketServletFactory factory
+                = (WebSocketServletFactory) context.getServletContext().getAttribute(WebSocketServletFactory.class.getName());
         int factoryBufferSize = factory.getPolicy().getInputBufferSize();
         assertEquals(25000, factoryBufferSize, "Got a wrong buffersize");
         long factoryMaxIdleTime = factory.getPolicy().getIdleTimeout();
@@ -77,40 +79,41 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
         int factoryMaxBinaryMessageSize = factory.getPolicy().getMaxBinaryMessageSize();
         assertEquals(550, factoryMaxBinaryMessageSize, "Got a wrong maxBinaryMessageSize");
     }
-    
+
     @Test
     public void testSetServletNoMinThreadsNoMaxThreadsNoThreadPool() throws Exception {
         assumeTrue(1 + Runtime.getRuntime().availableProcessors() * 2 >= 19, "At lease 18 CPUs available");
         port = AvailablePortFinder.getNextAvailable();
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000";
-        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
+        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint) context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
         Consumer consumer = websocketEndpoint.createConsumer(processor);
         component.connect((WebsocketProducerConsumer) consumer);
         assertNotNull(consumer);
         assertEquals(WebsocketConsumer.class, consumer.getClass());
-        
+
         // just check the servlet initial parameters
         ConnectorRef conector = WebsocketComponent.getConnectors().values().iterator().next();
-        
-        ServletContextHandler context = (ServletContextHandler)conector.server.getHandler();
+
+        ServletContextHandler context = (ServletContextHandler) conector.server.getHandler();
         String buffersize = context.getInitParameter("bufferSize");
         assertEquals("25000", buffersize, "Got a wrong buffersize");
         String maxIdleTime = context.getInitParameter("maxIdleTime");
         assertEquals("3000", maxIdleTime, "Got a wrong maxIdleTime");
-        
-        WebSocketServletFactory factory = (WebSocketServletFactory)context.getServletContext().getAttribute(WebSocketServletFactory.class.getName());
+
+        WebSocketServletFactory factory
+                = (WebSocketServletFactory) context.getServletContext().getAttribute(WebSocketServletFactory.class.getName());
         int factoryBufferSize = factory.getPolicy().getInputBufferSize();
         assertEquals(25000, factoryBufferSize, "Got a wrong buffersize");
         long factoryMaxIdleTime = factory.getPolicy().getIdleTimeout();
         assertEquals(3000, factoryMaxIdleTime, "Got a wrong maxIdleTime");
     }
-    
+
     @Test
     public void testSetServletThreadPool() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000";
-        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
+        WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint) context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
         QueuedThreadPool qtp = new QueuedThreadPool(25, 1);
         component.setThreadPool(qtp);
@@ -118,17 +121,18 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
         component.connect((WebsocketProducerConsumer) consumer);
         assertNotNull(consumer);
         assertEquals(WebsocketConsumer.class, consumer.getClass());
-        
+
         // just check the servlet initial parameters
         ConnectorRef conector = WebsocketComponent.getConnectors().values().iterator().next();
-        
-        ServletContextHandler context = (ServletContextHandler)conector.server.getHandler();
+
+        ServletContextHandler context = (ServletContextHandler) conector.server.getHandler();
         String buffersize = context.getInitParameter("bufferSize");
         assertEquals("25000", buffersize, "Got a wrong buffersize");
         String maxIdleTime = context.getInitParameter("maxIdleTime");
         assertEquals("3000", maxIdleTime, "Got a wrong maxIdleTime");
-        
-        WebSocketServletFactory factory = (WebSocketServletFactory)context.getServletContext().getAttribute(WebSocketServletFactory.class.getName());
+
+        WebSocketServletFactory factory
+                = (WebSocketServletFactory) context.getServletContext().getAttribute(WebSocketServletFactory.class.getName());
         int factoryBufferSize = factory.getPolicy().getInputBufferSize();
         assertEquals(25000, factoryBufferSize, "Got a wrong buffersize");
         long factoryMaxIdleTime = factory.getPolicy().getIdleTimeout();

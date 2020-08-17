@@ -45,7 +45,8 @@ public class AggregateCompletionAwareAggregationStrategyTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionSize(3).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionSize(3)
+                        .to("mock:aggregated");
             }
         };
     }

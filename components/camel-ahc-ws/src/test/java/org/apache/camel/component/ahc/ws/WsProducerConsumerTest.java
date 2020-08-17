@@ -38,16 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public class WsProducerConsumerTest extends CamelTestSupport {
-    
+
     protected static final String TEST_MESSAGE = "Hello World!";
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(WsProducerConsumerTest.class);
-    
+
     protected Server server;
-   
+
     protected List<Object> messages;
-    
+
     public void startTestServer() throws Exception {
         // start a simple websocket echo service
         server = new Server(PORT);
@@ -59,7 +59,7 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         ctx.addServlet(TestServletFactory.class.getName(), "/*");
 
         server.setHandler(ctx);
-        
+
         server.start();
         assertTrue(server.isStarted());
     }
@@ -145,13 +145,13 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         rbs[0] = new RouteBuilder() {
             public void configure() {
                 from("direct:input").routeId("foo")
-                    .to("ahc-ws://localhost:" + PORT);
+                        .to("ahc-ws://localhost:" + PORT);
             }
         };
         rbs[1] = new RouteBuilder() {
             public void configure() {
                 from("ahc-ws://localhost:" + PORT).routeId("bar")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
         return rbs;

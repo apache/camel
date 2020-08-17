@@ -68,7 +68,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             shutdownThreadPool = true;
         }
 
-        AggregateProcessor answer = new AggregateProcessor(camelContext, internal, correlation, strategy, threadPool, shutdownThreadPool);
+        AggregateProcessor answer
+                = new AggregateProcessor(camelContext, internal, correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository();
         if (repository != null) {
@@ -76,7 +77,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
 
         if (definition.getAggregateController() == null && definition.getAggregateControllerRef() != null) {
-            definition.setAggregateController(mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
+            definition
+                    .setAggregateController(mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
         }
 
         // this EIP supports using a shared timeout checker thread pool or
@@ -89,10 +91,12 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool
                 // profile id
-                timeoutThreadPool = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
-                                                                                                                      definition.getTimeoutCheckerExecutorServiceRef());
+                timeoutThreadPool = camelContext.getExecutorServiceManager().newScheduledThreadPool(this,
+                        AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
+                        definition.getTimeoutCheckerExecutorServiceRef());
                 if (timeoutThreadPool == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + definition.getTimeoutCheckerExecutorServiceRef()
+                    throw new IllegalArgumentException(
+                            "ExecutorServiceRef " + definition.getTimeoutCheckerExecutorServiceRef()
                                                        + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
                 }
                 shutdownTimeoutThreadPool = true;
@@ -103,7 +107,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         if (parseBoolean(definition.getCompletionFromBatchConsumer(), false)
                 && parseBoolean(definition.getDiscardOnAggregationFailure(), false)) {
-            throw new IllegalArgumentException("Cannot use both completionFromBatchConsumer and discardOnAggregationFailure on: " + definition);
+            throw new IllegalArgumentException(
+                    "Cannot use both completionFromBatchConsumer and discardOnAggregationFailure on: " + definition);
         }
 
         // set other options
@@ -119,7 +124,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             // if aggregation strategy implements predicate and was not
             // configured then use as fallback
             log.debug("Using AggregationStrategy as completion predicate: {}", strategy);
-            answer.setCompletionPredicate((Predicate)strategy);
+            answer.setCompletionPredicate((Predicate) strategy);
         }
         if (definition.getCompletionTimeoutExpression() != null) {
             Expression expression = createExpression(definition.getCompletionTimeoutExpression());
@@ -179,7 +184,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
         if (definition.getOptimisticLockRetryPolicy() == null) {
             if (definition.getOptimisticLockRetryPolicyDefinition() != null) {
-                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicyDefinition()));
+                answer.setOptimisticLockRetryPolicy(
+                        createOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicyDefinition()));
             }
         } else {
             answer.setOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicy());
@@ -219,16 +225,18 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy)aggStrategy;
+                strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter
+                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                throw new IllegalArgumentException(
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
             }
         }
 
@@ -237,7 +245,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(camelContext);
+            ((CamelContextAware) strategy).setCamelContext(camelContext);
         }
 
         return strategy;

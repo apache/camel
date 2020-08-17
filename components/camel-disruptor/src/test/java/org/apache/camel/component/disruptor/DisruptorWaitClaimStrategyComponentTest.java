@@ -31,8 +31,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- * Tests the WaitStrategy and ClaimStrategy configuration of the disruptor
- * component
+ * Tests the WaitStrategy and ClaimStrategy configuration of the disruptor component
  */
 public class DisruptorWaitClaimStrategyComponentTest extends CamelTestSupport {
     private static final Integer VALUE = Integer.valueOf(42);

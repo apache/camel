@@ -19,16 +19,16 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 
 /**
- * A plugin used to turn an {@link Exchange} into a String representation
- * usually to be used for logging or tracing purposes.
+ * A plugin used to turn an {@link Exchange} into a String representation usually to be used for logging or tracing
+ * purposes.
  */
 public interface ExchangeFormatter {
 
     /**
      * Generates a string representation of the exchange
      *
-     * @param exchange the exchange
-     * @return a string representation of the exchange
+     * @param  exchange the exchange
+     * @return          a string representation of the exchange
      */
     String format(Exchange exchange);
 }

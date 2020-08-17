@@ -55,7 +55,8 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JMXTXUseOriginalBodyWithDLCErrorHandlerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/component/jms/tx/JMXTXUseOriginalBodyWithDLCErrorHandlerTest.xml");
     }
 
     @Override
@@ -105,7 +106,6 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
             return "oh no";
         }
     }
-
 
     public static class TestRoutes extends SpringRouteBuilder {
 

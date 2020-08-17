@@ -61,11 +61,14 @@ public class SubscriptionHelperTest {
         when(endpoint.getConfiguration()).thenReturn(config);
         when(component.getConfig()).thenReturn(new SalesforceEndpointConfig());
 
-        assertEquals(Optional.of(10L), determineReplayIdFor(endpoint, "my-topic-1"), "Expecting replayId for `my-topic-1` to be 10, as short topic names have priority");
+        assertEquals(Optional.of(10L), determineReplayIdFor(endpoint, "my-topic-1"),
+                "Expecting replayId for `my-topic-1` to be 10, as short topic names have priority");
 
-        assertEquals(Optional.of(30L), determineReplayIdFor(endpoint, "my-topic-2"), "Expecting replayId for `my-topic-2` to be 30, the only one given");
+        assertEquals(Optional.of(30L), determineReplayIdFor(endpoint, "my-topic-2"),
+                "Expecting replayId for `my-topic-2` to be 30, the only one given");
 
-        assertEquals(Optional.of(14L), determineReplayIdFor(endpoint, "my-topic-3"), "Expecting replayId for `my-topic-3` to be 14, the default");
+        assertEquals(Optional.of(14L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 14, the default");
     }
 
     @Test
@@ -87,21 +90,28 @@ public class SubscriptionHelperTest {
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(endpointConfig);
 
-        assertEquals(Optional.of(5L), determineReplayIdFor(endpoint, "my-topic-1"), "Expecting replayId for `my-topic-1` to be 5, as endpoint configuration has priority");
+        assertEquals(Optional.of(5L), determineReplayIdFor(endpoint, "my-topic-1"),
+                "Expecting replayId for `my-topic-1` to be 5, as endpoint configuration has priority");
 
-        assertEquals(Optional.of(3L), determineReplayIdFor(endpoint, "my-topic-2"), "Expecting replayId for `my-topic-2` to be 3, as endpoint does not configure it");
+        assertEquals(Optional.of(3L), determineReplayIdFor(endpoint, "my-topic-2"),
+                "Expecting replayId for `my-topic-2` to be 3, as endpoint does not configure it");
 
-        assertEquals(Optional.of(4L), determineReplayIdFor(endpoint, "my-topic-3"), "Expecting replayId for `my-topic-3` to be 4, as it is endpoint's default");
+        assertEquals(Optional.of(4L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 4, as it is endpoint's default");
 
         endpointConfig.setDefaultReplayId(null);
 
-        assertEquals(Optional.of(1L), determineReplayIdFor(endpoint, "my-topic-3"), "Expecting replayId for `my-topic-3` to be 1, as it is component's default when endpoint does not have a default");
+        assertEquals(Optional.of(1L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 1, as it is component's default when endpoint does not have a default");
 
         when(endpoint.getReplayId()).thenReturn(6L);
 
-        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-1"), "Expecting replayId for `my-topic-1` to be 6, as it is endpoint configured explicitly on the endpoint");
-        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-2"), "Expecting replayId for `my-topic-2` to be 6, as it is endpoint configured explicitly on the endpoint");
-        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-3"), "Expecting replayId for `my-topic-3` to be 6, as it is endpoint configured explicitly on the endpoint");
+        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-1"),
+                "Expecting replayId for `my-topic-1` to be 6, as it is endpoint configured explicitly on the endpoint");
+        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-2"),
+                "Expecting replayId for `my-topic-2` to be 6, as it is endpoint configured explicitly on the endpoint");
+        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 6, as it is endpoint configured explicitly on the endpoint");
     }
 
     @Test

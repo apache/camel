@@ -60,7 +60,8 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void onKick(String chan, IRCUser user, String passiveNick, String msg) {
-        log.debug("Server: " + server + " - onKick chan=" + chan + " user=" + user + " passiveNick=" + passiveNick + " msg=\"" + msg + "\"");
+        log.debug("Server: " + server + " - onKick chan=" + chan + " user=" + user + " passiveNick=" + passiveNick + " msg=\""
+                  + msg + "\"");
     }
 
     @Override
@@ -111,7 +112,7 @@ public class IrcLogger extends IRCEventAdapter {
     @Override
     public void onReply(int num, String value, String msg) {
         log.debug("Server: " + server + " - onReply num=" + num + " value=\"" + value + "\" msg=\"" + msg + "\"");
-    }    
+    }
 
     @Override
     public void onTopic(String chan, IRCUser user, String topic) {
@@ -120,6 +121,7 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void unknown(String prefix, String command, String middle, String trailing) {
-        log.info("Server: " + server + " - unknown prefix=" + prefix + " command=" + command + " middle=" + middle + " trailing=" + trailing);
+        log.info("Server: " + server + " - unknown prefix=" + prefix + " command=" + command + " middle=" + middle
+                 + " trailing=" + trailing);
     }
 }

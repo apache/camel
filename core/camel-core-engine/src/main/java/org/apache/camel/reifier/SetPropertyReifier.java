@@ -28,14 +28,15 @@ import org.apache.camel.util.ObjectHelper;
 public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition> {
 
     public SetPropertyReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SetPropertyDefinition)definition);
+        super(route, (SetPropertyDefinition) definition);
     }
 
     @Override
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getName(), "propertyName", this);
         Expression expr = createExpression(definition.getExpression());
-        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(parseString(definition.getName()), camelContext);
+        Expression nameExpr
+                = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(parseString(definition.getName()), camelContext);
         return new SetPropertyProcessor(nameExpr, expr);
     }
 }

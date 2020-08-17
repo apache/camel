@@ -47,8 +47,9 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     private static final String TEST_CONTAINER = "testContainer";
     private static final String TEST_BLOB_IN_DIR = "/dir/testBlob";
     private static final String MESSAGE = "<test>This is a test</test>";
-        
-    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("transient").credentials("identity", "credential").build(BlobStoreContext.class);
+
+    BlobStoreContext blobStoreContext
+            = ContextBuilder.newBuilder("transient").credentials("identity", "credential").build(BlobStoreContext.class);
     BlobStore blobStore = blobStoreContext.getBlobStore();
 
     @Test
@@ -63,7 +64,8 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     public void testBlobStorePutAndGet() throws InterruptedException {
         String message = "Some message";
         template.sendBody("direct:put-and-get", message);
-        Object result = template.requestBodyAndHeader("direct:put-and-get", null, JcloudsConstants.OPERATION, JcloudsConstants.GET, String.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-get", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.GET, String.class);
         assertEquals(message, result);
     }
 
@@ -71,52 +73,62 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     public void testBlobStorePutWithStreamAndGet() throws InterruptedException, TransformerException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
         Exchange exchange = new DefaultExchange(context);
-        StreamCache streamCache = StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
+        StreamCache streamCache
+                = StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
         template.sendBody("direct:put-and-get", streamCache);
-        Object result = template.requestBodyAndHeader("direct:put-and-get", null, JcloudsConstants.OPERATION, JcloudsConstants.GET, String.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-get", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.GET, String.class);
         assertEquals(MESSAGE, result);
     }
-    
+
     @Test
     public void testBlobStorePutAndCount() throws InterruptedException {
         String message = "Some message";
         template.sendBody("direct:put-and-count", message);
-        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(1), result);
     }
-    
+
     @Test
     public void testBlobStorePutAndRemove() throws InterruptedException {
         String message = "Some message";
         template.sendBody("direct:put-and-remove", message);
         template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOB);
-        Object result = template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(0), result);
     }
-    
+
     @Test
     public void testBlobStorePutAndClear() throws InterruptedException {
         String message = "Some message";
         template.sendBody("direct:put-and-clear", message);
-        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(1), result);
-        template.requestBodyAndHeader("direct:put-and-clear", null, JcloudsConstants.OPERATION, JcloudsConstants.CLEAR_CONTAINER);
-        result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        template.requestBodyAndHeader("direct:put-and-clear", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.CLEAR_CONTAINER);
+        result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(0), result);
     }
-    
+
     @Test
     public void testBlobStorePutAndDeleteContainer() throws InterruptedException {
         String message = "Some message";
         template.sendBody("direct:put-and-delete-container", message);
-        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(1), result);
-        template.requestBodyAndHeader("direct:put-and-delete-container", null, JcloudsConstants.OPERATION, JcloudsConstants.DELETE_CONTAINER);
+        template.requestBodyAndHeader("direct:put-and-delete-container", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.DELETE_CONTAINER);
     }
-    
+
     @Test
     public void testCheckContainerExists() throws InterruptedException {
-        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.CONTAINER_EXISTS, Boolean.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.CONTAINER_EXISTS, Boolean.class);
         assertEquals(true, result);
         Map<String, Object> headers = new HashMap<>();
         headers.put(JcloudsConstants.OPERATION, JcloudsConstants.CONTAINER_EXISTS);
@@ -124,11 +136,12 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         result = template.requestBodyAndHeaders("direct:container-exists", null, headers, Boolean.class);
         assertEquals(false, result);
     }
-    
+
     @Test
     public void testRemoveBlobs() throws InterruptedException {
         template.sendBody("direct:put", "test message");
-        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(1), result);
         List blobsToRemove = new ArrayList<>();
         blobsToRemove.add(TEST_BLOB_IN_DIR);
@@ -137,7 +150,8 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         headers.put(JcloudsConstants.CONTAINER_NAME, TEST_CONTAINER);
         headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);
         template.sendBodyAndHeaders("direct:remove-blobs", null, headers);
-        result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION, JcloudsConstants.COUNT_BLOBS, Long.class);
+        result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
+                JcloudsConstants.COUNT_BLOBS, Long.class);
         assertEquals(new Long(0), result);
     }
 
@@ -157,30 +171,30 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
                         .to("jclouds:blobstore:transient");
-                
+
                 from("direct:put-and-count")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
                         .to("jclouds:blobstore:transient");
-                
+
                 from("direct:put-and-remove")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
                         .to("jclouds:blobstore:transient");
-                
+
                 from("direct:put-and-clear")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
                         .to("jclouds:blobstore:transient");
-                
+
                 from("direct:put-and-delete-container")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB_IN_DIR))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))
                         .to("jclouds:blobstore:transient");
-                
+
                 from("direct:container-exists")
                         .to("jclouds:blobstore:transient");
-                
+
                 from("direct:remove-blobs")
                         .to("jclouds:blobstore:transient");
             }

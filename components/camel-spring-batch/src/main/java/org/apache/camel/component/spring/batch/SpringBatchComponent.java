@@ -43,7 +43,8 @@ public class SpringBatchComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, 
+        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(
+                uri, this, jobLauncher, defaultResolvedJobLauncher,
                 allResolvedJobLaunchers, remaining, jobRegistry);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -52,7 +53,8 @@ public class SpringBatchComponent extends DefaultComponent {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        defaultResolvedJobLauncher = getCamelContext().getRegistry().lookupByNameAndType(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
+        defaultResolvedJobLauncher
+                = getCamelContext().getRegistry().lookupByNameAndType(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
         allResolvedJobLaunchers = getCamelContext().getRegistry().findByTypeWithName(JobLauncher.class);
     }
 
@@ -73,7 +75,7 @@ public class SpringBatchComponent extends DefaultComponent {
 
     /**
      * Explicitly specifies a JobRegistry to be used.
-     */    
+     */
     public void setJobRegistry(JobRegistry jobRegistry) {
         this.jobRegistry = jobRegistry;
     }

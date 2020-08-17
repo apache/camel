@@ -47,7 +47,8 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
     private String id;
     private String routeId;
 
-    public SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService, SagaCompletionMode completionMode, CamelSagaStep step) {
+    public SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+                         SagaCompletionMode completionMode, CamelSagaStep step) {
         super(ObjectHelper.notNull(childProcessor, "childProcessor"));
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
@@ -72,7 +73,9 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
         }
     }
 
-    protected void handleSagaCompletion(Exchange exchange, CamelSagaCoordinator coordinator, CamelSagaCoordinator previousCoordinator, AsyncCallback callback) {
+    protected void handleSagaCompletion(
+            Exchange exchange, CamelSagaCoordinator coordinator, CamelSagaCoordinator previousCoordinator,
+            AsyncCallback callback) {
         if (this.completionMode == SagaCompletionMode.AUTO) {
             if (exchange.getException() != null) {
                 coordinator.compensate().whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
@@ -131,8 +134,9 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
         ifNotException(ex, exchange, false, null, null, callback, code);
     }
 
-    protected void ifNotException(Throwable ex, Exchange exchange, boolean handleCompletion, CamelSagaCoordinator coordinator,
-                                  CamelSagaCoordinator previousCoordinator, AsyncCallback callback, Runnable code) {
+    protected void ifNotException(
+            Throwable ex, Exchange exchange, boolean handleCompletion, CamelSagaCoordinator coordinator,
+            CamelSagaCoordinator previousCoordinator, AsyncCallback callback, Runnable code) {
         if (ex != null) {
             exchange.setException(ex);
             if (handleCompletion) {

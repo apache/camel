@@ -79,10 +79,10 @@ public class AtomixMapNodesProducerTest extends AtomixClientTestSupport {
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());
@@ -98,7 +98,7 @@ public class AtomixMapNodesProducerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .toF("atomix-map:%s?nodes=%s:%d", MAP_NAME, replicaAddress.host(), replicaAddress.port());
+                        .toF("atomix-map:%s?nodes=%s:%d", MAP_NAME, replicaAddress.host(), replicaAddress.port());
             }
         };
     }

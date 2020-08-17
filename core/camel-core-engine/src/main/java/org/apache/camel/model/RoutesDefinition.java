@@ -158,8 +158,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     /**
      * Creates a new route from the given URI input
      *
-     * @param uri the from uri
-     * @return the builder
+     * @param  uri the from uri
+     * @return     the builder
      */
     public RouteDefinition from(@AsEndpointUri String uri) {
         RouteDefinition route = createRoute();
@@ -170,8 +170,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     /**
      * Creates a new route from the given endpoint
      *
-     * @param endpoint the from endpoint
-     * @return the builder
+     * @param  endpoint the from endpoint
+     * @return          the builder
      */
     public RouteDefinition from(Endpoint endpoint) {
         RouteDefinition route = createRoute();
@@ -188,12 +188,13 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     /**
      * Creates a new route using the given route
      *
-     * @param route the route
-     * @return the builder
+     * @param  route the route
+     * @return       the builder
      */
     public RouteDefinition route(RouteDefinition route) {
         // must prepare the route before we can add it to the routes list
-        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(), getInterceptSendTos(), getOnCompletions());
+        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
+                getInterceptSendTos(), getOnCompletions());
         getRoutes().add(route);
         // mark this route as prepared
         route.markPrepared();
@@ -201,8 +202,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates and adds an interceptor that is triggered on every step in the
-     * route processing.
+     * Creates and adds an interceptor that is triggered on every step in the route processing.
      *
      * @return the interceptor builder to configure
      */
@@ -213,8 +213,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates and adds an interceptor that is triggered when an exchange is
-     * received as input to any routes (eg from all the <tt>from</tt>)
+     * Creates and adds an interceptor that is triggered when an exchange is received as input to any routes (eg from
+     * all the <tt>from</tt>)
      *
      * @return the interceptor builder to configure
      */
@@ -225,12 +225,11 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates and adds an interceptor that is triggered when an exchange is
-     * received as input to the route defined with the given endpoint (eg from
-     * the <tt>from</tt>)
+     * Creates and adds an interceptor that is triggered when an exchange is received as input to the route defined with
+     * the given endpoint (eg from the <tt>from</tt>)
      *
-     * @param uri uri of the endpoint
-     * @return the interceptor builder to configure
+     * @param  uri uri of the endpoint
+     * @return     the interceptor builder to configure
      */
     public InterceptFromDefinition interceptFrom(@AsEndpointUri
     final String uri) {
@@ -240,11 +239,10 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates and adds an interceptor that is triggered when an exchange is
-     * send to the given endpoint
+     * Creates and adds an interceptor that is triggered when an exchange is send to the given endpoint
      *
-     * @param uri uri of the endpoint
-     * @return the builder
+     * @param  uri uri of the endpoint
+     * @return     the builder
      */
     public InterceptSendToEndpointDefinition interceptSendToEndpoint(@AsEndpointUri
     final String uri) {
@@ -256,8 +254,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     /**
      * Adds an on exception
      * 
-     * @param exception the exception
-     * @return the builder
+     * @param  exception the exception
+     * @return           the builder
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exception) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exception);

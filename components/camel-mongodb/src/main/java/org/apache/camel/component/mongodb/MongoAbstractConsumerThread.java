@@ -51,8 +51,11 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     }
 
     protected abstract MongoCursor<Document> initializeCursor();
+
     protected abstract void init() throws Exception;
+
     protected abstract void doRun();
+
     protected abstract void regeneratingCursor();
 
     /**

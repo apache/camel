@@ -56,18 +56,16 @@ public class ProducerUseMessageBodyForTemplateTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-
         Map<String, Object> batch1 = new HashMap<>();
         batch1.put("num1", 3);
         batch1.put("num2", 1);
 
-
-        template.requestBodyAndHeader("direct:query", "SUBNUMBERS(INTEGER :#num1,INTEGER :#num2,OUT INTEGER resultofsum)", SqlStoredConstants.SQL_STORED_PARAMETERS, batch1);
+        template.requestBodyAndHeader("direct:query", "SUBNUMBERS(INTEGER :#num1,INTEGER :#num2,OUT INTEGER resultofsum)",
+                SqlStoredConstants.SQL_STORED_PARAMETERS, batch1);
 
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-
 
         assertEquals(Integer.valueOf(2), exchange.getIn().getBody(Map.class).get("resultofsum"));
     }

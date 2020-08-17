@@ -65,7 +65,7 @@ public class ManagedThreadsTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .threads(1, 2).id("mysend")
+                        .threads(1, 2).id("mysend")
                         .to("mock:foo");
             }
         };

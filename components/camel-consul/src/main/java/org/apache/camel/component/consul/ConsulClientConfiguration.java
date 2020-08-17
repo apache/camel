@@ -57,17 +57,20 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String password;
 
-    @Deprecated @Metadata(deprecationNote = "Use connectTimeout instead")
+    @Deprecated
+    @Metadata(deprecationNote = "Use connectTimeout instead")
     @UriParam
     private Long connectTimeoutMillis;
     @UriParam
     private Duration connectTimeout;
-    @Deprecated @Metadata(deprecationNote = "Use readTimeout instead")
+    @Deprecated
+    @Metadata(deprecationNote = "Use readTimeout instead")
     @UriParam
     private Long readTimeoutMillis;
     @UriParam
     private Duration readTimeout;
-    @Deprecated @Metadata(deprecationNote = "Use writeTimeout instead")
+    @Deprecated
+    @Metadata(deprecationNote = "Use writeTimeout instead")
     @UriParam(javaType = "java.time.Duration")
     private Long writeTimeoutMillis;
     @UriParam
@@ -182,8 +185,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * SSL configuration using an
-     * org.apache.camel.support.jsse.SSLContextParameters instance.
+     * SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -303,8 +305,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * Configure if the AgentClient should attempt a ping before returning the
-     * Consul instance
+     * Configure if the AgentClient should attempt a ping before returning the Consul instance
      */
     public void setPingInstance(boolean pingInstance) {
         this.pingInstance = pingInstance;
@@ -392,7 +393,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
 
     public ConsulClientConfiguration copy() {
         try {
-            return (ConsulClientConfiguration)super.clone();
+            return (ConsulClientConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

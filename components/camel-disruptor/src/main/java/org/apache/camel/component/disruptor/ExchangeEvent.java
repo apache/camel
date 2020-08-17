@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 public class ExchangeEvent {
 
     private SynchronizedExchange synchronizedExchange;
-    
+
     public SynchronizedExchange getSynchronizedExchange() {
         return synchronizedExchange;
     }
@@ -43,6 +43,6 @@ public class ExchangeEvent {
 
     @Override
     public String toString() {
-        return "ExchangeEvent{" + "exchange=" + synchronizedExchange.getExchange()  + '}';
+        return "ExchangeEvent{" + "exchange=" + synchronizedExchange.getExchange() + '}';
     }
 }

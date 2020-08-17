@@ -29,8 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link Processor} which converts the inbound exchange to a method
- * invocation on a POJO
+ * A {@link Processor} which converts the inbound exchange to a method invocation on a POJO
  */
 public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
@@ -145,7 +144,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         }
 
         if (invocation == null) {
-            exchange.setException(new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean));
+            exchange.setException(new IllegalStateException(
+                    "No method invocation could be created, no matching method could be found on: " + bean));
             callback.done(true);
             return true;
         }
@@ -193,8 +193,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     }
 
     /**
-     * Sets whether to support getter style method name, so you can
-     * say the method is called 'name' but it will invoke the 'getName' method.
+     * Sets whether to support getter style method name, so you can say the method is called 'name' but it will invoke
+     * the 'getName' method.
      * <p/>
      * Is by default turned off.
      */

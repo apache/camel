@@ -32,10 +32,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowComponent;
 
-
-
 /**
- * Abstract parent for test verifying that UndertowSecurityProvider.requireServletContext really causes servletContext to be created.
+ * Abstract parent for test verifying that UndertowSecurityProvider.requireServletContext really causes servletContext
+ * to be created.
  */
 public abstract class AbstractProviderServletTest extends BaseUndertowTest {
 
@@ -65,11 +64,10 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
         }
 
         @Override
-        public  abstract boolean requireServletContext();
+        public abstract boolean requireServletContext();
 
         abstract void assertServletContext(ServletRequestContext servletRequestContext);
     }
-
 
     static void createSecurtyProviderConfigurationFile(Class<? extends MockSecurityProvider> clazz) throws Exception {
         URL location = MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
@@ -85,7 +83,7 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext =  super.createCamelContext();
+        CamelContext camelContext = super.createCamelContext();
         UndertowComponent component = camelContext.getComponent("undertow", UndertowComponent.class);
 
         //put mock object asconfiguration, it is not used

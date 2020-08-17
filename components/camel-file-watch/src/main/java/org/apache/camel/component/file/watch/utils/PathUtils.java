@@ -20,7 +20,8 @@ import java.nio.file.Path;
 
 public final class PathUtils {
 
-    private PathUtils() { }
+    private PathUtils() {
+    }
 
     public static Path normalize(Path path) {
         return path.normalize();

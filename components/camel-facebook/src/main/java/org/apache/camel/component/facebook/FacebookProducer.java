@@ -91,15 +91,15 @@ public class FacebookProducer extends DefaultAsyncProducer {
                     Object result;
                     String rawJSON = null;
                     if (endpoint.getConfiguration().getJsonStoreEnabled() == null
-                        || !endpoint.getConfiguration().getJsonStoreEnabled()) {
+                            || !endpoint.getConfiguration().getJsonStoreEnabled()) {
                         result = FacebookMethodsTypeHelper.invokeMethod(
-                            endpoint.getConfiguration().getFacebook(), method, properties);
+                                endpoint.getConfiguration().getFacebook(), method, properties);
                     } else {
                         final Facebook facebook = endpoint.getConfiguration().getFacebook();
                         // lock out the underlying Facebook object from other threads
                         synchronized (facebook) {
                             result = FacebookMethodsTypeHelper.invokeMethod(
-                                facebook, method, properties);
+                                    facebook, method, properties);
                             rawJSON = DataObjectFactory.getRawJSON(result);
                         }
                     }
@@ -110,7 +110,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
                     exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
                     if (rawJSON != null) {
                         exchange.getMessage().setHeader(FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "rawJSON",
-                            rawJSON);
+                                rawJSON);
                     }
 
                 } catch (Throwable t) {
@@ -143,14 +143,15 @@ public class FacebookProducer extends DefaultAsyncProducer {
             // filter candidates based on endpoint and exchange properties
             final Set<String> argNames = properties.keySet();
             final List<FacebookMethodsType> filteredMethods = filterMethods(candidates, MatchType.SUPER_SET,
-                argNames.toArray(new String[argNames.size()]));
+                    argNames.toArray(new String[argNames.size()]));
 
             // get the method to call
             if (filteredMethods.isEmpty()) {
                 final Set<String> missing = getMissingProperties(endpoint.getMethod(),
-                    endpoint.getNameStyle(), argNames);
-                throw new RuntimeCamelException(String.format("Missing properties for %s, need one or more from %s",
-                        endpoint.getMethod(), missing));
+                        endpoint.getNameStyle(), argNames);
+                throw new RuntimeCamelException(
+                        String.format("Missing properties for %s, need one or more from %s",
+                                endpoint.getMethod(), missing));
             } else if (filteredMethods.size() == 1) {
                 // found an exact match
                 method = filteredMethods.get(0);
@@ -171,11 +172,13 @@ public class FacebookProducer extends DefaultAsyncProducer {
             Object value = exchange.getIn().getBody();
             try {
                 value = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(
-                    FacebookEndpointConfiguration.class.getDeclaredField(inBodyProperty).getType(),
-                    exchange, value);
+                        FacebookEndpointConfiguration.class.getDeclaredField(inBodyProperty).getType(),
+                        exchange, value);
             } catch (Exception e) {
-                exchange.setException(new RuntimeCamelException(String.format(
-                    "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()), e));
+                exchange.setException(new RuntimeCamelException(
+                        String.format(
+                                "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()),
+                        e));
 
                 return false;
             }
@@ -197,14 +200,14 @@ public class FacebookProducer extends DefaultAsyncProducer {
 
             // try to lookup a pool first based on profile
             ThreadPoolProfile poolProfile = manager.getThreadPoolProfile(
-                FacebookConstants.FACEBOOK_THREAD_PROFILE_NAME);
+                    FacebookConstants.FACEBOOK_THREAD_PROFILE_NAME);
             if (poolProfile == null) {
                 poolProfile = manager.getDefaultThreadPoolProfile();
             }
 
             // create a new pool using the custom or default profile
             executorService = manager.newScheduledThreadPool(FacebookProducer.class,
-                FacebookConstants.FACEBOOK_THREAD_PROFILE_NAME, poolProfile);
+                    FacebookConstants.FACEBOOK_THREAD_PROFILE_NAME, poolProfile);
         }
 
         return executorService;

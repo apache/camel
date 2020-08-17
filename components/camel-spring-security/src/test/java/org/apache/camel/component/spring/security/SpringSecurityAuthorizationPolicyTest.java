@@ -74,7 +74,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         }
         end.assertIsSatisfied();
     }
-    
+
     @Test
     public void testGetAuthorizationTokenFromSecurityContextHolder() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
@@ -84,9 +84,9 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         template.sendBody("direct:start", "hello world");
         end.assertIsSatisfied();
         SecurityContextHolder.getContext().setAuthentication(null);
-        
+
     }
-    
+
     @Test
     public void testAuthorizationFailedWithWrongExplicitRole() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
@@ -95,7 +95,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_BAD"));
 
             Authentication authToken = new UsernamePasswordAuthenticationToken("jim", "jimspassword", authorities);
-            
+
             Subject subject = new Subject();
             subject.getPrincipals().add(authToken);
 
@@ -111,7 +111,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
     private void sendMessageWithAuthentication(String username, String password) {
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(username, password);
-        
+
         Subject subject = new Subject();
         subject.getPrincipals().add(authToken);
 

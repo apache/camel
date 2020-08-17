@@ -54,5 +54,4 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
         setProperties(target, properties);
     }
 
-
 }

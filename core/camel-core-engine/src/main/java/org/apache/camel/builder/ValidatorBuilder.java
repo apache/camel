@@ -30,11 +30,10 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 
 /**
- * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to
- * build a {@link org.apache.camel.spi.Validator} and register into
- * {@link org.apache.camel.CamelContext}. It requires a 'type' to be specified
- * by type() method. And then you can choose a type of validator by withUri(),
- * withPredicate(), withJava() or withBean() method.
+ * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build a
+ * {@link org.apache.camel.spi.Validator} and register into {@link org.apache.camel.CamelContext}. It requires a 'type'
+ * to be specified by type() method. And then you can choose a type of validator by withUri(), withPredicate(),
+ * withJava() or withBean() method.
  */
 public class ValidatorBuilder {
 
@@ -45,10 +44,8 @@ public class ValidatorBuilder {
     private String beanRef;
 
     /**
-     * Set the data type name. If you specify 'xml:XYZ', the validator will be
-     * picked up if source type is 'xml:XYZ'. If you specify just 'xml', the
-     * validator matches with all of 'xml' source type like 'xml:ABC' or
-     * 'xml:DEF'.
+     * Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if source type is 'xml:XYZ'. If
+     * you specify just 'xml', the validator matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'.
      *
      * @param type 'from' data type name
      */
@@ -70,7 +67,7 @@ public class ValidatorBuilder {
     /**
      * Set the URI to be used for the endpoint {@link Validator}.
      * 
-     * @see EndpointValidatorDefinition, ProcessorValidator
+     * @see       EndpointValidatorDefinition, ProcessorValidator
      * @param uri endpoint URI
      */
     public ValidatorBuilder withUri(String uri) {
@@ -80,10 +77,9 @@ public class ValidatorBuilder {
     }
 
     /**
-     * Set the {@link Expression} to be used for the predicate
-     * {@link Validator}.
+     * Set the {@link Expression} to be used for the predicate {@link Validator}.
      * 
-     * @see PredicateValidatorDefinition, ProcessorValidator
+     * @see              PredicateValidatorDefinition, ProcessorValidator
      * @param expression validation expression
      */
     public ValidatorBuilder withExpression(@AsPredicate Expression expression) {
@@ -95,7 +91,7 @@ public class ValidatorBuilder {
     /**
      * Set the {@link Predicate} to be used for the predicate {@link Validator}.
      * 
-     * @see PredicateValidatorDefinition, ProcessorValidator
+     * @see             PredicateValidatorDefinition, ProcessorValidator
      * @param predicate validation predicate
      */
     public ValidatorBuilder withExpression(@AsPredicate Predicate predicate) {
@@ -105,12 +101,10 @@ public class ValidatorBuilder {
     }
 
     /**
-     * Set the Java {@code Class} represents a custom {@code Validator}
-     * implementation class.
+     * Set the Java {@code Class} represents a custom {@code Validator} implementation class.
      * 
-     * @see CustomValidatorDefinition
-     * @param clazz {@code Class} object represents custom validator
-     *            implementation
+     * @see         CustomValidatorDefinition
+     * @param clazz {@code Class} object represents custom validator implementation
      */
     public ValidatorBuilder withJava(Class<? extends Validator> clazz) {
         resetType();
@@ -121,7 +115,7 @@ public class ValidatorBuilder {
     /**
      * Set the Java Bean name to be used for custom {@code Validator}.
      * 
-     * @see CustomValidatorDefinition
+     * @see       CustomValidatorDefinition
      * @param ref bean name for the custom {@code Validator}
      */
     public ValidatorBuilder withBean(String ref) {
@@ -138,8 +132,8 @@ public class ValidatorBuilder {
     }
 
     /**
-     * Configures a new Validator according to the configurations built on this
-     * builder and register it into the given {@code CamelContext}.
+     * Configures a new Validator according to the configurations built on this builder and register it into the given
+     * {@code CamelContext}.
      * 
      * @param camelContext the given CamelContext
      */

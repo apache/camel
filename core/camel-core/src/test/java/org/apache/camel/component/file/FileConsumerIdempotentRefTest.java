@@ -56,8 +56,9 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

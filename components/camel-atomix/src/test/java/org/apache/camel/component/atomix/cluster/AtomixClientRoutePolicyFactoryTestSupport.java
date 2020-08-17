@@ -94,9 +94,9 @@ public abstract class AtomixClientRoutePolicyFactoryTestSupport {
                 @Override
                 public void configure() throws Exception {
                     from("timer:atomix?delay=1000&period=1000")
-                        .routeId("route-" + id)
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                            .routeId("route-" + id)
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

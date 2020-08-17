@@ -49,26 +49,26 @@ public class NettyHttpServiceCallRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:custom")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .component("netty-http")
                         .staticServiceDiscovery()
-                            .servers("myService@localhost:8081")
-                            .servers("myService@localhost:8082")
+                        .servers("myService@localhost:8081")
+                        .servers("myService@localhost:8082")
                         .endParent();
 
                 from("direct:default")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                            .servers("myService@localhost:8081")
-                            .servers("myService@localhost:8082")
+                        .servers("myService@localhost:8081")
+                        .servers("myService@localhost:8082")
                         .endParent();
 
                 from("netty-http:http://localhost:8081")
-                    .transform().constant("8081");
+                        .transform().constant("8081");
                 from("netty-http:http://localhost:8082")
-                    .transform().constant("8082");
+                        .transform().constant("8082");
             }
         };
     }

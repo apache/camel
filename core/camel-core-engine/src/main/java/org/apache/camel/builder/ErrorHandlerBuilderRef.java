@@ -17,8 +17,7 @@
 package org.apache.camel.builder;
 
 /**
- * Represents a proxy to an error handler builder which is resolved by named
- * reference
+ * Represents a proxy to an error handler builder which is resolved by named reference
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 

@@ -46,7 +46,6 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
         System.setProperty("RecipientListCxfTest.port3", Integer.toString(port3));
     }
 
-
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/JettyRecipientListCxfIssueTest.xml");

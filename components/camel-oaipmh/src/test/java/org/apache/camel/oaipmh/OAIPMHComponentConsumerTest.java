@@ -32,7 +32,7 @@ public class OAIPMHComponentConsumerTest extends CamelTestSupport {
     @Test
     public void testOAIPMH() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(532);  
+        mock.expectedMessageCount(532);
         mock.assertIsSatisfied(10 * 1000);
     }
 
@@ -54,16 +54,17 @@ public class OAIPMHComponentConsumerTest extends CamelTestSupport {
             public void configure() {
 
                 from("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request?"
-                        + "delay=1000&"
-                        + "from=2020-06-01T00:00:00Z&"
-                        + "initialDelay=1000")
-                        .split(xpath("/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
-                                new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
-                                        .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
-                                        .add("dc", "http://purl.org/dc/elements/1.1/")))
-                        //Log the titles of the records
-                        .to("log:titles")
-                        .to("mock:result");
+                     + "delay=1000&"
+                     + "from=2020-06-01T00:00:00Z&"
+                     + "initialDelay=1000")
+                             .split(xpath(
+                                     "/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
+                                     new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
+                                             .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
+                                             .add("dc", "http://purl.org/dc/elements/1.1/")))
+                             //Log the titles of the records
+                             .to("log:titles")
+                             .to("mock:result");
 
             }
         };

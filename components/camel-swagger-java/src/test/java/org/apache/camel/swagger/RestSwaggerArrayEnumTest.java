@@ -40,25 +40,25 @@ public class RestSwaggerArrayEnumTest {
 
         final RestDefinition restDefinition = new RestDefinition();
         restDefinition.get("/operation").param().name("pathParam").type(RestParamType.path).dataType("string")
-            .allowableValues("a", "b", "c").endParam()
+                .allowableValues("a", "b", "c").endParam()
 
-            .param().name("queryParam").type(RestParamType.query).dataType("int").allowableValues("1", "2", "3")
-            .endParam()
+                .param().name("queryParam").type(RestParamType.query).dataType("int").allowableValues("1", "2", "3")
+                .endParam()
 
-            .param().name("headerParam").type(RestParamType.header).dataType("float")
-            .allowableValues("1.1", "2.2", "3.3").endParam()
+                .param().name("headerParam").type(RestParamType.header).dataType("float")
+                .allowableValues("1.1", "2.2", "3.3").endParam()
 
-            .param().name("pathArrayParam").type(RestParamType.path).dataType("array").arrayType("string")
-            .allowableValues("a", "b", "c").endParam()
+                .param().name("pathArrayParam").type(RestParamType.path).dataType("array").arrayType("string")
+                .allowableValues("a", "b", "c").endParam()
 
-            .param().name("queryArrayParam").type(RestParamType.query).dataType("array").arrayType("int")
-            .allowableValues("1", "2", "3").endParam()
+                .param().name("queryArrayParam").type(RestParamType.query).dataType("array").arrayType("int")
+                .allowableValues("1", "2", "3").endParam()
 
-            .param().name("headerArrayParam").type(RestParamType.header).dataType("array").arrayType("float")
-            .allowableValues("1.1", "2.2", "3.3").endParam();
+                .param().name("headerArrayParam").type(RestParamType.header).dataType("array").arrayType("float")
+                .allowableValues("1.1", "2.2", "3.3").endParam();
 
         final Swagger swagger = reader.read(Collections.singletonList(restDefinition), null, new BeanConfig(),
-            "camel-1", new DefaultClassResolver());
+                "camel-1", new DefaultClassResolver());
 
         assertThat(swagger).isNotNull();
         final Map<String, Path> paths = swagger.getPaths();
@@ -69,22 +69,22 @@ public class RestSwaggerArrayEnumTest {
         assertThat(parameters).hasSize(6);
 
         ParameterAssert.assertThat(parameters.get(0)).hasName("pathParam").isGivenIn("path").isOfType("string")
-            .hasEnumSpecifiedWith("a", "b", "c");
+                .hasEnumSpecifiedWith("a", "b", "c");
 
         ParameterAssert.assertThat(parameters.get(1)).hasName("queryParam").isGivenIn("query").isOfType("string")
-            .hasEnumSpecifiedWith("1", "2", "3");
+                .hasEnumSpecifiedWith("1", "2", "3");
 
         ParameterAssert.assertThat(parameters.get(2)).hasName("headerParam").isGivenIn("header").isOfType("string")
-            .hasEnumSpecifiedWith("1.1", "2.2", "3.3");
+                .hasEnumSpecifiedWith("1.1", "2.2", "3.3");
 
         ParameterAssert.assertThat(parameters.get(3)).hasName("pathArrayParam").isGivenIn("path").isOfType("array")
-            .isOfArrayType("string").hasArrayEnumSpecifiedWith("a", "b", "c");
+                .isOfArrayType("string").hasArrayEnumSpecifiedWith("a", "b", "c");
 
         ParameterAssert.assertThat(parameters.get(4)).hasName("queryParam").isGivenIn("query").isOfType("array")
-            .isOfArrayType("int").hasArrayEnumSpecifiedWith(1, 2, 3);
+                .isOfArrayType("int").hasArrayEnumSpecifiedWith(1, 2, 3);
 
         ParameterAssert.assertThat(parameters.get(5)).hasName("headerParam").isGivenIn("header").isOfType("array")
-            .isOfArrayType("float").hasArrayEnumSpecifiedWith(1.1f, 2.2f, 3.3f);
+                .isOfArrayType("float").hasArrayEnumSpecifiedWith(1.1f, 2.2f, 3.3f);
     }
 
 }

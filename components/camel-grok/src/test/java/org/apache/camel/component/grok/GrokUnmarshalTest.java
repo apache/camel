@@ -95,8 +95,7 @@ public class GrokUnmarshalTest extends CamelTestSupport {
         result.assertIsSatisfied();
         assertEquals(
                 "-- barbarfoobarfoobar --",
-                result.getExchanges().get(0).getIn().getBody(Map.class).get("fooBar")
-        );
+                result.getExchanges().get(0).getIn().getBody(Map.class).get("fooBar"));
     }
 
     private Object get(Exchange exchange, int listIndex, String mapKey) {

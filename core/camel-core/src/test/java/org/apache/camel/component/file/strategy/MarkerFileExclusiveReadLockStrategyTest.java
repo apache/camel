@@ -106,11 +106,12 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/marker/in?readLock=markerFile&initialDelay=0&delay=10").onCompletion().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        numberOfFilesProcessed.addAndGet(1);
-                    }
-                }).end().threads(NUMBER_OF_THREADS).to("file:target/data/marker/out", "mock:result");
+                from("file:target/data/marker/in?readLock=markerFile&initialDelay=0&delay=10").onCompletion()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                numberOfFilesProcessed.addAndGet(1);
+                            }
+                        }).end().threads(NUMBER_OF_THREADS).to("file:target/data/marker/out", "mock:result");
             }
         };
     }

@@ -54,7 +54,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        RunInstancesResponse resultGet = (RunInstancesResponse)exchange.getMessage().getBody();
+        RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
         assertEquals(resultGet.instances().get(0).imageId(), "test-1");
         assertEquals(resultGet.instances().get(0).instanceType(), InstanceType.T2_MICRO);
         assertEquals(resultGet.instances().get(0).instanceId(), "instance-1");
@@ -75,7 +75,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        RunInstancesResponse resultGet = (RunInstancesResponse)exchange.getMessage().getBody();
+        RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
         assertEquals(resultGet.instances().get(0).imageId(), "test-1");
         assertEquals(resultGet.instances().get(0).instanceType(), InstanceType.T2_MICRO);
         assertEquals(resultGet.instances().get(0).instanceId(), "instance-1");
@@ -96,7 +96,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        StartInstancesResponse resultGet = (StartInstancesResponse)exchange.getMessage().getBody();
+        StartInstancesResponse resultGet = (StartInstancesResponse) exchange.getMessage().getBody();
         assertEquals(resultGet.startingInstances().get(0).instanceId(), "test-1");
         assertEquals(resultGet.startingInstances().get(0).previousState().name(), InstanceStateName.STOPPED);
         assertEquals(resultGet.startingInstances().get(0).currentState().name(), InstanceStateName.RUNNING);
@@ -114,7 +114,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        StopInstancesResponse resultGet = (StopInstancesResponse)exchange.getMessage().getBody();
+        StopInstancesResponse resultGet = (StopInstancesResponse) exchange.getMessage().getBody();
         assertEquals(resultGet.stoppingInstances().get(0).instanceId(), "test-1");
         assertEquals(resultGet.stoppingInstances().get(0).previousState().name(), InstanceStateName.RUNNING);
         assertEquals(resultGet.stoppingInstances().get(0).currentState().name(), InstanceStateName.STOPPED);
@@ -132,7 +132,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        TerminateInstancesResponse resultGet = (TerminateInstancesResponse)exchange.getMessage().getBody();
+        TerminateInstancesResponse resultGet = (TerminateInstancesResponse) exchange.getMessage().getBody();
         assertEquals(resultGet.terminatingInstances().get(0).instanceId(), "test-1");
         assertEquals(resultGet.terminatingInstances().get(0).previousState().name(), InstanceStateName.RUNNING);
         assertEquals(resultGet.terminatingInstances().get(0).currentState().name(), InstanceStateName.TERMINATED);
@@ -151,7 +151,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        DescribeInstancesResponse resultGet = (DescribeInstancesResponse)exchange.getMessage().getBody();
+        DescribeInstancesResponse resultGet = (DescribeInstancesResponse) exchange.getMessage().getBody();
         assertEquals(resultGet.reservations().size(), 1);
         assertEquals(resultGet.reservations().get(0).instances().size(), 1);
     }
@@ -171,7 +171,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DescribeInstanceStatusResponse resultGet = (DescribeInstanceStatusResponse)exchange.getMessage().getBody();
+        DescribeInstanceStatusResponse resultGet = (DescribeInstanceStatusResponse) exchange.getMessage().getBody();
         assertEquals(resultGet.instanceStatuses().size(), 1);
         assertEquals(resultGet.instanceStatuses().get(0).instanceState().name(), InstanceStateName.RUNNING);
     }
@@ -203,7 +203,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        MonitorInstancesResponse resultGet = (MonitorInstancesResponse)exchange.getMessage().getBody();
+        MonitorInstancesResponse resultGet = (MonitorInstancesResponse) exchange.getMessage().getBody();
 
         assertEquals(resultGet.instanceMonitorings().size(), 1);
         assertEquals(resultGet.instanceMonitorings().get(0).instanceId(), "test-1");
@@ -223,7 +223,7 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        UnmonitorInstancesResponse resultGet = (UnmonitorInstancesResponse)exchange.getMessage().getBody();
+        UnmonitorInstancesResponse resultGet = (UnmonitorInstancesResponse) exchange.getMessage().getBody();
 
         assertEquals(resultGet.instanceMonitorings().size(), 1);
         assertEquals(resultGet.instanceMonitorings().get(0).instanceId(), "test-1");

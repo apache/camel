@@ -37,7 +37,7 @@ public class RedisConnectionTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteECHO() throws Exception {
-        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<String>>any())).thenReturn("value");
+        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<String>> any())).thenReturn("value");
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "ECHO",
@@ -48,7 +48,7 @@ public class RedisConnectionTest extends RedisTestSupport {
 
     @Test
     public void shouldExecutePING() throws Exception {
-        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<String>>any())).thenReturn("PONG");
+        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<String>> any())).thenReturn("PONG");
 
         Object result = sendHeaders(RedisConstants.COMMAND, "PING");
 
@@ -59,7 +59,7 @@ public class RedisConnectionTest extends RedisTestSupport {
     public void shouldExecuteQUIT() throws Exception {
         sendHeaders(RedisConstants.COMMAND, "QUIT");
 
-        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>>any());
+        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>> any());
     }
 
     @Test

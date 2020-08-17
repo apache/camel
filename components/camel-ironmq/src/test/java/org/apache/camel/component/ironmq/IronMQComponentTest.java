@@ -101,7 +101,7 @@ public class IronMQComponentTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", "dummy");
         parameters.put("token", "dummy");
-        endpoint = (IronMQEndpoint)component.createEndpoint("ironmq", "testqueue", parameters);
+        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq", "testqueue", parameters);
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

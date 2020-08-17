@@ -48,7 +48,8 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
             assertEquals("flatpack", model.getName());
 
-            Map<String, DataFormatOptionModel> options = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
+            Map<String, DataFormatOptionModel> options
+                    = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
 
             assertEquals(10, options.size());
             BaseOptionModel found = options.get("textQualifier");
@@ -73,7 +74,8 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
             assertEquals("univocity-tsv", model.getName());
 
-            Map<String, DataFormatOptionModel> options = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
+            Map<String, DataFormatOptionModel> options
+                    = model.getOptions().stream().collect(Collectors.toMap(BaseOptionModel::getName, o -> o));
 
             assertEquals(16, options.size());
             BaseOptionModel found = options.get("escapeChar");

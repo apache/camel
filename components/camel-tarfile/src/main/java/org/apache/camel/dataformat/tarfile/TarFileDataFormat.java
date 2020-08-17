@@ -41,8 +41,7 @@ import static org.apache.camel.Exchange.FILE_LENGTH;
 import static org.apache.camel.Exchange.FILE_NAME;
 
 /**
- * Tar file data format.
- * Based on ZipFileDataFormat from camel-zipfile component
+ * Tar file data format. Based on ZipFileDataFormat from camel-zipfile component
  */
 @Dataformat("tarfile")
 public class TarFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
@@ -101,7 +100,8 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
             return tarIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(stream);
-            TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
+            TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory()
+                    .createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {

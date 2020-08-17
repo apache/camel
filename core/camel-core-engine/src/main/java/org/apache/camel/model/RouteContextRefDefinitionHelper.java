@@ -33,9 +33,9 @@ public final class RouteContextRefDefinitionHelper {
     /**
      * Lookup the routes from the {@link RouteContextRefDefinition}.
      *
-     * @param camelContext the CamelContext
-     * @param ref the id of the {@link RouteContextRefDefinition} to lookup and get the routes.
-     * @return the routes.
+     * @param  camelContext the CamelContext
+     * @param  ref          the id of the {@link RouteContextRefDefinition} to lookup and get the routes.
+     * @return              the routes.
      */
     @SuppressWarnings("unchecked")
     public static List<RouteDefinition> lookupRoutes(CamelContext camelContext, String ref) {

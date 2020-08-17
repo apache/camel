@@ -37,7 +37,8 @@ import org.springframework.context.ApplicationContextAware;
 @Metadata(label = "spring,configuration,endpoint")
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean implements FactoryBean<Endpoint>, ApplicationContextAware {
+public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean
+        implements FactoryBean<Endpoint>, ApplicationContextAware {
     @XmlTransient
     private ApplicationContext applicationContext;
     // ref is needed as transient as namespace parser registerEndpointsWithIdsDefinedInFromOrToTypes

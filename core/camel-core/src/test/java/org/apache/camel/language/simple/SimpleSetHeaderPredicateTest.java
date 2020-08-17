@@ -58,7 +58,7 @@ public class SimpleSetHeaderPredicateTest extends ContextTestSupport {
                 from("direct:start").setHeader("bar").simple("${header.foo} == 'Camel'", boolean.class).to("mock:result");
 
                 from("direct:other").setHeader("param1", constant("hello")).log("param1 = ${header.param1}").setHeader("param2")
-                    .simple("${header.param1} == 'hello'", Boolean.class).log("param2 = ${header.param2}").to("mock:other");
+                        .simple("${header.param1} == 'hello'", Boolean.class).log("param2 = ${header.param2}").to("mock:other");
             }
         };
     }

@@ -116,10 +116,12 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         Integer converters = (Integer) mbeanServer.getAttribute(name, "NumberOfTypeConverters");
         assertTrue(converters >= 150, "Should be more than 150 converters, was: " + converters);
 
-        Boolean has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"String", "java.io.InputStream"}, new String[]{"java.lang.String", "java.lang.String"});
+        Boolean has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[] { "String", "java.io.InputStream" },
+                new String[] { "java.lang.String", "java.lang.String" });
         assertTrue(has.booleanValue(), "Should have type converter");
 
-        has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"java.math.BigInteger", "int"}, new String[]{"java.lang.String", "java.lang.String"});
+        has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[] { "java.math.BigInteger", "int" },
+                new String[] { "java.lang.String", "java.lang.String" });
         assertFalse(has.booleanValue(), "Should not have type converter");
 
         // we have more than 150 converters out of the box
@@ -133,8 +135,8 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .convertBodyTo(int.class)
-                    .to("mock:a");
+                        .convertBodyTo(int.class)
+                        .to("mock:a");
             }
         };
     }

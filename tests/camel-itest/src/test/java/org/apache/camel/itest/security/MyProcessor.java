@@ -31,16 +31,16 @@ public class MyProcessor implements Processor {
         // Get the parameter list
         List<?> parameter = in.getBody(List.class);
         // Get the operation name
-        String operation = (String)in.getHeader(CxfConstants.OPERATION_NAME);
+        String operation = (String) in.getHeader(CxfConstants.OPERATION_NAME);
         Object result = null;
         if ("sayHi".equals(operation)) {
             result = " Hello buddy!";
-        } 
+        }
         if ("greetMe".equals(operation)) {
-            result = " Hello " +  (String)parameter.get(0);            
+            result = " Hello " + (String) parameter.get(0);
         }
         // Put the result back
-        exchange.getMessage().setBody(result);        
+        exchange.getMessage().setBody(result);
     }
 
 }

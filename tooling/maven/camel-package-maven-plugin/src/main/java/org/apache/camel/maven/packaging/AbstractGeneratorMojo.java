@@ -55,17 +55,18 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     protected MavenProjectHelper projectHelper;
 
     /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
+     * build context to check changed files and mark them for refresh (used for m2e compatibility)
      */
     @Component
     protected BuildContext buildContext;
 
     private DynamicClassLoader projectClassLoader;
 
-    public void execute(MavenProject project,
-                        MavenProjectHelper projectHelper,
-                        BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(
+            MavenProject project,
+            MavenProjectHelper projectHelper,
+            BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         this.project = project;
         this.projectHelper = projectHelper;
         this.buildContext = buildContext;

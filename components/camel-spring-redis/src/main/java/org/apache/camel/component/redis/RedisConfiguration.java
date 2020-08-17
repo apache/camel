@@ -32,9 +32,11 @@ public class RedisConfiguration {
     private boolean managedListenerContainer;
     private boolean managedConnectionFactory;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private Integer port;
     @UriParam(defaultValue = "SET")
     private Command command = Command.SET;
@@ -178,7 +180,7 @@ public class RedisConfiguration {
 
     public void stop() throws Exception {
         if (managedConnectionFactory) {
-            ((JedisConnectionFactory)connectionFactory).destroy();
+            ((JedisConnectionFactory) connectionFactory).destroy();
         }
         if (managedListenerContainer) {
             listenerContainer.destroy();

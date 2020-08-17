@@ -32,7 +32,8 @@ public final class SqlHelper {
     /**
      * Resolve the query by loading the query from the classpath or file resource if needed.
      */
-    public static String resolveQuery(CamelContext camelContext, String query, String placeholder) throws NoTypeConversionAvailableException, IOException {
+    public static String resolveQuery(CamelContext camelContext, String query, String placeholder)
+            throws NoTypeConversionAvailableException, IOException {
         String answer = query;
         if (ResourceHelper.hasScheme(query)) {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, query);

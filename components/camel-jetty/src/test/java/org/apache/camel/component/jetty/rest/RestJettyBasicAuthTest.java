@@ -35,11 +35,13 @@ public class RestJettyBasicAuthTest extends CamelSpringTestSupport {
 
     @Test
     public void testJestDslBasicAuth() throws Exception {
-        String out = template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=donald&authPassword=duck", null, String.class);
+        String out = template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=donald&authPassword=duck",
+                null, String.class);
         assertEquals("\"pong\"", out);
 
         try {
-            template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=mickey&authPassword=duck", null, String.class);
+            template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=mickey&authPassword=duck", null,
+                    String.class);
             fail("Should not login");
         } catch (Exception e) {
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

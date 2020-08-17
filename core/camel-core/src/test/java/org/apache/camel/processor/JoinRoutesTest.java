@@ -67,7 +67,8 @@ public class JoinRoutesTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b").when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b")
+                        .when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
 
                 from("direct:b").to("mock:result");
                 from("direct:c").to("mock:result");

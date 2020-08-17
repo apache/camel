@@ -19,7 +19,7 @@ package org.apache.camel.processor.loadbalancer;
 public class DistributionRatio {
     private final int distributionWeight;
     private int runtimeWeight;
-    
+
     public DistributionRatio(int distributionWeight) {
         this.distributionWeight = distributionWeight;
         this.runtimeWeight = distributionWeight;
@@ -45,5 +45,5 @@ public class DistributionRatio {
             return false;
         }
     }
-    
+
 }

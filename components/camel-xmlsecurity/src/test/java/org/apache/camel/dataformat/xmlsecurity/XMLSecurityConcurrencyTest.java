@@ -77,15 +77,10 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        marshal().secureXML(defaultKey.getEncoded()).
-                        to("mock:secure").
-                        to("direct:marshalled");
+                from("direct:start").marshal().secureXML(defaultKey.getEncoded()).to("mock:secure").to("direct:marshalled");
 
-                from("direct:marshalled").
-                        unmarshal().secureXML(defaultKey.getEncoded()).
-                        convertBodyTo(String.class).
-                        to("mock:result");
+                from("direct:marshalled").unmarshal().secureXML(defaultKey.getEncoded()).convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

@@ -33,9 +33,10 @@ public final class RouteTemplateContextRefDefinitionHelper {
     /**
      * Lookup the route templates from the {@link RouteTemplateContextRefDefinition}.
      *
-     * @param camelContext the CamelContext
-     * @param ref the id of the {@link RouteTemplateContextRefDefinition} to lookup and get the route templates.
-     * @return the route templates.
+     * @param  camelContext the CamelContext
+     * @param  ref          the id of the {@link RouteTemplateContextRefDefinition} to lookup and get the route
+     *                      templates.
+     * @return              the route templates.
      */
     @SuppressWarnings("unchecked")
     public static List<RouteTemplateDefinition> lookupRouteTemplates(CamelContext camelContext, String ref) {

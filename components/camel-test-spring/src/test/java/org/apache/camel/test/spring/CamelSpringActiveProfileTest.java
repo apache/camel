@@ -31,8 +31,8 @@ import org.springframework.test.context.ContextConfiguration;
 /**
  * Spring style testing with annotations to configure and setup the test.
  * <p/>
- * As we do next extend any base test class, we need to inject our resources
- * for testing such as the {@link CamelContext} and {@link ProducerTemplate}.
+ * As we do next extend any base test class, we need to inject our resources for testing such as the
+ * {@link CamelContext} and {@link ProducerTemplate}.
  */
 @ContextConfiguration
 @ActiveProfiles("test")

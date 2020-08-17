@@ -28,8 +28,8 @@ public interface UnitOfWorkFactory extends AfterPropertiesConfigured {
     /**
      * Creates a new {@link UnitOfWork}
      *
-     * @param exchange  the exchange
-     * @return the created {@link UnitOfWork}
+     * @param  exchange the exchange
+     * @return          the created {@link UnitOfWork}
      */
     UnitOfWork createUnitOfWork(Exchange exchange);
 
@@ -38,4 +38,3 @@ public interface UnitOfWorkFactory extends AfterPropertiesConfigured {
         // noop
     }
 }
-

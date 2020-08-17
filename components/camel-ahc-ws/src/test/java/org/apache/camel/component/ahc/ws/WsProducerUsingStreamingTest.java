@@ -22,7 +22,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ServerConnector;
 
 public class WsProducerUsingStreamingTest extends WsProducerTestBase {
-    
+
     @Override
     protected void setUpComponent() throws Exception {
     }
@@ -31,7 +31,7 @@ public class WsProducerUsingStreamingTest extends WsProducerTestBase {
     protected Connector getConnector() throws Exception {
         return new ServerConnector(server);
     }
-    
+
     @Override
     protected String getTextTestMessage() {
         return super.getTextTestMessage();

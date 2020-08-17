@@ -56,7 +56,8 @@ import org.slf4j.LoggerFactory;
  * Implementation of Circuit Breaker EIP using resilience4j.
  */
 @ManagedResource(description = "Managed Resilience Processor")
-public class ResilienceProcessor extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+public class ResilienceProcessor extends AsyncProcessorSupport
+        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
@@ -71,7 +72,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
 
-    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig, TimeLimiterConfig timeLimiterConfig, Processor processor,
+    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
+                               TimeLimiterConfig timeLimiterConfig, Processor processor,
                                Processor fallback) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;

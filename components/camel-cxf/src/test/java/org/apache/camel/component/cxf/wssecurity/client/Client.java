@@ -37,11 +37,10 @@ public final class Client {
         bean.getOutInterceptors().add(getWSS4JOutInterceptor());
         bean.setServiceClass(Greeter.class);
     }
-    
+
     public Greeter getClient() {
         return bean.create(Greeter.class);
     }
-    
 
     public static WSS4JOutInterceptor getWSS4JOutInterceptor() throws Exception {
 
@@ -58,7 +57,7 @@ public final class Client {
         // outProps.put("signatureUser", "clientx509v1");
 
         outProps.put("passwordCallbackClass",
-                     "org.apache.camel.component.cxf.wssecurity.client.UTPasswordCallback");
+                "org.apache.camel.component.cxf.wssecurity.client.UTPasswordCallback");
 
         // outProps.put("encryptionUser", "serverx509v1");
         // outProps.put("encryptionPropFile",
@@ -71,8 +70,8 @@ public final class Client {
         outProps.put("signaturePropFile", "wssecurity/etc/Client_Sign.properties");
         outProps.put("signatureKeyIdentifier", "DirectReference");
         outProps.put("signatureParts",
-        // "{Element}{" + WSU_NS + "}Timestamp;"
-                     "{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body");
+                // "{Element}{" + WSU_NS + "}Timestamp;"
+                "{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 
         return new WSS4JOutInterceptor(outProps);
     }

@@ -27,7 +27,7 @@ import org.apache.ibatis.annotations.Select;
 public interface AccountService {
 
     @Select("select ACC_ID as id, ACC_FIRST_NAME as firstName, ACC_LAST_NAME as lastName"
-        + ", ACC_EMAIL as emailAddress from ACCOUNT where ACC_ID = #{id}")
+            + ", ACC_EMAIL as emailAddress from ACCOUNT where ACC_ID = #{id}")
     Account selectBeanAccountById(@Param("id") int no);
 
     @Select("select * from ACCOUNT order by ACC_ID")
@@ -35,7 +35,7 @@ public interface AccountService {
     List<Account> selectBeanAllAccounts();
 
     @Insert("insert into ACCOUNT (ACC_ID,ACC_FIRST_NAME,ACC_LAST_NAME,ACC_EMAIL)"
-        + " values (#{id}, #{firstName}, #{lastName}, #{emailAddress})")
+            + " values (#{id}, #{firstName}, #{lastName}, #{emailAddress})")
     void insertBeanAccount(Account account);
 
 }

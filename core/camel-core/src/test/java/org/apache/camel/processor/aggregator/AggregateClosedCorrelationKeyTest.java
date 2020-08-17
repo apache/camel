@@ -37,7 +37,8 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).closeCorrelationKeyOnCompletion(1000).to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
+                        .closeCorrelationKeyOnCompletion(1000).to("mock:result");
             }
         });
         context.start();
@@ -65,7 +66,8 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).closeCorrelationKeyOnCompletion(2).to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
+                        .closeCorrelationKeyOnCompletion(2).to("mock:result");
             }
         });
         context.start();

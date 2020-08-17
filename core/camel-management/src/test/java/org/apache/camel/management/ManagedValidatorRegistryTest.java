@@ -90,15 +90,15 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 validator()
-                    .type("xml:foo")
-                    .withUri("direct:transformer");
+                        .type("xml:foo")
+                        .withUri("direct:transformer");
                 validator()
-                    .type("json:test")
-                    .withExpression(body().isNotNull());
+                        .type("json:test")
+                        .withExpression(body().isNotNull());
                 validator()
-                    .type("custom")
-                    .withJava(MyValidator.class);
-                
+                        .type("custom")
+                        .withJava(MyValidator.class);
+
                 from("direct:start").to("mock:result");
             }
         };

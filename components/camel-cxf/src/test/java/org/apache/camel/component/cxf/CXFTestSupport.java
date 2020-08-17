@@ -19,17 +19,16 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
- * For test cases that use unique contexts, they can share the 
- * ports which will make things a bit faster as ports aren't opened
- * and closed all the time. 
+ * For test cases that use unique contexts, they can share the ports which will make things a bit faster as ports aren't
+ * opened and closed all the time.
  */
 public final class CXFTestSupport {
 
-    static final int PORT1 = AvailablePortFinder.getNextAvailable();  
-    static final int PORT2 = AvailablePortFinder.getNextAvailable();  
-    static final int PORT3 = AvailablePortFinder.getNextAvailable();  
-    static final int PORT4 = AvailablePortFinder.getNextAvailable();  
-    static final int PORT5 = AvailablePortFinder.getNextAvailable();  
+    static final int PORT1 = AvailablePortFinder.getNextAvailable();
+    static final int PORT2 = AvailablePortFinder.getNextAvailable();
+    static final int PORT3 = AvailablePortFinder.getNextAvailable();
+    static final int PORT4 = AvailablePortFinder.getNextAvailable();
+    static final int PORT5 = AvailablePortFinder.getNextAvailable();
     static final int PORT6 = AvailablePortFinder.getNextAvailable();
     static final int SSL_PORT = AvailablePortFinder.getNextAvailable();
 
@@ -45,16 +44,16 @@ public final class CXFTestSupport {
         System.setProperty("CXFTestSupport.sslPort", Integer.toString(SSL_PORT));
         System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "true");
     }
-    
+
     private CXFTestSupport() {
     }
-    
+
     public static int getPort(String name) {
         int port = AvailablePortFinder.getNextAvailable();
         System.setProperty(name, Integer.toString(port));
         return port;
     }
-    
+
     public static int getPort1() {
         return PORT1;
     }

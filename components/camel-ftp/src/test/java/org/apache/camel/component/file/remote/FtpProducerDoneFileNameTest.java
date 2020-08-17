@@ -47,7 +47,8 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerPrefixDoneFileName() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
@@ -58,7 +59,8 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerExtDoneFileName() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
@@ -69,7 +71,8 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerReplaceExtDoneFileName() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
@@ -81,7 +84,8 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
     @Test
     public void testProducerInvalidDoneFileName() throws Exception {
         try {
-            template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:parent}/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+            template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:parent}/foo", "Hello World", Exchange.FILE_NAME,
+                    "hello.txt");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());

@@ -65,7 +65,8 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         assertSame(cfg, comp.getConfiguration());
 
         NettyEndpoint e1 = (NettyEndpoint) comp.createEndpoint("netty://udp://localhost:8601?sync=false");
-        NettyEndpoint e2 = (NettyEndpoint) comp.createEndpoint("netty://udp://localhost:8602?sync=false&udpConnectionlessSending=true");
+        NettyEndpoint e2
+                = (NettyEndpoint) comp.createEndpoint("netty://udp://localhost:8602?sync=false&udpConnectionlessSending=true");
 
         // should not be same
         assertNotSame(e1, e2);

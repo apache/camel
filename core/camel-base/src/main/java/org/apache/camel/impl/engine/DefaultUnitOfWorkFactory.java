@@ -37,7 +37,8 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
     public UnitOfWork createUnitOfWork(Exchange exchange) {
         UnitOfWork answer;
         if (usedMDCLogging) {
-            answer = new MDCUnitOfWork(exchange, inflightRepository, mdcLoggingKeysPattern, allowUseOriginalMessage, useBreadcrumb);
+            answer = new MDCUnitOfWork(
+                    exchange, inflightRepository, mdcLoggingKeysPattern, allowUseOriginalMessage, useBreadcrumb);
         } else {
             answer = new DefaultUnitOfWork(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
         }
@@ -50,7 +51,8 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
         inflightRepository = camelContext.getInflightRepository();
         usedMDCLogging = camelContext.isUseMDCLogging() != null && camelContext.isUseMDCLogging();
         mdcLoggingKeysPattern = camelContext.getMDCLoggingKeysPattern();
-        allowUseOriginalMessage = camelContext.isAllowUseOriginalMessage() != null ? camelContext.isAllowUseOriginalMessage() : false;
+        allowUseOriginalMessage
+                = camelContext.isAllowUseOriginalMessage() != null ? camelContext.isAllowUseOriginalMessage() : false;
         useBreadcrumb = camelContext.isUseBreadcrumb() != null ? camelContext.isUseBreadcrumb() : false;
     }
 

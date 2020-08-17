@@ -47,7 +47,7 @@ public class JCacheProducerClearTest extends JCacheComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:clear")
-                    .to("jcache://test-cache");
+                        .to("jcache://test-cache");
             }
         };
     }

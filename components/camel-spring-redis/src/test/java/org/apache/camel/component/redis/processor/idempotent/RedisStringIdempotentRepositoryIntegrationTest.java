@@ -69,7 +69,8 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        idempotentRepository = new RedisStringIdempotentRepository(redisTemplate,
+        idempotentRepository = new RedisStringIdempotentRepository(
+                redisTemplate,
                 "redis-idempotent-repository");
         RouteBuilder rb = new RouteBuilder() {
             @Override
@@ -135,4 +136,3 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
         assertFalse(idempotentRepository.contains("abc"));
     }
 }
-

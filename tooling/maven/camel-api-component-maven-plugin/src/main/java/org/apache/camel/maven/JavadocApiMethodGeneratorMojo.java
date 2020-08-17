@@ -41,7 +41,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Parses ApiMethod signatures from Javadoc.
  */
 @Mojo(name = "fromJavadoc", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
+      defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     static {
@@ -139,8 +139,9 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         }
 
         if (result.isEmpty()) {
-            throw new MojoExecutionException("No public non-static methods found, "
-                    + "make sure Javadoc is available as project test dependency");
+            throw new MojoExecutionException(
+                    "No public non-static methods found, "
+                                             + "make sure Javadoc is available as project test dependency");
         }
         return new ArrayList<>(result.values());
     }

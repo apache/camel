@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class MainIoCNewRouteBuilderTest {
 
     @Test
@@ -45,7 +46,8 @@ public class MainIoCNewRouteBuilderTest {
 
         endpoint.assertIsSatisfied();
 
-        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb = (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
+        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb
+                = (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
         assertNotNull(mcb);
         assertEquals("Tiger", mcb.getName());
 

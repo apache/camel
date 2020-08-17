@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCacheAggregationRepository extends ServiceSupport implements  OptimisticLockingAggregationRepository {
+public class JCacheAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(JCacheAggregationRepository.class);
 
@@ -91,7 +91,8 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
     }
 
     @Override
-    public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) throws OptimisticLockingException {
+    public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange)
+            throws OptimisticLockingException {
         if (!optimistic) {
             throw new UnsupportedOperationException();
         }
@@ -102,9 +103,10 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
             DefaultExchangeHolder oldHolder = cache.getAndPut(key, newHolder);
             if (oldHolder != null) {
                 Exchange exchange = unmarshallExchange(camelContext, oldHolder);
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
-                    key,
-                    exchange != null ? exchange.getExchangeId() : "<null>");
+                LOG.error(
+                        "Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
+                        key,
+                        exchange != null ? exchange.getExchangeId() : "<null>");
 
                 throw new OptimisticLockingException();
             }
@@ -112,7 +114,9 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
             DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange, true, allowSerializedHeaders);
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             if (!cache.replace(key, oldHolder, newHolder)) {
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one", key);
+                LOG.error(
+                        "Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
+                        key);
                 throw new OptimisticLockingException();
             }
         }
@@ -142,7 +146,9 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (!cache.remove(key, holder)) {
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.", key);
+                LOG.error(
+                        "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
+                        key);
                 throw new OptimisticLockingException();
             }
             LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
@@ -174,8 +180,7 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
             cacheManager = new JCacheManager<>(cache);
         } else {
             cacheManager = JCacheHelper.createManager(
-                ObjectHelper.notNull(configuration, "configuration")
-            );
+                    ObjectHelper.notNull(configuration, "configuration"));
 
             cache = cacheManager.getCache();
         }

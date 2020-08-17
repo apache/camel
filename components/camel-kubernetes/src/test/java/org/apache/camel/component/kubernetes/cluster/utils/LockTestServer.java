@@ -55,43 +55,44 @@ public class LockTestServer extends KubernetesMockServer {
 
         this.pods = new TreeSet<>(initialPods);
 
-        expect().get().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
+        expect().get().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName())
+                .andReply(new ResponseProvider<Object>() {
 
-            private Headers headers = new Headers.Builder().build();
+                    private Headers headers = new Headers.Builder().build();
 
-            @Override
-            public int getStatusCode(RecordedRequest request) {
-                if (refuseRequests) {
-                    return 500;
-                }
+                    @Override
+                    public int getStatusCode(RecordedRequest request) {
+                        if (refuseRequests) {
+                            return 500;
+                        }
 
-                if (lockSimulator.getConfigMap() != null) {
-                    return 200;
-                }
+                        if (lockSimulator.getConfigMap() != null) {
+                            return 200;
+                        }
 
-                return 404;
-            }
+                        return 404;
+                    }
 
-            @Override
-            public Object getBody(RecordedRequest recordedRequest) {
-                delayIfNecessary();
-                ConfigMap map = lockSimulator.getConfigMap();
-                if (map != null) {
-                    return map;
-                }
-                return "";
-            }
+                    @Override
+                    public Object getBody(RecordedRequest recordedRequest) {
+                        delayIfNecessary();
+                        ConfigMap map = lockSimulator.getConfigMap();
+                        if (map != null) {
+                            return map;
+                        }
+                        return "";
+                    }
 
-            @Override
-            public Headers getHeaders() {
-                return headers;
-            }
+                    @Override
+                    public Headers getHeaders() {
+                        return headers;
+                    }
 
-            @Override
-            public void setHeaders(Headers headers) {
-                this.headers = headers;
-            }
-        }).always();
+                    @Override
+                    public void setHeaders(Headers headers) {
+                        this.headers = headers;
+                    }
+                }).always();
 
         expect().post().withPath("/api/v1/namespaces/test/configmaps").andReply(new ResponseProvider<Object>() {
 
@@ -104,7 +105,8 @@ public class LockTestServer extends KubernetesMockServer {
                 }
 
                 ConfigMap map = convert(request);
-                if (map == null || map.getMetadata() == null || !lockSimulator.getConfigMapName().equals(map.getMetadata().getName())) {
+                if (map == null || map.getMetadata() == null
+                        || !lockSimulator.getConfigMapName().equals(map.getMetadata().getName())) {
                     throw new IllegalArgumentException("Illegal configMap received");
                 }
 
@@ -138,53 +140,57 @@ public class LockTestServer extends KubernetesMockServer {
             }
         }).always();
 
-        expect().put().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
+        expect().put().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName())
+                .andReply(new ResponseProvider<Object>() {
 
-            private Headers headers = new Headers.Builder().build();
+                    private Headers headers = new Headers.Builder().build();
 
-            @Override
-            public int getStatusCode(RecordedRequest request) {
-                if (refuseRequests) {
-                    return 500;
-                }
+                    @Override
+                    public int getStatusCode(RecordedRequest request) {
+                        if (refuseRequests) {
+                            return 500;
+                        }
 
-                ConfigMap map = convert(request);
+                        ConfigMap map = convert(request);
 
-                boolean done = lockSimulator.setConfigMap(map, false);
-                if (done) {
-                    return 200;
-                }
-                return 409;
-            }
+                        boolean done = lockSimulator.setConfigMap(map, false);
+                        if (done) {
+                            return 200;
+                        }
+                        return 409;
+                    }
 
-            @Override
-            public Object getBody(RecordedRequest recordedRequest) {
-                delayIfNecessary();
-                ConfigMap map = lockSimulator.getConfigMap();
-                if (map != null) {
-                    return map;
-                }
+                    @Override
+                    public Object getBody(RecordedRequest recordedRequest) {
+                        delayIfNecessary();
+                        ConfigMap map = lockSimulator.getConfigMap();
+                        if (map != null) {
+                            return map;
+                        }
 
-                return "";
-            }
+                        return "";
+                    }
 
-            @Override
-            public Headers getHeaders() {
-                return headers;
-            }
+                    @Override
+                    public Headers getHeaders() {
+                        return headers;
+                    }
 
-            @Override
-            public void setHeaders(Headers headers) {
-                this.headers = headers;
-            }
-        }).always();
+                    @Override
+                    public void setHeaders(Headers headers) {
+                        this.headers = headers;
+                    }
+                }).always();
 
         // Other resources
         expect().get().withPath("/api/v1/namespaces/test/pods")
-            .andReply(200,
-            request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and()
-            .withItems(getCurrentPods().stream().map(name -> new PodBuilder().withNewMetadata().withName(name).and().build()).collect(Collectors.toList())).build())
-            .always();
+                .andReply(200,
+                        request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and()
+                                .withItems(getCurrentPods().stream()
+                                        .map(name -> new PodBuilder().withNewMetadata().withName(name).and().build())
+                                        .collect(Collectors.toList()))
+                                .build())
+                .always();
     }
 
     public boolean isRefuseRequests() {

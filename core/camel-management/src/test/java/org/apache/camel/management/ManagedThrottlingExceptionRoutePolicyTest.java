@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSupport {
+public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSupport {
 
     @Test
     public void testRoutes() throws Exception {
@@ -43,7 +43,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
         if (isPlatform("aix")) {
             return;
         }
-        
+
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the Camel route
@@ -65,7 +65,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
         String policy = (String) mbeanServer.getAttribute(on, "RoutePolicyList");
         assertNotNull(policy);
         assertTrue(policy.startsWith("ThrottlingExceptionRoutePolicy"));
-        
+
         // get the RoutePolicy
         String mbeanName = String.format("org.apache.camel:context=camel-1,name=%s,type=services", policy);
         set = mbeanServer.queryNames(new ObjectName(mbeanName), null);
@@ -76,30 +76,31 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
         // the route has no failures
         String myType = (String) mbeanServer.getAttribute(on, "ServiceType");
         assertEquals("ThrottlingExceptionRoutePolicy", myType);
-        
-        ManagedThrottlingExceptionRoutePolicyMBean proxy = JMX.newMBeanProxy(mbeanServer, on, ManagedThrottlingExceptionRoutePolicyMBean.class);
+
+        ManagedThrottlingExceptionRoutePolicyMBean proxy
+                = JMX.newMBeanProxy(mbeanServer, on, ManagedThrottlingExceptionRoutePolicyMBean.class);
         assertNotNull(proxy);
-        
+
         // state should be closed w/ no failures
         String myState = proxy.currentState();
         assertEquals("State closed, failures 0", myState);
-        
+
         // the route has no failures
         Integer val = proxy.getCurrentFailures();
         assertEquals(0, val.intValue());
-        
+
         // the route has no failures
         Long lastFail = proxy.getLastFailure();
         assertEquals(0L, lastFail.longValue());
-        
+
         // the route is closed
         Long openAt = proxy.getOpenAt();
         assertEquals(0L, openAt.longValue());
-        
+
         // the route has a handler
         String handlerClass = proxy.getHalfOpenHandlerName();
         assertEquals("DummyHandler", handlerClass);
-        
+
         // values set during construction of class
         Integer threshold = proxy.getFailureThreshold();
         assertEquals(10, threshold.intValue());
@@ -109,12 +110,12 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
 
         Long halfOpenAfter = proxy.getHalfOpenAfter();
         assertEquals(5000L, halfOpenAfter.longValue());
-        
+
         // change value
         proxy.setHalfOpenAfter(10000L);
         halfOpenAfter = proxy.getHalfOpenAfter();
         assertEquals(10000L, halfOpenAfter.longValue());
-        
+
         try {
             getMockEndpoint("mock:result").expectedMessageCount(0);
             template.sendBody("direct:start", "Hello World");
@@ -122,17 +123,17 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
         } catch (Exception e) {
             // expected
         }
-        
+
         // state should be closed w/ no failures
         myState = proxy.currentState();
         assertTrue(myState.contains("State closed, failures 1, last failure"));
-        
+
         // the route has 1 failure
         val = proxy.getCurrentFailures();
         assertEquals(1, val.intValue());
 
         Thread.sleep(200);
-        
+
         // the route has 1 failure X mills ago
         lastFail = proxy.getLastFailure();
         assertTrue(lastFail.longValue() > 0);
@@ -142,15 +143,15 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
     protected RouteBuilder createRouteBuilder() throws Exception {
         ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(10, 1000, 5000, null);
         policy.setHalfOpenHandler(new DummyHandler());
-        
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("testRoute")
-                    .routePolicy(policy)
-                    .to("log:foo")
-                    .process(new BoomProcess())
-                    .to("mock:result");
+                        .routePolicy(policy)
+                        .to("log:foo")
+                        .process(new BoomProcess())
+                        .to("mock:result");
             }
         };
     }
@@ -163,15 +164,15 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
             Thread.sleep(50);
             throw new RuntimeException("boom!");
         }
-        
+
     }
-    
+
     class DummyHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {
             return false;
         }
-        
+
     }
 }

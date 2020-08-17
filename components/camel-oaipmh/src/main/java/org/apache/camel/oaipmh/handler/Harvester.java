@@ -46,7 +46,8 @@ public class Harvester {
 
     private boolean empty;
 
-    public Harvester(ResponseHandler oaipmhResponseHandler, URI baseURI, String verb, String metadata, String until, String from, String set, String identifier) {
+    public Harvester(ResponseHandler oaipmhResponseHandler, URI baseURI, String verb, String metadata, String until,
+                     String from, String set, String identifier) {
         this.baseURI = baseURI;
         this.verb = verb;
         this.metadata = metadata;
@@ -70,7 +71,8 @@ public class Harvester {
     private boolean harvest() throws IOException, URISyntaxException, ParserConfigurationException, SAXException, Exception {
         boolean hasNext = false;
         if (!this.empty) {
-            String responseXML = httpClient.doRequest(this.baseURI, this.verb, this.set, this.from, this.until, this.metadata, this.resumptionToken, this.identifier);
+            String responseXML = httpClient.doRequest(this.baseURI, this.verb, this.set, this.from, this.until, this.metadata,
+                    this.resumptionToken, this.identifier);
             OAIPMHResponse oaipmhResponse = new OAIPMHResponse(responseXML);
             this.oaipmhResponseHandler.process(oaipmhResponse);
             Optional<String> resumptionToken = oaipmhResponse.getResumptionToken();
@@ -90,7 +92,8 @@ public class Harvester {
 
     }
 
-    public List<String> synHarvest(boolean onlyFirst) throws IOException, URISyntaxException, ParserConfigurationException, SAXException, Exception {
+    public List<String> synHarvest(boolean onlyFirst)
+            throws IOException, URISyntaxException, ParserConfigurationException, SAXException, Exception {
         while (this.harvest()) {
             if (onlyFirst) {
                 break;

@@ -55,8 +55,9 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     private AsyncProcessor processor;
 
     public DefaultServiceCallProcessor(
-        CamelContext camelContext, String name, String scheme, String uri, ExchangePattern exchangePattern,
-        ServiceLoadBalancer loadBalancer, Expression expression) {
+                                       CamelContext camelContext, String name, String scheme, String uri,
+                                       ExchangePattern exchangePattern,
+                                       ServiceLoadBalancer loadBalancer, Expression expression) {
 
         this.uri = uri;
         this.exchangePattern = exchangePattern;
@@ -122,7 +123,6 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     // Lifecycle
     // *************************************
 
-
     @Override
     protected void doInit() throws Exception {
         StringHelper.notEmpty(name, "name", "service name");
@@ -135,7 +135,8 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         args.put("expression", expression);
         args.put("exchangePattern", exchangePattern);
 
-        Processor send = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(camelContext, "SendDynamicProcessor", args);
+        Processor send = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(camelContext,
+                "SendDynamicProcessor", args);
         processor = AsyncProcessorConverterHelper.convert(send);
     }
 
@@ -196,15 +197,13 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
 
         // If context path is not set on service call definition, reuse the one from
         // ServiceDefinition, if any
-        message.getHeaders().compute(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, (k, v) ->
-            v == null ? meta.get(ServiceDefinition.SERVICE_META_PATH) : v
-        );
+        message.getHeaders().compute(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH,
+                (k, v) -> v == null ? meta.get(ServiceDefinition.SERVICE_META_PATH) : v);
 
         // If port is not set on service call definition, reuse the one from
         // ServiceDefinition, if any
-        message.getHeaders().compute(ServiceCallConstants.SERVICE_PORT, (k, v) ->
-            v == null ? meta.get(ServiceDefinition.SERVICE_META_PORT) : v
-        );
+        message.getHeaders().compute(ServiceCallConstants.SERVICE_PORT,
+                (k, v) -> v == null ? meta.get(ServiceDefinition.SERVICE_META_PORT) : v);
 
         // use the dynamic send processor to call the service
         return processor.process(exchange, callback);
@@ -213,9 +212,9 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     /**
      * This function applies the simple language to the given expression.
      *
-     * @param expression the expression
-     * @param exchange the exchange
-     * @return the computed expression
+     * @param  expression the expression
+     * @param  exchange   the exchange
+     * @return            the computed expression
      */
     private static String applySimpleLanguage(String expression, Exchange exchange) {
         if (expression != null) {

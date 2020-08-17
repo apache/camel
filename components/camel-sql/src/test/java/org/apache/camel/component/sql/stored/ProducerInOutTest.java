@@ -81,8 +81,8 @@ public class ProducerInOutTest extends CamelTestSupport {
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql-stored:INOUTDEMO(INTEGER ${headers.in1},INOUT INTEGER ${headers.in2} out1,OUT INTEGER out2)")
-                    .to("mock:query");
+                        .to("sql-stored:INOUTDEMO(INTEGER ${headers.in1},INOUT INTEGER ${headers.in2} out1,OUT INTEGER out2)")
+                        .to("mock:query");
             }
         };
     }

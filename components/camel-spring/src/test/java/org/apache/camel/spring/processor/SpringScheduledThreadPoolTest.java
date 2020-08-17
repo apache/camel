@@ -35,7 +35,8 @@ public class SpringScheduledThreadPoolTest extends SpringTestSupport {
 
     @Test
     public void testScheduledThreadPool() throws Exception {
-        SizedScheduledExecutorService pool = context.getRegistry().lookupByNameAndType("myPool", SizedScheduledExecutorService.class);
+        SizedScheduledExecutorService pool
+                = context.getRegistry().lookupByNameAndType("myPool", SizedScheduledExecutorService.class);
         assertNotNull(pool);
 
         assertFalse(pool.isShutdown(), "Should be started");

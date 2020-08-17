@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 public class FailoverLoadBalancerReifier extends LoadBalancerReifier<FailoverLoadBalancerDefinition> {
 
     public FailoverLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
-        super(route, (FailoverLoadBalancerDefinition)definition);
+        super(route, (FailoverLoadBalancerDefinition) definition);
     }
 
     @Override

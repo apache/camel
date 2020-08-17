@@ -49,7 +49,7 @@ public class HL7MLLPCodecTest extends HL7TestSupport {
                     Message input = exchange.getIn().getBody(Message.class);
 
                     assertEquals("2.4", input.getVersion());
-                    QRD qrd = (QRD)input.get("QRD");
+                    QRD qrd = (QRD) input.get("QRD");
                     assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
                     Message response = createHL7AsMessage();
@@ -70,7 +70,8 @@ public class HL7MLLPCodecTest extends HL7TestSupport {
         in.append("\n");
         in.append(line2);
 
-        String out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString(), String.class);
+        String out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString(),
+                String.class);
         // END SNIPPET: e2
 
         String[] lines = out.split("\r");

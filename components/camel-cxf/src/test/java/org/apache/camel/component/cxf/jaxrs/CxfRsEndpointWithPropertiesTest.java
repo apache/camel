@@ -35,7 +35,7 @@ public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSuppo
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[] {"org/apache/camel/component/cxf/jaxrs/CxfRsEndpointWithProperties.xml"};
+        return new String[] { "org/apache/camel/component/cxf/jaxrs/CxfRsEndpointWithProperties.xml" };
     }
 
     @Test
@@ -45,14 +45,14 @@ public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSuppo
         CamelContext camelContext = ctx.getBean("camel", CamelContext.class);
         CxfRsEndpoint testEndpoint = camelContext.getEndpoint("cxfrs:bean:testEndpoint", CxfRsEndpoint.class);
         assertEquals("http://localhost:9900/testEndpoint", testEndpoint.getAddress(), "Got a wrong address");
-        
+
         List<Feature> features = testEndpoint.getFeatures();
         assertEquals(1, features.size(), "Single feature is expected");
-        
+
         Map<String, Object> endpointProps = testEndpoint.getProperties();
         assertEquals(1, endpointProps.size(), "Single endpoint property is expected");
         assertEquals("aValue", endpointProps.get("aKey"), "Wrong property value");
-        
+
         HttpGet get = new HttpGet(testEndpoint.getAddress());
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
         try {

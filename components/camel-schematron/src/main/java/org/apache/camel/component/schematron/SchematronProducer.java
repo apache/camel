@@ -49,7 +49,7 @@ public class SchematronProducer extends DefaultProducer {
     /**
      * Processes the payload. Validates the XML using the SchematronEngine
      *
-     * @param exchange
+     * @param  exchange
      * @throws Exception
      */
     @Override
@@ -60,10 +60,10 @@ public class SchematronProducer extends DefaultProducer {
 
         if (payload instanceof Source) {
             LOG.debug("Applying schematron validation on payload: {}", payload);
-            report = schematronProcessor.validate((Source)payload);
+            report = schematronProcessor.validate((Source) payload);
         } else if (payload instanceof String) {
             LOG.debug("Applying schematron validation on payload: {}", payload);
-            report = schematronProcessor.validate((String)payload);
+            report = schematronProcessor.validate((String) payload);
         } else {
             String stringPayload = exchange.getIn().getBody(String.class);
             LOG.debug("Applying schematron validation on payload: {}", stringPayload);

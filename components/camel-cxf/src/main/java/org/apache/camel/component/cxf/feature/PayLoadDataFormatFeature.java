@@ -36,54 +36,52 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This feature just setting up the CXF endpoint interceptor for handling the
- * Message in PAYLOAD data format
+ * This feature just setting up the CXF endpoint interceptor for handling the Message in PAYLOAD data format
  */
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LoggerFactory.getLogger(PayLoadDataFormatFeature.class);
     private static final boolean DEFAULT_ALLOW_STREAMING;
     static {
-        
+
         String s = System.getProperty("org.apache.camel.component.cxf.streaming");
         DEFAULT_ALLOW_STREAMING = s == null || Boolean.parseBoolean(s);
     }
 
     boolean allowStreaming = DEFAULT_ALLOW_STREAMING;
-    
+
     public PayLoadDataFormatFeature() {
     }
+
     public PayLoadDataFormatFeature(Boolean streaming) {
         if (streaming != null) {
             allowStreaming = streaming;
         }
     }
-    
-    
+
     @Override
     public void initialize(Client client, Bus bus) {
         client.getEndpoint().put("org.apache.cxf.binding.soap.addNamespaceContext", "true");
         removeFaultInInterceptorFromClient(client);
-        
+
         // Need to remove some interceptors that are incompatible
         // We don't support JAX-WS Holders for PAYLOAD (not needed anyway)
         // and thus we need to remove those interceptors to prevent Holder
         // object from being created and stuck into the contents list
         // instead of Source objects
-        removeInterceptor(client.getEndpoint().getInInterceptors(), 
-                          HolderInInterceptor.class);
-        removeInterceptor(client.getEndpoint().getOutInterceptors(), 
-                          HolderOutInterceptor.class);
+        removeInterceptor(client.getEndpoint().getInInterceptors(),
+                HolderInInterceptor.class);
+        removeInterceptor(client.getEndpoint().getOutInterceptors(),
+                HolderOutInterceptor.class);
         // The SoapHeaderInterceptor maps various headers onto method parameters.
         // At this point, we expect all the headers to remain as headers, not
         // part of the body, so we remove that one.
-        removeInterceptor(client.getEndpoint().getBinding().getInInterceptors(), 
-                          SoapHeaderInterceptor.class);
+        removeInterceptor(client.getEndpoint().getBinding().getInInterceptors(),
+                SoapHeaderInterceptor.class);
         client.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
         resetPartTypes(client.getEndpoint().getBinding());
 
         LOG.info("Initialized CXF Client: {} in Payload mode with allow streaming: {}", client, allowStreaming);
     }
-
 
     @Override
     public void initialize(Server server, Bus bus) {
@@ -94,12 +92,12 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         }
         // Need to remove some interceptors that are incompatible
         // See above.
-        removeInterceptor(server.getEndpoint().getInInterceptors(), 
-                          HolderInInterceptor.class);
-        removeInterceptor(server.getEndpoint().getOutInterceptors(), 
-                          HolderOutInterceptor.class);
-        removeInterceptor(server.getEndpoint().getBinding().getInInterceptors(), 
-                          SoapHeaderInterceptor.class);
+        removeInterceptor(server.getEndpoint().getInInterceptors(),
+                HolderInInterceptor.class);
+        removeInterceptor(server.getEndpoint().getOutInterceptors(),
+                HolderOutInterceptor.class);
+        removeInterceptor(server.getEndpoint().getBinding().getInInterceptors(),
+                SoapHeaderInterceptor.class);
         resetPartTypes(server.getEndpoint().getBinding());
 
         LOG.info("Initialized CXF Server: {} in Payload mode with allow streaming: {}", server, allowStreaming);
@@ -109,7 +107,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     protected Logger getLogger() {
         return LOG;
     }
-    
+
     private void resetPartTypes(Binding bop2) {
         // The HypbridSourceDatabinding, based on JAXB, will possibly set
         // JAXB types into the parts.  Since we need the Source objects,
@@ -136,7 +134,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
             resetPartTypeClass(bop.getOutput());
         }
     }
-    
+
     protected void resetPartTypeClass(BindingMessageInfo bmi) {
         if (bmi != null) {
             int size = bmi.getMessageParts().size();
@@ -150,6 +148,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
             }
         }
     }
+
     protected void resetPartTypeClass(MessageInfo msgInfo) {
         if (msgInfo != null) {
             int size = msgInfo.getMessageParts().size();
@@ -163,5 +162,5 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
             }
         }
     }
-    
+
 }

@@ -28,9 +28,9 @@ public interface PlatformHttpEngine {
     /**
      * Creates a new {@link Consumer} for the given {@link PlatformHttpEndpoint}.
      *
-     * @param platformHttpEndpoint the {@link PlatformHttpEndpoint} to create a consumer for
-     * @param processor the Processor to pass to
-     * @return a new {@link Consumer}
+     * @param  platformHttpEndpoint the {@link PlatformHttpEndpoint} to create a consumer for
+     * @param  processor            the Processor to pass to
+     * @return                      a new {@link Consumer}
      */
     Consumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor);
 

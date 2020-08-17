@@ -44,7 +44,8 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
     private final DecisionContextProvider contextProvider = new DecisionContextProviderImpl();
     private final WorkflowClock workflowClock = contextProvider.getDecisionContext().getWorkflowClock();
 
-    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext, DataConverter dataConverter) {
+    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext,
+                                   DataConverter dataConverter) {
         this.swfWorkflowConsumer = swfWorkflowConsumer;
         this.decisionContext = decisionContext;
         this.dataConverter = dataConverter;

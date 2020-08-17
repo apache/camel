@@ -28,11 +28,13 @@ public class OpenTracingExtractAdapter implements TextMap {
         this.adapter = adapter;
     }
 
-    @Override public Iterator<Map.Entry<String, String>> iterator() {
+    @Override
+    public Iterator<Map.Entry<String, String>> iterator() {
         return this.adapter.iterator();
     }
 
-    @Override public void put(String s, String s1) {
+    @Override
+    public void put(String s, String s1) {
         throw new UnsupportedOperationException("OpenTracingExtractAdapter should only be used with Tracer.extract()");
     }
 }

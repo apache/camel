@@ -62,7 +62,7 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:in")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

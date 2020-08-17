@@ -26,8 +26,8 @@ import org.apache.camel.spi.OnCamelContextStop;
 import org.apache.camel.support.LifecycleStrategySupport;
 
 /**
- * {@link LifecycleStrategy} for invoking callbacks {@link OnCamelContextInitialized}, {@link OnCamelContextStart}, and {@link OnCamelContextStop}
- * which has been registered in the Camel {@link org.apache.camel.spi.Registry}.
+ * {@link LifecycleStrategy} for invoking callbacks {@link OnCamelContextInitialized}, {@link OnCamelContextStart}, and
+ * {@link OnCamelContextStop} which has been registered in the Camel {@link org.apache.camel.spi.Registry}.
  */
 class OnCamelContextLifecycleStrategy extends LifecycleStrategySupport {
 

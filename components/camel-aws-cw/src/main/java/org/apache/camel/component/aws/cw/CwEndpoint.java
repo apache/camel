@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send metrics to AWS CloudWatch.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, category = {Category.CLOUD, Category.MONITORING})
+@UriEndpoint(firstVersion = "2.11.0", scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace",
+             producerOnly = true, category = { Category.CLOUD, Category.MONITORING })
 public class CwEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -63,7 +64,8 @@ public class CwEndpoint extends DefaultEndpoint {
     public void doInit() throws Exception {
         super.doInit();
 
-        cloudWatchClient = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
+        cloudWatchClient
+                = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
     }
 
     @Override
@@ -108,7 +110,8 @@ public class CwEndpoint extends DefaultEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonCloudWatchClientBuilder.standard().withCredentials(credentialsProvider);
             }

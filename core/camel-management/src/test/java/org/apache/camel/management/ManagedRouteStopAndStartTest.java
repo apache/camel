@@ -108,9 +108,10 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/managed?initialDelay=0&delay=10").routeId("foo").routeDescription("This is the foo route")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/managed?initialDelay=0&delay=10").routeId("foo")
+                        .routeDescription("This is the foo route")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 public class KMS2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(KMS2Component.class);
-    
+
     @Metadata
     private KMS2Configuration configuration = new KMS2Configuration();
 
@@ -59,7 +59,8 @@ public class KMS2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getKmsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getKmsClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon kms client or accessKey and secretKey must be specified");
         }
 

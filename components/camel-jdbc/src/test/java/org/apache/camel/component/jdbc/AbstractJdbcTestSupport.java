@@ -28,7 +28,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  * Unit test based on user forum request about this component
  */
 public abstract class AbstractJdbcTestSupport extends CamelTestSupport {
-    
+
     @BindToRegistry("testdb")
     protected EmbeddedDatabase db;
 
@@ -36,8 +36,8 @@ public abstract class AbstractJdbcTestSupport extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/init.sql").build();
-        
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/init.sql").build();
+
         super.setUp();
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractJdbcTestSupport extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 }

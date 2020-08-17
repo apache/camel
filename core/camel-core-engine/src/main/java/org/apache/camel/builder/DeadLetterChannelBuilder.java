@@ -27,9 +27,7 @@ import org.apache.camel.spi.CamelLogger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A builder of a
- * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
- * Channel</a>
+ * A builder of a <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a>
  */
 public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 

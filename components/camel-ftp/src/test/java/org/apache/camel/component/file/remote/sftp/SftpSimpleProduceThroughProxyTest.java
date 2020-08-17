@@ -55,8 +55,10 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
                     }
                 }).start();
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&proxy=#proxy", "Hello World", Exchange.FILE_NAME,
-                                   "hello.txt");
+        template.sendBodyAndHeader(
+                "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&proxy=#proxy",
+                "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue(file.exists(), "File should exist: " + file);
@@ -86,8 +88,10 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
                     }
                 }).start();
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin&proxy=#proxy", "Bye World", Exchange.FILE_NAME,
-                                   "bye.txt");
+        template.sendBodyAndHeader(
+                "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin&proxy=#proxy",
+                "Bye World", Exchange.FILE_NAME,
+                "bye.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/bye.txt");
         assertTrue(file.exists(), "File should exist: " + file);
@@ -117,8 +121,10 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
                     }
                 }).start();
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin&proxy=#proxy", "Farewell World",
-                                   Exchange.FILE_NAME, "farewell.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                                   + "/mysub/myother?username=admin&password=admin&proxy=#proxy",
+                "Farewell World",
+                Exchange.FILE_NAME, "farewell.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/myother/farewell.txt");
         assertTrue(file.exists(), "File should exist: " + file);

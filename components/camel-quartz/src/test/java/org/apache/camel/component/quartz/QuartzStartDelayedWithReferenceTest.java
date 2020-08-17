@@ -35,7 +35,8 @@ public class QuartzStartDelayedWithReferenceTest extends QuartzStartDelayedTest 
                 QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
                 quartz.setStartDelayedSeconds(2);
 
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=#interval&trigger.repeatCount=#count").routeId("myRoute").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=#interval&trigger.repeatCount=#count")
+                        .routeId("myRoute").to("mock:result");
             }
         };
     }

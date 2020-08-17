@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -52,27 +52,31 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         result.expectedMessageCount(1);
         HelloService client = getCXFClient();
         client.echo("hello world");
-        assertMockEndpointsSatisfied();        
-        Map<?, ?> context = CastUtils.cast((Map<?, ?>)result.assertExchangeReceived(0).getIn().getHeaders().get("ResponseContext"));
+        assertMockEndpointsSatisfied();
+        Map<?, ?> context
+                = CastUtils.cast((Map<?, ?>) result.assertExchangeReceived(0).getIn().getHeaders().get("ResponseContext"));
         Map<?, ?> protocalHeaders = CastUtils.cast((Map<?, ?>) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS"));
         assertTrue(protocalHeaders.get("content-type").toString().startsWith("[text/xml;"), "Should get a right content type");
-        assertTrue(protocalHeaders.get("content-type").toString().indexOf("charset=") > 0, "Should get a right context type with a charset");
+        assertTrue(protocalHeaders.get("content-type").toString().indexOf("charset=") > 0,
+                "Should get a right context type with a charset");
         assertEquals(context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200, "Should get the response code");
-        assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().startsWith("text/xml;"), "Should get the content type");
-        assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().indexOf("charset=") > 0, "Should get the content type");
-        
+        assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().startsWith("text/xml;"),
+                "Should get the content type");
+        assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().indexOf("charset=") > 0,
+                "Should get the content type");
+
     }
-    
+
     @Test
     public void testTheContentTypeOnTheWire() throws Exception {
-        Exchange exchange = template.send(getRouterAddress(),  new Processor() {
+        Exchange exchange = template.send(getRouterAddress(), new Processor() {
 
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" 
+                exchange.getIn().setBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                          + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
                                          + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">hello world</arg0>"
                                          + "</ns1:echo></soap:Body></soap:Envelope>");
-                
+
             }
 
         });

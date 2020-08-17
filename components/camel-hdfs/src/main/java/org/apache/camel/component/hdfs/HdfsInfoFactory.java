@@ -89,10 +89,11 @@ class HdfsInfoFactory {
     }
 
     /**
-     * this will connect to the hadoop hdfs file system, and in case of no connection
-     * then the hardcoded timeout in hadoop is 45 x 20 sec = 15 minutes
+     * this will connect to the hadoop hdfs file system, and in case of no connection then the hardcoded timeout in
+     * hadoop is 45 x 20 sec = 15 minutes
      */
-    static FileSystem newFileSystem(Configuration configuration, String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+    static FileSystem newFileSystem(Configuration configuration, String hdfsPath, HdfsConfiguration endpointConfig)
+            throws IOException {
         FileSystem fileSystem;
         if (endpointConfig.hasClusterConfiguration()) {
             // using default FS that was set during in the cluster configuration (@see org.apache.camel.component.hdfs.HaConfigurationBuilder)

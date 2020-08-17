@@ -88,7 +88,8 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this.setAlwaysReauthenticate(alwaysReauthenticate);
     }
 
-    public ShiroSecurityPolicy(String iniResourcePath, byte[] passPhrase, boolean alwaysReauthenticate, List<Permission> permissionsList) {
+    public ShiroSecurityPolicy(String iniResourcePath, byte[] passPhrase, boolean alwaysReauthenticate,
+                               List<Permission> permissionsList) {
         this(iniResourcePath, passPhrase, alwaysReauthenticate);
         this.setPermissionsList(permissionsList);
     }

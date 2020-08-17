@@ -46,7 +46,8 @@ public class MongoDbTailTrackingConfig {
      */
     public final String persistentId;
 
-    public MongoDbTailTrackingConfig(boolean persistentTailTracking, String tailTrackIncreasingField, String tailTrackDb, String tailTrackCollection, String tailTrackField,
+    public MongoDbTailTrackingConfig(boolean persistentTailTracking, String tailTrackIncreasingField, String tailTrackDb,
+                                     String tailTrackCollection, String tailTrackField,
                                      String persistentId) {
         this.increasingField = tailTrackIncreasingField;
         this.persistent = persistentTailTracking;

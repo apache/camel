@@ -92,10 +92,9 @@ public class AWS2EC2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform. It can be createAndRunInstances,
-     * startInstances, stopInstances, terminateInstances, describeInstances,
-     * describeInstancesStatus, rebootInstances, monitorInstances,
-     * unmonitorInstances, createTags or deleteTags
+     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances,
+     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or
+     * deleteTags
      */
     public void setOperation(AWS2EC2Operations operation) {
         this.operation = operation;
@@ -139,15 +138,13 @@ public class AWS2EC2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which EC2 client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which EC2 client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     public boolean isPojoRequest() {
         return pojoRequest;
     }
@@ -158,7 +155,7 @@ public class AWS2EC2Configuration implements Cloneable {
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }
-    
+
     public boolean isTrustAllCertificates() {
         return trustAllCertificates;
     }
@@ -169,15 +166,14 @@ public class AWS2EC2Configuration implements Cloneable {
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
-    
+
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will
-     * look for a client instance in the registry automatically otherwise it
-     * will skip that checking.
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
      */
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
@@ -189,7 +185,7 @@ public class AWS2EC2Configuration implements Cloneable {
 
     public AWS2EC2Configuration copy() {
         try {
-            return (AWS2EC2Configuration)super.clone();
+            return (AWS2EC2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

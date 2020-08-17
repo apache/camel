@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages using the SIP protocol (used in telecommunications).
  */
-@UriEndpoint(firstVersion = "2.5.0", scheme = "sip,sips", title = "SIP", syntax = "sip:uri", category = {Category.MOBILE})
+@UriEndpoint(firstVersion = "2.5.0", scheme = "sip,sips", title = "SIP", syntax = "sip:uri", category = { Category.MOBILE })
 public class SipEndpoint extends DefaultEndpoint {
     @UriParam
     private SipConfiguration configuration;

@@ -19,8 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Test for handling a StreamSource in a content-based router with XPath
- * predicates
+ * Test for handling a StreamSource in a content-based router with XPath predicates
  */
 public class StreamSourceContentBasedRouterNoErrorHandlerTest extends StreamSourceContentBasedRouterTest {
 
@@ -33,7 +32,8 @@ public class StreamSourceContentBasedRouterNoErrorHandlerTest extends StreamSour
                 // is enabled and make sure the predicates can be evaluated
                 // multiple times
 
-                from("direct:start").streamCaching().choice().when().xpath("/message/text() = 'xx'").to("mock:x").when().xpath("/message/text() = 'yy'").to("mock:y").end();
+                from("direct:start").streamCaching().choice().when().xpath("/message/text() = 'xx'").to("mock:x").when()
+                        .xpath("/message/text() = 'yy'").to("mock:y").end();
             }
         };
     }

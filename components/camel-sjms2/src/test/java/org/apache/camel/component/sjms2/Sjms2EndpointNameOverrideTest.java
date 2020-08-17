@@ -41,7 +41,7 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint(BEAN_NAME + ":test");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
-        Sjms2Endpoint sjms = (Sjms2Endpoint)endpoint;
+        Sjms2Endpoint sjms = (Sjms2Endpoint) endpoint;
         assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://test");
         assertEquals(sjms.createExchange().getPattern(), ExchangePattern.InOnly);
     }
@@ -66,7 +66,8 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+        ActiveMQConnectionFactory connectionFactory
+                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         Sjms2Component component = new Sjms2Component();
         component.setConnectionCount(1);
         component.setConnectionFactory(connectionFactory);

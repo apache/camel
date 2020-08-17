@@ -94,46 +94,46 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     // CxfBinding Methods
     // -------------------------------------------------------------------------
-    
+
     /**
-     * This method is called by {@link CxfProducer#process(Exchange)}. It populates
-     * the CXF exchange and invocation context (i.e. request/response) contexts, it 
-     * but does not create and populate a CXF message as a ClientImpl's invoke method
-     * will create a new CXF Message.  That method will put all properties from the 
-     * CXF exchange and request context to the CXF message.
+     * This method is called by {@link CxfProducer#process(Exchange)}. It populates the CXF exchange and invocation
+     * context (i.e. request/response) contexts, it but does not create and populate a CXF message as a ClientImpl's
+     * invoke method will create a new CXF Message. That method will put all properties from the CXF exchange and
+     * request context to the CXF message.
      */
     @Override
     public void populateCxfRequestFromExchange(
             org.apache.cxf.message.Exchange cxfExchange, Exchange camelExchange,
             Map<String, Object> requestContext) {
-               
+
         // propagate request context
         Map<String, Object> camelHeaders = camelExchange.getIn().getHeaders();
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
                 requestContext, Client.REQUEST_CONTEXT);
-                
+
         // propagate headers
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, 
+        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
                 requestContext);
-        
+
         String overrideAddress = camelExchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
 
         if (overrideAddress != null) {
             LOG.trace("Client address is overridden by header '{}' to value '{}'",
-                Exchange.DESTINATION_OVERRIDE_URL, overrideAddress);
+                    Exchange.DESTINATION_OVERRIDE_URL, overrideAddress);
             requestContext.put(Message.ENDPOINT_ADDRESS, overrideAddress);
         }
-        
+
         // propagate attachments
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
-                                                          DataFormat.class);
+        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,
+                DataFormat.class);
         // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream 
         // already has the attachment information
         if (!DataFormat.CXF_MESSAGE.equals(dataFormat)) {
             if (camelExchange.getIn(AttachmentMessage.class).hasAttachments()) {
-                for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+                for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange
+                        .getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
                     if (attachments == null) {
                         attachments = new HashSet<>();
                     }
@@ -148,47 +148,47 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             }
         }
-        
+
         if (attachments != null) {
             requestContext.put(CxfConstants.CAMEL_CXF_ATTACHMENTS, attachments);
         }
     }
-    
+
     /**
-     * This method is called by {@link CxfProducer#process(Exchange)}.  It propagates 
-     * information from CXF Exchange to Camel Exchange.  The CXF Exchange contains a 
-     * request from a CXF server.
+     * This method is called by {@link CxfProducer#process(Exchange)}. It propagates information from CXF Exchange to
+     * Camel Exchange. The CXF Exchange contains a request from a CXF server.
      */
     @Override
-    public void populateExchangeFromCxfResponse(Exchange camelExchange,
-                                                org.apache.cxf.message.Exchange cxfExchange,
-                                                Map<String, Object> responseContext) {
-      
+    public void populateExchangeFromCxfResponse(
+            Exchange camelExchange,
+            org.apache.cxf.message.Exchange cxfExchange,
+            Map<String, Object> responseContext) {
+
         Message cxfMessage = cxfExchange.getInMessage();
         // Need to check if the inMessage is set
         if (cxfMessage == null) {
             return;
         }
-        
+
         LOG.trace("Populate exchange from CXF response message: {}", cxfMessage);
 
         // copy the InMessage header to OutMessage header
         camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-        
+
         // propagate body
-        String encoding = (String)camelExchange.getProperty(Exchange.CHARSET_NAME);
-        camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage, 
+        String encoding = (String) camelExchange.getProperty(Exchange.CHARSET_NAME);
+        camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage,
                 camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding));
-        
+
         // propagate response context
         if (responseContext != null && responseContext.size() > 0) {
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(Client.RESPONSE_CONTEXT, 
-                                                                   responseContext, camelExchange)) {        
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(Client.RESPONSE_CONTEXT,
+                    responseContext, camelExchange)) {
                 camelExchange.getOut().setHeader(Client.RESPONSE_CONTEXT, responseContext);
                 LOG.trace("Set header = {} value = {}", Client.RESPONSE_CONTEXT, responseContext);
             }
         }
-        
+
         // propagate protocol headers
         propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getOut(), camelExchange);
 
@@ -196,8 +196,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (cxfMessage.getAttachments() != null) {
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
-                camelExchange.getOut(AttachmentMessage.class).addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
-            }        
+                camelExchange.getOut(AttachmentMessage.class).addAttachmentObject(attachment.getId(),
+                        createCamelAttachment(attachment));
+            }
         }
     }
 
@@ -210,42 +211,43 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         return camelAttachment;
     }
-    
+
     /**
      * This method is called by {@link CxfConsumer}.
      */
     @Override
-    public void populateExchangeFromCxfRequest(org.apache.cxf.message.Exchange cxfExchange,
-                                               Exchange camelExchange) {
-        
+    public void populateExchangeFromCxfRequest(
+            org.apache.cxf.message.Exchange cxfExchange,
+            Exchange camelExchange) {
+
         Method method = null;
         QName operationName = null;
         ExchangePattern mep = ExchangePattern.InOut;
-        
+
         // extract binding operation information
-        BindingOperationInfo boi = camelExchange.getProperty(BindingOperationInfo.class.getName(), 
-                                                             BindingOperationInfo.class);
+        BindingOperationInfo boi = camelExchange.getProperty(BindingOperationInfo.class.getName(),
+                BindingOperationInfo.class);
         if (boi != null) {
-            Service service = cxfExchange.get(Service.class); 
+            Service service = cxfExchange.get(Service.class);
             if (service != null) {
-                MethodDispatcher md = (MethodDispatcher)service.get(MethodDispatcher.class.getName());
+                MethodDispatcher md = (MethodDispatcher) service.get(MethodDispatcher.class.getName());
                 if (md != null) {
                     method = md.getMethod(boi);
                 }
             }
-            
+
             if (boi.getOperationInfo().isOneWay()) {
                 mep = ExchangePattern.InOnly;
             }
-                
+
             operationName = boi.getName();
         }
-        
+
         // set operation name in header
         if (operationName != null) {
-            camelExchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, 
+            camelExchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE,
                     boi.getName().getNamespaceURI());
-            camelExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, 
+            camelExchange.getIn().setHeader(CxfConstants.OPERATION_NAME,
                     boi.getName().getLocalPart());
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Set IN header: {}={}",
@@ -260,7 +262,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         CxfConstants.OPERATION_NAME, method.getName());
             }
         }
-                
+
         // set message exchange pattern
         camelExchange.setPattern(mep);
         LOG.trace("Set exchange MEP: {}", mep);
@@ -268,13 +270,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate headers
         Message cxfMessage = cxfExchange.getInMessage();
         propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getIn(), camelExchange);
-        
+
         // propagate the security subject from CXF security context
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
         if (securityContext instanceof LoginSecurityContext
-            && ((LoginSecurityContext)securityContext).getSubject() != null) {
-            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, 
-                                                   ((LoginSecurityContext)securityContext).getSubject());
+                && ((LoginSecurityContext) securityContext).getSubject() != null) {
+            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION,
+                    ((LoginSecurityContext) securityContext).getSubject());
         } else if (securityContext != null) {
             Principal user = securityContext.getUserPrincipal();
             if (user != null) {
@@ -283,12 +285,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
             }
         }
-        
+
         // Propagating properties from CXF Exchange to Camel Exchange has an  
         // side effect of copying reply side stuff when the producer is retried.
         // So, we do not want to do this.
         //camelExchange.getProperties().putAll(cxfExchange);
-        
+
         // propagate request context
         Object value = cxfMessage.get(Client.REQUEST_CONTEXT);
         if (value != null && !headerFilterStrategy.applyFilterToExternalHeaders(
@@ -296,42 +298,43 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             camelExchange.getIn().setHeader(Client.REQUEST_CONTEXT, value);
             LOG.trace("Populate context from CXF message {} value={}", Client.REQUEST_CONTEXT, value);
         }
-        
+
         // setup the charset from content-type header
         setCharsetWithContentType(camelExchange);
-           
+
         // set body
-        String encoding = (String)camelExchange.getProperty(Exchange.CHARSET_NAME);
-        Object body = DefaultCxfBinding.getContentFromCxf(cxfMessage, 
+        String encoding = (String) camelExchange.getProperty(Exchange.CHARSET_NAME);
+        Object body = DefaultCxfBinding.getContentFromCxf(cxfMessage,
                 camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding);
         if (body != null) {
             camelExchange.getIn().setBody(body);
-        }  
-        
+        }
+
         // propagate attachments if the data format is not POJO        
-        if (cxfMessage.getAttachments() != null 
-            && !camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class).equals(DataFormat.POJO)) {
+        if (cxfMessage.getAttachments() != null
+                && !camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class).equals(DataFormat.POJO)) {
             for (Attachment attachment : cxfMessage.getAttachments()) {
-                camelExchange.getIn(AttachmentMessage.class).addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
+                camelExchange.getIn(AttachmentMessage.class).addAttachmentObject(attachment.getId(),
+                        createCamelAttachment(attachment));
             }
         }
     }
-    
+
     /**
-     * This method is called by {@link CxfConsumer} to populate a CXF response protocol headers 
-     * from a Camel exchange headers before CheckError.
-     * Ensure can send protocol headers back even error/exception thrown
+     * This method is called by {@link CxfConsumer} to populate a CXF response protocol headers from a Camel exchange
+     * headers before CheckError. Ensure can send protocol headers back even error/exception thrown
      */
-    public void populateCxfHeaderFromCamelExchangeBeforeCheckError(Exchange camelExchange, 
+    public void populateCxfHeaderFromCamelExchangeBeforeCheckError(
+            Exchange camelExchange,
             org.apache.cxf.message.Exchange cxfExchange) {
-        
+
         if (cxfExchange.isOneWay()) {
             return;
         }
-        
+
         // create response context
         Map<String, Object> responseContext = new HashMap<>();
-        
+
         org.apache.camel.Message response;
         if (camelExchange.getPattern().isOutCapable()) {
             if (camelExchange.hasOut()) {
@@ -345,13 +348,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             response = camelExchange.getIn();
             LOG.trace("Get the response from the in message");
         }
-        
+
         // propagate response context
         Map<String, Object> camelHeaders = response.getHeaders();
-        extractInvocationContextFromCamel(camelExchange, camelHeaders, 
+        extractInvocationContextFromCamel(camelExchange, camelHeaders,
                 responseContext, Client.RESPONSE_CONTEXT);
-        
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, 
+
+        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
                 responseContext);
         if (cxfExchange.getOutMessage() != null) {
             cxfExchange.getOutMessage().put(Message.PROTOCOL_HEADERS, responseContext.get(Message.PROTOCOL_HEADERS));
@@ -359,20 +362,20 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     }
 
     /**
-     * This method is called by {@link CxfConsumer} to populate a CXF response exchange 
-     * from a Camel exchange.
+     * This method is called by {@link CxfConsumer} to populate a CXF response exchange from a Camel exchange.
      */
     @Override
-    public void populateCxfResponseFromExchange(Exchange camelExchange,
-                                                org.apache.cxf.message.Exchange cxfExchange) {
-        
+    public void populateCxfResponseFromExchange(
+            Exchange camelExchange,
+            org.apache.cxf.message.Exchange cxfExchange) {
+
         if (cxfExchange.isOneWay()) {
             return;
         }
-        
+
         // create response context
         Map<String, Object> responseContext = new HashMap<>();
-        
+
         org.apache.camel.Message response;
         if (camelExchange.getPattern().isOutCapable()) {
             if (camelExchange.hasOut()) {
@@ -386,43 +389,43 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             response = camelExchange.getIn();
             LOG.trace("Get the response from the in message");
         }
-        
+
         // propagate response context
         Map<String, Object> camelHeaders = response.getHeaders();
-        extractInvocationContextFromCamel(camelExchange, camelHeaders, 
+        extractInvocationContextFromCamel(camelExchange, camelHeaders,
                 responseContext, Client.RESPONSE_CONTEXT);
-        
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, 
+
+        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
                 responseContext);
         // create out message
         Endpoint ep = cxfExchange.get(Endpoint.class);
         Message outMessage = ep.getBinding().createMessage();
-        if (cxfExchange.getInMessage() instanceof SoapMessage) { 
-            SoapVersion soapVersion = ((SoapMessage)cxfExchange.getInMessage()).getVersion();
-            ((SoapMessage)outMessage).setVersion(soapVersion);
+        if (cxfExchange.getInMessage() instanceof SoapMessage) {
+            SoapVersion soapVersion = ((SoapMessage) cxfExchange.getInMessage()).getVersion();
+            ((SoapMessage) outMessage).setVersion(soapVersion);
         }
-        
-        cxfExchange.setOutMessage(outMessage);       
 
-        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
+        cxfExchange.setOutMessage(outMessage);
+
+        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,
                 DataFormat.class);
-        
+
         // make sure the "requestor role" property does not get propagated as we do switch role
         responseContext.remove(Message.REQUESTOR_ROLE);
-        
+
         outMessage.putAll(responseContext);
-        
+
         // Do we still need to put the response context back like this
-        outMessage.put(Client.RESPONSE_CONTEXT, responseContext);      
-        
+        outMessage.put(Client.RESPONSE_CONTEXT, responseContext);
+
         LOG.trace("Set out response context = {}", responseContext);
-        
+
         // set body
         Object outBody = DefaultCxfBinding.getBodyFromCamel(response, dataFormat);
-        
+
         if (outBody != null) {
             if (dataFormat == DataFormat.PAYLOAD) {
-                CxfPayload<?> payload = (CxfPayload<?>)outBody;
+                CxfPayload<?> payload = (CxfPayload<?>) outBody;
                 outMessage.setContent(List.class, getResponsePayloadList(cxfExchange, payload.getBodySources()));
                 outMessage.put(Header.HEADER_LIST, payload.getHeaders());
             } else {
@@ -433,9 +436,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 MessageContentsList resList = null;
                 // Create a new MessageContentsList to avoid OOM from the HolderOutInterceptor
                 if (outBody instanceof List) {
-                    resList = new MessageContentsList((List<?>)outBody);
+                    resList = new MessageContentsList((List<?>) outBody);
                 } else if (outBody.getClass().isArray()) {
-                    resList = new MessageContentsList((Object[])outBody);
+                    resList = new MessageContentsList((Object[]) outBody);
                 } else {
                     resList = new MessageContentsList(outBody);
                 }
@@ -445,19 +448,21 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     LOG.trace("Set Out CXF message content = {}", resList);
                 }
             }
-        } else if (!cxfExchange.isOneWay() 
-            && cxfExchange.getInMessage() != null
-            && MessageUtils.isTrue(cxfExchange.getInMessage().getContextualProperty("jaxws.provider.interpretNullAsOneway"))) { 
+        } else if (!cxfExchange.isOneWay()
+                && cxfExchange.getInMessage() != null
+                && MessageUtils
+                        .isTrue(cxfExchange.getInMessage().getContextualProperty("jaxws.provider.interpretNullAsOneway"))) {
             // treat this non-oneway call as oneway when the provider returns a null
             changeToOneway(cxfExchange);
             return;
         }
-        
+
         // propagate attachments
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
         if (camelExchange.hasOut() && camelExchange.getOut(AttachmentMessage.class).hasAttachments()) {
-            for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange.getOut(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+            for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange.getOut(AttachmentMessage.class)
+                    .getAttachmentObjects().entrySet()) {
                 if (attachments == null) {
                     attachments = new HashSet<>();
                 }
@@ -479,7 +484,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (boi != null) {
             cxfExchange.put(BindingMessageInfo.class, boi.getOutput());
         }
-        
+
     }
 
     // HeaderFilterStrategyAware Methods
@@ -495,7 +500,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
     }
-    
+
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
@@ -508,16 +513,17 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     // Non public methods
     // -------------------------------------------------------------------------
-    
-    protected MessageContentsList getResponsePayloadList(org.apache.cxf.message.Exchange exchange, 
-                                                         List<Source> elements) {
+
+    protected MessageContentsList getResponsePayloadList(
+            org.apache.cxf.message.Exchange exchange,
+            List<Source> elements) {
         BindingOperationInfo boi = exchange.getBindingOperationInfo();
 
         if (boi.isUnwrapped()) {
             boi = boi.getWrappedOperation();
             exchange.put(BindingOperationInfo.class, boi);
         }
-        
+
         MessageContentsList answer = new MessageContentsList();
 
         int i = 0;
@@ -530,76 +536,78 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
 
         return answer;
-        
+
     }
-    
+
     /**
      * @param camelExchange
-     * @param cxfContext Request or Response context
+     * @param cxfContext    Request or Response context
      * @param camelHeaders
      * @param contextKey
      */
     @SuppressWarnings("unchecked")
-    protected void extractInvocationContextFromCamel(Exchange camelExchange,
+    protected void extractInvocationContextFromCamel(
+            Exchange camelExchange,
             Map<String, Object> camelHeaders, Map<String, Object> cxfContext,
             String contextKey) {
-        
+
         // extract from header
-        Map<String, ?> context = (Map<String, ?>)camelHeaders.get(contextKey);
+        Map<String, ?> context = (Map<String, ?>) camelHeaders.get(contextKey);
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Propagate {} from header context = {}", 
-                        contextKey, (context instanceof WrappedMessageContext) 
-                                ? ((WrappedMessageContext)context).getWrappedMap() 
-                                        : context);
+                LOG.trace("Propagate {} from header context = {}",
+                        contextKey, (context instanceof WrappedMessageContext)
+                                ? ((WrappedMessageContext) context).getWrappedMap()
+                                : context);
             }
         }
-        
+
         // extract from exchange property
-        context = (Map<String, ?>)camelExchange.getProperty(contextKey);
+        context = (Map<String, ?>) camelExchange.getProperty(contextKey);
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Propagate {} from exchange property context = {}",
-                        contextKey, (context instanceof WrappedMessageContext) 
-                                ? ((WrappedMessageContext)context).getWrappedMap() 
-                                        : context);
+                        contextKey, (context instanceof WrappedMessageContext)
+                                ? ((WrappedMessageContext) context).getWrappedMap()
+                                : context);
             }
         }
-        
+
         // copy camel exchange properties into context
         if (camelExchange.getProperties() != null) {
             cxfContext.putAll(camelExchange.getProperties());
         }
-        
+
     }
 
     /**
      * @param cxfMessage
      * @param camelMessage
-     * @param exchange provides context for filtering
+     * @param exchange     provides context for filtering
      */
-    protected void propagateHeadersFromCxfToCamel(Message cxfMessage,
+    protected void propagateHeadersFromCxfToCamel(
+            Message cxfMessage,
             org.apache.camel.Message camelMessage, Exchange exchange) {
-        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
         Map<String, Object> camelHeaders = camelMessage.getHeaders();
         camelHeaders.put(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
-        
+
         // Copy the http header to CAMEL as we do in camel-cxfrs
         CxfHeaderHelper.copyHttpHeadersFromCxfToCamel(headerFilterStrategy, cxfMessage, camelMessage, exchange);
-        
+
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
-                if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
-                                                                       entry.getValue(), exchange)) {
+                if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(),
+                        entry.getValue(), exchange)) {
                     // We need to filter the content type with multi-part, 
                     // as the multi-part stream is already consumed by AttachmentInInterceptor,
                     // it will cause some trouble when route this message to another CXF endpoint.
-                    
+
                     if ("Content-Type".compareToIgnoreCase(entry.getKey()) == 0
-                        && entry.getValue().get(0) != null
-                        && entry.getValue().get(0).startsWith("multipart/related")) {
+                            && entry.getValue().get(0) != null
+                            && entry.getValue().get(0).startsWith("multipart/related")) {
                         // We need to keep the Content-Type if the data format is RAW message
                         DataFormat dataFormat = exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class);
                         if (dataFormat.equals(DataFormat.RAW)) {
@@ -615,7 +623,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         List<String> values = entry.getValue();
                         Object evalue;
                         if (values.size() > 1) {
-                            if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class)) {
+                            if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE,
+                                    Boolean.class)) {
                                 StringBuilder sb = new StringBuilder();
                                 for (Iterator<String> it = values.iterator(); it.hasNext();) {
                                     sb.append(it.next());
@@ -639,7 +648,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             }
         }
-        
+
         // propagate SOAP/protocol header list
         String key = Header.HEADER_LIST;
         Object value = cxfMessage.get(key);
@@ -648,26 +657,26 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 camelHeaders.put(key, value);
                 LOG.trace("Populate header from CXF header={} value={}", key, value);
             } else {
-                ((List<?>)value).clear();
+                ((List<?>) value).clear();
             }
         }
-        
+
         // propagate the SOAPAction header
-        String soapAction = (String)camelHeaders.get(SoapBindingConstants.SOAP_ACTION);
+        String soapAction = (String) camelHeaders.get(SoapBindingConstants.SOAP_ACTION);
         // Remove SOAPAction from the protocol header, as it will not be overrided
         if (ObjectHelper.isEmpty(soapAction) || "\"\"".equals(soapAction)) {
             camelHeaders.remove(SoapBindingConstants.SOAP_ACTION);
         }
-        soapAction = (String)cxfMessage.get(SoapBindingConstants.SOAP_ACTION);
+        soapAction = (String) cxfMessage.get(SoapBindingConstants.SOAP_ACTION);
         if (soapAction != null) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(SoapBindingConstants.SOAP_ACTION, soapAction, exchange)) {
                 camelHeaders.put(SoapBindingConstants.SOAP_ACTION, soapAction);
                 LOG.trace("Populate header from CXF header={} value={}", SoapBindingConstants.SOAP_ACTION, soapAction);
-            } 
+            }
         }
-        
+
     }
-    
+
     // replace the multi-part content-type
     protected String replaceMultiPartContentType(String contentType) {
         String result = "";
@@ -686,7 +695,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         return result;
     }
-    
+
     protected String getContentTypeString(List<String> values) {
         String result = "";
         for (String value : values) {
@@ -700,27 +709,28 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     }
 
     @SuppressWarnings("unchecked")
-    protected void propagateHeadersFromCamelToCxf(Exchange camelExchange, 
+    protected void propagateHeadersFromCamelToCxf(
+            Exchange camelExchange,
             Map<String, Object> camelHeaders,
-            org.apache.cxf.message.Exchange cxfExchange, 
+            org.apache.cxf.message.Exchange cxfExchange,
             Map<String, Object> cxfContext) {
-        
+
         // get cxf transport headers (if any) from camel exchange
         // use a treemap to keep ordering and ignore key case
         Map<String, List<String>> transportHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         if (camelExchange != null) {
-            Map<String, List<String>> h = CastUtils.cast((Map<?, ?>)camelExchange.getProperty(Message.PROTOCOL_HEADERS));
+            Map<String, List<String>> h = CastUtils.cast((Map<?, ?>) camelExchange.getProperty(Message.PROTOCOL_HEADERS));
             if (h != null) {
                 transportHeaders.putAll(h);
             }
         }
-        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)camelHeaders.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) camelHeaders.get(Message.PROTOCOL_HEADERS));
         if (headers != null) {
             transportHeaders.putAll(headers);
         }
-        
+
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class);
-            
+
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {
             // put response code in request context so it will be copied to CXF message's property
             if (Message.RESPONSE_CODE.equals(entry.getKey()) || Exchange.HTTP_RESPONSE_CODE.equals(entry.getKey())) {
@@ -728,7 +738,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 cxfContext.put(Message.RESPONSE_CODE, entry.getValue());
                 continue;
             }
-            
+
             // We need to copy the content-type if the dataformat is RAW
             if (Message.CONTENT_TYPE.equalsIgnoreCase(entry.getKey()) && dataFormat.equals(DataFormat.RAW)) {
                 if (entry.getValue() != null) {
@@ -737,47 +747,47 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
                 continue;
             }
-            
+
             // need to filter the User-Agent ignore the case, as CXF just check the header with "User-Agent"
             if (entry.getKey().equalsIgnoreCase("User-Agent")) {
                 List<String> listValue = new ArrayList<>();
                 listValue.add(entry.getValue().toString());
                 transportHeaders.put("User-Agent", listValue);
             }
-            
+
             // this header should be filtered, continue to the next header
             if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
                 continue;
             }
-            
+
             LOG.debug("Propagate to CXF header: {} value: {}", entry.getKey(), entry.getValue());
-            
+
             // put SOAP/protocol header list in exchange
             if (Header.HEADER_LIST.equals(entry.getKey())) {
-                List<Header> headerList = (List<Header>)entry.getValue();
+                List<Header> headerList = (List<Header>) entry.getValue();
                 for (Header header : headerList) {
                     header.setDirection(Header.Direction.DIRECTION_OUT);
                     LOG.trace("Propagate SOAP/protocol header: {} : {}", header.getName(), header.getObject());
                 }
-                
+
                 //cxfExchange.put(Header.HEADER_LIST, headerList);
                 cxfContext.put(entry.getKey(), headerList);
                 continue;
             }
-            
+
             if (ObjectHelper.isNotEmpty(entry.getValue())) {
                 // things that are not filtered and not specifically copied will be put in transport headers
                 if (entry.getValue() instanceof List) {
-                    transportHeaders.put(entry.getKey(), (List<String>)entry.getValue());
+                    transportHeaders.put(entry.getKey(), (List<String>) entry.getValue());
                 } else {
                     List<String> listValue = new ArrayList<>();
                     listValue.add(entry.getValue().toString());
                     transportHeaders.put(entry.getKey(), listValue);
                 }
             }
-            
+
         }
-        
+
         if (transportHeaders.size() > 0) {
             cxfContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
         } else {
@@ -786,7 +796,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             cxfContext.remove(Message.PROTOCOL_HEADERS);
         }
         if (camelHeaders.get(CxfConstants.OPERATION_NAMESPACE) == null
-            && camelHeaders.get(CxfConstants.OPERATION_NAME) == null) {
+                && camelHeaders.get(CxfConstants.OPERATION_NAME) == null) {
             cxfContext.put(SoapBindingConstants.SOAP_ACTION, camelHeaders.get(SoapBindingConstants.SOAP_ACTION));
         }
     }
@@ -795,16 +805,16 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Set<Class<?>> contentFormats = message.getContentFormats();
         Object answer = null;
         if (contentFormats != null) {
-            
+
             if (LOG.isTraceEnabled()) {
                 for (Class<?> contentFormat : contentFormats) {
                     LOG.trace("Content format={} value={}",
                             contentFormat, message.getContent(contentFormat));
                 }
             }
-            
+
             if (dataFormat == DataFormat.POJO) {
-                List<?> pojoMessageList = message.getContent(List.class);  
+                List<?> pojoMessageList = message.getContent(List.class);
                 if (pojoMessageList != null && !pojoMessageList.isEmpty()) {
                     answer = pojoMessageList;
                 }
@@ -815,10 +825,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     }
                 }
             } else if (dataFormat == DataFormat.PAYLOAD) {
-                List<SoapHeader> headers = CastUtils.cast((List<?>)message.get(Header.HEADER_LIST));
+                List<SoapHeader> headers = CastUtils.cast((List<?>) message.get(Header.HEADER_LIST));
                 Map<String, String> nsMap = new HashMap<>();
                 answer = new CxfPayload<>(headers, getPayloadBodyElements(message, nsMap), nsMap);
-                
+
             } else if (dataFormat.dealias() == DataFormat.RAW) {
                 answer = message.getContent(InputStream.class);
                 if (answer == null) {
@@ -828,12 +838,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                             encoding = "UTF-8";
                         }
                         LOG.trace("file encoding is = {}", encoding);
-                        answer = new ReaderInputStream((Reader)answer, Charset.forName(encoding));
+                        answer = new ReaderInputStream((Reader) answer, Charset.forName(encoding));
                     }
                 }
-                
-            } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE 
-                && message.getContent(List.class) != null) {
+
+            } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE
+                    && message.getContent(List.class) != null) {
                 // CAMEL-6404 added check point of message content
                 // The message content of list could be null if there is a fault message is received
                 answer = message.getContent(List.class).get(0);
@@ -857,16 +867,17 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             } else {
                 if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns.getKey()))) {
-                    element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, XMLConstants.XMLNS_ATTRIBUTE + ":" + ns.getKey(), ns.getValue());
+                    element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                            XMLConstants.XMLNS_ATTRIBUTE + ":" + ns.getKey(), ns.getValue());
                 }
             }
         }
-                     
+
     }
 
     protected static List<Source> getPayloadBodyElements(Message message, Map<String, String> nsMap) {
         // take the namespace attribute from soap envelop
-        Map<String, String> bodyNC = CastUtils.cast((Map<?, ?>)message.get("soap.body.ns.context"));
+        Map<String, String> bodyNC = CastUtils.cast((Map<?, ?>) message.get("soap.body.ns.context"));
         if (bodyNC != null) {
             // if there is no Node and the addNamespaceContext option is enabled, this map is available
             nsMap.putAll(bodyNC);
@@ -877,7 +888,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 for (int i = 0; i < attrs.getLength(); i++) {
                     Node node = attrs.item(i);
                     if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
-                        && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
+                            && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
                         nsMap.put(node.getLocalName(), node.getNodeValue());
                     }
                 }
@@ -891,55 +902,55 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         BindingOperationInfo boi = exchange.getBindingOperationInfo();
 
         OperationInfo op = boi.getOperationInfo();
-        
+
         if (boi.isUnwrapped()) {
             op = boi.getWrappedOperation().getOperationInfo();
-        } 
+        }
 
         List<MessagePartInfo> partInfos = null;
         boolean client = Boolean.TRUE.equals(message.get(Message.REQUESTOR_ROLE));
         if (client) {
             // it is a response
-            partInfos = op.getOutput().getMessageParts();            
-            
+            partInfos = op.getOutput().getMessageParts();
+
         } else {
             // it is a request
-            partInfos = op.getInput().getMessageParts();            
+            partInfos = op.getInput().getMessageParts();
         }
-        
+
         List<Source> answer = new ArrayList<>();
 
         for (MessagePartInfo partInfo : partInfos) {
             if (!inObjects.hasValue(partInfo)) {
                 continue;
             }
-            
+
             Object part = inObjects.get(partInfo);
-            
+
             if (part instanceof Holder) {
-                part = ((Holder<?>)part).value;
+                part = ((Holder<?>) part).value;
             }
-                        
+
             if (part instanceof Source) {
                 Element element = null;
                 if (part instanceof DOMSource) {
-                    element = getFirstElement(((DOMSource)part).getNode());
+                    element = getFirstElement(((DOMSource) part).getNode());
                 }
 
                 if (element != null) {
                     addNamespace(element, nsMap);
                     answer.add(new DOMSource(element));
                 } else {
-                    answer.add((Source)part);
+                    answer.add((Source) part);
                 }
-                
+
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Extract body element {}",
-                              element == null ? "null" : getXMLString(element));
+                            element == null ? "null" : getXMLString(element));
                 }
             } else if (part instanceof Element) {
-                addNamespace((Element)part, nsMap);
-                answer.add(new DOMSource((Element)part));
+                addNamespace((Element) part, nsMap);
+                answer.add(new DOMSource((Element) part));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unhandled part type '{}'", part.getClass());
@@ -949,7 +960,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         return answer;
     }
-    
+
     private static String getXMLString(Element el) {
         try {
             return StaxUtils.toString(el);
@@ -959,10 +970,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         return "unknown content";
     }
 
-    public static Object getBodyFromCamel(org.apache.camel.Message out,
+    public static Object getBodyFromCamel(
+            org.apache.camel.Message out,
             DataFormat dataFormat) {
         Object answer = null;
-        
+
         if (dataFormat == DataFormat.POJO) {
             answer = out.getBody();
         } else if (dataFormat == DataFormat.PAYLOAD) {
@@ -977,13 +989,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     private static Element getFirstElement(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
-            return (Element)node;
-        } 
-        
+            return (Element) node;
+        }
+
         return DOMUtils.getFirstElement(node);
     }
-    
-    
+
     @Override
     public void copyJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
         if (cxfExchange.getOutMessage() != null) {
@@ -1004,7 +1015,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 context.put(entry.getKey(), entry.getValue());
             }
         }
-        
+
     }
 
     //TODO replace this method with the cxf util's method when it becomes available
@@ -1022,9 +1033,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
     }
-    public static Method findMethod(Class<?> cls,
-                                    String name,
-                                    Class<?>... params) {
+
+    public static Method findMethod(
+            Class<?> cls,
+            String name,
+            Class<?>... params) {
         if (cls == null) {
             return null;
         }

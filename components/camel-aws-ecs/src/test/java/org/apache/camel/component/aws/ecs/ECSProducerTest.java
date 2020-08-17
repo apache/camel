@@ -35,10 +35,10 @@ public class ECSProducerTest extends CamelTestSupport {
 
     @BindToRegistry("amazonEcsClient")
     AmazonECSClientMock clientMock = new AmazonECSClientMock();
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void kmsListClustersTest() throws Exception {
 
@@ -51,12 +51,12 @@ public class ECSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ListClustersResult resultGet = (ListClustersResult) exchange.getIn().getBody();
         assertEquals(1, resultGet.getClusterArns().size());
         assertEquals("Test", resultGet.getClusterArns().get(0));
     }
-    
+
     @Test
     public void ecsCreateClusterTest() throws Exception {
 
@@ -70,11 +70,11 @@ public class ECSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         CreateClusterResult resultGet = (CreateClusterResult) exchange.getIn().getBody();
         assertEquals("Test", resultGet.getCluster().getClusterName());
     }
-    
+
     @Test
     public void eksDescribeClusterTest() throws Exception {
 
@@ -88,11 +88,11 @@ public class ECSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DescribeClustersResult resultGet = exchange.getIn().getBody(DescribeClustersResult.class);
         assertEquals("Test", resultGet.getClusters().get(0).getClusterName());
     }
-    
+
     @Test
     public void eksDeleteClusterTest() throws Exception {
 
@@ -106,7 +106,7 @@ public class ECSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DeleteClusterResult resultGet = exchange.getIn().getBody(DeleteClusterResult.class);
         assertEquals("Test", resultGet.getCluster().getClusterName());
     }
@@ -117,17 +117,17 @@ public class ECSProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listClusters")
-                    .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=listClusters")
-                    .to("mock:result");
+                        .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=listClusters")
+                        .to("mock:result");
                 from("direct:createCluster")
-                    .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=createCluster")
-                    .to("mock:result");
+                        .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=createCluster")
+                        .to("mock:result");
                 from("direct:deleteCluster")
-                    .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=deleteCluster")
-                    .to("mock:result");
+                        .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=deleteCluster")
+                        .to("mock:result");
                 from("direct:describeCluster")
-                    .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=describeCluster")
-                    .to("mock:result");
+                        .to("aws-ecs://test?ecsClient=#amazonEcsClient&operation=describeCluster")
+                        .to("mock:result");
             }
         };
     }

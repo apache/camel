@@ -22,7 +22,6 @@ public enum EvictionType {
     SIZE_BASED("size_based"),
     TIME_BASED("time_based");
 
-
     private static EvictionType[] values = values();
     private final String type;
 

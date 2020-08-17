@@ -33,7 +33,7 @@ public class PrepareRequest implements Processor {
         List<String> params = new ArrayList<>();
         params.add(exchange.getIn().getBody(String.class));
         exchange.getMessage().setBody(params);
-        String operation = (String)exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
+        String operation = (String) exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
         LOG.info("The operation name is " + operation);
         exchange.getMessage().setHeader(CxfConstants.OPERATION_NAME, operation);
     }

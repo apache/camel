@@ -53,7 +53,8 @@ public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(209)).transform(constant("Not allowed"));
+                from("jetty://http://localhost:{{port}}/test").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(209))
+                        .transform(constant("Not allowed"));
             }
         };
     }

@@ -28,8 +28,7 @@ import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Represents one of built-in functions of the
- * <a href="http://camel.apache.org/simple.html">simple language</a>
+ * Represents one of built-in functions of the <a href="http://camel.apache.org/simple.html">simple language</a>
  */
 public class SimpleFunctionExpression extends LiteralExpression {
 
@@ -63,12 +62,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
     /**
      * Creates a Camel {@link Expression} based on this model.
      *
-     * @param expression not in use
-     * @param strict whether to throw exception if the expression was not a function,
-     *          otherwise <tt>null</tt> is returned
-     * @return the created {@link Expression}
-     * @throws org.apache.camel.language.simple.types.SimpleParserException
-     *          should be thrown if error parsing the model
+     * @param  expression                                                   not in use
+     * @param  strict                                                       whether to throw exception if the expression
+     *                                                                      was not a function, otherwise <tt>null</tt>
+     *                                                                      is returned
+     * @return                                                              the created {@link Expression}
+     * @throws org.apache.camel.language.simple.types.SimpleParserException should be thrown if error parsing the model
      */
     public Expression createExpression(String expression, boolean strict) {
         String function = text.toString();
@@ -197,7 +196,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 3);
             if (parts.length < 3) {
-                throw new SimpleParserException("Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
             }
             return SimpleExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
         }
@@ -283,7 +283,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (ObjectHelper.isNotEmpty(remainder)) {
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
-                    throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, token.getIndex());
+                    throw new SimpleParserException(
+                            "Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
                 return SimpleExpressionBuilder.mandatoryBodyOgnlExpression(type, remainder);
             } else {
@@ -449,12 +450,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
             }
             if (values.contains(",")) {
                 String[] tokens = values.split(",", -1);
                 if (tokens.length > 2) {
-                    throw new SimpleParserException("Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+                    throw new SimpleParserException(
+                            "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
                 }
                 return SimpleExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
             } else {

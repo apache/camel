@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sql.stored;
 
-
 public final class CustomType {
 
     public static final int INTEGER = 1;

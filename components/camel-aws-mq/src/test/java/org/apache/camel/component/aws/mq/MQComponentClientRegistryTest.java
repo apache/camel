@@ -36,26 +36,27 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAmazonMqClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalMQClientMisconfiguration() throws Exception {
 
         MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-mq://MyQueue"));
+                () -> component.createEndpoint("aws-mq://MyQueue"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonMQClientMock awsMQClient = new AmazonMQClientMock();
         context.getRegistry().bind("awsMQClient", awsMQClient);
         MQComponent component = context.getComponent("aws-mq", MQComponent.class);
-        MQEndpoint endpoint = (MQEndpoint) component.createEndpoint("aws-mq://MyQueue?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        MQEndpoint endpoint = (MQEndpoint) component
+                .createEndpoint("aws-mq://MyQueue?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(awsMQClient, endpoint.getConfiguration().getAmazonMqClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 

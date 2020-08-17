@@ -25,9 +25,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
 
 /**
- * Represents a CustomValidator. One of the bean reference (ref) or fully
- * qualified class name (className) of the custom {@link Validator} needs to be
- * specified. {@see ValidatorDefinition} {@see Validator}
+ * Represents a CustomValidator. One of the bean reference (ref) or fully qualified class name (className) of the custom
+ * {@link Validator} needs to be specified. {@see ValidatorDefinition} {@see Validator}
  */
 @Metadata(label = "validation")
 @XmlType(name = "customValidator")

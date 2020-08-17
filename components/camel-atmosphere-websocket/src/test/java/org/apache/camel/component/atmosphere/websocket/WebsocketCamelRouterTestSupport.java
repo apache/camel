@@ -29,7 +29,7 @@ public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
     public static final String CONTEXT_URL = "http://localhost/mycontext";
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
     protected boolean startCamelContext = true;
-    
+
     protected Server server;
 
     protected ServletHolder servletHolder;
@@ -53,17 +53,16 @@ public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
 
         server.start();
     }
-    
+
     @Override
     @AfterEach
     public void tearDown() throws Exception {
         if (startCamelContext) {
             super.tearDown();
         }
-        
+
         server.stop();
         server.destroy();
     }
-    
 
 }

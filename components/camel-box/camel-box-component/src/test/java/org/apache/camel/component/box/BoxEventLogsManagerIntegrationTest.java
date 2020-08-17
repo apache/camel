@@ -32,8 +32,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for
- * {@link BoxEventLogsManager} APIs.
+ * Test class for {@link BoxEventLogsManager} APIs.
  */
 public class BoxEventLogsManagerIntegrationTest extends AbstractBoxTestSupport {
 

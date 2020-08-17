@@ -80,7 +80,8 @@ public class NettyConcurrentTest extends BaseNettyTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    String reply = template.requestBody("netty:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder", index, String.class);
+                    String reply = template.requestBody("netty:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder",
+                            index, String.class);
                     LOG.debug("Sent {} received {}", index, reply);
                     assertEquals("Bye " + index, reply);
                     return reply;

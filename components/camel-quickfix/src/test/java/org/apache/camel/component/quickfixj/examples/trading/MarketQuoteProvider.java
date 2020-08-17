@@ -17,11 +17,11 @@
 package org.apache.camel.component.quickfixj.examples.trading;
 
 /**
- * Trivial market data provider interface to allow plugins for
- * alternative market data sources.
+ * Trivial market data provider interface to allow plugins for alternative market data sources.
  *
  */
 public interface MarketQuoteProvider {
     double getBid(String symbol);
+
     double getAsk(String symbol);
 }

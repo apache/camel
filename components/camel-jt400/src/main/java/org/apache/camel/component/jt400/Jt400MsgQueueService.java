@@ -27,29 +27,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Pseudo-abstract class that encapsulates Service logic common to
- * {@link Jt400MsgQueueConsumer} and {@link Jt400MsgQueueProducer}.
+ * Pseudo-abstract class that encapsulates Service logic common to {@link Jt400MsgQueueConsumer} and
+ * {@link Jt400MsgQueueProducer}.
  */
 class Jt400MsgQueueService implements Service {
-    
+
     /**
      * Logging tool.
      */
     private static final Logger LOG = LoggerFactory.getLogger(Jt400MsgQueueService.class);
-    
+
     /**
      * Endpoint which this service connects to.
      */
     private final Jt400Endpoint endpoint;
-    
+
     /**
      * Message queue object that corresponds to the endpoint of this service (null if stopped).
      */
     private MessageQueue queue;
-    
+
     /**
-     * Creates a {@code Jt400MsgQueueService} that connects to the specified
-     * endpoint.
+     * Creates a {@code Jt400MsgQueueService} that connects to the specified endpoint.
      * 
      * @param endpoint endpoint which this service connects to
      */
@@ -83,13 +82,11 @@ class Jt400MsgQueueService implements Service {
             endpoint.releaseSystem(system);
         }
     }
-    
+
     /**
-     * Returns the message queue object that this service connects to. Returns
-     * {@code null} if the service is stopped.
+     * Returns the message queue object that this service connects to. Returns {@code null} if the service is stopped.
      * 
-     * @return the message queue object that this service connects to, or
-     *         {@code null} if stopped
+     * @return the message queue object that this service connects to, or {@code null} if stopped
      */
     public MessageQueue getMsgQueue() {
         return queue;

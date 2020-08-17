@@ -38,7 +38,7 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
     private static final String REQUEST_BODY = "Something";
     private static final String EXPECTED_REPLY_BODY = "Re: " + REQUEST_BODY;
     private static final String EXPECTED_REPLY_HEADER = "queue://bar";
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -80,9 +80,9 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
                 final String body = request.getIn().getBody(String.class);
                 final String cid = request.getIn().getHeader("JMSCorrelationID", String.class);
                 final Destination replyTo = request.getIn().getHeader("JMSReplyTo", Destination.class);
-                
+
                 assertEquals(EXPECTED_REPLY_HEADER, replyTo.toString());
-                
+
                 // send reply
                 template.send("jms:dummy", ExchangePattern.InOnly, exchange -> {
 
