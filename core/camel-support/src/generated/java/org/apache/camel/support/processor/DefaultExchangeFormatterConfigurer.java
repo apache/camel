@@ -121,5 +121,12 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        default: return null;
+        }
+    }
 }
 

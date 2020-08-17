@@ -61,5 +61,14 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "config":
+        case "Config": return org.apache.camel.main.HealthCheckConfigurationProperties.class;
+        default: return null;
+        }
+    }
 }
 

@@ -38,6 +38,20 @@ public interface PropertyConfigurerGetter {
     Map<String, Object> getAllOptions(Object target);
 
     /**
+     * Gets the nested class type an option supports (such as list, map, or arrays)
+     *
+     * For maps, then the nested type returned is the type of the value in the map (not the map key type).
+     *
+     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
+     * @param name          the property name
+     * @param ignoreCase    whether to ignore case for matching the property name
+     * @return the nested class type, or <tt>null</tt> if the option does not has nested types or not possible to resolve.
+     */
+    default Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        return null;
+    }
+
+    /**
      * Gets the property value
      *
      * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.

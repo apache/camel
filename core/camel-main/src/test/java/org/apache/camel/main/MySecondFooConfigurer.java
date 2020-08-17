@@ -41,5 +41,14 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bars":
+        case "Bars": return org.apache.camel.main.MySecondBar.class;
+        default: return null;
+        }
+    }
 }
 

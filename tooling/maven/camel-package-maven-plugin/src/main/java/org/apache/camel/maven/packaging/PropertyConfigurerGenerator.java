@@ -135,6 +135,34 @@ public final class PropertyConfigurerGenerator {
                 w.write("        }\n");
             }
             w.write("    }\n");
+
+            // nested type was stored in deprecation note as we use BaseOptionModel to hold the option data
+            boolean hasNestedTypes = options.stream().map(BaseOptionModel::getDeprecationNote).anyMatch(s -> s != null && !s.trim().isEmpty());
+            if (hasNestedTypes) {
+                w.write("\n");
+                w.write("    @Override\n");
+                w.write("    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {\n");
+                if (!options.isEmpty()) {
+                    w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
+                    for (BaseOptionModel option : options) {
+                        String nestedType = option.getDeprecationNote();
+                        if (nestedType != null && !nestedType.isEmpty()) {
+                            nestedType = nestedType.replace('$', '.');
+                            if (!option.getName().toLowerCase().equals(option.getName())) {
+                                w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+                            }
+                            w.write(String.format("        case \"%s\": return %s.class;\n", option.getName(), nestedType));
+                        }
+                    }
+                    if (hasSuper) {
+                        w.write("        default: return super.getOptionNestedType(target, name, ignoreCase);\n");
+                    } else {
+                        w.write("        default: return null;\n");
+                    }
+                    w.write("        }\n");
+                }
+                w.write("    }\n");
+            }
         }
 
         w.write("}\n");
