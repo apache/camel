@@ -37,7 +37,7 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
             Exchange newOne = new DefaultExchange(context());
             final String key = "abrakadabra";
             assertThrows(UnsupportedOperationException.class,
-                () -> repo.add(context(), key, oldOne, newOne));
+                    () -> repo.add(context(), key, oldOne, newOne));
         } finally {
             repo.doStop();
         }
@@ -53,7 +53,7 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
             Exchange ex = new DefaultExchange(context());
             final String key = "abrakadabra";
             assertThrows(UnsupportedOperationException.class,
-                () -> repo.add(context(), key, ex));
+                    () -> repo.add(context(), key, ex));
         } finally {
             repo.doStop();
         }
@@ -64,7 +64,7 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
         final String repoName = "hzRepoMap";
         HazelcastAggregationRepository repo = new HazelcastAggregationRepository(repoName, (HazelcastInstance) null);
         assertThrows(IllegalArgumentException.class,
-            () -> repo.doStart());
+                () -> repo.doStart());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
             repo.doStart();
             Exchange ex = new DefaultExchange(context());
             repo.add(context(), "somedefaultkey", ex);
-        //} catch (Throwable e) {
+            //} catch (Throwable e) {
             //fail(e.getMessage());
         } finally {
             repo.doStop();

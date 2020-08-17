@@ -39,12 +39,10 @@ public interface UndertowHost {
      * differ from the passed {@link HttpHandler} and the returned instance is the effectively registered one for the
      * given {@link HttpHandlerRegistrationInfo}.
      *
-     * @param registrationInfo
-     *            the {@link HttpHandlerRegistrationInfo} related to {@code handler}
-     * @param handler
-     *            the {@link HttpHandler} to register
-     * @return the given {@code handler} or a different {@link HttpHandler} that has been registered with the given
-     *         {@link HttpHandlerRegistrationInfo} earlier.
+     * @param  registrationInfo the {@link HttpHandlerRegistrationInfo} related to {@code handler}
+     * @param  handler          the {@link HttpHandler} to register
+     * @return                  the given {@code handler} or a different {@link HttpHandler} that has been registered
+     *                          with the given {@link HttpHandlerRegistrationInfo} earlier.
      */
     HttpHandler registerHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
 

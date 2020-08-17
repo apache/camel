@@ -41,7 +41,8 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     private long lastAttemptTime;
     private long nextAttemptTime;
 
-    BackOffTimerTask(BackOff backOff, ScheduledExecutorService scheduler, ThrowingFunction<BackOffTimer.Task, Boolean, Exception> function) {
+    BackOffTimerTask(BackOff backOff, ScheduledExecutorService scheduler,
+                     ThrowingFunction<BackOffTimer.Task, Boolean, Exception> function) {
         this.backOff = backOff;
         this.scheduler = scheduler;
         this.status = Status.Active;
@@ -195,9 +196,8 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     // *****************************
 
     /**
-     * Return the number of milliseconds to wait before retrying the operation
-     * or ${@link BackOff#NEVER} to indicate that no further attempt should be
-     * made.
+     * Return the number of milliseconds to wait before retrying the operation or ${@link BackOff#NEVER} to indicate
+     * that no further attempt should be made.
      */
     long next() {
         // A call to next when currentDelay is set to NEVER has no effects
@@ -228,13 +228,13 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     @Override
     public String toString() {
         return "BackOffTimerTask["
-            + "status=" + status
-            + ", currentAttempts=" + currentAttempts
-            + ", currentDelay=" + currentDelay
-            + ", currentElapsedTime=" + currentElapsedTime
-            + ", firstAttemptTime=" + firstAttemptTime
-            + ", lastAttemptTime=" + lastAttemptTime
-            + ", nextAttemptTime=" + nextAttemptTime
-            + ']';
+               + "status=" + status
+               + ", currentAttempts=" + currentAttempts
+               + ", currentDelay=" + currentDelay
+               + ", currentElapsedTime=" + currentElapsedTime
+               + ", firstAttemptTime=" + firstAttemptTime
+               + ", lastAttemptTime=" + lastAttemptTime
+               + ", nextAttemptTime=" + nextAttemptTime
+               + ']';
     }
 }

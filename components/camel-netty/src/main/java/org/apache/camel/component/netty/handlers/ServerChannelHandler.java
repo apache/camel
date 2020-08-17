@@ -94,7 +94,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
         // set the exchange charset property for converting
         if (consumer.getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
+            exchange.setProperty(Exchange.CHARSET_NAME,
+                    IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
         }
         if (consumer.getConfiguration().isReuseChannel()) {
             exchange.setProperty(NettyConstants.NETTY_CHANNEL, ctx.channel());
@@ -116,9 +117,9 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     /**
      * Allows any custom logic before the {@link Exchange} is processed by the routing engine.
      *
-     * @param exchange       the exchange
-     * @param ctx            the channel handler context
-     * @param message        the message which needs to be sent
+     * @param exchange the exchange
+     * @param ctx      the channel handler context
+     * @param message  the message which needs to be sent
      */
     protected void beforeProcess(final Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
         // noop
@@ -171,7 +172,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         } else {
             // if textline enabled then covert to a String which must be used for textline
             if (consumer.getConfiguration().isTextline()) {
-                body = NettyHelper.getTextlineBody(body, exchange, consumer.getConfiguration().getDelimiter(), consumer.getConfiguration().isAutoAppendDelimiter());
+                body = NettyHelper.getTextlineBody(body, exchange, consumer.getConfiguration().getDelimiter(),
+                        consumer.getConfiguration().isAutoAppendDelimiter());
             }
 
             // we got a body to write
@@ -179,7 +181,9 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             if (consumer.getConfiguration().isTcp()) {
                 NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, exchange, listener);
             } else {
-                NettyHelper.writeBodyAsync(LOG, ctx.channel(), exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, ctx.channel(),
+                        exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body, exchange,
+                        listener);
             }
         }
     }
@@ -187,8 +191,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     /**
      * Gets the object we want to use as the response object for sending to netty.
      *
-     * @param exchange the exchange
-     * @return the object to use as response
+     * @param  exchange  the exchange
+     * @return           the object to use as response
      * @throws Exception is thrown if error getting the response body
      */
     protected Object getResponseBody(Exchange exchange) throws Exception {
@@ -207,12 +211,13 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     /**
      * Creates the {@link ChannelFutureListener} to execute when writing the response is complete.
      *
-     * @param consumer          the netty consumer
-     * @param exchange          the exchange
-     * @param remoteAddress     the remote address of the message
-     * @return the listener.
+     * @param  consumer      the netty consumer
+     * @param  exchange      the exchange
+     * @param  remoteAddress the remote address of the message
+     * @return               the listener.
      */
-    protected ChannelFutureListener createResponseFutureListener(NettyConsumer consumer, Exchange exchange, SocketAddress remoteAddress) {
+    protected ChannelFutureListener createResponseFutureListener(
+            NettyConsumer consumer, Exchange exchange, SocketAddress remoteAddress) {
         return new ServerResponseFutureListener(consumer, exchange, remoteAddress);
     }
 

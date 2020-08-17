@@ -60,7 +60,7 @@ public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
     protected AbstractApplicationContext createApplicationContext() {
         AbstractApplicationContext applicationContext = super.createApplicationContext();
 
-        connectionFactory = (ConnectionFactory)applicationContext.getBean("customConnectionFactory");
+        connectionFactory = (ConnectionFactory) applicationContext.getBean("customConnectionFactory");
         return applicationContext;
     }
 
@@ -119,7 +119,8 @@ public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+                throws IOException {
             lastBody = body;
             super.handleDelivery(consumerTag, envelope, properties, body);
         }

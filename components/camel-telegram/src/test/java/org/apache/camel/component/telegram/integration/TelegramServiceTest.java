@@ -111,28 +111,28 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setText("Choose one option!");
 
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
-            .text("Option One - I").build();
+                .text("Option One - I").build();
 
         InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
-            .text("Option One - II").build();
+                .text("Option One - II").build();
 
         InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
-            .text("Option Two - I").build();
+                .text("Option Two - I").build();
 
         InlineKeyboardButton buttonOptionThreeI = InlineKeyboardButton.builder()
-            .text("Option Three - I").build();
+                .text("Option Three - I").build();
 
         InlineKeyboardButton buttonOptionThreeII = InlineKeyboardButton.builder()
-            .text("Option Three - II").build();
+                .text("Option Three - II").build();
 
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
-            .keyboard()
-            .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
-            .addRow(Arrays.asList(buttonOptionTwoI))
-            .addRow(Arrays.asList(buttonOptionThreeI, buttonOptionThreeII))
-            .close()
-            .oneTimeKeyboard(true)
-            .build();
+                .keyboard()
+                .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
+                .addRow(Arrays.asList(buttonOptionTwoI))
+                .addRow(Arrays.asList(buttonOptionThreeI, buttonOptionThreeII))
+                .close()
+                .oneTimeKeyboard(true)
+                .build();
 
         msg.setReplyMarkup(replyMarkup);
 
@@ -168,8 +168,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setText("Your answer was accepted!");
 
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
-            .removeKeyboard(true)
-            .build();
+                .removeKeyboard(true)
+                .build();
 
         msg.setReplyMarkup(replyMarkup);
 
@@ -209,8 +209,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.png");
         msg.setReplyMarkup(
-            new ForceReply(true)
-        );
+                new ForceReply(true));
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -225,10 +224,10 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.png");
         msg.setReplyMarkup(
-            InlineKeyboardMarkup.builder()
-                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                    .url("https://camel.apache.org").build())).build()
-        );
+                InlineKeyboardMarkup.builder()
+                        .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                                .url("https://camel.apache.org").build()))
+                        .build());
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -272,8 +271,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setDurationSeconds(5);
         msg.setPerformer("Myself");
         ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
-            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                .url("https://camel.apache.org").build())).build();
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                        .url("https://camel.apache.org").build()))
+                .build();
         msg.setReplyMarkup(replyMarkup);
 
         MessageResult result = sendMessage(msg);
@@ -306,8 +306,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setHeight(50);
 
         ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
-            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                .url("https://camel.apache.org").build())).build();
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                        .url("https://camel.apache.org").build()))
+                .build();
         msg.setReplyMarkup(replyMarkup);
 
         MessageResult result = sendMessage(msg);
@@ -336,11 +337,11 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setFilenameWithExtension("file.txt");
         msg.setCaption("A document");
         ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
-            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                .url("https://camel.apache.org").build())).build();
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                        .url("https://camel.apache.org").build()))
+                .build();
         msg.setReplyMarkup(
-            replyMarkup
-        );
+                replyMarkup);
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -355,8 +356,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setLatitude(latitude);
         msg.setLongitude(longitude);
         msg.setReplyMarkup(InlineKeyboardMarkup.builder()
-            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                .url("https://camel.apache.org").build())).build());
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                        .url("https://camel.apache.org").build()))
+                .build());
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -371,8 +373,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setLatitude(latitude);
         msg.setLongitude(longitude);
         msg.setReplyMarkup(InlineKeyboardMarkup.builder()
-            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                .url("https://camel.apache.org").build())).build());
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                        .url("https://camel.apache.org").build()))
+                .build());
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -420,10 +423,10 @@ public class TelegramServiceTest extends TelegramTestSupport {
 
         // Edit message
         EditMessageTextMessage msg = EditMessageTextMessage.builder()
-            .chatId(chatId)
-            .text(newText)
-            .messageId(messageId)
-            .build();
+                .chatId(chatId)
+                .text(newText)
+                .messageId(messageId)
+                .build();
 
         MessageResult response = sendMessage(msg);
 
@@ -444,11 +447,11 @@ public class TelegramServiceTest extends TelegramTestSupport {
 
         // Edit message
         EditMessageTextMessage msg = EditMessageTextMessage.builder()
-            .chatId(chatId)
-            .text(newTextWithUrl)
-            .parseMode("HTML")
-            .messageId(messageId)
-            .build();
+                .chatId(chatId)
+                .text(newTextWithUrl)
+                .parseMode("HTML")
+                .messageId(messageId)
+                .build();
 
         MessageResult response = sendMessage(msg);
 
@@ -468,9 +471,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
 
         //edit message
         EditMessageCaptionMessage editMessageCaptionMessage = EditMessageCaptionMessage.builder()
-            .caption(newCaption)
-            .messageId(messageId)
-            .build();
+                .caption(newCaption)
+                .messageId(messageId)
+                .build();
 
         MessageResult message = sendMessage(editMessageCaptionMessage);
         Assertions.assertEquals(newCaption, message.getMessage().getCaption());
@@ -490,10 +493,10 @@ public class TelegramServiceTest extends TelegramTestSupport {
 
         //edit message
         EditMessageCaptionMessage editMessageCaptionMessage = EditMessageCaptionMessage.builder()
-            .caption(newCaptionWithUrl)
-            .messageId(messageId)
-            .parseMode("HTML")
-            .build();
+                .caption(newCaptionWithUrl)
+                .messageId(messageId)
+                .parseMode("HTML")
+                .build();
 
         MessageResult message = sendMessage(editMessageCaptionMessage);
         IncomingMessage incomingMessage = message.getMessage();
@@ -518,9 +521,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaAudio.setMedia(mediaUrl);
 
         EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
-            .messageId(messageId)
-            .media(inputMediaAudio)
-            .build();
+                .messageId(messageId)
+                .media(inputMediaAudio)
+                .build();
 
         MessageResult message = sendMessage(editMessageMediaMessage);
         IncomingMessage incomingMessage = message.getMessage();
@@ -545,9 +548,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaAnimation.setMedia(mediaUrl);
 
         EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
-            .messageId(messageId)
-            .media(inputMediaAnimation)
-            .build();
+                .messageId(messageId)
+                .media(inputMediaAnimation)
+                .build();
 
         MessageResult message = sendMessage(editMessageMediaMessage);
         IncomingMessage incomingMessage = message.getMessage();
@@ -572,9 +575,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaVideo.setMedia(mediaUrl);
 
         EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
-            .messageId(messageId)
-            .media(inputMediaVideo)
-            .build();
+                .messageId(messageId)
+                .media(inputMediaVideo)
+                .build();
 
         MessageResult message = sendMessage(editMessageMediaMessage);
         IncomingMessage incomingMessage = message.getMessage();
@@ -600,9 +603,9 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaPhoto.setMedia(mediaUrl);
 
         EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
-            .messageId(messageId)
-            .media(inputMediaPhoto)
-            .build();
+                .messageId(messageId)
+                .media(inputMediaPhoto)
+                .build();
 
         MessageResult message = sendMessage(editMessageMediaMessage);
         IncomingMessage incomingMessage = message.getMessage();
@@ -619,25 +622,25 @@ public class TelegramServiceTest extends TelegramTestSupport {
 
         //edit markup
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
-            .text("camel")
-            .url("https://camel.apache.org/")
-            .build();
+                .text("camel")
+                .url("https://camel.apache.org/")
+                .build();
 
         InlineKeyboardMarkup replyMarkup = InlineKeyboardMarkup.builder()
-            .addRow(Collections.singletonList(buttonOptionOneI))
-            .build();
+                .addRow(Collections.singletonList(buttonOptionOneI))
+                .build();
 
         EditMessageReplyMarkupMessage editMessageReplyMarkupMessage = EditMessageReplyMarkupMessage.builder()
-            .messageId(messageId)
-            .replyMarkup(replyMarkup)
-            .build();
+                .messageId(messageId)
+                .replyMarkup(replyMarkup)
+                .build();
 
         MessageResult incomingMessage = sendMessage(editMessageReplyMarkupMessage);
         Assertions.assertTrue(incomingMessage.isOk());
 
         Assertions.assertEquals(buttonOptionOneI,
-            ((InlineKeyboardMarkup)incomingMessage.getMessage().getReplyMarkup()).getInlineKeyboard()
-        .get(0).get(0));
+                ((InlineKeyboardMarkup) incomingMessage.getMessage().getReplyMarkup()).getInlineKeyboard()
+                        .get(0).get(0));
     }
 
     @Test
@@ -663,8 +666,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setCallbackGame(new CallbackGame(gameShortName));
         inlineKeyboardButton.setText(gameText);
-        InlineKeyboardMarkup inlineKeyboardMarkup =
-            InlineKeyboardMarkup.builder().addRow(Collections.singletonList(inlineKeyboardButton)).build();
+        InlineKeyboardMarkup inlineKeyboardMarkup
+                = InlineKeyboardMarkup.builder().addRow(Collections.singletonList(inlineKeyboardButton)).build();
 
         OutgoingGameMessage outgoingGameMessage = new OutgoingGameMessage();
         outgoingGameMessage.setGameShortName(gameShortName);

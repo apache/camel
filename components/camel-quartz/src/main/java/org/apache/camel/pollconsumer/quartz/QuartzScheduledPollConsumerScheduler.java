@@ -45,10 +45,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A quartz based {@link ScheduledPollConsumerScheduler} which uses a
- * {@link CronTrigger} to define when the poll should be triggered.
+ * A quartz based {@link ScheduledPollConsumerScheduler} which uses a {@link CronTrigger} to define when the poll should
+ * be triggered.
  */
-public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler, NonManagedService {
+public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
+        implements ScheduledPollConsumerScheduler, NonManagedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
 
@@ -183,7 +184,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
         TriggerKey triggerKey = null;
         if (triggerId != null && triggerGroup != null) {
             triggerKey = new TriggerKey(triggerId, triggerGroup);
-            existingTrigger = (CronTrigger)quartzScheduler.getTrigger(triggerKey);
+            existingTrigger = (CronTrigger) quartzScheduler.getTrigger(triggerKey);
         }
 
         // Is an trigger already exist for this triggerId ?
@@ -205,8 +206,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
 
             trigger = TriggerBuilder.newTrigger().withIdentity(id, triggerGroup)
-                .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
-                .build();
+                    .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
+                    .build();
 
             LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
             quartzScheduler.scheduleJob(job, trigger);
@@ -224,8 +225,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
             LOG.debug("Updated jobData map to {}", jobData);
 
             trigger = existingTrigger.getTriggerBuilder()
-                .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
-                .build();
+                    .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
+                    .build();
 
             // Reschedule job if trigger settings were changed
             if (hasTriggerChanged(existingTrigger, trigger)) {
@@ -254,8 +255,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
-                    job.getJobClass().getSimpleName(), trigger.getNextFireTime()});
+                    new Object[] {
+                            trigger.getKey(), trigger.getClass().getSimpleName(),
+                            job.getJobClass().getSimpleName(), trigger.getNextFireTime() });
         }
     }
 
@@ -278,7 +280,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
         JobDataMap jobDataMap = trigger.getJobDataMap();
         String routeIdFromTrigger = jobDataMap.getString("routeId");
         if (routeIdFromTrigger != null && !routeIdFromTrigger.equals(routeId)) {
-            throw new IllegalArgumentException("Trigger key " + trigger.getKey() + " is already used by route: " + routeIdFromTrigger + ". Cannot re-use it for another route: " + routeId);
+            throw new IllegalArgumentException(
+                    "Trigger key " + trigger.getKey() + " is already used by route: " + routeIdFromTrigger
+                                               + ". Cannot re-use it for another route: " + routeId);
         }
     }
 
@@ -291,7 +295,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
             SimpleTrigger newSimple = (SimpleTrigger) newTrigger;
             SimpleTrigger oldSimple = (SimpleTrigger) oldTrigger;
             return newSimple.getRepeatInterval() != oldSimple.getRepeatInterval()
-                || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
+                    || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
         } else {
             return !newTrigger.getClass().equals(oldTrigger.getClass()) || !newTrigger.equals(oldTrigger);
         }

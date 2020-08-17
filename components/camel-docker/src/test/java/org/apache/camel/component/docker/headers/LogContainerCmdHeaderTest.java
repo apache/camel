@@ -40,7 +40,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
 
     @Mock
     private LogContainerResultCallback callback;
-    
+
     @Test
     void logContainerHeaderTest() {
 

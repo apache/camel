@@ -58,7 +58,8 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).handled(true).useOriginalMessage().to("file://target/data/outbox").to("mock:error");
+                onException(Exception.class).handled(true).useOriginalMessage().to("file://target/data/outbox")
+                        .to("mock:error");
 
                 from("file://target/data/inbox?initialDelay=0&delay=10").process(new Processor() {
                     @Override

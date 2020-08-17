@@ -40,6 +40,6 @@ public class DummyProducer extends DefaultProducer {
         total += amount;
 
         exchange.getIn().setBody("total " + total + " of " + drink.name().toLowerCase() + " ordered"
-            + (celebrity ? " from famous person" : ""));
+                                 + (celebrity ? " from famous person" : ""));
     }
 }

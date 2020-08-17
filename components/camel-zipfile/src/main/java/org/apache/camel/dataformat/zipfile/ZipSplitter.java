@@ -23,10 +23,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 
 /**
- * ZipSplitter the expression builder which can be used after the splitter
- * Based on the thread <a href=
- * "http://camel.465427.n5.nabble.com/zip-file-best-practices-td5713437.html"
- * >zip file best practices</a>
+ * ZipSplitter the expression builder which can be used after the splitter Based on the thread
+ * <a href= "http://camel.465427.n5.nabble.com/zip-file-best-practices-td5713437.html" >zip file best practices</a>
  */
 public class ZipSplitter implements Expression {
 

@@ -40,11 +40,12 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
         this.transport = new NetHttpTransport();
         this.jsonFactory = new JacksonFactory();
     }
-    
+
     public BatchGoogleDriveClientFactory(String proxyHost, int proxyPort) {
         try {
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, 
-                                    new InetSocketAddress(InetAddress.getByName(proxyHost), proxyPort));
+            Proxy proxy = new Proxy(
+                    Proxy.Type.HTTP,
+                    new InetSocketAddress(InetAddress.getByName(proxyHost), proxyPort));
             this.transport = new NetHttpTransport.Builder().setProxy(proxy).build();
             this.jsonFactory = new JacksonFactory();
         } catch (UnknownHostException e) {
@@ -53,7 +54,9 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
     }
 
     @Override
-    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken) {
+    public Drive makeClient(
+            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
+            String accessToken) {
         if (clientId == null || clientSecret == null) {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Google Drive client.");
         }
@@ -62,7 +65,7 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
 
             if (refreshToken != null && !"".equals(refreshToken)) {
                 credential.setRefreshToken(refreshToken);
-            } 
+            }
             if (accessToken != null && !"".equals(accessToken)) {
                 credential.setAccessToken(accessToken);
             }
@@ -71,14 +74,14 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
             throw new RuntimeCamelException("Could not create Google Drive client.", e);
         }
     }
-    
+
     // Authorizes the installed application to access user's protected data.
     private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
         // authorize
         return new GoogleCredential.Builder()
-            .setJsonFactory(jsonFactory)
-            .setTransport(transport)
-            .setClientSecrets(clientId, clientSecret)
-            .build();
+                .setJsonFactory(jsonFactory)
+                .setTransport(transport)
+                .setClientSecrets(clientId, clientSecret)
+                .build();
     }
 }

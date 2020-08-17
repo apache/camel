@@ -76,8 +76,8 @@ public class XQueryConcurrencyTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from(uri)
-                    .transform().xquery("/person/id", String.class)
-                    .to("mock:result");
+                        .transform().xquery("/person/id", String.class)
+                        .to("mock:result");
             }
         };
     }

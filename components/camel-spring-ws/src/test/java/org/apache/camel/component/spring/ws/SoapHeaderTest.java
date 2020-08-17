@@ -27,21 +27,22 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 @CamelSpringTest
 @ContextConfiguration
 public class SoapHeaderTest {
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
-    private final String soapHeader = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\"><h:MessageID>1234567890</h:MessageID><h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String soapHeader
+            = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\"><h:MessageID>1234567890</h:MessageID><h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
 
     @Produce
     private ProducerTemplate template;
 
     /**
-     * This tests both the Producer and the Consumer. The SOAP Header is populated into the
-     * Camel Header which is copied across in the SoapHeaderResponseProcessor. The result is
-     * that the header sent in should be the same as the header returned.
+     * This tests both the Producer and the Consumer. The SOAP Header is populated into the Camel Header which is copied
+     * across in the SoapHeaderResponseProcessor. The result is that the header sent in should be the same as the header
+     * returned.
      *
      * @throws Exception
      */

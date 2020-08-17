@@ -43,7 +43,8 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
             a.interceptSendToEndpoint("mock:resultA").process();
         });
 
-        AdviceWithRouteBuilder.adviceWith(context, "RouteB", a -> { });
+        AdviceWithRouteBuilder.adviceWith(context, "RouteB", a -> {
+        });
 
         context.start();
 

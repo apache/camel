@@ -54,9 +54,8 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
 
         MockEndpoint mock = getMockEndpoint("mock:locked");
         mock.expectedBodiesReceived(
-            "orders: 1",
-            "orders: 2"
-        );
+                "orders: 1",
+                "orders: 2");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Donald%");
@@ -102,27 +101,31 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                 };
 
                 onException(Exception.class)
-                    .setBody().simple("${exception}")
-                    .to("mock:error")
-                    .handled(true);
+                        .setBody().simple("${exception}")
+                        .to("mock:error")
+                        .handled(true);
 
                 from("direct:locked")
-                    .onException(OptimisticLockException.class)
+                        .onException(OptimisticLockException.class)
                         .redeliveryDelay(60)
                         .maximumRedeliveries(2)
-                    .end()
-                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?lockModeType=OPTIMISTIC_FORCE_INCREMENT&query=select c from Customer c where c.name like '${header.name}'")
-                    .aggregationStrategy(enrichStrategy)
-                    .to("jpa://" + Customer.class.getName())
-                    .setBody().simple("orders: ${body.orderCount}")
-                    .to("mock:locked");
+                        .end()
+                        .pollEnrich()
+                        .simple("jpa://" + Customer.class.getName()
+                                + "?lockModeType=OPTIMISTIC_FORCE_INCREMENT&query=select c from Customer c where c.name like '${header.name}'")
+                        .aggregationStrategy(enrichStrategy)
+                        .to("jpa://" + Customer.class.getName())
+                        .setBody().simple("orders: ${body.orderCount}")
+                        .to("mock:locked");
 
                 from("direct:not-locked")
-                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?query=select c from Customer c where c.name like '${header.name}'")
-                    .aggregationStrategy(enrichStrategy)
-                    .to("jpa://" + Customer.class.getName())
-                    .setBody().simple("orders: ${body.orderCount}")
-                    .to("mock:not-locked");
+                        .pollEnrich()
+                        .simple("jpa://" + Customer.class.getName()
+                                + "?query=select c from Customer c where c.name like '${header.name}'")
+                        .aggregationStrategy(enrichStrategy)
+                        .to("jpa://" + Customer.class.getName())
+                        .setBody().simple("orders: ${body.orderCount}")
+                        .to("mock:not-locked");
             }
         };
     }

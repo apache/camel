@@ -27,6 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class RecentItemTest {
 
     @Test
@@ -37,7 +38,8 @@ public class RecentItemTest {
                                                                          "    \"attributes\" : \n" + //
                                                                          "    { \n" + //
                                                                          "        \"type\" : \"Account\", \n" + //
-                                                                         "        \"url\" : \"/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ\" \n" + //
+                                                                         "        \"url\" : \"/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ\" \n"
+                                                                         + //
                                                                          "    }, \n" + //
                                                                          "    \"Id\" : \"a06U000000CelH0IAJ\", \n" + //
                                                                          "    \"Name\" : \"Acme\" \n" + //
@@ -45,7 +47,7 @@ public class RecentItemTest {
 
         assertThat("RecentItem should deserialize from JSON", read, instanceOf(RecentItem.class));
 
-        final RecentItem recentItem = (RecentItem)read;
+        final RecentItem recentItem = (RecentItem) read;
 
         assertEquals("a06U000000CelH0IAJ", recentItem.getId(), "RecentItem.Id should be deserialized");
 
@@ -55,7 +57,8 @@ public class RecentItemTest {
 
         assertEquals("Account", recentItem.getAttributes().getType(), "RecentItem.attributes.type should be deserialized");
 
-        assertEquals("/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ", recentItem.getAttributes().getUrl(), "RecentItem.attributes.url should be deserialized");
+        assertEquals("/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ", recentItem.getAttributes().getUrl(),
+                "RecentItem.attributes.url should be deserialized");
 
     }
 }

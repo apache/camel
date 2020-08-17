@@ -20,5 +20,9 @@ package org.apache.camel.catalog;
  * Kind of a Camel part, such as component, dataformat, language, etc.
  */
 public enum Kind {
-    component, dataformat, language, other, eip
+    component,
+    dataformat,
+    language,
+    other,
+    eip
 }

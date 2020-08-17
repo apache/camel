@@ -34,7 +34,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers?forwardOnComplete=true")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -42,12 +42,12 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
 
         context.start();
 
-        Flux.<Integer>empty().subscribe(numbers);
+        Flux.<Integer> empty().subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
-        endpoint.expectedBodiesReceived(new Object[]{null});
+        endpoint.expectedBodiesReceived(new Object[] { null });
         endpoint.assertIsSatisfied();
     }
 
@@ -57,7 +57,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -65,7 +65,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
 
         context.start();
 
-        Flux.<Integer>empty().subscribe(numbers);
+        Flux.<Integer> empty().subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);
@@ -78,7 +78,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -103,7 +103,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers?forwardOnError=true")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -114,14 +114,13 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
         RuntimeException ex = new RuntimeException("1");
 
         Flux.just(1)
-            .map(n -> {
-                if (n == 1) {
-                    throw ex;
-                }
-                return n;
-            })
-            .subscribe(numbers);
-
+                .map(n -> {
+                    if (n == 1) {
+                        throw ex;
+                    }
+                    return n;
+                })
+                .subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
@@ -138,7 +137,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -149,14 +148,13 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
         RuntimeException ex = new RuntimeException("1");
 
         Flux.just(1)
-            .map(n -> {
-                if (n == 1) {
-                    throw ex;
-                }
-                return n;
-            })
-            .subscribe(numbers);
-
+                .map(n -> {
+                    if (n == 1) {
+                        throw ex;
+                    }
+                    return n;
+                })
+                .subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);

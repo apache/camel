@@ -31,7 +31,7 @@ public class JMSTransactionErrorHandlerTest extends CamelSpringTestSupport {
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/JMSTransactionErrorHandlerTest.xml");
+                "/org/apache/camel/component/jms/tx/JMSTransactionErrorHandlerTest.xml");
     }
 
     @Test

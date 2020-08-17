@@ -27,7 +27,8 @@ public class BridgePropertyPlaceholderConfigurerUtilIssueTest extends SpringTest
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurerUtilIssue.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurerUtilIssue.xml");
     }
 
     @Test

@@ -34,26 +34,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Threads processor that leverage a thread pool for continue processing the {@link Exchange}s
- * using the asynchronous routing engine.
+ * Threads processor that leverage a thread pool for continue processing the {@link Exchange}s using the asynchronous
+ * routing engine.
  * <p/>
- * <b>Notice:</b> For transacted routes then this {@link ThreadsProcessor} is not in use, as we want to
- * process messages using the same thread to support all work done in the same transaction. The reason
- * is that the transaction manager that orchestrate the transaction, requires all the work to be done
- * on the same thread.
+ * <b>Notice:</b> For transacted routes then this {@link ThreadsProcessor} is not in use, as we want to process messages
+ * using the same thread to support all work done in the same transaction. The reason is that the transaction manager
+ * that orchestrate the transaction, requires all the work to be done on the same thread.
  * <p/>
  * Pay attention to how this processor handles rejected tasks.
  * <ul>
- * <li>Abort - The current exchange will be set with a {@link RejectedExecutionException} exception,
- * and marked to stop continue routing.
- * The {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>failed</b>, due the exception.</li>
- * <li>Discard - The current exchange will be marked to stop continue routing (notice no exception is set).
- * The {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>successful</b>, due no exception being set.</li>
- * <li>DiscardOldest - The oldest exchange will be marked to stop continue routing (notice no exception is set).
- * The {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>successful</b>, due no exception being set.
- * And the current exchange will be added to the task queue.</li>
- * <li>CallerRuns - The current exchange will be processed by the current thread. Which mean the current thread
- * will not be free to process a new exchange, as its processing the current exchange.</li>
+ * <li>Abort - The current exchange will be set with a {@link RejectedExecutionException} exception, and marked to stop
+ * continue routing. The {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>failed</b>, due the
+ * exception.</li>
+ * <li>Discard - The current exchange will be marked to stop continue routing (notice no exception is set). The
+ * {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>successful</b>, due no exception being set.</li>
+ * <li>DiscardOldest - The oldest exchange will be marked to stop continue routing (notice no exception is set). The
+ * {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>successful</b>, due no exception being set. And the
+ * current exchange will be added to the task queue.</li>
+ * <li>CallerRuns - The current exchange will be processed by the current thread. Which mean the current thread will not
+ * be free to process a new exchange, as its processing the current exchange.</li>
  * </ul>
  */
 public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
@@ -105,7 +104,8 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
         }
     }
 
-    public ThreadsProcessor(CamelContext camelContext, ExecutorService executorService, boolean shutdownExecutorService, ThreadPoolRejectedPolicy rejectedPolicy) {
+    public ThreadsProcessor(CamelContext camelContext, ExecutorService executorService, boolean shutdownExecutorService,
+                            ThreadPoolRejectedPolicy rejectedPolicy) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(executorService, "executorService");
         ObjectHelper.notNull(rejectedPolicy, "rejectedPolicy");
@@ -124,7 +124,8 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
         // we cannot execute this asynchronously for transacted exchanges, as the transaction manager doesn't support
         // using different threads in the same transaction
         if (exchange.isTransacted()) {
-            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(),
+                    exchange);
             callback.done(true);
             return true;
         }

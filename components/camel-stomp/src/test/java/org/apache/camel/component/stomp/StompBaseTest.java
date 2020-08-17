@@ -129,7 +129,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
         return stomp;
     }
 
-    protected SSLContextParameters getServerSSLContextParameters()  {
+    protected SSLContextParameters getServerSSLContextParameters() {
         if (serverSslContextParameters == null) {
             serverSslContextParameters = getSSLContextParameters("jsse/server.keystore", "password");
         }
@@ -145,7 +145,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
         return serverSslContext;
     }
 
-    protected SSLContextParameters getClientSSLContextParameters()  {
+    protected SSLContextParameters getClientSSLContextParameters() {
         if (clientSslContextParameters == null) {
             clientSslContextParameters = getSSLContextParameters("jsse/client.keystore", "password");
         }
@@ -161,7 +161,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
         return clientSslContext;
     }
 
-    private SSLContextParameters getSSLContextParameters(String path, String password)  {
+    private SSLContextParameters getSSLContextParameters(String path, String password) {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(path);
         ksp.setPassword(password);

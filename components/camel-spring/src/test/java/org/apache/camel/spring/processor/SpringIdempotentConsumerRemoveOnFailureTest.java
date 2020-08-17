@@ -25,7 +25,8 @@ public class SpringIdempotentConsumerRemoveOnFailureTest extends IdempotentConsu
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringIdempotentConsumerRemoveOnFailureTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/SpringIdempotentConsumerRemoveOnFailureTest.xml");
     }
 
 }

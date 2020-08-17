@@ -41,7 +41,8 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
     public void testHttpSimpleExchange() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo", exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo",
+                exchange -> exchange.getIn().setBody("Hello World"));
         assertNotNull(out);
         assertTrue(out.hasOut());
 
@@ -63,8 +64,8 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

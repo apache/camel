@@ -22,8 +22,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 /**
- * A builder to create Netty {@link io.netty.channel.EventLoopGroup} which can be used for sharing worker pools
- * with multiple Netty {@link NettyServerBootstrapFactory} server bootstrap configurations.
+ * A builder to create Netty {@link io.netty.channel.EventLoopGroup} which can be used for sharing worker pools with
+ * multiple Netty {@link NettyServerBootstrapFactory} server bootstrap configurations.
  */
 public final class NettyWorkerPoolBuilder {
 

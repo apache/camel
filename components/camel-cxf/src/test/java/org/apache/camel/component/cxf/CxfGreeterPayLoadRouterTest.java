@@ -27,8 +27,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * The Greeter test with the PAYLOAD date format
  */
-public class CxfGreeterPayLoadRouterTest  extends AbstractCXFGreeterRouterTest {
+public class CxfGreeterPayLoadRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
+
     @AfterAll
     public static void stopService() {
         if (endpoint != null) {
@@ -40,7 +41,7 @@ public class CxfGreeterPayLoadRouterTest  extends AbstractCXFGreeterRouterTest {
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1() + "/CxfGreeterPayLoadRouterTest/SoapContext/SoapPort";
-        endpoint = Endpoint.publish(address, implementor); 
+        endpoint = Endpoint.publish(address, implementor);
     }
 
     @Override
@@ -48,17 +49,14 @@ public class CxfGreeterPayLoadRouterTest  extends AbstractCXFGreeterRouterTest {
         return new RouteBuilder() {
             public void configure() {
                 from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD&publishedEndpointUrl=http://www.simple.com/services/test")
-                    .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
+                        .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
             }
         };
     }
 
-    
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointPayloadBeans.xml");
     }
-
-
 
 }

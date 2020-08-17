@@ -51,7 +51,8 @@ public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Contex
 
                 from("direct:start").split(body()).shareUnitOfWork().stopOnException().to("direct:b").end().to("mock:result");
 
-                from("direct:b").to("mock:b").filter(body().contains("Donkey")).throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:b").filter(body().contains("Donkey"))
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

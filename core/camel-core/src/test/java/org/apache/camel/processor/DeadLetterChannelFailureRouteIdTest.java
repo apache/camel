@@ -23,8 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to test that route id of the failed route is available to the end
- * user.
+ * Unit test to test that route id of the failed route is available to the end user.
  */
 public class DeadLetterChannelFailureRouteIdTest extends ContextTestSupport {
 

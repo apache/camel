@@ -35,14 +35,17 @@ public interface CustomerServiceResource {
     @PUT
     @Path("/customers/")
     Response updateCustomer(Customer customer);
-    
+
     @Path("/{id}")
     @PUT()
-    @Consumes({ "application/xml", "text/plain",
-                    "application/json" })
-    @Produces({ "application/xml", "text/plain",
-                    "application/json" })
-    Object invoke(@PathParam("id") String id,
-                    String payload);
+    @Consumes({
+            "application/xml", "text/plain",
+            "application/json" })
+    @Produces({
+            "application/xml", "text/plain",
+            "application/json" })
+    Object invoke(
+            @PathParam("id") String id,
+            String payload);
 }
 // END SNIPPET: example

@@ -36,7 +36,8 @@ import org.springframework.context.ApplicationContextAware;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelRedeliveryPolicyFactoryBean extends AbstractCamelRedeliveryPolicyFactoryBean implements FactoryBean<RedeliveryPolicy>, ApplicationContextAware {
+public class CamelRedeliveryPolicyFactoryBean extends AbstractCamelRedeliveryPolicyFactoryBean
+        implements FactoryBean<RedeliveryPolicy>, ApplicationContextAware {
 
     @XmlTransient
     private ApplicationContext applicationContext;

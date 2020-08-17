@@ -45,7 +45,8 @@ public class TelegramServiceProxyTest extends TelegramTestSupport {
     @Test
     public void testGetUpdates() {
         IncomingMessage res = consumer.receiveBody(
-                String.format("telegram://bots?proxyHost=%s&proxyPort=%s&proxyType=%s", proxyHost, proxyPort, proxyType), 5000, IncomingMessage.class);
+                String.format("telegram://bots?proxyHost=%s&proxyPort=%s&proxyType=%s", proxyHost, proxyPort, proxyType), 5000,
+                IncomingMessage.class);
         assertNotNull(res);
     }
 
@@ -55,7 +56,9 @@ public class TelegramServiceProxyTest extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
         template.requestBody(
-                String.format("telegram://bots?chatId=%s&proxyHost=%s&proxyPort=%s&proxyType=%s", chatId, proxyHost, proxyPort, proxyType), msg);
+                String.format("telegram://bots?chatId=%s&proxyHost=%s&proxyPort=%s&proxyType=%s", chatId, proxyHost, proxyPort,
+                        proxyType),
+                msg);
     }
 
 }

@@ -36,10 +36,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-
-
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"/HandlersSpringTest.xml"})
+@ContextConfiguration(locations = { "/HandlersSpringTest.xml" })
 public class UndertowHandlersSpringTest {
 
     private Integer port;
@@ -66,28 +64,28 @@ public class UndertowHandlersSpringTest {
         mockEndpoint.expectedBodiesReceived("Hello World");
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2VjcmV0";
-        String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World", 
-                                                   "Authorization", auth, String.class);
+        String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
+                "Authorization", auth, String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testBasicAuthConsumerWthWrongPassword() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2Vjc";
         try {
-            String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World", 
-                                                   "Authorization", auth, String.class);
+            String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
+                    "Authorization", auth, String.class);
             fail("Should send back 401");
             assertEquals("Bye World", out);
 
             mockEndpoint.assertIsSatisfied();
-         
+
         } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = (HttpOperationFailedException)e.getCause();
+            HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
             assertEquals(401, cause.getStatusCode());
         }
 
@@ -103,4 +101,3 @@ public class UndertowHandlersSpringTest {
     }
 
 }
-

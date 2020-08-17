@@ -35,7 +35,7 @@ public class AS2Producer extends AbstractApiProducer<AS2ApiName, AS2Configuratio
     public AS2Producer(AS2Endpoint endpoint) {
         super(endpoint, AS2PropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
-    
+
     @Override
     public void interceptResult(Object methodResult, Exchange resultExchange) {
         HttpCoreContext context = (HttpCoreContext) methodResult;

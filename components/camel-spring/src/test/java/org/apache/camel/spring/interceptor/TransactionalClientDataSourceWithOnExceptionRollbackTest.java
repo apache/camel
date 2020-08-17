@@ -69,14 +69,14 @@ public class TransactionalClientDataSourceWithOnExceptionRollbackTest extends Tr
                 onException(IllegalArgumentException.class).handled(false).to("mock:error").rollback();
 
                 from("direct:okay")
-                    .policy(required)
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .policy(required)
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    .policy(required)
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .policy(required)
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

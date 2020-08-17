@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.NamespaceAware;
 
 /**
- * A useful base class for any expression which may be namespace or XML content
- * aware such as {@link XPathExpression} or {@link XQueryExpression}
+ * A useful base class for any expression which may be namespace or XML content aware such as {@link XPathExpression} or
+ * {@link XQueryExpression}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
@@ -48,8 +48,7 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     /**
      * Injects the XML Namespaces of prefix -> uri mappings
      *
-     * @param namespaces the XML namespaces with the key of prefixes and the
-     *            value the URIs
+     * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
      */
     @Override
     public void setNamespaces(Map<String, String> namespaces) {

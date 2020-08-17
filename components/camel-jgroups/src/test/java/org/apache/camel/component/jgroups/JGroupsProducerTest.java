@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JGroupsProducerTest extends CamelTestSupport {
-   
+
     static final String CLUSTER_NAME = "CLUSTER_NAME";
 
     static final String MESSAGE = "MESSAGE";

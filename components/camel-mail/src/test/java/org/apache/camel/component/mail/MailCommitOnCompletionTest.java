@@ -84,11 +84,11 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("pop3://jones@localhost?password=secret&delete=true&initialDelay=100&delay=100")
-                    .process(exchange -> {
-                        String msg = exchange.getIn().getBody(String.class);
-                        exchange.getMessage().setBody("Hi " + msg);
-                    })
-                    .to("mock:result");
+                        .process(exchange -> {
+                            String msg = exchange.getIn().getBody(String.class);
+                            exchange.getMessage().setBody("Hi " + msg);
+                        })
+                        .to("mock:result");
             }
         };
     }

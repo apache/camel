@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosProducerDelTest extends AtmosTestSupport {
 
-    public AtmosProducerDelTest() throws Exception { }
+    public AtmosProducerDelTest() throws Exception {
+    }
 
     @Test
     public void testCamelAtmos() throws Exception {
@@ -41,14 +42,13 @@ public class AtmosProducerDelTest extends AtmosTestSupport {
             }
         });
 
-
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
+        mock.expectedMinimumMessageCount(1);
         assertMockEndpointsSatisfied();
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(AtmosResultHeader.DELETED_PATH.name());
+        Object header = exchange.getIn().getHeader(AtmosResultHeader.DELETED_PATH.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);

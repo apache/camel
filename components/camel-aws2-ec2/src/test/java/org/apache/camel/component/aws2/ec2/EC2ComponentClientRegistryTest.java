@@ -32,7 +32,7 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
         context.getRegistry().bind("amazonEc2Client", clientMock);
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://TestDomain");
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component.createEndpoint("aws2-ec2://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
     }
@@ -45,25 +45,27 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
             component.createEndpoint("aws2-ec2://TestDomain");
         });
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
         context.getRegistry().bind("amazonEc2Client", clientMock);
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy&autoDiscoverClient=false");
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component
+                .createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getAmazonEc2Client());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
         context.getRegistry().bind("amazonEc2Client", clientMock);
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy");
+        AWS2EC2Endpoint endpoint
+                = (AWS2EC2Endpoint) component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy");
 
         assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
         assertSame(clientMock, endpoint.getConfiguration().getAmazonEc2Client());

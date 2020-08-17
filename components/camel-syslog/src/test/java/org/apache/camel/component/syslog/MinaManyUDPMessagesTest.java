@@ -36,14 +36,16 @@ public class MinaManyUDPMessagesTest extends CamelTestSupport {
 
     private static int serverPort;
     private final int messageCount = 100;
-    private final String message = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
-                                   + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n" + "         Conveyer1=OK, Conveyer2=OK # %%";
+    private final String message
+            = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
+              + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
+              + "         Conveyer1=OK, Conveyer2=OK # %%";
 
     @BeforeAll
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
     }
-    
+
     @Test
     public void testSendingManyMessages() throws Exception, InterruptedException {
         MockEndpoint stop1 = getMockEndpoint("mock:stop1");
@@ -82,8 +84,7 @@ public class MinaManyUDPMessagesTest extends CamelTestSupport {
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }
-                }).to("mock:stop1").
-                    marshal(syslogDataFormat).to("mock:stop2");
+                }).to("mock:stop1").marshal(syslogDataFormat).to("mock:stop2");
             }
         };
     }

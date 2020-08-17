@@ -121,7 +121,7 @@ public class AS2Configuration {
 
     @UriParam
     private PrivateKey decryptingPrivateKey;
-    
+
     @UriParam
     private String mdnMessageTemplate;
 
@@ -156,8 +156,9 @@ public class AS2Configuration {
      */
     public void setAs2Version(String as2Version) {
         if (!as2Version.equals("1.0") && !as2Version.equals("1.1")) {
-            throw new IllegalArgumentException(String.format(
-                    "Value '%s' of configuration parameter 'as2Version' must be either '1.0' or '1.1'", as2Version));
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Value '%s' of configuration parameter 'as2Version' must be either '1.0' or '1.1'", as2Version));
         }
         this.as2Version = as2Version;
     }
@@ -167,8 +168,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The value included in the User-Agent message header identifying
-     * the AS2 user agent.
+     * The value included in the User-Agent message header identifying the AS2 user agent.
      */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
@@ -179,8 +179,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The value included in the Server message header identifying the
-     * AS2 Server.
+     * The value included in the Server message header identifying the AS2 Server.
      */
     public void setServer(String server) {
         this.server = server;
@@ -191,8 +190,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The Server Fully Qualified Domain Name (FQDN).
-     * Used in message ids sent by endpoint.
+     * The Server Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint.
      */
     public void setServerFqdn(String serverFqdn) {
         if (serverFqdn == null) {
@@ -231,8 +229,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The Client Fully Qualified Domain Name (FQDN).
-     * Used in message ids sent by endpoint.
+     * The Client Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint.
      */
     public void setClientFqdn(String clientFqdn) {
         if (clientFqdn == null) {
@@ -268,8 +265,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The content type of EDI message.
-     * One of application/edifact, application/edi-x12, application/edi-consent
+     * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent
      */
     public void setEdiMessageType(ContentType ediMessageType) {
         this.ediMessageType = ediMessageType;
@@ -291,11 +287,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The structure of AS2 Message. One of:
-     * PLAIN - No encryption, no signature,
-     * SIGNED - No encryption, signature,
-     * ENCRYPTED - Encryption, no signature,
-     * ENCRYPTED_SIGNED - Encryption, signature
+     * The structure of AS2 Message. One of: PLAIN - No encryption, no signature, SIGNED - No encryption, signature,
+     * ENCRYPTED - Encryption, no signature, ENCRYPTED_SIGNED - Encryption, signature
      */
     public void setAs2MessageStructure(AS2MessageStructure as2MessageStructure) {
         this.as2MessageStructure = as2MessageStructure;
@@ -396,8 +389,7 @@ public class AS2Configuration {
     /**
      * The value of the Disposition-Notification-To header.
      * 
-     * Assigning a value to this parameter requests a message disposition
-     * notification (MDN) for the AS2 message.
+     * Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message.
      */
     public void setDispositionNotificationTo(String dispositionNotificationTo) {
         this.dispositionNotificationTo = dispositionNotificationTo;
@@ -408,9 +400,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The list of algorithms, in order of preference, requested to generate a
-     * message integrity check (MIC) returned in message dispostion notification
-     * (MDN)
+     * The list of algorithms, in order of preference, requested to generate a message integrity check (MIC) returned in
+     * message dispostion notification (MDN)
      */
     public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
@@ -459,6 +450,5 @@ public class AS2Configuration {
     public void setMdnMessageTemplate(String mdnMessageTemplate) {
         this.mdnMessageTemplate = mdnMessageTemplate;
     }
-    
-    
+
 }

@@ -21,7 +21,6 @@ import org.apache.camel.component.soroushbot.models.SoroushMessage;
 public class MaximumConnectionRetryReachedException extends RuntimeException {
     final SoroushMessage soroushMessage;
 
-
     public MaximumConnectionRetryReachedException(String message, SoroushMessage soroushMessage) {
         super(message);
         this.soroushMessage = soroushMessage;
@@ -35,8 +34,8 @@ public class MaximumConnectionRetryReachedException extends RuntimeException {
     @Override
     public String getLocalizedMessage() {
         return "MaximumConnectionRetryReachedException{"
-                + "soroushMessage=" + soroushMessage
-                + ", message=" + getMessage()
-                + "} ";
+               + "soroushMessage=" + soroushMessage
+               + ", message=" + getMessage()
+               + "} ";
     }
 }

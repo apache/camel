@@ -22,7 +22,6 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +38,7 @@ import org.cometd.bayeux.client.ClientSession.Extension.Adapter;
  * The Bayeux extension for replay
  *
  * @author hal.hildebrand
- * @since API v37.0
+ * @since  API v37.0
  */
 public class ReplayExtension extends Adapter {
     private static final String EXTENSION_NAME = "replay";
@@ -98,7 +97,7 @@ public class ReplayExtension extends Adapter {
     private static Long getReplayId(Message.Mutable message) {
         Map<String, Object> data = message.getDataAsMap();
         @SuppressWarnings("unchecked")
-        Optional<Long> optional = resolve(() -> (Long)((Map<String, Object>)data.get(EVENT_KEY)).get(REPLAY_ID_KEY));
+        Optional<Long> optional = resolve(() -> (Long) ((Map<String, Object>) data.get(EVENT_KEY)).get(REPLAY_ID_KEY));
         return optional.orElse(null);
     }
 

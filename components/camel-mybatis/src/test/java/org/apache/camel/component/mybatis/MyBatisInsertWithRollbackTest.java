@@ -47,11 +47,11 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).handled(true)
-                    .to("mock:rollback");
+                        .to("mock:rollback");
 
                 from("direct:start")
-                    .to("mybatis:insertAccount?statementType=Insert")
-                    .to("mock:commit");
+                        .to("mybatis:insertAccount?statementType=Insert")
+                        .to("mock:commit");
             }
         };
     }

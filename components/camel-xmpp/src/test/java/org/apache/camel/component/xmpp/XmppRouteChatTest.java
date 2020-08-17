@@ -55,7 +55,7 @@ public class XmppRouteChatTest extends CamelTestSupport {
         template.sendBody("direct:toConsumer", body1);
         Thread.sleep(50);
         template.sendBody("direct:toConsumer", body2);
-        
+
         template.sendBody("direct:toProducer", body1);
         Thread.sleep(50);
         template.sendBody("direct:toProducer", body2);
@@ -71,28 +71,28 @@ public class XmppRouteChatTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:toConsumer")
-                    .to(getConsumerUri());
+                        .to(getConsumerUri());
 
                 from("direct:toProducer")
-                    .to(getProducerUri());
+                        .to(getProducerUri());
 
                 from(getConsumerUri())
-                    .to("mock:out1");
+                        .to("mock:out1");
 
                 from(getProducerUri())
-                    .to("mock:out2");
+                        .to("mock:out2");
             }
         };
     }
 
     protected String getProducerUri() {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-producer@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
+               + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-producer@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
-    
+
     protected String getConsumerUri() {
         return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-consumer@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
+               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-consumer@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 
     @Override

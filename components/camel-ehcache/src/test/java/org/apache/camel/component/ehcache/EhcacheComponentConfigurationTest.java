@@ -45,17 +45,16 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setKeyType("java.lang.String");
         component.getConfiguration().setValueType("java.lang.String");
         component.getConfiguration().setCacheManager(
-            CacheManagerBuilder.newCacheManagerBuilder()
-                .withCache(
-                    "myCache",
-                    CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                        String.class,
-                        String.class,
-                        ResourcePoolsBuilder.newResourcePoolsBuilder()
-                            .heap(100, EntryUnit.ENTRIES)
-                            .offheap(1, MemoryUnit.MB))
-                ).build(true)
-        );
+                CacheManagerBuilder.newCacheManagerBuilder()
+                        .withCache(
+                                "myCache",
+                                CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                        String.class,
+                                        String.class,
+                                        ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                                .heap(100, EntryUnit.ENTRIES)
+                                                .offheap(1, MemoryUnit.MB)))
+                        .build(true));
 
         return component;
     }
@@ -67,11 +66,10 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     @Test
     void testCacheManager() throws Exception {
         assertEquals(
-            context().getRegistry().lookupByNameAndType("ehcache", EhcacheComponent.class).getCacheManager(),
-            endpoint.getManager().getCacheManager()
-        );
+                context().getRegistry().lookupByNameAndType("ehcache", EhcacheComponent.class).getCacheManager(),
+                endpoint.getManager().getCacheManager());
 
-        Cache<String, String> cache =  endpoint.getManager().getCache("myCache", String.class, String.class);
+        Cache<String, String> cache = endpoint.getManager().getCache("myCache", String.class, String.class);
         ResourcePools pools = cache.getRuntimeConfiguration().getResourcePools();
 
         SizedResourcePool h = pools.getPoolForResource(ResourceType.Core.HEAP);
@@ -94,7 +92,7 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:ehcache")
-                    .to(endpoint);
+                        .to(endpoint);
             }
         };
     }

@@ -46,8 +46,8 @@ public class FreemarkerBodyAsDomainObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("freemarker:org/apache/camel/component/freemarker/BodyAsDomainObject.ftl")
-                    .to("mock:result");
+                        .to("freemarker:org/apache/camel/component/freemarker/BodyAsDomainObject.ftl")
+                        .to("mock:result");
             }
         };
     }
@@ -75,11 +75,11 @@ public class FreemarkerBodyAsDomainObjectTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "MyPerson{"
-                + "givenName='"
-                + givenName + '\''
-                + ", familyName='"
-                + familyName + '\''
-                + '}';
+                   + "givenName='"
+                   + givenName + '\''
+                   + ", familyName='"
+                   + familyName + '\''
+                   + '}';
         }
     }
 

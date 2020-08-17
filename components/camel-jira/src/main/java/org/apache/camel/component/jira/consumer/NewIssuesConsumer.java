@@ -59,7 +59,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         if (latestIssueId > -1) {
             List<Issue> newIssues = getNewIssues();
             // In the end, we want only *new* issues oldest to newest.
-            for (int i = newIssues.size() - 1; i > -1; i--)  {
+            for (int i = newIssues.size() - 1; i > -1; i--) {
                 Issue newIssue = newIssues.get(i);
                 Exchange e = getEndpoint().createExchange();
                 e.getIn().setBody(newIssue);

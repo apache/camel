@@ -31,7 +31,8 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
 
     @Test
     public void testTransferException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/hello",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/hello",
                 new ByteArrayInputStream("".getBytes()), "text/plain");
         WebResponse response = query(req, false);
 
@@ -50,7 +51,7 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
             @Override
             public void configure() throws Exception {
                 from("servlet:hello?transferException=true")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

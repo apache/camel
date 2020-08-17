@@ -29,9 +29,9 @@ public class SqlProducerInQueryEndpointTest extends SqlProducerInTest {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql:select * from projects where project in (:#in:names) order by id")
-                    .to("log:query")
-                    .to("mock:query");
+                        .to("sql:select * from projects where project in (:#in:names) order by id")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

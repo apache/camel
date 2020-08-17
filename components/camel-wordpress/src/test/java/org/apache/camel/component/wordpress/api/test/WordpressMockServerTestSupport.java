@@ -58,7 +58,8 @@ public abstract class WordpressMockServerTestSupport {
         serviceProvider = WordpressServiceProvider.getInstance();
         serviceProvider.init(getServerBaseUrl());
         // @formatter:on
-        LOGGER.info("Local server up and running on address {} and port {}", localServer.getInetAddress(), localServer.getLocalPort());
+        LOGGER.info("Local server up and running on address {} and port {}", localServer.getInetAddress(),
+                localServer.getLocalPort());
 
     }
 
@@ -82,10 +83,12 @@ public abstract class WordpressMockServerTestSupport {
         usersSingleUpdateRequestHandlers.put("DELETE", "/data/users/delete.json");
 
         // @formatter:off
-        return ServerBootstrap.bootstrap().setListenerPort(port).registerHandler("/wp/v2/posts", new WordpressServerHttpRequestHandler(postsListCreateRequestHandlers))
-            .registerHandler("/wp/v2/posts/*", new WordpressServerHttpRequestHandler(postsSingleUpdateRequestHandlers))
-            .registerHandler("/wp/v2/users", new WordpressServerHttpRequestHandler(usersListCreateRequestHandlers))
-            .registerHandler("/wp/v2/users/*", new WordpressServerHttpRequestHandler(usersSingleUpdateRequestHandlers)).create();
+        return ServerBootstrap.bootstrap().setListenerPort(port)
+                .registerHandler("/wp/v2/posts", new WordpressServerHttpRequestHandler(postsListCreateRequestHandlers))
+                .registerHandler("/wp/v2/posts/*", new WordpressServerHttpRequestHandler(postsSingleUpdateRequestHandlers))
+                .registerHandler("/wp/v2/users", new WordpressServerHttpRequestHandler(usersListCreateRequestHandlers))
+                .registerHandler("/wp/v2/users/*", new WordpressServerHttpRequestHandler(usersSingleUpdateRequestHandlers))
+                .create();
         // @formatter:on
     }
 

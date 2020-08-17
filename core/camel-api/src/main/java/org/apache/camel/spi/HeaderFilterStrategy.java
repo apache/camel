@@ -27,38 +27,35 @@ public interface HeaderFilterStrategy {
      * The direction is either <tt>IN</tt> or <tt>OUT</tt>.
      */
     enum Direction {
-        IN, OUT
+        IN,
+        OUT
     }
 
     /**
-     * Applies filtering logic to Camel Message header that is
-     * going to be copied to target message such as CXF and JMS message.
+     * Applies filtering logic to Camel Message header that is going to be copied to target message such as CXF and JMS
+     * message.
      * <p/>
-     * It returns <tt>true</tt> if the filtering logic return a match.
-     * Otherwise, it returns <tt>false</tt>.
-     * A match means the header should be excluded.
+     * It returns <tt>true</tt> if the filtering logic return a match. Otherwise, it returns <tt>false</tt>. A match
+     * means the header should be excluded.
      *
-     * @param headerName  the header name
-     * @param headerValue the header value
-     * @param exchange    the context to perform filtering
-     * @return <tt>true</tt> if this header should be filtered out.
+     * @param  headerName  the header name
+     * @param  headerValue the header value
+     * @param  exchange    the context to perform filtering
+     * @return             <tt>true</tt> if this header should be filtered out.
      */
     boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange);
 
-
     /**
-     * Applies filtering logic to an external message header such
-     * as CXF and JMS message that is going to be copied to Camel
-     * message header.
+     * Applies filtering logic to an external message header such as CXF and JMS message that is going to be copied to
+     * Camel message header.
      * <p/>
-     * It returns <tt>true</tt> if the filtering logic return a match.
-     * Otherwise, it returns <tt>false</tt>.
-     * A match means the header should be excluded.
+     * It returns <tt>true</tt> if the filtering logic return a match. Otherwise, it returns <tt>false</tt>. A match
+     * means the header should be excluded.
      *
-     * @param headerName  the header name
-     * @param headerValue the header value
-     * @param exchange    the context to perform filtering
-     * @return <tt>true</tt> if this header should be filtered out.
+     * @param  headerName  the header name
+     * @param  headerValue the header value
+     * @param  exchange    the context to perform filtering
+     * @return             <tt>true</tt> if this header should be filtered out.
      */
     boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange);
 

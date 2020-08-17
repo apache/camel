@@ -44,8 +44,8 @@ public class VertxHttpTimeoutTest extends VertxHttpTestSupport {
             @Override
             public void configure() throws Exception {
                 from(getTestServerUri())
-                    .delay(50)
-                    .setBody(constant("Hello World"));
+                        .delay(50)
+                        .setBody(constant("Hello World"));
             }
         };
     }

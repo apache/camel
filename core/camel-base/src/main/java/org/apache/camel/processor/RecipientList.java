@@ -43,10 +43,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Implements a dynamic <a
- * href="http://camel.apache.org/recipient-list.html">Recipient List</a>
- * pattern where the list of actual endpoints to send a message exchange to are
- * dependent on some dynamic expression.
+ * Implements a dynamic <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> pattern where the list
+ * of actual endpoints to send a message exchange to are dependent on some dynamic expression.
  */
 public class RecipientList extends AsyncProcessorSupport implements IdAware, RouteIdAware {
 
@@ -186,7 +184,8 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
             iter = ObjectHelper.createIterator(recipientList, delimiter);
         }
 
-        RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), null, producerCache, iter, getAggregationStrategy(),
+        RecipientListProcessor rlp = new RecipientListProcessor(
+                exchange.getContext(), null, producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
                 isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
                 isStopOnAggregateException());
@@ -226,7 +225,8 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         }
         if (timeout > 0) {
             // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
-            aggregateExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
+            aggregateExecutorService
+                    = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
         }
         ServiceHelper.startService(aggregationStrategy, producerCache);
     }
@@ -259,15 +259,15 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     public boolean isStreaming() {
         return streaming;
     }
-    
+
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
     }
- 
+
     public boolean isIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
-    
+
     public void setIgnoreInvalidEndpoints(boolean ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }

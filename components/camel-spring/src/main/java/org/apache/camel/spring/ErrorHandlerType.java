@@ -33,7 +33,10 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 @XmlEnum(String.class)
 public enum ErrorHandlerType {
 
-    DefaultErrorHandler, DeadLetterChannel, NoErrorHandler, TransactionErrorHandler;
+    DefaultErrorHandler,
+    DeadLetterChannel,
+    NoErrorHandler,
+    TransactionErrorHandler;
 
     /**
      * Get the type as class.

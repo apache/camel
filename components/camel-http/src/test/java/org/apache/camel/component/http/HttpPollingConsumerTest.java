@@ -43,13 +43,10 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
         localServer.start();
 
         endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
@@ -68,7 +65,8 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     @Test
     public void basicAuthenticationShouldSuccess() throws Exception {
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
-            + password, String.class);
+                                           + password,
+                String.class);
         assertEquals(getExpectedContent(), body);
 
     }
@@ -77,7 +75,8 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
 
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
-                + password + "&authenticationPreemptive=true", String.class);
+                                           + password + "&authenticationPreemptive=true",
+                String.class);
         assertEquals(getExpectedContent(), body);
     }
 

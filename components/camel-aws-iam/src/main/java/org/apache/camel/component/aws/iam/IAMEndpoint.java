@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS IAM instances.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "aws-iam", title = "AWS Identity and Access Management (IAM)", syntax = "aws-iam:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "2.23.0", scheme = "aws-iam", title = "AWS Identity and Access Management (IAM)",
+             syntax = "aws-iam:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class IAMEndpoint extends ScheduledPollEndpoint {
 
     private AmazonIdentityManagement iamClient;
@@ -101,7 +102,8 @@ public class IAMEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonIdentityManagementClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonIdentityManagementClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonIdentityManagementClientBuilder.standard().withCredentials(credentialsProvider);
             }

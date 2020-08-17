@@ -41,6 +41,7 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 return expr.evaluate(exchange, type);
             }
+
             @Override
             public String toString() {
                 return definition.getExpression();
@@ -56,6 +57,7 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
             public boolean matches(Exchange exchange) {
                 return pred.matches(exchange);
             }
+
             @Override
             public String toString() {
                 return definition.getExpression();

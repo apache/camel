@@ -17,5 +17,6 @@
 package org.apache.camel.component.drill;
 
 public enum DrillConnectionMode {
-    ZK, DRILLBIT
+    ZK,
+    DRILLBIT
 }

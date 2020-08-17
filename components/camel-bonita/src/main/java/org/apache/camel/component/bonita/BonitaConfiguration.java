@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class BonitaConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private BonitaOperation operation;
     @UriParam(defaultValue = "localhost")
     private String hostname = "localhost";

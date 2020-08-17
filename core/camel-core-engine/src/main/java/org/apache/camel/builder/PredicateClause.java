@@ -54,8 +54,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     // *******************************
 
     /**
-     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In
-     * Message. <blockquote>
+     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Message. <blockquote>
      * 
      * <pre>
      * {@code
@@ -79,8 +78,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     // *******************************
 
     /**
-     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In
-     * Body. <blockquote>
+     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Body. <blockquote>
      * 
      * <pre>
      * {@code
@@ -100,8 +98,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     }
 
     /**
-     * Define a {@link org.apache.camel.Predicate} which targets the typed
-     * Exchange In Body. <blockquote>
+     * Define a {@link org.apache.camel.Predicate} which targets the typed Exchange In Body. <blockquote>
      * 
      * <pre>
      * {@code
@@ -121,8 +118,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     }
 
     /**
-     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In
-     * Body and its Headers. <blockquote>
+     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Body and its Headers. <blockquote>
      * 
      * <pre>
      * {@code
@@ -142,8 +138,8 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     }
 
     /**
-     * Define a {@link org.apache.camel.Predicate} which targets the typed
-     * Exchange In Body and its Headers. <blockquote>
+     * Define a {@link org.apache.camel.Predicate} which targets the typed Exchange In Body and its Headers.
+     * <blockquote>
      * 
      * <pre>
      * {@code

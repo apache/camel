@@ -38,7 +38,8 @@ public class PubNubPublishTest extends PubNubTestBase {
 
     @Test
     public void testPubNub() throws Exception {
-        stubFor(post(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0")).willReturn(aResponse().withStatus(200).withBody("[1,\"Sent\",\"14598111595318003\"]")));
+        stubFor(post(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0"))
+                .willReturn(aResponse().withStatus(200).withBody("[1,\"Sent\",\"14598111595318003\"]")));
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
         template.sendBody("direct:publish", new Hello("Hi"));
@@ -48,13 +49,13 @@ public class PubNubPublishTest extends PubNubTestBase {
     @Test
     public void testPublishEmptyBody() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:publish", null));
+                () -> template.sendBody("direct:publish", null));
     }
 
     @Test
     public void testFireWithOperationHeader() throws Exception {
         stubFor(get(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0/%22Hi%22"))
-            .willReturn(aResponse().withBody("[1,\"Sent\",\"14598111595318003\"]")));
+                .willReturn(aResponse().withBody("[1,\"Sent\",\"14598111595318003\"]")));
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
 

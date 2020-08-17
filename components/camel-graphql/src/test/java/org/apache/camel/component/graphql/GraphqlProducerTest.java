@@ -30,10 +30,10 @@ public class GraphqlProducerTest {
         String body = GraphqlProducer.buildRequestBody(query, null, null);
 
         String expectedBody = "{"
-            + "\"query\":\"queryText\","
-            + "\"operationName\":null,"
-            + "\"variables\":{}"
-            + "}";
+                              + "\"query\":\"queryText\","
+                              + "\"operationName\":null,"
+                              + "\"variables\":{}"
+                              + "}";
         assertEquals(expectedBody, body);
     }
 
@@ -48,10 +48,10 @@ public class GraphqlProducerTest {
         String body = GraphqlProducer.buildRequestBody(query, operationName, variables);
 
         String expectedBody = "{"
-            + "\"query\":\"queryText\","
-            + "\"operationName\":\"queryName\","
-            + "\"variables\":{\"key1\":\"value1\",\"key2\":\"value2\"}"
-            + "}";
+                              + "\"query\":\"queryText\","
+                              + "\"operationName\":\"queryName\","
+                              + "\"variables\":{\"key1\":\"value1\",\"key2\":\"value2\"}"
+                              + "}";
         assertEquals(expectedBody, body);
     }
 

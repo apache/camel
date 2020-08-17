@@ -39,8 +39,9 @@ public class SimpleTryCatchFinallyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().to("mock:try").throwException(new IllegalArgumentException("Damn")).doCatch(IllegalArgumentException.class).to("mock:catch")
-                    .doFinally().to("mock:finally").end().to("mock:result");
+                from("direct:start").doTry().to("mock:try").throwException(new IllegalArgumentException("Damn"))
+                        .doCatch(IllegalArgumentException.class).to("mock:catch")
+                        .doFinally().to("mock:finally").end().to("mock:result");
             }
         };
     }

@@ -55,7 +55,7 @@ public class SplitterPojoTest extends ContextTestSupport {
 
     @Test
     public void testSplitMessageWithPojoBean() throws Exception {
-        String users[] = {"James", "Jonathan", "Hadrian", "Claus", "Willem"};
+        String users[] = { "James", "Jonathan", "Hadrian", "Claus", "Willem" };
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
         mock.expectedMessageCount(5);
@@ -74,14 +74,14 @@ public class SplitterPojoTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:body")
-                    // here we use a POJO bean mySplitterBean to do the split of
-                    // the payload
-                    .split().method("mySplitterBean", "splitBody").to("mock:result");
+                        // here we use a POJO bean mySplitterBean to do the split of
+                        // the payload
+                        .split().method("mySplitterBean", "splitBody").to("mock:result");
                 from("direct:message")
-                    // here we use a POJO bean mySplitterBean to do the split of
-                    // the message
-                    // with a certain header value
-                    .split().method("mySplitterBean", "splitMessage").to("mock:result");
+                        // here we use a POJO bean mySplitterBean to do the split of
+                        // the message
+                        // with a certain header value
+                        .split().method("mySplitterBean", "splitMessage").to("mock:result");
                 // END SNIPPET: e1
 
             }
@@ -92,11 +92,10 @@ public class SplitterPojoTest extends ContextTestSupport {
     public class MySplitterBean {
 
         /**
-         * The split body method returns something that is iteratable such as a
-         * java.util.List.
+         * The split body method returns something that is iteratable such as a java.util.List.
          *
-         * @param body the payload of the incoming message
-         * @return a list containing each part splitted
+         * @param  body the payload of the incoming message
+         * @return      a list containing each part splitted
          */
         public List<String> splitBody(String body) {
             // since this is based on an unit test you can of cause
@@ -113,12 +112,11 @@ public class SplitterPojoTest extends ContextTestSupport {
         }
 
         /**
-         * The split message method returns something that is iteratable such as
-         * a java.util.List.
+         * The split message method returns something that is iteratable such as a java.util.List.
          *
-         * @param header the header of the incoming message with the name user
-         * @param body the payload of the incoming message
-         * @return a list containing each part splitted
+         * @param  header the header of the incoming message with the name user
+         * @param  body   the payload of the incoming message
+         * @return        a list containing each part splitted
          */
         public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
             // we can leverage the Parameter Binding Annotations

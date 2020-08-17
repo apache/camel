@@ -96,15 +96,15 @@ public class SnsProducer extends DefaultProducer {
             // only put the message header which is not filtered into the message attribute
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 Object value = entry.getValue();
-                if (value instanceof String && !((String)value).isEmpty()) {
+                if (value instanceof String && !((String) value).isEmpty()) {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     mav.setDataType("String");
-                    mav.withStringValue((String)value);
+                    mav.withStringValue((String) value);
                     result.put(entry.getKey(), mav);
                 } else if (value instanceof ByteBuffer) {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     mav.setDataType("Binary");
-                    mav.withBinaryValue((ByteBuffer)value);
+                    mav.withBinaryValue((ByteBuffer) value);
                     result.put(entry.getKey(), mav);
                 } else if (value instanceof Date) {
                     MessageAttributeValue mav = new MessageAttributeValue();
@@ -121,7 +121,8 @@ public class SnsProducer extends DefaultProducer {
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
-                    LOG.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());
+                    LOG.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(),
+                            entry.getValue());
                 }
             }
         }

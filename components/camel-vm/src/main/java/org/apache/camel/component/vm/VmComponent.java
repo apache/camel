@@ -29,10 +29,11 @@ import org.apache.camel.component.seda.QueueReference;
 import org.apache.camel.component.seda.SedaComponent;
 
 /**
- * The <a href="http://camel.apache.org/vm.html">VM component</a> is for asynchronous SEDA exchanges on a {@link BlockingQueue} 
- * within the classloader tree containing the camel-core.jar.
+ * The <a href="http://camel.apache.org/vm.html">VM component</a> is for asynchronous SEDA exchanges on a
+ * {@link BlockingQueue} within the classloader tree containing the camel-core.jar.
  *
- * i.e. to handle communicating across CamelContext instances and possibly across web application contexts, providing that camel-core.jar is on the system classpath.
+ * i.e. to handle communicating across CamelContext instances and possibly across web application contexts, providing
+ * that camel-core.jar is on the system classpath.
  */
 @org.apache.camel.spi.annotations.Component("vm")
 public class VmComponent extends SedaComponent {
@@ -47,7 +48,7 @@ public class VmComponent extends SedaComponent {
     public Map<String, QueueReference> getQueues() {
         return QUEUES;
     }
-    
+
     @Override
     public QueueReference getQueueReference(String key) {
         return QUEUES.get(key);
@@ -82,12 +83,14 @@ public class VmComponent extends SedaComponent {
     }
 
     @Override
-    protected VmEndpoint createEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+    protected VmEndpoint createEndpoint(
+            String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
         return new VmEndpoint(endpointUri, component, queueFactory, concurrentConsumers);
     }
 
     @Override
-    protected VmEndpoint createEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+    protected VmEndpoint createEndpoint(
+            String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         return new VmEndpoint(endpointUri, component, queue, concurrentConsumers);
     }
 }

@@ -44,18 +44,19 @@ public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessag
             public void configure() {
                 from(routerEndpointURI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        
+
                         exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, getServiceAddress());
-                        
+
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> elements = payload.getBodySources();
                         assertNotNull(elements, "We should get the elements here");
                         assertEquals(elements.size(), 1, "Get the wrong elements size");
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/", "Get the wrong namespace URI");
+                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/",
+                                "Get the wrong namespace URI");
                     }
                 })
-                .to(serviceEndpointURI);
+                        .to(serviceEndpointURI);
             }
         };
     }

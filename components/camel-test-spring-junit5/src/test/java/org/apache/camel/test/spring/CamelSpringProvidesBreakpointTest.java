@@ -42,17 +42,17 @@ public class CamelSpringProvidesBreakpointTest
         assertNotNull(camelContext.getDebugger());
 
         start.sendBody("David");
-        
+
         assertNotNull(camelContext.getDebugger());
         assertNotNull(camelContext.getDebugger().getBreakpoints());
         assertEquals(1, camelContext.getDebugger().getBreakpoints().size());
-        
+
         assertTrue(camelContext.getDebugger().getBreakpoints().get(0) instanceof TestBreakpoint);
         assertTrue(((TestBreakpoint) camelContext.getDebugger().getBreakpoints().get(0)).isBreakpointHit());
     }
 
     private static final class TestBreakpoint extends BreakpointSupport {
-        
+
         private boolean breakpointHit;
 
         @Override

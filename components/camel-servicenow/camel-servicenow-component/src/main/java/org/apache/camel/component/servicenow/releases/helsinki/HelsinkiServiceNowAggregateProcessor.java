@@ -53,24 +53,24 @@ class HelsinkiServiceNowAggregateProcessor extends AbstractServiceNowProcessor {
         final Class<?> responseModel = getResponseModel(in, tableName);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("stats")
-            .path(tableName)
-            .query(ServiceNowParams.SYSPARM_QUERY, in)
-            .query(ServiceNowParams.SYSPARM_AVG_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_COUNT, in)
-            .query(ServiceNowParams.SYSPARM_MIN_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_QUERY, in)
-            .query(ServiceNowParams.SYSPARM_MAX_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_SUM_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_GROUP_BY, in)
-            .query(ServiceNowParams.SYSPARM_ORDER_BY, in)
-            .query(ServiceNowParams.SYSPARM_HAVING, in)
-            .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-            .query(responseModel)
-            .invoke(HttpMethod.GET);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("stats")
+                .path(tableName)
+                .query(ServiceNowParams.SYSPARM_QUERY, in)
+                .query(ServiceNowParams.SYSPARM_AVG_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_COUNT, in)
+                .query(ServiceNowParams.SYSPARM_MIN_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_QUERY, in)
+                .query(ServiceNowParams.SYSPARM_MAX_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_SUM_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_GROUP_BY, in)
+                .query(ServiceNowParams.SYSPARM_ORDER_BY, in)
+                .query(ServiceNowParams.SYSPARM_HAVING, in)
+                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                .query(responseModel)
+                .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
     }

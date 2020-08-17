@@ -24,8 +24,8 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 /**
- * A Default Service Endpoint Interface (aka serviceClass) to be used if neither explicit 
- * serviceClass and WSDL is specified in a CXF endpoint
+ * A Default Service Endpoint Interface (aka serviceClass) to be used if neither explicit serviceClass and WSDL is
+ * specified in a CXF endpoint
  */
 @SOAPBinding(parameterStyle = ParameterStyle.BARE)
 @WebService(targetNamespace = "http://camel.apache.org/cxf/jaxws/dispatch", name = "DefaultSEI")
@@ -33,9 +33,10 @@ public interface DefaultSEI {
 
     @Oneway
     @WebMethod(operationName = "InvokeOneWay")
-    void invokeOneWay(@WebParam(partName = "InvokeOneWayRequest",  mode = WebParam.Mode.IN)String in);
-    
+    void invokeOneWay(@WebParam(partName = "InvokeOneWayRequest", mode = WebParam.Mode.IN) String in);
+
     @WebMethod(operationName = "Invoke")
-    void invoke(@WebParam(partName = "InvokeRequest", mode = WebParam.Mode.IN)String in,
-                   @WebParam(partName = "InvokeResponse",  mode = WebParam.Mode.OUT)String out);
+    void invoke(
+            @WebParam(partName = "InvokeRequest", mode = WebParam.Mode.IN) String in,
+            @WebParam(partName = "InvokeResponse", mode = WebParam.Mode.OUT) String out);
 }

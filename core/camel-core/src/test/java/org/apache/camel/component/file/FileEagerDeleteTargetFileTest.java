@@ -38,7 +38,9 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 
     @Test
     public void testEagerDeleteTargetFileTrue() throws Exception {
-        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=true", "Bye World", Exchange.FILE_NAME, "world.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=true", "Bye World",
+                Exchange.FILE_NAME, "world.txt");
 
         File file = new File("target/data/eagerdelete/world.txt");
         assertTrue(file.exists(), "File should exist");
@@ -47,7 +49,9 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 
     @Test
     public void testEagerDeleteTargetFileFalse() throws Exception {
-        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=false", "Bye World", Exchange.FILE_NAME, "world.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=false", "Bye World",
+                Exchange.FILE_NAME, "world.txt");
 
         File file = new File("target/data/eagerdelete/world.txt");
         assertTrue(file.exists(), "File should exist");
@@ -56,7 +60,8 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 
     @Test
     public void testEagerDeleteTargetFileDefault() throws Exception {
-        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}", "Bye World", Exchange.FILE_NAME, "world.txt");
+        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}", "Bye World",
+                Exchange.FILE_NAME, "world.txt");
 
         File file = new File("target/data/eagerdelete/world.txt");
         assertTrue(file.exists(), "File should exist");

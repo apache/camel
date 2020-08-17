@@ -33,7 +33,7 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
 
     private ASN1DataFormat asn1;
     private String fileName = "src/test/resources/asn1_data/SMS_SINGLE.tt";
-    
+
     private void baseASN1DataFormatWithStreamTest(String mockEnpointName, String directEndpointName) throws Exception {
         getMockEndpoint(mockEnpointName).expectedMessageCount(1);
 
@@ -57,7 +57,7 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
     void testUnmarshalReturnOutputStream() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:unmarshal", "direct:unmarshal");
     }
-    
+
     @Test
     void testUnmarshalReturnOutputStreamDsl() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:unmarshaldsl", "direct:unmarshaldsl");
@@ -67,7 +67,7 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
     void testUnmarshalMarshalReturnOutputStream() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:marshal", "direct:unmarshalthenmarshal");
     }
-    
+
     @Test
     void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:marshaldsl", "direct:unmarshalthenmarshaldsl");
@@ -83,7 +83,7 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
 
                 from("direct:unmarshal").unmarshal(asn1).to("mock:unmarshal");
                 from("direct:unmarshalthenmarshal").unmarshal(asn1).marshal(asn1).to("mock:marshal");
-                
+
                 from("direct:unmarshaldsl").unmarshal().asn1().to("mock:unmarshaldsl");
                 from("direct:unmarshalthenmarshaldsl").unmarshal().asn1().marshal().asn1().to("mock:marshaldsl");
             }

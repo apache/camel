@@ -43,7 +43,7 @@ public final class SantuarioUtil {
                         System.setProperty(lineBreakPropName, "true");
                         return false;
                     }
-                    return true; 
+                    return true;
                 }
             });
         } catch (Throwable t) {
@@ -65,7 +65,7 @@ public final class SantuarioUtil {
             }
         }
     }
-    
+
     public static void addSantuarioJSR105Provider() {
         AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
             public Boolean run() {
@@ -79,5 +79,5 @@ public final class SantuarioUtil {
             }
         });
     }
-    
+
 }

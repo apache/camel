@@ -42,8 +42,10 @@ public class PropertiesComponentPropertiesSourceTest {
     @Test
     public void testOrderedPropertiesSources() {
         CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource(Ordered.HIGHEST, "ps1", "shared", "v1", "my-key-1", "my-val-1"));
-        context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource(Ordered.LOWEST, "ps2", "shared", "v2", "my-key-2", "my-val-2"));
+        context.getRegistry().bind("my-ps-1",
+                new PropertiesPropertiesSource(Ordered.HIGHEST, "ps1", "shared", "v1", "my-key-1", "my-val-1"));
+        context.getRegistry().bind("my-ps-2",
+                new PropertiesPropertiesSource(Ordered.LOWEST, "ps2", "shared", "v2", "my-key-2", "my-val-2"));
 
         Properties properties = context.getPropertiesComponent().loadProperties();
 
@@ -82,11 +84,13 @@ public class PropertiesComponentPropertiesSourceTest {
         context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource("ps1", "my-key-1", "my-val-1"));
         context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource("ps2", "my-key-2", "my-val-2"));
 
-        assertThatThrownBy(() -> context.resolvePropertyPlaceholders("{{my-key-1}}")).isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Property with key [my-key-1] not found in properties from text: {{my-key-1}}");
+        assertThatThrownBy(() -> context.resolvePropertyPlaceholders("{{my-key-1}}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Property with key [my-key-1] not found in properties from text: {{my-key-1}}");
 
-        assertThatThrownBy(() -> context.resolvePropertyPlaceholders("{{my-key-2}}")).isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Property with key [my-key-2] not found in properties from text: {{my-key-2}}");
+        assertThatThrownBy(() -> context.resolvePropertyPlaceholders("{{my-key-2}}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Property with key [my-key-2] not found in properties from text: {{my-key-2}}");
     }
 
     private static final class PropertiesPropertiesSource extends Properties implements LoadablePropertiesSource, Ordered {

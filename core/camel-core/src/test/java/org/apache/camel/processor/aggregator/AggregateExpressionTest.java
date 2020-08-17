@@ -46,7 +46,8 @@ public class AggregateExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionFromBatchConsumer().to("mock:result");
+                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionFromBatchConsumer()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

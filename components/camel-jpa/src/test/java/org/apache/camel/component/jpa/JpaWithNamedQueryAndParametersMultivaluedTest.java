@@ -19,7 +19,7 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.examples.Customer;
 
 public class JpaWithNamedQueryAndParametersMultivaluedTest extends JpaWithNamedQueryAndParametersTest {
-    
+
     protected String getEndpointUri() {
         return "jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName&parameters.custName=Willem";
     }

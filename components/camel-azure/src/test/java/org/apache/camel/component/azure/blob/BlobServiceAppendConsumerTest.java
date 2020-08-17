@@ -38,20 +38,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class BlobServiceAppendConsumerTest extends CamelTestSupport {
     @EndpointInject("direct:start")
     ProducerTemplate templateStart;
-    
+
     @Test
     @Disabled
     public void testGetAppendBlob() throws Exception {
         templateStart.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Append Blob"));
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        
+
         assertMockEndpointsSatisfied();
         File f = mock.getExchanges().get(0).getIn().getBody(File.class);
         assertNotNull(f, "File must be set");
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOHelper.copy(new FileInputStream(f), bos);
             String data = bos.toString("UTF-8");
             assertEquals("Append Blob", data);
@@ -66,22 +66,23 @@ public class BlobServiceAppendConsumerTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind("creds",
-                      new StorageCredentialsAccountAndKey("camelazure",
-                                                          "base64EncodedValue"));
+                new StorageCredentialsAccountAndKey(
+                        "camelazure",
+                        "base64EncodedValue"));
         return context;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("azure-blob://camelazure/container1/blobAppend?credentials=#creds&operation=updateAppendBlob");
-                
+                        .to("azure-blob://camelazure/container1/blobAppend?credentials=#creds&operation=updateAppendBlob");
+
                 from("azure-blob://camelazure/container1/blobAppend?credentials=#creds&blobType=appendblob"
-                    + "&fileDir=" + System.getProperty("java.io.tmpdir"))
-                    .to("mock:result");
+                     + "&fileDir=" + System.getProperty("java.io.tmpdir"))
+                             .to("mock:result");
             }
         };
     }

@@ -63,7 +63,7 @@ public class TestPojoView {
             return false;
         }
 
-        TestPojoView that = (TestPojoView)o;
+        TestPojoView that = (TestPojoView) o;
 
         if (age != that.age) {
             return false;

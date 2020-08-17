@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Test to duplicate issues with Camel's exec command in Java 8 on Unix
- * This issue appears to be caused by a race condition, so this test does not always fail
+ * Test to duplicate issues with Camel's exec command in Java 8 on Unix This issue appears to be caused by a race
+ * condition, so this test does not always fail
  */
 public class ExecJava8IssueTest {
 
@@ -105,11 +105,11 @@ public class ExecJava8IssueTest {
      * Creates a script which will append " world" to a file
      */
     private void writeScript(File script) throws IOException {
-        try (FileWriter fw = new FileWriter(script); 
-            PrintWriter pw = new PrintWriter(fw);) {
+        try (FileWriter fw = new FileWriter(script);
+             PrintWriter pw = new PrintWriter(fw);) {
             String s = "echo \" world\" >> $1";
             pw.print(s);
-        } 
+        }
     }
 
     /**

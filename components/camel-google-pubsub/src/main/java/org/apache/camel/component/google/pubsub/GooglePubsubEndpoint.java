@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Built on top of the Google Cloud Pub/Sub libraries.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub", syntax = "google-pubsub:projectId:destinationName", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",
+             syntax = "google-pubsub:projectId:destinationName", category = { Category.CLOUD, Category.MESSAGING })
 public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     private Logger log;
@@ -54,23 +55,27 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
     private String loggerId;
 
-    @UriParam(name = "concurrentConsumers", description = "The number of parallel streams consuming from the subscription", defaultValue = "1")
+    @UriParam(name = "concurrentConsumers", description = "The number of parallel streams consuming from the subscription",
+              defaultValue = "1")
     private Integer concurrentConsumers = 1;
 
-    @UriParam(name = "maxMessagesPerPoll", description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
+    @UriParam(name = "maxMessagesPerPoll",
+              description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
     private Integer maxMessagesPerPoll = 1;
 
     @UriParam(name = "synchronousPull", description = "Synchronously pull batches of messages", defaultValue = "false")
     private boolean synchronousPull;
 
-    @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE", description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
+    @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE",
+              description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
 
     public GooglePubsubEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
 
         if (!(component instanceof GooglePubsubComponent)) {
-            throw new IllegalArgumentException("The component provided is not GooglePubsubComponent : " + component.getClass().getName());
+            throw new IllegalArgumentException(
+                    "The component provided is not GooglePubsubComponent : " + component.getClass().getName());
         }
     }
 
@@ -110,7 +115,8 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "GooglePubsubConsumer[" + getDestinationName() + "]", concurrentConsumers);
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "GooglePubsubConsumer[" + getDestinationName() + "]", concurrentConsumers);
     }
 
     @Override

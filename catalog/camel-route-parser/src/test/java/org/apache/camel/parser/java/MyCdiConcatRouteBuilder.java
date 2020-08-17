@@ -42,8 +42,8 @@ public class MyCdiConcatRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         from(inputEndpoint)
-            .log("I was here")
-            .to(loga)
-            .to(mynetty);
+                .log("I was here")
+                .to(loga)
+                .to(mynetty);
     }
 }

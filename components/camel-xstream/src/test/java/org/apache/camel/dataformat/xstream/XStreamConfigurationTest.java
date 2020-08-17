@@ -62,9 +62,10 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setName("Tiger");
         order.setAmount(1);
         order.setPrice(99.95);
-        
-        String ordereString = "<?xml version='1.0' encoding='UTF-8'?>" + "<purchase-order name=\"Tiger\" price=\"99.95\" amount=\"1.0\"/>";
-        mock.expectedBodiesReceived(new Object[] {ordereString, order});
+
+        String ordereString
+                = "<?xml version='1.0' encoding='UTF-8'?>" + "<purchase-order name=\"Tiger\" price=\"99.95\" amount=\"1.0\"/>";
+        mock.expectedBodiesReceived(new Object[] { ordereString, order });
 
         template.sendBody("direct:marshal", order);
         template.sendBody("direct:unmarshal", ordereString);
@@ -84,8 +85,9 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         history.setHistory(list);
 
         String ordereString = "<?xml version='1.0' encoding='UTF-8'?>" + "<org.apache.camel.dataformat.xstream.PurchaseHistory>"
-                + "<double>11.5</double><double>97.5</double>" + "</org.apache.camel.dataformat.xstream.PurchaseHistory>";
-        mock.expectedBodiesReceived(new Object[] {ordereString, history});
+                              + "<double>11.5</double><double>97.5</double>"
+                              + "</org.apache.camel.dataformat.xstream.PurchaseHistory>";
+        mock.expectedBodiesReceived(new Object[] { ordereString, history });
 
         template.sendBody("direct:marshal", history);
         template.sendBody("direct:unmarshal", ordereString);
@@ -102,16 +104,16 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setName("Tiger");
         order.setAmount(1);
         order.setPrice(99.95);
-        
+
         String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":99.95,\"@amount\":1}}";
-        mock.expectedBodiesReceived(new Object[] {ordereString, order});
+        mock.expectedBodiesReceived(new Object[] { ordereString, order });
 
         template.sendBody("direct:marshal-json", order);
         template.sendBody("direct:unmarshal-json", ordereString);
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testCustomXStreamDriverMarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -121,7 +123,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setName("Tiger");
         order.setAmount(1);
         order.setPrice(99.95);
-                
+
         template.sendBody("direct:myDriver", order);
         mock.assertIsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getBody(String.class);
@@ -167,9 +169,9 @@ public class XStreamConfigurationTest extends CamelTestSupport {
                 xstreamDefinition.setConverters(converters);
                 from("direct:marshal-json").marshal(xstreamDefinition).to("mock:result");
                 from("direct:unmarshal-json").unmarshal(xstreamDefinition).to("mock:result");
-                
-                org.apache.camel.dataformat.xstream.XStreamDataFormat xStreamDataFormat 
-                    = new org.apache.camel.dataformat.xstream.XStreamDataFormat();
+
+                org.apache.camel.dataformat.xstream.XStreamDataFormat xStreamDataFormat
+                        = new org.apache.camel.dataformat.xstream.XStreamDataFormat();
                 xStreamDataFormat.setXstreamDriver(new JsonHierarchicalStreamDriver());
                 xStreamDataFormat.setPermissions("+6org.apache.camel.dataformat.xstream.*");
 

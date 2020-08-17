@@ -148,7 +148,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private String getUnitTestName() throws MojoExecutionException {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
-        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "IntegrationTest";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
+               + "IntegrationTest";
     }
 
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
@@ -189,8 +190,10 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                         argType = getProjectClassLoader().loadClass(argWithTypes);
                     }
                 } catch (ClassNotFoundException e) {
-                    throw new MojoExecutionException(String.format("Error loading extra option [%s %s] : %s",
-                        argWithTypes, name, e.getMessage()), e);
+                    throw new MojoExecutionException(
+                            String.format("Error loading extra option [%s %s] : %s",
+                                    argWithTypes, name, e.getMessage()),
+                            e);
                 }
                 parameters.put(name, new ApiMethodArg(name, argType, typeArgs));
             }
@@ -211,13 +214,14 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private String getConfigName() throws MojoExecutionException {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
-        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
+               + "EndpointConfiguration";
     }
 
     private String getProxyClassWithCanonicalName(String proxyClass) {
         return proxyClass.replace("$", "");
     }
-    
+
     private VelocityContext getCommonContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
         VelocityContext context = new VelocityContext();
         context.put("models", models);
@@ -230,7 +234,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         ArgumentSubstitutionParser.Substitution[] subs = new ArgumentSubstitutionParser.Substitution[substitutions.length];
         for (int i = 0; i < substitutions.length; i++) {
             final Substitution substitution = substitutions[i];
-            subs[i] = new ArgumentSubstitutionParser.Substitution(substitution.getMethod(),
+            subs[i] = new ArgumentSubstitutionParser.Substitution(
+                    substitution.getMethod(),
                     substitution.getArgName(), substitution.getArgType(),
                     substitution.getReplacement(), substitution.isReplaceWithType());
         }
@@ -346,14 +351,15 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                             log.debug("Could not load " + argType + ", trying to load java.lang." + argType);
                         }
                         parameterizedType.append(
-                            getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
+                                getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
                     } catch (ClassNotFoundException e1) {
                         parameterizedType.append("?");
                         // if the length of the artType is 1, we think that it's variable type parameter (like T in List<T>)
                         // not perfect solution, but should work in most of the cases
                         if (argType.trim().length() > 1) {
                             log.warn("Ignoring type parameters <" + typeArgs + "> for argument " + argument.getName()
-                                    + ", unable to load parametric type argument " + argType, e1);
+                                     + ", unable to load parametric type argument " + argType,
+                                    e1);
                         }
                     }
                 }

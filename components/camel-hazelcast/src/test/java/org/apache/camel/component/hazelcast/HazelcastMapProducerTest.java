@@ -70,7 +70,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     @Test
     public void testWithInvalidOperation() {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:putInvalid", "my-foo"));
+                () -> template.sendBody("direct:putInvalid", "my-foo"));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         template.sendBodyAndHeaders("direct:put", "test", headers);
         verify(map).put("4711", "test", 1, TimeUnit.MINUTES);
     }
-    
+
     @Test
     public void testUpdate() {
         template.sendBodyAndHeader("direct:update", "my-fooo", HazelcastConstants.OBJECT_ID, "4711");
@@ -117,7 +117,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         verify(map).get("4711");
         assertEquals("my-foo", body);
     }
-    
+
     @Test
     public void testGetAllEmptySet() {
         Set<Object> l = new HashSet<>();
@@ -133,7 +133,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         assertTrue(body.contains("key2=value2"));
         assertTrue(body.contains("key3=value3"));
     }
-    
+
     @Test
     public void testGetAllOnlyOneKey() {
         Set<Object> l = new HashSet<>();
@@ -157,7 +157,8 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     public void testQuery() {
         String sql = "bar > 1000";
 
-        when(map.values(any(SqlPredicate.class))).thenReturn(Arrays.<Object>asList(new Dummy("beta", 2000), new Dummy("gamma", 3000)));
+        when(map.values(any(SqlPredicate.class)))
+                .thenReturn(Arrays.<Object> asList(new Dummy("beta", 2000), new Dummy("gamma", 3000)));
         template.sendBodyAndHeader("direct:queue", null, HazelcastConstants.QUERY, sql);
         verify(map).values(any(SqlPredicate.class));
 
@@ -166,10 +167,11 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         assertNotNull(b1);
         assertEquals(2, b1.size());
     }
-    
+
     @Test
     public void testEmptyQuery() {
-        when(map.values()).thenReturn(Arrays.<Object>asList(new Dummy("beta", 2000), new Dummy("gamma", 3000), new Dummy("delta", 4000)));
+        when(map.values()).thenReturn(
+                Arrays.<Object> asList(new Dummy("beta", 2000), new Dummy("gamma", 3000), new Dummy("delta", 4000)));
         template.sendBody("direct:queue", null);
         verify(map).values();
 
@@ -178,7 +180,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         assertNotNull(b1);
         assertEquals(3, b1.size());
     }
-    
+
     @Test
     public void testUpdateOldValue() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
@@ -189,7 +191,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         verify(map).replace("4711", "my-foo", "replaced");
         verify(map).unlock("4711");
     }
-    
+
     @Test
     public void testPutIfAbsent() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
@@ -197,7 +199,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
         verify(map).putIfAbsent("4711", "replaced");
     }
-    
+
     @Test
     public void testPutIfAbsentWithTtl() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
@@ -207,7 +209,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
         verify(map).putIfAbsent("4711", "replaced", new Long(1), TimeUnit.MINUTES);
     }
-    
+
     @Test
     public void testEvict() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
@@ -215,20 +217,20 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         template.sendBodyAndHeaders("direct:evict", "", headers);
         verify(map).evict("4711");
     }
-    
+
     @Test
     public void testEvictAll() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
         template.sendBodyAndHeaders("direct:evictAll", "", headers);
         verify(map).evictAll();
     }
-    
+
     @Test
     public void testClear() throws InterruptedException {
         template.sendBody("direct:clear", "test");
         verify(map).clear();
     }
-    
+
     @Test
     public void testContainsKey() {
         when(map.containsKey("testOk")).thenReturn(true);
@@ -242,7 +244,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         verify(map).containsKey("testKo");
         assertEquals(false, body);
     }
-    
+
     @Test
     public void testContainsValue() {
         when(map.containsValue("testOk")).thenReturn(true);
@@ -263,43 +265,55 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
             @Override
             public void configure() throws Exception {
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
                 from("direct:putIfAbsent").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT_IF_ABSENT))
-                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:update").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.UPDATE)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:update").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.UPDATE))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:getAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_ALL)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:getAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_ALL))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:queue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.QUERY)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:queue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.QUERY))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:evict").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:evict").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:evictAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT_ALL)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:evictAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT_ALL))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
                 from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_KEY))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:containsValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_VALUE))
+                from("direct:containsValue")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_VALUE))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:putWithOperationNumber").toF("hazelcast-%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastOperation.PUT);
+                from("direct:putWithOperationNumber").toF("hazelcast-%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX,
+                        HazelcastOperation.PUT);
                 from("direct:putWithOperationName").toF("hazelcast-%sfoo?operation=PUT", HazelcastConstants.MAP_PREFIX);
             }
         };

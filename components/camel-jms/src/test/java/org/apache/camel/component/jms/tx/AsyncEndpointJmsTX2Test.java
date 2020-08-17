@@ -32,7 +32,7 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
-    }    
+    }
 
     @Test
     public void testAsyncEndpointOK() throws Exception {
@@ -56,7 +56,7 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")
-                    .transacted()
+                        .transacted()
                         .to("mock:before")
                         .to("log:before")
                         .process(exchange -> {
@@ -75,8 +75,8 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
                         .to("mock:result");
 
                 from("direct:foo")
-                    .transacted()
-                    .to("async:bye:camel");
+                        .transacted()
+                        .to("async:bye:camel");
             }
         };
     }

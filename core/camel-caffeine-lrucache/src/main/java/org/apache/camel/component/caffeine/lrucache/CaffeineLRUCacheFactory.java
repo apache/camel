@@ -70,10 +70,9 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -83,10 +82,9 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -96,11 +94,11 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize, and will
+     * stop on eviction.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -110,25 +108,26 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize,load factor
+     * and ordering mode.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
-     * @param stopOnEviction   whether to stop service on eviction.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
+     * @param  stopOnEviction           whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
+                maximumCacheSize, stopOnEviction);
         return new CaffeineLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -138,11 +137,11 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -152,25 +151,26 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
-     * @param stopOnEviction   whether to stop service on eviction.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
+     * @param  stopOnEviction           whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUSoftCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUSoftCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
+                maximumCacheSize, stopOnEviction);
         return new CaffeineLRUSoftCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -180,11 +180,11 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -194,17 +194,18 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
-     * @param stopOnEviction   whether to stop service on eviction.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
+     * @param  stopOnEviction           whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUWeakCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUWeakCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
+                maximumCacheSize, stopOnEviction);
         return new CaffeineLRUWeakCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 

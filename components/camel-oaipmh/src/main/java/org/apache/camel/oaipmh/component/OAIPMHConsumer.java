@@ -27,11 +27,11 @@ import org.slf4j.LoggerFactory;
  * The OAIPMH consumer.
  */
 public class OAIPMHConsumer extends DefaultScheduledPollConsumer {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(OAIPMHConsumer.class);
-    
+
     private Harvester harvester;
-    
+
     public OAIPMHConsumer(OAIPMHEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.harvester = new Harvester(
@@ -47,11 +47,11 @@ public class OAIPMHConsumer extends DefaultScheduledPollConsumer {
             this.harvester.getHttpClient().setIgnoreSSLWarnings(true);
         }
     }
-    
+
     @Override
     protected int poll() throws Exception {
         this.harvester.asynHarvest();
         return 0;
     }
-    
+
 }

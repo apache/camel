@@ -51,7 +51,7 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
     @Test
     public void testFetcherWithPathSid() throws Exception {
         final Account result = requestBodyAndHeaders("direct://FETCHER", null,
-            headers("CamelTwilioPathSid", ((TwilioComponent) context().getComponent("twilio")).getAccountSid()));
+                headers("CamelTwilioPathSid", ((TwilioComponent) context().getComponent("twilio")).getAccountSid()));
 
         assertNotNull(result, "fetcher result not null");
         assertNotNull(result.getSid(), "fetcher result sid not null");
@@ -72,7 +72,7 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
     @Test
     public void testReaderWithStatusActive() throws Exception {
         final ResourceSet<Account> result = requestBodyAndHeaders("direct://READER", null,
-            headers("CamelTwilioStatus", "active"));
+                headers("CamelTwilioStatus", "active"));
 
         assertNotNull(result, "reader result not null");
         result.forEach(account -> {
@@ -93,11 +93,11 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
             public void configure() {
                 // test route for fetcher
                 from("direct://FETCHER")
-                    .to("twilio://" + PATH_PREFIX + "/fetch");
+                        .to("twilio://" + PATH_PREFIX + "/fetch");
 
                 // test route for reader
                 from("direct://READER")
-                    .to("twilio://" + PATH_PREFIX + "/read");
+                        .to("twilio://" + PATH_PREFIX + "/read");
 
             }
         };

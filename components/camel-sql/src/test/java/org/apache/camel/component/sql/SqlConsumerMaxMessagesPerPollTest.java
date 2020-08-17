@@ -40,9 +40,9 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY)
-            .addScript("sql/createAndPopulateDatabase4.sql")
-            .build();
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/createAndPopulateDatabase4.sql")
+                .build();
 
         super.setUp();
     }
@@ -97,8 +97,8 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects where processed = false order by id?maxMessagesPerPoll=2&initialDelay=0&delay=50")
-                    .to("mock:result")
-                    .to("sql:update projects set processed = true where id = :#id");
+                        .to("mock:result")
+                        .to("sql:update projects set processed = true where id = :#id");
             }
         };
     }

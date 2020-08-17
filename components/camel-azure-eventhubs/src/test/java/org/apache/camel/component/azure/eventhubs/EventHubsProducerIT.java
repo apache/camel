@@ -78,8 +78,9 @@ class EventHubsProducerIT extends CamelTestSupport {
         resultAsync.whenComplete((exchange, throwable) -> {
             // we sent our exchange, let's check it out
             final Boolean eventFlag = consumerAsyncClient.receiveFromPartition(firstPartition, EventPosition.earliest())
-                    .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition) && partitionEvent.getData().getBodyAsString()
-                            .contains(messageBody))
+                    .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
+                            && partitionEvent.getData().getBodyAsString()
+                                    .contains(messageBody))
                     .block();
 
             if (eventFlag == null) {

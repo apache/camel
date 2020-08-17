@@ -34,9 +34,9 @@ public class MainLogPlaceholderTest {
             @Override
             public void configure() throws Exception {
                 from("timer:tick?period=10")
-                    .log("{{message}}")
-                    .transform().constant("Hello {{message}}")
-                    .wireTap("{{tap}}");
+                        .log("{{message}}")
+                        .transform().constant("Hello {{message}}")
+                        .wireTap("{{tap}}");
             }
         });
         main.start();

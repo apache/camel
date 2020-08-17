@@ -47,9 +47,10 @@ public class ProcessorTransformer extends Transformer {
 
     /**
      * Perform data transformation with specified from/to type using Processor.
+     * 
      * @param message message to apply transformation
-     * @param from 'from' data type
-     * @param to 'to' data type
+     * @param from    'from' data type
+     * @param to      'to' data type
      */
     @Override
     public void transform(Message message, DataType from, DataType to) throws Exception {
@@ -64,14 +65,14 @@ public class ProcessorTransformer extends Transformer {
                 message.setBody(input);
             }
         }
-        
+
         LOG.debug("Sending to transform processor: {}", processor);
         Exchange transformExchange = new DefaultExchange(exchange);
         transformExchange.setIn(message);
         transformExchange.adapt(ExtendedExchange.class).setProperties(exchange.getProperties());
         processor.process(transformExchange);
         Message answer = transformExchange.getMessage();
-        
+
         if (to.isJavaType()) {
             Object answerBody = answer.getBody();
             Class<?> toClass = context.getClassResolver().resolveClass(to.getName());
@@ -81,15 +82,15 @@ public class ProcessorTransformer extends Transformer {
                 answer.setBody(answerBody);
             }
         }
-        
+
         message.copyFrom(answer);
     }
 
     /**
      * Set processor to use
      *
-     * @param processor Processor
-     * @return this ProcessorTransformer instance
+     * @param  processor Processor
+     * @return           this ProcessorTransformer instance
      */
     public ProcessorTransformer setProcessor(Processor processor) {
         this.processor = processor;
@@ -100,8 +101,7 @@ public class ProcessorTransformer extends Transformer {
     @Override
     public String toString() {
         if (transformerString == null) {
-            transformerString =
-                String.format("ProcessorTransformer[scheme='%s', from='%s', to='%s', processor='%s']",
+            transformerString = String.format("ProcessorTransformer[scheme='%s', from='%s', to='%s', processor='%s']",
                     getModel(), getFrom(), getTo(), processor);
         }
         return transformerString;

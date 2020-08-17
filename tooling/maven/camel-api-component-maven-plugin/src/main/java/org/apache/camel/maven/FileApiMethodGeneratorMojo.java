@@ -33,7 +33,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Parses ApiMethod signatures from a File.
  */
 @Mojo(name = "fromFile", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
+      defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     @Parameter(required = true, property = PREFIX + "signatureFile")

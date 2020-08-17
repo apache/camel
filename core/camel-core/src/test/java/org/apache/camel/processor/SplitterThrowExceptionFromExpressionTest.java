@@ -46,7 +46,8 @@ public class SplitterThrowExceptionFromExpressionTest extends ContextTestSupport
             public void configure() throws Exception {
                 onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start").split().method(SplitterThrowExceptionFromExpressionTest.class, "splitMe").to("mock://result").end();
+                from("direct://start").split().method(SplitterThrowExceptionFromExpressionTest.class, "splitMe")
+                        .to("mock://result").end();
             }
         };
     }

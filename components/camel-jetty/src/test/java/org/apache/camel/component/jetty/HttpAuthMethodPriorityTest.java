@@ -58,38 +58,46 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         return sh;
     }
 
     @Test
     public void testAuthMethodPriorityBasicDigest() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck", "Hello World",
-                                          String.class);
+        String out = template.requestBody(
+                "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck",
+                "Hello World",
+                String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testAuthMethodPriorityNTLMBasic() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck", "Hello World",
-                                          String.class);
+        String out = template.requestBody(
+                "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck",
+                "Hello World",
+                String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testAuthMethodPriorityInvalid() throws Exception {
         try {
-            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck", "Hello World", String.class);
+            template.requestBody(
+                    "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck",
+                    "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (FailedToCreateProducerException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
+            IllegalArgumentException cause
+                    = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
             // JAXB 2.2 uses a slightly different message
-            boolean b = cause.getMessage().contains("No enum const") && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
+            boolean b = cause.getMessage().contains("No enum const")
+                    && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
             assertTrue(b, "Bad fault message: " + cause.getMessage());
         }
     }
@@ -97,7 +105,9 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     @Test
     public void testAuthMethodPriorityNTLM() throws Exception {
         try {
-            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck", "Hello World", String.class);
+            template.requestBody(
+                    "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck",
+                    "Hello World", String.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

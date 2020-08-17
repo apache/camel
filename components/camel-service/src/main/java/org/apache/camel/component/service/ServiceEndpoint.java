@@ -42,13 +42,13 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @ManagedResource(description = "Managed Service Endpoint")
 @UriEndpoint(
-    firstVersion = "2.22.0",
-    scheme = "service",
-    syntax = "service:delegateUri",
-    consumerOnly = true,
-    title = "Service",
-    lenientProperties = true,
-    category = {Category.CLOUD})
+             firstVersion = "2.22.0",
+             scheme = "service",
+             syntax = "service:delegateUri",
+             consumerOnly = true,
+             title = "Service",
+             lenientProperties = true,
+             category = { Category.CLOUD })
 public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final ServiceRegistry serviceRegistry;
@@ -59,7 +59,8 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @Metadata(required = true)
     private final String delegateUri;
 
-    public ServiceEndpoint(String uri, ServiceComponent component, ServiceRegistry serviceRegistry, Map<String, String> serviceParameters, String delegateUri) {
+    public ServiceEndpoint(String uri, ServiceComponent component, ServiceRegistry serviceRegistry,
+                           Map<String, String> serviceParameters, String delegateUri) {
         super(uri, component);
 
         this.serviceRegistry = serviceRegistry;
@@ -105,7 +106,7 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
         Map<String, String> parameters = new HashMap<>();
 
         if (delegateEndpoint instanceof DiscoverableService) {
-            parameters.putAll(((DiscoverableService)delegateEndpoint).getServiceProperties());
+            parameters.putAll(((DiscoverableService) delegateEndpoint).getServiceProperties());
         }
 
         parameters.putAll(serviceParameters);

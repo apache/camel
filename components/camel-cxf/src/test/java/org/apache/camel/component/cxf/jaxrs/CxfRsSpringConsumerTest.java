@@ -36,23 +36,22 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
-    private static int port1 = CXFTestSupport.getPort1(); 
-    
-    
+    private static int port1 = CXFTestSupport.getPort1();
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // just throw the CustomException here
                 throw new CustomException("Here is the exception");
-            }  
+            }
         };
         final Processor responseProcessor = new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // do something else with the request properties as usual
                 // do something else with the response
                 exchange.getMessage().getBody(Customer.class).setId(246);
-            }  
+            }
         };
         return new RouteBuilder() {
             public void configure() {
@@ -63,23 +62,24 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
             }
         };
     }
-    
-    
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringConsumer.xml");
     }
-    
+
     @Test
     public void testMappingException() throws Exception {
         String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest/customerservice/customers/126";
         doTestMappingException(address);
     }
+
     @Test
     public void testMappingException2() throws Exception {
         String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest2/customerservice/customers/126";
         doTestMappingException(address);
     }
+
     @Test
     public void testInvokeCxfRsConsumer() throws Exception {
         String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerInvokeService/customerservice/customers/123";
@@ -87,7 +87,7 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
         Customer c = wc.accept("application/json").get(Customer.class);
         assertEquals(246L, c.getId());
     }
-    
+
     private void doTestMappingException(String address) throws Exception {
         HttpGet get = new HttpGet(address);
         get.addHeader("Accept", "application/json");
@@ -96,7 +96,8 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
         try {
             HttpResponse response = httpclient.execute(get);
             assertEquals(500, response.getStatusLine().getStatusCode(), "Get a wrong status code");
-            assertEquals("exception: Here is the exception", response.getHeaders("exception")[0].toString(), "Get a worng message header");
+            assertEquals("exception: Here is the exception", response.getHeaders("exception")[0].toString(),
+                    "Get a worng message header");
         } finally {
             httpclient.close();
         }

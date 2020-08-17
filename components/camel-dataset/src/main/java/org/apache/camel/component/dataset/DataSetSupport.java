@@ -52,7 +52,8 @@ public abstract class DataSetSupport implements DataSet {
     }
 
     @Override
-    public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index) throws Exception {
+    public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index)
+            throws Exception {
         Object expectedBody = expected.getIn().getBody();
         Object actualBody = actual.getIn().getBody();
         if (expectedBody != null) {

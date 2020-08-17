@@ -28,7 +28,8 @@ import org.openstack4j.core.transport.Config;
 /**
  * Manage VM images and metadata definitions in OpenStack Glance.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-glance", title = "OpenStack Glance", syntax = "openstack-glance:host", category = {Category.CLOUD, Category.PAAS}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-glance", title = "OpenStack Glance", syntax = "openstack-glance:host",
+             category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath
@@ -146,7 +147,7 @@ public class GlanceEndpoint extends AbstractOpenstackEndpoint {
     }
 
     /**
-     *OpenStack configuration
+     * OpenStack configuration
      */
     public void setConfig(Config config) {
         this.config = config;
@@ -164,4 +165,3 @@ public class GlanceEndpoint extends AbstractOpenstackEndpoint {
         this.apiVersion = apiVersion;
     }
 }
-

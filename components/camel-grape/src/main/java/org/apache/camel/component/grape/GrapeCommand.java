@@ -18,6 +18,8 @@ package org.apache.camel.component.grape;
 
 public enum GrapeCommand {
 
-    grab, listPatches, clearPatches
+    grab,
+    listPatches,
+    clearPatches
 
 }

@@ -67,17 +67,17 @@ public class MicroProfileMetricsCounterTest extends MicroProfileMetricsTestSuppo
             @Override
             public void configure() throws Exception {
                 from("direct:increment")
-                    .to("microprofile-metrics:counter:test-counter?counterIncrement=10");
+                        .to("microprofile-metrics:counter:test-counter?counterIncrement=10");
 
                 from("direct:default")
-                    .to("microprofile-metrics:counter:test-counter");
+                        .to("microprofile-metrics:counter:test-counter");
 
                 from("direct:defaultMetricType")
-                    .to("microprofile-metrics:test-counter");
+                        .to("microprofile-metrics:test-counter");
 
                 from("direct:incrementFromHeader")
-                    .setHeader(HEADER_COUNTER_INCREMENT, constant(10))
-                    .to("microprofile-metrics:counter:test-counter-header");
+                        .setHeader(HEADER_COUNTER_INCREMENT, constant(10))
+                        .to("microprofile-metrics:counter:test-counter-header");
             }
         };
     }

@@ -70,7 +70,8 @@ public class ExecEndpointTest {
     @DirtiesContext
     public void testCreateEndpointDefaultConf() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test");
-        assertTrue(e instanceof ExecEndpoint, "The Camel Exec component must create instances of " + ExecEndpoint.class.getSimpleName());
+        assertTrue(e instanceof ExecEndpoint,
+                "The Camel Exec component must create instances of " + ExecEndpoint.class.getSimpleName());
         assertNull(e.getArgs());
         assertNull(e.getWorkingDir());
         assertNull(e.getOutFile());
@@ -91,14 +92,16 @@ public class ExecEndpointTest {
     @DirtiesContext
     public void testCreateEndpointCustomBinding() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test?binding=#customBinding");
-        assertSame(customBinding, e.getBinding(), "Expected is the custom customBinding reference from the application context");
+        assertSame(customBinding, e.getBinding(),
+                "Expected is the custom customBinding reference from the application context");
     }
 
     @Test
     @DirtiesContext
     public void testCreateEndpointCustomCommandExecutor() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test?commandExecutor=#customExecutor");
-        assertSame(customExecutor, e.getCommandExecutor(), "Expected is the custom customExecutor reference from the application context");
+        assertSame(customExecutor, e.getCommandExecutor(),
+                "Expected is the custom customExecutor reference from the application context");
     }
 
     @Test
@@ -109,7 +112,7 @@ public class ExecEndpointTest {
         ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "+"));
         assertEquals(args, e.getArgs());
     }
-    
+
     @Test
     @DirtiesContext
     public void testCreateEndpointWithArgs2() throws Exception {
@@ -117,7 +120,7 @@ public class ExecEndpointTest {
         ExecEndpoint e = createExecEndpoint("exec:test?args=" + UnsafeUriCharactersEncoder.encode(args));
         assertEquals(args, e.getArgs());
     }
-    
+
     @Test
     @DirtiesContext
     public void testCreateEndpointWithArgs3() throws Exception {
@@ -214,6 +217,6 @@ public class ExecEndpointTest {
 
     private ExecEndpoint createExecEndpoint(String uri) throws Exception {
         LOGGER.debug("Using Exec endpoint URI " + uri);
-        return (ExecEndpoint)component.createEndpoint(uri);
+        return (ExecEndpoint) component.createEndpoint(uri);
     }
 }

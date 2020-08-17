@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 @Disabled("Require a running Nats server")
 public class NatsProducerTLSTest extends CamelTestSupport {
-   
+
     @BindToRegistry("ssl")
     SSLContextParameters ssl = createSSLContextParameters();
 
@@ -39,7 +39,7 @@ public class NatsProducerTLSTest extends CamelTestSupport {
     public void sendTest() throws Exception {
         template.sendBody("direct:send", "pippo");
     }
-    
+
     private SSLContextParameters createSSLContextParameters() {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 

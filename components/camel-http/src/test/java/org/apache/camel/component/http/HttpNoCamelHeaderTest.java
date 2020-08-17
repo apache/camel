@@ -37,13 +37,10 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/hello", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/hello", (request, response, context) -> {
                     response.setStatusCode(HttpStatus.SC_OK);
                     Object header = request.getFirstHeader(Exchange.FILE_NAME);
                     assertNull(header, "There should be no Camel header");
@@ -75,11 +72,13 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
 
     @Test
     public void testNoCamelHeader() throws Exception {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/hello", exchange -> {
-            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
-            exchange.getIn().setBody("This is content");
-        });
+        Exchange out = template.request(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/hello",
+                exchange -> {
+                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
+                    exchange.getIn().setBody("This is content");
+                });
 
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");

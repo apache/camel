@@ -228,14 +228,14 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     /**
      * Sets the handler for tasks which cannot be executed by the thread pool.
      *
-     * @param rejectedPolicy  the policy for the handler
+     * @param rejectedPolicy the policy for the handler
      */
     public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }
 
     /**
-     * Overwrites each attribute that is null with the attribute from defaultProfile 
+     * Overwrites each attribute that is null with the attribute from defaultProfile
      * 
      * @param defaultProfile profile with default values
      */
@@ -289,8 +289,8 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     @Override
     public String toString() {
         return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + "-" + maxPoolSize
-                + ", keepAlive:" + keepAliveTime + " " + timeUnit + ", maxQueue:" + maxQueueSize
-                + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + "]";
+               + ", keepAlive:" + keepAliveTime + " " + timeUnit + ", maxQueue:" + maxQueueSize
+               + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + "]";
     }
 
 }

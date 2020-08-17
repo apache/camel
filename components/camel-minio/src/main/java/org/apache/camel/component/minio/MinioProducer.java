@@ -142,8 +142,10 @@ public class MinioProducer extends DefaultProducer {
             } else {
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 if (objectMetadata.containsKey(Exchange.CONTENT_LENGTH)) {
-                    if (objectMetadata.get("Content-Length").equals("0") && isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                        LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
+                    if (objectMetadata.get("Content-Length").equals("0")
+                            && isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                        LOG.debug(
+                                "The content length is not defined. It needs to be determined by reading the data into memory");
                         baos = determineLengthInputStream(inputStream);
                         objectMetadata.put("Content-Length", String.valueOf(baos.size()));
                         inputStream = new ByteArrayInputStream(baos.toByteArray());
@@ -213,7 +215,8 @@ public class MinioProducer extends DefaultProducer {
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineObjectName(exchange);
             final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_OBJECT_NAME, String.class);
-            final String destinationBucketName = exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
+            final String destinationBucketName
+                    = exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
 
             if (isEmpty(destinationBucketName)) {
                 throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
@@ -337,7 +340,8 @@ public class MinioProducer extends DefaultProducer {
             final String length = exchange.getIn().getHeader(MinioConstants.LENGTH, String.class);
 
             if (isEmpty(offset) || isEmpty(length)) {
-                throw new IllegalArgumentException("A Offset and length header must be configured to perform a partial get operation.");
+                throw new IllegalArgumentException(
+                        "A Offset and length header must be configured to perform a partial get operation.");
             }
 
             InputStream respond = minioClient.getObject(GetObjectArgs.builder()
@@ -418,11 +422,11 @@ public class MinioProducer extends DefaultProducer {
     }
 
     /**
-     * Reads the bucket name from the header of the given exchange. If not
-     * provided, it's read from the endpoint configuration.
+     * Reads the bucket name from the header of the given exchange. If not provided, it's read from the endpoint
+     * configuration.
      *
-     * @param exchange The exchange to read the header from.
-     * @return The bucket name.
+     * @param  exchange                 The exchange to read the header from.
+     * @return                          The bucket name.
      * @throws IllegalArgumentException if the header could not be determined.
      */
     private String determineBucketName(final Exchange exchange) {

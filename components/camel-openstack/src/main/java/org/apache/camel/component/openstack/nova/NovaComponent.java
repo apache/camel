@@ -33,4 +33,3 @@ public class NovaComponent extends DefaultComponent {
         return endpoint;
     }
 }
-

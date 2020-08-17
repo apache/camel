@@ -49,7 +49,8 @@ public class ManagedRouteStopUsingMBeanAPITest extends ManagementTestSupport {
 
         ObjectName on = set.iterator().next();
 
-        ManagedRouteMBean mbean = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+        ManagedRouteMBean mbean
+                = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
 
         // the route has this starting endpoint uri
         assertEquals("direct://start", mbean.getEndpointUri());

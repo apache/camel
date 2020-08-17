@@ -28,7 +28,6 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 
 @Dataformat("fhirXml")
 public class FhirXmlDataFormat extends FhirDataFormat {
-    
 
     @Override
     public void marshal(Exchange exchange, Object o, OutputStream outputStream) throws Exception {

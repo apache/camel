@@ -46,7 +46,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -163,7 +163,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             LOG.error("Delete a specific secret require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific secret require specify a namespace name");
         }
-        boolean secretDeleted = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
+        boolean secretDeleted
+                = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretDeleted);

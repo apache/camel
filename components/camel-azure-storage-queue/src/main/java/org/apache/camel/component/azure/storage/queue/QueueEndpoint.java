@@ -32,9 +32,11 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using Azure SDK v12.
+ * The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using
+ * Azure SDK v12.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service", syntax = "azure-storage-queue:queueName", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service",
+             syntax = "azure-storage-queue:queueName", category = { Category.CLOUD, Category.MESSAGING })
 public class QueueEndpoint extends DefaultEndpoint {
 
     private QueueServiceClient queueServiceClient;
@@ -64,7 +66,8 @@ public class QueueEndpoint extends DefaultEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        queueServiceClient = configuration.getServiceClient() != null ? configuration.getServiceClient() : QueueClientFactory.createQueueServiceClient(configuration);
+        queueServiceClient = configuration.getServiceClient() != null
+                ? configuration.getServiceClient() : QueueClientFactory.createQueueServiceClient(configuration);
     }
 
     public Exchange createExchange(final QueueMessageItem messageItem) {

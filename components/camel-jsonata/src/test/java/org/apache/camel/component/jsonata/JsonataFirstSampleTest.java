@@ -35,10 +35,10 @@ public class JsonataFirstSampleTest extends CamelTestSupport {
     @Test
     public void testFirstSampleJsonata() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            IOHelper.loadText(
-                ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context, "org/apache/camel/component/jsonata/firstSample/output.json")
-            ).trim() // Remove the last newline added by IOHelper.loadText()
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jsonata/firstSample/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://start",
@@ -65,8 +65,8 @@ public class JsonataFirstSampleTest extends CamelTestSupport {
 
                 from("direct://start")
                         .process(processor)
-                    .to("jsonata:org/apache/camel/component/jsonata/firstSample/expressions.json?inputType=JsonString&outputType=JsonString")
-                    .to("mock:result");
+                        .to("jsonata:org/apache/camel/component/jsonata/firstSample/expressions.json?inputType=JsonString&outputType=JsonString")
+                        .to("mock:result");
             }
         };
     }

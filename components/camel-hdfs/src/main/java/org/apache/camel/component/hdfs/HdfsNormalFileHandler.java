@@ -47,8 +47,8 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
                 outputStream = hdfsInfo.getFileSystem().append(
                         hdfsInfo.getPath(),
                         endpointConfig.getBufferSize(),
-                    () -> { }
-                );
+                        () -> {
+                        });
             } else {
                 outputStream = hdfsInfo.getFileSystem().create(
                         hdfsInfo.getPath(),
@@ -56,8 +56,8 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
                         endpointConfig.getBufferSize(),
                         endpointConfig.getReplication(),
                         endpointConfig.getBlockSize(),
-                    () -> { }
-                );
+                        () -> {
+                        });
             }
             return outputStream;
         } catch (IOException ex) {
@@ -70,7 +70,8 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
         InputStream inputStream = null;
         try {
             inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, value);
-            return copyBytes(inputStream, (FSDataOutputStream) hdfsOutputStream.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
+            return copyBytes(inputStream, (FSDataOutputStream) hdfsOutputStream.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE,
+                    false);
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         } finally {

@@ -45,7 +45,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxGroupsManagerIntegrationTest.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-        .getApiName(BoxGroupsManagerApiMethod.class).getName();
+            .getApiName(BoxGroupsManagerApiMethod.class).getName();
     private static final String CAMEL_TEST_GROUP_DESCRIPTION = "CamelTestGroupDescription";
     private static final String CAMEL_TEST_GROUP_NAME = "CamelTestGroup";
     private static final String CAMEL_TEST_CREATE_GROUP_NAME = "CamelTestCreateGroup";
@@ -64,7 +64,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.role", null);
 
         final com.box.sdk.BoxGroupMembership result = requestBodyAndHeaders("direct://ADDGROUPMEMBERSHIP", null,
-            headers);
+                headers);
 
         assertNotNull(result, "addGroupMembership result");
         LOG.debug("addGroupMembership: " + result);
@@ -116,7 +116,8 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testGetAllGroups() throws Exception {
-        @SuppressWarnings("rawtypes") final java.util.Collection result = requestBody("direct://GETALLGROUPS", null);
+        @SuppressWarnings("rawtypes")
+        final java.util.Collection result = requestBody("direct://GETALLGROUPS", null);
 
         assertNotNull(result, "getAllGroups result");
         LOG.debug("getAllGroups: " + result);
@@ -166,7 +167,8 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetGroupMemberships() throws Exception {
         // using String message body for single parameter "groupId"
-        @SuppressWarnings("rawtypes") final java.util.Collection result = requestBody("direct://GETGROUPMEMBERSHIPS", testGroup.getID());
+        @SuppressWarnings("rawtypes")
+        final java.util.Collection result = requestBody("direct://GETGROUPMEMBERSHIPS", testGroup.getID());
 
         assertNotNull(result, "getGroupMemberships result");
         LOG.debug("getGroupMemberships: " + result);
@@ -184,7 +186,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.info", info);
 
         final com.box.sdk.BoxGroupMembership result = requestBodyAndHeaders("direct://UPDATEGROUPMEMBERSHIPINFO", null,
-            headers);
+                headers);
 
         assertNotNull(result, "updateGroupMembershipInfo result");
         LOG.debug("updateGroupMembershipInfo: " + result);
@@ -205,7 +207,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
                 // test route for deleteGroupMembership
                 from("direct://DELETEGROUPMEMBERSHIP")
-                    .to("box://" + PATH_PREFIX + "/deleteGroupMembership?inBody=groupMembershipId");
+                        .to("box://" + PATH_PREFIX + "/deleteGroupMembership?inBody=groupMembershipId");
 
                 // test route for getAllGroups
                 from("direct://GETALLGROUPS").to("box://" + PATH_PREFIX + "/getAllGroups");
@@ -215,11 +217,11 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
                 // test route for getGroupMembershipInfo
                 from("direct://GETGROUPMEMBERSHIPINFO")
-                    .to("box://" + PATH_PREFIX + "/getGroupMembershipInfo?inBody=groupMembershipId");
+                        .to("box://" + PATH_PREFIX + "/getGroupMembershipInfo?inBody=groupMembershipId");
 
                 // test route for getGroupMemberships
                 from("direct://GETGROUPMEMBERSHIPS")
-                    .to("box://" + PATH_PREFIX + "/getGroupMemberships?inBody=groupId");
+                        .to("box://" + PATH_PREFIX + "/getGroupMemberships?inBody=groupId");
 
                 // test route for updateGroupInfo
                 from("direct://UPDATEGROUPINFO").to("box://" + PATH_PREFIX + "/updateGroupInfo");
@@ -282,7 +284,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         } else {
             int i = 0;
             for (@SuppressWarnings("unused")
-                Object obj : it) {
+            Object obj : it) {
                 i++;
             }
             return i;

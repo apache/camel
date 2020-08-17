@@ -47,7 +47,7 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
                 // here is the Camel route where we aggregate
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                                // complete every 5th seconds
+                        // complete every 5th seconds
                         .completionInterval(getCompletionInterval()).aggregationRepository(repo)
                         .to("mock:aggregated");
             }

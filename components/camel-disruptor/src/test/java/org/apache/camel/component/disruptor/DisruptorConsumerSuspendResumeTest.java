@@ -41,7 +41,7 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         // suspend bar consumer (not the route)
-        final DisruptorConsumer consumer = (DisruptorConsumer)context.getRoute("bar").getConsumer();
+        final DisruptorConsumer consumer = (DisruptorConsumer) context.getRoute("bar").getConsumer();
 
         ServiceHelper.suspendService(consumer);
         assertEquals("Suspended", consumer.getStatus().name());

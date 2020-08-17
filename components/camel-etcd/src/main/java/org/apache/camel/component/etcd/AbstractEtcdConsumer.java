@@ -29,7 +29,8 @@ public abstract class AbstractEtcdConsumer extends DefaultConsumer {
 
     private EtcdClient client;
 
-    protected AbstractEtcdConsumer(AbstractEtcdEndpoint endpoint, Processor processor, EtcdConfiguration configuration, String path) {
+    protected AbstractEtcdConsumer(AbstractEtcdEndpoint endpoint, Processor processor, EtcdConfiguration configuration,
+                                   String path) {
         super(endpoint, processor);
 
         this.configuration = configuration;
@@ -48,7 +49,7 @@ public abstract class AbstractEtcdConsumer extends DefaultConsumer {
 
     protected EtcdClient getClient() throws Exception {
         if (client == null) {
-            client = ((EtcdEndpoint)getEndpoint()).createClient();
+            client = ((EtcdEndpoint) getEndpoint()).createClient();
         }
 
         return client;

@@ -49,27 +49,23 @@ import org.apache.camel.util.StringHelper;
 public class GooglePubsubComponent extends DefaultComponent {
 
     @Metadata(
-            label = "common",
-            description = "Endpoint to use with local Pub/Sub emulator."
-    )
+              label = "common",
+              description = "Endpoint to use with local Pub/Sub emulator.")
     private String endpoint;
 
     @Metadata(
-            label = "producer",
-            description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics."
-    )
+              label = "producer",
+              description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
     private int publisherCacheSize = 100;
 
     @Metadata(
-            label = "producer",
-            description = "How many milliseconds should each producer stay alive in the cache."
-    )
+              label = "producer",
+              description = "How many milliseconds should each producer stay alive in the cache.")
     private int publisherCacheTimeout = 180000;
 
     @Metadata(
-            label = "advanced",
-            description = "How many milliseconds should a producer be allowed to terminate."
-    )
+              label = "advanced",
+              description = "How many milliseconds should a producer be allowed to terminate.")
     private int publisherTerminationTimeout = 60000;
 
     private RemovalListener<String, Publisher> removalListener = removal -> {
@@ -100,7 +96,8 @@ public class GooglePubsubComponent extends DefaultComponent {
         String[] parts = remaining.split(":");
 
         if (parts.length < 2) {
-            throw new IllegalArgumentException("Google PubSub Endpoint format \"projectId:destinationName[:subscriptionName]\"");
+            throw new IllegalArgumentException(
+                    "Google PubSub Endpoint format \"projectId:destinationName[:subscriptionName]\"");
         }
 
         GooglePubsubEndpoint pubsubEndpoint = new GooglePubsubEndpoint(uri, this, remaining);
@@ -126,8 +123,8 @@ public class GooglePubsubComponent extends DefaultComponent {
         Publisher.Builder builder = Publisher.newBuilder(topicName);
         if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider =
-                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            TransportChannelProvider channelProvider
+                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
             builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
         }
@@ -138,8 +135,8 @@ public class GooglePubsubComponent extends DefaultComponent {
         Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, messageReceiver);
         if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider =
-                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            TransportChannelProvider channelProvider
+                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
             builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
         }
@@ -152,8 +149,8 @@ public class GooglePubsubComponent extends DefaultComponent {
 
         if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
-            TransportChannelProvider channelProvider =
-                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            TransportChannelProvider channelProvider
+                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
             builder.setTransportChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
         }
@@ -192,4 +189,3 @@ public class GooglePubsubComponent extends DefaultComponent {
         this.publisherTerminationTimeout = publisherTerminationTimeout;
     }
 }
-

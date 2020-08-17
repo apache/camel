@@ -36,11 +36,10 @@ public class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
-    MinioClient minioClient =
-            MinioClient.builder()
-                    .endpoint(properties.getProperty("endpoint"))
-                    .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
-                    .build();
+    MinioClient minioClient = MinioClient.builder()
+            .endpoint(properties.getProperty("endpoint"))
+            .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;

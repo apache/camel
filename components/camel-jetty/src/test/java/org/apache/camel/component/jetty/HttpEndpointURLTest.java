@@ -25,7 +25,8 @@ public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     public void testHttpEndpointURLWithIPv6() {
-        JettyHttpEndpoint endpoint = (JettyHttpEndpoint)context.getEndpoint("jetty://http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
+        JettyHttpEndpoint endpoint
+                = (JettyHttpEndpoint) context.getEndpoint("jetty://http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
     }
 

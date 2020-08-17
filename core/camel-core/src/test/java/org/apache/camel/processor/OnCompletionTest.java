@@ -46,7 +46,8 @@ public class OnCompletionTest extends ContextTestSupport {
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:sync").expectedMessageCount(1);
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
-        getMockEndpoint("mock:sync").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:sync").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -68,14 +69,14 @@ public class OnCompletionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start").onCompletion()
-                    // this route is only invoked when the original route is
-                    // complete as a kind
-                    // of completion callback
-                    .to("log:sync").to("mock:sync")
-                    // must use end to denote the end of the onCompletion route
-                    .end()
-                    // here the original route contiues
-                    .process(new MyProcessor()).to("mock:result");
+                        // this route is only invoked when the original route is
+                        // complete as a kind
+                        // of completion callback
+                        .to("log:sync").to("mock:sync")
+                        // must use end to denote the end of the onCompletion route
+                        .end()
+                        // here the original route contiues
+                        .process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

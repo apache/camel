@@ -49,11 +49,11 @@ public class SagaProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         String currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
         if (currentSaga == null) {
-            exchange.setException(new IllegalStateException("Current exchange is not bound to a saga context: cannot complete"));
+            exchange.setException(
+                    new IllegalStateException("Current exchange is not bound to a saga context: cannot complete"));
             callback.done(true);
             return true;
         }
-
 
         camelSagaService.getSaga(currentSaga).thenApply(coordinator -> {
             if (coordinator == null) {

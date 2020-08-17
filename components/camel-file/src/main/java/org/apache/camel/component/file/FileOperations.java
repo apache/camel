@@ -70,7 +70,7 @@ public class FileOperations implements GenericFileOperations<File> {
 
     @Override
     public void setEndpoint(GenericFileEndpoint<File> endpoint) {
-        this.endpoint = (FileEndpoint)endpoint;
+        this.endpoint = (FileEndpoint) endpoint;
     }
 
     @Override
@@ -297,10 +297,10 @@ public class FileOperations implements GenericFileOperations<File> {
                 // using file directly (optimized)
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
-                    body = ((WrappedFile<?>)body).getFile();
+                    body = ((WrappedFile<?>) body).getFile();
                 }
                 if (body instanceof File) {
-                    source = (File)body;
+                    source = (File) body;
                     fileBased = true;
                 }
             }
@@ -325,7 +325,8 @@ public class FileOperations implements GenericFileOperations<File> {
                             Set<PosixFilePermission> permissions = endpoint.getPermissions();
                             if (!permissions.isEmpty()) {
                                 if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions), file);
+                                    LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions),
+                                            file);
                                 }
                                 Files.setPosixFilePermissions(file.toPath(), permissions);
                             }
@@ -361,7 +362,8 @@ public class FileOperations implements GenericFileOperations<File> {
             if (charset != null) {
                 // charset configured so we must use a reader so we can write
                 // with encoding
-                Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange, exchange.getIn().getBody());
+                Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
+                        exchange.getIn().getBody());
                 if (in == null) {
                     // okay no direct reader conversion, so use an input stream
                     // (which a lot can be converted as)
@@ -426,7 +428,8 @@ public class FileOperations implements GenericFileOperations<File> {
         // in case we are using file locks as read-locks then we need to use
         // file channels for copying to support this
         String path = source.getAbsolutePath();
-        FileChannel channel = exchange.getProperty(asExclusiveReadLockKey(path, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
+        FileChannel channel
+                = exchange.getProperty(asExclusiveReadLockKey(path, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
         if (channel != null) {
             try (FileChannel out = new FileOutputStream(target).getChannel()) {
                 LOG.trace("writeFileByFile using FileChannel: {} -> {}", source, target);
@@ -478,7 +481,7 @@ public class FileOperations implements GenericFileOperations<File> {
         boolean exists = target.exists();
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
         try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), StandardOpenOption.WRITE,
-                                                  append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);
@@ -492,8 +495,8 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     /**
-     * Creates a new file if the file doesn't exist. If the endpoint's existing
-     * file logic is set to 'Override' then the target file will be truncated
+     * Creates a new file if the file doesn't exist. If the endpoint's existing file logic is set to 'Override' then the
+     * target file will be truncated
      */
     private void writeFileEmptyBody(File target) throws IOException {
         if (!target.exists()) {
@@ -501,22 +504,24 @@ public class FileOperations implements GenericFileOperations<File> {
             FileUtil.createNewFile(target);
         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
             LOG.debug("Truncating existing file: {}", target);
-            try (SeekableByteChannel out = Files.newByteChannel(target.toPath(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+            try (SeekableByteChannel out
+                    = Files.newByteChannel(target.toPath(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
                 // nothing to write
             }
         }
     }
 
     /**
-     * Creates and prepares the output file channel. Will position itself in
-     * correct position if the file is writable eg. it should append or override
-     * any existing content.
+     * Creates and prepares the output file channel. Will position itself in correct position if the file is writable
+     * eg. it should append or override any existing content.
      */
     private SeekableByteChannel prepareOutputFileChannel(File target) throws IOException {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
-            SeekableByteChannel out = Files.newByteChannel(target.toPath(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            SeekableByteChannel out
+                    = Files.newByteChannel(target.toPath(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             return out.position(out.size());
         }
-        return Files.newByteChannel(target.toPath(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        return Files.newByteChannel(target.toPath(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.CREATE);
     }
 }

@@ -42,21 +42,26 @@ public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJe
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice?mapHttpMessageFormUrlEncodedBody=false").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
+                from("jetty:http://localhost:{{port}}/myapp/myservice?mapHttpMessageFormUrlEncodedBody=false")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
 
-                        // for unit testing make sure we got right message
-                        assertEquals("b1=x&b2=y", body, "The body message is wrong");
-                        assertEquals("a", exchange.getIn().getHeader("query1"), "Get a wrong query parameter from the message header");
-                        assertEquals("b", exchange.getIn().getHeader("query2"), "Get a wrong query parameter from the message header");
-                        assertNotEquals("x", exchange.getIn().getHeader("b1"), "Get a wrong form parameter from the message header");
-                        assertNotEquals("y", exchange.getIn().getHeader("b2"), "Get a wrong form parameter from the message header");
+                                // for unit testing make sure we got right message
+                                assertEquals("b1=x&b2=y", body, "The body message is wrong");
+                                assertEquals("a", exchange.getIn().getHeader("query1"),
+                                        "Get a wrong query parameter from the message header");
+                                assertEquals("b", exchange.getIn().getHeader("query2"),
+                                        "Get a wrong query parameter from the message header");
+                                assertNotEquals("x", exchange.getIn().getHeader("b1"),
+                                        "Get a wrong form parameter from the message header");
+                                assertNotEquals("y", exchange.getIn().getHeader("b2"),
+                                        "Get a wrong form parameter from the message header");
 
-                        // send a response
-                        exchange.getOut().setBody("Request message is OK");
-                    }
-                });
+                                // send a response
+                                exchange.getOut().setBody("Request message is OK");
+                            }
+                        });
             }
         };
     }

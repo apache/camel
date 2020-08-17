@@ -28,14 +28,14 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 public final class MyCustomCodec {
 
-    private static ByteBuf nullDelimiter = Unpooled.wrappedBuffer(new byte[]{0});
+    private static ByteBuf nullDelimiter = Unpooled.wrappedBuffer(new byte[] { 0 });
 
     private MyCustomCodec() {
         // Helper class
     }
 
     public static ChannelHandlerFactory createMyCustomDecoder() {
-        ByteBuf[] delimiters = new ByteBuf[]{nullDelimiter, nullDelimiter};
+        ByteBuf[] delimiters = new ByteBuf[] { nullDelimiter, nullDelimiter };
         return ChannelHandlerFactories.newDelimiterBasedFrameDecoder(4096, delimiters, "tcp");
     }
 

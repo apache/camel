@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityDataFormat> {
 
     public XMLSecurityDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (XMLSecurityDataFormat)definition);
+        super(camelContext, (XMLSecurityDataFormat) definition);
     }
 
     @Override

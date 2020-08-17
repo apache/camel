@@ -45,7 +45,8 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getTypeConverterRegistry().addTypeConverter(LocalDateTime.class, String.class, new MyLocalDateTimeConverter());
+                context.getTypeConverterRegistry().addTypeConverter(LocalDateTime.class, String.class,
+                        new MyLocalDateTimeConverter());
 
                 errorHandler(deadLetterChannel("mock:error"));
 

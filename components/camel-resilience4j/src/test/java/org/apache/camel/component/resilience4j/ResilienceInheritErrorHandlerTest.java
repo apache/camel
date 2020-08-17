@@ -41,9 +41,10 @@ public class ResilienceInheritErrorHandlerTest extends CamelTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("direct:start").to("log:start")
-                    // turn on Camel's error handler on hystrix so it can do
-                    // redeliveries
-                    .circuitBreaker().inheritErrorHandler(true).to("mock:a").throwException(new IllegalArgumentException("Forced")).end().to("log:result").to("mock:result");
+                        // turn on Camel's error handler on hystrix so it can do
+                        // redeliveries
+                        .circuitBreaker().inheritErrorHandler(true).to("mock:a")
+                        .throwException(new IllegalArgumentException("Forced")).end().to("log:result").to("mock:result");
             }
         };
     }

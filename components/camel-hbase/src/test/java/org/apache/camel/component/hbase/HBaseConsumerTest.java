@@ -45,8 +45,8 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
-     * to define the routes for testing
+     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder} to define
+     * the routes for testing
      */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

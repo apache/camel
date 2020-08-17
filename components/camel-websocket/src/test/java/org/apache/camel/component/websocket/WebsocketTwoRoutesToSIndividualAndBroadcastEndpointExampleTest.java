@@ -99,7 +99,8 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
                             public void onPongFrame(byte[] payload) {
 
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -121,7 +122,7 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setMinThreads(1);
                 websocketComponent.setMaxThreads(25);
-                
+
                 from("websocket://localhost:" + port + "/bar")
                         .log(">>> Message received from BAR WebSocket Client : ${body}")
                         .transform().simple("The bar has ${body}")

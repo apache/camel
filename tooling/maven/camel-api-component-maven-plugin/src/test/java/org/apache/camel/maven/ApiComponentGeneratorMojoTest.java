@@ -62,7 +62,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         // exclude name2, and int times
         mojo.apis[0].setExcludeConfigNames("name2");
         mojo.apis[0].setExcludeConfigTypes("int");
-        mojo.apis[0].setNullableOptions(new String[] {"namesList"});
+        mojo.apis[0].setNullableOptions(new String[] { "namesList" });
 
         List<ApiMethodAlias> aliases = new ArrayList<>();
         aliases.add(new ApiMethodAlias("get(.+)", "$1"));
@@ -72,8 +72,8 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[1].setProxyClass(VelocityContext.class.getName());
         mojo.apis[1].setAliases(aliases);
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
-        mojo.apis[1].setSubstitutions(new Substitution[] {substitution});
-        mojo.apis[1].setExtraOptions(new ExtraOption[] {new ExtraOption("java.util.Map<String, String>", "extraMap")});
+        mojo.apis[1].setSubstitutions(new Substitution[] { substitution });
+        mojo.apis[1].setExtraOptions(new ExtraOption[] { new ExtraOption("java.util.Map<String, String>", "extraMap") });
 
         mojo.extraOptions = new ExtraOption[1];
         mojo.extraOptions[0] = new ExtraOption("java.util.List<String>", "extraStrings");
@@ -84,6 +84,5 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[1].setFromJavadoc(fromJavadoc);
         return mojo;
     }
-    
 
 }

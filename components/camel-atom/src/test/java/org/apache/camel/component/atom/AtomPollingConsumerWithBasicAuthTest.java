@@ -27,12 +27,14 @@ public class AtomPollingConsumerWithBasicAuthTest extends AtomPollingConsumerTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=false&username=camel&password=camelPass")
-                        .to("mock:result");
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port
+                     + "/?splitEntries=false&username=camel&password=camelPass")
+                             .to("mock:result");
 
                 // this is a bit weird syntax that normally is not used using the feedUri parameter
-                from("atom:?feedUri=http://localhost:" + JettyTestServer.getInstance().port + "/&splitEntries=false&username=camel&password=camelPass")
-                        .to("mock:result2");
+                from("atom:?feedUri=http://localhost:" + JettyTestServer.getInstance().port
+                     + "/&splitEntries=false&username=camel&password=camelPass")
+                             .to("mock:result2");
             }
         };
     }

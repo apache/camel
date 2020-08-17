@@ -37,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages from <a href="http://nats.io/">NATS</a> messaging system.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = {Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = { Category.MESSAGING })
 public class NatsEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -61,14 +61,16 @@ public class NatsEndpoint extends DefaultEndpoint {
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
 
     public NatsConfiguration getConfiguration() {
         return configuration;
     }
 
-    public Connection getConnection() throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
+    public Connection getConnection()
+            throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
         Builder builder = getConfiguration().createOptions();
         if (getConfiguration().getSslContextParameters() != null && getConfiguration().isSecure()) {
             SSLContext sslCtx = getConfiguration().getSslContextParameters().createSSLContext(getCamelContext());

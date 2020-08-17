@@ -62,5 +62,4 @@ public class QuartzOneCamelContextRestartTest {
         mock1.assertIsSatisfied();
     }
 
-
 }

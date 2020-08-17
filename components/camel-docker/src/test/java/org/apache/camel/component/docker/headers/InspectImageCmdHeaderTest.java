@@ -54,7 +54,6 @@ public class InspectImageCmdHeaderTest extends BaseDockerHeaderTest<InspectImage
     protected void setupMocks() {
         Mockito.when(dockerClient.inspectImageCmd(anyString())).thenReturn(mockObject);
 
-
     }
 
     @Override

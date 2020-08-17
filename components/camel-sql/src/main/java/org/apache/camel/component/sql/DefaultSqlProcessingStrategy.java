@@ -39,15 +39,20 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
     }
 
     @Override
-    public int commit(final DefaultSqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
+    public int commit(
+            final DefaultSqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate,
+            final String query)
+            throws Exception {
 
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), exchange);
+        final String preparedQuery
+                = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), exchange);
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
-                Iterator<?> iterator = sqlPrepareStatementStrategy.createPopulateIterator(query, preparedQuery, expected, exchange, data);
+                Iterator<?> iterator
+                        = sqlPrepareStatementStrategy.createPopulateIterator(query, preparedQuery, expected, exchange, data);
                 if (iterator != null) {
                     sqlPrepareStatementStrategy.populateStatement(ps, iterator, expected);
                     LOG.trace("Execute query {}", query);
@@ -66,14 +71,16 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
     }
 
     @Override
-    public int commitBatchComplete(final DefaultSqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
+    public int commitBatchComplete(final DefaultSqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query)
+            throws Exception {
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), null);
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
                 if (expected != 0) {
-                    throw new IllegalArgumentException("Query onConsumeBatchComplete " + query + " cannot have parameters, was " + expected);
+                    throw new IllegalArgumentException(
+                            "Query onConsumeBatchComplete " + query + " cannot have parameters, was " + expected);
                 }
 
                 LOG.trace("Execute query {}", query);
@@ -88,4 +95,3 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
         });
     }
 }
-

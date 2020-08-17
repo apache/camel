@@ -71,8 +71,8 @@ public class LevelDBBigPayloadTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer:foo")
-                    .bean(BigPayload.class)
-                    .aggregate(method(LevelDBBigPayloadTest.class, "number"), new UseLatestAggregationStrategy())
+                        .bean(BigPayload.class)
+                        .aggregate(method(LevelDBBigPayloadTest.class, "number"), new UseLatestAggregationStrategy())
                         .aggregationRepository(repo)
                         .completionSize(2).completionTimeout(5000)
                         .log("Aggregated key ${header.CamelAggregatedCorrelationKey}");

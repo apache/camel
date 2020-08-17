@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * To test camel-mina component using a TCP client that communicates using TCP socket communication.
@@ -136,21 +135,21 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends BaseMinaTest {
 
             public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()))
-                    .process(e -> {
-                        String in = e.getIn().getBody(String.class);
-                        if ("force-null-out-body".equals(in)) {
-                            // forcing a null out body
-                            e.getMessage().setBody(null);
-                        } else if ("force-exception".equals(in)) {
-                            // clear out before throwing exception
-                            e.getMessage().setBody(null);
-                            throw new IllegalArgumentException("Forced exception");
-                        } else if ("force-set-in-body".equals(in)) {
-                            e.getIn().setBody("Update the in message!");
-                        } else {
-                            e.getMessage().setBody("Hello " + in);
-                        }
-                    });
+                        .process(e -> {
+                            String in = e.getIn().getBody(String.class);
+                            if ("force-null-out-body".equals(in)) {
+                                // forcing a null out body
+                                e.getMessage().setBody(null);
+                            } else if ("force-exception".equals(in)) {
+                                // clear out before throwing exception
+                                e.getMessage().setBody(null);
+                                throw new IllegalArgumentException("Forced exception");
+                            } else if ("force-set-in-body".equals(in)) {
+                                e.getIn().setBody("Update the in message!");
+                            } else {
+                                e.getMessage().setBody("Hello " + in);
+                            }
+                        });
             }
         };
     }

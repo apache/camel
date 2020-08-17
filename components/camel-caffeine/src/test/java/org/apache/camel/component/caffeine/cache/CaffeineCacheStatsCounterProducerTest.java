@@ -35,7 +35,8 @@ public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupp
         final Map<String, String> map = generateRandomMapOfString(3);
         final Set<String> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT_ALL).withBody(map).to("direct://start").send();
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT_ALL).withBody(map)
+                .to("direct://start").send();
 
         MockEndpoint mock1 = getMockEndpoint("mock:result");
         mock1.expectedMinimumMessageCount(1);
@@ -47,7 +48,7 @@ public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupp
             assertTrue(elements.containsKey(k));
             assertEquals(map.get(k), elements.get(k));
         });
-        
+
         assertEquals(2, getMetricRegistry().counter("camelcache.hits").getCount());
     }
 
@@ -59,8 +60,9 @@ public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupp
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start").toF("caffeine-cache://%s?cache=#cacheSc", "test").to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
-                    .to("mock:result");
+                from("direct://start").toF("caffeine-cache://%s?cache=#cacheSc", "test")
+                        .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
+                        .to("mock:result");
             }
         };
     }

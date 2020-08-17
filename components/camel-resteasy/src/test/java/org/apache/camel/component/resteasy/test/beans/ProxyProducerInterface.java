@@ -29,8 +29,7 @@ import javax.ws.rs.core.Response;
 @Path("/customer")
 public interface ProxyProducerInterface {
 
-
-//    @HEAD
+    //    @HEAD
     @GET
     @Produces("application/json")
     @Consumes()
@@ -45,7 +44,9 @@ public interface ProxyProducerInterface {
     @GET
     @Produces("application/json")
     @Path("/getSpecificThreeCustomers")
-    Response getSpecificThreeCustomers(@QueryParam("c1") Integer customerId1, @QueryParam("c2") Integer customerId2, @QueryParam("c3") Integer customerId3);
+    Response getSpecificThreeCustomers(
+            @QueryParam("c1") Integer customerId1, @QueryParam("c2") Integer customerId2,
+            @QueryParam("c3") Integer customerId3);
 
     @DELETE
     @Path("/deleteCustomer")

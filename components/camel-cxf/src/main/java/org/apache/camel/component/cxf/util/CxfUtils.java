@@ -25,11 +25,11 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 
 public final class CxfUtils {
-    
+
     private CxfUtils() {
         // helper class
     }
-    
+
     public static String getStringFromInputStream(InputStream in) throws Exception {
         CachedOutputStream bos = new CachedOutputStream();
         IOUtils.copy(in, bos);
@@ -37,7 +37,7 @@ public final class CxfUtils {
         bos.close();
         return bos.getOut().toString();
     }
-    
+
     public static void closeCamelUnitOfWork(Message message) {
         Exchange cxfExchange;
         if ((cxfExchange = message.getExchange()) != null) {

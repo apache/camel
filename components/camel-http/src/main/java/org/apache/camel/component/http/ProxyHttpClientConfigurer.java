@@ -41,7 +41,8 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this(host, port, scheme, null, null, null, null);
     }
 
-    public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String username, String password, String domain, String ntHost) {
+    public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String username, String password, String domain,
+                                     String ntHost) {
         this.host = host;
         this.port = port;
         this.scheme = scheme;
@@ -67,6 +68,5 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
             clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
     }
-
 
 }

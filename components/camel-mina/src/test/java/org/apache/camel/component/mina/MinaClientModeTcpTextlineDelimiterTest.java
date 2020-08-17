@@ -52,12 +52,13 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true", getPort()))
-                    .id("minaRoute")
-                    .noAutoStartup()
-                    .to("log:before?showAll=true")
-                    .to("mock:result")
-                    .to("log:after?showAll=true");
+                from(String.format("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true",
+                        getPort()))
+                                .id("minaRoute")
+                                .noAutoStartup()
+                                .to("log:before?showAll=true")
+                                .to("mock:result")
+                                .to("log:after?showAll=true");
             }
         };
     }

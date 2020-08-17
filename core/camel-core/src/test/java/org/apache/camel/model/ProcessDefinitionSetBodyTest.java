@@ -43,7 +43,7 @@ public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setBody(exchange -> FUNCTION_MESSAGE).to("mock:functionOutput").to("mock:output");
+                        .setBody(exchange -> FUNCTION_MESSAGE).to("mock:functionOutput").to("mock:output");
             }
         };
     }

@@ -32,7 +32,7 @@ import org.apache.camel.spi.ClassResolver;
 public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
 
     public OnExceptionReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (OnExceptionDefinition)definition);
+        super(route, (OnExceptionDefinition) definition);
     }
 
     @Override

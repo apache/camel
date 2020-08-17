@@ -20,14 +20,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
 /**
- * A test Java main class to be executed. The behavior of the program is
- * controlled by the arguments that the {@link #main(String[])} receives. Valid
- * arguments are the public static fields of the class.
+ * A test Java main class to be executed. The behavior of the program is controlled by the arguments that the
+ * {@link #main(String[])} receives. Valid arguments are the public static fields of the class.
  */
 public class ExecutableJavaProgram {
     /**
-     * Start 2 threads that print text in the stdout and stderr, each printing
-     * {@link #LINES_TO_PRINT_FROM_EACH_THREAD} lines.
+     * Start 2 threads that print text in the stdout and stderr, each printing {@link #LINES_TO_PRINT_FROM_EACH_THREAD}
+     * lines.
      */
     public static final String THREADS = "threads";
 

@@ -32,12 +32,12 @@ public class BatchPutAttributesCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest()
-            .withDomainName(determineDomainName())
-            .withItems(determineReplaceableItems());
+                .withDomainName(determineDomainName())
+                .withItems(determineReplaceableItems());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         this.sdbClient.batchPutAttributes(request);
-        
+
         log.trace("Request sent");
     }
 

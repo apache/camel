@@ -85,7 +85,8 @@ public class BlobExchangeHeaders {
                 .metadata(properties.getMetadata());
     }
 
-    public static BlobExchangeHeaders createBlobExchangeHeadersFromBlobDownloadHeaders(final BlobDownloadHeaders blobDownloadHeaders) {
+    public static BlobExchangeHeaders createBlobExchangeHeadersFromBlobDownloadHeaders(
+            final BlobDownloadHeaders blobDownloadHeaders) {
         return createBlobExchangeHeadersFromBlobProperties(buildBlobProperties(blobDownloadHeaders));
     }
 
@@ -126,7 +127,8 @@ public class BlobExchangeHeaders {
     }
 
     private static BlobProperties buildBlobProperties(final BlobDownloadHeaders hd) {
-        return new BlobProperties(null, hd.getLastModified(), hd.getETag(),
+        return new BlobProperties(
+                null, hd.getLastModified(), hd.getETag(),
                 hd.getContentLength() == null ? 0 : hd.getContentLength(), hd.getContentType(), null,
                 hd.getContentEncoding(), hd.getContentDisposition(), hd.getContentLanguage(), hd.getCacheControl(),
                 hd.getBlobSequenceNumber(), hd.getBlobType(), hd.getLeaseStatus(), hd.getLeaseState(),

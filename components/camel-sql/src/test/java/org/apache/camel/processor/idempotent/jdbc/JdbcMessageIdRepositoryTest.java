@@ -92,14 +92,14 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:result")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String id = exchange.getIn().getHeader("messageId", String.class);
-                            if (id.equals("2")) {
-                                throw new IllegalArgumentException("Damn I cannot handle id 2");
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damn I cannot handle id 2");
+                                }
                             }
-                        }
-                    });
+                        });
             }
         };
         RouteDefinition routeDefinition = context.getRouteDefinition("JdbcMessageIdRepositoryTest");

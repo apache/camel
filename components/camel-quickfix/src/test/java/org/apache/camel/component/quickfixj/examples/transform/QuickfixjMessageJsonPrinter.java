@@ -29,7 +29,7 @@ public class QuickfixjMessageJsonPrinter {
     public QuickfixjMessageJsonPrinter() throws ConfigError {
         formatter = new QuickfixjEventJsonTransformer();
     }
-    
+
     public void print(Exchange exchange) {
         LOG.info(formatter.transform(exchange));
     }

@@ -22,8 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Logging event notifier that only notifies if <tt>INFO</tt> log level has
- * been configured for its logger.
+ * Logging event notifier that only notifies if <tt>INFO</tt> log level has been configured for its logger.
  */
 public class LoggingEventNotifier extends EventNotifierSupport {
 

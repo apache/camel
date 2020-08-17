@@ -60,8 +60,10 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // generate a new file continuously
-                from("timer:foo?period=50").setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropper.class, "getFilename")).setBody(constant("Hello World"))
-                    .to("file:target/data/filestress").to("mock:result");
+                from("timer:foo?period=50")
+                        .setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropper.class, "getFilename"))
+                        .setBody(constant("Hello World"))
+                        .to("file:target/data/filestress").to("mock:result");
             }
         };
     }

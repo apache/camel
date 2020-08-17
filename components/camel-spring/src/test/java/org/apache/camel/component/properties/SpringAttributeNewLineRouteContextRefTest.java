@@ -25,7 +25,8 @@ public class SpringAttributeNewLineRouteContextRefTest extends SpringTestSupport
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringAttributeNewLineRouteContextRefTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringAttributeNewLineRouteContextRefTest.xml");
     }
 
     @Test

@@ -45,12 +45,13 @@ public class ConditionalExceptionProcessor implements Processor {
 
         if (getCount() > maxCalls * 2) {
             errorMsg = "Expected only " + maxCalls * 2 + " calls to process() but encountered "
-                + getCount() + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery for each call.";
+                       + getCount()
+                       + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery for each call.";
         }
 
         // should be printed 2 times due to one re-delivery after one failure
         LOG.info("Exchange[" + getCount() + "][" + ((getCount() % 2 != 0) ? "Should rollback" : "Should succeed")
-            + "] = " + exchange);
+                 + "] = " + exchange);
 
         // force rollback on every mod 2 attempt
         if (getCount() % 2 != 0) {

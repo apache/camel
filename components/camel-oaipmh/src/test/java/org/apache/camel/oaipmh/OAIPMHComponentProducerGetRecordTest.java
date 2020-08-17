@@ -28,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class OAIPMHComponentProducerGetRecordTest extends CamelTestSupport {
-    
+
     @Test
     public void testOAIPMH() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -36,22 +36,22 @@ public class OAIPMHComponentProducerGetRecordTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied(3 * 1000);
     }
-    
+
     @BeforeClass
     public static void startServer() throws IOException {
         //Mocked data  taken from https://dspace.ucuenca.edu.ec/oai/request - July 21, 2020
         JettyTestServer.getInstance().context = "test2";
         JettyTestServer.getInstance().startServer();
     }
-    
+
     @AfterClass
     public static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        
+
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -59,7 +59,8 @@ public class OAIPMHComponentProducerGetRecordTest extends CamelTestSupport {
                         .setHeader("CamelOaimphIdentifier", constant("oai:dspace.ucuenca.edu.ec:123456789/32374"))
                         .to("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request")
                         .split(body())
-                        .split(xpath("/default:OAI-PMH/default:GetRecord/default:record/default:metadata/oai_dc:dc/dc:title/text()",
+                        .split(xpath(
+                                "/default:OAI-PMH/default:GetRecord/default:record/default:metadata/oai_dc:dc/dc:title/text()",
                                 new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
                                         .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
                                         .add("dc", "http://purl.org/dc/elements/1.1/")))

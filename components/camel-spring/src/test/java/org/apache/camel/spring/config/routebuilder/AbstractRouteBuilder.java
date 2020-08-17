@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public abstract class AbstractRouteBuilder extends RouteBuilder {
 
     protected abstract String getResult();
-    
+
     @Override
     public void configure() throws Exception {
         from("direct:start").to(getResult());

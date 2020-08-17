@@ -42,7 +42,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -66,17 +66,17 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
                 // enable async in only mode on the consumer
                 from("sjms:queue:start?synchronous=false")
                         .choice()
-                            .when(body().contains("Camel"))
-                            .to("async:camel?delay=2000")
-                            .inOut("sjms:queue:in.out.test?namedReplyTo=response.queue&synchronous=false")
-                            .to("mock:result")
+                        .when(body().contains("Camel"))
+                        .to("async:camel?delay=2000")
+                        .inOut("sjms:queue:in.out.test?namedReplyTo=response.queue&synchronous=false")
+                        .to("mock:result")
                         .otherwise()
-                            .to("log:other")
-                            .to("mock:result");
+                        .to("log:other")
+                        .to("mock:result");
 
                 from("sjms:queue:in.out.test?exchangePattern=InOut&synchronous=false")
-                    .to("log:camel")
-                    .transform(constant("Bye Camel"));
+                        .to("log:camel")
+                        .transform(constant("Bye Camel"));
             }
         };
     }

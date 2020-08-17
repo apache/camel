@@ -134,7 +134,8 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         }
     }
 
-    private SSLContext createSSLContext(CamelContext camelContext, NettyServerBootstrapConfiguration configuration) throws Exception {
+    private SSLContext createSSLContext(CamelContext camelContext, NettyServerBootstrapConfiguration configuration)
+            throws Exception {
         if (!configuration.isSsl()) {
             return null;
         }

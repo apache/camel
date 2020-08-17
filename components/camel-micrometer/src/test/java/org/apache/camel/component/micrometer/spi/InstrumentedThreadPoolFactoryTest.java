@@ -104,7 +104,8 @@ public class InstrumentedThreadPoolFactoryTest {
 
     @Test
     public void testNewScheduledThreadPool() {
-        final ScheduledExecutorService scheduledExecutorService = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
+        final ScheduledExecutorService scheduledExecutorService
+                = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
 
         assertThat(scheduledExecutorService, is(notNullValue()));
         assertThat(scheduledExecutorService, is(instanceOf(TimedExecutorService.class)));

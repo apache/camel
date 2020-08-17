@@ -26,10 +26,12 @@ import javax.enterprise.util.Nonbinding;
 import javax.inject.Qualifier;
 
 /**
- * A CDI qualifier to define the <a href="http://camel.apache.org/uris.html">Camel URI</a> associated to
- * the annotated resource. This annotation can be used to annotate an {@code @Inject} injection point for
- * values of type {@link org.apache.camel.Endpoint} or {@link org.apache.camel.ProducerTemplate}. For example:
- * <pre><code>
+ * A CDI qualifier to define the <a href="http://camel.apache.org/uris.html">Camel URI</a> associated to the annotated
+ * resource. This annotation can be used to annotate an {@code @Inject} injection point for values of type
+ * {@link org.apache.camel.Endpoint} or {@link org.apache.camel.ProducerTemplate}. For example:
+ * 
+ * <pre>
+ * <code>
  * {@literal @}Inject
  * {@literal @}Uri("mock:foo")
  * Endpoint endpoint;
@@ -37,17 +39,19 @@ import javax.inject.Qualifier;
  * {@literal @}Inject
  * {@literal @}Uri("seda:bar")
  * ProducerTemplate producer;
- * </code></pre>
+ * </code>
+ * </pre>
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 public @interface Uri {
 
     /**
      * Returns the <a href="http://camel.apache.org/uris.html">Camel URI</a> of the resource.
      */
-    @Nonbinding String value();
+    @Nonbinding
+    String value();
 
     final class Literal extends AnnotationLiteral<Uri> implements Uri {
 

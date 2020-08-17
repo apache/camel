@@ -69,8 +69,8 @@ public class MyBatisExecutorTypeTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:updateAccount?statementType=Update&executorType=batch")
-                    .to("mock:result");
+                        .to("mybatis:updateAccount?statementType=Update&executorType=batch")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

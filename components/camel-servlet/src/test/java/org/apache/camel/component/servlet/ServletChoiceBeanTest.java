@@ -60,14 +60,14 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 from("servlet:/hello")
-                    .bean(ServletChoiceBeanTest.class, "findClient(${header.id})")
-                    .to("mock:bean")
-                    .choice()
+                        .bean(ServletChoiceBeanTest.class, "findClient(${header.id})")
+                        .to("mock:bean")
+                        .choice()
                         .when(simple("${body} == null"))
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
-                    .otherwise()
+                        .otherwise()
                         .setBody(simple("Client is ${body}"))
-                    .end();
+                        .end();
             }
         };
     }

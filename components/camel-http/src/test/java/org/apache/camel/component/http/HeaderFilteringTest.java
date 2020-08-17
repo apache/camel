@@ -58,7 +58,8 @@ public class HeaderFilteringTest {
 
         final DefaultCamelContext context = new DefaultCamelContext();
         final Producer producer = http.createProducer(context, "http://localhost:" + port, GET.name(), "/test", null, null,
-                APPLICATION_JSON.getMimeType(), APPLICATION_JSON.getMimeType(), new RestConfiguration(), Collections.emptyMap());
+                APPLICATION_JSON.getMimeType(), APPLICATION_JSON.getMimeType(), new RestConfiguration(),
+                Collections.emptyMap());
 
         final DefaultExchange exchange = new DefaultExchange(context);
         final DefaultMessage in = new DefaultMessage(context);
@@ -91,9 +92,9 @@ public class HeaderFilteringTest {
         try (final OutputStream responseBody = exchange.getResponseBody()) {
             try {
                 assertThat(exchange.getRequestBody())
-                    .hasSameContentAs(new ByteArrayInputStream(BODY.getBytes(StandardCharsets.UTF_8)));
+                        .hasSameContentAs(new ByteArrayInputStream(BODY.getBytes(StandardCharsets.UTF_8)));
                 assertThat(exchange.getRequestHeaders()).containsEntry(HOST,
-                    Collections.singletonList("localhost:" + port));
+                        Collections.singletonList("localhost:" + port));
 
                 exchange.sendResponseHeaders(200, 0);
             } catch (final AssertionError error) {

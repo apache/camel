@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public abstract class AbstractPGPDataFormatTest extends CamelTestSupport {
-    
+
     protected void doRoundTripEncryptionTests(String endpoint) throws Exception {
         MockEndpoint encrypted = setupExpectations(context, 3, "mock:encrypted");
         MockEndpoint unencrypted = setupExpectations(context, 3, "mock:unencrypted");

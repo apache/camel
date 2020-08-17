@@ -25,9 +25,9 @@ public class ReactiveStreamsTestServiceFactory implements CamelReactiveStreamsSe
     /**
      * Creates a new instance of the {@link ReactiveStreamsEngineConfiguration}
      *
-     * @param context       the Camel context
-     * @param configuration the ReactiveStreams engine configuration
-     * @return the ReactiveStreams service
+     * @param  context       the Camel context
+     * @param  configuration the ReactiveStreams engine configuration
+     * @return               the ReactiveStreams service
      */
     @Override
     public CamelReactiveStreamsService newInstance(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {

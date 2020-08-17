@@ -32,7 +32,8 @@ public class MainComponentConfigurationTest {
         properties.setProperty("camel.component.dummy.configuration.log", "true");
         properties.setProperty("camel.component.dummy.component-value", "component-value");
         properties.setProperty("camel.component.dummy.configuration.nested.value", "nested-value");
-        properties.setProperty("camel.component.dummy.configuration", "#class:org.apache.camel.main.support.MyDummyConfiguration");
+        properties.setProperty("camel.component.dummy.configuration",
+                "#class:org.apache.camel.main.support.MyDummyConfiguration");
 
         Main main = new Main();
         try {
@@ -54,4 +55,3 @@ public class MainComponentConfigurationTest {
         }
     }
 }
-

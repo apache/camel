@@ -67,14 +67,14 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
                 onException(IllegalArgumentException.class).handled(false).to("mock:error");
 
                 from("file://target/transacted/okay?initialDelay=0&delay=10")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("file://target/transacted/fail?initialDelay=0&delay=10&moveFailed=../failed")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

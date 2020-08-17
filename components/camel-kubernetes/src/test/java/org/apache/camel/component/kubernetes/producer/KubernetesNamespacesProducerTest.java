@@ -47,7 +47,9 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/api/v1/namespaces").andReturn(200, new NamespaceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/api/v1/namespaces")
+                .andReturn(200, new NamespaceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         List<Namespace> result = template.requestBody("direct:list", "", List.class);
         assertEquals(3, result.size());
     }
@@ -56,8 +58,10 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     public void getNamespace() throws Exception {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("test");
-        server.expect().withPath("/api/v1/namespaces/test").andReturn(200, new NamespaceBuilder().withMetadata(meta).build()).once();
-        Exchange ex = template.request("direct:getNs", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        server.expect().withPath("/api/v1/namespaces/test").andReturn(200, new NamespaceBuilder().withMetadata(meta).build())
+                .once();
+        Exchange ex = template.request("direct:getNs",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
 
         Namespace ns = ex.getMessage().getBody(Namespace.class);
 
@@ -70,7 +74,8 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
         server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 
-        Exchange ex = template.request("direct:deleteNamespace", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1"));
+        Exchange ex = template.request("direct:deleteNamespace",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1"));
 
         boolean nsDeleted = ex.getMessage().getBody(Boolean.class);
 
@@ -84,7 +89,8 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
             public void configure() throws Exception {
                 from("direct:list").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces");
                 from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
-                from("direct:deleteNamespace").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=deleteNamespace");
+                from("direct:deleteNamespace")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=deleteNamespace");
             }
         };
     }

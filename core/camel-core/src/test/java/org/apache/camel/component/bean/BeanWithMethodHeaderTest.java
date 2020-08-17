@@ -39,7 +39,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         template.sendBody("direct:echo", "Hello World");
 
         assertMockEndpointsSatisfied();
-        assertNull(mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME), "There should no Bean_METHOD_NAME header");
+        assertNull(mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME),
+                "There should no Bean_METHOD_NAME header");
     }
 
     @Test
@@ -87,7 +88,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(AmbiguousMethodCallException.class, e.getCause());
-            AmbiguousMethodCallException ace = (AmbiguousMethodCallException)e.getCause();
+            AmbiguousMethodCallException ace = (AmbiguousMethodCallException) e.getCause();
             assertEquals(2, ace.getMethods().size());
         }
     }

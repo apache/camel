@@ -103,9 +103,9 @@ public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("mybatis:selectAllAccounts").routeId("route1")
-                     // let it complete only current task so we shutdown faster
-                     .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                     .delay(1000).to("seda:foo");
+                        // let it complete only current task so we shutdown faster
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
+                        .delay(1000).to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

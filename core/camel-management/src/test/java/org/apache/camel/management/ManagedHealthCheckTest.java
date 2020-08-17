@@ -111,12 +111,12 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         Collection<String> ids = (Collection) mbeanServer.invoke(on, "getHealthChecksIDs", null, null);
         assertEquals(2, ids.size());
 
-        mbeanServer.invoke(on, "disableById", new Object[]{"myCheck"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "disableById", new Object[] { "myCheck" }, new String[] { "java.lang.String" });
 
         up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertTrue(up);
 
-        mbeanServer.invoke(on, "enableById", new Object[]{"myCheck"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "enableById", new Object[] { "myCheck" }, new String[] { "java.lang.String" });
 
         up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertFalse(up);

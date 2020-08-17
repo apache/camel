@@ -54,7 +54,8 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("httpURI"));
     }
@@ -89,7 +90,8 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, error.getCode());
-        assertTrue(error.getDetail(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof UnknownHostException);
+        assertTrue(error.getDetail(
+                ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof UnknownHostException);
     }
 
     @Override
@@ -98,7 +100,7 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}")
-                    .process(e -> e.getMessage().setBody("ok"));
+                        .process(e -> e.getMessage().setBody("ok"));
             }
         };
     }

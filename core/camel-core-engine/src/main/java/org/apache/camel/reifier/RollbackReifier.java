@@ -25,7 +25,7 @@ import org.apache.camel.processor.RollbackProcessor;
 public class RollbackReifier extends ProcessorReifier<RollbackDefinition> {
 
     public RollbackReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (RollbackDefinition)definition);
+        super(route, (RollbackDefinition) definition);
     }
 
     @Override
@@ -35,7 +35,8 @@ public class RollbackReifier extends ProcessorReifier<RollbackDefinition> {
 
         // validate that only either mark rollbacks is chosen and not both
         if (isMarkRollbackOnly && isMarkRollbackOnlyLast) {
-            throw new IllegalArgumentException("Only either one of markRollbackOnly and markRollbackOnlyLast is possible to select as true");
+            throw new IllegalArgumentException(
+                    "Only either one of markRollbackOnly and markRollbackOnlyLast is possible to select as true");
         }
 
         RollbackProcessor answer = new RollbackProcessor(definition.getMessage());

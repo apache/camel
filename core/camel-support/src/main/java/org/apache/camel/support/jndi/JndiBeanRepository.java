@@ -77,7 +77,7 @@ public class JndiBeanRepository implements BeanRepository {
             return type.cast(answer);
         } catch (Throwable e) {
             String msg = "Found bean: " + name + " in JNDI Context: " + context
-                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+                         + " of type: " + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }

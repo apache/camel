@@ -65,17 +65,17 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
                 // enable async in only mode on the consumer
                 from("activemq:queue:start?asyncConsumer=true")
                         .choice()
-                            .when(body().contains("Camel"))
-                            .to("async:camel?delay=2000")
-                            .inOut("activemq:queue:camel")
-                            .to("mock:result")
+                        .when(body().contains("Camel"))
+                        .to("async:camel?delay=2000")
+                        .inOut("activemq:queue:camel")
+                        .to("mock:result")
                         .otherwise()
-                            .to("log:other")
-                            .to("mock:result");
+                        .to("log:other")
+                        .to("mock:result");
 
                 from("activemq:queue:camel")
-                    .to("log:camel")
-                    .transform(constant("Bye Camel"));
+                        .to("log:camel")
+                        .transform(constant("Bye Camel"));
             }
         };
     }

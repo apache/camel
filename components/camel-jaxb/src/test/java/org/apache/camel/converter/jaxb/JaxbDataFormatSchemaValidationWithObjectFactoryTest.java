@@ -47,16 +47,16 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
     private MockEndpoint mockUnmarshall;
 
     private JAXBContext jbCtx;
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        
+
         super.setUp();
-        
+
         XmlRootElement xmlRootElementAnnotation = Message.class.getAnnotation(XmlRootElement.class);
         assertNull(xmlRootElementAnnotation);
-      
+
         jbCtx = JAXBContext.newInstance(Message.class);
     }
 
@@ -72,19 +72,19 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
             assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
             assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.b"));
         }
-    } 
-    
+    }
+
     @Test
     public void testUnmarshallOfNonRootWithValidationException() throws Exception {
-        
+
         JAXBElement<Message> message = new ObjectFactory().createMessage(new Message());
-        
+
         String xml;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             jbCtx.createMarshaller().marshal(message, baos);
             xml = new String(baos.toByteArray(), "UTF-8");
         }
-        
+
         try {
             template.sendBody("direct:unmarshall", xml);
             fail("CamelExecutionException expected");
@@ -96,7 +96,7 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
             assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.b"));
         }
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -110,12 +110,12 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
                 jaxbDataFormat.setObjectFactory(true);
 
                 from("direct:marshall")
-                    .marshal(jaxbDataFormat)
-                    .to("mock:marshall");
+                        .marshal(jaxbDataFormat)
+                        .to("mock:marshall");
 
                 from("direct:unmarshall")
-                    .unmarshal(jaxbDataFormat)
-                    .to("mock:unmarshall");
+                        .unmarshal(jaxbDataFormat)
+                        .to("mock:unmarshall");
             }
         };
     }

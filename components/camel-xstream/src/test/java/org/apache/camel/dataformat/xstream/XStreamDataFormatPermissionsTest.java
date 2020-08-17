@@ -25,31 +25,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
-    protected static final String XML_PURCHASE_ORDER = 
-        "<org.apache.camel.dataformat.xstream.PurchaseOrder>"
-        + "<name>foo</name>"
-        + "<price>10.0</price>"
-        + "<amount>1.0</amount>"
-        + "</org.apache.camel.dataformat.xstream.PurchaseOrder>";
-    protected static final String XML_PURCHASE_ORDERS_LIST = 
-        "<list>"
-        + "<org.apache.camel.dataformat.xstream.PurchaseOrder>"
-        + "<name>foo</name>"
-        + "<price>10.0</price>"
-        + "<amount>1.0</amount>"
-        + "</org.apache.camel.dataformat.xstream.PurchaseOrder>"
-        + "<org.apache.camel.dataformat.xstream.PurchaseOrder>"
-        + "<name>bar</name>"
-        + "<price>9.0</price>"
-        + "<amount>2.0</amount>"
-        + "</org.apache.camel.dataformat.xstream.PurchaseOrder>"
-        + "</list>";
-    
+    protected static final String XML_PURCHASE_ORDER = "<org.apache.camel.dataformat.xstream.PurchaseOrder>"
+                                                       + "<name>foo</name>"
+                                                       + "<price>10.0</price>"
+                                                       + "<amount>1.0</amount>"
+                                                       + "</org.apache.camel.dataformat.xstream.PurchaseOrder>";
+    protected static final String XML_PURCHASE_ORDERS_LIST = "<list>"
+                                                             + "<org.apache.camel.dataformat.xstream.PurchaseOrder>"
+                                                             + "<name>foo</name>"
+                                                             + "<price>10.0</price>"
+                                                             + "<amount>1.0</amount>"
+                                                             + "</org.apache.camel.dataformat.xstream.PurchaseOrder>"
+                                                             + "<org.apache.camel.dataformat.xstream.PurchaseOrder>"
+                                                             + "<name>bar</name>"
+                                                             + "<price>9.0</price>"
+                                                             + "<amount>2.0</amount>"
+                                                             + "</org.apache.camel.dataformat.xstream.PurchaseOrder>"
+                                                             + "</list>";
+
     @Test
     public void testNone() {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         try {
             xStream.fromXML(XML_PURCHASE_ORDER);
             fail("should fail to unmarshall");
@@ -57,15 +56,15 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
             // OK
         }
     }
-    
-    
+
     @Test
     public void testDeny() {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setPermissions("-org.apache.camel.dataformat.xstream.PurchaseOrder");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         try {
             xStream.fromXML(XML_PURCHASE_ORDER);
             fail("should fail to unmarshall");
@@ -79,11 +78,12 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setPermissions("org.apache.camel.dataformat.xstream.PurchaseOrder");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         Object po = xStream.fromXML(XML_PURCHASE_ORDER);
         assertNotNull(po);
-        
+
         po = xStream.fromXML(XML_PURCHASE_ORDERS_LIST);
         assertNotNull(po);
     }
@@ -91,10 +91,12 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
     @Test
     public void testAllowAndDeny() {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-        xStreamDataFormat.setPermissions("org.apache.camel.dataformat.xstream.PurchaseOrder,-org.apache.camel.dataformat.xstream.*");
+        xStreamDataFormat
+                .setPermissions("org.apache.camel.dataformat.xstream.PurchaseOrder,-org.apache.camel.dataformat.xstream.*");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         try {
             xStream.fromXML(XML_PURCHASE_ORDER);
             fail("should fail to unmarshall");
@@ -106,10 +108,12 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
     @Test
     public void testDenyAndAllowDeny() {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-        xStreamDataFormat.setPermissions("-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseOrder");
+        xStreamDataFormat
+                .setPermissions("-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseOrder");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         Object po = xStream.fromXML(XML_PURCHASE_ORDER);
         assertNotNull(po);
 
@@ -122,8 +126,9 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setPermissions("*");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         Object po = xStream.fromXML(XML_PURCHASE_ORDER);
         assertNotNull(po);
 
@@ -136,8 +141,9 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setPermissions("*,-org.apache.camel.dataformat.xstream.PurchaseOrder");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         try {
             xStream.fromXML(XML_PURCHASE_ORDER);
             fail("should fail to unmarshall");
@@ -151,8 +157,9 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setPermissions("-*");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         try {
             xStream.fromXML(XML_PURCHASE_ORDER);
             fail("should fail to unmarshall");
@@ -166,8 +173,9 @@ public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setPermissions("-*,org.apache.camel.dataformat.xstream.PurchaseOrder");
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         Object po = xStream.fromXML(XML_PURCHASE_ORDER);
         assertNotNull(po);
 

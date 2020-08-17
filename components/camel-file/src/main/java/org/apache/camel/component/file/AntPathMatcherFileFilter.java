@@ -26,8 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * File filter using {@link AntPathMatcher}.
  * <p/>
- * Exclude take precedence over includes. If a file match both exclude and
- * include it will be regarded as excluded.
+ * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  */
 public class AntPathMatcherFileFilter implements FileFilter {
     private static final Logger LOG = LoggerFactory.getLogger(AntPathMatcherFileFilter.class);
@@ -45,8 +44,8 @@ public class AntPathMatcherFileFilter implements FileFilter {
     /**
      * Accepts the given file by the path name
      *
-     * @param path the path
-     * @return <tt>true</tt> if accepted, <tt>false</tt> if not
+     * @param  path the path
+     * @return      <tt>true</tt> if accepted, <tt>false</tt> if not
      */
     public boolean acceptPathName(String path) {
         // must use single / as path separators
@@ -86,8 +85,8 @@ public class AntPathMatcherFileFilter implements FileFilter {
     }
 
     /**
-     * @return <tt>true</tt> if case sensitive pattern matching is on,
-     *         <tt>false</tt> if case sensitive pattern matching is off.
+     * @return <tt>true</tt> if case sensitive pattern matching is on, <tt>false</tt> if case sensitive pattern matching
+     *         is off.
      */
     public boolean isCaseSensitive() {
         return caseSensitive;
@@ -98,8 +97,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
      * <p/>
      * Is by default turned on <tt>true</tt>.
      * 
-     * @param caseSensitive <tt>false</tt> to disable case sensitive pattern
-     *            matching
+     * @param caseSensitive <tt>false</tt> to disable case sensitive pattern matching
      */
     public void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
@@ -122,16 +120,14 @@ public class AntPathMatcherFileFilter implements FileFilter {
     }
 
     /**
-     * Sets excludes using a single string where each element can be separated
-     * with comma
+     * Sets excludes using a single string where each element can be separated with comma
      */
     public void setExcludes(String excludes) {
         setExcludes(excludes.split(","));
     }
 
     /**
-     * Sets includes using a single string where each element can be separated
-     * with comma
+     * Sets includes using a single string where each element can be separated with comma
      */
     public void setIncludes(String includes) {
         setIncludes(includes.split(","));

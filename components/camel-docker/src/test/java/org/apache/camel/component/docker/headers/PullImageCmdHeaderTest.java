@@ -40,7 +40,7 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
 
     @Mock
     private PullImageResultCallback callback;
-    
+
     @Test
     void pullImageHeaderTest() {
 
@@ -52,7 +52,6 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         headers.put(DockerConstants.DOCKER_REPOSITORY, repository);
         headers.put(DockerConstants.DOCKER_TAG, tag);
         headers.put(DockerConstants.DOCKER_REGISTRY, registry);
-
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 

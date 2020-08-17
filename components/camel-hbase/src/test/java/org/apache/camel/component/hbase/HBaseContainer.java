@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.hbase;
 
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HBaseTestingUtility;
 import org.testcontainers.containers.GenericContainer;
 
 /**
- * Currently there is no official HBase docker image.
- * This is dummy implementation of the HBase container.
+ * Currently there is no official HBase docker image. This is dummy implementation of the HBase container.
  */
 public class HBaseContainer extends GenericContainer {
 

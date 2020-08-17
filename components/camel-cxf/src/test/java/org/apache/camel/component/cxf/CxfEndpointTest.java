@@ -46,13 +46,13 @@ public class CxfEndpointTest {
     private int port2 = CXFTestSupport.getPort2();
 
     private String routerEndpointURI = "cxf://http://localhost:" + port1 + "/CxfEndpointTest/router"
-            + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-            + "&dataFormat=POJO";
+                                       + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+                                       + "&dataFormat=POJO";
     private String wsdlEndpointURI = "cxf://http://localhost:" + port2 + "/CxfEndpointTest/helloworld"
-            + "?wsdlURL=classpath:person.wsdl"
-            + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
-            + "&portName={http://camel.apache.org/wsdl-first}soap"
-            + "&dataFormat=PAYLOAD";
+                                     + "?wsdlURL=classpath:person.wsdl"
+                                     + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
+                                     + "&portName={http://camel.apache.org/wsdl-first}soap"
+                                     + "&dataFormat=PAYLOAD";
 
     @Test
     public void testSettingContinucationTimout() throws Exception {
@@ -67,14 +67,14 @@ public class CxfEndpointTest {
     @Test
     public void testSpringCxfEndpoint() throws Exception {
 
-        ClassPathXmlApplicationContext ctx =
-                new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/CxfEndpointBeans.xml"});
+        ClassPathXmlApplicationContext ctx
+                = new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/component/cxf/CxfEndpointBeans.xml" });
 
         SpringCamelContext context = new SpringCamelContext(ctx);
         context.start();
 
         CxfComponent cxfComponent = new CxfComponent(context);
-        CxfSpringEndpoint endpoint = (CxfSpringEndpoint)cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
+        CxfSpringEndpoint endpoint = (CxfSpringEndpoint) cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
 
         assertEquals(endpoint.getAddress(),
                 "http://localhost:" + port2 + "/CxfEndpointTest/helloworld", "Got the wrong endpoint address");
@@ -95,14 +95,14 @@ public class CxfEndpointTest {
         context.start();
 
         CxfComponent cxfComponent = new CxfComponent(context);
-        CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI);
+        CxfEndpoint endpoint = (CxfEndpoint) cxfComponent.createEndpoint(routerEndpointURI);
         endpoint.setBus(newBus);
-        CamelCxfClientImpl client = (CamelCxfClientImpl)endpoint.createClient();
+        CamelCxfClientImpl client = (CamelCxfClientImpl) endpoint.createClient();
         assertEquals(newBus, client.getBus(), "CamelCxfClientImpl should has the same bus with CxfEndpoint");
 
-        endpoint = (CxfEndpoint)cxfComponent.createEndpoint(wsdlEndpointURI);
+        endpoint = (CxfEndpoint) cxfComponent.createEndpoint(wsdlEndpointURI);
         endpoint.setBus(newBus);
-        client = (CamelCxfClientImpl)endpoint.createClient();
+        client = (CamelCxfClientImpl) endpoint.createClient();
         assertEquals(newBus, client.getBus(), "CamelCxfClientImpl should has the same bus with CxfEndpoint");
     }
 
@@ -116,18 +116,18 @@ public class CxfEndpointTest {
         camelContext.start();
 
         CxfComponent cxfComponent = new CxfComponent(camelContext);
-        CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfConfigurer=#myConfigurer");
+        CxfEndpoint endpoint = (CxfEndpoint) cxfComponent.createEndpoint(routerEndpointURI + "&cxfConfigurer=#myConfigurer");
 
         Consumer consumer = endpoint.createConsumer(processor);
         consumer.start();
 
         verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
         verify(configurer).configureServer(isA(Server.class));
-        
+
         reset(configurer);
         Producer producer = endpoint.createProducer();
         producer.start();
-        
+
         verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
         verify(configurer).configureClient(isA(Client.class));
     }

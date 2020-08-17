@@ -47,7 +47,6 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         return (MicrometerEndpoint) super.getEndpoint();
     }
 
-
     @Override
     public void process(Exchange exchange) {
         Message in = exchange.getIn();

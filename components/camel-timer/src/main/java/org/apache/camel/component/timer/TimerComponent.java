@@ -28,10 +28,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * The <a href="http://camel.apache.org/timer.html">Timer Component</a> is for generating message exchanges when a timer fires.
+ * The <a href="http://camel.apache.org/timer.html">Timer Component</a> is for generating message exchanges when a timer
+ * fires.
  *
- * Represents the component that manages {@link TimerEndpoint}.  It holds the
- * list of {@link TimerConsumer} objects that are started.
+ * Represents the component that manages {@link TimerEndpoint}. It holds the list of {@link TimerConsumer} objects that
+ * are started.
  */
 @org.apache.camel.spi.annotations.Component("timer")
 public class TimerComponent extends DefaultComponent {
@@ -52,7 +53,8 @@ public class TimerComponent extends DefaultComponent {
             answer = timers.get(key);
             if (answer == null) {
                 // the timer name is also the thread name, so lets resolve a name to be used
-                String name = consumer.getEndpoint().getCamelContext().getExecutorServiceManager().resolveThreadName("timer://" + consumer.getEndpoint().getTimerName());
+                String name = consumer.getEndpoint().getCamelContext().getExecutorServiceManager()
+                        .resolveThreadName("timer://" + consumer.getEndpoint().getTimerName());
                 answer = new Timer(name, consumer.getEndpoint().isDaemon());
                 timers.put(key, answer);
                 // store new reference counter

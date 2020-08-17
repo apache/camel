@@ -41,23 +41,25 @@ public class AthenaComponentClientRegistryTest extends CamelTestSupport {
         Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
         assertThrows(IllegalArgumentException.class, () -> component.createEndpoint("aws2-athena://label"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
         AmazonAthenaClientMock clientMock = new AmazonAthenaClientMock();
         context.getRegistry().bind("amazonAthenaClient", clientMock);
         Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
-        Athena2Endpoint endpoint = (Athena2Endpoint) component.createEndpoint("aws2-athena://label?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        Athena2Endpoint endpoint = (Athena2Endpoint) component
+                .createEndpoint("aws2-athena://label?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getAmazonAthenaClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
         AmazonAthenaClientMock clientMock = new AmazonAthenaClientMock();
         context.getRegistry().bind("amazonAthenaClient", clientMock);
         Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
-        Athena2Endpoint endpoint = (Athena2Endpoint) component.createEndpoint("aws2-athena://label?accessKey=xxx&secretKey=yyy");
+        Athena2Endpoint endpoint
+                = (Athena2Endpoint) component.createEndpoint("aws2-athena://label?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getAmazonAthenaClient());
     }

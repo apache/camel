@@ -29,8 +29,8 @@ public class UndertowNoAutoStartupTest extends BaseUndertowTest {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/myapp")
-                    .autoStartup(false)
-                    .to("mock:myapp");
+                        .autoStartup(false)
+                        .to("mock:myapp");
             }
         };
     }

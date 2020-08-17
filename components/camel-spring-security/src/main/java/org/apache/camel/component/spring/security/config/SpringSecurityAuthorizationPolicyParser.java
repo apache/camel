@@ -29,17 +29,17 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         // true = allow id to be set as there is a setter method on target bean
         super(SpringSecurityAuthorizationPolicy.class, true);
     }
-    
+
     @Override
     protected boolean isEligibleAttribute(String attributeName) {
         if ("access".equals(attributeName) || "accessDecisionManager".equals(attributeName)
-            || "authenticationManager".equals(attributeName)) {
+                || "authenticationManager".equals(attributeName)) {
             return false;
         } else {
             return super.isEligibleAttribute(attributeName);
         }
     }
-    
+
     @Override
     protected void postProcess(BeanDefinitionBuilder builder, Element element) {
         setReferenceIfAttributeDefine(builder, element, "accessDecisionManager");
@@ -49,11 +49,11 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         }
 
         BeanDefinitionBuilder accessPolicyBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-            SpringSecurityAccessPolicy.class.getCanonicalName());
+                SpringSecurityAccessPolicy.class.getCanonicalName());
         accessPolicyBuilder.addConstructorArgValue(element.getAttribute("access"));
         builder.addPropertyValue("springSecurityAccessPolicy", accessPolicyBuilder.getBeanDefinition());
     }
-    
+
     protected void setReferenceIfAttributeDefine(BeanDefinitionBuilder builder, Element element, String attribute) {
         String valueRef = attribute;
         if (ObjectHelper.isNotEmpty(element.getAttribute(attribute))) {

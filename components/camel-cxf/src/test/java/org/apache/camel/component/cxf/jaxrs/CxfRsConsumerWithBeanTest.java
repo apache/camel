@@ -33,8 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerWithBeanTest";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
-    private static final String CXF_RS_ENDPOINT_URI_2 = "cxfrs://http://localhost:" + CXT + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    private static final String CXF_RS_ENDPOINT_URI
+            = "cxfrs://http://localhost:" + CXT
+              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    private static final String CXF_RS_ENDPOINT_URI_2
+            = "cxfrs://http://localhost:" + CXT
+              + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
@@ -56,7 +60,7 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
         sendPutRequest("http://localhost:" + CXT + "/rest/customerservice/c20");
         sendPutRequest("http://localhost:" + CXT + "/rest2/customerservice/c20");
     }
-    
+
     private void sendPutRequest(String uri) throws Exception {
         HttpPut put = new HttpPut(uri);
         StringEntity entity = new StringEntity("string");

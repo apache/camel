@@ -33,15 +33,16 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 
 /**
- * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP {@link Processor}.
+ * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP
+ * {@link Processor}.
  * <p/>
  * The component should use the {@link FactoryFinder} SPI to specify a file with the name of the EIP model in the
- * directory of {@link #RESOURCE_PATH}. The file should contain a property with key <tt>class</tt> that refers
- * to the name of the {@link ProcessorFactory} the Camel component implement, which gets called for creating
- * the {@link Processor}s for the EIP.
+ * directory of {@link #RESOURCE_PATH}. The file should contain a property with key <tt>class</tt> that refers to the
+ * name of the {@link ProcessorFactory} the Camel component implement, which gets called for creating the
+ * {@link Processor}s for the EIP.
  * <p/>
- * The Hystrix EIP is such an example where the circuit breaker EIP (CircuitBreakerDefinition) is implemented
- * in the <tt>camel-hystrix</tt> component.
+ * The Hystrix EIP is such an example where the circuit breaker EIP (CircuitBreakerDefinition) is implemented in the
+ * <tt>camel-hystrix</tt> component.
  */
 public class DefaultProcessorFactory implements ProcessorFactory {
 
@@ -81,7 +82,8 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     }
 
     @Override
-    public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception {
+    public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args)
+            throws Exception {
         if ("SendDynamicProcessor".equals(definitionName)) {
             String uri = (String) args.get("uri");
             Expression expression = (Expression) args.get("expression");
@@ -99,5 +101,5 @@ public class DefaultProcessorFactory implements ProcessorFactory {
 
         return null;
     }
-    
+
 }

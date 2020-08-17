@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = { GaugeRouteTest.TestConfig.class })
+                      classes = { GaugeRouteTest.TestConfig.class })
 @MockEndpoints
 public class GaugeRouteTest {
 

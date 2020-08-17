@@ -49,21 +49,25 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&sync=true&textline=true").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
-                    }
-                });
+                from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&sync=true&textline=true")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody(
+                                        "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
+                            }
+                        });
             }
         };
     }
 
     @Test
     public void testCustomClientPipelineFactory() throws Exception {
-        String response = (String)template.requestBody("netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&sync=true&textline=true",
-                                                       "Forest Gump describing Vietnam...");
+        String response = (String) template.requestBody(
+                "netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&sync=true&textline=true",
+                "Forest Gump describing Vietnam...");
 
-        assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);
+        assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'",
+                response);
         assertEquals(true, clientInvoked);
         assertEquals(true, serverInvoked);
     }
@@ -81,7 +85,8 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
 
             ChannelPipeline channelPipeline = ch.pipeline();
             clientInvoked = true;
-            channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
+            channelPipeline.addLast("decoder-DELIM",
+                    new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ClientChannelHandler(producer));
@@ -108,7 +113,8 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
             ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
-            channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
+            channelPipeline.addLast("decoder-DELIM",
+                    new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ServerChannelHandler(consumer));
         }

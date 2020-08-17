@@ -30,7 +30,8 @@ public class CamelWorkflowDefinitionFactory extends WorkflowDefinitionFactory {
     private WorkflowTypeRegistrationOptions registrationOptions;
     private DataConverter dataConverter;
 
-    public CamelWorkflowDefinitionFactory(SWFWorkflowConsumer swfWorkflowConsumer, WorkflowType workflowType, WorkflowTypeRegistrationOptions registrationOptions, DataConverter dataConverter) {
+    public CamelWorkflowDefinitionFactory(SWFWorkflowConsumer swfWorkflowConsumer, WorkflowType workflowType,
+                                          WorkflowTypeRegistrationOptions registrationOptions, DataConverter dataConverter) {
         this.swfWorkflowConsumer = swfWorkflowConsumer;
         this.workflowType = workflowType;
         this.registrationOptions = registrationOptions;

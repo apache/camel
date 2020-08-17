@@ -32,6 +32,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ApprovalResultTest {
 
     @Test
@@ -71,7 +72,8 @@ public class ApprovalResultTest {
                         + "<newWorkitemIds>04i0Y000000L0fkQAC</newWorkitemIds>"//
                         + "<success>true</success>"//
                         + "</ProcessApprovalResult>"//
-                        + "</ProcessApprovalResult>", results);
+                        + "</ProcessApprovalResult>",
+                results);
 
         assertResponseReadCorrectly(results);
     }

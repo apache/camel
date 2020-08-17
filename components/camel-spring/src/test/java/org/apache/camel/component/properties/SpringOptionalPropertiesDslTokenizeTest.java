@@ -28,7 +28,8 @@ public class SpringOptionalPropertiesDslTokenizeTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringOptionalPropertiesDslTokenizeTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringOptionalPropertiesDslTokenizeTest.xml");
     }
 
     @Test

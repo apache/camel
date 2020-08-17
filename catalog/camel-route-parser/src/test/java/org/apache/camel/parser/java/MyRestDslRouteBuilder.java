@@ -25,26 +25,26 @@ public class MyRestDslRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         restConfiguration()
-            .contextPath("myapi").port(1234)
-            .component("jetty")
-            .apiComponent("swagger")
-            .apiHost("localhost")
-            .apiContextPath("myapi/swagger")
-            .skipBindingOnErrorCode(true)
-            .scheme("https")
-            .hostNameResolver(RestHostNameResolver.allLocalIp)
-            .bindingMode(RestBindingMode.json)
-            .componentProperty("foo", "123")
-            .endpointProperty("pretty", "false")
-            .consumerProperty("bar", "456")
-            .corsHeaderProperty("key1", "value1")
-            .corsHeaderProperty("key2", "value2");
+                .contextPath("myapi").port(1234)
+                .component("jetty")
+                .apiComponent("swagger")
+                .apiHost("localhost")
+                .apiContextPath("myapi/swagger")
+                .skipBindingOnErrorCode(true)
+                .scheme("https")
+                .hostNameResolver(RestHostNameResolver.allLocalIp)
+                .bindingMode(RestBindingMode.json)
+                .componentProperty("foo", "123")
+                .endpointProperty("pretty", "false")
+                .consumerProperty("bar", "456")
+                .corsHeaderProperty("key1", "value1")
+                .corsHeaderProperty("key2", "value2");
 
         rest("/foo").consumes("xml").produces("json").description("my foo service")
-            .get("{id}").apiDocs(false)
+                .get("{id}").apiDocs(false)
                 .description("get by id")
                 .to("log:id")
-            .post().bindingMode(RestBindingMode.xml)
+                .post().bindingMode(RestBindingMode.xml)
                 .description("post something")
                 .toD("log:post");
     }

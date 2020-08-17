@@ -43,7 +43,8 @@ public class CouchDbConsumer extends DefaultConsumer {
         super.doStart();
         LOG.info("Starting CouchDB consumer");
 
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
+                1);
         task = new CouchDbChangesetTracker(endpoint, this, couchClient);
         executor.submit(task);
     }

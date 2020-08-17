@@ -42,7 +42,8 @@ public class MiloClientConsumer extends DefaultConsumer {
 
     private Double samplingInterval;
 
-    public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor, final MiloClientConnection connection) {
+    public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor,
+                              final MiloClientConnection connection) {
         super(endpoint, processor);
 
         requireNonNull(connection);

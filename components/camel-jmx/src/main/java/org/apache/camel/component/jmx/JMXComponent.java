@@ -25,10 +25,9 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
- * Component for connecting JMX Notification events to a camel route.
- * The endpoint created from this component allows users to specify
- * an ObjectName to listen to and any JMX Notifications received from
- * that object will flow into the route.
+ * Component for connecting JMX Notification events to a camel route. The endpoint created from this component allows
+ * users to specify an ObjectName to listen to and any JMX Notifications received from that object will flow into the
+ * route.
  */
 @Component("jmx")
 public class JMXComponent extends DefaultComponent {

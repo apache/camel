@@ -87,7 +87,7 @@ public class InfinispanIdempotentRepositoryTest {
     public void doesntRemoveMissingKey() {
         assertFalse(idempotentRepository.remove("One"));
     }
-    
+
     @Test
     public void clearCache() {
         assertTrue(idempotentRepository.add("One"));
@@ -95,9 +95,9 @@ public class InfinispanIdempotentRepositoryTest {
 
         assertTrue(getCache().containsKey("One"));
         assertTrue(getCache().containsKey("Two"));
-        
+
         idempotentRepository.clear();
-        
+
         assertFalse(getCache().containsKey("One"));
         assertFalse(getCache().containsKey("Two"));
     }

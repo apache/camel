@@ -33,7 +33,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Date date = new Date();
         Exchange exchange = super.createExchangeWithBody(null);
-        
+
         String value = binding.convertHeaderValueToString(exchange, date);
         assertNotEquals(value, date.toString());
         assertEquals(value, DefaultHttpBinding.getHttpDateFormat().format(date));
@@ -54,7 +54,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Locale l = Locale.SIMPLIFIED_CHINESE;
         Exchange exchange = super.createExchangeWithBody(null);
-        
+
         String value = binding.convertHeaderValueToString(exchange, l);
         assertNotEquals(value, l.toString());
         assertEquals("zh-CN", value);

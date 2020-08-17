@@ -68,9 +68,10 @@ public class CometBindingTest {
     @Test
     void testBindingTransfersSessionAttributtes() {
         // setup
-        Set<String> attributeNames = new HashSet<>(Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
-                                                                 LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
-                                                                 FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
+        Set<String> attributeNames = new HashSet<>(
+                Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
+                        LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
+                        FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
         when(remote.getAttributeNames()).thenReturn(attributeNames);
         when(remote.getAttribute(STRING_ATTR_NAME)).thenReturn(HELLO);
         when(remote.getAttribute(INTEGER_ATTR_NAME)).thenReturn(EIGHT);
@@ -90,7 +91,7 @@ public class CometBindingTest {
         assertEquals(THIRTY_FOUR, result.getHeader(LONG_ATTR_NAME));
         assertEquals(TWO_POINT_ONE, result.getHeader(DOUBLE_ATTR_NAME));
         assertEquals(null, result.getHeader(FOO_ATTR_NAME));
-        assertTrue((Boolean)result.getHeader(BOOLEAN_ATT_NAME));
+        assertTrue((Boolean) result.getHeader(BOOLEAN_ATT_NAME));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class CometBindingTest {
         // setup
         String expectedSubscriptionInfo = "subscriptionInfo";
         when(cometdMessage.get(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME))
-            .thenReturn(expectedSubscriptionInfo);
+                .thenReturn(expectedSubscriptionInfo);
 
         // act
         Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
@@ -121,8 +122,7 @@ public class CometBindingTest {
         // assert
         assertEquals(2, result.getHeaders().size());
         assertEquals(expectedSubscriptionInfo,
-                     result.getHeader(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME));
+                result.getHeader(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME));
     }
 
 }
-

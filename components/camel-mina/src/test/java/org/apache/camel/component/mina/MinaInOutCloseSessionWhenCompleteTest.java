@@ -28,7 +28,8 @@ public class MinaInOutCloseSessionWhenCompleteTest extends BaseMinaTest {
 
     @Test
     public void testCloseSessionWhenComplete() throws Exception {
-        Object out = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()), "Chad");
+        Object out
+                = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()), "Chad");
         assertEquals("Bye Chad", out);
     }
 

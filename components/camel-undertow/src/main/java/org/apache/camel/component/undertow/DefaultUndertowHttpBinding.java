@@ -64,8 +64,8 @@ import org.xnio.streams.ChannelInputStream;
 import static org.apache.camel.util.BufferCaster.cast;
 
 /**
- * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
- * By default {@link UndertowHeaderFilterStrategy} is also used.
+ * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any. By default
+ * {@link UndertowHeaderFilterStrategy} is also used.
  */
 public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
@@ -88,7 +88,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         this.useStreaming = useStreaming;
     }
 
-    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException, Boolean muteException) {
+    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException,
+                                      Boolean muteException) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.transferException = transferException;
         this.muteException = muteException;
@@ -139,7 +140,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                         am.addAttachmentObject(key, attachment);
                         body.put(key, attachment.getDataHandler());
                     } else if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(key, value.getValue(), exchange)) {
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(key, value.getValue(), exchange)) {
                         UndertowHelper.appendHeader(result.getHeaders(), key, value.getValue());
                         UndertowHelper.appendHeader(body, key, value.getValue());
                     }
@@ -149,7 +150,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         } else {
             //extract body by myself if undertow parser didn't handle and the method is allowed to have one
             //body is extracted as byte[] then auto TypeConverter kicks in
-            if (Methods.POST.equals(httpExchange.getRequestMethod()) || Methods.PUT.equals(httpExchange.getRequestMethod()) || Methods.PATCH.equals(httpExchange.getRequestMethod())) {
+            if (Methods.POST.equals(httpExchange.getRequestMethod()) || Methods.PUT.equals(httpExchange.getRequestMethod())
+                    || Methods.PATCH.equals(httpExchange.getRequestMethod())) {
                 StreamSourceChannel source = httpExchange.getRequestChannel();
                 if (useStreaming) {
                     result.setBody(new ChannelInputStream(source));
@@ -191,7 +193,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     @Override
-    public void populateCamelHeaders(HttpServerExchange httpExchange, Map<String, Object> headersMap, Exchange exchange) throws Exception {
+    public void populateCamelHeaders(HttpServerExchange httpExchange, Map<String, Object> headersMap, Exchange exchange)
+            throws Exception {
         LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
         String path = httpExchange.getRequestPath();
@@ -324,7 +327,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         Exchange camelExchange = message.getExchange();
         Object body = message.getBody();
         Exception exception = camelExchange.getException();
-        
+
         int code = determineResponseCode(camelExchange, body);
         message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, code);
         httpExchange.setStatusCode(code);
@@ -377,7 +380,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             // mark the exception as failure handled, as we handled it by actively muting it
             ExchangeHelper.setFailureHandled(camelExchange);
         }
-        
+
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
@@ -408,7 +411,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         return codeToUse;
     }
-    
+
     @Override
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {
 
@@ -459,7 +462,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 LOG.error("Channel did not block");
             } else {
                 cast(buffer).flip();
-                out.write(buffer.array(), buffer.arrayOffset() + cast(buffer).position(), buffer.arrayOffset() + cast(buffer).limit());
+                out.write(buffer.array(), buffer.arrayOffset() + cast(buffer).position(),
+                        buffer.arrayOffset() + cast(buffer).limit());
                 // to be compatible with java 8
                 Buffer buf = buffer;
                 cast(buf).clear();

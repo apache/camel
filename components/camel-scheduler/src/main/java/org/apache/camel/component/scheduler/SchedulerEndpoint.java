@@ -31,14 +31,15 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Generate messages in specified intervals using <code>java.util.concurrent.ScheduledExecutorService</code>.
  *
- * This component is similar to the timer component, but it offers more functionality in terms of scheduling.
- * Also this component uses JDK ScheduledExecutorService. Where as the timer uses a JDK Timer.
+ * This component is similar to the timer component, but it offers more functionality in terms of scheduling. Also this
+ * component uses JDK ScheduledExecutorService. Where as the timer uses a JDK Timer.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "scheduler", title = "Scheduler", syntax = "scheduler:name",
-    consumerOnly = true, category = {Category.CORE, Category.SCHEDULING})
+             consumerOnly = true, category = { Category.CORE, Category.SCHEDULING })
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String name;
     @UriParam(defaultValue = "1", label = "scheduler")
     private int concurrentTasks = 1;

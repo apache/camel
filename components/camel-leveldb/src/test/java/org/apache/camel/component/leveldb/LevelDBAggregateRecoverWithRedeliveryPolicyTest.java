@@ -50,7 +50,7 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
     public void testLevelDBAggregateRecover() throws Exception {
         getMockEndpoint("mock:aggregated").setResultWaitTime(20000);
         getMockEndpoint("mock:result").setResultWaitTime(20000);
-        
+
         // should fail the first 3 times and then recover
         getMockEndpoint("mock:aggregated").expectedMessageCount(4);
         getMockEndpoint("mock:result").expectedBodiesReceived("ABCDE");
@@ -75,7 +75,7 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
                         // this is the output from the aggregator
                         .log("aggregated exchange id ${exchangeId} with ${body}")
@@ -90,7 +90,7 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
                             }
                         })
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

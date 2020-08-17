@@ -21,5 +21,6 @@ import java.util.Map;
 
 public interface ExtractAdapter {
     Iterator<Map.Entry<String, String>> iterator();
+
     Object get(String key);
 }

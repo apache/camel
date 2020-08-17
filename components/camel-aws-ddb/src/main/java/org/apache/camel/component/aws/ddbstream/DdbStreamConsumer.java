@@ -114,14 +114,16 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
             providedSeqNum = new BigInteger(lastSeenSequenceNumber);
             condition = BigIntComparisons.Conditions.LT;
         }
-        switch(getEndpoint().getConfiguration().getIteratorType()) {
+        switch (getEndpoint().getConfiguration().getIteratorType()) {
             case AFTER_SEQUENCE_NUMBER:
                 condition = BigIntComparisons.Conditions.LT;
-                providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
+                providedSeqNum
+                        = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
                 break;
             case AT_SEQUENCE_NUMBER:
                 condition = BigIntComparisons.Conditions.LTEQ;
-                providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
+                providedSeqNum
+                        = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
                 break;
             default:
         }

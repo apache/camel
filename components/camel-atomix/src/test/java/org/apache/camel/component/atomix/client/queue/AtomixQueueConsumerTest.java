@@ -102,7 +102,7 @@ public class AtomixQueueConsumerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-queue:%s", QUEUE_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

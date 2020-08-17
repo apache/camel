@@ -264,11 +264,13 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/").get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest().post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+                rest("/").get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest().post("/bar")
+                        .description("Bar endpoint").route().log("Hello /foo").endRest();
             }
         });
 
-        RestOpenApiProcessor processor = new RestOpenApiProcessor("an-invalid-pattern", false, null, context.getRestConfiguration());
+        RestOpenApiProcessor processor
+                = new RestOpenApiProcessor("an-invalid-pattern", false, null, context.getRestConfiguration());
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader("/some/rest/api/document.json", Exchange.HTTP_PATH);
         processor.process(exchange);

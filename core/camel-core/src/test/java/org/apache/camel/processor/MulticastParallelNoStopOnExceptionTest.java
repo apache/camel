@@ -86,7 +86,8 @@ public class MulticastParallelNoStopOnExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start").multicast().parallelProcessing().executorService(service).to("direct:foo", "direct:bar", "direct:baz").end().to("mock:result");
+                from("direct:start").multicast().parallelProcessing().executorService(service)
+                        .to("direct:foo", "direct:bar", "direct:baz").end().to("mock:result");
 
                 // need a little delay to slow these okays down so we better can
                 // test stop when parallel

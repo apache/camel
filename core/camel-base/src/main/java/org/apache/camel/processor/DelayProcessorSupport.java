@@ -31,8 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A useful base class for any processor which provides some kind of throttling
- * or delayed processing.
+ * A useful base class for any processor which provides some kind of throttling or delayed processing.
  * <p/>
  * This implementation will block while waiting.
  */
@@ -88,13 +87,14 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         this(camelContext, processor, null, false);
     }
 
-    public DelayProcessorSupport(CamelContext camelContext, Processor processor, ScheduledExecutorService executorService, boolean shutdownExecutorService) {
+    public DelayProcessorSupport(CamelContext camelContext, Processor processor, ScheduledExecutorService executorService,
+                                 boolean shutdownExecutorService) {
         super(processor);
         this.camelContext = camelContext;
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
     }
-    
+
     protected boolean processDelay(Exchange exchange, AsyncCallback callback, long delay) {
         if (!isAsyncDelayed() || exchange.isTransacted()) {
             // use synchronous delay (also required if using transactions)
@@ -129,7 +129,9 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                         exchange.setException(new RejectedExecutionException());
                     } else {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Scheduling rejected task, so letting caller run, delaying at first for {} millis for exchangeId: {}", delay, exchange.getExchangeId());
+                            LOG.debug(
+                                    "Scheduling rejected task, so letting caller run, delaying at first for {} millis for exchangeId: {}",
+                                    delay, exchange.getExchangeId());
                         }
                         // let caller run by processing
                         try {
@@ -174,7 +176,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             callback.done(true);
             return true;
         }
-        
+
         return processDelay(exchange, callback, delay);
     }
 
@@ -208,7 +210,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
      * <p/>
      * This implementation will block while waiting
      * 
-     * @param delay the delay time in millis
+     * @param delay    the delay time in millis
      * @param exchange the exchange being processed
      */
     protected void delay(long delay, Exchange exchange) throws InterruptedException {

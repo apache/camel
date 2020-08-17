@@ -78,16 +78,16 @@ public class AsyncJmsInOutTest extends CamelTestSupport {
                 // this means the async processing model is about 2x faster
 
                 from("seda:start")
-                    // we can only send at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
-                    .inOut("activemq:queue:bar")
-                    .to("mock:result");
+                        // we can only send at fastest the 100 msg in 5 sec due the delay
+                        .delay(50)
+                        .inOut("activemq:queue:bar")
+                        .to("mock:result");
 
                 from("activemq:queue:bar")
-                    .log("Using ${threadName} to process ${body}")
-                    // we can only process at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        // we can only process at fastest the 100 msg in 5 sec due the delay
+                        .delay(50)
+                        .transform(body().prepend("Bye "));
             }
         };
     }

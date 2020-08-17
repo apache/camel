@@ -39,21 +39,22 @@ public abstract class FujiServiceNowProcessor extends AbstractServiceNowProcesso
         final String sysId = getSysID(in);
 
         doProcess(
-            exchange,
-            ObjectHelper.notNull(requestModel, "requestModel"),
-            ObjectHelper.notNull(responseModel, "responseModel"),
-            apiVersion,
-            ObjectHelper.notNull(action, "action"),
-            ObjectHelper.notNull(tableName, "tableName"),
-            sysId);
+                exchange,
+                ObjectHelper.notNull(requestModel, "requestModel"),
+                ObjectHelper.notNull(responseModel, "responseModel"),
+                apiVersion,
+                ObjectHelper.notNull(action, "action"),
+                ObjectHelper.notNull(tableName, "tableName"),
+                sysId);
     }
 
     protected abstract void doProcess(
-        Exchange exchange,
-        Class<?> requestModel,
-        Class<?> responseModel,
-        String apiVersion,
-        String action,
-        String tableName,
-        String sysId) throws Exception;
+            Exchange exchange,
+            Class<?> requestModel,
+            Class<?> responseModel,
+            String apiVersion,
+            String action,
+            String tableName,
+            String sysId)
+            throws Exception;
 }

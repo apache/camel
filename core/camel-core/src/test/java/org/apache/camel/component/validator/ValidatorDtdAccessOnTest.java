@@ -30,8 +30,7 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
     }
 
     /**
-     * Tests that external DTD call is executed for StringSource by expecting an
-     * UnkonwHostException.
+     * Tests that external DTD call is executed for StringSource by expecting an UnkonwHostException.
      */
     @Test
     public void testInvalidMessageWithExternalDTDStringSource() throws Exception {
@@ -44,8 +43,7 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
     }
 
     /**
-     * Tests that external DTD call is executed for StreamSourceby expecting an
-     * UnknownHostException.
+     * Tests that external DTD call is executed for StreamSourceby expecting an UnknownHostException.
      */
     @Test
     public void testInvalidMessageWithExternalDTDStreamSource() throws Exception {
@@ -58,8 +56,7 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
     }
 
     /**
-     * Tests that XXE is possible for StreamSource by expecting an
-     * UnkonwHostException.
+     * Tests that XXE is possible for StreamSource by expecting an UnkonwHostException.
      */
     @Test
     public void testInvalidMessageXXESourceStream() throws Exception {

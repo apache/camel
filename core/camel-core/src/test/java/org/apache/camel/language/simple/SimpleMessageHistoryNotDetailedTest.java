@@ -52,8 +52,9 @@ public class SimpleMessageHistoryNotDetailedTest extends ContextTestSupport {
                 // turn on message history
                 context.setMessageHistory(true);
 
-                from("direct:start").to("mock:a").log("${messageHistory(false)}").to("mock:b").log("${messageHistory(false)}").transform().simple("${messageHistory(false)}")
-                    .to("mock:result");
+                from("direct:start").to("mock:a").log("${messageHistory(false)}").to("mock:b").log("${messageHistory(false)}")
+                        .transform().simple("${messageHistory(false)}")
+                        .to("mock:result");
             }
         };
     }

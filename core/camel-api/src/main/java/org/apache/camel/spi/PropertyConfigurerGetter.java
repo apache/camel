@@ -19,11 +19,11 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * A marker interface to identify the object as being a configurer which can
- * provide details about the options the configurer supports.
+ * A marker interface to identify the object as being a configurer which can provide details about the options the
+ * configurer supports.
  * <p/>
- * This is used in Camel to have fast property configuration of Camel components & endpoints,
- * and for EIP patterns as well.
+ * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
+ * well.
  *
  * @see PropertyConfigurer
  */
@@ -32,8 +32,9 @@ public interface PropertyConfigurerGetter {
     /**
      * Provides a map of which options the cofigurer supports and their class type.
      *
-     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
-     * @return configurable options from the target as a Map name -> class type.
+     * @param  target the target instance such as {@link org.apache.camel.Endpoint} or
+     *                {@link org.apache.camel.Component}.
+     * @return        configurable options from the target as a Map name -> class type.
      */
     Map<String, Object> getAllOptions(Object target);
 
@@ -42,10 +43,12 @@ public interface PropertyConfigurerGetter {
      *
      * For maps, then the nested type returned is the type of the value in the map (not the map key type).
      *
-     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
-     * @param name          the property name
-     * @param ignoreCase    whether to ignore case for matching the property name
-     * @return the nested class type, or <tt>null</tt> if the option does not has nested types or not possible to resolve.
+     * @param  target     the target instance such as {@link org.apache.camel.Endpoint} or
+     *                    {@link org.apache.camel.Component}.
+     * @param  name       the property name
+     * @param  ignoreCase whether to ignore case for matching the property name
+     * @return            the nested class type, or <tt>null</tt> if the option does not has nested types or not
+     *                    possible to resolve.
      */
     default Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
         return null;
@@ -54,10 +57,11 @@ public interface PropertyConfigurerGetter {
     /**
      * Gets the property value
      *
-     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
-     * @param name          the property name
-     * @param ignoreCase    whether to ignore case for matching the property name
-     * @return the property value
+     * @param  target     the target instance such as {@link org.apache.camel.Endpoint} or
+     *                    {@link org.apache.camel.Component}.
+     * @param  name       the property name
+     * @param  ignoreCase whether to ignore case for matching the property name
+     * @return            the property value
      */
     Object getOptionValue(Object target, String name, boolean ignoreCase);
 

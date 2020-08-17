@@ -57,10 +57,10 @@ public class XmlRootElementPreferringElementNameStrategyTest {
     @Test
     public void testFindExceptionForFaultName() throws Exception {
         assertThrows(UnsupportedOperationException.class,
-            () -> ens.findExceptionForFaultName(new QName(LOCAL_NAME, CUSTOM_NS)));
+                () -> ens.findExceptionForFaultName(new QName(LOCAL_NAME, CUSTOM_NS)));
     }
 
-    @XmlType(name = "", propOrder = {LOCAL_NAME})
+    @XmlType(name = "", propOrder = { LOCAL_NAME })
     @XmlRootElement(name = LOCAL_NAME, namespace = CUSTOM_NS)
     public class Request implements Serializable {
 

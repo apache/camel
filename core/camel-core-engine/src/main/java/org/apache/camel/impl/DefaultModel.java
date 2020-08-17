@@ -194,7 +194,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters) throws Exception {
+    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
+            throws Exception {
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
             if (routeTemplateId.equals(def.getId())) {
@@ -222,7 +223,9 @@ public class DefaultModel implements Model {
             }
         }
         if (templatesBuilder.length() > 0) {
-            throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + templatesBuilder.toString());
+            throw new IllegalArgumentException(
+                    "Route template " + routeTemplateId + " the following mandatory parameters must be provided: "
+                                               + templatesBuilder.toString());
         }
         // then override with user parameters
         if (parameters != null) {
@@ -244,7 +247,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
+    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes)
+            throws Exception {
         if (restDefinitions == null || restDefinitions.isEmpty()) {
             return;
         }
@@ -385,7 +389,8 @@ public class DefaultModel implements Model {
     @Override
     public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
-            Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+            Iterator<ProcessorDefinition> it
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             while (it.hasNext()) {
                 ProcessorDefinition<?> proc = it.next();
                 if (id.equals(proc.getId())) {

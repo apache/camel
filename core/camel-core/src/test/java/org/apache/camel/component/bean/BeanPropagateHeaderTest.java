@@ -50,7 +50,8 @@ public class BeanPropagateHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader("foo", constant("bar")).convertBodyTo(Integer.class).to("bean:order").inOnly("seda:foo").transform(constant("OK"));
+                from("direct:start").setHeader("foo", constant("bar")).convertBodyTo(Integer.class).to("bean:order")
+                        .inOnly("seda:foo").transform(constant("OK"));
 
                 from("seda:foo").to("mock:result");
             }

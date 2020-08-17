@@ -85,12 +85,12 @@ public final class DomConverter {
 
         return buffer.toString();
     }
-    
+
     private String toString(Node node, Exchange exchange) throws TransformerException {
         String s;
         if (node instanceof Text) {
             Text textnode = (Text) node;
-            
+
             StringBuilder b = new StringBuilder();
             b.append(textnode.getNodeValue());
             textnode = (Text) textnode.getNextSibling();
@@ -101,7 +101,7 @@ public final class DomConverter {
             s = b.toString();
         } else {
             s = xml.toString(node, exchange);
-            
+
         }
         return s;
     }
@@ -133,7 +133,8 @@ public final class DomConverter {
     }
 
     @Converter
-    public InputStream toInputStream(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
+    public InputStream toInputStream(NodeList nodeList, Exchange exchange)
+            throws TransformerException, UnsupportedEncodingException {
         return new ByteArrayInputStream(toByteArray(nodeList, exchange));
     }
 

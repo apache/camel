@@ -33,44 +33,44 @@ public class DefaultDestinationCreationStrategyTest extends JmsTestSupport {
 
     @Test
     public void testQueueCreation() throws Exception {
-        Queue destination = (Queue)strategy.createDestination(getSession(), "queue://test", false);
+        Queue destination = (Queue) strategy.createDestination(getSession(), "queue://test", false);
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
 
-        destination = (Queue)strategy.createDestination(getSession(), "queue:test", false);
+        destination = (Queue) strategy.createDestination(getSession(), "queue:test", false);
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
 
-        destination = (Queue)strategy.createDestination(getSession(), "test", false);
+        destination = (Queue) strategy.createDestination(getSession(), "test", false);
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
     }
 
     @Test
     public void testTopicCreation() throws Exception {
-        Topic destination = (Topic)strategy.createDestination(getSession(), "topic://test", true);
+        Topic destination = (Topic) strategy.createDestination(getSession(), "topic://test", true);
         assertNotNull(destination);
         assertEquals("test", destination.getTopicName());
 
-        destination = (Topic)strategy.createDestination(getSession(), "topic:test", true);
+        destination = (Topic) strategy.createDestination(getSession(), "topic:test", true);
         assertNotNull(destination);
         assertEquals("test", destination.getTopicName());
 
-        destination = (Topic)strategy.createDestination(getSession(), "test", true);
+        destination = (Topic) strategy.createDestination(getSession(), "test", true);
         assertNotNull(destination);
         assertEquals("test", destination.getTopicName());
     }
 
     @Test
     public void testTemporaryQueueCreation() throws Exception {
-        TemporaryQueue destination = (TemporaryQueue)strategy.createTemporaryDestination(getSession(), false);
+        TemporaryQueue destination = (TemporaryQueue) strategy.createTemporaryDestination(getSession(), false);
         assertNotNull(destination);
         assertNotNull(destination.getQueueName());
     }
 
     @Test
     public void testTemporaryTopicCreation() throws Exception {
-        TemporaryTopic destination = (TemporaryTopic)strategy.createTemporaryDestination(getSession(), true);
+        TemporaryTopic destination = (TemporaryTopic) strategy.createTemporaryDestination(getSession(), true);
         assertNotNull(destination);
         assertNotNull(destination.getTopicName());
     }

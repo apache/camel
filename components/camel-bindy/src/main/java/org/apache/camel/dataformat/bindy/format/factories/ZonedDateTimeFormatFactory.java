@@ -33,7 +33,8 @@ public class ZonedDateTimeFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new ZonedDateTimePatternFormat(formattingOptions.getPattern(),
+        return new ZonedDateTimePatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getLocale());
     }
 
@@ -59,7 +60,7 @@ public class ZonedDateTimeFormatFactory extends AbstractFormatFactory {
             DateTimeFormatter df = this.getDateFormat();
 
             ObjectHelper.notNull(this.pattern, "pattern");
-            
+
             return ZonedDateTime.parse(string, df);
         }
 

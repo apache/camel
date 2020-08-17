@@ -36,8 +36,8 @@ public final class OgnlHelper {
      * <p/>
      * An expression is considered an OGNL expression when it contains either one of the following chars: . or [
      *
-     * @param expression  the String
-     * @return <tt>true</tt> if a Camel OGNL expression, otherwise <tt>false</tt>. 
+     * @param  expression the String
+     * @return            <tt>true</tt> if a Camel OGNL expression, otherwise <tt>false</tt>.
      */
     public static boolean isValidOgnlExpression(String expression) {
         if (ObjectHelper.isEmpty(expression)) {
@@ -69,7 +69,7 @@ public final class OgnlHelper {
         if (bracketBegin > 0 || bracketEnd > 0) {
             return bracketBegin != bracketEnd;
         }
-        
+
         // check for double dots
         if (expression.contains("..")) {
             return true;
@@ -79,8 +79,8 @@ public final class OgnlHelper {
     }
 
     /**
-     * Validates whether the method name is using valid java identifiers in the name
-     * Will throw {@link IllegalArgumentException} if the method name is invalid.
+     * Validates whether the method name is using valid java identifiers in the name Will throw
+     * {@link IllegalArgumentException} if the method name is invalid.
      */
     public static void validateMethodName(String method) {
         if (ObjectHelper.isEmpty(method)) {
@@ -97,9 +97,11 @@ public final class OgnlHelper {
                 break;
             }
             if (i == 0 && !Character.isJavaIdentifierStart(ch)) {
-                throw new IllegalArgumentException("Method name must start with a valid java identifier at position: 0 in method: " + method);
+                throw new IllegalArgumentException(
+                        "Method name must start with a valid java identifier at position: 0 in method: " + method);
             } else if (!Character.isJavaIdentifierPart(ch)) {
-                throw new IllegalArgumentException("Method name must be valid java identifier at position: " + i + " in method: " + method);
+                throw new IllegalArgumentException(
+                        "Method name must be valid java identifier at position: " + i + " in method: " + method);
             }
         }
     }
@@ -107,8 +109,8 @@ public final class OgnlHelper {
     /**
      * Tests whether or not the given Camel OGNL expression is using the null safe operator or not.
      *
-     * @param ognlExpression the Camel OGNL expression
-     * @return <tt>true</tt> if the null safe operator is used, otherwise <tt>false</tt>.
+     * @param  ognlExpression the Camel OGNL expression
+     * @return                <tt>true</tt> if the null safe operator is used, otherwise <tt>false</tt>.
      */
     public static boolean isNullSafeOperator(String ognlExpression) {
         if (ObjectHelper.isEmpty(ognlExpression)) {
@@ -123,8 +125,8 @@ public final class OgnlHelper {
      * <p/>
      * Will remove any leading of the following chars: ? or .
      *
-     * @param ognlExpression  the Camel OGNL expression
-     * @return the Camel OGNL expression without any leading operators.
+     * @param  ognlExpression the Camel OGNL expression
+     * @return                the Camel OGNL expression without any leading operators.
      */
     public static String removeLeadingOperators(String ognlExpression) {
         if (ObjectHelper.isEmpty(ognlExpression)) {
@@ -144,8 +146,8 @@ public final class OgnlHelper {
     /**
      * Removes any trailing operators from the Camel OGNL expression.
      *
-     * @param ognlExpression  the Camel OGNL expression
-     * @return the Camel OGNL expression without any trailing operators.
+     * @param  ognlExpression the Camel OGNL expression
+     * @return                the Camel OGNL expression without any trailing operators.
      */
     public static String removeTrailingOperators(String ognlExpression) {
         if (ObjectHelper.isEmpty(ognlExpression)) {
@@ -185,12 +187,11 @@ public final class OgnlHelper {
     }
 
     /**
-     * Regular expression with repeating groups is a pain to get right
-     * and then nobody understands the reg exp afterwards.
-     * So we use a bit ugly/low-level Java code to split the OGNL into methods.
+     * Regular expression with repeating groups is a pain to get right and then nobody understands the reg exp
+     * afterwards. So we use a bit ugly/low-level Java code to split the OGNL into methods.
      *
-     * @param ognl the ognl expression
-     * @return a list of methods, will return an empty list, if ognl expression has no methods
+     * @param  ognl                     the ognl expression
+     * @return                          a list of methods, will return an empty list, if ognl expression has no methods
      * @throws IllegalArgumentException if the last method has a missing ending parenthesis
      */
     public static List<String> splitOgnl(String ognl) {

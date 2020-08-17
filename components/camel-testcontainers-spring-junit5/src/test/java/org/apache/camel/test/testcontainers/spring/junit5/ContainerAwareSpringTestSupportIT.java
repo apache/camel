@@ -26,7 +26,8 @@ import org.testcontainers.containers.GenericContainer;
 public class ContainerAwareSpringTestSupportIT extends ContainerAwareSpringTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/test/testcontainers/spring/junit5/ContainerAwareSpringTestSupportTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/test/testcontainers/spring/junit5/ContainerAwareSpringTestSupportTest.xml");
     }
 
     @Test
@@ -43,19 +44,18 @@ public class ContainerAwareSpringTestSupportIT extends ContainerAwareSpringTestS
     @Override
     protected GenericContainer<?> createContainer() {
         return new GenericContainer("consul:1.6.2")
-            .withNetworkAliases("myconsul")
-            .withExposedPorts(8500)
-            .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
-            .withCommand(
-                "agent",
-                "-dev",
-                "-server",
-                "-bootstrap",
-                "-client",
-                "0.0.0.0",
-                "-log-level",
-                "trace"
-            );
+                .withNetworkAliases("myconsul")
+                .withExposedPorts(8500)
+                .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
+                .withCommand(
+                        "agent",
+                        "-dev",
+                        "-server",
+                        "-bootstrap",
+                        "-client",
+                        "0.0.0.0",
+                        "-log-level",
+                        "trace");
     }
 
 }

@@ -29,7 +29,8 @@ public class FtpConsumerIdempotentKeyChangedIssueTest extends FtpServerTestSuppo
     private Endpoint endpoint;
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/idempotent?password=admin&readLock=changed" + "&idempotentKey=${file:onlyname}-${file:size}-${date:file:yyyyMMddHHmmss}";
+        return "ftp://admin@localhost:" + getPort() + "/idempotent?password=admin&readLock=changed"
+               + "&idempotentKey=${file:onlyname}-${file:size}-${date:file:yyyyMMddHHmmss}";
     }
 
     @Test

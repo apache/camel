@@ -53,7 +53,7 @@ public class ManagedDataFormatTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .unmarshal(new DataFormatServiceTest.MyDataFormat())
+                        .unmarshal(new DataFormatServiceTest.MyDataFormat())
                         .to("mock:result");
             }
         };

@@ -35,8 +35,8 @@ import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * Manage an AWS s3 client for all users to use. This implementation is for
- * local instances to use a static and solid credential set.
+ * Manage an AWS s3 client for all users to use. This implementation is for local instances to use a static and solid
+ * credential set.
  */
 public class AWS2S3ClientStandardImpl implements AWS2CamelS3InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3ClientStandardImpl.class);
@@ -64,7 +64,8 @@ public class AWS2S3ClientStandardImpl implements AWS2CamelS3InternalClient {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -72,7 +73,8 @@ public class AWS2S3ClientStandardImpl implements AWS2CamelS3InternalClient {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -92,8 +94,7 @@ public class AWS2S3ClientStandardImpl implements AWS2CamelS3InternalClient {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

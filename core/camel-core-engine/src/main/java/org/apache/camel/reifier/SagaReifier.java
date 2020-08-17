@@ -38,7 +38,7 @@ import org.apache.camel.saga.CamelSagaStep;
 public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
     public SagaReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SagaDefinition)definition);
+        super(route, (SagaDefinition) definition);
     }
 
     @Override
@@ -61,7 +61,8 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         }
 
         String timeout = definition.getTimeout() != null ? definition.getTimeout() : definition.getTimeoutInMilliseconds();
-        CamelSagaStep step = new CamelSagaStep(compensationEndpoint, completionEndpoint, optionsMap,
+        CamelSagaStep step = new CamelSagaStep(
+                compensationEndpoint, completionEndpoint, optionsMap,
                 Optional.ofNullable(parseDuration(timeout)));
 
         SagaPropagation propagation = parse(SagaPropagation.class, definition.getPropagation());

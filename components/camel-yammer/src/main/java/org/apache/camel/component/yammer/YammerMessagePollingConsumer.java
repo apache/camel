@@ -64,7 +64,9 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
                 url.append(".json");
                 break;
             default:
-                throw new Exception(String.format("%s is not a valid Yammer message function type.", endpoint.getConfig().getFunction().name()));
+                throw new Exception(
+                        String.format("%s is not a valid Yammer message function type.",
+                                endpoint.getConfig().getFunction().name()));
         }
 
         StringBuilder args = new StringBuilder();
@@ -110,7 +112,6 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
 
         return url.toString();
     }
-
 
     @Override
     protected int poll() throws Exception {

@@ -49,12 +49,15 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
     }
 
     @Override
-    public java.util.stream.Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
+    public java.util.stream.Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
+            ExtensionContext extensionContext) {
         Class<?> testClass = extensionContext.getRequiredTestClass();
         try {
             List<Method> parameters = getParametersMethods(testClass);
             if (parameters.size() != 1) {
-                throw new IllegalStateException("Class " + testClass.getName() + " should provide a single method annotated with @" + Parameters.class.getSimpleName());
+                throw new IllegalStateException(
+                        "Class " + testClass.getName() + " should provide a single method annotated with @"
+                                                + Parameters.class.getSimpleName());
             }
             Object params = parameters.iterator().next().invoke(null);
             return CollectionUtils.toStream(params)
@@ -107,14 +110,14 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
 
         @Override
         public String getDisplayName(int invocationIndex) {
-            return "[" + invocationIndex + "] " + java.util.stream.Stream.of(params).map(Object::toString).collect(Collectors.joining(", "));
+            return "[" + invocationIndex + "] "
+                   + java.util.stream.Stream.of(params).map(Object::toString).collect(Collectors.joining(", "));
         }
 
         @Override
         public java.util.List<Extension> getAdditionalExtensions() {
             return Arrays.asList(
-                    (TestInstancePostProcessor) this::postProcessTestInstance
-                    );
+                    (TestInstancePostProcessor) this::postProcessTestInstance);
         }
 
         protected void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
@@ -126,7 +129,9 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                     .sorted(Comparator.comparing(f -> (Integer) f.getAnnotation(Parameter.class).value()))
                     .collect(Collectors.toList());
             if (params.length != fields.size()) {
-                throw new TestInstantiationException("Expected " + fields.size() + " parameters bug got " + params.length + " when instantiating " + clazz.getName());
+                throw new TestInstantiationException(
+                        "Expected " + fields.size() + " parameters bug got " + params.length + " when instantiating "
+                                                     + clazz.getName());
             }
             for (int i = 0; i < fields.size(); i++) {
                 Field f = fields.get(i);

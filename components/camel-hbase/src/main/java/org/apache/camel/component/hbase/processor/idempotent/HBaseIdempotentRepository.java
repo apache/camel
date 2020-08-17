@@ -46,7 +46,8 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     private Connection connection;
     private Table table;
 
-    public HBaseIdempotentRepository(Configuration configuration, String tableName, String family, String qualifier) throws IOException {
+    public HBaseIdempotentRepository(Configuration configuration, String tableName, String family,
+                                     String qualifier) throws IOException {
         this.tableName = tableName;
         this.family = family;
         this.qualifier = qualifier;
@@ -106,7 +107,7 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     public boolean confirm(String o) {
         return true;
     }
-    
+
     @Override
     public void clear() {
         Scan s = new Scan();
@@ -116,11 +117,11 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
             for (Result rr : scanner) {
                 Delete d = new Delete(rr.getRow());
                 table.delete(d);
-            } 
+            }
         } catch (Exception e) {
             LOG.warn("Error clear HBase repository {}", table);
         }
-    }    
+    }
 
     @Override
     protected void doStart() throws Exception {

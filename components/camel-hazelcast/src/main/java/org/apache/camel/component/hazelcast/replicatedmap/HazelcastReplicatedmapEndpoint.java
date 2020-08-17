@@ -29,17 +29,20 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> replicated map.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "hazelcast-replicatedmap", title = "Hazelcast Replicated Map", syntax = "hazelcast-replicatedmap:cacheName", category = {Category.CACHE, Category.DATAGRID})
+@UriEndpoint(firstVersion = "2.16.0", scheme = "hazelcast-replicatedmap", title = "Hazelcast Replicated Map",
+             syntax = "hazelcast-replicatedmap:cacheName", category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastReplicatedmapEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastReplicatedmapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastDefaultComponent component) {
+    public HazelcastReplicatedmapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,
+                                          HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component, cacheName);
         setCommand(HazelcastCommand.replicatedmap);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastReplicatedmapConsumer answer = new HazelcastReplicatedmapConsumer(hazelcastInstance, this, processor, cacheName);
+        HazelcastReplicatedmapConsumer answer
+                = new HazelcastReplicatedmapConsumer(hazelcastInstance, this, processor, cacheName);
         configureConsumer(answer);
         return answer;
     }

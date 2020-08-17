@@ -53,7 +53,8 @@ public class WeatherConsumer extends ScheduledPollConsumer {
         try {
             HttpResponse response = httpClient.execute(getMethod);
             if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
-                LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}", status, response.getStatusLine().getStatusCode(), query);
+                LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}", status,
+                        response.getStatusLine().getStatusCode(), query);
                 return 0;
             }
             String weather = EntityUtils.toString(response.getEntity(), "UTF-8");

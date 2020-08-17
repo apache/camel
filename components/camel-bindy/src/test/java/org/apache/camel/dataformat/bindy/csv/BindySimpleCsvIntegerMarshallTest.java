@@ -63,7 +63,7 @@ public class BindySimpleCsvIntegerMarshallTest {
             camelDataFormat.setLocale("en_US");
 
             from(URI_DIRECT_START).marshal(camelDataFormat)
-                .to(URI_MOCK_RESULT);
+                    .to(URI_MOCK_RESULT);
         }
     }
 
@@ -77,7 +77,6 @@ public class BindySimpleCsvIntegerMarshallTest {
 
         @DataField(pos = 9, precision = 2)
         private BigDecimal price;
-
 
         public String getInstrument() {
             return instrument;

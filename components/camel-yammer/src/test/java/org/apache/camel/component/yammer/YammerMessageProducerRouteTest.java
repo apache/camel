@@ -30,12 +30,12 @@ public class YammerMessageProducerRouteTest extends YammerComponentTestSupport {
     public void testCreateMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        
+
         String messageBodyToCreate = "Hi from Camel!";
         template.sendBody("direct:start", messageBodyToCreate);
-        
+
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         Messages messages = exchange.getIn().getBody(Messages.class);
 
@@ -47,13 +47,15 @@ public class YammerMessageProducerRouteTest extends YammerComponentTestSupport {
     protected String jsonFile() {
         return "/message.json";
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("direct:start").to("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("direct:start").to(
+                        "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+                        .to("mock:result");
             }
         };
     }

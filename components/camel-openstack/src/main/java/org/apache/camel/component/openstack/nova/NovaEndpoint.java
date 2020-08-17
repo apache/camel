@@ -31,7 +31,8 @@ import org.openstack4j.core.transport.Config;
 /**
  * Access OpenStack to manage compute resources.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", category = {Category.CLOUD, Category.PAAS}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host",
+             category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")
@@ -171,7 +172,7 @@ public class NovaEndpoint extends AbstractOpenstackEndpoint {
     }
 
     /**
-     *OpenStack configuration
+     * OpenStack configuration
      */
     public void setConfig(Config config) {
         this.config = config;

@@ -45,7 +45,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
     public void execute(Exchange exchange) throws SmppException {
         SubmitSm[] submitSms = createSubmitSm(exchange);
         List<String> messageIDs = new ArrayList<>(submitSms.length);
-        
+
         for (int i = 0; i < submitSms.length; i++) {
             SubmitSm submitSm = submitSms[i];
             String messageID;
@@ -113,7 +113,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         return submitSms;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     protected SubmitSm createSubmitSmTemplate(Exchange exchange) {
         Message in = exchange.getIn();
         SubmitSm submitSm = new SubmitSm();
@@ -187,7 +187,8 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         }
 
         if (in.getHeaders().containsKey(SmppConstants.SCHEDULE_DELIVERY_TIME)) {
-            submitSm.setScheduleDeliveryTime(SmppUtils.formatTime(in.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, Date.class)));
+            submitSm.setScheduleDeliveryTime(
+                    SmppUtils.formatTime(in.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, Date.class)));
         }
 
         if (in.getHeaders().containsKey(SmppConstants.VALIDITY_PERIOD)) {

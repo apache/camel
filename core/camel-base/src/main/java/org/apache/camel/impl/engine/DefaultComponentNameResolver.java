@@ -34,7 +34,8 @@ public class DefaultComponentNameResolver implements ComponentNameResolver {
         Set<String> sorted = new TreeSet<>();
 
         try {
-            Set<String> locations = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver().findResourceNames(RESOURCE_PATH);
+            Set<String> locations = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver()
+                    .findResourceNames(RESOURCE_PATH);
             locations.forEach(l -> sorted.add(l.substring(l.lastIndexOf('/') + 1)));
         } catch (Exception e) {
             throw new RuntimeCamelException(e);

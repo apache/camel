@@ -29,8 +29,8 @@ import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 
 /**
- * Used to generate the main ComponentBuilderFactory which is the main entry of the DSLs.
- * E.g: ComponentBuilderFactory.kafka().setBrokers("{{host:port}}").build()
+ * Used to generate the main ComponentBuilderFactory which is the main entry of the DSLs. E.g:
+ * ComponentBuilderFactory.kafka().setBrokers("{{host:port}}").build()
  */
 public final class ComponentsBuilderFactoryGenerator {
     private static final String CLASS_NAME = "ComponentsBuilderFactory";
@@ -39,7 +39,8 @@ public final class ComponentsBuilderFactoryGenerator {
     private final Set<ComponentModel> componentModels;
     private JavaClass javaClass;
 
-    private ComponentsBuilderFactoryGenerator(final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
+    private ComponentsBuilderFactoryGenerator(final Set<ComponentModel> componentModels, final ClassLoader classLoader,
+                                              final String packageName) {
         this.componentModels = componentModels;
         this.packageName = packageName;
 
@@ -48,7 +49,8 @@ public final class ComponentsBuilderFactoryGenerator {
         generateJavaClass();
     }
 
-    public static ComponentsBuilderFactoryGenerator generateClass(final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
+    public static ComponentsBuilderFactoryGenerator generateClass(
+            final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
         Objects.requireNonNull(componentModels);
         Objects.requireNonNull(classLoader);
         Objects.requireNonNull(packageName);
@@ -82,8 +84,10 @@ public final class ComponentsBuilderFactoryGenerator {
     }
 
     private void setJavaDoc() {
-        final String doc = "Component entry DSL builder. You can build a component like this: ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").build()" + "\n\n"
-                + AbstractGeneratorMojo.GENERATED_MSG;
+        final String doc
+                = "Component entry DSL builder. You can build a component like this: ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").build()"
+                  + "\n\n"
+                  + AbstractGeneratorMojo.GENERATED_MSG;
         javaClass.getJavaDoc().setText(doc);
     }
 
@@ -99,8 +103,9 @@ public final class ComponentsBuilderFactoryGenerator {
 
     private void setComponentsDslMethods() {
         componentModels.forEach(componentModel -> {
-            final String returnType = packageName + ".dsl." + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + "."
-                    + ComponentDslInnerBuilderGenerator.getExpectedGeneratedInterfaceName(componentModel);
+            final String returnType = packageName + ".dsl."
+                                      + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + "."
+                                      + ComponentDslInnerBuilderGenerator.getExpectedGeneratedInterfaceName(componentModel);
 
             final Method componentEntryMethod = javaClass.addMethod();
 

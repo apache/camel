@@ -26,17 +26,15 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
- * A <a href="http://camel.apache.org/bean-language.html">bean language</a>
- * which uses a simple text notation to invoke methods on beans to evaluate predicates or expressions
+ * A <a href="http://camel.apache.org/bean-language.html">bean language</a> which uses a simple text notation to invoke
+ * methods on beans to evaluate predicates or expressions
  * <p/>
- * The notation is essentially <code>beanName.methodName</code> which is then invoked using the
- * beanName to lookup in the <a href="http://camel.apache.org/registry.html>registry</a>
- * then the method is invoked to evaluate the expression using the
- * <a href="http://camel.apache.org/bean-integration.html">bean integration</a> to bind the
+ * The notation is essentially <code>beanName.methodName</code> which is then invoked using the beanName to lookup in
+ * the <a href="http://camel.apache.org/registry.html>registry</a> then the method is invoked to evaluate the expression
+ * using the <a href="http://camel.apache.org/bean-integration.html">bean integration</a> to bind the
  * {@link org.apache.camel.Exchange} to the method arguments.
  * <p/>
- * As of Camel 1.5 the bean language also supports invoking a provided bean by
- * its classname or the bean itself.
+ * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
 public class BeanLanguage extends LanguageSupport implements GeneratedPropertyConfigurer {
@@ -56,14 +54,18 @@ public class BeanLanguage extends LanguageSupport implements GeneratedPropertyCo
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
             case "bean":
-                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value)); return true;
+                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value));
+                return true;
             case "beantype":
             case "beanType":
-                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
             case "ref":
-                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
             case "method":
-                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
             default:
                 return false;
         }

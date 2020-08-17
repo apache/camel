@@ -56,8 +56,8 @@ public class MyBatisInsertWithOutputHeaderTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis:insertAccount?statementType=Insert&outputHeader=" + TEST_CASE_HEADER_NAME)
-                    .to("mock:result");
+                        .to("mybatis:insertAccount?statementType=Insert&outputHeader=" + TEST_CASE_HEADER_NAME)
+                        .to("mock:result");
             }
         };
     }

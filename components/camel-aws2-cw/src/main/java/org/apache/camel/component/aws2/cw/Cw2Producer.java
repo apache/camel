@@ -63,15 +63,16 @@ public class Cw2Producer extends DefaultProducer {
     private List<MetricDatum> getMetricData(Exchange exchange) {
         Object body = exchange.getIn().getBody();
         if (body instanceof List) {
-            return CastUtils.cast((List<?>)body);
+            return CastUtils.cast((List<?>) body);
         }
 
         if (body instanceof MetricDatum) {
-            return Arrays.asList((MetricDatum)body);
+            return Arrays.asList((MetricDatum) body);
         }
 
-        MetricDatum.Builder metricDatum = MetricDatum.builder().metricName(determineName(exchange)).value(determineValue(exchange)).unit(determineUnit(exchange))
-            .timestamp(determineTimestamp(exchange));
+        MetricDatum.Builder metricDatum = MetricDatum.builder().metricName(determineName(exchange))
+                .value(determineValue(exchange)).unit(determineUnit(exchange))
+                .timestamp(determineTimestamp(exchange));
         setDimension(metricDatum, exchange);
         return Arrays.asList(metricDatum.build());
     }
@@ -87,7 +88,8 @@ public class Cw2Producer extends DefaultProducer {
             if (dimensions != null) {
                 Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
-                    Dimension dimension = Dimension.builder().name(dimensionEntry.getKey()).value(dimensionEntry.getValue()).build();
+                    Dimension dimension
+                            = Dimension.builder().name(dimensionEntry.getKey()).value(dimensionEntry.getValue()).build();
                     dimensionCollection.add(dimension);
                 }
                 metricDatum.dimensions(dimensionCollection);
@@ -149,6 +151,6 @@ public class Cw2Producer extends DefaultProducer {
 
     @Override
     public Cw2Endpoint getEndpoint() {
-        return (Cw2Endpoint)super.getEndpoint();
+        return (Cw2Endpoint) super.getEndpoint();
     }
 }

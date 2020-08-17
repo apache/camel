@@ -51,7 +51,8 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         jndiContext.unbind("validator");
 
         String directStart = "direct:start";
-        String endpointUri = "validator:org/apache/camel/component/validator/xsds/person.xsd?resourceResolverFactory=#resourceResolverFactory";
+        String endpointUri
+                = "validator:org/apache/camel/component/validator/xsds/person.xsd?resourceResolverFactory=#resourceResolverFactory";
 
         execute(directStart, endpointUri);
     }
@@ -73,19 +74,20 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         MockEndpoint endEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         endEndpoint.expectedMessageCount(1);
 
-        final String body = "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\" xmlns:c=\"org.health.check.common\">\n" //
-                            + "  <p:firstName>James</p:firstName>\n" //
-                            + "  <p:lastName>Strachan</p:lastName>\n" //
-                            + "  <p:city>London</p:city>\n" //
-                            + "  <h:health>\n"//
-                            + "      <h:lastCheck>2011-12-23</h:lastCheck>\n" //
-                            + "      <h:status>OK</h:status>\n" //
-                            + "      <c:commonElement>" //
-                            + "          <c:element1/>" //
-                            + "          <c:element2/>" //
-                            + "      </c:commonElement>" //
-                            + "  </h:health>\n" //
-                            + "</p:person>";
+        final String body
+                = "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\" xmlns:c=\"org.health.check.common\">\n" //
+                  + "  <p:firstName>James</p:firstName>\n" //
+                  + "  <p:lastName>Strachan</p:lastName>\n" //
+                  + "  <p:city>London</p:city>\n" //
+                  + "  <h:health>\n"//
+                  + "      <h:lastCheck>2011-12-23</h:lastCheck>\n" //
+                  + "      <h:status>OK</h:status>\n" //
+                  + "      <c:commonElement>" //
+                  + "          <c:element1/>" //
+                  + "          <c:element2/>" //
+                  + "      </c:commonElement>" //
+                  + "  </h:health>\n" //
+                  + "</p:person>";
 
         template.sendBody(directStart, body);
 
@@ -96,7 +98,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
         ValidatorEndpoint validatorEndpoint = resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class);
         assertNotNull(validatorEndpoint);
-        CustomResourceResolver resolver = (CustomResourceResolver)validatorEndpoint.getResourceResolver();
+        CustomResourceResolver resolver = (CustomResourceResolver) validatorEndpoint.getResourceResolver();
 
         Set<String> uris = resolver.getResolvedResourceUris();
         checkResourceUri(uris, "../type2.xsd");
@@ -119,22 +121,26 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
-                    .recipientList(new SimpleExpression("validator:${header.xsd_file}?resourceResolverFactory=#resourceResolverFactory")).to("mock:end");
+                from("direct:start")
+                        .setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
+                        .recipientList(new SimpleExpression(
+                                "validator:${header.xsd_file}?resourceResolverFactory=#resourceResolverFactory"))
+                        .to("mock:end");
             }
 
         }, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
 
-                from("direct:startComponent").setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
-                    .recipientList(new SimpleExpression("validator:${header.xsd_file}")).to("mock:end");
+                from("direct:startComponent")
+                        .setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
+                        .recipientList(new SimpleExpression("validator:${header.xsd_file}")).to("mock:end");
 
             }
-        }};
+        } };
     }
 
     static class ResourceResolverFactoryImpl implements ValidatorResourceResolverFactory {

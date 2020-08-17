@@ -43,9 +43,10 @@ public class KerberosAuthentication {
     }
 
     /**
-     * In order to connect to a hadoop cluster using Kerberos you need to add your own filesystem to the cache of the FileSystem component.
-     * This is done by setting the uri that you use in your camel route as the URI that is used to setup the connection.
-     * The URI is used as key when adding it to the cache (default functionality of the static FileSystem.get(URI, Configuration) method).
+     * In order to connect to a hadoop cluster using Kerberos you need to add your own filesystem to the cache of the
+     * FileSystem component. This is done by setting the uri that you use in your camel route as the URI that is used to
+     * setup the connection. The URI is used as key when adding it to the cache (default functionality of the static
+     * FileSystem.get(URI, Configuration) method).
      *
      * @throws IOException - In case of error
      */

@@ -48,7 +48,8 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
     }
 
     private void sendAndVerify(String delimiter, MockEndpoint mock) throws InterruptedException {
-        template.sendBody("direct:start", "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter + "ActiveMQ in Action" + delimiter + "2");
+        template.sendBody("direct:start", "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter
+                                          + "ActiveMQ in Action" + delimiter + "2");
 
         assertMockEndpointsSatisfied();
 

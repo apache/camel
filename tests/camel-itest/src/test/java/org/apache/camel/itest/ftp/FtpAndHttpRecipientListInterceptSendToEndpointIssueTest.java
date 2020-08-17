@@ -55,14 +55,14 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
             @Override
             public void configure() {
                 interceptSendToEndpoint("(ftp|http|seda):.*")
-                    .to("mock:intercept");
+                        .to("mock:intercept");
 
                 from("direct:start")
-                    .recipientList(header("foo"))
-                    .to("mock:result");
+                        .recipientList(header("foo"))
+                        .to("mock:result");
 
                 from("jetty:http://0.0.0.0:" + httpPort + "/myapp")
-                    .transform().constant("Bye World");
+                        .transform().constant("Bye World");
 
                 from("seda:foo").to("mock:foo");
             }

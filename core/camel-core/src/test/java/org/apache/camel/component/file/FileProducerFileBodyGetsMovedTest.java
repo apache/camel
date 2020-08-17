@@ -28,8 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Checks that body of type {@link java.io.File} is simply moved avoiding
- * copying using IO streams.
+ * Checks that body of type {@link java.io.File} is simply moved avoiding copying using IO streams.
  */
 public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
 

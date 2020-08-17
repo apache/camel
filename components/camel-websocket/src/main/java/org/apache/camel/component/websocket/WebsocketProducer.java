@@ -69,11 +69,13 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
                     int timeout = endpoint.getSendTimeout();
                     future.get(timeout, TimeUnit.MILLISECONDS);
                     if (!future.isCancelled() && !future.isDone()) {
-                        throw new WebsocketSendException("Failed to send message to the connection within " + timeout + " millis.", exchange);
+                        throw new WebsocketSendException(
+                                "Failed to send message to the connection within " + timeout + " millis.", exchange);
                     }
                 }
             } else {
-                throw new WebsocketSendException("Failed to send message to single connection; connection key not set.", exchange);
+                throw new WebsocketSendException(
+                        "Failed to send message to single connection; connection key not set.", exchange);
             }
         }
     }
@@ -122,7 +124,8 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
                     }
                 } catch (Exception e) {
                     if (exception == null) {
-                        exception = new WebsocketSendException("Failed to deliver message to one or more recipients.", exchange, e);
+                        exception = new WebsocketSendException(
+                                "Failed to deliver message to one or more recipients.", exchange, e);
                     }
                 }
             }
@@ -137,7 +140,8 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             // if there are still more then we need to wait a little bit before checking again, to avoid burning cpu cycles in the while loop
             if (!futures.isEmpty()) {
                 long interval = Math.min(1000, timeout);
-                LOG.debug("Sleeping {} millis waiting for sendToAll to complete sending with timeout {} millis", interval, timeout);
+                LOG.debug("Sleeping {} millis waiting for sendToAll to complete sending with timeout {} millis", interval,
+                        timeout);
                 try {
                     Thread.sleep(interval);
                 } catch (InterruptedException e) {
@@ -146,7 +150,9 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             }
         }
         if (!futures.isEmpty()) {
-            exception = new WebsocketSendException("Failed to deliver message within " + endpoint.getSendTimeout() + " millis to one or more recipients.", exchange);
+            exception = new WebsocketSendException(
+                    "Failed to deliver message within " + endpoint.getSendTimeout() + " millis to one or more recipients.",
+                    exchange);
         }
 
         if (exception != null) {

@@ -27,11 +27,10 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.support.ObjectHelper;
 
 /**
- * A default implementation of {@link Injector} which just uses reflection to
- * instantiate new objects using their zero argument constructor,
- * and then performing bean post processing using {@link CamelBeanPostProcessor}.
+ * A default implementation of {@link Injector} which just uses reflection to instantiate new objects using their zero
+ * argument constructor, and then performing bean post processing using {@link CamelBeanPostProcessor}.
  */
-public class DefaultInjector implements Injector  {
+public class DefaultInjector implements Injector {
 
     // use the reflection injector
     private final CamelBeanPostProcessor postProcessor;

@@ -120,14 +120,16 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                 Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt < failUntilAttempt) {
-                    throw new RuntimeException("Failed to process due to attempt: " + attempt + " being less than: " + failUntilAttempt);
+                    throw new RuntimeException(
+                            "Failed to process due to attempt: " + attempt + " being less than: " + failUntilAttempt);
                 }
             }
         };
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(2).redeliveryDelay(50).loggingLevel(LoggingLevel.DEBUG)
+                from("direct:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(2).redeliveryDelay(50)
+                        .loggingLevel(LoggingLevel.DEBUG)
 
                 ).process(processor).to("mock:success");
             }

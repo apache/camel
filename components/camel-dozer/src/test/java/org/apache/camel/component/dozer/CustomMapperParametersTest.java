@@ -33,7 +33,8 @@ public class CustomMapperParametersTest {
 
     @Test
     void shouldExecuteCustomFunctionWithArguments() {
-        customMapper.setParameter(MapperWithMultiParmMethod.class.getName() + ",test,java.lang.Integer=12,java.lang.Integer=20");
+        customMapper
+                .setParameter(MapperWithMultiParmMethod.class.getName() + ",test,java.lang.Integer=12,java.lang.Integer=20");
         Object result = customMapper.mapCustom("JeremiahWasABullfrog", String.class);
         assertEquals("Bullfrog", result);
     }
@@ -60,4 +61,3 @@ class MapperWithMultiParmMethod {
         return source.substring(beginindex.intValue(), endindex.intValue());
     }
 }
-

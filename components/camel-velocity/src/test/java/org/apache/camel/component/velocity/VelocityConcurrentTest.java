@@ -62,9 +62,7 @@ public class VelocityConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        to("velocity:org/apache/camel/component/velocity/Concurrent.vm").
-                        to("mock:result");
+                from("direct:start").to("velocity:org/apache/camel/component/velocity/Concurrent.vm").to("mock:result");
             }
         };
     }

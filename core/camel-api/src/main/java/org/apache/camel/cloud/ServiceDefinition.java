@@ -77,8 +77,8 @@ public interface ServiceDefinition {
         }
 
         return getPort() == other.getPort()
-            && StringHelper.matches(getName(), other.getName())
-            && StringHelper.matches(getId(), other.getId())
-            && StringHelper.matches(getHost(), other.getHost());
+                && StringHelper.matches(getName(), other.getName())
+                && StringHelper.matches(getId(), other.getId())
+                && StringHelper.matches(getHost(), other.getHost());
     }
 }

@@ -86,7 +86,8 @@ public class SearchCriteria implements Serializable {
     @Override
     public String toString() {
         // @formatter:off
-        return toStringHelper(this).add("Query", this.search).add("Page", page).add("Per Page", perPage).addValue(this.order).toString();
+        return toStringHelper(this).add("Query", this.search).add("Page", page).add("Per Page", perPage).addValue(this.order)
+                .toString();
     }
 
 }

@@ -41,7 +41,8 @@ public class WordpressServiceUsersAdapterTest extends WordpressMockServerTestSup
     @BeforeAll
     public static void before() {
         serviceUsers = serviceProvider.getService(WordpressServiceUsers.class);
-        serviceUsers.setWordpressAuthentication(new WordpressBasicAuthentication(WordpressServerHttpRequestHandler.USERNAME, WordpressServerHttpRequestHandler.PASSWORD));
+        serviceUsers.setWordpressAuthentication(new WordpressBasicAuthentication(
+                WordpressServerHttpRequestHandler.USERNAME, WordpressServerHttpRequestHandler.PASSWORD));
     }
 
     @Test

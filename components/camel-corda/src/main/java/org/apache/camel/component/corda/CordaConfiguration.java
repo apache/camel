@@ -36,7 +36,8 @@ public class CordaConfiguration implements Cloneable {
     private transient String host;
     private transient int port;
 
-    @UriPath @Metadata(required = true, description = "The url for the corda node")
+    @UriPath
+    @Metadata(required = true, description = "The url for the corda node")
     private String node;
     @UriParam(label = "producer", description = "Operation to use")
     private String operation;
@@ -48,31 +49,32 @@ public class CordaConfiguration implements Cloneable {
     private boolean processSnapshot = true;
 
     @UriParam(label = "consumer,advanced",
-            description = "Start the given flow with the given arguments, returning an Observable with a single observation of the"
-                    + " result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC.")
+              description = "Start the given flow with the given arguments, returning an Observable with a single observation of the"
+                            + " result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC.")
     private Class<FlowLogic<?>> flowLogicClass;
     @UriParam(label = "consumer,advanced",
-            description = "Start the given flow with the given arguments, returning an Observable with a single observation of the"
-                    + " result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC.")
+              description = "Start the given flow with the given arguments, returning an Observable with a single observation of the"
+                            + " result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC.")
     private Object[] flowLogicArguments;
     @UriParam(label = "consumer,advanced",
-            description = "A contract state (or just state) contains opaque data used by a contract program. It can be thought of as a disk"
-            + " file that the program can use to persist data across transactions. States are immutable: once created they are never"
-            + " updated, instead, any changes must generate a new successor state. States can be updated (consumed) only once: the"
-            + " notary is responsible for ensuring there is no \"double spending\" by only signing a transaction if the input states are all free.")
+              description = "A contract state (or just state) contains opaque data used by a contract program. It can be thought of as a disk"
+                            + " file that the program can use to persist data across transactions. States are immutable: once created they are never"
+                            + " updated, instead, any changes must generate a new successor state. States can be updated (consumed) only once: the"
+                            + " notary is responsible for ensuring there is no \"double spending\" by only signing a transaction if the input states are all free.")
     private Class<ContractState> contractStateClass;
-    @UriParam(label = "consumer,advanced", description = "QueryCriteria assumes underlying schema tables are correctly indexed for performance.")
+    @UriParam(label = "consumer,advanced",
+              description = "QueryCriteria assumes underlying schema tables are correctly indexed for performance.")
     private QueryCriteria queryCriteria;
     @UriParam(label = "consumer", defaultValue = "200",
-            description = "PageSpecification allows specification of a page number (starting from 1) and page size"
-                    + " (defaulting to 200 with a maximum page size of (Integer.MAX_INT)"
-                    + " Note: we default the page number to 200 to enable queries without requiring a page specification"
-                    + " but enabling detection of large results sets that fall out of the 200 requirement."
-                    + " Max page size should be used with extreme caution as results may exceed your JVM memory footprint.")
+              description = "PageSpecification allows specification of a page number (starting from 1) and page size"
+                            + " (defaulting to 200 with a maximum page size of (Integer.MAX_INT)"
+                            + " Note: we default the page number to 200 to enable queries without requiring a page specification"
+                            + " but enabling detection of large results sets that fall out of the 200 requirement."
+                            + " Max page size should be used with extreme caution as results may exceed your JVM memory footprint.")
     private PageSpecification pageSpecification;
     @UriParam(label = "consumer", enums = "ASC,DESC",
-            description = "Sort allows specification of a set of entity attribute names and their associated directionality"
-                    + " and null handling, to be applied upon processing a query specification.")
+              description = "Sort allows specification of a set of entity attribute names and their associated directionality"
+                            + " and null handling, to be applied upon processing a query specification.")
     private Sort sort;
 
     public void configure() {
@@ -102,8 +104,6 @@ public class CordaConfiguration implements Cloneable {
     public int retrievePort() {
         return port;
     }
-
-
 
     public String getNode() {
         return node;
@@ -195,7 +195,7 @@ public class CordaConfiguration implements Cloneable {
 
     public CordaConfiguration copy() {
         try {
-            return (CordaConfiguration)super.clone();
+            return (CordaConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

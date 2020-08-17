@@ -26,11 +26,12 @@ import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A {@link org.apache.camel.spi.PollingConsumerPollStrategy} which supports suspending consumers if they
- * failed for X number of times in a row.
+ * A {@link org.apache.camel.spi.PollingConsumerPollStrategy} which supports suspending consumers if they failed for X
+ * number of times in a row.
  * <p/>
  * If Camel cannot successfully consumer from a given consumer, then after X consecutive failed attempts the consumer
- * will be suspended/stopped. This prevents the log to get flooded with failed attempts, for example during nightly runs.
+ * will be suspended/stopped. This prevents the log to get flooded with failed attempts, for example during nightly
+ * runs.
  */
 public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPollStrategy implements Service {
 
@@ -44,10 +45,10 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
     /**
      * Sets the limit for how many straight rollbacks causes this strategy to suspend the fault consumer.
      * <p/>
-     * When the consumer has been suspended, it has to be manually resumed/started to be active again.
-     * The limit is by default 3.
+     * When the consumer has been suspended, it has to be manually resumed/started to be active again. The limit is by
+     * default 3.
      *
-     * @param limit  the limit
+     * @param limit the limit
      */
     public void setLimit(int limit) {
         this.limit = limit;
@@ -88,22 +89,22 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
     /**
      * The consumer is to be suspended because it exceeded the limit
      *
-     * @param consumer the consumer
-     * @param endpoint the endpoint
+     * @param  consumer  the consumer
+     * @param  endpoint  the endpoint
      * @throws Exception is thrown if error suspending the consumer
      */
     protected void onSuspend(Consumer consumer, Endpoint endpoint) throws Exception {
         log.warn("Suspending consumer " + consumer + " after " + limit + " attempts to consume from " + endpoint
-                + ". You have to manually resume the consumer!");
+                 + ". You have to manually resume the consumer!");
         ServiceHelper.suspendService(consumer);
     }
 
     /**
      * Rollback occurred.
      *
-     * @param consumer the consumer
-     * @param endpoint the endpoint
-     * @return whether or not to retry immediately, is default <tt>false</tt>
+     * @param  consumer  the consumer
+     * @param  endpoint  the endpoint
+     * @return           whether or not to retry immediately, is default <tt>false</tt>
      * @throws Exception can be thrown in case something goes wrong
      */
     protected boolean onRollback(Consumer consumer, Endpoint endpoint) throws Exception {

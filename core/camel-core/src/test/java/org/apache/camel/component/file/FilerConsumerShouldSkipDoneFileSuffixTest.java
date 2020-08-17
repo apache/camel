@@ -75,7 +75,8 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50").convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

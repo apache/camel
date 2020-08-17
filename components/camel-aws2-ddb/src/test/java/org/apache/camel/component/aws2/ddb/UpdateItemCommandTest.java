@@ -55,12 +55,14 @@ public class UpdateItemCommandTest {
         exchange.getIn().setHeader(Ddb2Constants.KEY, key);
 
         Map<String, AttributeValueUpdate> attributeMap = new HashMap<>();
-        AttributeValueUpdate attributeValue = AttributeValueUpdate.builder().value(AttributeValue.builder().s("new value").build()).action(AttributeAction.ADD).build();
+        AttributeValueUpdate attributeValue = AttributeValueUpdate.builder()
+                .value(AttributeValue.builder().s("new value").build()).action(AttributeAction.ADD).build();
         attributeMap.put("name", attributeValue);
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_VALUES, attributeMap);
 
         Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<>();
-        expectedAttributeValueMap.put("name", ExpectedAttributeValue.builder().attributeValueList(AttributeValue.builder().s("expected value").build()).build());
+        expectedAttributeValueMap.put("name", ExpectedAttributeValue.builder()
+                .attributeValueList(AttributeValue.builder().s("expected value").build()).build());
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_CONDITION, expectedAttributeValueMap);
         exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
 
@@ -71,6 +73,7 @@ public class UpdateItemCommandTest {
         assertEquals(key, ddbClient.updateItemRequest.key());
         assertEquals(expectedAttributeValueMap, ddbClient.updateItemRequest.expected());
         assertEquals(ReturnValue.ALL_OLD, ddbClient.updateItemRequest.returnValues());
-        assertEquals(AttributeValue.builder().s("attrValue").build(), exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
+        assertEquals(AttributeValue.builder().s("attrValue").build(),
+                exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

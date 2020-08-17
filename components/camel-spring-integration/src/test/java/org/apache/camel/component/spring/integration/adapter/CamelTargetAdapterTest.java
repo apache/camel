@@ -60,8 +60,8 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 latch.countDown();
-                assertEquals(MESSAGE_BODY + " is processed",  message.getPayload(), "Get the wrong result");
-            }            
+                assertEquals(MESSAGE_BODY + " is processed", message.getPayload(), "Get the wrong result");
+            }
         });
 
         requestChannel.send(message);
@@ -80,8 +80,8 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 latch.countDown();
-                assertEquals(MESSAGE_BODY + " is processed",  message.getPayload(), "Get the wrong result");
-            }            
+                assertEquals(MESSAGE_BODY + " is processed", message.getPayload(), "Get the wrong result");
+            }
         });
 
         requestChannel.send(message);

@@ -152,9 +152,9 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
                         .to("mock:result");
 
                 from("seda:foo").routeId("foo")
-                    // route scoped error handler
-                    .errorHandler(deadLetterChannel("mock:dead"))
-                    .to("mock:result");
+                        // route scoped error handler
+                        .errorHandler(deadLetterChannel("mock:dead"))
+                        .to("mock:result");
             }
         };
     }

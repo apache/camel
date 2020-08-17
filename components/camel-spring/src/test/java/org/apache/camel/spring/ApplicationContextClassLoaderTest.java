@@ -29,7 +29,7 @@ public class ApplicationContextClassLoaderTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");
     }
-    
+
     @Test
     public void testClassLoader() {
         ClassLoader cl = context.getApplicationContextClassLoader();

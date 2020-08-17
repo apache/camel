@@ -29,9 +29,9 @@ public class SqlProducerInMultiExpressionTest extends SqlProducerInMultiTest {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql:classpath:sql/selectProjectsInMultiExpression.sql")
-                    .to("log:query")
-                    .to("mock:query");
+                        .to("sql:classpath:sql/selectProjectsInMultiExpression.sql")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

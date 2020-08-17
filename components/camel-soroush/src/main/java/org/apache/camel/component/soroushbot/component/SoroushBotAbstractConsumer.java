@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
 
 /**
- * this component handle logic for getting message from Soroush server and for each message
- * it calls abstract function {@link SoroushBotAbstractConsumer#sendExchange(Exchange)}
- * each subclass should handle how it will start the processing of the exchange
+ * this component handle logic for getting message from Soroush server and for each message it calls abstract function
+ * {@link SoroushBotAbstractConsumer#sendExchange(Exchange)} each subclass should handle how it will start the
+ * processing of the exchange
  */
 public abstract class SoroushBotAbstractConsumer extends DefaultConsumer implements org.apache.camel.spi.ShutdownPrepared {
 
@@ -65,7 +65,8 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
         run();
     }
 
-    protected final void handleExceptionThrownWhileCreatingOrProcessingExchange(Exchange exchange, SoroushMessage soroushMessage, Exception ex) {
+    protected final void handleExceptionThrownWhileCreatingOrProcessingExchange(
+            Exchange exchange, SoroushMessage soroushMessage, Exception ex) {
         //set originalMessage property to the created soroushMessage to let  Error Handler access the message
         exchange.setProperty("OriginalMessage", soroushMessage);
         //use this instead of handleException() to manually set the exchange.
@@ -138,7 +139,6 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                 }
                 return true;
             }
-
 
             @Override
             public void onEvent(EventSource eventSource, String id, String type, String data) {
@@ -270,4 +270,3 @@ class ReconnectableEventSourceListener extends EventSourceListener {
         return connectionRetry;
     }
 }
-

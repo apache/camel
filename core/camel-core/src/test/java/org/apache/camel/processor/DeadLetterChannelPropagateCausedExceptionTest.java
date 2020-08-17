@@ -52,7 +52,8 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -82,7 +83,8 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -110,7 +112,8 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -140,7 +143,8 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -175,7 +179,8 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());

@@ -54,8 +54,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
- * A support class that builds up and tears down an ActiveMQ Artemis instance to be used
- * for unit testing.
+ * A support class that builds up and tears down an ActiveMQ Artemis instance to be used for unit testing.
  */
 public class Jms2TestSupport extends CamelTestSupport {
 
@@ -73,7 +72,7 @@ public class Jms2TestSupport extends CamelTestSupport {
     /**
      * Set up the Broker
      *
-     * @see CamelTestSupport#doPreSetup()
+     * @see              CamelTestSupport#doPreSetup()
      *
      * @throws Exception
      */
@@ -102,7 +101,8 @@ public class Jms2TestSupport extends CamelTestSupport {
                 Arrays.asList("connector")).setBindings("cf");
         jmsConfig.getConnectionFactoryConfigurations().add(cfConfig);
 
-        JMSQueueConfiguration queueConfig = new JMSQueueConfigurationImpl().setName("queue1").setDurable(false).setBindings("queue/queue1");
+        JMSQueueConfiguration queueConfig
+                = new JMSQueueConfigurationImpl().setName("queue1").setDurable(false).setBindings("queue/queue1");
         jmsConfig.getQueueConfigurations().add(queueConfig);
 
         broker.setConfiguration(configuration).setJmsConfiguration(jmsConfig);
@@ -116,7 +116,7 @@ public class Jms2TestSupport extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        DefaultCamelContext dcc = (DefaultCamelContext)context;
+        DefaultCamelContext dcc = (DefaultCamelContext) context;
         while (!dcc.isStopped()) {
             log.info("Waiting on the Camel Context to stop");
         }
@@ -183,10 +183,13 @@ public class Jms2TestSupport extends CamelTestSupport {
     }
 
     public MessageConsumer createQueueConsumer(String destination) throws Exception {
-        return new Jms2ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null, false, false);
+        return new Jms2ObjectFactory().createMessageConsumer(session,
+                destinationCreationStrategy.createDestination(session, destination, false), null, false, null, false, false);
     }
 
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
-        return new Jms2ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, false, false);
+        return new Jms2ObjectFactory().createMessageConsumer(session,
+                destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, false,
+                false);
     }
 }

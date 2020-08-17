@@ -45,7 +45,8 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
     @Override
     public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
         LOG.info("Cluster view {} - leader changed to: {}", view.getLocalMember(), leader);
-        this.leaderships.add(new LeadershipInfo(leader.map(CamelClusterMember::getId).orElse(null), System.currentTimeMillis()));
+        this.leaderships
+                .add(new LeadershipInfo(leader.map(CamelClusterMember::getId).orElse(null), System.currentTimeMillis()));
     }
 
     public List<LeadershipInfo> getLeadershipInfo() {
@@ -69,7 +70,7 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
         long start = System.currentTimeMillis();
         while (!as.test(getCurrentLeader())) {
             assertFalse(System.currentTimeMillis() - start > TimeUnit.MILLISECONDS.convert(time, unit),
-                "Timeout while waiting for condition");
+                    "Timeout while waiting for condition");
             doWait(50);
         }
     }

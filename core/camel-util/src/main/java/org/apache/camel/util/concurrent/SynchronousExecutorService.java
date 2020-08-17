@@ -21,11 +21,11 @@ import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A synchronous {@link java.util.concurrent.ExecutorService} which always invokes
- * the task in the caller thread (just a thread pool facade).
+ * A synchronous {@link java.util.concurrent.ExecutorService} which always invokes the task in the caller thread (just a
+ * thread pool facade).
  * <p/>
- * There is no task queue, and no thread pool. The task will thus always be executed
- * by the caller thread in a fully synchronous method invocation.
+ * There is no task queue, and no thread pool. The task will thus always be executed by the caller thread in a fully
+ * synchronous method invocation.
  * <p/>
  * This implementation is very simple and does not support waiting for tasks to complete during shutdown.
  */

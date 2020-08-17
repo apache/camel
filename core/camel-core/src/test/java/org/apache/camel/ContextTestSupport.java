@@ -36,8 +36,8 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * A useful base class which creates a {@link CamelContext} with some routes
- * along with a {@link ProducerTemplate} for use in the test case
+ * A useful base class which creates a {@link CamelContext} with some routes along with a {@link ProducerTemplate} for
+ * use in the test case
  */
 public abstract class ContextTestSupport extends TestSupport {
 
@@ -52,9 +52,8 @@ public abstract class ContextTestSupport extends TestSupport {
     /**
      * Use the RouteBuilder or not
      * 
-     * @return If the return value is true, the camel context will be started in
-     *         the setup method. If the return value is false, the camel context
-     *         will not be started in the setup method.
+     * @return If the return value is true, the camel context will be started in the setup method. If the return value
+     *         is false, the camel context will not be started in the setup method.
      */
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
@@ -77,17 +76,15 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Allows a service to be registered a separate lifecycle service to start
-     * and stop the context; such as for Spring when the ApplicationContext is
-     * started and stopped, rather than directly stopping the CamelContext
+     * Allows a service to be registered a separate lifecycle service to start and stop the context; such as for Spring
+     * when the ApplicationContext is started and stopped, rather than directly stopping the CamelContext
      */
     public void setCamelContextService(Service camelContextService) {
         this.camelContextService = camelContextService;
     }
 
     /**
-     * Convenient api to create a NotifyBuilder to be notified of a specific
-     * event
+     * Convenient api to create a NotifyBuilder to be notified of a specific event
      */
     protected NotifyBuilder event() {
         return new NotifyBuilder(context);
@@ -103,7 +100,7 @@ public abstract class ContextTestSupport extends TestSupport {
 
         CamelContext c2 = createCamelContext();
         if (c2 instanceof ModelCamelContext) {
-            context = (ModelCamelContext)c2;
+            context = (ModelCamelContext) c2;
         } else {
             throw new Exception("Context must be a ModelCamelContext");
         }
@@ -165,8 +162,8 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Whether to load additional type converters by scanning the classpath.
-     * This should only be enabled for tests that uses custom type converters.
+     * Whether to load additional type converters by scanning the classpath. This should only be enabled for tests that
+     * uses custom type converters.
      */
     protected boolean isLoadTypeConverters() {
         return true;
@@ -217,8 +214,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create a
-     * {@link RouteBuilder} to define the routes for testing
+     * Factory method which derived classes can use to create a {@link RouteBuilder} to define the routes for testing
      */
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -229,45 +225,40 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create an array of
-     * {@link RouteBuilder}s to define the routes for testing
+     * Factory method which derived classes can use to create an array of {@link RouteBuilder}s to define the routes for
+     * testing
      *
      * @see #createRouteBuilder()
      */
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {createRouteBuilder()};
+        return new RouteBuilder[] { createRouteBuilder() };
     }
 
     /**
      * Resolves a mandatory endpoint for the given URI or an exception is thrown
      *
-     * @param uri the Camel <a href="">URI</a> to use to create or resolve an
-     *            endpoint
-     * @return the endpoint
+     * @param  uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @return     the endpoint
      */
     protected Endpoint resolveMandatoryEndpoint(String uri) {
         return resolveMandatoryEndpoint(context, uri);
     }
 
     /**
-     * Resolves a mandatory endpoint for the given URI and expected type or an
-     * exception is thrown
+     * Resolves a mandatory endpoint for the given URI and expected type or an exception is thrown
      *
-     * @param uri the Camel <a href="">URI</a> to use to create or resolve an
-     *            endpoint
-     * @return the endpoint
+     * @param  uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @return     the endpoint
      */
     protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
         return resolveMandatoryEndpoint(context, uri, endpointType);
     }
 
     /**
-     * Resolves the mandatory Mock endpoint using a URI of the form
-     * <code>mock:someName</code>
+     * Resolves the mandatory Mock endpoint using a URI of the form <code>mock:someName</code>
      *
-     * @param uri the URI which typically starts with "mock:" and has some name
-     * @return the mandatory mock endpoint or an exception is thrown if it could
-     *         not be resolved
+     * @param  uri the URI which typically starts with "mock:" and has some name
+     * @return     the mandatory mock endpoint or an exception is thrown if it could not be resolved
      */
     protected MockEndpoint getMockEndpoint(String uri) {
         return resolveMandatoryEndpoint(uri, MockEndpoint.class);
@@ -277,7 +268,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * Sends a message to the given endpoint URI with the body value
      *
      * @param endpointUri the URI of the endpoint to send to
-     * @param body the body for the message
+     * @param body        the body for the message
      */
     protected void sendBody(String endpointUri, final Object body) {
         template.send(endpointUri, new Processor() {
@@ -290,12 +281,11 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Sends a message to the given endpoint URI with the body value and
-     * specified headers
+     * Sends a message to the given endpoint URI with the body value and specified headers
      *
      * @param endpointUri the URI of the endpoint to send to
-     * @param body the body for the message
-     * @param headers any headers to set on the message
+     * @param body        the body for the message
+     * @param headers     any headers to set on the message
      */
     protected void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
         template.send(endpointUri, new Processor() {
@@ -314,7 +304,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * Sends messages to the given endpoint for each of the specified bodies
      *
      * @param endpointUri the endpoint URI to send to
-     * @param bodies the bodies to send, one per message
+     * @param bodies      the bodies to send, one per message
      */
     protected void sendBodies(String endpointUri, Object... bodies) {
         for (Object body : bodies) {
@@ -330,8 +320,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Asserts that the given language name and expression evaluates to the
-     * given value on a specific exchange
+     * Asserts that the given language name and expression evaluates to the given value on a specific exchange
      */
     protected void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
         Language language = assertResolveLanguage(languageName);
@@ -343,8 +332,8 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Asserts that the given language name and predicate expression evaluates
-     * to the expected value on the message exchange
+     * Asserts that the given language name and predicate expression evaluates to the expected value on the message
+     * exchange
      */
     protected void assertPredicate(String languageName, String expressionText, Exchange exchange, boolean expected) {
         Language language = assertResolveLanguage(languageName);

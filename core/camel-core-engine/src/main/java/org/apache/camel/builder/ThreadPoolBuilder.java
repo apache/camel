@@ -72,7 +72,7 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new thread pool
      *
-     * @return the created thread pool
+     * @return           the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
     public ExecutorService build() throws Exception {
@@ -83,8 +83,8 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new thread pool
      *
-     * @param name name which is appended to the thread name
-     * @return the created thread pool
+     * @param  name      name which is appended to the thread name
+     * @return           the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
     public ExecutorService build(String name) throws Exception {
@@ -94,10 +94,9 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new thread pool
      *
-     * @param source the source object, usually it should be <tt>this</tt>
-     *            passed in as parameter
-     * @param name name which is appended to the thread name
-     * @return the created thread pool
+     * @param  source    the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param  name      name which is appended to the thread name
+     * @return           the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
     public ExecutorService build(Object source, String name) throws Exception {
@@ -107,7 +106,7 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new scheduled thread pool
      *
-     * @return the created scheduled thread pool
+     * @return           the created scheduled thread pool
      * @throws Exception is thrown if error building the scheduled thread pool
      */
     public ScheduledExecutorService buildScheduled() throws Exception {
@@ -117,8 +116,8 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new scheduled thread pool
      *
-     * @param name name which is appended to the thread name
-     * @return the created scheduled thread pool
+     * @param  name      name which is appended to the thread name
+     * @return           the created scheduled thread pool
      * @throws Exception is thrown if error building the scheduled thread pool
      */
     public ScheduledExecutorService buildScheduled(String name) throws Exception {
@@ -128,10 +127,9 @@ public final class ThreadPoolBuilder {
     /**
      * Builds the new scheduled thread pool
      *
-     * @param source the source object, usually it should be <tt>this</tt>
-     *            passed in as parameter
-     * @param name name which is appended to the thread name
-     * @return the created scheduled thread pool
+     * @param  source    the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param  name      name which is appended to the thread name
+     * @return           the created scheduled thread pool
      * @throws Exception is thrown if error building the scheduled thread pool
      */
     public ScheduledExecutorService buildScheduled(Object source, String name) throws Exception {

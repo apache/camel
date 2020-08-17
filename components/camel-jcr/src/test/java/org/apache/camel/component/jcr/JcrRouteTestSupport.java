@@ -63,7 +63,7 @@ public abstract class JcrRouteTestSupport extends CamelTestSupport {
         if (!config.exists()) {
             throw new FileNotFoundException("Missing config file: " + config.getPath());
         }
-        
+
         repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
         registry.bind("repository", repository);
     }

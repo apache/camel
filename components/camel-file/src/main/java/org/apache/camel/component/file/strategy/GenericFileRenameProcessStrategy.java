@@ -32,7 +32,9 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public boolean begin(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         // must invoke super
         boolean result = super.begin(operations, endpoint, exchange, file);
         if (!result) {
@@ -45,7 +47,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
             GenericFile<T> to = renameFile(operations, file, newName);
             FileEndpoint fe = null;
             if (endpoint instanceof FileEndpoint) {
-                fe = (FileEndpoint)endpoint;
+                fe = (FileEndpoint) endpoint;
                 if (to != null) {
                     to.bindToExchange(exchange, fe.isProbeContentType());
                 }
@@ -61,7 +63,9 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void rollback(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         try {
             operations.releaseRetrievedFileResources(exchange);
 
@@ -71,7 +75,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 FileEndpoint fe = null;
                 if (endpoint instanceof FileEndpoint) {
-                    fe = (FileEndpoint)endpoint;
+                    fe = (FileEndpoint) endpoint;
                     file.bindToExchange(copy, fe.isProbeContentType());
                 } else {
                     file.bindToExchange(copy);
@@ -92,7 +96,9 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void commit(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         try {
             operations.releaseRetrievedFileResources(exchange);
 
@@ -102,7 +108,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 FileEndpoint fe = null;
                 if (endpoint instanceof FileEndpoint) {
-                    fe = (FileEndpoint)endpoint;
+                    fe = (FileEndpoint) endpoint;
                     file.bindToExchange(copy, fe.isProbeContentType());
                 } else {
                     file.bindToExchange(copy);

@@ -35,8 +35,8 @@ import org.apache.camel.language.simple.types.TokenType;
 /**
  * Base class for Simple language parser.
  * <p/>
- * This parser is based on the principles of a
- * <a href="http://en.wikipedia.org/wiki/Recursive_descent_parser">recursive descent parser</a>.
+ * This parser is based on the principles of a <a href="http://en.wikipedia.org/wiki/Recursive_descent_parser">recursive
+ * descent parser</a>.
  */
 public abstract class BaseSimpleParser {
 
@@ -54,8 +54,7 @@ public abstract class BaseSimpleParser {
     }
 
     /**
-     * Advances the parser position to the next known {@link SimpleToken}
-     * in the input.
+     * Advances the parser position to the next known {@link SimpleToken} in the input.
      */
     protected void nextToken() {
         if (index < expression.length()) {
@@ -73,8 +72,7 @@ public abstract class BaseSimpleParser {
     }
 
     /**
-     * Advances the parser position to the next known {@link SimpleToken}
-     * in the input.
+     * Advances the parser position to the next known {@link SimpleToken} in the input.
      *
      * @param filter filter for accepted token types
      */
@@ -107,13 +105,13 @@ public abstract class BaseSimpleParser {
     /**
      * Prepares blocks, such as functions, single or double quoted texts.
      * <p/>
-     * This process prepares the {@link Block}s in the AST. This is done
-     * by linking child {@link SimpleNode nodes} which are within the start and end of the blocks,
-     * as child to the given block. This is done to have the AST graph updated and prepared properly.
+     * This process prepares the {@link Block}s in the AST. This is done by linking child {@link SimpleNode nodes} which
+     * are within the start and end of the blocks, as child to the given block. This is done to have the AST graph
+     * updated and prepared properly.
      * <p/>
-     * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s
-     * or {@link org.apache.camel.Expression}s to be used by Camel then the AST graph
-     * has a linked and prepared graph of nodes which represent the input expression.
+     * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s or
+     * {@link org.apache.camel.Expression}s to be used by Camel then the AST graph has a linked and prepared graph of
+     * nodes which represent the input expression.
      */
     protected void prepareBlocks() {
         List<SimpleNode> answer = new ArrayList<>();
@@ -126,7 +124,8 @@ public abstract class BaseSimpleParser {
             } else if (token instanceof BlockEnd) {
                 // end block is just an abstract mode, so we should not add it
                 if (stack.isEmpty()) {
-                    throw new SimpleParserException(token.getToken().getType().getType() + " has no matching start token", token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            token.getToken().getType().getType() + " has no matching start token", token.getToken().getIndex());
                 }
 
                 Block top = stack.pop();
@@ -134,7 +133,9 @@ public abstract class BaseSimpleParser {
                 Block block = stack.isEmpty() ? null : stack.peek();
                 if (block != null) {
                     if (!block.acceptAndAddNode(top)) {
-                        throw new SimpleParserException(block.getToken().getType() + " cannot accept " + token.getToken().getType(), token.getToken().getIndex());
+                        throw new SimpleParserException(
+                                block.getToken().getType() + " cannot accept " + token.getToken().getType(),
+                                token.getToken().getIndex());
                     }
                 } else {
                     // no block, so add to answer
@@ -145,7 +146,9 @@ public abstract class BaseSimpleParser {
                 Block block = stack.isEmpty() ? null : stack.peek();
                 if (block != null) {
                     if (!block.acceptAndAddNode(token)) {
-                        throw new SimpleParserException(block.getToken().getType() + " cannot accept " + token.getToken().getType(), token.getToken().getIndex());
+                        throw new SimpleParserException(
+                                block.getToken().getType() + " cannot accept " + token.getToken().getType(),
+                                token.getToken().getIndex());
                     }
                 } else {
                     // no block, so add to answer
@@ -162,13 +165,12 @@ public abstract class BaseSimpleParser {
     /**
      * Prepares unary expressions.
      * <p/>
-     * This process prepares the unary expressions in the AST. This is done
-     * by linking the unary operator with the left hand side node,
-     * to have the AST graph updated and prepared properly.
+     * This process prepares the unary expressions in the AST. This is done by linking the unary operator with the left
+     * hand side node, to have the AST graph updated and prepared properly.
      * <p/>
-     * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s
-     * or {@link org.apache.camel.Expression}s to be used by Camel then the AST graph
-     * has a linked and prepared graph of nodes which represent the input expression.
+     * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s or
+     * {@link org.apache.camel.Expression}s to be used by Camel then the AST graph has a linked and prepared graph of
+     * nodes which represent the input expression.
      */
     protected void prepareUnaryExpressions() {
         Deque<SimpleNode> stack = new ArrayDeque<>();
@@ -182,7 +184,8 @@ public abstract class BaseSimpleParser {
 
                 SimpleNode previous = stack.isEmpty() ? null : stack.pop();
                 if (previous == null) {
-                    throw new SimpleParserException("Unary operator " + operator + " has no left hand side token", token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Unary operator " + operator + " has no left hand side token", token.getToken().getIndex());
                 } else {
                     token.acceptLeft(previous);
                 }
@@ -204,11 +207,11 @@ public abstract class BaseSimpleParser {
     /**
      * Accept the given token.
      * <p/>
-     * This is to be used by the grammar to accept tokens and then continue parsing
-     * using the grammar, such as a function grammar.
+     * This is to be used by the grammar to accept tokens and then continue parsing using the grammar, such as a
+     * function grammar.
      *
-     * @param accept  the token
-     * @return <tt>true</tt> if accepted, <tt>false</tt> otherwise.
+     * @param  accept the token
+     * @return        <tt>true</tt> if accepted, <tt>false</tt> otherwise.
      */
     protected boolean accept(TokenType accept) {
         return token == null || token.getType().getType() == accept;
@@ -217,7 +220,7 @@ public abstract class BaseSimpleParser {
     /**
      * Expect a given token
      *
-     * @param expect the token to expect
+     * @param  expect                the token to expect
      * @throws SimpleParserException is thrown if the token is not as expected
      */
     protected void expect(TokenType expect) throws SimpleParserException {
@@ -228,7 +231,8 @@ public abstract class BaseSimpleParser {
             throw new SimpleParserException("expected symbol " + expect + " but reached eol", previousIndex);
         } else {
             // use the previous index as that is where the problem is
-            throw new SimpleParserException("expected symbol " + expect + " but was " + token.getType().getType(), previousIndex);
+            throw new SimpleParserException(
+                    "expected symbol " + expect + " but was " + token.getType().getType(), previousIndex);
         }
     }
 

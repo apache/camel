@@ -25,7 +25,7 @@ public class NatsTestSupport extends ContainerAwareTestSupport {
 
     public static final String CONTAINER_IMAGE = "nats:2.1.4";
     public static final String CONTAINER_NAME = "nats";
-    
+
     @Override
     protected GenericContainer<?> createContainer() {
         return natsContainer();
@@ -33,16 +33,15 @@ public class NatsTestSupport extends ContainerAwareTestSupport {
 
     public static GenericContainer natsContainer() {
         return new GenericContainer(CONTAINER_IMAGE)
-            .withNetworkAliases(CONTAINER_NAME)
-            .waitingFor(Wait.forLogMessageContaining("Listening for route connections", 1));
+                .withNetworkAliases(CONTAINER_NAME)
+                .waitingFor(Wait.forLogMessageContaining("Listening for route connections", 1));
     }
-    
+
     public String getNatsBrokerUrl() {
         return String.format(
-            "%s:%d",
-            getContainerHost(CONTAINER_NAME),
-            getContainerPort(CONTAINER_NAME, 4222)
-        );
+                "%s:%d",
+                getContainerHost(CONTAINER_NAME),
+                getContainerPort(CONTAINER_NAME, 4222));
     }
 
     @Override

@@ -22,8 +22,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
 /**
- * A Producer which stores data into the Amazon DynamoDB Service
- * <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB</a>
+ * A Producer which stores data into the Amazon DynamoDB Service <a href="http://aws.amazon.com/dynamodb/">AWS
+ * DynamoDB</a>
  */
 public class DdbProducer extends DefaultProducer {
 
@@ -90,6 +90,6 @@ public class DdbProducer extends DefaultProducer {
 
     @Override
     public DdbEndpoint getEndpoint() {
-        return (DdbEndpoint)super.getEndpoint();
+        return (DdbEndpoint) super.getEndpoint();
     }
 }

@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
 /**
  * On completion strategy for {@link org.apache.camel.processor.idempotent.IdempotentConsumer}.
  * <p/>
- * This strategy adds the message id to the idempotent repository in cast the exchange
- * was processed successfully. In case of failure the message id is <b>not</b> added.
+ * This strategy adds the message id to the idempotent repository in cast the exchange was processed successfully. In
+ * case of failure the message id is <b>not</b> added.
  */
 public class IdempotentOnCompletion implements Synchronization {
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentOnCompletion.class);
@@ -36,7 +36,8 @@ public class IdempotentOnCompletion implements Synchronization {
     private final boolean eager;
     private final boolean removeOnFailure;
 
-    public IdempotentOnCompletion(IdempotentRepository idempotentRepository, String messageId, boolean eager, boolean removeOnFailure) {
+    public IdempotentOnCompletion(IdempotentRepository idempotentRepository, String messageId, boolean eager,
+                                  boolean removeOnFailure) {
         this.idempotentRepository = idempotentRepository;
         this.messageId = messageId;
         this.eager = eager;
@@ -60,8 +61,7 @@ public class IdempotentOnCompletion implements Synchronization {
     }
 
     /**
-     * A strategy method to allow derived classes to overload the behavior of
-     * processing a completed message
+     * A strategy method to allow derived classes to overload the behavior of processing a completed message
      *
      * @param exchange  the exchange
      * @param messageId the message ID of this exchange
@@ -75,8 +75,7 @@ public class IdempotentOnCompletion implements Synchronization {
     }
 
     /**
-     * A strategy method to allow derived classes to overload the behavior of
-     * processing a failed message
+     * A strategy method to allow derived classes to overload the behavior of processing a failed message
      *
      * @param exchange  the exchange
      * @param messageId the message ID of this exchange

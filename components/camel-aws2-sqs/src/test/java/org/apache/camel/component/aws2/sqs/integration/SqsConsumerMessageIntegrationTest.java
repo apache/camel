@@ -27,7 +27,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
 
@@ -58,15 +57,18 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws2-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1");
+        final String sqsEndpointUri
+                = String.format("aws2-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1");
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                from("aws2-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1&deleteAfterRead=false&deleteIfFiltered=true").startupOrder(1)
-                    .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}").to("mock:result");
+                from("aws2-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1&deleteAfterRead=false&deleteIfFiltered=true")
+                        .startupOrder(1)
+                        .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
+                        .to("mock:result");
             }
         };
     }

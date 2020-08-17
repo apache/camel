@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
-    
+
     public static final String USERNAME = "ben";
     public static final String PASSWORD = "password123";
 
@@ -63,7 +63,8 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
             response.setEntity(new StringEntity("Forbidden", ContentType.TEXT_PLAIN));
             return;
         }
-        final String responseBody = IOUtils.toString(this.getClass().getResourceAsStream(mockResourceJsonResponse.get(requestWrapper.getMethod())));
+        final String responseBody = IOUtils
+                .toString(this.getClass().getResourceAsStream(mockResourceJsonResponse.get(requestWrapper.getMethod())));
         if (responseBody == null) {
             LOGGER.warn("Resource not found on {}. Response body null.", mockResourceJsonResponse);
         }

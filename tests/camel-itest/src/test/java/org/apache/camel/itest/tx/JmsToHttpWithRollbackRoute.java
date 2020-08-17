@@ -27,11 +27,9 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
- * Route that listen on a JMS queue and send a request/reply over http
- * before returning a response. Is transacted.
+ * Route that listen on a JMS queue and send a request/reply over http before returning a response. Is transacted.
  * <p/>
- * Notice we use the SpringRouteBuilder that supports transacted
- * error handler.
+ * Notice we use the SpringRouteBuilder that supports transacted error handler.
  */
 public class JmsToHttpWithRollbackRoute extends SpringRouteBuilder {
     protected static int counter;
@@ -44,8 +42,7 @@ public class JmsToHttpWithRollbackRoute extends SpringRouteBuilder {
     protected Endpoint data;
 
     protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
-    protected String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
-
+    protected String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
     @Override
     public void configure() {
@@ -55,25 +52,25 @@ public class JmsToHttpWithRollbackRoute extends SpringRouteBuilder {
         errorHandler(transactionErrorHandler(required));
 
         from(data)
-            // must setup policy for each route due CAMEL-1475 bug
-            .policy(required)
-            // send a request to http and get the response
-            .to("http://localhost:" + port + "/sender")
-            // convert the response to String so we can work with it and avoid streams only be readable once
-            // as the http component will return data as a stream
-            .convertBodyTo(String.class)
-            // do a choice if the response is okay or not
-            .choice()
+                // must setup policy for each route due CAMEL-1475 bug
+                .policy(required)
+                // send a request to http and get the response
+                .to("http://localhost:" + port + "/sender")
+                // convert the response to String so we can work with it and avoid streams only be readable once
+                // as the http component will return data as a stream
+                .convertBodyTo(String.class)
+                // do a choice if the response is okay or not
+                .choice()
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
-                    // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:JmsToHttpWithRollbackRoute")
-                    // response is not okay so force a rollback
-                    .rollback()
+                // as this is based on an unit test we use mocks to verify how many times we did rollback
+                .to("mock:JmsToHttpWithRollbackRoute")
+                // response is not okay so force a rollback
+                .rollback()
                 .otherwise()
                 // otherwise since its okay, the route ends and the response is sent back
                 // to the original caller
-            .end();
+                .end();
 
         // this is our http route that will fail the first 2 attempts
         // before it sends an ok response

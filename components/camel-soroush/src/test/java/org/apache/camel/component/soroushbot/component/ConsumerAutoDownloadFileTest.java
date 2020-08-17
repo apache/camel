@@ -51,8 +51,10 @@ public class ConsumerAutoDownloadFileTest extends SoroushBotTestSupport {
         assertEquals(exchanges.size(), 4);
         exchanges.forEach(exchange -> {
             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
-            assertTrue(body.getFile() == null ^ body.getFileUrl() != null, "if fileUrl is not null file may not be null and visa versa");
-            assertTrue(body.getThumbnail() == null ^ body.getThumbnailUrl() != null, "if and only if thumbnail url is null thumbnail may be null");
+            assertTrue(body.getFile() == null ^ body.getFileUrl() != null,
+                    "if fileUrl is not null file may not be null and visa versa");
+            assertTrue(body.getThumbnail() == null ^ body.getThumbnailUrl() != null,
+                    "if and only if thumbnail url is null thumbnail may be null");
         });
 
     }

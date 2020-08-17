@@ -21,8 +21,7 @@ import org.apache.camel.component.consul.ConsulClientConfiguration;
 
 public class ConsulServiceRegistryConfiguration extends ConsulClientConfiguration {
     /**
-     * Should we remove all the registered services know by this registry on
-     * stop?
+     * Should we remove all the registered services know by this registry on stop?
      */
     private boolean deregisterServicesOnStop = true;
 
@@ -42,14 +41,13 @@ public class ConsulServiceRegistryConfiguration extends ConsulClientConfiguratio
     private int checkTtl = 60;
 
     /**
-     * How often (in seconds) a service has to be marked as healthy if its check
-     * is TTL or how often the check should run. Default is 5 seconds.
+     * How often (in seconds) a service has to be marked as healthy if its check is TTL or how often the check should
+     * run. Default is 5 seconds.
      */
     private int checkInterval = 5;
 
     /**
-     * How long (in seconds) to wait to deregister a service in case of unclean
-     * shutdown. Default is 1 hour.
+     * How long (in seconds) to wait to deregister a service in case of unclean shutdown. Default is 1 hour.
      */
     private int deregisterAfter = 60 * 60;
 
@@ -112,7 +110,7 @@ public class ConsulServiceRegistryConfiguration extends ConsulClientConfiguratio
     @Override
     public ConsulServiceRegistryConfiguration copy() {
         try {
-            return (ConsulServiceRegistryConfiguration)super.clone();
+            return (ConsulServiceRegistryConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

@@ -39,7 +39,8 @@ import org.springframework.context.ApplicationContextAware;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "fluentTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelFluentProducerTemplateFactoryBean extends AbstractCamelFluentProducerTemplateFactoryBean implements FactoryBean<FluentProducerTemplate>, InitializingBean, DisposableBean,
+public class CamelFluentProducerTemplateFactoryBean extends AbstractCamelFluentProducerTemplateFactoryBean
+        implements FactoryBean<FluentProducerTemplate>, InitializingBean, DisposableBean,
         ApplicationContextAware {
 
     @XmlTransient

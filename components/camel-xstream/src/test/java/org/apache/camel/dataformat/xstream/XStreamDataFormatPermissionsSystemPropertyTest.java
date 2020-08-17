@@ -41,8 +41,9 @@ public class XStreamDataFormatPermissionsSystemPropertyTest extends XStreamDataF
     @Override
     public void testNone() {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
-        
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+
         Object po = xStream.fromXML(XML_PURCHASE_ORDER);
         assertNotNull(po);
     }

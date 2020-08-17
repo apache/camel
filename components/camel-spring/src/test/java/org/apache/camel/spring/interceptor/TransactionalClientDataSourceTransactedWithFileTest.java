@@ -63,14 +63,14 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 from("file://target/transacted/okay?initialDelay=0&delay=10")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("file://target/transacted/fail?initialDelay=0&delay=10")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

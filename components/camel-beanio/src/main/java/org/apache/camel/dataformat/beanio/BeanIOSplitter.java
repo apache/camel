@@ -38,8 +38,8 @@ import org.beanio.StreamFactory;
 import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
 
 /**
- * You can use {@link BeanIOSplitter} with the Camel Splitter EIP to split big payloads
- * using a stream mode to avoid reading the entire content into memory.
+ * You can use {@link BeanIOSplitter} with the Camel Splitter EIP to split big payloads using a stream mode to avoid
+ * reading the entire content into memory.
  */
 public class BeanIOSplitter implements Expression {
 

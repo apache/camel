@@ -44,10 +44,9 @@ public class JGroupsClusterRouteTest {
 
         @Override
         public void configure() throws Exception {
-            from("jgroups:" + clusterName + "?enableViewMessages=true").
-                    filter(dropNonCoordinatorViews()).
-                    threads().delay(delayIfContextNotStarted(SECONDS.toMillis(15))).
-                    to("controlbus:route?routeId=masterRoute&action=start&async=true");
+            from("jgroups:" + clusterName + "?enableViewMessages=true").filter(dropNonCoordinatorViews()).threads()
+                    .delay(delayIfContextNotStarted(SECONDS.toMillis(15)))
+                    .to("controlbus:route?routeId=masterRoute&action=start&async=true");
 
             from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri);
         }

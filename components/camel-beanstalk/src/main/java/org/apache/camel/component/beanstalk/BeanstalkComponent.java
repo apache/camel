@@ -28,9 +28,10 @@ import org.apache.camel.support.DefaultComponent;
  * <p/>
  * URI is <code>beanstalk://[host[:port]][/tube]?query</code>
  * <p/>
- * Parameters:<ul>
- * <li><code>command</code> - one of "put", "release", "bury", "touch", "delete", "kick".
- * "put" is the default for Producers.</li>
+ * Parameters:
+ * <ul>
+ * <li><code>command</code> - one of "put", "release", "bury", "touch", "delete", "kick". "put" is the default for
+ * Producers.</li>
  * <li><code>jobPriority</code></li>
  * <li><code>jobDelay</code></li>
  * <li><code>jobTimeToRun</code></li>
@@ -67,18 +68,19 @@ public class BeanstalkComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         return new BeanstalkEndpoint(uri, this, connectionSettingsFactory.parseUri(remaining), remaining);
     }
 
     /**
      * Custom {@link ConnectionSettingsFactory}.
      * <p/>
-     * Specify which {@link ConnectionSettingsFactory} to use to make connections to Beanstalkd. Especially
-     * useful for unit testing without beanstalkd daemon (you can mock {@link ConnectionSettings})
+     * Specify which {@link ConnectionSettingsFactory} to use to make connections to Beanstalkd. Especially useful for
+     * unit testing without beanstalkd daemon (you can mock {@link ConnectionSettings})
      *
      * @param connFactory the connection factory
-     * @see ConnectionSettingsFactory
+     * @see               ConnectionSettingsFactory
      */
     @Metadata(label = "advanced")
     public static void setConnectionSettingsFactory(ConnectionSettingsFactory connFactory) {

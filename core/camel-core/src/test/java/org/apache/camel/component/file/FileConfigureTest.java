@@ -29,7 +29,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FileConfigureTest extends ContextTestSupport {
-    private static final String EXPECT_PATH = "target" + File.separator + "data" + File.separator + "foo" + File.separator + "bar";
+    private static final String EXPECT_PATH
+            = "target" + File.separator + "data" + File.separator + "foo" + File.separator + "bar";
     private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";
 
     private static final Processor DUMMY_PROCESSOR = new Processor() {
@@ -55,24 +56,32 @@ public class FileConfigureTest extends ContextTestSupport {
 
     @Test
     public void testUriWithParameters() throws Exception {
-        FileEndpoint endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&bridgeErrorHandler=true"
-                                                         + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+        FileEndpoint endpoint
+                = resolveMandatoryEndpoint(
+                        "file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&bridgeErrorHandler=true"
+                                           + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed",
+                        FileEndpoint.class);
         assertNotNull(endpoint, "Could not find file endpoint");
         assertEquals(true, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
 
-        endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&startingDirectoryMustExist=true"
-                                            + "&bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+        endpoint = resolveMandatoryEndpoint(
+                "file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&startingDirectoryMustExist=true"
+                                            + "&bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed",
+                FileEndpoint.class);
 
         assertNotNull(endpoint, "Could not find file endpoint");
         assertEquals(true, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
 
-        endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&startingDirectoryMustExist=true&useFixedDelay=true&initialDelay=10"
-                                            + "&bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+        endpoint = resolveMandatoryEndpoint(
+                "file:///C:/camel/temp?delay=10&startingDirectoryMustExist=true&useFixedDelay=true&initialDelay=10"
+                                            + "&bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed",
+                FileEndpoint.class);
 
         assertNotNull(endpoint, "Could not find file endpoint");
         assertEquals(true, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
 
-        endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10", FileEndpoint.class);
+        endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10",
+                FileEndpoint.class);
 
         assertNotNull(endpoint, "Could not find file endpoint");
         assertEquals(false, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");

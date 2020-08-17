@@ -51,7 +51,8 @@ public class DefaultClassResolverTest {
     @Test
     public void testResolveClassClassLoaderType() {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class<Integer> clazz = resolver.resolveClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
+        Class<Integer> clazz
+                = resolver.resolveClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
@@ -114,7 +115,8 @@ public class DefaultClassResolverTest {
     @Test
     public void testResolveMandatoryClassClassLoaderType() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
+        Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class,
+                DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 

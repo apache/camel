@@ -110,8 +110,7 @@ public abstract class TestSupport {
     }
 
     /**
-     * Returns a predicate and value builder for the inbound message body as a
-     * specific type
+     * Returns a predicate and value builder for the inbound message body as a specific type
      */
     public static <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
@@ -136,7 +135,8 @@ public abstract class TestSupport {
 
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull(value, "Expected an instance of type: " + expectedType.getName() + " but was null");
-        assertTrue(expectedType.isInstance(value), "object should be a " + expectedType.getName() + " but was: " + value + " with type: " + value.getClass().getName());
+        assertTrue(expectedType.isInstance(value), "object should be a " + expectedType.getName() + " but was: " + value
+                                                   + " with type: " + value.getClass().getName());
         return expectedType.cast(value);
     }
 
@@ -161,13 +161,11 @@ public abstract class TestSupport {
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body
-     * value
+     * Asserts that the given exchange has an OUT message of the given body value
      *
-     * @param exchange the exchange which should have an OUT message
-     * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the
-     *             expected class type
+     * @param  exchange                the exchange which should have an OUT message
+     * @param  expected                the expected value of the OUT message
+     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
      */
     public static void assertInMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
         assertNotNull(exchange, "Should have a response exchange!");
@@ -185,13 +183,11 @@ public abstract class TestSupport {
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body
-     * value
+     * Asserts that the given exchange has an OUT message of the given body value
      *
-     * @param exchange the exchange which should have an OUT message
-     * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the
-     *             expected class type
+     * @param  exchange                the exchange which should have an OUT message
+     * @param  expected                the expected value of the OUT message
+     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
      */
     @Deprecated
     public static void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
@@ -342,8 +338,7 @@ public abstract class TestSupport {
     }
 
     /**
-     * A helper method to create a list of Route objects for a given route
-     * builder
+     * A helper method to create a list of Route objects for a given route builder
      */
     public static List<Route> getRouteList(RouteBuilder builder) throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -357,9 +352,8 @@ public abstract class TestSupport {
     /**
      * Asserts that the text contains the given string
      *
-     * @param text the text to compare
-     * @param containedText the text which must be contained inside the other
-     *            text parameter
+     * @param text          the text to compare
+     * @param containedText the text which must be contained inside the other text parameter
      */
     public static void assertStringContains(String text, String containedText) {
         assertNotNull(text, "Text should not be null!");
@@ -367,14 +361,13 @@ public abstract class TestSupport {
     }
 
     /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or
-     * DelegateAsyncProcessor objects this call will drill through them and
-     * return the wrapped Processor.
+     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects this call will
+     * drill through them and return the wrapped Processor.
      */
     public static Processor unwrap(Processor processor) {
         while (true) {
             if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
+                processor = ((DelegateProcessor) processor).getProcessor();
             } else {
                 return processor;
             }
@@ -382,23 +375,22 @@ public abstract class TestSupport {
     }
 
     /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or
-     * DelegateAsyncProcessor objects this call will drill through them and
-     * return the Channel.
+     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects this call will
+     * drill through them and return the Channel.
      * <p/>
      * Returns null if no channel is found.
      */
     public static Channel unwrapChannel(Processor processor) {
         while (true) {
             if (processor instanceof Pipeline) {
-                processor = ((Pipeline)processor).next().get(0);
+                processor = ((Pipeline) processor).next().get(0);
             }
             if (processor instanceof Channel) {
-                return (Channel)processor;
+                return (Channel) processor;
             } else if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
+                processor = ((DelegateProcessor) processor).getProcessor();
             } else if (processor instanceof ErrorHandlerSupport) {
-                processor = ((ErrorHandlerSupport)processor).getOutput();
+                processor = ((ErrorHandlerSupport) processor).getOutput();
             } else {
                 return null;
             }
@@ -441,16 +433,14 @@ public abstract class TestSupport {
     }
 
     /**
-     * To be used for folder/directory comparison that works across different
-     * platforms such as Window, Mac and Linux.
+     * To be used for folder/directory comparison that works across different platforms such as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String expected, String actual) {
         assertDirectoryEquals(null, expected, actual);
     }
 
     /**
-     * To be used for folder/directory comparison that works across different
-     * platforms such as Window, Mac and Linux.
+     * To be used for folder/directory comparison that works across different platforms such as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String message, String expected, String actual) {
         // must use single / as path separators
@@ -495,8 +485,8 @@ public abstract class TestSupport {
      * <p/>
      * Uses <tt>os.name</tt> from the system properties to determine the OS.
      *
-     * @param platform such as Windows
-     * @return <tt>true</tt> if its that platform.
+     * @param  platform such as Windows
+     * @return          <tt>true</tt> if its that platform.
      */
     public static boolean isPlatform(String platform) {
         String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
@@ -506,11 +496,10 @@ public abstract class TestSupport {
     /**
      * Is this Java by the given vendor.
      * <p/>
-     * Uses <tt>java.vendor</tt> from the system properties to determine the
-     * vendor.
+     * Uses <tt>java.vendor</tt> from the system properties to determine the vendor.
      *
-     * @param vendor such as IBM
-     * @return <tt>true</tt> if its that vendor.
+     * @param  vendor such as IBM
+     * @return        <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVendor(String vendor) {
         String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.ENGLISH);
@@ -520,11 +509,10 @@ public abstract class TestSupport {
     /**
      * Is this version the given Java version.
      * <p/>
-     * Uses <tt>java.version</tt> from the system properties to determine the
-     * version.
+     * Uses <tt>java.version</tt> from the system properties to determine the version.
      *
-     * @param version such as 1.6 or 6
-     * @return <tt>true</tt> if its that vendor.
+     * @param  version such as 1.6 or 6
+     * @return         <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVersion(String version) {
         if (version.contains(".")) { // before jdk 9
@@ -537,8 +525,7 @@ public abstract class TestSupport {
     /**
      * Returns the current major Java version e.g 8.
      * <p/>
-     * Uses <tt>java.specification.version</tt> from the system properties to
-     * determine the major version.
+     * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
      * 
      * @return the current major Java version.
      */
@@ -554,15 +541,12 @@ public abstract class TestSupport {
     /**
      * Used for registering a sysetem property.
      * <p/>
-     * if the property already contains the passed value nothing will happen. If
-     * the system property has already a value, the passed value will be
-     * appended separated by <tt>separator</tt>
+     * if the property already contains the passed value nothing will happen. If the system property has already a
+     * value, the passed value will be appended separated by <tt>separator</tt>
      *
-     * @param sysPropertyName the name of the system property to be set
-     * @param sysPropertyValue the value to be set for the system property
-     *            passed as sysPropertyName
-     * @param separator the property separator to be used to append
-     *            sysPropertyValue
+     * @param sysPropertyName  the name of the system property to be set
+     * @param sysPropertyValue the value to be set for the system property passed as sysPropertyName
+     * @param separator        the property separator to be used to append sysPropertyValue
      */
     public static void registerSystemProperty(String sysPropertyName, String sysPropertyValue, String separator) {
         synchronized (System.getProperties()) {

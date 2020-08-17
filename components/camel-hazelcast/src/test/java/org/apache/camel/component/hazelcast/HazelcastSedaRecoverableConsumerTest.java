@@ -56,7 +56,6 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

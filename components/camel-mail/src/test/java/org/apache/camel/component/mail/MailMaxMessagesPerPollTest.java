@@ -88,7 +88,7 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&maxMessagesPerPoll=3"
-                    + "&delete=true").to("mock:result");
+                     + "&delete=true").to("mock:result");
             }
         };
     }

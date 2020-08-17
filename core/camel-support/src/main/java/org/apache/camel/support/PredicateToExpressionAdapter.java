@@ -47,5 +47,5 @@ public final class PredicateToExpressionAdapter implements Expression {
     public static Expression toExpression(final Predicate predicate) {
         return new PredicateToExpressionAdapter(predicate);
     }
-    
+
 }

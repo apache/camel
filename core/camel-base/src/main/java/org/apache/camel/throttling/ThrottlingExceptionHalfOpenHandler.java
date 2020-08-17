@@ -17,14 +17,14 @@
 package org.apache.camel.throttling;
 
 /**
- * Used by the {@link ThrottlingExceptionRoutePolicy} to allow custom code
- * to handle the half open circuit state and how to determine if a route
- * should be closed
+ * Used by the {@link ThrottlingExceptionRoutePolicy} to allow custom code to handle the half open circuit state and how
+ * to determine if a route should be closed
  */
 public interface ThrottlingExceptionHalfOpenHandler {
 
     /**
      * Check the state of the Camel route
+     * 
      * @return true to close the route and false to leave open
      */
     boolean isReadyToBeClosed();

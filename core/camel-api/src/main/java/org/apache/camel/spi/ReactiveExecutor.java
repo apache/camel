@@ -29,21 +29,21 @@ public interface ReactiveExecutor {
     /**
      * Schedules the task to be run (fairly)
      *
-     * @param runnable    the task
+     * @param runnable the task
      */
     void schedule(Runnable runnable);
 
     /**
      * Schedules the task to be prioritized and run asap
      *
-     * @param runnable    the task
+     * @param runnable the task
      */
     void scheduleMain(Runnable runnable);
 
     /**
      * Schedules the task to run synchronously (current thread)
      *
-     * @param runnable    the task
+     * @param runnable the task
      */
     void scheduleSync(Runnable runnable);
 

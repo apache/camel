@@ -80,7 +80,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * Starts the consumer.
      *
      * @return the returned value is always <tt>true</tt> and should not be used.
-     * @see #resumeOrStartConsumer(Consumer)
+     * @see    #resumeOrStartConsumer(Consumer)
      */
     public void startConsumer(Consumer consumer) throws Exception {
         ServiceHelper.startService(consumer);
@@ -90,7 +90,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * Stops the consumer.
      *
      * @return the returned value is always <tt>true</tt> and should not be used.
-     * @see #suspendOrStopConsumer(Consumer)
+     * @see    #suspendOrStopConsumer(Consumer)
      */
     public void stopConsumer(Consumer consumer) throws Exception {
         // stop and shutdown
@@ -100,11 +100,12 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     /**
      * Suspends or stops the consumer.
      *
-     * If the consumer is {@link org.apache.camel.Suspendable} then the consumer is suspended,
-     * otherwise the consumer is stopped.
+     * If the consumer is {@link org.apache.camel.Suspendable} then the consumer is suspended, otherwise the consumer is
+     * stopped.
      *
-     * @see #stopConsumer(Consumer)
-     * @return <tt>true</tt> if the consumer was suspended or stopped, <tt>false</tt> if the consumer was already suspend or stopped
+     * @see    #stopConsumer(Consumer)
+     * @return <tt>true</tt> if the consumer was suspended or stopped, <tt>false</tt> if the consumer was already
+     *         suspend or stopped
      */
     public boolean suspendOrStopConsumer(Consumer consumer) throws Exception {
         return ServiceHelper.suspendService(consumer);
@@ -113,11 +114,12 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     /**
      * Resumes or starts the consumer.
      *
-     * If the consumer is {@link org.apache.camel.Suspendable} then the consumer is resumed,
-     * otherwise the consumer is started.
+     * If the consumer is {@link org.apache.camel.Suspendable} then the consumer is resumed, otherwise the consumer is
+     * started.
      *
-     * @see #startConsumer(Consumer)
-     * @return <tt>true</tt> if the consumer was resumed or started, <tt>false</tt> if the consumer was already resumed or started
+     * @see    #startConsumer(Consumer)
+     * @return <tt>true</tt> if the consumer was resumed or started, <tt>false</tt> if the consumer was already resumed
+     *         or started
      */
     public boolean resumeOrStartConsumer(Consumer consumer) throws Exception {
         return ServiceHelper.resumeService(consumer);
@@ -154,11 +156,11 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     }
 
     /**
-     * Allows to stop a route asynchronously using a separate background thread which can allow any current in-flight exchange
-     * to complete while the route is being shutdown.
-     * You may attempt to stop a route from processing an exchange which would be in-flight and therefore attempting to stop
-     * the route will defer due there is an inflight exchange in-progress. By stopping the route independently using a separate
-     * thread ensures the exchange can continue process and complete and the route can be stopped.
+     * Allows to stop a route asynchronously using a separate background thread which can allow any current in-flight
+     * exchange to complete while the route is being shutdown. You may attempt to stop a route from processing an
+     * exchange which would be in-flight and therefore attempting to stop the route will defer due there is an inflight
+     * exchange in-progress. By stopping the route independently using a separate thread ensures the exchange can
+     * continue process and complete and the route can be stopped.
      */
     public void stopRouteAsync(final Route route) {
         String threadId = route.getCamelContext().getExecutorServiceManager().resolveThreadName("StopRouteAsync");

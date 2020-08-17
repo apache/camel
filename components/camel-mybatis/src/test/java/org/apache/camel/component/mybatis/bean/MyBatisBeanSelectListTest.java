@@ -50,8 +50,8 @@ public class MyBatisBeanSelectListTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis-bean:AccountService:selectBeanAllAccounts")
-                    .to("mock:result");
+                        .to("mybatis-bean:AccountService:selectBeanAllAccounts")
+                        .to("mock:result");
             }
         };
     }

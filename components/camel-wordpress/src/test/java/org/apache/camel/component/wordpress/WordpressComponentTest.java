@@ -40,19 +40,22 @@ public class WordpressComponentTest extends CamelTestSupport {
         final WordpressComponent component = new WordpressComponent(context);
         component.init();
 
-        final WordpressEndpoint endpoint = (WordpressEndpoint)component
-            .createEndpoint("wordpress:post?apiVersion=2&url=http://mysite.com/&criteria.search=test&criteria.page=1&criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json");
+        final WordpressEndpoint endpoint = (WordpressEndpoint) component
+                .createEndpoint(
+                        "wordpress:post?apiVersion=2&url=http://mysite.com/&criteria.search=test&criteria.page=1&criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json");
 
         assertThat(endpoint.getConfiguration().getSearchCriteria(), instanceOf(PostSearchCriteria.class));
         assertNotNull(endpoint.getConfiguration().getSearchCriteria());
         assertThat(endpoint.getConfiguration().getSearchCriteria().getPage(), is(1));
         assertThat(endpoint.getConfiguration().getSearchCriteria().getPerPage(), is(10));
         assertThat(endpoint.getConfiguration().getSearchCriteria().getSearch(), is("test"));
-        assertThat(((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getOrderBy(), is(PostOrderBy.author));
-        assertThat(((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getCategories(), notNullValue());
-        assertThat(((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getCategories(), not(emptyCollectionOf(String.class)));
+        assertThat(((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getOrderBy(), is(PostOrderBy.author));
+        assertThat(((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories(), notNullValue());
+        assertThat(((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories(),
+                not(emptyCollectionOf(String.class)));
 
-        LOGGER.info("Categories are {}", ((PostSearchCriteria)endpoint.getConfiguration().getSearchCriteria()).getCategories());
+        LOGGER.info("Categories are {}",
+                ((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories());
     }
 
 }

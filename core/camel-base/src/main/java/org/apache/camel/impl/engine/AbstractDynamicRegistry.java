@@ -33,10 +33,10 @@ import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * Base implementation for {@link org.apache.camel.spi.TransformerRegistry}, {@link org.apache.camel.spi.ValidatorRegistry}
- * and {@link org.apache.camel.spi.EndpointRegistry}.
+ * Base implementation for {@link org.apache.camel.spi.TransformerRegistry},
+ * {@link org.apache.camel.spi.ValidatorRegistry} and {@link org.apache.camel.spi.EndpointRegistry}.
  */
-public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements StaticService {
+public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements StaticService {
 
     protected final ExtendedCamelContext context;
     protected final RouteController routeController;
@@ -150,9 +150,9 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements
         return new AbstractSet<Entry<K, V>>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
-                return new CompoundIterator<>(Arrays.asList(
-                        staticMap.entrySet().iterator(), dynamicMap.entrySet().iterator()
-                ));
+                return new CompoundIterator<>(
+                        Arrays.asList(
+                                staticMap.entrySet().iterator(), dynamicMap.entrySet().iterator()));
             }
 
             @Override

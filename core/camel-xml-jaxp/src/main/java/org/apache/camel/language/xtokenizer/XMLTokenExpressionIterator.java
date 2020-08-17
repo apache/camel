@@ -84,11 +84,14 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         switch (ignoreCase ? name.toLowerCase() : name) {
             case "headername":
             case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
             case "mode":
-                setMode(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+                setMode(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
             case "group":
-                setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value)); return true;
+                setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value));
+                return true;
             default:
                 return false;
         }
@@ -128,7 +131,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.headerName = headerName;
     }
 
-    protected Iterator<?> createIterator(InputStream in, String charset) throws XMLStreamException, UnsupportedEncodingException {
+    protected Iterator<?> createIterator(InputStream in, String charset)
+            throws XMLStreamException, UnsupportedEncodingException {
         return createIterator(new InputStreamReader(in, charset));
     }
 
@@ -153,9 +157,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     /**
      * Strategy to evaluate the exchange
      *
-     * @param exchange   the exchange
-     * @param closeStream whether to close the stream before returning from this method.
-     * @return the evaluated value
+     * @param  exchange    the exchange
+     * @param  closeStream whether to close the stream before returning from this method.
+     * @return             the evaluated value
      */
     protected Object doEvaluate(Exchange exchange, boolean closeStream) {
         Reader reader = null;
@@ -191,7 +195,6 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         }
     }
 
-
     static class XMLTokenIterator implements Iterator<Object>, Closeable {
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
         private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']*'|\"[^\"]*\")");
@@ -224,9 +227,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 if (s.length() > 0) {
                     int d = s.indexOf(':');
                     String pfx = d > 0 ? s.substring(0, d) : "";
-                    this.splitpath[i] =
-                            new AttributedQName(
-                                    "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
+                    this.splitpath[i] = new AttributedQName(
+                            "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
                 }
             }
 
@@ -653,8 +655,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         public boolean matches(QName qname) {
             return (nsany || getNamespaceURI().equals(qname.getNamespaceURI()))
                     && (lcpattern != null
-                    ? lcpattern.matcher(qname.getLocalPart()).matches()
-                    : getLocalPart().equals(qname.getLocalPart()));
+                            ? lcpattern.matcher(qname.getLocalPart()).matches()
+                            : getLocalPart().equals(qname.getLocalPart()));
         }
 
         private void checkWildcard(String nsa, String lcp) {

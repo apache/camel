@@ -36,9 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test case derived from:
- * http://camel.apache.org/transactional-client.html and Martin
- * Krasser's sample:
+ * Test case derived from: http://camel.apache.org/transactional-client.html and Martin Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
  */
 public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
@@ -66,8 +64,8 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
         notify.matchesMockWaitTime();
 
         assertTrue(getConditionalExceptionProcessor().getCount() == 2,
-                    "Expected only 2 calls to process() (1 failure, 1 success) but encountered "
-                   + getConditionalExceptionProcessor().getCount() + ".");
+                "Expected only 2 calls to process() (1 failure, 1 success) but encountered "
+                                                                       + getConditionalExceptionProcessor().getCount() + ".");
     }
 
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor() {
@@ -77,8 +75,8 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
     }
 
     /**
-     * By default routes should be wrapped in the {@link DeadLetterChannel} so
-     * lets unwrap that and return the actual processor
+     * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual
+     * processor
      */
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor(Route route) {
         // the following is very specific (and brittle) and is not generally
@@ -93,12 +91,12 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
             processor = unwrapDeadLetter(processor);
 
             if (processor instanceof Channel) {
-                processor = ((Channel)processor).getNextProcessor();
+                processor = ((Channel) processor).getNextProcessor();
             } else if (processor instanceof DelegateProcessor) {
                 // TransactionInterceptor is a DelegateProcessor
-                processor = ((DelegateProcessor)processor).getProcessor();
+                processor = ((DelegateProcessor) processor).getProcessor();
             } else if (processor instanceof Pipeline) {
-                for (Processor p : ((Pipeline)processor).next()) {
+                for (Processor p : ((Pipeline) processor).next()) {
                     p = findProcessorByClass(p, findClass);
                     if (p != null && p.getClass().isAssignableFrom(findClass)) {
                         processor = p;
@@ -114,13 +112,13 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
     private Processor unwrapDeadLetter(Processor processor) {
         while (true) {
             if (processor instanceof Channel) {
-                processor = ((Channel)processor).getNextProcessor();
+                processor = ((Channel) processor).getNextProcessor();
             } else if (processor instanceof DeadLetterChannel) {
-                processor = ((DeadLetterChannel)processor).getOutput();
+                processor = ((DeadLetterChannel) processor).getOutput();
             } else if (processor instanceof DefaultErrorHandler) {
-                processor = ((DefaultErrorHandler)processor).getOutput();
+                processor = ((DefaultErrorHandler) processor).getOutput();
             } else if (processor instanceof TransactionErrorHandler) {
-                processor = ((TransactionErrorHandler)processor).getOutput();
+                processor = ((TransactionErrorHandler) processor).getOutput();
             } else {
                 return processor;
             }

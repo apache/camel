@@ -31,7 +31,8 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 /**
  * Send DataSet jobs to an Apache Flink cluster.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Flink", syntax = "flink:endpointType", producerOnly = true, category = {Category.TRANSFORMATION, Category.BIGDATA, Category.STREAMS})
+@UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Flink", syntax = "flink:endpointType", producerOnly = true,
+             category = { Category.TRANSFORMATION, Category.BIGDATA, Category.STREAMS })
 public class FlinkEndpoint extends DefaultEndpoint {
 
     @UriPath

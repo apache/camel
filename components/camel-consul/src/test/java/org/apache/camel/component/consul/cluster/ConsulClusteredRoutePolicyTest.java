@@ -79,7 +79,8 @@ public class ConsulClusteredRoutePolicyTest {
 
             ConsulClusterService service = new ConsulClusterService();
             service.setId("node-" + id);
-            service.setUrl(String.format("http://%s:%d", container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT)));
+            service.setUrl(String.format("http://%s:%d", container.getContainerIpAddress(),
+                    container.getMappedPort(Consul.DEFAULT_HTTP_PORT)));
 
             LOGGER.info("Consul URL {}", service.getUrl());
 
@@ -90,8 +91,9 @@ public class ConsulClusteredRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id).routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id)
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

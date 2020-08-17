@@ -17,7 +17,9 @@
 package org.apache.camel.component.splunk;
 
 public enum ConsumerType {
-    NORMAL, REALTIME, SAVEDSEARCH;
+    NORMAL,
+    REALTIME,
+    SAVEDSEARCH;
 
     public static ConsumerType fromUri(String uri) {
         for (ConsumerType consumerType : ConsumerType.values()) {

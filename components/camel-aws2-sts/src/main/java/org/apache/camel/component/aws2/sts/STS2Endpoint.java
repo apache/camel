@@ -26,7 +26,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -42,8 +41,10 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Manage AWS STS cluster instances using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "aws2-sts", title = "AWS 2 Security Token Service (STS)", syntax = "aws2-sts:label", producerOnly = true, category = {Category.CLOUD,
-                                                                                                                                                                    Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "aws2-sts", title = "AWS 2 Security Token Service (STS)",
+             syntax = "aws2-sts:label", producerOnly = true, category = {
+                     Category.CLOUD,
+                     Category.MANAGEMENT })
 public class STS2Endpoint extends DefaultEndpoint {
 
     private StsClient stsClient;
@@ -99,7 +100,8 @@ public class STS2Endpoint extends DefaultEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -107,7 +109,8 @@ public class STS2Endpoint extends DefaultEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -120,7 +123,8 @@ public class STS2Endpoint extends DefaultEndpoint {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
         }
         if (configuration.isTrustAllCertificates()) {
-            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap.builder().put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE).build());
+            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(
+                    AttributeMap.builder().put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE).build());
             clientBuilder.httpClient(ahc);
         }
         client = clientBuilder.build();

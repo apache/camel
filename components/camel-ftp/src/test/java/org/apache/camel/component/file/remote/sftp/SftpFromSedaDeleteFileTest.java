@@ -33,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&knownHostsFile=" + getKnownHostsFile() + "&privateKeyFile=./src/test/resources/id_rsa"
+        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&knownHostsFile=" + getKnownHostsFile()
+               + "&privateKeyFile=./src/test/resources/id_rsa"
                + "&privateKeyPassphrase=secret&delay=500&disconnect=false&delete=true";
     }
 

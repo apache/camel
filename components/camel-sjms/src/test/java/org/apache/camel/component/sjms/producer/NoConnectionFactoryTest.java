@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * A unit test to ensure getting a meaningful error message
- * when neither of ConnectionResource nor ConnectionFactory is configured.
+ * A unit test to ensure getting a meaningful error message when neither of ConnectionResource nor ConnectionFactory is
+ * configured.
  */
 public class NoConnectionFactoryTest {
 
@@ -98,7 +98,7 @@ public class NoConnectionFactoryTest {
             @Override
             public void configure() throws Exception {
                 from("sjms:queue:test-in?exchangePattern=InOnly")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }
@@ -108,7 +108,7 @@ public class NoConnectionFactoryTest {
             @Override
             public void configure() throws Exception {
                 from("sjms:queue:test-in?exchangePattern=InOut")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }
@@ -118,8 +118,8 @@ public class NoConnectionFactoryTest {
             @Override
             public void configure() throws Exception {
                 from("direct:inonly")
-                    .to("sjms:queue:test-out?exchangePattern=InOnly")
-                    .to("mock:result");
+                        .to("sjms:queue:test-out?exchangePattern=InOnly")
+                        .to("mock:result");
             }
         };
     }
@@ -129,8 +129,8 @@ public class NoConnectionFactoryTest {
             @Override
             public void configure() throws Exception {
                 from("direct:inout")
-                    .to("sjms:queue:test-out?exchangePattern=InOut")
-                    .to("mock:result");
+                        .to("sjms:queue:test-out?exchangePattern=InOut")
+                        .to("mock:result");
             }
         };
     }

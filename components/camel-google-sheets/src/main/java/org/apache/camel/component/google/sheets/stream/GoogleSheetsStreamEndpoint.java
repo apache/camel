@@ -45,7 +45,8 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private GoogleSheetsStreamConfiguration configuration;
 
-    public GoogleSheetsStreamEndpoint(String uri, GoogleSheetsStreamComponent component, GoogleSheetsStreamConfiguration endpointConfiguration) {
+    public GoogleSheetsStreamEndpoint(String uri, GoogleSheetsStreamComponent component,
+                                      GoogleSheetsStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -63,15 +64,15 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
     }
 
     public Sheets getClient() {
-        return ((GoogleSheetsStreamComponent)getComponent()).getClient(configuration);
+        return ((GoogleSheetsStreamComponent) getComponent()).getClient(configuration);
     }
 
     public GoogleSheetsClientFactory getClientFactory() {
-        return ((GoogleSheetsStreamComponent)getComponent()).getClientFactory();
+        return ((GoogleSheetsStreamComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleSheetsClientFactory clientFactory) {
-        ((GoogleSheetsStreamComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleSheetsStreamComponent) getComponent()).setClientFactory(clientFactory);
     }
 
     public GoogleSheetsStreamConfiguration getConfiguration() {

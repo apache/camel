@@ -27,8 +27,9 @@ import org.apache.camel.support.language.LanguageAnnotation;
 public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(CamelContext camelContext, Annotation annotation,
-                                       LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+    public Expression createExpression(
+            CamelContext camelContext, Annotation annotation,
+            LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
 
         String expression = getExpressionFromAnnotation(annotation);
         JsonPathExpression answer = new JsonPathExpression(expression);

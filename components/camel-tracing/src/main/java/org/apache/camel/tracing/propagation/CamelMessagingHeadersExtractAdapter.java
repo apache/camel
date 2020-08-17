@@ -33,9 +33,9 @@ public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter
         this.jmsEncoding = jmsEncoding;
         map.entrySet().stream().filter(e -> e.getValue() instanceof String || e.getValue() instanceof byte[]).forEach(e -> {
             if (e.getValue() instanceof byte[]) {
-                this.map.put(decodeDash(e.getKey()), new String((byte[])e.getValue(), StandardCharsets.UTF_8));
+                this.map.put(decodeDash(e.getKey()), new String((byte[]) e.getValue(), StandardCharsets.UTF_8));
             } else {
-                this.map.put(decodeDash(e.getKey()), (String)e.getValue());
+                this.map.put(decodeDash(e.getKey()), (String) e.getValue());
             }
         });
     }
@@ -51,9 +51,8 @@ public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter
     }
 
     /**
-     * Decode dashes (encoded in {@link CamelMessagingHeadersInjectAdapter} Dash
-     * encoding and decoding is required by JMS. This is implemented here rather
-     * than specifically to JMS so that other Camel messaging endpoints can take
+     * Decode dashes (encoded in {@link CamelMessagingHeadersInjectAdapter} Dash encoding and decoding is required by
+     * JMS. This is implemented here rather than specifically to JMS so that other Camel messaging endpoints can take
      * part in traces where the peer is using JMS.
      */
     private String decodeDash(String key) {

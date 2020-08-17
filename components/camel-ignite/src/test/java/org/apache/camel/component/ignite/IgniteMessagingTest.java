@@ -124,7 +124,8 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
     @Test
     public void testConsumerManyMessages() throws Exception {
         List<Object> messages = Lists.newArrayList();
-        Consumer consumer = context.getEndpoint("ignite-messaging:" + TOPIC1).createConsumer(storeBodyInListProcessor(messages));
+        Consumer consumer
+                = context.getEndpoint("ignite-messaging:" + TOPIC1).createConsumer(storeBodyInListProcessor(messages));
         consumer.start();
 
         Set<Integer> messagesToSend = ContiguousSet.create(Range.closedOpen(0, 100), DiscreteDomain.integers());

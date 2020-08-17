@@ -27,7 +27,7 @@ public class NatsAuthTestSupport extends ContainerAwareTestSupport {
     public static final String CONTAINER_NAME = "nats-auth";
     public static final String USERNAME = "admin";
     public static final String PASSWORD = "password";
-    
+
     @Override
     protected GenericContainer<?> createContainer() {
         return natsContainer();
@@ -35,25 +35,23 @@ public class NatsAuthTestSupport extends ContainerAwareTestSupport {
 
     public static GenericContainer natsContainer() {
         return new GenericContainer(CONTAINER_IMAGE)
-            .withNetworkAliases(CONTAINER_NAME)
-            .waitingFor(Wait.forLogMessageContaining("Server is ready", 1))
-            .withCommand(
-                         "-DV",
-                         "--user",
-                         USERNAME,
-                         "--pass",
-                         PASSWORD
-                     );
+                .withNetworkAliases(CONTAINER_NAME)
+                .waitingFor(Wait.forLogMessageContaining("Server is ready", 1))
+                .withCommand(
+                        "-DV",
+                        "--user",
+                        USERNAME,
+                        "--pass",
+                        PASSWORD);
     }
-    
+
     public String getNatsBrokerUrl() {
         return String.format(
-            "%s:%s@%s:%d",
-            USERNAME,
-            PASSWORD,
-            getContainerHost(CONTAINER_NAME),
-            getContainerPort(CONTAINER_NAME, 4222)
-        );
+                "%s:%s@%s:%d",
+                USERNAME,
+                PASSWORD,
+                getContainerHost(CONTAINER_NAME),
+                getContainerPort(CONTAINER_NAME, 4222));
     }
 
     @Override

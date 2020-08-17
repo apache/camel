@@ -61,9 +61,10 @@ public final class ReferenceId implements Serializable {
             return false;
         }
 
-        final ReferenceId other = (ReferenceId)obj;
+        final ReferenceId other = (ReferenceId) obj;
 
-        return Objects.equals(id, other.id) && Objects.equals(referenceId, other.referenceId) && Objects.equals(getErrors(), other.getErrors());
+        return Objects.equals(id, other.id) && Objects.equals(referenceId, other.referenceId)
+                && Objects.equals(getErrors(), other.getErrors());
     }
 
     public List<RestError> getErrors() {

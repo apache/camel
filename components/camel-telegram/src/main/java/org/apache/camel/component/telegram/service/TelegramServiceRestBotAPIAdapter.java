@@ -89,7 +89,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private final String baseUri;
 
     public TelegramServiceRestBotAPIAdapter(AsyncHttpClient asyncHttpClient, int bufferSize, String telegramBaseUri,
-            String authorizationToken) {
+                                            String authorizationToken) {
         this.asyncHttpClient = asyncHttpClient;
         this.baseUri = telegramBaseUri + "/bot" + authorizationToken;
         this.mapper = new ObjectMapper();
@@ -102,7 +102,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         m.put(OutgoingDocumentMessage.class, new OutgoingDocumentMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingStickerMessage.class, new OutgoingStickerMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingGameMessage.class,
-            new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendGame"));
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendGame"));
         m.put(SendLocationMessage.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendLocation"));
         m.put(EditMessageLiveLocationMessage.class,
@@ -128,7 +128,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         m.put(OutgoingGetGameHighScoresMessage.class, new OutgoingPlainMessageHandler(
                 asyncHttpClient, bufferSize, mapper, baseUri + "/getGameHighScores", MessageResultGameScores.class));
         m.put(OutgoingAnswerInlineQuery.class, new OutgoingPlainMessageHandler(
-            asyncHttpClient, bufferSize, mapper, baseUri + "/answerInlineQuery"));
+                asyncHttpClient, bufferSize, mapper, baseUri + "/answerInlineQuery"));
         this.handlers = m;
     }
 
@@ -167,7 +167,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             } else {
                 throw new RuntimeException(
                         "Could not " + request.getMethod() + " " + request.getUrl() + ": " + response.getStatusCode() + " "
-                                + response.getStatusText());
+                                           + response.getStatusText());
             }
         } catch (ExecutionException e) {
             throw new RuntimeException("Could not request " + request.getMethod() + " " + request.getUrl(), e);
@@ -237,7 +237,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingAudioMessageHandler extends OutgoingMessageHandler<OutgoingAudioMessage> {
 
         public OutgoingAudioMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
+                                           String baseUri) {
             super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendAudio", null, MessageResult.class);
         }
 
@@ -256,7 +256,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingVideoMessageHandler extends OutgoingMessageHandler<OutgoingVideoMessage> {
 
         public OutgoingVideoMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
+                                           String baseUri) {
             super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVideo", null, MessageResult.class);
         }
 
@@ -276,7 +276,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingDocumentMessageHandler extends OutgoingMessageHandler<OutgoingDocumentMessage> {
 
         public OutgoingDocumentMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
+                                              String baseUri) {
             super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendDocument", null, MessageResult.class);
         }
 
@@ -293,7 +293,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingPhotoMessageHandler extends OutgoingMessageHandler<OutgoingPhotoMessage> {
 
         public OutgoingPhotoMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
+                                           String baseUri) {
             super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendPhoto", null, MessageResult.class);
         }
 
@@ -333,7 +333,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         private final Class<? extends MessageResult> resultClass;
 
         public OutgoingMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper, String uri,
-                String contentType, Class<? extends MessageResult> resultClass) {
+                                      String contentType, Class<? extends MessageResult> resultClass) {
             this.resultClass = resultClass;
             this.asyncHttpClient = asyncHttpClient;
             this.bufferSize = bufferSize;
@@ -390,7 +390,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         private Class<? extends MessageResult> onCompletedType;
 
         private TelegramAsyncHandler(Exchange exchange, AsyncCallback callback, String url, int bufferSize,
-                ObjectMapper mapper, Class<? extends MessageResult> onCompletedType) {
+                                     ObjectMapper mapper, Class<? extends MessageResult> onCompletedType) {
             this.onCompletedType = onCompletedType;
             this.exchange = exchange;
             this.callback = callback;
@@ -419,8 +419,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 os.close();
                 final boolean success = statusCode >= 200 && statusCode < 300;
                 try (InputStream maybeGzStream = new ByteArrayInputStream(os.toByteArray());
-                        InputStream is = GZIPHelper.uncompressGzip(contentEncoding, maybeGzStream);
-                        Reader r = new InputStreamReader(is, charset)) {
+                     InputStream is = GZIPHelper.uncompressGzip(contentEncoding, maybeGzStream);
+                     Reader r = new InputStreamReader(is, charset)) {
 
                     if (success) {
                         final Object result;

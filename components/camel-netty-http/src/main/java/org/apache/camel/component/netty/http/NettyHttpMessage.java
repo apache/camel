@@ -24,8 +24,8 @@ import org.apache.camel.support.DefaultMessage;
 /**
  * Netty HTTP based {@link org.apache.camel.Message}.
  * <p/>
- * This implementation allows direct access to the Netty {@link FullHttpRequest} using
- * the {@link #getHttpRequest()} method.
+ * This implementation allows direct access to the Netty {@link FullHttpRequest} using the {@link #getHttpRequest()}
+ * method.
  */
 public class NettyHttpMessage extends DefaultMessage {
 

@@ -97,7 +97,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
         // AMQPersistenceAdapter amq = new AMQPersistenceAdapter();
         // amq.setDirectory(new File("target/data"));
         // brokerService.setPersistenceAdapter(amq);
-        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter)brokerService.getPersistenceAdapter();
+        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService.getPersistenceAdapter();
         kahaDBPersistenceAdapter.setEnableJournalDiskSyncs(false);
         brokerService.addConnector("tcp://localhost:61616");
         return brokerService;
@@ -132,7 +132,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
             if (consumed.getAndIncrement() == 0) {
                 firstConsumed.set(System.currentTimeMillis());
             }
-            ActiveMQTextMessage m = (ActiveMQTextMessage)((JmsMessage)exchange.getIn()).getJmsMessage();
+            ActiveMQTextMessage m = (ActiveMQTextMessage) ((JmsMessage) exchange.getIn()).getJmsMessage();
             // Thread.currentThread().sleep(500);
             if (consumed.get() % 500 == 0) {
                 LOG.info("received on " + m.getConnection().toString());

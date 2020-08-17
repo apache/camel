@@ -52,7 +52,7 @@ public class Order {
 
     @GET
     @Path("products/{productId}/")
-    public Product getProduct(@PathParam("productId")int productId) {
+    public Product getProduct(@PathParam("productId") int productId) {
         Product p = products.get(new Long(productId));
         return p;
     }

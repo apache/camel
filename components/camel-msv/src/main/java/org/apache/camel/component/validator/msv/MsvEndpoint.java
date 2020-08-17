@@ -28,7 +28,8 @@ import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 /**
  * Validate XML payloads using Multi-Schema Validator (MSV).
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "msv", title = "MSV", syntax = "msv:resourceUri", producerOnly = true, category = {Category.VALIDATION})
+@UriEndpoint(firstVersion = "1.1.0", scheme = "msv", title = "MSV", syntax = "msv:resourceUri", producerOnly = true,
+             category = { Category.VALIDATION })
 public class MsvEndpoint extends ValidatorEndpoint {
 
     public MsvEndpoint(String endpointUri, Component component, String resourceUri) {

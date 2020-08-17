@@ -58,10 +58,10 @@ public class JmsDurableTopicTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:topic:foo?clientId=123&durableSubscriptionName=bar")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("activemq:topic:foo?clientId=456&durableSubscriptionName=bar")
-                    .to("mock:result2");
+                        .to("mock:result2");
             }
         };
     }

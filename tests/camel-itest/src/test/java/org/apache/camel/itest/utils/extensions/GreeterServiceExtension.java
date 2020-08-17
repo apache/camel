@@ -57,7 +57,6 @@ public class GreeterServiceExtension implements BeforeAllCallback, AfterAllCallb
         LOG.info("The WS endpoint is published! ");
     }
 
-
     public static GreeterServiceExtension createExtension(String portProperty) {
         return new GreeterServiceExtension(portProperty);
     }

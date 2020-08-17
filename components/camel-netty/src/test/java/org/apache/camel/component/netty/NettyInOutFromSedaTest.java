@@ -40,13 +40,13 @@ public class NettyInOutFromSedaTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .log("before ${body}")
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
-                    .log("after ${body}")
-                    .to("mock:result");
+                        .log("before ${body}")
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
+                        .log("after ${body}")
+                        .to("mock:result");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
-                    .transform(body().prepend("Bye "));
+                        .transform(body().prepend("Bye "));
             }
         };
     }

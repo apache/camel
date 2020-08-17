@@ -26,18 +26,20 @@ import java.util.concurrent.ThreadLocalRandom;
  * If {@code randomBackOff} is enabled and no value is set for {@code maximumRetryDelay}, a default value of 1000ms will
  * be used, the random delay will be between 0 and 1000 milliseconds.
  * <p/>
- * If both {@code randomBackOff} and {@code exponentialBackOff} are enabled, {@code exponentialBackOff} will take precedence.
+ * If both {@code randomBackOff} and {@code exponentialBackOff} are enabled, {@code exponentialBackOff} will take
+ * precedence.
  * <p/>
  * If {@code exponentialBackOff} is enabled and a value is set for {@code maximumRetryDelay}, the retry delay will keep
- * doubling in value until it reaches or exceeds {@code maximumRetryDelay}. After it has reached or exceeded {@code maximumRetryDelay}
- * the value of {@code maximumRetryDelay} will be used as the retry delay.
+ * doubling in value until it reaches or exceeds {@code maximumRetryDelay}. After it has reached or exceeded
+ * {@code maximumRetryDelay} the value of {@code maximumRetryDelay} will be used as the retry delay.
  * <p/>
- * If both {@code exponentialBackOff} and {@code randomBackOff} are disabled, the value of {@code retryDelay} will be used
- * as the retry delay and remain constant through all the retry attempts.
+ * If both {@code exponentialBackOff} and {@code randomBackOff} are disabled, the value of {@code retryDelay} will be
+ * used as the retry delay and remain constant through all the retry attempts.
  * <p/>
  * If the value of {@code maximumRetries} is set above zero, retry attempts will stop at the value specified.
  * <p/>
- * The default behaviour of this policy is to retry forever and exponentially increase the back-off delay starting with 50ms.
+ * The default behaviour of this policy is to retry forever and exponentially increase the back-off delay starting with
+ * 50ms.
  */
 public class OptimisticLockRetryPolicy {
     private static final long DEFAULT_MAXIMUM_RETRY_DELAY = 1000L;
@@ -65,8 +67,12 @@ public class OptimisticLockRetryPolicy {
     public long getDelay(final int retryCounter) {
         long sleepFor = 0;
         if (retryDelay > 0 || randomBackOff) {
-            sleepFor = exponentialBackOff ? (retryDelay << retryCounter)
-                    : (randomBackOff ? ThreadLocalRandom.current().nextInt((int)(maximumRetryDelay > 0 ? maximumRetryDelay : DEFAULT_MAXIMUM_RETRY_DELAY)) : retryDelay);
+            sleepFor = exponentialBackOff
+                    ? (retryDelay << retryCounter)
+                    : (randomBackOff
+                            ? ThreadLocalRandom.current()
+                                    .nextInt((int) (maximumRetryDelay > 0 ? maximumRetryDelay : DEFAULT_MAXIMUM_RETRY_DELAY))
+                            : retryDelay);
             if (maximumRetryDelay > 0 && sleepFor > maximumRetryDelay) {
                 sleepFor = maximumRetryDelay;
             }

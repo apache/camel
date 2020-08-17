@@ -37,7 +37,8 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName) throws GenericFileOperationFailedException {
+    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+            throws GenericFileOperationFailedException {
         // need to evaluate using a dummy and simulate the file first, to have
         // access to all the file attributes
         // create a dummy exchange as Exchange is needed for expression
@@ -57,9 +58,10 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         // leading paths
         to = FileUtil.stripLeadingSeparator(to);
         // normalize accordingly to configuration
-        to = ((FtpEndpoint<FTPFile>)endpoint).getConfiguration().normalizePath(to);
+        to = ((FtpEndpoint<FTPFile>) endpoint).getConfiguration().normalizePath(to);
         if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+            throw new GenericFileOperationFailedException(
+                    "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
 
         // do we have a sub directory
@@ -75,16 +77,20 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
                 LOG.trace("Deleting existing file: {}", to);
                 boolean result;
                 try {
-                    result = ((FtpOperations)operations).getClient().deleteFile(to);
+                    result = ((FtpOperations) operations).getClient().deleteFile(to);
                     if (!result) {
                         throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                     }
                 } catch (IOException e) {
-                    throw new GenericFileOperationFailedException(((FtpOperations)operations).getClient().getReplyCode(), ((FtpOperations)operations).getClient().getReplyString(),
-                                                                  "Cannot delete file: " + to, e);
+                    throw new GenericFileOperationFailedException(
+                            ((FtpOperations) operations).getClient().getReplyCode(),
+                            ((FtpOperations) operations).getClient().getReplyString(),
+                            "Cannot delete file: " + to, e);
                 }
             } else {
-                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException(
+                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
+                                                              + to);
             }
         }
 

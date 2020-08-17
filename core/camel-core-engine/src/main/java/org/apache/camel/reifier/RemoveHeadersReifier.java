@@ -35,9 +35,11 @@ public class RemoveHeadersReifier extends ProcessorReifier<RemoveHeadersDefiniti
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPattern(), "patterns", definition);
         if (definition.getExcludePatterns() != null) {
-            return new RemoveHeadersProcessor(parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
+            return new RemoveHeadersProcessor(
+                    parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
         } else if (definition.getExcludePattern() != null) {
-            return new RemoveHeadersProcessor(parseString(definition.getPattern()), parseStrings(new String[] {definition.getExcludePattern()}));
+            return new RemoveHeadersProcessor(
+                    parseString(definition.getPattern()), parseStrings(new String[] { definition.getExcludePattern() }));
         } else {
             return new RemoveHeadersProcessor(parseString(definition.getPattern()), null);
         }

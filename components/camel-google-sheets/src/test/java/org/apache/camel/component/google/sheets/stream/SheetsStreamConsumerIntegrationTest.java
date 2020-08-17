@@ -53,8 +53,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
 
         List<List<Object>> data = Arrays.asList(
                 Arrays.asList("a1", "b1"),
-                Arrays.asList("a2", "b2")
-        );
+                Arrays.asList("a2", "b2"));
 
         assertThatGoogleApi(getGoogleApiTestServer())
                 .updateValuesRequest(spreadsheetId, range, data)
@@ -103,8 +102,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
 
         List<List<Object>> data = Arrays.asList(
                 Arrays.asList("a1", "b1"),
-                Arrays.asList("a2", "b2")
-        );
+                Arrays.asList("a2", "b2"));
 
         assertThatGoogleApi(getGoogleApiTestServer())
                 .updateValuesRequest(spreadsheetId, range, data)
@@ -160,9 +158,11 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(String.format("google-sheets-stream://data?spreadsheetId=%s&range=%s&delay=20000&maxResults=5&splitResults=%s", spreadsheetId, range, splitResults))
-                        .routeId("google-stream-test")
-                        .to("mock:result");
+                from(String.format(
+                        "google-sheets-stream://data?spreadsheetId=%s&range=%s&delay=20000&maxResults=5&splitResults=%s",
+                        spreadsheetId, range, splitResults))
+                                .routeId("google-stream-test")
+                                .to("mock:result");
             }
         };
     }

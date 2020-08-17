@@ -62,7 +62,8 @@ public final class QuickfixjConverters {
     }
 
     @Converter
-    public static Message toMessage(byte[] value, Exchange exchange) throws InvalidMessage, ConfigError, UnsupportedEncodingException {
+    public static Message toMessage(byte[] value, Exchange exchange)
+            throws InvalidMessage, ConfigError, UnsupportedEncodingException {
         DataDictionary dataDictionary = getDataDictionary(exchange);
         String charsetName = ExchangeHelper.getCharsetName(exchange);
 
@@ -84,7 +85,8 @@ public final class QuickfixjConverters {
     }
 
     @Converter
-    public static InputStream toInputStream(Message value, Exchange exchange) throws InvalidMessage, ConfigError, UnsupportedEncodingException {
+    public static InputStream toInputStream(Message value, Exchange exchange)
+            throws InvalidMessage, ConfigError, UnsupportedEncodingException {
         if (exchange != null) {
             String charsetName = ExchangeHelper.getCharsetName(exchange);
             if (charsetName != null) {
@@ -115,11 +117,14 @@ public final class QuickfixjConverters {
         return dataDictionary;
     }
 
-    public static Exchange toExchange(Endpoint endpoint, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory) {
+    public static Exchange toExchange(
+            Endpoint endpoint, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory) {
         return toExchange(endpoint, sessionID, message, eventCategory, ExchangePattern.InOnly);
     }
 
-    public static Exchange toExchange(Endpoint endpoint, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory, ExchangePattern exchangePattern) {
+    public static Exchange toExchange(
+            Endpoint endpoint, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory,
+            ExchangePattern exchangePattern) {
         Exchange exchange = endpoint.createExchange(exchangePattern);
 
         org.apache.camel.Message camelMessage = exchange.getIn();

@@ -62,30 +62,29 @@ public final class ApnsUtils {
 
         return deviceToken;
     }
-    
+
     public static ApnsServerStub prepareAndStartServer(int gatePort, int feedPort) {
         InputStream stream = ClassLoader.getSystemResourceAsStream(FixedCertificates.SERVER_STORE);
-        SSLContext context = Utilities.newSSLContext(stream, FixedCertificates.SERVER_PASSWORD, 
-                                                     "PKCS12", getAlgorithm());
+        SSLContext context = Utilities.newSSLContext(stream, FixedCertificates.SERVER_PASSWORD,
+                "PKCS12", getAlgorithm());
 
-        
         ApnsServerStub server = new ApnsServerStub(
                 context.getServerSocketFactory(),
                 gatePort, feedPort);
         server.start();
         return server;
     }
-    
+
     public static String getAlgorithm() {
         List<String> keys = new LinkedList<>();
         List<String> trusts = new LinkedList<>();
         for (Provider p : Security.getProviders()) {
             for (Service s : p.getServices()) {
                 if ("KeyManagerFactory".equals(s.getType())
-                    && s.getAlgorithm().endsWith("509")) {
+                        && s.getAlgorithm().endsWith("509")) {
                     keys.add(s.getAlgorithm());
                 } else if ("TrustManagerFactory".equals(s.getType())
-                    && s.getAlgorithm().endsWith("509")) {
+                        && s.getAlgorithm().endsWith("509")) {
                     trusts.add(s.getAlgorithm());
                 }
             }
@@ -93,7 +92,7 @@ public final class ApnsUtils {
         keys.retainAll(trusts);
         return keys.get(0);
     }
-    
+
     public static SSLContextParameters clientContext() throws Exception {
         final KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(ClassLoader.getSystemResource(FixedCertificates.CLIENT_STORE).toString());
@@ -109,28 +108,28 @@ public final class ApnsUtils {
         contextParameters.setTrustManagers(new TrustManagersParameters() {
             @Override
             public TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
-                return new TrustManager[] {new X509TrustManager() {
+                return new TrustManager[] { new X509TrustManager() {
                     public void checkClientTrusted(X509Certificate[] chain, String authType)
-                        throws CertificateException {
+                            throws CertificateException {
                     }
 
                     public void checkServerTrusted(X509Certificate[] chain, String authType)
-                        throws CertificateException {
+                            throws CertificateException {
                     }
 
                     public X509Certificate[] getAcceptedIssuers() {
                         return new X509Certificate[0];
                     }
 
-                }};
+                } };
             }
         });
 
         return contextParameters;
     }
-    
-    public static ApnsServiceFactory createDefaultTestConfiguration(CamelContext camelContext) 
-        throws Exception {
+
+    public static ApnsServiceFactory createDefaultTestConfiguration(CamelContext camelContext)
+            throws Exception {
         ApnsServiceFactory apnsServiceFactory = new ApnsServiceFactory(camelContext);
 
         apnsServiceFactory.setFeedbackHost(TestConstants.TEST_HOST);
@@ -146,9 +145,9 @@ public final class ApnsUtils {
 
     public static byte[] generateFeedbackBytes(byte[] deviceTokenBytes) {
         byte[] feedbackBytes = ApnsFeedbackParsingUtilsAcessor.pack(
-        /* time_t */new byte[] {0, 0, 0, 0},
-        /* length */new byte[] {0, 32},
-        /* device token */deviceTokenBytes);
+                /* time_t */new byte[] { 0, 0, 0, 0 },
+                /* length */new byte[] { 0, 32 },
+                /* device token */deviceTokenBytes);
 
         return feedbackBytes;
     }

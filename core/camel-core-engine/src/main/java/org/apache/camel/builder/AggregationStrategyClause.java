@@ -59,8 +59,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     // *******************************
 
     /**
-     * Define an aggregation strategy which targets Exchanges In Message.
-     * <blockquote>
+     * Define an aggregation strategy which targets Exchanges In Message. <blockquote>
      * 
      * <pre>
      * {@code
@@ -104,8 +103,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     // *******************************
 
     /**
-     * Define an aggregation strategy which targets Exchanges In Body.
-     * <blockquote>
+     * Define an aggregation strategy which targets Exchanges In Body. <blockquote>
      * 
      * <pre>
      * {@code
@@ -128,8 +126,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     }
 
     /**
-     * Define an aggregation strategy which targets Exchanges In Body.
-     * <blockquote>
+     * Define an aggregation strategy which targets Exchanges In Body. <blockquote>
      * 
      * <pre>
      * {@code
@@ -159,7 +156,8 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
             Message oldMessage = oldExchange != null ? oldExchange.getIn() : null;
             Message newMessage = ObjectHelper.notNull(newExchange, "NewExchange").getIn();
 
-            Object result = function.apply(oldMessage != null ? oldMessage.getBody(oldType) : null, newMessage != null ? newMessage.getBody(newType) : null);
+            Object result = function.apply(oldMessage != null ? oldMessage.getBody(oldType) : null,
+                    newMessage != null ? newMessage.getBody(newType) : null);
 
             if (oldExchange != null) {
                 oldExchange.getIn().setBody(result);

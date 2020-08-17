@@ -17,14 +17,14 @@
 package org.apache.camel.component.slack;
 
 public final class SlackConstants {
-    
+
     public static final String SLACK_USERNAME_FIELD = "username";
     public static final String SLACK_TEXT_FIELD = "text";
     public static final String SLACK_CHANNEL_FIELD = "channel";
     public static final String SLACK_ICON_URL_FIELD = "icon_url";
     public static final String SLACK_ICON_EMOJI_FIELD = "icon_emoji";
     public static final String SLACK_ATTACHMENTS_FIELD = "attachments";
-    
+
     public static final String SLACK_ATTACHMENT_FALLBACK_FIELD = "fallback";
     public static final String SLACK_ATTACHMENT_COLOR_FIELD = "color";
     public static final String SLACK_ATTACHMENT_TEXT_FIELD = "text";

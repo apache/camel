@@ -26,9 +26,9 @@ public interface SuggestionStrategy {
     /**
      * Provides a list of valid option names for a did you mean function.
      *
-     * @param names         valid names
-     * @param unknownOption unknown option name
-     * @return a list of suggested names (did you mean)
+     * @param  names         valid names
+     * @param  unknownOption unknown option name
+     * @return               a list of suggested names (did you mean)
      */
     String[] suggestEndpointOptions(Set<String> names, String unknownOption);
 }

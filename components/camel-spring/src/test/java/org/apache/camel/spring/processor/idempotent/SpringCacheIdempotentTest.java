@@ -45,4 +45,3 @@ public class SpringCacheIdempotentTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 }
-

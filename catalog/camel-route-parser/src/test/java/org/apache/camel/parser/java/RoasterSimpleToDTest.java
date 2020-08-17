@@ -39,11 +39,13 @@ public class RoasterSimpleToDTest {
 
     @Test
     void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java"));
+        JavaClassSource clazz
+                = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
 
         List<CamelEndpointDetails> details = new ArrayList<>();
-        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".", "src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java", details);
+        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".",
+                "src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java", details);
         LOG.info("{}", details);
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);

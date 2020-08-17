@@ -32,7 +32,8 @@ public class SplitSubUnitOfWorkStopOnExceptionIssueTest extends SplitSubUnitOfWo
 
                 from("direct:dead").setBody(simple("${body}")).to("mock:dead");
 
-                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().to("mock:b").to("direct:line").end().to("mock:result");
+                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().to("mock:b")
+                        .to("direct:line").end().to("mock:result");
 
                 from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
             }

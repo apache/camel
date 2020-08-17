@@ -32,17 +32,16 @@ public class DynamicRouteTest extends CamelTestSupport {
 
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
-    
+
     @Test
     void testDynamicRouteWithJms() {
         String response = template.requestBody("jms:queue:request?replyTo=bar", "foo", String.class);
         assertEquals("response is foo", response);
         response = template.requestBody("jms:queue:request", "bar", String.class);
         assertEquals("response is bar", response);
-        
-      
+
     }
-    
+
     @Test
     void testDynamicRouteWithDirect() {
         String response = template.requestBody("direct:start", "foo", String.class);
@@ -50,17 +49,16 @@ public class DynamicRouteTest extends CamelTestSupport {
         response = template.requestBody("direct:start", "bar", String.class);
         assertEquals("response is bar", response);
     }
-    
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
-       
+
         return new RouteBuilder() {
             public void configure() {
-                from("jms:queue:request") 
-                    .dynamicRouter().method(MyDynamicRouter.class, "route");
+                from("jms:queue:request")
+                        .dynamicRouter().method(MyDynamicRouter.class, "route");
                 from("direct:start")
-                    .dynamicRouter(method(new MyDynamicRouter()));
+                        .dynamicRouter(method(new MyDynamicRouter()));
             }
 
         };
@@ -75,7 +73,7 @@ public class DynamicRouteTest extends CamelTestSupport {
         registry.bind("jms", amq);
         registry.bind("myBean", new MyBean());
     }
-    
+
     public static class MyBean {
 
         public String foo() {
@@ -86,10 +84,10 @@ public class DynamicRouteTest extends CamelTestSupport {
             return "response is bar";
         }
     }
-    
+
     public static class MyDynamicRouter {
         public String route(String methodName, @Header(Exchange.SLIP_ENDPOINT) String previous) {
-            
+
             if (previous != null && previous.startsWith("bean://myBean?method")) {
                 // we get the result here and stop routing
                 return null;
@@ -100,4 +98,3 @@ public class DynamicRouteTest extends CamelTestSupport {
     }
 
 }
-

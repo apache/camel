@@ -27,8 +27,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verify the standard file url paths on windows that are interpreted as the
- * window's url paths without the volume name will work on windows system.
+ * Verify the standard file url paths on windows that are interpreted as the window's url paths without the volume name
+ * will work on windows system.
  */
 public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     private String path;
@@ -85,7 +85,8 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://" + path + "/route/poller?initialDelay=0&delay=10").to("file://" + path + "/route/out", "mock:result");
+                from("file://" + path + "/route/poller?initialDelay=0&delay=10").to("file://" + path + "/route/out",
+                        "mock:result");
                 from("file://" + path + "/from/poller?initialDelay=0&delay=10").to("mock:result");
                 from("direct:report").to("file://" + path + "/to/out", "mock:result");
             }

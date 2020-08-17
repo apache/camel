@@ -197,7 +197,8 @@ public final class CamelXmlHelper {
 
     private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) throws Exception {
         // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB model uses
-        Document root = XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests", "http://camel.apache.org/schema/spring");
+        Document root = XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
+                "http://camel.apache.org/schema/spring");
         return root;
     }
 

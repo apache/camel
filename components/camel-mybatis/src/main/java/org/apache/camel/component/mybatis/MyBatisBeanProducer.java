@@ -106,7 +106,8 @@ public class MyBatisBeanProducer extends DefaultProducer {
         // find the mapper
         Object mapper = session.getMapper(clazz);
         if (mapper == null) {
-            throw new IllegalArgumentException("No Mapper with typeAlias or class name: " + endpoint.getBeanName() + " in MyBatis configuration.");
+            throw new IllegalArgumentException(
+                    "No Mapper with typeAlias or class name: " + endpoint.getBeanName() + " in MyBatis configuration.");
         }
         LOG.debug("Resolved MyBatis Bean mapper: {}", mapper);
 

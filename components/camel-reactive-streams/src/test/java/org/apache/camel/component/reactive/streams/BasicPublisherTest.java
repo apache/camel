@@ -123,7 +123,7 @@ public class BasicPublisherTest extends CamelTestSupport {
         }.addRoutesToCamelContext(context);
 
         assertThrows(FailedToStartRouteException.class,
-            () -> context.start());
+                () -> context.start());
     }
 
     @Override

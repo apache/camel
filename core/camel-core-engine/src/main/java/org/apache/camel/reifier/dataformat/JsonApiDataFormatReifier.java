@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.JsonApiDataFormat;
 public class JsonApiDataFormatReifier extends DataFormatReifier<JsonApiDataFormat> {
 
     public JsonApiDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (JsonApiDataFormat)definition);
+        super(camelContext, (JsonApiDataFormat) definition);
     }
 
     @Override

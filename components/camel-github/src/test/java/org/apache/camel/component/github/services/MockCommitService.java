@@ -54,14 +54,17 @@ public class MockCommitService extends CommitService {
     }
 
     @Override
-    public synchronized List<RepositoryCommit> getCommits(IRepositoryIdProvider repository, String sha, String path) throws IOException {
+    public synchronized List<RepositoryCommit> getCommits(IRepositoryIdProvider repository, String sha, String path)
+            throws IOException {
         LOG.debug("Returning list of size " + commitsList.size());
         return commitsList;
     }
 
     @Override
-    public CommitStatus createStatus(IRepositoryIdProvider repository,
-            String sha, CommitStatus status) throws IOException {
+    public CommitStatus createStatus(
+            IRepositoryIdProvider repository,
+            String sha, CommitStatus status)
+            throws IOException {
         commitStatus.put(sha, status);
 
         return status;

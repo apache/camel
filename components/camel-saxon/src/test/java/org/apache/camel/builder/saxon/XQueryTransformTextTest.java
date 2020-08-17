@@ -52,9 +52,7 @@ public class XQueryTransformTextTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").
-                    transform().xquery("/people/person/text()", String.class).
-                    to("mock:result");
+                from("direct:start").transform().xquery("/people/person/text()", String.class).to("mock:result");
                 // END SNIPPET: example
             }
         };

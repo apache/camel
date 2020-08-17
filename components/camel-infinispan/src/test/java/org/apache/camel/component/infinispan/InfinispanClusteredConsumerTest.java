@@ -106,4 +106,3 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
         };
     }
 }
-

@@ -22,10 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
@@ -70,7 +70,7 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
                 from("disruptor-vm:a")
                         .to("mock:a")
-                                // this timeout will trigger an exception to occur
+                        // this timeout will trigger an exception to occur
                         .to("disruptor-vm:b?timeout=200")
                         .to("mock:a2");
             }

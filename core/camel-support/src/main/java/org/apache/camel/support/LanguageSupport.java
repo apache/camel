@@ -32,7 +32,7 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
 
     public static final String RESOURCE = "resource:";
 
-    private static final String[] SIMPLE_FUNCTION_START = new String[]{"${", "$simple{"};
+    private static final String[] SIMPLE_FUNCTION_START = new String[] { "${", "$simple{" };
 
     private CamelContext camelContext;
 
@@ -52,14 +52,14 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
     }
 
     /**
-     * Loads the resource if the given expression is referring to an external resource by using
-     * the syntax <tt>resource:scheme:uri<tt>.
+     * Loads the resource if the given expression is referring to an external resource by using the syntax
+     * <tt>resource:scheme:uri<tt>.
      * If the expression is not referring to a resource, then its returned as is.
      * <p/>
      * For example <tt>resource:classpath:mygroovy.groovy</tt> to refer to a groovy script on the classpath.
      *
-     * @param expression the expression
-     * @return the expression
+     * @param  expression                       the expression
+     * @return                                  the expression
      * @throws ExpressionIllegalSyntaxException is thrown if error loading the resource
      */
     protected String loadResource(String expression) throws ExpressionIllegalSyntaxException {
@@ -81,8 +81,8 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
     /**
      * Does the expression include a simple function.
      *
-     * @param expression the expression
-     * @return <tt>true</tt> if one or more simple function is included in the expression
+     * @param  expression the expression
+     * @return            <tt>true</tt> if one or more simple function is included in the expression
      */
     public static boolean hasSimpleFunction(String expression) {
         if (expression != null) {

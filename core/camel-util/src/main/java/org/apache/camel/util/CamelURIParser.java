@@ -19,11 +19,11 @@ package org.apache.camel.util;
 /**
  * A Camel specific URI parser that parses endpoint URIs in a quasi syntax that Camel uses.
  *
- * The {@link java.net.URI} is much slower and parses endpoint URIs into additional parts which
- * Camel does not use or need.
+ * The {@link java.net.URI} is much slower and parses endpoint URIs into additional parts which Camel does not use or
+ * need.
  */
 public final class CamelURIParser {
- 
+
     private CamelURIParser() {
     }
 
@@ -31,13 +31,14 @@ public final class CamelURIParser {
      * Parses the URI.
      *
      * If this parser cannot parse the uri then <tt>null</tt> is returned. And instead the follow code can be used:
+     * 
      * <pre>
-     *     URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
+     * URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
      * </pre>
      *
-     * @param uri the uri
+     * @param  uri the uri
      *
-     * @return <tt>null</tt> if not possible to parse, or an array[3] with scheme,path,query
+     * @return     <tt>null</tt> if not possible to parse, or an array[3] with scheme,path,query
      */
     public static String[] parseUri(String uri) {
         int schemeStart = 0;
@@ -106,6 +107,6 @@ public final class CamelURIParser {
             query = uri.substring(queryStart);
         }
 
-        return new String[]{scheme, path, query};
+        return new String[] { scheme, path, query };
     }
 }

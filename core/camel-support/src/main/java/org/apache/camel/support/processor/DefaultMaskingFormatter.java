@@ -24,9 +24,8 @@ import java.util.regex.Pattern;
 import org.apache.camel.spi.MaskingFormatter;
 
 /**
- * The {@link MaskingFormatter} that searches the specified keywords in the source
- * and replace its value with mask string. By default passphrase, password and secretKey
- * are used as keywords to replace its value.
+ * The {@link MaskingFormatter} that searches the specified keywords in the source and replace its value with mask
+ * string. By default passphrase, password and secretKey are used as keywords to replace its value.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 

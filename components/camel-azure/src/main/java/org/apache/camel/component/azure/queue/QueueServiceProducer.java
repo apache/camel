@@ -84,7 +84,8 @@ public class QueueServiceProducer extends DefaultProducer {
     private void listQueues(Exchange exchange) throws Exception {
         CloudQueue client = QueueServiceUtil.createQueueClient(getConfiguration());
         QueueServiceRequestOptions opts = QueueServiceUtil.getRequestOptions(exchange);
-        QueueListingDetails details = (QueueListingDetails)exchange.getIn().getHeader(QueueServiceConstants.QUEUE_LISTING_DETAILS);
+        QueueListingDetails details
+                = (QueueListingDetails) exchange.getIn().getHeader(QueueServiceConstants.QUEUE_LISTING_DETAILS);
         if (details == null) {
             details = QueueListingDetails.ALL;
         }
@@ -134,6 +135,7 @@ public class QueueServiceProducer extends DefaultProducer {
                 getConfiguration().getMessageVisibilityDelay(),
                 opts.getRequestOpts(), opts.getOpContext());
     }
+
     private void updateMessage(Exchange exchange) throws Exception {
         CloudQueue client = QueueServiceUtil.createQueueClient(getConfiguration());
         QueueServiceRequestOptions opts = QueueServiceUtil.getRequestOptions(exchange);
@@ -146,10 +148,10 @@ public class QueueServiceProducer extends DefaultProducer {
         Object fieldsObject = exchange.getIn().getHeader(QueueServiceConstants.MESSAGE_UPDATE_FIELDS);
         if (fieldsObject instanceof EnumSet) {
             @SuppressWarnings("unchecked")
-            EnumSet<MessageUpdateFields> theFields = (EnumSet<MessageUpdateFields>)fieldsObject;
+            EnumSet<MessageUpdateFields> theFields = (EnumSet<MessageUpdateFields>) fieldsObject;
             fields = theFields;
         } else if (fieldsObject instanceof MessageUpdateFields) {
-            fields = EnumSet.of((MessageUpdateFields)fieldsObject);
+            fields = EnumSet.of((MessageUpdateFields) fieldsObject);
         }
         client.updateMessage(message,
                 getConfiguration().getMessageVisibilityDelay(),
@@ -177,14 +179,13 @@ public class QueueServiceProducer extends DefaultProducer {
         ExchangeUtil.getMessageForResponse(exchange).setBody(message);
     }
 
-
     private CloudQueueMessage getCloudQueueMessage(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getMandatoryBody();
         CloudQueueMessage message = null;
         if (body instanceof CloudQueueMessage) {
-            message = (CloudQueueMessage)body;
+            message = (CloudQueueMessage) body;
         } else if (body instanceof String) {
-            message = new CloudQueueMessage((String)body);
+            message = new CloudQueueMessage((String) body);
         }
         if (message == null) {
             throw new IllegalArgumentException("Unsupported queue message type:" + body.getClass().getName());

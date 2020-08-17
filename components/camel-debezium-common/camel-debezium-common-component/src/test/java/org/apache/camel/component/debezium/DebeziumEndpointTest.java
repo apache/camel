@@ -53,7 +53,8 @@ public class DebeziumEndpointTest {
 
     @BeforeEach
     public void setUp() {
-        debeziumEndpoint = new DebeziumTestEndpoint("", new DebeziumTestComponent(new DefaultCamelContext()),
+        debeziumEndpoint = new DebeziumTestEndpoint(
+                "", new DebeziumTestComponent(new DefaultCamelContext()),
                 new FileConnectorEmbeddedDebeziumConfiguration());
     }
 
@@ -83,15 +84,15 @@ public class DebeziumEndpointTest {
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
         assertEquals(Envelope.Operation.CREATE.code(),
                 inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
-        final Struct key = (Struct)inMessage.getHeader(DebeziumConstants.HEADER_KEY);
+        final Struct key = (Struct) inMessage.getHeader(DebeziumConstants.HEADER_KEY);
         assertEquals(12345, key.getInt32("id").intValue());
         assertSourceMetadata(inMessage);
         assertNotNull(inMessage.getHeader(DebeziumConstants.HEADER_TIMESTAMP));
 
         // assert value
-        final Struct body = (Struct)inMessage.getBody();
+        final Struct body = (Struct) inMessage.getBody();
         assertNotNull(body);
-        assertEquals((byte)1, body.getInt8("id").byteValue());
+        assertEquals((byte) 1, body.getInt8("id").byteValue());
 
         // assert schema
         assertSchema(body.schema());
@@ -109,12 +110,12 @@ public class DebeziumEndpointTest {
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
         assertEquals(Envelope.Operation.DELETE.code(),
                 inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
-        final Struct key = (Struct)inMessage.getHeader(DebeziumConstants.HEADER_KEY);
+        final Struct key = (Struct) inMessage.getHeader(DebeziumConstants.HEADER_KEY);
         assertEquals(12345, key.getInt32("id").intValue());
         assertNotNull(inMessage.getHeader(DebeziumConstants.HEADER_BEFORE));
 
         // assert value
-        final Struct body = (Struct)inMessage.getBody();
+        final Struct body = (Struct) inMessage.getBody();
         assertNull(body); // we expect body to be null since is a delete
     }
 
@@ -128,11 +129,11 @@ public class DebeziumEndpointTest {
         assertNotNull(exchange);
         // assert headers
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
-        final Struct key = (Struct)inMessage.getHeader(DebeziumConstants.HEADER_KEY);
+        final Struct key = (Struct) inMessage.getHeader(DebeziumConstants.HEADER_KEY);
         assertEquals(12345, key.getInt32("id").intValue());
 
         // assert value
-        final Struct body = (Struct)inMessage.getBody();
+        final Struct body = (Struct) inMessage.getBody();
         assertNull(body);
     }
 
@@ -148,17 +149,17 @@ public class DebeziumEndpointTest {
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
         assertEquals(Envelope.Operation.UPDATE.code(),
                 inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
-        final Struct key = (Struct)inMessage.getHeader(DebeziumConstants.HEADER_KEY);
+        final Struct key = (Struct) inMessage.getHeader(DebeziumConstants.HEADER_KEY);
         assertEquals(12345, key.getInt32("id").intValue());
         assertSourceMetadata(inMessage);
 
         // assert value
         final Struct before = (Struct) inMessage.getHeader(DebeziumConstants.HEADER_BEFORE);
-        final Struct after = (Struct)inMessage.getBody();
+        final Struct after = (Struct) inMessage.getBody();
         assertNotNull(before);
         assertNotNull(after);
-        assertEquals((byte)1, before.getInt8("id").byteValue());
-        assertEquals((byte)2, after.getInt8("id").byteValue());
+        assertEquals((byte) 1, before.getInt8("id").byteValue());
+        assertEquals((byte) 2, after.getInt8("id").byteValue());
     }
 
     @Test
@@ -193,7 +194,7 @@ public class DebeziumEndpointTest {
         assertNull(inMessage.getHeader(DebeziumConstants.HEADER_KEY));
 
         // assert value
-        final Struct body = (Struct)inMessage.getBody();
+        final Struct body = (Struct) inMessage.getBody();
         // we have to get value of after with struct, we are strict about this case
         assertNull(body);
     }
@@ -206,10 +207,11 @@ public class DebeziumEndpointTest {
         final Struct after = new Struct(recordSchema);
         final Struct source = new Struct(sourceSchema);
 
-        after.put("id", (byte)1);
+        after.put("id", (byte) 1);
         source.put("lsn", 1234);
         final Struct payload = envelope.create(after, source, Instant.now());
-        return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
+        return new SourceRecord(
+                new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }
 
@@ -218,18 +220,21 @@ public class DebeziumEndpointTest {
         Envelope envelope = Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema)
                 .withSource(SchemaBuilder.struct().build()).build();
         final Struct before = new Struct(recordSchema);
-        before.put("id", (byte)1);
+        before.put("id", (byte) 1);
         final Struct payload = envelope.delete(before, null, Instant.now());
-        return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
+        return new SourceRecord(
+                new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }
 
     private SourceRecord createDeleteRecordWithNull() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
-        Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema).withSource(SchemaBuilder.struct().build()).build();
+        Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema).withSource(SchemaBuilder.struct().build())
+                .build();
         final Struct before = new Struct(recordSchema);
-        before.put("id", (byte)1);
-        return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
+        before.put("id", (byte) 1);
+        return new SourceRecord(
+                new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), null, null);
     }
 
@@ -242,18 +247,19 @@ public class DebeziumEndpointTest {
         final Struct source = new Struct(sourceSchema);
         final Struct after = new Struct(recordSchema);
 
-        before.put("id", (byte)1);
-        after.put("id", (byte)2);
+        before.put("id", (byte) 1);
+        after.put("id", (byte) 2);
         source.put("lsn", 1234);
         final Struct payload = envelope.update(before, after, source, Instant.now());
-        return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
+        return new SourceRecord(
+                new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }
 
     private SourceRecord createUnknownUnnamedSchemaRecord() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
         final Struct before = new Struct(recordSchema);
-        before.put("id", (byte)1);
+        before.put("id", (byte) 1);
         return new SourceRecord(new HashMap<>(), new HashMap<>(), "dummy", recordSchema, before);
     }
 

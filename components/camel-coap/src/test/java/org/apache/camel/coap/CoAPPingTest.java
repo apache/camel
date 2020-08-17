@@ -41,7 +41,8 @@ public class CoAPPingTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/TestResource", PORT).to("log:exch").transform(body().convertTo(Boolean.class)).to("log:exch");
+                fromF("coap://localhost:%d/TestResource", PORT).to("log:exch").transform(body().convertTo(Boolean.class))
+                        .to("log:exch");
 
                 from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
             }

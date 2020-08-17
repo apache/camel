@@ -40,7 +40,7 @@ public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
         }
 
         // The camel context already started by ContextTestSupport in the startup method
-        
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");

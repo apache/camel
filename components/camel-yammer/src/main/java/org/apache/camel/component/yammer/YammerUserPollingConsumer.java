@@ -59,12 +59,13 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
                 url.append(".json");
                 break;
             default:
-                throw new Exception(String.format("%s is not a valid Yammer user function type.", endpoint.getConfig().getFunction().name()));
+                throw new Exception(
+                        String.format("%s is not a valid Yammer user function type.",
+                                endpoint.getConfig().getFunction().name()));
         }
 
         return url.toString();
     }
-
 
     @Override
     protected int poll() throws Exception {
@@ -77,7 +78,8 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 switch (endpoint.getConfig().getFunction()) {
                     case USERS:
-                        List<User> users = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+                        List<User> users = jsonMapper.readValue(jsonBody,
+                                jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
                         exchange.getIn().setBody(users);
                         break;
                     case CURRENT:
@@ -85,7 +87,9 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
                         exchange.getIn().setBody(user);
                         break;
                     default:
-                        throw new Exception(String.format("%s is not a valid Yammer user function type.", endpoint.getConfig().getFunction().name()));
+                        throw new Exception(
+                                String.format("%s is not a valid Yammer user function type.",
+                                        endpoint.getConfig().getFunction().name()));
                 }
 
             } else {

@@ -32,21 +32,24 @@ class EventHubsComponentTest extends CamelTestSupport {
 
     @Test
     public void testCreateEndpointWithNoEventHubsNameOrNameSpace() throws Exception {
-        ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class, () ->
-                context.getEndpoint("azure-eventhubs:?sharedAccessKey=string&sharedAccessName=name"));
+        ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("azure-eventhubs:?sharedAccessKey=string&sharedAccessName=name"));
 
-        assertTrue(exception.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
+        assertTrue(
+                exception.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
 
-        ResolveEndpointFailedException exception2 = assertThrows(ResolveEndpointFailedException.class, () ->
-                context.getEndpoint("azure-eventhubs:name?sharedAccessKey=string&sharedAccessName=name"));
+        ResolveEndpointFailedException exception2 = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("azure-eventhubs:name?sharedAccessKey=string&sharedAccessName=name"));
 
-        assertTrue(exception2.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
+        assertTrue(
+                exception2.getMessage().contains("ConnectionString, AzureClients or Namespace and EventHub name must be set"));
     }
 
     @Test
     public void testCreateEndpointWithNoSuppliedClientsOrKeysOrConnectionString() {
-        final String expectedErrorMessage = "Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
-                + "or connectionString must be specified";
+        final String expectedErrorMessage
+                = "Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
+                  + "or connectionString must be specified";
 
         // first case: with no client or key or connectionstring
         assertTrue(getErrorMessage("azure-eventhubs:name/hubName?").contains(expectedErrorMessage));
@@ -66,11 +69,13 @@ class EventHubsComponentTest extends CamelTestSupport {
         configuration.setSharedAccessKey("dummyKey");
         configuration.setSharedAccessName("dummyUser");
 
-        final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        final EventHubProducerAsyncClient producerAsyncClient
+                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
 
         context.getRegistry().bind("producerClient", producerAsyncClient);
 
-        assertNotNull(context.getEndpoint("azure-eventhubs:name/hubName?autoDiscoverClient=false&producerAsyncClient=#producerClient"));
+        assertNotNull(context
+                .getEndpoint("azure-eventhubs:name/hubName?autoDiscoverClient=false&producerAsyncClient=#producerClient"));
     }
 
     @Test
@@ -81,9 +86,12 @@ class EventHubsComponentTest extends CamelTestSupport {
         configuration.setSharedAccessKey("dummyKey");
         configuration.setSharedAccessName("dummyUser");
 
-        final EventHubConsumerAsyncClient consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
-        final EventHubConsumerAsyncClient consumerAsyncClient2 = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
-        final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        final EventHubConsumerAsyncClient consumerAsyncClient
+                = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
+        final EventHubConsumerAsyncClient consumerAsyncClient2
+                = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
+        final EventHubProducerAsyncClient producerAsyncClient
+                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
 
         // we dont allow more than one instance
         context.getRegistry().bind("consumerClient", consumerAsyncClient);
@@ -101,8 +109,8 @@ class EventHubsComponentTest extends CamelTestSupport {
     @Test
     public void testCreateEndpointWithConfig() {
         final String uri = "azure-eventhubs:namespace/hubName?sharedAccessName=DummyAccessKeyName"
-                + "&sharedAccessKey=DummyKey"
-                + "&consumerGroupName=testConsumer&prefetchCount=100";
+                           + "&sharedAccessKey=DummyKey"
+                           + "&consumerGroupName=testConsumer&prefetchCount=100";
 
         final EventHubsEndpoint endpoint = (EventHubsEndpoint) context.getEndpoint(uri);
 
@@ -116,7 +124,8 @@ class EventHubsComponentTest extends CamelTestSupport {
     }
 
     private String getErrorMessage(final String uri) {
-        ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint(uri));
+        ResolveEndpointFailedException exception
+                = assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint(uri));
         return exception.getMessage();
     }
 

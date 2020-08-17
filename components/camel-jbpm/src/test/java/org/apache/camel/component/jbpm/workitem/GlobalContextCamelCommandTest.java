@@ -62,7 +62,7 @@ public class GlobalContextCamelCommandTest {
 
     @Test
     public void testExecuteGlobalCommand() throws Exception {
-    
+
         String camelEndpointId = "testCamelRoute";
         String camelRouteUri = "direct:" + camelEndpointId;
 

@@ -43,9 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @ExtendWith(DirectoryExtension.class)
-@CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
+@CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
 @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
 public class LdapRouteTwoTest extends AbstractLdapTestUnit {
 
@@ -76,7 +75,7 @@ public class LdapRouteTwoTest extends AbstractLdapTestUnit {
     public void tearDown() throws Exception {
         camel.stop();
     }
-    
+
     @Test
     public void testLdapRouteStandardTwo() throws Exception {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));

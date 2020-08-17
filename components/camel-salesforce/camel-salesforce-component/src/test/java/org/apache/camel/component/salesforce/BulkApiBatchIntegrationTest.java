@@ -56,7 +56,8 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         return result.toArray(new BatchTest[result.size()]);
     }
 
-    @ParameterizedTest @MethodSource("getBatches")
+    @ParameterizedTest
+    @MethodSource("getBatches")
     public void testBatchLifecycle(BatchTest request) throws Exception {
         log.info("Testing Batch lifecycle with {} content", request.contentType);
 

@@ -34,9 +34,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * In this test we are checking that same netty endpoint can be safely called twice
- * in single route with reconnect. It requires for processing to be fully async otherwise
- * {@link io.netty.util.concurrent.BlockingOperationException} is thrown by netty.
+ * In this test we are checking that same netty endpoint can be safely called twice in single route with reconnect. It
+ * requires for processing to be fully async otherwise {@link io.netty.util.concurrent.BlockingOperationException} is
+ * thrown by netty.
  */
 public class NettyTCPChainedTest extends BaseNettyTest {
 
@@ -84,8 +84,8 @@ public class NettyTCPChainedTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?sync=false&encoders=#encoder")
-                    .to("log:result")
-                    .to("mock:result");
+                        .to("log:result")
+                        .to("mock:result");
                 from("direct:nettyCall")
                         .to("netty:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1&encoders=#encoder");
                 from("direct:chainedCalls")

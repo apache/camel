@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
 
-    @ParameterizedTest @EnumSource(names = { "XML", "CSV" })
+    @ParameterizedTest
+    @EnumSource(names = { "XML", "CSV" })
     public void testQueryLifecycle(ContentType contentType) throws Exception {
         log.info("Testing Query lifecycle with {} content", contentType);
 
@@ -73,7 +74,8 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
 
         // test getQueryResult
         for (String resultId : resultIds) {
-            InputStream results = template().requestBodyAndHeader("direct:getQueryResult", batchInfo, SalesforceEndpointConfig.RESULT_ID, resultId, InputStream.class);
+            InputStream results = template().requestBodyAndHeader("direct:getQueryResult", batchInfo,
+                    SalesforceEndpointConfig.RESULT_ID, resultId, InputStream.class);
             assertNotNull(results, "Null query result");
         }
 

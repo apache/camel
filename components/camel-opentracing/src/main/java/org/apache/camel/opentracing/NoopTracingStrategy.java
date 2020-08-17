@@ -25,8 +25,10 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 public class NoopTracingStrategy implements InterceptStrategy {
 
     @Override
-    public Processor wrapProcessorInInterceptors(CamelContext camelContext, NamedNode processorDefinition,
-                                                 Processor target, Processor nextTarget) throws Exception {
+    public Processor wrapProcessorInInterceptors(
+            CamelContext camelContext, NamedNode processorDefinition,
+            Processor target, Processor nextTarget)
+            throws Exception {
         return new DelegateAsyncProcessor(target);
     }
 }

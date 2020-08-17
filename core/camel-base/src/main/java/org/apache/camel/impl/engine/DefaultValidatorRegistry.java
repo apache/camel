@@ -28,7 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Default implementation of {@link org.apache.camel.spi.ValidatorRegistry}.
  */
-public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorKey, Validator> implements ValidatorRegistry<ValidatorKey> {
+public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorKey, Validator>
+        implements ValidatorRegistry<ValidatorKey> {
 
     public DefaultValidatorRegistry(CamelContext context) {
         super(context, CamelContextHelper.getMaximumValidatorCacheSize(context));

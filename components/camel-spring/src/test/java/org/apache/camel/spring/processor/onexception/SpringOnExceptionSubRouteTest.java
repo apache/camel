@@ -82,11 +82,11 @@ public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
             fail("Should throw an Exception");
         } catch (Exception e) {
             assertEquals("Cannot order: kaboom", e.getCause().getMessage());
-        }        
+        }
 
         assertMockEndpointsSatisfied();
-    }    
-    
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/onExceptionSubRouteTest.xml");

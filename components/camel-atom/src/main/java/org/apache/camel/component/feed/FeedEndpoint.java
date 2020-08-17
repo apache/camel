@@ -33,13 +33,14 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
-    @UriPath(description = "The URI to the feed to poll.") @Metadata(required = true)
+    @UriPath(description = "The URI to the feed to poll.")
+    @Metadata(required = true)
     protected String feedUri;
-    @UriParam(defaultValue = "true", description = "Sets whether or not entries should be sent " 
-            + "individually or whether the entire feed should be sent as a single message")
+    @UriParam(defaultValue = "true", description = "Sets whether or not entries should be sent "
+                                                   + "individually or whether the entire feed should be sent as a single message")
     protected boolean splitEntries = true;
-    @UriParam(description = "Sets the timestamp to be used for filtering entries from the " 
-            + "atom feeds. This options is only in conjunction with the splitEntries.")
+    @UriParam(description = "Sets the timestamp to be used for filtering entries from the "
+                            + "atom feeds. This options is only in conjunction with the splitEntries.")
     protected Date lastUpdate;
     @UriParam(defaultValue = "true", description = "Sets whether to use filtering or not of the entries.")
     protected boolean filter = true;
@@ -47,9 +48,9 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     private boolean feedHeader = true;
     @UriParam(description = "Sets whether to sort entries by published date. Only works when splitEntries = true.")
     private boolean sortEntries;
-    @UriParam(defaultValue = "true", description = "Sets whether all entries identified in a " 
-            + "single feed poll should be delivered immediately. If true, only one entry is processed " 
-            + "per delay. Only applicable when splitEntries = true.")
+    @UriParam(defaultValue = "true", description = "Sets whether all entries identified in a "
+                                                   + "single feed poll should be delivered immediately. If true, only one entry is processed "
+                                                   + "per delay. Only applicable when splitEntries = true.")
     private boolean throttleEntries = true;
     @UriParam(description = "Sets the username to be used for basic authentication when polling from a HTTP feed.")
     private String username;
@@ -79,7 +80,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         } else {
             answer = createPollingConsumer(this, processor);
         }
-        
+
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed,
         // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
         answer.setDelay(FeedPollingConsumer.DEFAULT_CONSUMER_DELAY);
@@ -87,9 +88,12 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         return answer;
     }
 
-    protected abstract FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) throws Exception;
+    protected abstract FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor)
+            throws Exception;
 
-    protected abstract FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) throws Exception;
+    protected abstract FeedPollingConsumer createEntryPollingConsumer(
+            FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries)
+            throws Exception;
 
     protected Exchange createExchangeWithFeedHeader(Object feed, String header) {
         Exchange exchange = createExchange();
@@ -97,22 +101,22 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
             exchange.getIn().setHeader(header, feed);
         }
         return exchange;
-    }    
-    
+    }
+
     /**
      * Creates an Exchange with the entries as the in body.
      *
-     * @param feed   the atom feed
-     * @return the created exchange
+     * @param  feed the atom feed
+     * @return      the created exchange
      */
     public abstract Exchange createExchange(Object feed);
 
     /**
      * Creates an Exchange with the given entry as the in body.
      *
-     * @param feed   the feed
-     * @param entry  the entry as the in body
-     * @return the created exchange
+     * @param  feed  the feed
+     * @param  entry the entry as the in body
+     * @return       the created exchange
      */
     public abstract Exchange createExchange(Object feed, Object entry);
 
@@ -146,8 +150,8 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Sets whether or not entries should be sent individually or whether the entire
-     * feed should be sent as a single message
+     * Sets whether or not entries should be sent individually or whether the entire feed should be sent as a single
+     * message
      */
     public void setSplitEntries(boolean splitEntries) {
         this.splitEntries = splitEntries;
@@ -158,8 +162,8 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Sets the timestamp to be used for filtering entries from the atom feeds.
-     * This options is only in conjunction with the splitEntries.
+     * Sets the timestamp to be used for filtering entries from the atom feeds. This options is only in conjunction with
+     * the splitEntries.
      */
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
@@ -196,7 +200,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     public boolean isSortEntries() {
         return sortEntries;
-    }      
+    }
 
     @Override
     public boolean isLenientProperties() {
@@ -215,7 +219,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     public boolean isThrottleEntries() {
         return this.throttleEntries;
     }
-    
+
     public String getUsername() {
         return username;
     }

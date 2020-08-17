@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
 public class ZipFileDataFormatReifier extends DataFormatReifier<ZipFileDataFormat> {
 
     public ZipFileDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (ZipFileDataFormat)definition);
+        super(camelContext, (ZipFileDataFormat) definition);
     }
 
     @Override

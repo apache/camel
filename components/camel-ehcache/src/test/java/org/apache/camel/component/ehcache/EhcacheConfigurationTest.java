@@ -46,26 +46,23 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
     public Component createEhcacheComponent() {
         EhcacheComponent component = new EhcacheComponent();
         component.setCacheConfiguration(
-            CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                String.class,
-                String.class,
-                ResourcePoolsBuilder.newResourcePoolsBuilder()
-                    .heap(100, EntryUnit.ENTRIES)
-                    .offheap(1, MemoryUnit.MB))
-                .build()
-        );
-        component.setCachesConfigurations(
-            Collections.singletonMap(
-                "customConfig",
                 CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                    String.class,
-                    String.class,
-                    ResourcePoolsBuilder.newResourcePoolsBuilder()
-                        .heap(200, EntryUnit.ENTRIES)
-                        .offheap(2, MemoryUnit.MB))
-                    .build()
-            )
-        );
+                        String.class,
+                        String.class,
+                        ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                .heap(100, EntryUnit.ENTRIES)
+                                .offheap(1, MemoryUnit.MB))
+                        .build());
+        component.setCachesConfigurations(
+                Collections.singletonMap(
+                        "customConfig",
+                        CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                String.class,
+                                String.class,
+                                ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                        .heap(200, EntryUnit.ENTRIES)
+                                        .offheap(2, MemoryUnit.MB))
+                                .build()));
 
         return component;
     }
@@ -76,8 +73,10 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
 
     @Test
     void testConfiguration() throws Exception {
-        Cache<String, String> globalConfigCache = globalConfig.getManager().getCache("globalConfig", String.class, String.class);
-        Cache<String, String> customConfigCache = customConfig.getManager().getCache("customConfig", String.class, String.class);
+        Cache<String, String> globalConfigCache
+                = globalConfig.getManager().getCache("globalConfig", String.class, String.class);
+        Cache<String, String> customConfigCache
+                = customConfig.getManager().getCache("customConfig", String.class, String.class);
 
         assertTrue(globalConfigCache instanceof Ehcache);
         assertTrue(customConfigCache instanceof Ehcache);
@@ -104,8 +103,8 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:ehcache")
-                    .to(globalConfig)
-                    .to(customConfig);
+                        .to(globalConfig)
+                        .to(customConfig);
             }
         };
     }

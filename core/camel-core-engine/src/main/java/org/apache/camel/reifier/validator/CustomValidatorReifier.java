@@ -24,7 +24,7 @@ import org.apache.camel.spi.Validator;
 public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefinition> {
 
     public CustomValidatorReifier(CamelContext camelContext, ValidatorDefinition definition) {
-        super(camelContext, (CustomValidatorDefinition)definition);
+        super(camelContext, (CustomValidatorDefinition) definition);
     }
 
     @Override
@@ -39,10 +39,13 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
                 throw new IllegalArgumentException("Cannot find validator with ref:" + definition.getRef());
             }
             if (validator.getType() != null) {
-                throw new IllegalArgumentException(String.format("Validator '%s' is already in use. Please check if duplicate validator exists.", definition.getRef()));
+                throw new IllegalArgumentException(
+                        String.format("Validator '%s' is already in use. Please check if duplicate validator exists.",
+                                definition.getRef()));
             }
         } else {
-            Class<Validator> validatorClass = camelContext.getClassResolver().resolveClass(definition.getClassName(), Validator.class);
+            Class<Validator> validatorClass
+                    = camelContext.getClassResolver().resolveClass(definition.getClassName(), Validator.class);
             if (validatorClass == null) {
                 throw new IllegalArgumentException("Cannot find validator class: " + definition.getClassName());
             }

@@ -29,8 +29,8 @@ import org.apache.camel.component.jms.JmsEndpoint;
 import org.springframework.jms.listener.SessionAwareMessageListener;
 
 /**
- * The {@link ReplyManager} is responsible for handling <a href="http://camel.apache.org/request-reply.html">request-reply</a>
- * over JMS.
+ * The {@link ReplyManager} is responsible for handling
+ * <a href="http://camel.apache.org/request-reply.html">request-reply</a> over JMS.
  */
 public interface ReplyManager extends SessionAwareMessageListener {
 
@@ -52,8 +52,8 @@ public interface ReplyManager extends SessionAwareMessageListener {
     void setScheduledExecutorService(ScheduledExecutorService executorService);
 
     /**
-     * Sets the thread pool to use for continue routing {@link Exchange} when a timeout was triggered
-     * when doing request/reply over JMS.
+     * Sets the thread pool to use for continue routing {@link Exchange} when a timeout was triggered when doing
+     * request/reply over JMS.
      */
     void setOnTimeoutExecutorService(ExecutorService executorService);
 
@@ -76,35 +76,35 @@ public interface ReplyManager extends SessionAwareMessageListener {
     /**
      * Register a reply
      *
-     * @param replyManager    the reply manager being used
-     * @param exchange        the exchange
-     * @param callback        the callback
-     * @param originalCorrelationId  an optional original correlation id
-     * @param correlationId   the correlation id to expect being used
-     * @param requestTimeout  the timeout
-     * @return the correlation id used
+     * @param  replyManager          the reply manager being used
+     * @param  exchange              the exchange
+     * @param  callback              the callback
+     * @param  originalCorrelationId an optional original correlation id
+     * @param  correlationId         the correlation id to expect being used
+     * @param  requestTimeout        the timeout
+     * @return                       the correlation id used
      */
-    String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                         String originalCorrelationId, String correlationId, long requestTimeout);
+    String registerReply(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+            String originalCorrelationId, String correlationId, long requestTimeout);
 
     /**
      * Updates the correlation id to the new correlation id.
      * <p/>
-     * This is only used when <tt>useMessageIDasCorrelationID</tt> option is used, which means a
-     * provisional correlation id is first used, then after the message has been sent, the real
-     * correlation id is known. This allows us then to update the internal mapping to expect the
-     * real correlation id.
+     * This is only used when <tt>useMessageIDasCorrelationID</tt> option is used, which means a provisional correlation
+     * id is first used, then after the message has been sent, the real correlation id is known. This allows us then to
+     * update the internal mapping to expect the real correlation id.
      *
-     * @param correlationId     the provisional correlation id
-     * @param newCorrelationId  the real correlation id
-     * @param requestTimeout    the timeout
+     * @param correlationId    the provisional correlation id
+     * @param newCorrelationId the real correlation id
+     * @param requestTimeout   the timeout
      */
     void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout);
 
     /**
      * Process the reply
      *
-     * @param holder  containing needed data to process the reply and continue routing
+     * @param holder containing needed data to process the reply and continue routing
      */
     void processReply(ReplyHolder holder);
 }

@@ -39,13 +39,14 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setVersion("2.0");
         config.setHost("http:mycoolserver:8888/myapi");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -53,7 +54,7 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"http:mycoolserver:8888/myapi\""));
@@ -66,18 +67,19 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
 
         context.stop();
     }
-    
+
     @Override
     @Test
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setHost("http:mycoolserver:8888/myapi");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -85,11 +87,11 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"url\" : \"http://http:mycoolserver:8888/myapi/api\""));
-        
+
         assertFalse(json.contains("\"/hello/bye\""));
         assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
         assertFalse(json.contains("\"/hello/bye/{name}\""));

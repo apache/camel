@@ -95,8 +95,9 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
                 boolean isStatic = validatorRegistry.isStatic(type);
                 boolean isDynamic = validatorRegistry.isDynamic(type);
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"type", "static", "dynamic", "description"},
-                                                              new Object[]{type.toString(), isStatic, isDynamic, desc});
+                CompositeData data = new CompositeDataSupport(
+                        ct, new String[] { "type", "static", "dynamic", "description" },
+                        new Object[] { type.toString(), isStatic, isDynamic, desc });
                 answer.put(data);
             }
             return answer;

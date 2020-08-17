@@ -36,7 +36,8 @@ public class MyEmbeddedCustomListener extends InfinispanEmbeddedCustomListener {
     @CacheEntryCreated
     public void processEvent(CacheEntryEvent<Object, Object> event) {
         if (isAccepted(event.getType().toString())) {
-            infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(), event.getKey());
+            infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(),
+                    event.getKey());
             assertEquals(cacheName, event.getCache().getName());
         }
     }

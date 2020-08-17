@@ -27,7 +27,7 @@ public interface ReplyHandler {
      * The reply message was received
      *
      * @param correlationId the correlation id
-     * @param reply the reply message
+     * @param reply         the reply message
      */
     void onReply(String correlationId, AMQP.BasicProperties properties, byte[] reply);
 

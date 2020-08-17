@@ -27,8 +27,9 @@ import org.junit.jupiter.api.Test;
 public class SjmsComponentRestartTest extends CamelTestSupport {
 
     @BindToRegistry("activemqCF")
-    private ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
-    
+    private ActiveMQConnectionFactory connectionFactory
+            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;

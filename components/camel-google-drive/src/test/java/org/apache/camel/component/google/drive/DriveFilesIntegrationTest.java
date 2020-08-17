@@ -45,16 +45,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveFilesIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-    
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+
     @Test
     public void testCopy() throws Exception {
         File testFile = uploadTestFile();
         String fromFileId = testFile.getId();
-        
+
         File toFile = new File();
         toFile.setTitle(UPLOAD_FILE.getName() + "_copy");
-        
+
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fromFileId);
@@ -64,15 +65,15 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         final File result = requestBodyAndHeaders("direct://COPY", null, headers);
 
         assertNotNull(result, "copy result");
-        assertEquals(toFile.getTitle(), result.getTitle());        
+        assertEquals(toFile.getTitle(), result.getTitle());
         LOG.debug("copy: " + result);
     }
 
-    @Test    
+    @Test
     public void testDelete() throws Exception {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
-        
+
         // using String message body for single parameter "fileId"
         sendBody("direct://DELETE", fileId);
 
@@ -80,16 +81,16 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
             // the file should be gone now
             final File result = requestBody("direct://GET", fileId);
             fail("Should have not found deleted file.");
-        } catch (Exception e) {               
+        } catch (Exception e) {
             e.printStackTrace();
-        }        
+        }
     }
 
     @Test
     public void testGet() throws Exception {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
-        
+
         // using String message body for single parameter "fileId"
         final File result = requestBody("direct://GET", fileId);
 
@@ -99,7 +100,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     @Test
     public void testInsert() throws Exception {
-        File file = new File();        
+        File file = new File();
         file.setTitle(UPLOAD_FILE.getName());
         // using com.google.api.services.drive.model.File message body for single parameter "content"
         File result = requestBody("direct://INSERT", file);
@@ -108,7 +109,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testInsert1() throws Exception {        
+    public void testInsert1() throws Exception {
         File result = uploadTestFile();
 
         assertNotNull(result, "insert result");
@@ -119,20 +120,20 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     public void testList() throws Exception {
         // upload a test file
         File testFile = uploadTestFile();
-        
+
         FileList result = requestBody("direct://LIST", null);
         assertNotNull(result, "list result");
         assertTrue(result.getItems().size() >= 1);
-        
+
         File testFile2 = uploadTestFile();
-        
+
         Map<String, Object> headers = new HashMap<>();
         headers.put("CamelGoogleDrive.maxResults", 1);
-        
+
         result = requestBodyAndHeaders("direct://LIST", null, headers);
         assertNotNull(result, "list result");
         assertTrue(result.getItems().size() == 1);
-        
+
         // test paging the list
         List<File> resultList = new ArrayList<>();
         String pageToken;
@@ -159,12 +160,12 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         // lets update the filename
         file.setTitle(UPLOAD_FILE.getName() + "PATCHED");
-        
+
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", file.getId());
         // parameter type is String
-        headers.put("CamelGoogleDrive.fields", "title");       
+        headers.put("CamelGoogleDrive.fields", "title");
         // parameter type is com.google.api.services.drive.model.File
         headers.put("CamelGoogleDrive.content", file);
 
@@ -189,17 +190,17 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     @Test
     public void testTrash() throws Exception {
         File testFile = uploadTestFile();
-        String fileId = testFile.getId();       
+        String fileId = testFile.getId();
 
         assertNotNull(requestBody("direct://TRASH", fileId), "trash result");
         assertNotNull(requestBody("direct://UNTRASH", fileId), "untrash result");
 
-    }   
+    }
 
     @Test
     public void testUpdate() throws Exception {
         File theTestFile = uploadTestFile();
-        
+
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", theTestFile.getId());
@@ -213,12 +214,12 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testUpdate1() throws Exception {       
-        
+    public void testUpdate1() throws Exception {
+
         // First retrieve the file from the API.
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
-        
+
         // using String message body for single parameter "fileId"
         final File file = requestBody("direct://GET", fileId);
 
@@ -230,7 +231,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         FileContent mediaContent = new FileContent(null, fileContent);
 
         // Send the request to the API.
-        
+
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
@@ -267,55 +268,55 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
             public void configure() {
                 // test route for copy
                 from("direct://COPY")
-                    .to("google-drive://" + PATH_PREFIX + "/copy");
+                        .to("google-drive://" + PATH_PREFIX + "/copy");
 
                 // test route for delete
                 from("direct://DELETE")
-                    .to("google-drive://" + PATH_PREFIX + "/delete?inBody=fileId");
+                        .to("google-drive://" + PATH_PREFIX + "/delete?inBody=fileId");
 
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get?inBody=fileId");
+                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=fileId");
 
                 // test route for insert
                 from("direct://INSERT")
-                    .to("google-drive://" + PATH_PREFIX + "/insert?inBody=content");
+                        .to("google-drive://" + PATH_PREFIX + "/insert?inBody=content");
 
                 // test route for insert
                 from("direct://INSERT_1")
-                    .to("google-drive://" + PATH_PREFIX + "/insert");
+                        .to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
                 from("direct://LIST")
-                    .to("google-drive://" + PATH_PREFIX + "/list");
+                        .to("google-drive://" + PATH_PREFIX + "/list");
 
                 // test route for patch
                 from("direct://PATCH")
-                    .to("google-drive://" + PATH_PREFIX + "/patch");
+                        .to("google-drive://" + PATH_PREFIX + "/patch");
 
                 // test route for touch
                 from("direct://TOUCH")
-                    .to("google-drive://" + PATH_PREFIX + "/touch?inBody=fileId");
+                        .to("google-drive://" + PATH_PREFIX + "/touch?inBody=fileId");
 
                 // test route for trash
                 from("direct://TRASH")
-                    .to("google-drive://" + PATH_PREFIX + "/trash?inBody=fileId");
+                        .to("google-drive://" + PATH_PREFIX + "/trash?inBody=fileId");
 
                 // test route for untrash
                 from("direct://UNTRASH")
-                    .to("google-drive://" + PATH_PREFIX + "/untrash?inBody=fileId");
+                        .to("google-drive://" + PATH_PREFIX + "/untrash?inBody=fileId");
 
                 // test route for update
                 from("direct://UPDATE")
-                    .to("google-drive://" + PATH_PREFIX + "/update");
+                        .to("google-drive://" + PATH_PREFIX + "/update");
 
                 // test route for update
                 from("direct://UPDATE_1")
-                    .to("google-drive://" + PATH_PREFIX + "/update");
+                        .to("google-drive://" + PATH_PREFIX + "/update");
 
                 // test route for watch
                 from("direct://WATCH")
-                    .to("google-drive://" + PATH_PREFIX + "/watch");
+                        .to("google-drive://" + PATH_PREFIX + "/watch");
 
             }
         };

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bean.validator;
 
-
 public class CarWithoutAnnotations implements Car {
 
     private String manufacturer;

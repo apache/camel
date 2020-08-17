@@ -46,8 +46,8 @@ public final class TestUtil {
     }
 
     /**
-     * Compare the to string ignoring new lines symbol. Handy if you need to
-     * compare some text coming from 2 different OS.
+     * Compare the to string ignoring new lines symbol. Handy if you need to compare some text coming from 2 different
+     * OS.
      */
     public static void assertEqualsIgnoreNewLinesSymbol(String expected, String actual) {
         assertEquals(StringUtils.deleteAny(expected, "\n\r"), StringUtils.deleteAny(actual, "\n\r"));
@@ -58,7 +58,7 @@ public final class TestUtil {
      * Retrieve a WS-Addressing properties from the soapMessage
      */
     public static MessageAddressingProperties getWSAProperties(SoapMessage soapMessage) {
-        AddressingVersion[] versions = new AddressingVersion[] {new Addressing200408(), new Addressing10()};
+        AddressingVersion[] versions = new AddressingVersion[] { new Addressing200408(), new Addressing10() };
 
         for (AddressingVersion version : versions) {
             if (supports(version, soapMessage)) {

@@ -26,24 +26,24 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 /**
  * HL7 MLLP codec.
  * <p/>
- * This codec supports encoding/decoding the HL7 MLLP protocol.
- * It will use the default markers for start and end combination:
+ * This codec supports encoding/decoding the HL7 MLLP protocol. It will use the default markers for start and end
+ * combination:
  * <ul>
- *   <li>0x0b (11 decimal) = start marker</li>
- *   <li>0x0d (13 decimal = the \r char) = segment terminators</li>
- *   <li>0x1c (28 decimal) = end 1 marker</li>
- *   <li>0x0d (13 decimal) = end 2 marker</li>
+ * <li>0x0b (11 decimal) = start marker</li>
+ * <li>0x0d (13 decimal = the \r char) = segment terminators</li>
+ * <li>0x1c (28 decimal) = end 1 marker</li>
+ * <li>0x0d (13 decimal) = end 2 marker</li>
  * </ul>
  * <p/>
- * The decoder is used for decoding from MLLP (bytes) to String. The String will not contain any of
- * the start and end markers.
+ * The decoder is used for decoding from MLLP (bytes) to String. The String will not contain any of the start and end
+ * markers.
  * <p/>
- * The encoder is used for encoding from String to MLLP (bytes). The String should <b>not</b> contain
- * any of the start and end markers, the encoder will add these, and stream the string as bytes.
+ * The encoder is used for encoding from String to MLLP (bytes). The String should <b>not</b> contain any of the start
+ * and end markers, the encoder will add these, and stream the string as bytes.
  * <p/>
- * This codes supports charset encoding/decoding between bytes and String. The JVM platform default charset
- * is used, but the charset can be configured on this codec using the setter method.
- * The decoder will use the JVM platform default charset for decoding, but the charset can be configured on the this codec.
+ * This codes supports charset encoding/decoding between bytes and String. The JVM platform default charset is used, but
+ * the charset can be configured on this codec using the setter method. The decoder will use the JVM platform default
+ * charset for decoding, but the charset can be configured on the this codec.
  */
 public class HL7MLLPCodec implements ProtocolCodecFactory {
 

@@ -29,20 +29,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CxfProducerOperationTest extends CxfProducerTest {
     private static final String NAMESPACE = "http://apache.org/hello_world_soap_http";
 
-   
     @Override
     protected String getSimpleEndpointUri() {
         return "cxf://" + getSimpleServerAddress()
-            + "?serviceClass=org.apache.camel.component.cxf.HelloService" 
-            + "&defaultOperationName=" + ECHO_OPERATION;
+               + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+               + "&defaultOperationName=" + ECHO_OPERATION;
     }
 
     @Override
     protected String getJaxwsEndpointUri() {
         return "cxf://" + getJaxWsServerAddress()
-            + "?serviceClass=org.apache.hello_world_soap_http.Greeter"
-            + "&defaultOperationName=" + GREET_ME_OPERATION
-            + "&defaultOperationNamespace=" + NAMESPACE;
+               + "?serviceClass=org.apache.hello_world_soap_http.Greeter"
+               + "&defaultOperationName=" + GREET_ME_OPERATION
+               + "&defaultOperationNamespace=" + NAMESPACE;
     }
 
     @Override
@@ -63,7 +62,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
         return exchange;
 
     }
-    
+
     @Override
     protected Exchange sendJaxWsMessage() {
         Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
@@ -76,7 +75,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
         });
         return exchange;
     }
-    
+
     @Test
     public void testSendingComplexParameter() throws Exception {
         Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
@@ -85,7 +84,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
                 final List<String> para1 = new ArrayList<>();
                 para1.add("para1");
                 final List<String> para2 = new ArrayList<>();
-                para2.add("para2");                
+                para2.add("para2");
                 List<List<String>> parameters = new ArrayList<>();
                 parameters.add(para1);
                 parameters.add(para2);
@@ -95,12 +94,12 @@ public class CxfProducerOperationTest extends CxfProducerTest {
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "complexParameters");
             }
         });
-        
+
         if (exchange.getException() != null) {
             throw exchange.getException();
         }
-        
+
         assertEquals("param:para1para2", exchange.getOut().getBody(String.class), "Get a wrong response.");
-        
+
     }
 }

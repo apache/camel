@@ -76,7 +76,8 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doCreate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class),
+                String.class);
         StringHelper.notEmpty(name, "Container name");
 
         final CreateUpdateContainerOptions options = messageToCreateUpdateOptions(msg);
@@ -99,7 +100,8 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doUpdate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class),
+                String.class);
         StringHelper.notEmpty(name, "Container name");
         final CreateUpdateContainerOptions options = messageToCreateUpdateOptions(msg);
         final ActionResponse out = os.objectStorage().containers().update(name, options);
@@ -108,7 +110,8 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class),
+                String.class);
         StringHelper.notEmpty(name, "Container name");
         final ActionResponse out = os.objectStorage().containers().delete(name);
         checkFailure(out, exchange, "Delete container " + name);
@@ -116,14 +119,16 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doGetMetadata(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class),
+                String.class);
         StringHelper.notEmpty(name, "Container name");
         msg.setBody(os.objectStorage().containers().getMetadata(name));
     }
 
     private void doDeleteMetadata(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class),
+                String.class);
         StringHelper.notEmpty(name, "Container name");
         boolean success = os.objectStorage().containers().deleteMetadata(name, msg.getBody(Map.class));
         if (!success) {
@@ -133,7 +138,8 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doUpdateMetadata(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class),
+                String.class);
         StringHelper.notEmpty(name, "Container name");
         boolean success = os.objectStorage().containers().updateMetadata(name, msg.getBody(Map.class));
         if (!success) {
@@ -146,19 +152,23 @@ public class ContainerProducer extends AbstractOpenstackProducer {
         if (options == null) {
             Map headers = message.getHeaders();
             if (headers.containsKey(SwiftHeaders.CONTAINER_METADATA_PREFIX)) {
-                options = getCreateUpdateOptions(options).metadata(message.getHeader(SwiftHeaders.CONTAINER_METADATA_PREFIX, Map.class));
+                options = getCreateUpdateOptions(options)
+                        .metadata(message.getHeader(SwiftHeaders.CONTAINER_METADATA_PREFIX, Map.class));
             }
 
             if (headers.containsKey(SwiftHeaders.VERSIONS_LOCATION)) {
-                options = getCreateUpdateOptions(options).versionsLocation(message.getHeader(SwiftHeaders.VERSIONS_LOCATION, String.class));
+                options = getCreateUpdateOptions(options)
+                        .versionsLocation(message.getHeader(SwiftHeaders.VERSIONS_LOCATION, String.class));
             }
 
             if (headers.containsKey(SwiftHeaders.CONTAINER_READ)) {
-                options = getCreateUpdateOptions(options).accessRead(message.getHeader(SwiftHeaders.CONTAINER_READ, String.class));
+                options = getCreateUpdateOptions(options)
+                        .accessRead(message.getHeader(SwiftHeaders.CONTAINER_READ, String.class));
             }
 
             if (headers.containsKey(SwiftHeaders.CONTAINER_WRITE)) {
-                options = getCreateUpdateOptions(options).accessWrite(message.getHeader(SwiftHeaders.CONTAINER_WRITE, String.class));
+                options = getCreateUpdateOptions(options)
+                        .accessWrite(message.getHeader(SwiftHeaders.CONTAINER_WRITE, String.class));
             }
         }
         return options;

@@ -31,18 +31,20 @@ public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
     @Test
     public void testPostMethodNotAllowed() {
         try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD, "POST");
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                    "POST");
             fail("Shall not pass!");
         } catch (Exception e) {
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(405, hofe.getStatusCode());
         }
     }
-    
+
     @Test
     public void testGetMethodAllowed() {
         try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD, "GET");
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                    "GET");
         } catch (Exception e) {
             fail("Shall pass with GET http method!");
         }

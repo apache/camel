@@ -39,11 +39,9 @@ public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport 
     @Produce(DIRECT_ONE)
     private ProducerTemplate produceOne;
 
-
     @Test
     public void checkAggregationFromOneRoute() throws Exception {
-        final InfinispanRemoteAggregationRepository repoOne =
-                new InfinispanRemoteAggregationRepository();
+        final InfinispanRemoteAggregationRepository repoOne = new InfinispanRemoteAggregationRepository();
 
         final int completionSize = 4;
         final String correlator = "CORRELATOR";
@@ -70,7 +68,7 @@ public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport 
         produceOne.sendBodyAndHeader(3, correlator, correlator);
         produceOne.sendBodyAndHeader(4, correlator, correlator);
         produceOne.sendBodyAndHeader(5, correlator, correlator);
-        
+
         produceOne.sendBodyAndHeader(6, correlator, correlator);
         produceOne.sendBodyAndHeader(7, correlator, correlator);
         produceOne.sendBodyAndHeader(20, correlator, correlator);
@@ -78,7 +76,7 @@ public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport 
 
         mock.assertIsSatisfied();
     }
-    
+
     class SumOfIntsAggregationStrategy implements AggregationStrategy {
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

@@ -23,7 +23,8 @@ import org.apache.camel.component.nitrite.operation.AbstractPayloadAwareOperatio
 import org.apache.camel.component.nitrite.operation.CommonOperation;
 
 /**
- * Upsert (Insert or Update) document in collection or object in ObjectRepository. If parameter not specified, updates document from message body
+ * Upsert (Insert or Update) document in collection or object in ObjectRepository. If parameter not specified, updates
+ * document from message body
  */
 public class UpsertOperation extends AbstractPayloadAwareOperation implements CommonOperation {
     public UpsertOperation(Object payload) {
@@ -37,7 +38,6 @@ public class UpsertOperation extends AbstractPayloadAwareOperation implements Co
     protected void execute(Exchange exchange, NitriteEndpoint endpoint) throws Exception {
         exchange.getMessage().setHeader(
                 NitriteConstants.WRITE_RESULT,
-                endpoint.getNitriteCollection().update(getPayload(exchange, endpoint), true)
-        );
+                endpoint.getNitriteCollection().update(getPayload(exchange, endpoint), true));
     }
 }

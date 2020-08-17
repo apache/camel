@@ -206,7 +206,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
         Assertions.assertThat(response).as("Response should be provided").isNotNull();
 
         Assertions.assertThat(response.getCompositeResponse()).as("Received errors in: " + response)
-            .allMatch(val -> val.getHttpStatusCode() >= 200 && val.getHttpStatusCode() <= 299);
+                .allMatch(val -> val.getHttpStatusCode() >= 200 && val.getHttpStatusCode() <= 299);
 
         return response;
     }
@@ -217,9 +217,10 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
             @Override
             public void configure() throws Exception {
                 from("direct:deleteBatchAccounts")
-                    .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
-                        + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
-                    .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}")).to("salesforce:deleteSObject?sObjectName=Account").end();
+                        .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
+                            + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
+                        .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}"))
+                        .to("salesforce:deleteSObject?sObjectName=Account").end();
             }
         };
     }
@@ -231,7 +232,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Parameters(name = "format = {0}, version = {1}")
     public static Iterable<Object[]> formats() {
-        return VERSIONS.stream().map(v -> new Object[] {"JSON", v}).collect(Collectors.toList());
+        return VERSIONS.stream().map(v -> new Object[] { "JSON", v }).collect(Collectors.toList());
     }
 
     static void assertResponseContains(final SObjectCompositeResponse response, final String key) {
@@ -247,7 +248,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
         Assertions.assertThat(firstCompositeResponseBody).isInstanceOf(Map.class);
 
         @SuppressWarnings("unchecked")
-        final Map<String, ?> body = (Map<String, ?>)firstCompositeResponseBody;
+        final Map<String, ?> body = (Map<String, ?>) firstCompositeResponseBody;
         Assertions.assertThat(body).containsKey(key);
         Assertions.assertThat(body.get(key)).isNotNull();
     }

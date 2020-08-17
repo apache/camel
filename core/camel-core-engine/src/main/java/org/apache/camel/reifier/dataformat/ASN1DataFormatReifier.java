@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.ASN1DataFormat;
 public class ASN1DataFormatReifier extends DataFormatReifier<ASN1DataFormat> {
 
     public ASN1DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (ASN1DataFormat)definition);
+        super(camelContext, (ASN1DataFormat) definition);
     }
 
     @Override

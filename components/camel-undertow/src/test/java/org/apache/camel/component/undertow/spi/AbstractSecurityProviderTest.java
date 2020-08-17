@@ -37,7 +37,7 @@ import org.junit.jupiter.api.BeforeAll;
 /**
  * Abstract parent for test involving securityProvider.
  */
-public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
+public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
 
     static final String PRINCIPAL_PARAMETER = "principal_parameter";
 
@@ -59,7 +59,8 @@ public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
 
         @Override
         public int authenticate(HttpServerExchange httpExchange, List<String> allowedRoles) throws Exception {
-            if (configuration.getRoleToAssign() != null && allowedRoles != null && allowedRoles.contains(configuration.getRoleToAssign())) {
+            if (configuration.getRoleToAssign() != null && allowedRoles != null
+                    && allowedRoles.contains(configuration.getRoleToAssign())) {
                 httpExchange.putAttachment(PRINCIPAL_KEY, configuration.getRoleToAssign());
                 return StatusCodes.OK;
             }
@@ -119,7 +120,7 @@ public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext =  super.createCamelContext();
+        CamelContext camelContext = super.createCamelContext();
         UndertowComponent component = camelContext.getComponent("undertow", UndertowComponent.class);
 
         securityConfiguration = new MockSecurityConfiguration();

@@ -26,8 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.AbstractCamelConsumerTemplateFactoryBean;
 
 /**
- * A factory for creating a new {@link org.apache.camel.ConsumerTemplate}
- * instance with a minimum of XML
+ * A factory for creating a new {@link org.apache.camel.ConsumerTemplate} instance with a minimum of XML
  */
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

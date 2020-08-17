@@ -39,5 +39,4 @@ public class SwiftProducerTestSupport extends AbstractProducerTestSupport {
         when(client.objectStorage()).thenReturn(objectStorageService);
     }
 
-
 }

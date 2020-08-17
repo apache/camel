@@ -76,28 +76,28 @@ public class HystrixTimeoutTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .circuitBreaker()
+                        .circuitBreaker()
                         // use 2 second timeout
                         .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
                         .log("Hystrix processing start: ${threadName}")
                         .toD("direct:${body}")
                         .log("Hystrix processing end: ${threadName}")
-                    .end()
-                    .log("After Hystrix ${body}");
+                        .end()
+                        .log("After Hystrix ${body}");
 
                 from("direct:fast")
-                    // this is a fast route and takes 1 second to respond
-                    .log("Fast processing start: ${threadName}")
-                    .delay(1000)
-                    .transform().constant("Fast response")
-                    .log("Fast processing end: ${threadName}");
+                        // this is a fast route and takes 1 second to respond
+                        .log("Fast processing start: ${threadName}")
+                        .delay(1000)
+                        .transform().constant("Fast response")
+                        .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
-                    // this is a slow route and takes 3 second to respond
-                    .log("Slow processing start: ${threadName}")
-                    .delay(3000)
-                    .transform().constant("Slow response")
-                    .log("Slow processing end: ${threadName}");
+                        // this is a slow route and takes 3 second to respond
+                        .log("Slow processing start: ${threadName}")
+                        .delay(3000)
+                        .transform().constant("Slow response")
+                        .log("Slow processing end: ${threadName}");
             }
         };
     }

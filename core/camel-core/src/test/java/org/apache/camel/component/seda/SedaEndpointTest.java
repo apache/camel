@@ -44,7 +44,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer)prod);
+        seda.onStarted((SedaProducer) prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -52,7 +52,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer)cons);
+        seda.onStarted((SedaConsumer) cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());
@@ -68,7 +68,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer)prod);
+        seda.onStarted((SedaProducer) prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -76,7 +76,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer)cons);
+        seda.onStarted((SedaConsumer) cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());
@@ -92,7 +92,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(2, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer)prod);
+        seda.onStarted((SedaProducer) prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -100,7 +100,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer)cons);
+        seda.onStarted((SedaConsumer) cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());
@@ -122,7 +122,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(2, seda.getConcurrentConsumers());
 
         Producer prod = seda.createProducer();
-        seda.onStarted((SedaProducer)prod);
+        seda.onStarted((SedaProducer) prod);
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
@@ -130,7 +130,7 @@ public class SedaEndpointTest extends ContextTestSupport {
                 // do nothing
             }
         });
-        seda.onStarted((SedaConsumer)cons);
+        seda.onStarted((SedaConsumer) cons);
         assertEquals(1, seda.getConsumers().size());
 
         assertEquals(0, seda.getExchanges().size());

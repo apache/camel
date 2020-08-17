@@ -36,8 +36,9 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Perform various operations on a Google Calendar.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar", syntax = "google-calendar:apiName/methodName",
-        consumerPrefix = "consumer", category = {Category.API, Category.CLOUD})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar",
+             syntax = "google-calendar:apiName/methodName",
+             consumerPrefix = "consumer", category = { Category.API, Category.CLOUD })
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 
     @UriParam
@@ -46,8 +47,10 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
     private Object apiProxy;
 
     public GoogleCalendarEndpoint(String uri, GoogleCalendarComponent component,
-                                  GoogleCalendarApiName apiName, String methodName, GoogleCalendarConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleCalendarApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+                                  GoogleCalendarApiName apiName, String methodName,
+                                  GoogleCalendarConfiguration endpointConfiguration) {
+        super(uri, component, apiName, methodName, GoogleCalendarApiCollection.getCollection().getHelper(apiName),
+              endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -111,7 +114,7 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
     }
 
     public Calendar getClient() {
-        return ((GoogleCalendarComponent)getComponent()).getClient(configuration);
+        return ((GoogleCalendarComponent) getComponent()).getClient(configuration);
     }
 
     @Override
@@ -120,10 +123,10 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
     }
 
     public GoogleCalendarClientFactory getClientFactory() {
-        return ((GoogleCalendarComponent)getComponent()).getClientFactory();
+        return ((GoogleCalendarComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
-        ((GoogleCalendarComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleCalendarComponent) getComponent()).setClientFactory(clientFactory);
     }
 }

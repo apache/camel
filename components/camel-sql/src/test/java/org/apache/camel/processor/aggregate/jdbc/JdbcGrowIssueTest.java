@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcGrowIssueTest.class);
-    
+
     private static final int SIZE = 1024;
 
     @Test

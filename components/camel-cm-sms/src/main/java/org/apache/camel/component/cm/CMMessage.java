@@ -17,8 +17,10 @@
 package org.apache.camel.component.cm;
 
 /**
- * Valid message to be serialized and sent to CM Endpoints. If the message only uses GSM 7-bit characters, then 160 characters will fit in 1 SMS part, and 153*n characters will fit in n SMS parts for
- * n>1. If the message contains other characters, then only 70 characters will fit in 1 SMS part, and 67*n characters will fit in n SMS parts for n>1. <br>
+ * Valid message to be serialized and sent to CM Endpoints. If the message only uses GSM 7-bit characters, then 160
+ * characters will fit in 1 SMS part, and 153*n characters will fit in n SMS parts for n>1. If the message contains
+ * other characters, then only 70 characters will fit in 1 SMS part, and 67*n characters will fit in n SMS parts for
+ * n>1. <br>
  * <br>
  * {@link https://dashboard.onlinesmsgateway.com/docs} <br>
  * {@link http://support.telerivet.com/customer/portal/articles/1957426-multipart-unicode-sms-messages}
@@ -142,7 +144,9 @@ public class CMMessage {
     @Override
     public String toString() {
 
-        StringBuffer sb = new StringBuffer(" {phoneNumber: " + phoneNumber + ", message: " + message + ", sender=" + sender + ", unicode: " + unicode + ", multipart: " + multipart);
+        StringBuffer sb = new StringBuffer(
+                " {phoneNumber: " + phoneNumber + ", message: " + message + ", sender=" + sender + ", unicode: " + unicode
+                                           + ", multipart: " + multipart);
         if (idAsString != null && !idAsString.isEmpty()) {
             sb.append(", idAsString=" + idAsString);
         }

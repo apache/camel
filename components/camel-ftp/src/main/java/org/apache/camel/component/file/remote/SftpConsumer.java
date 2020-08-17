@@ -46,7 +46,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
     private transient String sftpConsumerToString;
 
-    public SftpConsumer(RemoteFileEndpoint<SftpRemoteFile> endpoint, Processor processor, RemoteFileOperations<SftpRemoteFile> operations,
+    public SftpConsumer(RemoteFileEndpoint<SftpRemoteFile> endpoint, Processor processor,
+                        RemoteFileOperations<SftpRemoteFile> operations,
                         GenericFileProcessStrategy<SftpRemoteFile> processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
@@ -68,7 +69,9 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                     operations.buildDirectory(dir, true);
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
-                    LOG.warn("Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.", e);
+                    LOG.warn(
+                            "Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.",
+                            e);
                 }
             }
         } finally {
@@ -99,7 +102,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         return answer;
     }
 
-    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
+    protected boolean pollSubDirectory(
+            String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
@@ -109,7 +113,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     @Override
-    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
+    protected boolean doPollDirectory(
+            String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         LOG.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 
         depth++;
@@ -170,7 +175,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         for (SftpRemoteFile file : files) {
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(), file.isDirectory());
+                LOG.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(),
+                        file.isDirectory());
             }
 
             // check if we can continue polling in files
@@ -238,7 +244,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         answer.setFileNameOnly(file.getFilename());
         answer.setFileLength(file.getFileLength());
         answer.setLastModified(file.getLastModified());
-        answer.setHostname(((RemoteFileConfiguration)endpoint.getConfiguration()).getHost());
+        answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
         answer.setDirectory(file.isDirectory());
 
         // absolute or relative path
@@ -271,7 +277,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     protected void updateFileHeaders(GenericFile<SftpRemoteFile> file, Message message) {
         Object rf = file.getFile().getRemoteFile();
         if (rf != null) {
-            ChannelSftp.LsEntry e = (ChannelSftp.LsEntry)rf;
+            ChannelSftp.LsEntry e = (ChannelSftp.LsEntry) rf;
             long length = e.getAttrs().getSize();
             long modified = e.getAttrs().getMTime() * 1000L;
             file.setFileLength(length);
@@ -286,12 +292,12 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     private boolean isStepwise() {
-        RemoteFileConfiguration config = (RemoteFileConfiguration)endpoint.getConfiguration();
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();
     }
 
     private boolean isUseList() {
-        RemoteFileConfiguration config = (RemoteFileConfiguration)endpoint.getConfiguration();
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isUseList();
     }
 

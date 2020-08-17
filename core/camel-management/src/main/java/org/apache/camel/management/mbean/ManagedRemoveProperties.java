@@ -29,7 +29,8 @@ public class ManagedRemoveProperties extends ManagedProcessor implements Managed
     private final RemovePropertiesProcessor processor;
     private final String exclude;
 
-    public ManagedRemoveProperties(CamelContext context, RemovePropertiesProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedRemoveProperties(CamelContext context, RemovePropertiesProcessor processor,
+                                   ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
         if (processor.getExcludePattern() != null) {

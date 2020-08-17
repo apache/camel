@@ -26,7 +26,7 @@ public interface AS2Constants {
 
     // thread profile name for this component
     String THREAD_PROFILE_NAME = "CamelAS2";
-    
+
     // header property containing the AS2 Interchange. 
     String AS2_INTERCHANGE = PROPERTY_PREFIX + "interchange";
 }

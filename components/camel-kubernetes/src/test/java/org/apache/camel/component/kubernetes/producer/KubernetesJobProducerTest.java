@@ -49,8 +49,9 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs").andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
-            .once();
+        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs")
+                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         List<Secret> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
@@ -59,7 +60,7 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/apis/batch/v1/namespaces/test/jobs?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("key1", "value1");
@@ -93,7 +94,8 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJob");
-                from("direct:listByLabels").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJobByLabels");
+                from("direct:listByLabels")
+                        .to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJobByLabels");
                 from("direct:get").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=getJob");
                 from("direct:create").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=createJob");
                 from("direct:delete").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=deleteJob");

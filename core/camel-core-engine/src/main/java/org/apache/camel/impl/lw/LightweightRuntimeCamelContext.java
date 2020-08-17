@@ -410,7 +410,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         throw new UnsupportedOperationException();
     }
 
-
     //
     // Model
     //
@@ -633,11 +632,10 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     /**
-     * Normalize uri so we can do endpoint hits with minor mistakes and
-     * parameters is not in the same order.
+     * Normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order.
      *
-     * @param uri the uri
-     * @return normalized uri
+     * @param  uri                            the uri
+     * @return                                normalized uri
      * @throws ResolveEndpointFailedException if uri cannot be normalized
      */
     protected static String normalizeEndpointUri(String uri) {
@@ -661,12 +659,13 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             throw new NoSuchEndpointException(name);
         }
         if (endpoint instanceof InterceptSendToEndpoint) {
-            endpoint = ((InterceptSendToEndpoint)endpoint).getOriginalEndpoint();
+            endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
         }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
         } else {
-            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: " + endpoint.getClass().getCanonicalName());
+            throw new IllegalArgumentException(
+                    "The endpoint is not of type: " + endpointType + " but is: " + endpoint.getClass().getCanonicalName());
         }
     }
 
@@ -763,7 +762,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             // check if the language is singleton, if so return the shared
             // instance
             if (answer instanceof IsSingleton) {
-                boolean singleton = ((IsSingleton)answer).isSingleton();
+                boolean singleton = ((IsSingleton) answer).isSingleton();
                 if (singleton) {
                     return answer;
                 }
@@ -773,11 +772,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             // inject CamelContext if aware
             if (answer != null) {
                 if (answer instanceof CamelContextAware) {
-                    ((CamelContextAware)answer).setCamelContext(reference);
+                    ((CamelContextAware) answer).setCamelContext(reference);
                 }
                 if (answer instanceof Service) {
                     try {
-                        startService((Service)answer);
+                        startService((Service) answer);
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
@@ -1159,7 +1158,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
+    public AsyncProcessor createMulticast(
+            Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
         throw new UnsupportedOperationException();
     }
 
@@ -1357,7 +1357,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until
         // we find it
-        String[] subPackages = new String[] {"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
+        String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
         for (String sub : subPackages) {
             String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
             InputStream inputStream = getClassResolver().loadResourceAsStream(path);
@@ -1750,7 +1750,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception {
         throw new UnsupportedOperationException();
     }
 
@@ -1813,7 +1814,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             }
 
             @Override
-            public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
+            public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
+                    throws Exception {
                 throw new UnsupportedOperationException();
             }
 
@@ -1858,11 +1860,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         // and register startup aware so they can be notified when
         // camel context has been started
         if (service instanceof StartupListener) {
-            StartupListener listener = (StartupListener)service;
+            StartupListener listener = (StartupListener) service;
             addStartupListener(listener);
         }
         if (service instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware)service;
+            CamelContextAware aware = (CamelContextAware) service;
             aware.setCamelContext(reference);
         }
         service.start();

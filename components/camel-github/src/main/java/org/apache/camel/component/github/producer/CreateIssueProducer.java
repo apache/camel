@@ -25,16 +25,16 @@ import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.service.IssueService;
 
 /**
- * Producer endpoint that creates an issue. The endpoint requires the "GitHubIssueTitle" header,
- * which sets the GitHub issue title. The issue body content is set from the exchange message body.
+ * Producer endpoint that creates an issue. The endpoint requires the "GitHubIssueTitle" header, which sets the GitHub
+ * issue title. The issue body content is set from the exchange message body.
  */
 public class CreateIssueProducer extends AbstractGitHubProducer {
-    
+
     private IssueService issueService;
 
     public CreateIssueProducer(GitHubEndpoint endpoint) throws Exception {
         super(endpoint);
-        
+
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_ISSUE_SERVICE);
         if (service != null) {
@@ -54,9 +54,9 @@ public class CreateIssueProducer extends AbstractGitHubProducer {
         }
         issue.setTitle(issueTitle);
         issue.setBody(exchange.getIn().getBody(String.class));
-        
+
         Issue finalIssue = issueService.createIssue(getRepository(), issue);
-        
+
         // copy the header of in message to the out message
         exchange.getOut().copyFrom(exchange.getIn());
         exchange.getOut().setBody(finalIssue);

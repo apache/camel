@@ -37,15 +37,15 @@ public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
     @BeforeAll
     public static void startService() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:" + getPort1() 
-            + "/CxfWsdlFirstProcessorTest/PersonService/";
+        String address = "http://localhost:" + getPort1()
+                         + "/CxfWsdlFirstProcessorTest/PersonService/";
         Endpoint.publish(address, implementor);
     }
-    
+
     @Override
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
         assertEquals(2, fromHandler.getFaultCount());
         assertEquals(4, fromHandler.getMessageCount());
-        assertEquals(0, toHandler.getGetHeadersCount());   
+        assertEquals(0, toHandler.getGetHeadersCount());
     }
 }

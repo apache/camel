@@ -67,10 +67,9 @@ public final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<
         super.doStart();
 
         DistributedGroup group = getAtomixEndpoint().getAtomix().getGroup(
-            groupName,
-            new DistributedGroup.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(groupName)),
-            new DistributedGroup.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(groupName))
-        ).join();
+                groupName,
+                new DistributedGroup.Config(getAtomixEndpoint().getConfiguration().getResourceOptions(groupName)),
+                new DistributedGroup.Options(getAtomixEndpoint().getConfiguration().getResourceConfig(groupName))).join();
 
         this.localMember = group.join(memberName).join();
         this.consumer = localMember.messaging().consumer(channelName);

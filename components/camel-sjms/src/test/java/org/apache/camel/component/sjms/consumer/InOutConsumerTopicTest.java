@@ -43,12 +43,12 @@ public class InOutConsumerTopicTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("sjms:topic:start").to("log:request")
-                    .to("sjms:topic:in.out.topic?exchangePattern=InOut&namedReplyTo=in.out.topic.response")
-                    .to("log:response").to("mock:result");
+                        .to("sjms:topic:in.out.topic?exchangePattern=InOut&namedReplyTo=in.out.topic.response")
+                        .to("log:response").to("mock:result");
 
                 from("sjms:topic:in.out.topic?exchangePattern=InOut").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        String body = (String)exchange.getIn().getBody();
+                        String body = (String) exchange.getIn().getBody();
                         if (body.contains("Camel")) {
                             Thread.sleep(2000);
                         }

@@ -45,7 +45,7 @@ public class KubernetesJobProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -99,7 +99,8 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Job, JobList, Boolean, Watch, Watcher<Job>> jobs = getEndpoint().getKubernetesClient().batch().jobs();
+        FilterWatchListMultiDeletable<Job, JobList, Boolean, Watch, Watcher<Job>> jobs
+                = getEndpoint().getKubernetesClient().batch().jobs();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             jobs.withLabel(entry.getKey(), entry.getValue());
         }
@@ -145,7 +146,8 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific job require specify a hpa spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
-        Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata().withSpec(jobSpec).build();
+        Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
+                .withSpec(jobSpec).build();
         job = getEndpoint().getKubernetesClient().batch().jobs().inNamespace(namespaceName).create(jobCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);

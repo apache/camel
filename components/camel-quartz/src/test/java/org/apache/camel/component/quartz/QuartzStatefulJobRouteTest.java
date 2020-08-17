@@ -27,7 +27,7 @@ import org.quartz.Trigger;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * This test the  CronTrigger as a timer endpoint in a route.
+ * This test the CronTrigger as a timer endpoint in a route.
  */
 public class QuartzStatefulJobRouteTest extends BaseQuartzTest {
 

@@ -37,12 +37,12 @@ public final class DateTimeConverter {
     public static TimeZone toTimeZone(String s) {
         return TimeZone.getTimeZone(s);
     }
-    
+
     @Converter
     public static Date toDate(Long l) {
         return new Date(l);
     }
-    
+
     @Converter
     public static Long toLong(Date date) {
         return date.getTime();

@@ -48,7 +48,8 @@ import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 import org.jboss.jandex.Indexer;
 
-@Mojo(name = "generate-spi", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "generate-spi", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class SpiGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName SERVICE_FACTORY = DotName.createSimple(ServiceFactory.class.getName());
@@ -125,8 +126,9 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                 continue;
             }
             DotName sfaName = sfa.target().asClass().name();
-            for  (AnnotationInstance annotation : index.getAnnotations(sfaName)) {
-                if (annotation.target().kind() != Kind.CLASS || annotation.target().asClass().nestingType() != NestingType.TOP_LEVEL) {
+            for (AnnotationInstance annotation : index.getAnnotations(sfaName)) {
+                if (annotation.target().kind() != Kind.CLASS
+                        || annotation.target().asClass().nestingType() != NestingType.TOP_LEVEL) {
                     continue;
                 }
                 String className = annotation.target().asClass().name().toString();

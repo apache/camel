@@ -31,7 +31,8 @@ import com.github.dockerjava.core.SSLConfig;
 public class NoImplSslConfig implements SSLConfig {
 
     @Override
-    public SSLContext getSSLContext() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
+    public SSLContext getSSLContext()
+            throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         return null;
     }
 

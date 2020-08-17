@@ -43,7 +43,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
     @Test
     public void testJmsTemplateUsesPoolingConnectionFactory() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo");
-        JmsProducer producer = (JmsProducer)endpoint.createProducer();
+        JmsProducer producer = (JmsProducer) endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
         assertEquals(false, template.isPubSubDomain(), "pubSubDomain");
@@ -53,11 +53,12 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
     @Test
     public void testJmsTemplateUsesSingleConnectionFactory() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo?useSingleConnection=true");
-        JmsProducer producer = (JmsProducer)endpoint.createProducer();
+        JmsProducer producer = (JmsProducer) endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
         assertEquals(false, template.isPubSubDomain(), "pubSubDomain");
-        SingleConnectionFactory connectionFactory = assertIsInstanceOf(SingleConnectionFactory.class, template.getConnectionFactory());
+        SingleConnectionFactory connectionFactory
+                = assertIsInstanceOf(SingleConnectionFactory.class, template.getConnectionFactory());
         assertIsInstanceOf(ActiveMQConnectionFactory.class, connectionFactory.getTargetConnectionFactory());
     }
 
@@ -78,7 +79,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
     @Test
     public void testJmsTemplateDoesNotUsePoolingConnectionFactory() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo?usePooledConnection=false");
-        JmsProducer producer = (JmsProducer)endpoint.createProducer();
+        JmsProducer producer = (JmsProducer) endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
         assertEquals(false, template.isPubSubDomain(), "pubSubDomain");

@@ -21,8 +21,7 @@ import org.apache.camel.component.crypto.cms.exception.CryptoCmsException;
 import org.bouncycastle.cms.OriginatorInformation;
 
 /**
- * Provides originator information. Used in Enveloped Data object. See
- * EnvelopedDataEncryptorConfiguration.
+ * Provides originator information. Used in Enveloped Data object. See EnvelopedDataEncryptorConfiguration.
  */
 public interface OriginatorInformationProvider {
 

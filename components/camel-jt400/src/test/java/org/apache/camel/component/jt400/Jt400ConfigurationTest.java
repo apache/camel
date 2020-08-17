@@ -30,7 +30,8 @@ public class Jt400ConfigurationTest extends Jt400TestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        jt400Configuration = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
+        jt400Configuration
+                = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
     }
 
     @Test

@@ -20,7 +20,8 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
 import org.apache.camel.spi.annotations.Component;
 
 /**
- * The <a href="https://camel.apache.org/components/latest/xj-component.html">XJ Component</a> is for performing xml to json and back transformations of messages
+ * The <a href="https://camel.apache.org/components/latest/xj-component.html">XJ Component</a> is for performing xml to
+ * json and back transformations of messages
  */
 @Component("xj")
 public class XJComponent extends XsltSaxonComponent {

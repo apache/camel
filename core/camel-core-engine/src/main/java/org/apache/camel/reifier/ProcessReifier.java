@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
 
     public ProcessReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (ProcessDefinition)definition);
+        super(route, (ProcessDefinition) definition);
     }
 
     @Override

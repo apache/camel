@@ -35,9 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Test of integration between the mail component and JSSE Configuration
- * Utility. This test does not easily automate. This test is therefore ignored
- * and the source is maintained here for easier development in the future.
+ * Test of integration between the mail component and JSSE Configuration Utility. This test does not easily automate.
+ * This test is therefore ignored and the source is maintained here for easier development in the future.
  */
 @Disabled
 public class SslContextParametersMailRouteTest extends CamelTestSupport {
@@ -86,7 +85,8 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:in").to("smtps://" + smtpHost + "?username=" + username + "&password=" + password + "&sslContextParameters=#sslContextParameters");
+                from("direct:in").to("smtps://" + smtpHost + "?username=" + username + "&password=" + password
+                                     + "&sslContextParameters=#sslContextParameters");
             }
         });
 
@@ -103,7 +103,8 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause().getCause() instanceof SSLHandshakeException);
-            assertTrue(e.getCause().getCause().getMessage().contains("unable to find valid certification path to requested target"));
+            assertTrue(e.getCause().getCause().getMessage()
+                    .contains("unable to find valid certification path to requested target"));
         }
     }
 

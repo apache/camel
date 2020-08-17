@@ -32,6 +32,7 @@ public class Annotation {
     public Class<? extends java.lang.annotation.Annotation> getType() {
         return type;
     }
+
     public Annotation setType(Class<? extends java.lang.annotation.Annotation> type) {
         this.type = type;
         return this;
@@ -61,6 +62,7 @@ public class Annotation {
             return setLiteralValue(value);
         }
     }
+
     public String getStringValue(String name) {
         String v = values.get(name);
         return v != null ? unquote(v) : null;

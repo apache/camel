@@ -22,7 +22,7 @@ public class GreeterImplWithSleep extends GreeterImpl {
 
     @Override
     public String greetMe(String hi) {
-        try {            
+        try {
             Thread.sleep(2000);
         } catch (Exception ignore) {
 

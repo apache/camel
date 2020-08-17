@@ -58,7 +58,8 @@ public class OAIPMHComponentProducerTest extends CamelTestSupport {
                         .setHeader("CamelOaimphFrom", constant("2020-06-01T00:00:00Z"))
                         .to("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request")
                         .split(body())
-                        .split(xpath("/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
+                        .split(xpath(
+                                "/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
                                 new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
                                         .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
                                         .add("dc", "http://purl.org/dc/elements/1.1/")))

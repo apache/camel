@@ -30,16 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link CamelInternalProcessorAdvice} which applies {@link Transformer} and {@link Validator}
- * according to the data type Contract.
+ * A {@link CamelInternalProcessorAdvice} which applies {@link Transformer} and {@link Validator} according to the data
+ * type Contract.
  * <p/>
- * The default camel {@link Message} implements {@link DataTypeAware} which
- * holds a {@link DataType} to indicate current message type. If the input type
- * declared by {@link org.apache.camel.model.InputTypeDefinition} is different from current IN message type,
- * camel internal processor look for a Transformer which transforms from the current
- * message type to the expected message type before routing.
- * After routing, if the output type declared by {@link org.apache.camel.model.OutputTypeDefinition} is different
- * from current OUT message (or IN message if no OUT), camel look for a Transformer and apply.
+ * The default camel {@link Message} implements {@link DataTypeAware} which holds a {@link DataType} to indicate current
+ * message type. If the input type declared by {@link org.apache.camel.model.InputTypeDefinition} is different from
+ * current IN message type, camel internal processor look for a Transformer which transforms from the current message
+ * type to the expected message type before routing. After routing, if the output type declared by
+ * {@link org.apache.camel.model.OutputTypeDefinition} is different from current OUT message (or IN message if no OUT),
+ * camel look for a Transformer and apply.
  * 
  * @see Transformer
  * @see Validator
@@ -50,11 +49,11 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
     private static final Logger LOG = LoggerFactory.getLogger(ContractAdvice.class);
 
     private Contract contract;
-    
+
     public ContractAdvice(Contract contract) {
         this.contract = contract;
     }
-    
+
     @Override
     public Object before(Exchange exchange) throws Exception {
         if (!(exchange.getIn() instanceof DataTypeAware)) {
@@ -80,7 +79,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
 
         return null;
     }
-    
+
     @Override
     public void after(Exchange exchange, Object data) throws Exception {
         if (exchange.isFailed()) {
@@ -95,7 +94,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
         try {
             DataType to = contract.getOutputType();
             if (to != null) {
-                DataTypeAware typeAwareTarget = (DataTypeAware)target;
+                DataTypeAware typeAwareTarget = (DataTypeAware) target;
                 DataType from = typeAwareTarget.getDataType();
                 if (!to.equals(from)) {
                     LOG.debug("Looking for transformer for OUTPUT: from='{}', to='{}'", from, to);
@@ -123,10 +122,10 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
             convertIfRequired(message, to);
             return;
         }
-        
+
         // transform into 'from' type before performing declared transformation
         convertIfRequired(message, from);
-        
+
         if (applyMatchedTransformer(message, from, to)) {
             // Found matched transformer. Java-Java transformer is also allowed.
             return;
@@ -140,10 +139,10 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
             // Other->Other transformation - found a transformer chain
             return;
         }
-        
+
         throw new IllegalArgumentException("No Transformer found for [from='" + from + "', to='" + to + "']");
     }
-    
+
     private boolean convertIfRequired(Message message, DataType type) throws Exception {
         // TODO for better performance it may be better to add TypeConverterTransformer
         // into transformer registry automatically to avoid unnecessary scan in transformer registry
@@ -158,7 +157,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
         }
         return false;
     }
-    
+
     private boolean applyTransformer(Transformer transformer, Message message, DataType from, DataType to) throws Exception {
         if (transformer != null) {
             LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
@@ -172,7 +171,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
         Transformer transformer = message.getExchange().getContext().resolveTransformer(from, to);
         return applyTransformer(transformer, message, from, to);
     }
-    
+
     private boolean applyTransformerChain(Message message, DataType from, DataType to) throws Exception {
         CamelContext context = message.getExchange().getContext();
         Transformer fromTransformer = context.resolveTransformer(from.getModel());

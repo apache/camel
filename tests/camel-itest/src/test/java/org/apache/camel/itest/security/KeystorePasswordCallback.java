@@ -26,9 +26,9 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 public class KeystorePasswordCallback implements CallbackHandler {
-    
+
     private Map<String, String> passwords = new HashMap<>();
-    
+
     public KeystorePasswordCallback() {
         passwords.put("alice", "password");
         passwords.put("jim", "jimspassword");
@@ -36,8 +36,7 @@ public class KeystorePasswordCallback implements CallbackHandler {
     }
 
     /**
-     * It attempts to get the password from the private 
-     * alias/passwords map.
+     * It attempts to get the password from the private alias/passwords map.
      */
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
@@ -49,7 +48,7 @@ public class KeystorePasswordCallback implements CallbackHandler {
                     setPassword(callback, pass);
                     return;
                 }
-            } 
+            }
             if (type.endsWith("#PasswordText")) {
                 // Code for CXF 2.4.X
                 if (getPassword(callback) == null) {
@@ -59,7 +58,7 @@ public class KeystorePasswordCallback implements CallbackHandler {
             }
         }
     }
-    
+
     private void setPassword(Callback callback, String pass) {
         try {
             callback.getClass().getMethod("setPassword", String.class).invoke(callback, pass);
@@ -67,9 +66,10 @@ public class KeystorePasswordCallback implements CallbackHandler {
             throw new RuntimeException(e);
         }
     }
+
     private String getPassword(Callback callback) {
         try {
-            return (String)callback.getClass().getMethod("getPassword").invoke(callback);
+            return (String) callback.getClass().getMethod("getPassword").invoke(callback);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -77,19 +77,19 @@ public class KeystorePasswordCallback implements CallbackHandler {
 
     private String getIdentifier(Callback cb) {
         try {
-            return (String)cb.getClass().getMethod("getIdentifier").invoke(cb);
+            return (String) cb.getClass().getMethod("getIdentifier").invoke(cb);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Add an alias/password pair to the callback mechanism.
      */
     public void setAliasPassword(String alias, String password) {
         passwords.put(alias, password);
     }
-    
+
     private String getPasswordType(Callback pc) {
         try {
             Method getType = null;
@@ -103,9 +103,9 @@ public class KeystorePasswordCallback implements CallbackHandler {
             if (getType == null) {
                 getType = pc.getClass().getMethod("getType");
             }
-            String result = (String)getType.invoke(pc);
+            String result = (String) getType.invoke(pc);
             return result;
-            
+
         } catch (Exception ex) {
             return null;
         }

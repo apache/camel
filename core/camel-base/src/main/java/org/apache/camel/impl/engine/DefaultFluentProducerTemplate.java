@@ -68,7 +68,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     private DefaultFluentProducerTemplate(CamelContext context, ClassValue<ConvertBodyProcessor> resultProcessors,
-                                          Endpoint defaultEndpoint, int maximumCacheSize, boolean eventNotifierEnabled, ProducerTemplate template) {
+                                          Endpoint defaultEndpoint, int maximumCacheSize, boolean eventNotifierEnabled,
+                                          ProducerTemplate template) {
         this.context = context;
         this.resultProcessors = resultProcessors;
         this.defaultEndpoint = defaultEndpoint;
@@ -79,7 +80,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     private DefaultFluentProducerTemplate newClone() {
-        return new DefaultFluentProducerTemplate(context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template);
+        return new DefaultFluentProducerTemplate(
+                context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template);
     }
 
     private DefaultFluentProducerTemplate checkCloned() {
@@ -198,8 +200,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         Object b = type != null
-            ? clone.context.getTypeConverter().convertTo(type, body)
-            : body;
+                ? clone.context.getTypeConverter().convertTo(type, body)
+                : body;
         clone.body = b;
         return clone;
     }
@@ -281,7 +283,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @SuppressWarnings("unchecked")
     public <T> T request(Class<T> type) throws CamelExecutionException {
         if (exchangeSupplier != null && exchangeSupplier.get() != null) {
-            throw new IllegalArgumentException("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.");
+            throw new IllegalArgumentException(
+                    "withExchange not supported on FluentProducerTemplate.request method. Use send method instead.");
         }
 
         DefaultFluentProducerTemplate clone = checkCloned();
@@ -298,22 +301,20 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
         T result;
         if (type == Exchange.class) {
-            result = (T)clone.template().request(target, processorSupplier);
+            result = (T) clone.template().request(target, processorSupplier);
         } else if (type == Message.class) {
             Exchange exchange = clone.template().request(target, processorSupplier);
-            result = (T)exchange.getMessage();
+            result = (T) exchange.getMessage();
         } else {
             Exchange exchange = clone.template().send(
-                target,
-                ExchangePattern.InOut,
-                processorSupplier,
-                clone.resultProcessors.get(type)
-            );
+                    target,
+                    ExchangePattern.InOut,
+                    processorSupplier,
+                    clone.resultProcessors.get(type));
 
             result = clone.context.getTypeConverter().convertTo(
-                type,
-                ExchangeHelper.extractResultBody(exchange, exchange.getPattern())
-            );
+                    type,
+                    ExchangeHelper.extractResultBody(exchange, exchange.getPattern()));
         }
 
         return result;
@@ -447,7 +448,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
             return template.getDefaultEndpoint();
         }
 
-        throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
+        throw new IllegalArgumentException(
+                "No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
     }
 
     @Override

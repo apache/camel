@@ -57,9 +57,9 @@ import org.apache.camel.util.TimeUtils;
 /**
  * Default implementation of {@link Route}.
  * <p/>
- * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
- * such as starting and stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)}
- * and {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
+ * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route, such as starting and
+ * stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)} and
+ * {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
  */
 public class DefaultRoute extends ServiceSupport implements Route {
 
@@ -184,7 +184,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     /**
-     * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#startRoute(String)} to start a route.
+     * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#startRoute(String)} to start
+     * a route.
      */
     @Override
     public void start() {
@@ -192,7 +193,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     /**
-     * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#stopRoute(String)} to stop a route.
+     * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#stopRoute(String)} to stop a
+     * route.
      */
     @Override
     public void stop() {
@@ -552,8 +554,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     /**
-     * Factory method to lazily create the complete list of services required for this route
-     * such as adding the processor or consumer
+     * Factory method to lazily create the complete list of services required for this route such as adding the
+     * processor or consumer
      */
     protected void addServices(List<Service> services) throws Exception {
         Endpoint endpoint = getEndpoint();
@@ -568,16 +570,16 @@ public class DefaultRoute extends ServiceSupport implements Route {
             }
         }
         if (processor instanceof Service) {
-            services.add((Service)processor);
+            services.add((Service) processor);
         }
         for (Processor p : onCompletions.values()) {
             if (processor instanceof Service) {
-                services.add((Service)p);
+                services.add((Service) p);
             }
         }
         for (Processor p : onExceptions.values()) {
             if (processor instanceof Service) {
-                services.add((Service)p);
+                services.add((Service) p);
             }
         }
     }

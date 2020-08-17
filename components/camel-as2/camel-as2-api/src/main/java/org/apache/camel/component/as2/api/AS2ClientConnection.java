@@ -49,12 +49,14 @@ public class AS2ClientConnection {
     private String userAgent;
     private String clientFqdn;
 
-    public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName, Integer targetPortNumber) throws UnknownHostException, IOException {
+    public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName,
+                               Integer targetPortNumber) throws UnknownHostException, IOException {
 
         this.as2Version = Args.notNull(as2Version, "as2Version");
         this.userAgent = Args.notNull(userAgent, "userAgent");
         this.clientFqdn = Args.notNull(clientFqdn, "clientFqdn");
-        this.targetHost = new HttpHost(Args.notNull(targetHostName, "targetHostName"), Args.notNull(targetPortNumber, "targetPortNumber"));
+        this.targetHost = new HttpHost(
+                Args.notNull(targetHostName, "targetHostName"), Args.notNull(targetPortNumber, "targetPortNumber"));
 
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create()

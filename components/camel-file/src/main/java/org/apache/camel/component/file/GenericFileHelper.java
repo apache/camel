@@ -27,7 +27,8 @@ public final class GenericFileHelper {
         // for example if the file consumer uses preMove then the file is moved
         // and therefore has another name
         // that would no longer match
-        String path = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
+        String path
+                = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
         return asExclusiveReadLockKey(path, key);
     }
 

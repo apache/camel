@@ -55,15 +55,15 @@ import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
- * Generate or updates the component/dataformat/language/eip readme.md and .adoc
- * files in the project root directory.
+ * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
  */
 @Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     //Header attributes that are preserved through header generation
-    private static final Pattern[] MANUAL_ATTRIBUTES = {Pattern.compile(":(group): *(.*)"),
-            Pattern.compile(":(summary-group): *(.*)")};
+    private static final Pattern[] MANUAL_ATTRIBUTES = {
+            Pattern.compile(":(group): *(.*)"),
+            Pattern.compile(":(summary-group): *(.*)") };
 
     /**
      * The project build directory
@@ -106,9 +106,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
      */
     @Parameter
     protected Boolean failFast;
-    
+
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         componentDocDir = new File(project.getBasedir(), "src/main/docs");
         dataformatDocDir = new File(project.getBasedir(), "src/main/docs");
@@ -167,7 +168,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     // resolvePropertyPlaceholders is an option which only make
                     // sense to use if the component has other options
-                    boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
+                    boolean hasOptions = model.getComponentOptions().stream()
+                            .anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
                     if (!hasOptions) {
                         model.getComponentOptions().clear();
                     }
@@ -263,7 +265,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     // avoid any differences
                     // to make sure the build is stable
                     if ("bindy".equals(dataFormatName)) {
-                        model.getOptions().stream().filter(o -> "type".equals(o.getName())).forEach(o -> o.setDefaultValue(null));
+                        model.getOptions().stream().filter(o -> "type".equals(o.getName()))
+                                .forEach(o -> o.setDefaultValue(null));
                     }
 
                     String title = asDataFormatTitle(model.getName(), model.getTitle());
@@ -293,7 +296,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String asComponentName(String name) {
         // special for some components which share the same readme file
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
+                || name.equals("smtps")) {
             return "mail";
         }
 
@@ -322,7 +326,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
                     // skip option named id
-                    model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id") || Objects.equals(opt.getName(), "expression"));
+                    model.getOptions().removeIf(
+                            opt -> Objects.equals(opt.getName(), "id") || Objects.equals(opt.getName(), "expression"));
                     // enhance description for deprecated options
                     model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
                         String desc = "*Deprecated* " + option.getDescription();
@@ -383,8 +388,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 if (json != null) {
                     EipModel model = JsonMapper.generateEipModel(json);
                     // skip option named id/description/expression/outputs
-                    model.getOptions().removeIf(option -> "id".equals(option.getName()) || "description".equals(option.getName()) || "expression".equals(option.getName())
-                                                          || "outputs".equals(option.getName()));
+                    model.getOptions()
+                            .removeIf(option -> "id".equals(option.getName()) || "description".equals(option.getName())
+                                    || "expression".equals(option.getName())
+                                    || "outputs".equals(option.getName()));
                     // lets put required in the description
                     model.getOptions().stream().filter(EipOptionModel::isRequired).forEach(option -> {
                         String desc = "*Required* " + option.getDescription();
@@ -435,7 +442,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String asComponentTitle(String name, String title) {
         // special for some components which share the same readme file
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
+                || name.equals("smtps")) {
             return "Mail";
         }
 
@@ -460,7 +468,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         return title;
     }
 
-    private boolean updateHeader(String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix, String linkSuffix) throws MojoExecutionException {
+    private boolean updateHeader(
+            String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix,
+            String linkSuffix)
+            throws MojoExecutionException {
         getLog().debug("updateHeader " + file);
 
         if (model == null || !file.exists()) {
@@ -481,11 +492,11 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
             // find manual attributes
             Map<String, String> manualAttributes = new LinkedHashMap<>();
-            for (String line: lines) {
+            for (String line : lines) {
                 if (line.length() == 0) {
                     break;
                 }
-                for (Pattern attrName: MANUAL_ATTRIBUTES) {
+                for (Pattern attrName : MANUAL_ATTRIBUTES) {
                     Matcher m = attrName.matcher(line);
                     if (m.matches()) {
                         manualAttributes.put(m.group(1), m.group(2));
@@ -508,7 +519,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             newLines.add(":docTitle: " + model.getTitle());
 
             if (model instanceof ArtifactModel<?>) {
-                newLines.add(":artifactId: " + ((ArtifactModel<?>)model).getArtifactId());
+                newLines.add(":artifactId: " + ((ArtifactModel<?>) model).getArtifactId());
             }
             newLines.add(":description: " + model.getDescription());
             newLines.add(":since: " + model.getFirstVersionShort());
@@ -518,7 +529,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 newLines.add(":deprecated: *deprecated*");
             }
             if (model instanceof ComponentModel) {
-                newLines.add(":component-header: " + generateComponentHeader((ComponentModel)model));
+                newLines.add(":component-header: " + generateComponentHeader((ComponentModel) model));
                 if (Arrays.asList(model.getLabel().split(",")).contains("core")) {
                     newLines.add(":core:");
                 }
@@ -526,7 +537,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
             if (!manualAttributes.isEmpty()) {
                 newLines.add("//Manually maintained attributes");
-                for (Map.Entry<String, String> entry: manualAttributes.entrySet()) {
+                for (Map.Entry<String, String> entry : manualAttributes.entrySet()) {
                     newLines.add(":" + entry.getKey() + ": " + entry.getValue());
                 }
             }
@@ -707,28 +718,31 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private ComponentModel generateComponentModel(String json) {
         ComponentModel component = JsonMapper.generateComponentModel(json);
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream()).filter(BaseOptionModel::isRequired).forEach(option -> {
-            String desc = "*Required* " + option.getDescription();
-            option.setDescription(desc);
-        });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream()).filter(BaseOptionModel::isDeprecated).forEach(option -> {
-            String desc = "*Deprecated* " + option.getDescription();
-            if (!Strings.isEmpty(option.getDeprecationNote())) {
-                if (!desc.endsWith(".")) {
-                    desc += ".";
-                }
-                desc = desc + " Deprecation note: " + option.getDeprecationNote();
-            }
-            option.setDescription(desc);
-        });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream()).filter(o -> o.getEnums() != null).forEach(option -> {
-            String desc = option.getDescription();
-            if (!desc.endsWith(".")) {
-                desc = desc + ".";
-            }
-            desc = desc + " The value can be one of: " + wrapEnumValues(option.getEnums());
-            option.setDescription(desc);
-        });
+        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
+                .filter(BaseOptionModel::isRequired).forEach(option -> {
+                    String desc = "*Required* " + option.getDescription();
+                    option.setDescription(desc);
+                });
+        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
+                .filter(BaseOptionModel::isDeprecated).forEach(option -> {
+                    String desc = "*Deprecated* " + option.getDescription();
+                    if (!Strings.isEmpty(option.getDeprecationNote())) {
+                        if (!desc.endsWith(".")) {
+                            desc += ".";
+                        }
+                        desc = desc + " Deprecation note: " + option.getDeprecationNote();
+                    }
+                    option.setDescription(desc);
+                });
+        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
+                .filter(o -> o.getEnums() != null).forEach(option -> {
+                    String desc = option.getDescription();
+                    if (!desc.endsWith(".")) {
+                        desc = desc + ".";
+                    }
+                    desc = desc + " The value can be one of: " + wrapEnumValues(option.getEnums());
+                    option.setDescription(desc);
+                });
         return component;
     }
 
@@ -767,7 +781,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {
         try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = PackageHelper.loadText(templateStream);
-            return (String)TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            return (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
         } catch (IOException e) {
             throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
         }

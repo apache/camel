@@ -60,7 +60,6 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
 
-
 import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
 import static org.apache.camel.tooling.util.Strings.between;
 
@@ -72,8 +71,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     public static final DotName CONFIGURER = DotName.createSimple("org.apache.camel.spi.Configurer");
 
     /**
-     * Whether to discover configurer classes from classpath by scanning for @Configurer annotations.
-     * This requires using jandex-maven-plugin.
+     * Whether to discover configurer classes from classpath by scanning for @Configurer annotations. This requires
+     * using jandex-maven-plugin.
      */
     @Parameter(defaultValue = "true")
     protected boolean discoverClasses = true;
@@ -113,7 +112,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     public AbstractGenerateConfigurerMojo() {
     }
 
-    protected void doExecute(File sourcesOutputDir, File resourcesOutputDir, List<String> classes, boolean testClasspathOnly) throws MojoExecutionException, MojoFailureException {
+    protected void doExecute(File sourcesOutputDir, File resourcesOutputDir, List<String> classes, boolean testClasspathOnly)
+            throws MojoExecutionException, MojoFailureException {
         if ("pom".equals(project.getPackaging())) {
             return;
         }
@@ -179,13 +179,13 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     }
 
     /**
-     * Add any relevant project dependencies to the classpath. Takes
-     * includeProjectDependencies into consideration.
+     * Add any relevant project dependencies to the classpath. Takes includeProjectDependencies into consideration.
      *
-     * @param path classpath of {@link URL} objects
+     * @param  path                   classpath of {@link URL} objects
      * @throws MojoExecutionException
      */
-    private void addRelevantProjectDependenciesToClasspath(List<URL> path, boolean testClasspathOnly) throws MojoExecutionException {
+    private void addRelevantProjectDependenciesToClasspath(List<URL> path, boolean testClasspathOnly)
+            throws MojoExecutionException {
         try {
             getLog().debug("Project Dependencies will be included.");
 
@@ -209,7 +209,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             while (iter.hasNext()) {
                 Artifact classPathElement = iter.next();
                 getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                        + " to classpath");
+                               + " to classpath");
                 File file = classPathElement.getFile();
                 if (file != null) {
                     path.add(file.toURI().toURL());
@@ -239,7 +239,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         List<Artifact> artifacts = new ArrayList<>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency)dependencies.next();
+            Dependency dependency = (Dependency) dependencies.next();
 
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
@@ -294,7 +294,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         Class clazz = projectClassLoader.loadClass(fqn);
         // find all public setters
         doWithMethods(clazz, m -> {
-            boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set") && Character.isUpperCase(m.getName().charAt(3));
+            boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set")
+                    && Character.isUpperCase(m.getName().charAt(3));
             setter &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             setter &= filterSetter(m);
             if (setter) {
@@ -366,7 +367,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         return true;
     }
 
-    private void generateConfigurer(String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir) throws IOException {
+    private void generateConfigurer(String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir)
+            throws IOException {
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String cn = targetFqn.substring(pos + 1) + "Configurer";

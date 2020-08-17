@@ -48,7 +48,7 @@ public class PlanGatewayIntegrationTest extends AbstractBraintreeTestSupport {
             public void configure() {
                 // test route for all
                 from("direct://ALL")
-                    .to("braintree://" + PATH_PREFIX + "/all");
+                        .to("braintree://" + PATH_PREFIX + "/all");
             }
         };
     }

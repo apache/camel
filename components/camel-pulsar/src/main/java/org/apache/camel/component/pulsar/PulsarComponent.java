@@ -47,7 +47,8 @@ public class PulsarComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters)
+            throws Exception {
         if (autoConfiguration != null && autoConfiguration.isAutoConfigurable()) {
             autoConfiguration.ensureNameSpaceAndTenant(path);
         }
@@ -77,8 +78,7 @@ public class PulsarComponent extends DefaultComponent {
     }
 
     /**
-     * Allows to pre-configure the Pulsar component with common options that the
-     * endpoints will reuse.
+     * Allows to pre-configure the Pulsar component with common options that the endpoints will reuse.
      */
     public void setConfiguration(PulsarConfiguration configuration) {
         this.configuration = configuration;
@@ -111,8 +111,7 @@ public class PulsarComponent extends DefaultComponent {
     }
 
     /**
-     * Provide a factory to create an alternate implementation of
-     * {@link PulsarMessageReceipt}.
+     * Provide a factory to create an alternate implementation of {@link PulsarMessageReceipt}.
      */
     public void setPulsarMessageReceiptFactory(PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
         this.pulsarMessageReceiptFactory = pulsarMessageReceiptFactory;

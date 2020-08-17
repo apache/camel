@@ -38,7 +38,7 @@ public class MainRestTest {
                 .withContextPath("foo")
                 .withUseXForwardHeaders(true)
                 .withPort(1234)
-            .end();
+                .end();
 
         main.start();
 

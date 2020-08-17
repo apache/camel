@@ -29,8 +29,10 @@ public class ConnectorConfigFieldTest {
 
     @Test
     void testIfReturnsCorrectly() {
-        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey("field.test", ConfigDef.Type.STRING, "empty",
-                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
+                "field.test", ConfigDef.Type.STRING, "empty",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
                 null, false);
 
         final ConnectorConfigField connectorConfigField = new ConnectorConfigField(configKey, false, true, "I am overriden");
@@ -48,8 +50,10 @@ public class ConnectorConfigFieldTest {
 
     @Test
     void testIfHandlesUnderscoreFieldsCorrectly() {
-        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey("field.test_underscore", ConfigDef.Type.STRING, "empty",
-                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
+                "field.test_underscore", ConfigDef.Type.STRING, "empty",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
                 null, false);
 
         final ConnectorConfigField connectorConfigField = new ConnectorConfigField(configKey, false, true, null);
@@ -65,33 +69,40 @@ public class ConnectorConfigFieldTest {
 
     @Test
     public void testIfDiscoversDurationFieldCorrectly() {
-        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey("field.test_underscore.Ms", ConfigDef.Type.LONG, "100",
-                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
+                "field.test_underscore.Ms", ConfigDef.Type.LONG, "100",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
                 null, false);
 
         final ConnectorConfigField connectorConfigField = new ConnectorConfigField(configKey, false, true, null);
 
         assertTrue(connectorConfigField.isTimeField());
 
-
-        final ConfigDef.ConfigKey configKey2 = new ConfigDef.ConfigKey("field.test_underscore.ms", ConfigDef.Type.INT, "100",
-                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
+        final ConfigDef.ConfigKey configKey2 = new ConfigDef.ConfigKey(
+                "field.test_underscore.ms", ConfigDef.Type.INT, "100",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
                 null, false);
 
         final ConnectorConfigField connectorConfigField2 = new ConnectorConfigField(configKey2, false, true, null);
 
         assertTrue(connectorConfigField2.isTimeField());
 
-        final ConfigDef.ConfigKey configKey3 = new ConfigDef.ConfigKey("field", ConfigDef.Type.INT, "100",
-                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
+        final ConfigDef.ConfigKey configKey3 = new ConfigDef.ConfigKey(
+                "field", ConfigDef.Type.INT, "100",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
                 null, false);
 
         final ConnectorConfigField connectorConfigField3 = new ConnectorConfigField(configKey3, false, true, null);
 
         assertFalse(connectorConfigField3.isTimeField());
 
-        final ConfigDef.ConfigKey configKey4 = new ConfigDef.ConfigKey("field.ms.field", ConfigDef.Type.LONG, "100",
-                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
+        final ConfigDef.ConfigKey configKey4 = new ConfigDef.ConfigKey(
+                "field.ms.field", ConfigDef.Type.LONG, "100",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
                 null, false);
 
         final ConnectorConfigField connectorConfigField4 = new ConnectorConfigField(configKey4, false, true, null);

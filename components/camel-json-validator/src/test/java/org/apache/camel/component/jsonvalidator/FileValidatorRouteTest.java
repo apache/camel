@@ -47,7 +47,7 @@ public class FileValidatorRouteTest extends CamelTestSupport {
                 Exchange.FILE_NAME, "valid.json");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
-        
+
         assertTrue(FileUtil.deleteFile(new File("target/validator/valid.json")), "Should be able to delete the file");
     }
 
@@ -83,14 +83,14 @@ public class FileValidatorRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/validator?noop=true")
-                    .doTry()
+                        .doTry()
                         .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")
                         .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")                        
-                    .doFinally()
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .doFinally()
                         .to("mock:finally")
-                    .end();
+                        .end();
             }
         };
     }

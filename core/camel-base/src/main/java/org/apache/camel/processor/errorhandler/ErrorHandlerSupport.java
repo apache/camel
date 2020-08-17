@@ -40,12 +40,13 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         exceptionPolicies.put(key, policy);
     }
 
-    /**CamelContextHelper
-     * Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given thrown exception.
+    /**
+     * CamelContextHelper Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given
+     * thrown exception.
      *
-     * @param exchange  the exchange
-     * @param exception the exception that was thrown
-     * @return the best exception type to handle this exception, <tt>null</tt> if none found.
+     * @param  exchange  the exchange
+     * @param  exception the exception that was thrown
+     * @return           the best exception type to handle this exception, <tt>null</tt> if none found.
      */
     protected ExceptionPolicy getExceptionPolicy(Exchange exchange, Throwable exception) {
         if (exceptionPolicy == null) {
@@ -57,8 +58,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     }
 
     /**
-     * Sets the strategy to use for resolving the {@link ExceptionPolicy} to use
-     * for handling thrown exceptions.
+     * Sets the strategy to use for resolving the {@link ExceptionPolicy} to use for handling thrown exceptions.
      */
     public void setExceptionPolicy(ExceptionPolicyStrategy exceptionPolicy) {
         if (exceptionPolicy != null) {

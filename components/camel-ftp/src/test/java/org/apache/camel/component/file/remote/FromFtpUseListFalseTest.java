@@ -25,8 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to poll a fixed file from the FTP server without using the list
- * command.
+ * Unit test to poll a fixed file from the FTP server without using the list command.
  */
 public class FromFtpUseListFalseTest extends FtpServerTestSupport {
 

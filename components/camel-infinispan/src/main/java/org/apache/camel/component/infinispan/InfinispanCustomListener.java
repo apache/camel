@@ -19,8 +19,8 @@ package org.apache.camel.component.infinispan;
 import java.util.Set;
 
 /**
- * This class is supposed to be extended by users and annotated with @Listener or @ClientListener
- * and passed to the consumer endpoint through the 'customListener' parameter.
+ * This class is supposed to be extended by users and annotated with @Listener or @ClientListener and passed to the
+ * consumer endpoint through the 'customListener' parameter.
  */
 public abstract class InfinispanCustomListener extends InfinispanEventListener {
 

@@ -79,97 +79,97 @@ public class TestUserMethodsTest extends CamelFacebookTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:createTestUser")
-                    .to("facebook://createTestUser?inBody=name&appId=" + properties.get("oAuthAppId")
-                        + "&userLocale=" + Locale.getDefault().toString()
-                        + "&permissions=" + getTestPermissions()
-                        + "&" + getAppOauthParams());
+                        .to("facebook://createTestUser?inBody=name&appId=" + properties.get("oAuthAppId")
+                            + "&userLocale=" + Locale.getDefault().toString()
+                            + "&permissions=" + getTestPermissions()
+                            + "&" + getAppOauthParams());
 
                 // note short form testUsers instead of getTestUsers
                 from("direct:testUsers")
-                    .to("facebook://testUsers?appId=" + properties.get("oAuthAppId") + "&" + getAppOauthParams());
+                        .to("facebook://testUsers?appId=" + properties.get("oAuthAppId") + "&" + getAppOauthParams());
 
                 from("direct:makeFriendTestUser")
-                    .to("facebook://makeFriendTestUser?inBody=testUser1&" + getAppOauthParams());
+                        .to("facebook://makeFriendTestUser?inBody=testUser1&" + getAppOauthParams());
 
                 from("direct:deleteTestUser")
-                    .to("facebook://deleteTestUser?inBody=testUserId&" + getAppOauthParams());
+                        .to("facebook://deleteTestUser?inBody=testUserId&" + getAppOauthParams());
             }
         };
     }
 
     public String getTestPermissions() {
         return "email"
-            + ",publish_actions"
-            + ",user_about_me"
-            + ",user_activities"
-            + ",user_birthday"
-            + ",user_checkins"
-            + ",user_education_history"
-            + ",user_events"
-            + ",user_games_activity"
-            + ",user_groups"
-            + ",user_hometown"
-            + ",user_interests"
-            + ",user_likes"
-            + ",user_location"
-            + ",user_notes"
-            + ",user_photos"
-            + ",user_questions"
-            + ",user_relationship_details"
-            + ",user_relationships"
-            + ",user_religion_politics"
-            + ",user_status"
-            + ",user_subscriptions"
-            + ",user_videos"
-            + ",user_website"
-            + ",user_work_history"
-            + ",friends_about_me"
-            + ",friends_activities"
-            + ",friends_birthday"
-            + ",friends_checkins"
-            + ",friends_education_history"
-            + ",friends_events"
-            + ",friends_games_activity"
-            + ",friends_groups"
-            + ",friends_hometown"
-            + ",friends_interests"
-            + ",friends_likes"
-            + ",friends_location"
-            + ",friends_notes"
-            + ",friends_photos"
-            + ",friends_questions"
-            + ",friends_relationship_details"
-            + ",friends_relationships"
-            + ",friends_religion_politics"
-            + ",friends_status"
-            + ",friends_subscriptions"
-            + ",friends_videos"
-            + ",friends_website"
-            + ",friends_work_history"
-            + ",ads_management"
-            + ",create_event"
-            + ",create_note"
-            + ",export_stream"
-            + ",friends_online_presence"
-            + ",manage_friendlists"
-            + ",manage_notifications"
-            + ",manage_pages"
-            + ",photo_upload"
-            + ",publish_checkins"
-            + ",publish_stream"
-            + ",read_friendlists"
-            + ",read_insights"
-            + ",read_mailbox"
-            + ",read_page_mailboxes"
-            + ",read_requests"
-            + ",read_stream"
-            + ",rsvp_event"
-            + ",share_item"
-            + ",sms"
-            + ",status_update"
-            + ",user_online_presence"
-            + ",video_upload"
-            + ",xmpp_login";
+               + ",publish_actions"
+               + ",user_about_me"
+               + ",user_activities"
+               + ",user_birthday"
+               + ",user_checkins"
+               + ",user_education_history"
+               + ",user_events"
+               + ",user_games_activity"
+               + ",user_groups"
+               + ",user_hometown"
+               + ",user_interests"
+               + ",user_likes"
+               + ",user_location"
+               + ",user_notes"
+               + ",user_photos"
+               + ",user_questions"
+               + ",user_relationship_details"
+               + ",user_relationships"
+               + ",user_religion_politics"
+               + ",user_status"
+               + ",user_subscriptions"
+               + ",user_videos"
+               + ",user_website"
+               + ",user_work_history"
+               + ",friends_about_me"
+               + ",friends_activities"
+               + ",friends_birthday"
+               + ",friends_checkins"
+               + ",friends_education_history"
+               + ",friends_events"
+               + ",friends_games_activity"
+               + ",friends_groups"
+               + ",friends_hometown"
+               + ",friends_interests"
+               + ",friends_likes"
+               + ",friends_location"
+               + ",friends_notes"
+               + ",friends_photos"
+               + ",friends_questions"
+               + ",friends_relationship_details"
+               + ",friends_relationships"
+               + ",friends_religion_politics"
+               + ",friends_status"
+               + ",friends_subscriptions"
+               + ",friends_videos"
+               + ",friends_website"
+               + ",friends_work_history"
+               + ",ads_management"
+               + ",create_event"
+               + ",create_note"
+               + ",export_stream"
+               + ",friends_online_presence"
+               + ",manage_friendlists"
+               + ",manage_notifications"
+               + ",manage_pages"
+               + ",photo_upload"
+               + ",publish_checkins"
+               + ",publish_stream"
+               + ",read_friendlists"
+               + ",read_insights"
+               + ",read_mailbox"
+               + ",read_page_mailboxes"
+               + ",read_requests"
+               + ",read_stream"
+               + ",rsvp_event"
+               + ",share_item"
+               + ",sms"
+               + ",status_update"
+               + ",user_online_presence"
+               + ",video_upload"
+               + ",xmpp_login";
     }
 
 }

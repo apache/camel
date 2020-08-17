@@ -25,8 +25,7 @@ import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 /**
- * (<b>Entry point</b>) Reverser server which reverses all text lines from
- * clients.
+ * (<b>Entry point</b>) Reverser server which reverses all text lines from clients.
  */
 public class MinaReverserServer {
 

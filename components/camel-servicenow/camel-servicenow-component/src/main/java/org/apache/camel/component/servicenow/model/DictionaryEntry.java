@@ -27,10 +27,10 @@ public class DictionaryEntry {
 
     @JsonCreator
     public DictionaryEntry(
-        @JsonProperty(value = "internal_type") Reference internalType,
-        @JsonProperty(value = "reference") Reference reference,
-        @JsonProperty(value = "max_length") Integer maxLength,
-        @JsonProperty(value = "mandatory", defaultValue = "false") boolean mandatory) {
+                           @JsonProperty(value = "internal_type") Reference internalType,
+                           @JsonProperty(value = "reference") Reference reference,
+                           @JsonProperty(value = "max_length") Integer maxLength,
+                           @JsonProperty(value = "mandatory", defaultValue = "false") boolean mandatory) {
 
         this.internalType = internalType;
         this.reference = reference;

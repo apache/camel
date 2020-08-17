@@ -93,7 +93,6 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
         pointMap.remove(InfluxDbConstants.MEASUREMENT_NAME);
         sendBody("direct:test", pointMap);
 
-
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
 

@@ -137,7 +137,8 @@ public class GoogleCalendarConfiguration {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -159,9 +160,8 @@ public class GoogleCalendarConfiguration {
     }
 
     /**
-     * Specifies the level of permissions you want a calendar application to have to a user account.
-     * You can separate multiple scopes by comma.
-     * See https://developers.google.com/google-apps/calendar/auth for more info.
+     * Specifies the level of permissions you want a calendar application to have to a user account. You can separate
+     * multiple scopes by comma. See https://developers.google.com/google-apps/calendar/auth for more info.
      */
     public void setScopes(String scopes) {
         this.scopes = scopes;

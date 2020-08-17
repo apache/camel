@@ -53,18 +53,18 @@ public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("seda:start")
-                    .log("Sending ${body}")
-                    .inOut("activemq:queue:foo?replyTo=myReplies")
-                    // process the remainder of the route concurrently
-                    .threads(5)
-                    .log("Reply ${body}")
-                    .delay(2000)
-                    .to("mock:result");
+                        .log("Sending ${body}")
+                        .inOut("activemq:queue:foo?replyTo=myReplies")
+                        // process the remainder of the route concurrently
+                        .threads(5)
+                        .log("Reply ${body}")
+                        .delay(2000)
+                        .to("mock:result");
 
                 from("activemq:queue:foo")
-                    .to("mock:foo")
-                    .transform(body().prepend("Bye "))
-                    .log("Sending back reply ${body}");
+                        .to("mock:foo")
+                        .transform(body().prepend("Bye "))
+                        .log("Sending back reply ${body}");
             }
         };
     }

@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class InfinispanLocalAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanLocalAggregationRepository.class.getName());
-    
+
     private boolean useRecovery = true;
     private DefaultCacheManager manager;
     private String cacheName;
@@ -49,15 +49,16 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
     private Configuration configuration;
 
     /**
-     * Creates new {@link InfinispanLocalAggregationRepository} that defaults to non-optimistic locking
-     * with recoverable behavior and a local Infinispan cache. 
+     * Creates new {@link InfinispanLocalAggregationRepository} that defaults to non-optimistic locking with recoverable
+     * behavior and a local Infinispan cache.
      */
     public InfinispanLocalAggregationRepository() {
     }
-    
+
     /**
-     * Creates new {@link InfinispanLocalAggregationRepository} that defaults to non-optimistic locking
-     * with recoverable behavior and a local Infinispan cache. 
+     * Creates new {@link InfinispanLocalAggregationRepository} that defaults to non-optimistic locking with recoverable
+     * behavior and a local Infinispan cache.
+     * 
      * @param cacheName cache name
      */
     public InfinispanLocalAggregationRepository(final String cacheName) {
@@ -117,7 +118,7 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
     public void setRecoveryInterval(long interval) {
         this.recoveryInterval = interval;
     }
-    
+
     @Override
     public long getRecoveryIntervalInMillis() {
         return recoveryInterval;
@@ -165,9 +166,10 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
             manager = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build());
             manager.start();
         } else {
-            manager = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(), configuration);
+            manager = new DefaultCacheManager(
+                    new GlobalConfigurationBuilder().defaultCacheName("default").build(), configuration);
             manager.start();
-        }        
+        }
         if (ObjectHelper.isEmpty(cacheName)) {
             cache = manager.getCache();
         } else {
@@ -188,7 +190,7 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
         }
         return exchange;
     }
-    
+
     public DefaultCacheManager getManager() {
         return manager;
     }

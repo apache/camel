@@ -34,27 +34,26 @@ public final class ExpressionNodeHelper {
     }
 
     /**
-     * Determines which {@link ExpressionDefinition} describes the given
-     * expression best possible.
+     * Determines which {@link ExpressionDefinition} describes the given expression best possible.
      * <p/>
-     * This implementation will use types such as {@link SimpleExpression},
-     * {@link XPathExpression} etc. if the given expression is detect as such a
-     * type.
+     * This implementation will use types such as {@link SimpleExpression}, {@link XPathExpression} etc. if the given
+     * expression is detect as such a type.
      *
-     * @param expression the expression
-     * @return a definition which describes the expression
+     * @param  expression the expression
+     * @return            a definition which describes the expression
      */
     public static ExpressionDefinition toExpressionDefinition(Expression expression) {
         if (expression instanceof SimpleBuilder) {
-            SimpleBuilder builder = (SimpleBuilder)expression;
+            SimpleBuilder builder = (SimpleBuilder) expression;
             // we keep the original expression by using the constructor that
             // accepts an expression
             SimpleExpression answer = new SimpleExpression(builder);
             answer.setExpression(builder.getText());
             answer.setResultType(builder.getResultType());
             return answer;
-        } else if (expression instanceof ExpressionResultTypeAware && expression.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
-            ExpressionResultTypeAware aware = (ExpressionResultTypeAware)expression;
+        } else if (expression instanceof ExpressionResultTypeAware
+                && expression.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
+            ExpressionResultTypeAware aware = (ExpressionResultTypeAware) expression;
             // we keep the original expression by using the constructor that
             // accepts an expression
             XPathExpression answer = new XPathExpression(expression);
@@ -63,38 +62,37 @@ public final class ExpressionNodeHelper {
             return answer;
         } else if (expression instanceof ValueBuilder) {
             // ValueBuilder wraps the actual expression so unwrap
-            ValueBuilder builder = (ValueBuilder)expression;
+            ValueBuilder builder = (ValueBuilder) expression;
             expression = builder.getExpression();
         }
 
         if (expression instanceof ExpressionDefinition) {
-            return (ExpressionDefinition)expression;
+            return (ExpressionDefinition) expression;
         }
         return new ExpressionDefinition(expression);
     }
 
     /**
-     * Determines which {@link ExpressionDefinition} describes the given
-     * predicate best possible.
+     * Determines which {@link ExpressionDefinition} describes the given predicate best possible.
      * <p/>
-     * This implementation will use types such as {@link SimpleExpression},
-     * {@link XPathExpression} etc. if the given predicate is detect as such a
-     * type.
+     * This implementation will use types such as {@link SimpleExpression}, {@link XPathExpression} etc. if the given
+     * predicate is detect as such a type.
      *
-     * @param predicate the predicate
-     * @return a definition which describes the predicate
+     * @param  predicate the predicate
+     * @return           a definition which describes the predicate
      */
     public static ExpressionDefinition toExpressionDefinition(Predicate predicate) {
         if (predicate instanceof SimpleBuilder) {
-            SimpleBuilder builder = (SimpleBuilder)predicate;
+            SimpleBuilder builder = (SimpleBuilder) predicate;
             // we keep the original expression by using the constructor that
             // accepts an expression
             SimpleExpression answer = new SimpleExpression(builder);
             answer.setExpression(builder.getText());
             return answer;
-        } else if (predicate instanceof ExpressionResultTypeAware && predicate.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
-            ExpressionResultTypeAware aware = (ExpressionResultTypeAware)predicate;
-            Expression expression = (Expression)predicate;
+        } else if (predicate instanceof ExpressionResultTypeAware
+                && predicate.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
+            ExpressionResultTypeAware aware = (ExpressionResultTypeAware) predicate;
+            Expression expression = (Expression) predicate;
             // we keep the original expression by using the constructor that
             // accepts an expression
             XPathExpression answer = new XPathExpression(expression);
@@ -103,15 +101,15 @@ public final class ExpressionNodeHelper {
             return answer;
         } else if (predicate instanceof ValueBuilder) {
             // ValueBuilder wraps the actual predicate so unwrap
-            ValueBuilder builder = (ValueBuilder)predicate;
+            ValueBuilder builder = (ValueBuilder) predicate;
             Expression expression = builder.getExpression();
             if (expression instanceof Predicate) {
-                predicate = (Predicate)expression;
+                predicate = (Predicate) expression;
             }
         }
 
         if (predicate instanceof ExpressionDefinition) {
-            return (ExpressionDefinition)predicate;
+            return (ExpressionDefinition) predicate;
         }
         return new ExpressionDefinition(predicate);
     }

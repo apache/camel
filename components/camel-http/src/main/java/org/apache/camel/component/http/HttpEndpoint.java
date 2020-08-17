@@ -57,77 +57,85 @@ import org.slf4j.LoggerFactory;
  * Send requests to external HTTP servers using Apache HTTP Client 4.x.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri",
-    producerOnly = true, category = {Category.HTTP}, lenientProperties = true)
+             producerOnly = true, category = { Category.HTTP }, lenientProperties = true)
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
     @UriParam(label = "security", description = "To configure security using SSLContextParameters."
-        + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
-        + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+                                                + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
+                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
 
     @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
     private HttpContext httpContext;
     @UriParam(label = "advanced", description = "Register a custom configuration strategy for new HttpClient instances"
-        + " created by producers or consumers such as to configure authentication mechanisms etc.")
+                                                + " created by producers or consumers such as to configure authentication mechanisms etc.")
     private HttpClientConfigurer httpClientConfigurer;
-    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true, description = "To configure the HttpClient using the key/values from the Map.")
+    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true,
+              description = "To configure the HttpClient using the key/values from the Map.")
     private Map<String, Object> httpClientOptions;
     @UriParam(label = "advanced", description = "To use a custom HttpClientConnectionManager to manage connections")
     private HttpClientConnectionManager clientConnectionManager;
-    @UriParam(label = "advanced", description = "Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.")
+    @UriParam(label = "advanced",
+              description = "Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.")
     private HttpClientBuilder clientBuilder;
     @UriParam(label = "advanced", description = "Sets a custom HttpClient to be used by the producer")
     private HttpClient httpClient;
-    @UriParam(label = "advanced", defaultValue = "false", description = "To use System Properties as fallback for configuration")
+    @UriParam(label = "advanced", defaultValue = "false",
+              description = "To use System Properties as fallback for configuration")
     private boolean useSystemProperties;
 
     // timeout
-    @Metadata(label = "timeout", defaultValue = "-1", description = "The timeout in milliseconds used when requesting a connection"
-        + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).",
-             javaType = "java.time.Duration")
+    @Metadata(label = "timeout", defaultValue = "-1",
+              description = "The timeout in milliseconds used when requesting a connection"
+                            + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
+                            + " A timeout value of zero is interpreted as an infinite timeout."
+                            + " A negative value is interpreted as undefined (system default).",
+              javaType = "java.time.Duration")
     private long connectionRequestTimeout = -1;
-    @Metadata(label = "timeout", defaultValue = "-1", description = "Determines the timeout in milliseconds until a connection is established."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).",
-            javaType = "java.time.Duration")
+    @Metadata(label = "timeout", defaultValue = "-1",
+              description = "Determines the timeout in milliseconds until a connection is established."
+                            + " A timeout value of zero is interpreted as an infinite timeout."
+                            + " A timeout value of zero is interpreted as an infinite timeout."
+                            + " A negative value is interpreted as undefined (system default).",
+              javaType = "java.time.Duration")
     private long connectTimeout = -1;
     @Metadata(label = "timeout", defaultValue = "-1", description = "Defines the socket timeout in milliseconds,"
-        + " which is the timeout for waiting for data  or, put differently,"
-        + " a maximum period inactivity between two consecutive data packets)."
-        + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).",
-            javaType = "java.time.Duration")
+                                                                    + " which is the timeout for waiting for data  or, put differently,"
+                                                                    + " a maximum period inactivity between two consecutive data packets)."
+                                                                    + " A timeout value of zero is interpreted as an infinite timeout."
+                                                                    + " A negative value is interpreted as undefined (system default).",
+              javaType = "java.time.Duration")
     private long socketTimeout = -1;
     @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
-        + " By default the BasicCookieStore is used which is an in-memory only cookie store."
-        + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
-        + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
+                                                         + " By default the BasicCookieStore is used which is an in-memory only cookie store."
+                                                         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
+                                                         + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
     private CookieStore cookieStore = new BasicCookieStore();
-    @UriParam(label = "producer", defaultValue = "true", description = "Whether to clear expired cookies before sending the HTTP request."
-        + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.")
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether to clear expired cookies before sending the HTTP request."
+                            + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.")
     private boolean clearExpiredCookies = true;
-    @UriParam(label = "producer,security", description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
+    @UriParam(label = "producer,security",
+              description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
     private boolean authenticationPreemptive;
     @UriParam(label = "producer,advanced", description = "Whether the HTTP GET should include the message body or not."
-        + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
+                                                         + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
     private boolean getWithBody;
     @UriParam(label = "producer,advanced", description = "Whether the HTTP DELETE should include the message body or not."
-        + " By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
+                                                         + " By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
     private boolean deleteWithBody;
     @UriParam(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
     private int maxTotalConnections;
     @UriParam(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     private int connectionsPerRoute;
-    @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
+    @UriParam(label = "security",
+              description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
     @UriParam(label = "producer", description = "To use custom host header for producer. When not set in query will "
-        + "be ignored. When set will override host header derived from url.")
+                                                + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
 
     public HttpEndpoint() {
@@ -137,17 +145,20 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this(endPointURI, component, httpURI, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientConnectionManager clientConnectionManager) throws URISyntaxException {
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI,
+                        HttpClientConnectionManager clientConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, HttpClientBuilder.create(), clientConnectionManager, null);
     }
 
     public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientBuilder clientBuilder,
-                        HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+                        HttpClientConnectionManager clientConnectionManager,
+                        HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         this(endPointURI, component, null, clientBuilder, clientConnectionManager, clientConfigurer);
     }
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientBuilder clientBuilder,
-                        HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+                        HttpClientConnectionManager clientConnectionManager,
+                        HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component, httpURI);
         this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;
@@ -204,7 +215,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
         if (!useSystemProperties) {
             // configure http proxy from camelContext
-            if (ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyPort"))) {
+            if (ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyHost"))
+                    && ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyPort"))) {
                 String host = getCamelContext().getGlobalOption("http.proxyHost");
                 int port = Integer.parseInt(getCamelContext().getGlobalOption("http.proxyPort"));
                 String scheme = getCamelContext().getGlobalOption("http.proxyScheme");
@@ -212,7 +224,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
                 }
-                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
+                LOG.debug(
+                        "CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}",
+                        host, port, scheme);
                 HttpHost proxy = new HttpHost(host, port, scheme);
                 clientBuilder.setProxy(proxy);
             }
@@ -251,7 +265,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientConnectionManager.shutdown();
         }
         if (httpClient instanceof Closeable) {
-            IOHelper.close((Closeable)httpClient);
+            IOHelper.close((Closeable) httpClient);
         }
     }
 
@@ -263,8 +277,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * Provide access to the http client request parameters used on new {@link RequestConfig} instances
-     * used by producers or consumers of this endpoint.
+     * Provide access to the http client request parameters used on new {@link RequestConfig} instances used by
+     * producers or consumers of this endpoint.
      */
     public void setClientBuilder(HttpClientBuilder clientBuilder) {
         this.clientBuilder = clientBuilder;
@@ -275,8 +289,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * Register a custom configuration strategy for new {@link HttpClient} instances
-     * created by producers or consumers such as to configure authentication mechanisms etc
+     * Register a custom configuration strategy for new {@link HttpClient} instances created by producers or consumers
+     * such as to configure authentication mechanisms etc
      */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
@@ -309,8 +323,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * Whether to clear expired cookies before sending the HTTP request.
-     * This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.
+     * Whether to clear expired cookies before sending the HTTP request. This ensures the cookies store does not keep
+     * growing by adding new cookies which is newer removed when they are expired.
      */
     public void setClearExpiredCookies(boolean clearExpiredCookies) {
         this.clearExpiredCookies = clearExpiredCookies;
@@ -323,8 +337,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     /**
      * Whether the HTTP DELETE should include the message body or not.
      * <p/>
-     * By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the
-     * message body.
+     * By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to
+     * include the message body.
      */
     public void setDeleteWithBody(boolean deleteWithBody) {
         this.deleteWithBody = deleteWithBody;
@@ -337,8 +351,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     /**
      * Whether the HTTP GET should include the message body or not.
      * <p/>
-     * By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the
-     * message body.
+     * By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include
+     * the message body.
      */
     public void setGetWithBody(boolean getWithBody) {
         this.getWithBody = getWithBody;
@@ -349,12 +363,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * To use a custom CookieStore.
-     * By default the BasicCookieStore is used which is an in-memory only cookie store.
-     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
-     * shouldn't be stored as we are just bridging (eg acting as a proxy).
-     * If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is
-     * then performed by the cookieHandler.
+     * To use a custom CookieStore. By default the BasicCookieStore is used which is an in-memory only cookie store.
+     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be
+     * stored as we are just bridging (eg acting as a proxy). If a cookieHandler is set then the cookie store is also
+     * forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.
      */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
@@ -427,8 +439,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
-     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
+     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier} or
+     * {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
@@ -439,9 +451,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * To configure security using SSLContextParameters.
-     * Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent.
-     * If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.
+     * To configure security using SSLContextParameters. Important: Only one instance of
+     * org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more
+     * different instances, you need to define a new HttpComponent per instance you need.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -452,12 +464,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * The timeout in milliseconds used when requesting a connection
-     * from the connection manager. A timeout value of zero is interpreted
-     * as an infinite timeout.
+     * The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of
+     * zero is interpreted as an infinite timeout.
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout.
-     * A negative value is interpreted as undefined (system default).
+     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
+     * (system default).
      * </p>
      * <p>
      * Default: {@code -1}
@@ -472,11 +483,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * Determines the timeout in milliseconds until a connection is established.
-     * A timeout value of zero is interpreted as an infinite timeout.
+     * Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted
+     * as an infinite timeout.
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout.
-     * A negative value is interpreted as undefined (system default).
+     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
+     * (system default).
      * </p>
      * <p>
      * Default: {@code -1}
@@ -491,12 +502,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds,
-     * which is the timeout for waiting for data  or, put differently,
-     * a maximum period inactivity between two consecutive data packets).
+     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds, which is the timeout for waiting for data or,
+     * put differently, a maximum period inactivity between two consecutive data packets).
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout.
-     * A negative value is interpreted as undefined (system default).
+     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
+     * (system default).
      * </p>
      * <p>
      * Default: {@code -1}
@@ -509,8 +519,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     /**
      * Defines a custom host header which will be sent when producing http request.
      * <p>
-     * When not set in query will be ignored. When set will override
-     * host header derived from url.
+     * When not set in query will be ignored. When set will override host header derived from url.
      * </p>
      * <p>
      * Default: {@code null}
@@ -570,7 +579,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     @ManagedAttribute(description = "Number of connection requests being blocked awaiting a free connection."
-        + " This can happen only if there are more worker threads contending for fewer connections.")
+                                    + " This can happen only if there are more worker threads contending for fewer connections.")
     public int getClientConnectionsPoolStatsPending() {
         ConnPoolControl<?> pool = null;
         if (clientConnectionManager instanceof ConnPoolControl) {

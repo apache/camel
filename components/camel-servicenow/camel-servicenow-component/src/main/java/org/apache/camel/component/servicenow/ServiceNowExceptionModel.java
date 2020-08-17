@@ -27,8 +27,8 @@ public final class ServiceNowExceptionModel {
     private final Map<String, String> error;
 
     public ServiceNowExceptionModel(
-        @JsonProperty("status") String status,
-        @JsonProperty("error") Map<String, String> error) {
+                                    @JsonProperty("status") String status,
+                                    @JsonProperty("error") Map<String, String> error) {
         this.status = status;
         this.error = error;
     }

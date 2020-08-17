@@ -40,7 +40,8 @@ public class BeanValidatorOutputValidateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 validator().type("toValidate").withBean("testValidator");
 
-                onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}").to("mock:invalid");
+                onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}")
+                        .to("mock:invalid");
 
                 from("direct:in").outputTypeWithValidate("toValidate").to("mock:out");
             }

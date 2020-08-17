@@ -48,7 +48,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanResourceResolver}
  */
-public class DefaultPackageScanResourceResolver extends BasePackageScanResolver implements PackageScanResourceResolver, NonManagedService, CamelContextAware {
+public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
+        implements PackageScanResourceResolver, NonManagedService, CamelContextAware {
 
     private static final AntPathMatcher PATH_MATCHER = AntPathMatcher.INSTANCE;
 
@@ -91,7 +92,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
         }
     }
 
-    protected void findInFileSystem(File dir, Set<KeyValueHolder<String, InputStream>> resources, String subPattern) throws Exception {
+    protected void findInFileSystem(File dir, Set<KeyValueHolder<String, InputStream>> resources, String subPattern)
+            throws Exception {
         ResourceHelper.findInFileSystem(dir.toPath(), subPattern).forEach(f -> {
             try {
                 String location = f.toString();
@@ -117,7 +119,9 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
         }
     }
 
-    protected void doFind(String packageName, ClassLoader classLoader, Set<KeyValueHolder<String, InputStream>> resources, String subPattern) {
+    protected void doFind(
+            String packageName, ClassLoader classLoader, Set<KeyValueHolder<String, InputStream>> resources,
+            String subPattern) {
         Enumeration<URL> urls;
         try {
             urls = getResources(classLoader, packageName);
@@ -211,15 +215,15 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
     }
 
     /**
-     * Finds matching classes within a jar files that contains a folder
-     * structure matching the package structure. If the File is not a JarFile or
-     * does not exist a warning will be logged, but no error will be raised.
+     * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the
+     * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.
      *
      * @param stream  the inputstream of the jar file to be examined for classes
      * @param urlPath the url of the jar file to be examined for classes
      */
-    private void loadImplementationsInJar(String packageName, String subPattern, InputStream stream,
-                                          String urlPath, Set<KeyValueHolder<String, InputStream>> resources) {
+    private void loadImplementationsInJar(
+            String packageName, String subPattern, InputStream stream,
+            String urlPath, Set<KeyValueHolder<String, InputStream>> resources) {
         List<String> entries = new ArrayList<>();
 
         JarInputStream jarStream = null;
@@ -260,19 +264,19 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
     }
 
     /**
-     * Finds matches in a physical directory on a filesystem. Examines all files
-     * within a directory - if the File object is not a directory, and ends with
-     * <i>.class</i> the file is loaded and tested to see if it is acceptable
-     * according to the Test. Operates recursively to find classes within a
-     * folder structure matching the package structure.
+     * Finds matches in a physical directory on a filesystem. Examines all files within a directory - if the File object
+     * is not a directory, and ends with <i>.class</i> the file is loaded and tested to see if it is acceptable
+     * according to the Test. Operates recursively to find classes within a folder structure matching the package
+     * structure.
      *
-     * @param parent   the package name up to this directory in the package
-     *                 hierarchy. E.g. if /classes is in the classpath and we wish to
-     *                 examine files in /classes/org/apache then the values of
-     *                 <i>parent</i> would be <i>org/apache</i>
+     * @param parent   the package name up to this directory in the package hierarchy. E.g. if /classes is in the
+     *                 classpath and we wish to examine files in /classes/org/apache then the values of <i>parent</i>
+     *                 would be <i>org/apache</i>
      * @param location a File object representing a directory
      */
-    private void loadImplementationsInDirectory(String subPattern, String parent, File location, Set<KeyValueHolder<String, InputStream>> resources) throws FileNotFoundException {
+    private void loadImplementationsInDirectory(
+            String subPattern, String parent, File location, Set<KeyValueHolder<String, InputStream>> resources)
+            throws FileNotFoundException {
         File[] files = location.listFiles();
         if (files == null || files.length == 0) {
             return;

@@ -25,7 +25,7 @@ public abstract class YammerComponentTestSupport extends CamelTestSupport {
 
     protected YammerComponent yammerComponent;
     private String messages;
-    
+
     public YammerComponentTestSupport() {
     }
 

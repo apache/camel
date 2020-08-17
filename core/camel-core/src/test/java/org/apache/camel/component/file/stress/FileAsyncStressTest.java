@@ -73,14 +73,15 @@ public class FileAsyncStressTest extends ContextTestSupport {
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from("file:target/data/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup().threads(10).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // simulate some work with random time to complete
-                        Random ran = new Random();
-                        int delay = ran.nextInt(50) + 10;
-                        Thread.sleep(delay);
-                    }
-                }).to("mock:result");
+                from("file:target/data/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup().threads(10)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // simulate some work with random time to complete
+                                Random ran = new Random();
+                                int delay = ran.nextInt(50) + 10;
+                                Thread.sleep(delay);
+                            }
+                        }).to("mock:result");
             }
         };
     }

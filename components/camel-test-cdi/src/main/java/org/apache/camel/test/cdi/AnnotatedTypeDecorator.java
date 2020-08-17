@@ -33,18 +33,20 @@ final class AnnotatedTypeDecorator<X> extends AnnotatedDecorator implements Anno
     private final Set<AnnotatedMethod<? super X>> decoratedMethods;
 
     AnnotatedTypeDecorator(AnnotatedType<X> decoratedType, Annotation decoratingAnnotation) {
-        this(decoratedType, decoratingAnnotation, Collections.<AnnotatedMethod<? super X>>emptySet());
+        this(decoratedType, decoratingAnnotation, Collections.<AnnotatedMethod<? super X>> emptySet());
     }
 
-    AnnotatedTypeDecorator(AnnotatedType<X> decoratedType, Annotation decoratingAnnotation, Set<AnnotatedMethod<? super X>> decoratedMethods) {
+    AnnotatedTypeDecorator(AnnotatedType<X> decoratedType, Annotation decoratingAnnotation,
+                           Set<AnnotatedMethod<? super X>> decoratedMethods) {
         this(decoratedType, Collections.singleton(decoratingAnnotation), decoratedMethods);
     }
 
     AnnotatedTypeDecorator(AnnotatedType<X> decoratedType, Set<AnnotatedMethod<? super X>> decoratedMethods) {
-        this(decoratedType, Collections.<Annotation>emptySet(), decoratedMethods);
+        this(decoratedType, Collections.<Annotation> emptySet(), decoratedMethods);
     }
 
-    AnnotatedTypeDecorator(AnnotatedType<X> decoratedType, Set<Annotation> decoratingAnnotations, Set<AnnotatedMethod<? super X>> decoratedMethods) {
+    AnnotatedTypeDecorator(AnnotatedType<X> decoratedType, Set<Annotation> decoratingAnnotations,
+                           Set<AnnotatedMethod<? super X>> decoratedMethods) {
         super(decoratedType, decoratingAnnotations);
         this.decoratedType = decoratedType;
         this.decoratedMethods = decoratedMethods;

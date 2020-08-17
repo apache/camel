@@ -66,26 +66,26 @@ import org.slf4j.LoggerFactory;
 /**
  * Internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
  * <ul>
- *     <li>Execute {@link UnitOfWork}</li>
- *     <li>Keeping track which route currently is being routed</li>
- *     <li>Execute {@link RoutePolicy}</li>
- *     <li>Gather JMX performance statics</li>
- *     <li>Tracing</li>
- *     <li>Debugging</li>
- *     <li>Message History</li>
- *     <li>Stream Caching</li>
- *     <li>{@link Transformer}</li>
+ * <li>Execute {@link UnitOfWork}</li>
+ * <li>Keeping track which route currently is being routed</li>
+ * <li>Execute {@link RoutePolicy}</li>
+ * <li>Gather JMX performance statics</li>
+ * <li>Tracing</li>
+ * <li>Debugging</li>
+ * <li>Message History</li>
+ * <li>Stream Caching</li>
+ * <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
  * <p/>
- * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorAdvice} advice (before and after advice)
- * by executing the {@link CamelInternalProcessorAdvice#before(org.apache.camel.Exchange)} and
- * {@link CamelInternalProcessorAdvice#after(org.apache.camel.Exchange, Object)} callbacks in correct order during routing.
- * This reduces number of stack frames needed during routing, and reduce the number of lines in stacktraces, as well
- * makes debugging the routing engine easier for end users.
+ * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorAdvice} advice
+ * (before and after advice) by executing the {@link CamelInternalProcessorAdvice#before(org.apache.camel.Exchange)} and
+ * {@link CamelInternalProcessorAdvice#after(org.apache.camel.Exchange, Object)} callbacks in correct order during
+ * routing. This reduces number of stack frames needed during routing, and reduce the number of lines in stacktraces, as
+ * well makes debugging the routing engine easier for end users.
  * <p/>
- * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then make sure to
- * read the source code of this class about the debugging tips, which you can find in the
+ * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then
+ * make sure to read the source code of this class about the debugging tips, which you can find in the
  * {@link #process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method.
  * <p/>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
@@ -118,7 +118,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Adds an {@link CamelInternalProcessorAdvice} advice to the list of advices to execute by this internal processor.
      *
-     * @param advice  the advice to add
+     * @param advice the advice to add
      */
     public void addAdvice(CamelInternalProcessorAdvice<?> advice) {
         advices.add(advice);
@@ -133,8 +133,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Gets the advice with the given type.
      *
-     * @param type  the type of the advice
-     * @return the advice if exists, or <tt>null</tt> if no advices has been added with the given type.
+     * @param  type the type of the advice
+     * @return      the advice if exists, or <tt>null</tt> if no advices has been added with the given type.
      */
     public <T> T getAdvice(Class<T> type) {
         for (CamelInternalProcessorAdvice task : advices) {
@@ -217,7 +217,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         boolean forceShutdown = shutdownStrategy.forceShutdown(this);
         if (forceShutdown) {
-            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
+            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
+                         + exchange;
             LOG.debug(msg);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException(msg));
@@ -250,7 +251,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(),
+                        exchange);
             }
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
@@ -393,8 +395,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         /**
          * Strategy to determine if this policy is allowed to run
          *
-         * @param policy the policy
-         * @return <tt>true</tt> to run
+         * @param  policy the policy
+         * @return        <tt>true</tt> to run
          */
         boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
             if (policy instanceof StatefulService) {
@@ -414,7 +416,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                     }
                 } catch (Exception e) {
                     log.warn("Error occurred during onExchangeBegin on RoutePolicy: " + policy
-                            + ". This exception will be ignored", e);
+                             + ". This exception will be ignored",
+                            e);
                 }
             }
             return null;
@@ -435,7 +438,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                     }
                 } catch (Exception e) {
                     log.warn("Error occurred during onExchangeDone on RoutePolicy: " + policy
-                            + ". This exception will be ignored", e);
+                             + ". This exception will be ignored",
+                            e);
                 }
             }
         }
@@ -478,16 +482,19 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
                 String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4,
-                        backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(), backlogTracer.getBodyMaxChars());
+                        backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
+                        backlogTracer.getBodyMaxChars());
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
                 String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                 if (first) {
                     long created = exchange.getCreated();
-                    DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
+                    DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(
+                            backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
                     backlogTracer.traceEvent(pseudo);
                 }
-                DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml);
+                DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
+                        backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml);
                 backlogTracer.traceEvent(event);
             }
 
@@ -587,8 +594,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
-     * Advice to inject new {@link UnitOfWork} to the {@link Exchange} if needed, and as well to ensure
-     * the {@link UnitOfWork} is done and stopped.
+     * Advice to inject new {@link UnitOfWork} to the {@link Exchange} if needed, and as well to ensure the
+     * {@link UnitOfWork} is done and stopped.
      */
     public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
@@ -660,7 +667,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (uowFactory != null) {
                 return uowFactory.createUnitOfWork(exchange);
             } else {
-                return exchange.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
+                return exchange.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
+                        .createUnitOfWork(exchange);
             }
         }
 
@@ -863,7 +871,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             this.tracer = tracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
-            this.tracingAfterRoute = routeDefinition != null ? new TracingAfterRoute(tracer, routeDefinition.getRouteId()) : null;
+            this.tracingAfterRoute
+                    = routeDefinition != null ? new TracingAfterRoute(tracer, routeDefinition.getRouteId()) : null;
         }
 
         @Override

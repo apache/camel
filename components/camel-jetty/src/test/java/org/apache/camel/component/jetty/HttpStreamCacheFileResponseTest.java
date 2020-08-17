@@ -66,9 +66,10 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
                 context.setStreamCaching(true);
 
                 from("jetty://http://localhost:{{port}}/myserver")
-                    // wrap the response in 2 input streams so it will force
-                    // caching to disk
-                    .transform().constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes()))).to("log:reply");
+                        // wrap the response in 2 input streams so it will force
+                        // caching to disk
+                        .transform().constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes())))
+                        .to("log:reply");
             }
         };
     }

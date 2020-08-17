@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class for any consumer which is polling based
  */
-public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, Suspendable, PollingConsumerPollingStrategy {
+public abstract class ScheduledPollConsumer extends DefaultConsumer
+        implements Runnable, Suspendable, PollingConsumerPollingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
@@ -138,9 +139,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             if (backoffCounter++ < backoffMultiplier) {
                 // yes we should backoff
                 if (idleCounter > 0) {
-                    LOG.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", idleCounter, backoffCounter, backoffMultiplier);
+                    LOG.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", idleCounter, backoffCounter,
+                            backoffMultiplier);
                 } else {
-                    LOG.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", errorCounter, backoffCounter, backoffMultiplier);
+                    LOG.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", errorCounter, backoffCounter,
+                            backoffMultiplier);
                 }
                 return;
             } else {
@@ -232,7 +235,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
                 try {
                     getExceptionHandler().handleException("Consumer " + this + " failed polling endpoint: " + getEndpoint()
-                            + ". Will try again at next poll", cause);
+                                                          + ". Will try again at next poll",
+                            cause);
                 } catch (Throwable e) {
                     LOG.warn("Error handling exception. This exception will be ignored.", e);
                 }
@@ -418,7 +422,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     /**
      * The polling method which is invoked periodically to poll this consumer
      *
-     * @return number of messages polled, will be <tt>0</tt> if no message was polled at all.
+     * @return           number of messages polled, will be <tt>0</tt> if no message was polled at all.
      * @throws Exception can be thrown if an exception occurred during polling
      */
     protected abstract int poll() throws Exception;
@@ -430,9 +434,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         // validate that if backoff multiplier is in use, the threshold values is set correctly
         if (backoffMultiplier > 0) {
             if (backoffIdleThreshold <= 0 && backoffErrorThreshold <= 0) {
-                throw new IllegalArgumentException("backoffIdleThreshold and/or backoffErrorThreshold must be configured to a positive value when using backoffMultiplier");
+                throw new IllegalArgumentException(
+                        "backoffIdleThreshold and/or backoffErrorThreshold must be configured to a positive value when using backoffMultiplier");
             }
-            LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier, backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
+            LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier,
+                    backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
         }
 
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
@@ -443,7 +449,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         super.doStart();
 
         if (scheduler == null) {
-            DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            DefaultScheduledPollConsumerScheduler scheduler
+                    = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
             scheduler.setDelay(delay);
             scheduler.setInitialDelay(initialDelay);
             scheduler.setTimeUnit(timeUnit);
@@ -459,10 +466,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);
             PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, copy);
             if (copy.size() > 0) {
-                throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()
-                        + " scheduler parameters that couldn't be set on the endpoint."
-                        + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                        + " Unknown parameters=[" + copy + "]");
+                throw new FailedToCreateConsumerException(
+                        getEndpoint(), "There are " + copy.size()
+                                       + " scheduler parameters that couldn't be set on the endpoint."
+                                       + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                                       + " Unknown parameters=[" + copy + "]");
             }
         }
 

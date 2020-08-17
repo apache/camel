@@ -19,9 +19,9 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-    
+
     public UndertowHeaderFilterStrategy() {
-        initialize();  
+        initialize();
     }
 
     protected void initialize() {
@@ -39,9 +39,9 @@ public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add("upgrade");
         getOutFilter().add("via");
         getOutFilter().add("warning");
-        
+
         setLowerCase(true);
-        
+
         // filter headers begin with "Camel" or "org.apache.camel"
         // must ignore case for Http based transports
         setOutFilterPattern(CAMEL_FILTER_PATTERN);

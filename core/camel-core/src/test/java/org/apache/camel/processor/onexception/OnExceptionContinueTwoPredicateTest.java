@@ -66,9 +66,9 @@ public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoT
                 }).to("mock:me");
 
                 from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:middle")
-                    // throw a second time to validate that the exchange is
-                    // reset appropriately
-                    .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
+                        // throw a second time to validate that the exchange is
+                        // reset appropriately
+                        .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
             }
         };
     }

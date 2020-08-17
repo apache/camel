@@ -23,8 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that error handling using threads() also works as
- * expected.
+ * Unit test to verify that error handling using threads() also works as expected.
  */
 public class AsyncDeadLetterChannelTest extends ContextTestSupport {
 

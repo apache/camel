@@ -24,11 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 
 /**
- * Helper to get and set the correct payload when transferring data using camel-netty.
- * Always use this helper instead of direct access on the exchange object.
+ * Helper to get and set the correct payload when transferring data using camel-netty. Always use this helper instead of
+ * direct access on the exchange object.
  * <p/>
- * This helper ensures that we can also transfer exchange objects over the wire using the
- * <tt>transferExchange=true</tt> option.
+ * This helper ensures that we can also transfer exchange objects over the wire using the <tt>transferExchange=true</tt>
+ * option.
  */
 public final class NettyPayloadHelper {
 
@@ -66,7 +66,7 @@ public final class NettyPayloadHelper {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
-            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>)payload;
+            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
             if (dp.content() instanceof DefaultExchangeHolder) {
                 DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) dp.content());
@@ -89,7 +89,7 @@ public final class NettyPayloadHelper {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
-            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>)payload;
+            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
             if (dp.content() instanceof DefaultExchangeHolder) {
                 DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) dp.content());
@@ -105,6 +105,5 @@ public final class NettyPayloadHelper {
             exchange.getOut().setBody(payload);
         }
     }
-
 
 }

@@ -43,7 +43,7 @@ public class WireTapVoidBeanTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        final MyTapBean tapBean = (MyTapBean)context.getRegistry().lookupByName("tap");
+        final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             assertEquals("Hello World", tapBean.getTapped());

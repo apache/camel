@@ -25,7 +25,8 @@ import org.apache.camel.component.hazelcast.listener.CamelEntryListener;
 
 public class HazelcastMultimapConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastMultimapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+    public HazelcastMultimapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
+                                     String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         MultiMap<Object, Object> cache = hazelcastInstance.getMultiMap(cacheName);

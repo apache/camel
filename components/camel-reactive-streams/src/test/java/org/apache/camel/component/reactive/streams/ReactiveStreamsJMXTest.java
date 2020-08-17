@@ -61,7 +61,6 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
         assertEquals("strings", pubdata.get("name"));
         assertEquals(1, pubdata.get("subscribers"));
 
-
         TabularData subTd0 = (TabularData) pubdata.get("subscriptions");
         assertEquals(1, subTd0.values().size());
 
@@ -77,7 +76,8 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
         assertEquals("BUFFER", subscriptions.get("back pressure"));
     }
 
-    private Map<String, Object> getValues(MBeanServer mbeanServer, ObjectName rxService, String name, int index) throws Exception {
+    private Map<String, Object> getValues(MBeanServer mbeanServer, ObjectName rxService, String name, int index)
+            throws Exception {
         TabularData td = (TabularData) mbeanServer.invoke(rxService, name, null, null);
         return getValues(td, index);
     }
@@ -100,7 +100,8 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
 
     private ObjectName getReactiveStreamsServiceName(MBeanServer mbeanServer) throws Exception {
         ObjectName on = ObjectName.getInstance("org.apache.camel:type=services,*");
-        QueryExp queryExp = Query.match(new AttributeValueExp("ServiceType"), new StringValueExp("DefaultCamelReactiveStreamsService"));
+        QueryExp queryExp
+                = Query.match(new AttributeValueExp("ServiceType"), new StringValueExp("DefaultCamelReactiveStreamsService"));
         Set<ObjectName> names = mbeanServer.queryNames(on, queryExp);
         assertEquals(1, names.size());
         return names.iterator().next();
@@ -123,7 +124,6 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
                 from("timer:tick")
                         .setBody().simple("Hello world ${header.CamelTimerCounter}")
                         .to("reactive-streams:strings");
-
 
                 CamelReactiveStreamsService rxCamel = CamelReactiveStreams.get(getContext());
 

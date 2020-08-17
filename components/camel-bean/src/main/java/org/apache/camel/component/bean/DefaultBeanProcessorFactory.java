@@ -45,8 +45,10 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
     }
 
     @Override
-    public Processor createBeanProcessor(CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
-                                         String method, BeanScope scope) throws Exception {
+    public Processor createBeanProcessor(
+            CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
+            String method, BeanScope scope)
+            throws Exception {
 
         BeanProcessor answer;
         Class<?> clazz = bean != null ? bean.getClass() : null;
@@ -118,8 +120,9 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
             // validate the bean type is not from java so you by mistake think its a reference
             // to a bean name but the String is being invoke instead
             if (bean instanceof String) {
-                throw new IllegalArgumentException("The bean instance is a java.lang.String type: " + bean
-                        + ". We suppose you want to refer to a bean instance by its id instead. Please use ref.");
+                throw new IllegalArgumentException(
+                        "The bean instance is a java.lang.String type: " + bean
+                                                   + ". We suppose you want to refer to a bean instance by its id instead. Please use ref.");
             }
 
             // the holder should either be bean or type based
@@ -133,9 +136,10 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                     if (ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
                         beanHolder = new ConstantTypeBeanHolder(clazz, camelContext);
                     } else if (clazz.isInterface()) {
-                        throw new IllegalArgumentException("The bean is an interface type: " + clazz
-                                + ". Interfaces are only supported to lookup in the Camel registry for a single instance of such type."
-                                + " Otherwise the bean must be a class type.");
+                        throw new IllegalArgumentException(
+                                "The bean is an interface type: " + clazz
+                                                           + ". Interfaces are only supported to lookup in the Camel registry for a single instance of such type."
+                                                           + " Otherwise the bean must be a class type.");
                     } else {
                         // this is only for invoking static methods on the bean
                         beanHolder = new ConstantStaticTypeBeanHolder(clazz, camelContext);
@@ -166,7 +170,8 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                 } else if (clazz != null) {
                     // there is no bean instance, so check for static methods only
                     if (!beanInfo.hasStaticMethod(method)) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
+                        throw RuntimeCamelException
+                                .wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
                     }
                 }
             }

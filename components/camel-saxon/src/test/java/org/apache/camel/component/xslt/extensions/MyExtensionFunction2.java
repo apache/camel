@@ -53,7 +53,7 @@ public class MyExtensionFunction2 extends ExtensionFunctionDefinition {
 
     @Override
     public SequenceType[] getArgumentTypes() {
-        return new SequenceType[]{SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_STRING};
+        return new SequenceType[] { SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_STRING };
     }
 
     @Override

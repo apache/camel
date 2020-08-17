@@ -19,11 +19,11 @@ package org.apache.camel.management;
 import org.apache.camel.Exchange;
 
 /**
- * A composite {@link PerformanceCounter} is used for tracking performance statistics on both a per
- * context and route level, by issuing callbacks on both when an event happens.
+ * A composite {@link PerformanceCounter} is used for tracking performance statistics on both a per context and route
+ * level, by issuing callbacks on both when an event happens.
  * <p/>
- * This implementation is used so the {@link org.apache.camel.management.mbean.ManagedCamelContext}
- * can aggregate all stats from the routes.
+ * This implementation is used so the {@link org.apache.camel.management.mbean.ManagedCamelContext} can aggregate all
+ * stats from the routes.
  */
 public class CompositePerformanceCounter implements PerformanceCounter {
 

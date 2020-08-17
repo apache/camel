@@ -85,7 +85,7 @@ public class HL7MLLPConfig {
     public void setEndByte2(char endByte2) {
         this.endByte2 = endByte2;
     }
-    
+
     public Parser getParser() {
         return parser;
     }

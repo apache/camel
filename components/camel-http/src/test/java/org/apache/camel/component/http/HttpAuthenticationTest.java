@@ -53,13 +53,12 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/search", new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), user, password)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/search",
+                        new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), user, password))
+                .create();
         localServer.start();
 
         super.setUp();
@@ -77,36 +76,44 @@ public class HttpAuthenticationTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationShouldSuccess() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
-            + password, exchange1 -> {
-            });
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                             + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
+                                             + password,
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }
 
-
     @Test
     public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
-            + password + "&authenticationPreemptive=true", exchange1 -> {
-            });
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                             + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
+                                             + password + "&authenticationPreemptive=true",
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }
 
     @Test
     public void basicAuthenticationShouldFailWithoutCreds() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search?throwExceptionOnFailure=false", exchange1 -> {
-        });
+        Exchange exchange
+                = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                                   + "/search?throwExceptionOnFailure=false",
+                        exchange1 -> {
+                        });
 
         assertExchangeFailed(exchange);
     }
 
     @Test
     public void basicAuthenticationShouldFailWithWrongCreds() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
-            + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong", exchange1 -> {
-            });
+        Exchange exchange = template
+                .request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                         + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong",
+                        exchange1 -> {
+                        });
 
         assertExchangeFailed(exchange);
     }

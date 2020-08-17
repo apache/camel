@@ -33,19 +33,18 @@ import org.apache.camel.Service;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
- * Processing will still occur synchronously but it will provide the required
- * notifications that the caller expects.
+ * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}. Processing will still occur
+ * synchronously but it will provide the required notifications that the caller expects.
  */
 public final class AsyncProcessorConverterHelper {
-    
+
     private AsyncProcessorConverterHelper() {
         // Helper class
     }
 
     /**
-     * Creates a {@link AsyncProcessor} that delegates to the given processor.
-     * It is important that this implements {@link DelegateProcessor}
+     * Creates a {@link AsyncProcessor} that delegates to the given processor. It is important that this implements
+     * {@link DelegateProcessor}
      */
     // CHECKSTYLE:OFF
     private static class ProcessorToAsyncProcessorBridge implements DelegateProcessor, AsyncProcessor, Navigate<Processor>, Service {
@@ -77,7 +76,8 @@ public final class AsyncProcessorConverterHelper {
 
         @Override
         public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-            AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                    = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
             process(exchange, callback);
             return callback.getFuture();
         }
@@ -90,7 +90,7 @@ public final class AsyncProcessorConverterHelper {
                 return "Processor is null";
             }
         }
-        
+
         @Override
         public void process(Exchange exchange) throws Exception {
             processNext(exchange);

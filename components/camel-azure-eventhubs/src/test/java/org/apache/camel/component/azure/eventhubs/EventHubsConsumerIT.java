@@ -75,12 +75,15 @@ class EventHubsConsumerIT extends CamelTestSupport {
     @Test
     public void testConsumerEvents() throws InterruptedException {
         // send test data
-        final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        final EventHubProducerAsyncClient producerAsyncClient
+                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
 
         final String messageBody = RandomStringUtils.randomAlphabetic(30);
         final String messageKey = RandomStringUtils.randomAlphabetic(5);
 
-        producerAsyncClient.send(Collections.singletonList(new EventData(messageBody)), new SendOptions().setPartitionKey(messageKey)).block();
+        producerAsyncClient
+                .send(Collections.singletonList(new EventData(messageBody)), new SendOptions().setPartitionKey(messageKey))
+                .block();
 
         result.expectedMinimumMessageCount(1);
         result.setAssertPeriod(20000);
@@ -92,7 +95,8 @@ class EventHubsConsumerIT extends CamelTestSupport {
         final Exchange returnedMessage = exchanges.stream()
                 .filter(Objects::nonNull)
                 .filter(exchange -> exchange.getMessage().getHeader(EventHubsConstants.PARTITION_KEY)
-                        != null && exchange.getMessage().getHeader(EventHubsConstants.PARTITION_KEY).equals(messageKey))
+                                    != null
+                        && exchange.getMessage().getHeader(EventHubsConstants.PARTITION_KEY).equals(messageKey))
                 .findFirst()
                 .orElse(null);
 
@@ -119,10 +123,10 @@ class EventHubsConsumerIT extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("azure-eventhubs:?"
-                        + "connectionString=RAW({{connectionString}})"
-                        + "&blobContainerName=" + containerName + "&eventPosition=#eventPosition"
-                        + "&blobAccountName={{blobAccountName}}&blobAccessKey=RAW({{blobAccessKey}})")
-                        .to(result);
+                     + "connectionString=RAW({{connectionString}})"
+                     + "&blobContainerName=" + containerName + "&eventPosition=#eventPosition"
+                     + "&blobAccountName={{blobAccountName}}&blobAccessKey=RAW({{blobAccessKey}})")
+                             .to(result);
 
             }
         };

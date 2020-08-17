@@ -33,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Sjms2EndpointConnectionSettingsTest extends CamelTestSupport {
-    private final ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+    private final ActiveMQConnectionFactory connectionFactory
+            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
     private final ConnectionResource connectionResource = new ConnectionFactoryResource(2, connectionFactory);
 
     @Test

@@ -41,37 +41,38 @@ public enum ExtraParameters {
     ENCODE_XML("encodeXml"),
 
     /**
-     * Sets the <code>Cache-Control</code> header value, which advises the server (or any cache in front of it)
-     * how to behave in terms of cached requests"
+     * Sets the <code>Cache-Control</code> header value, which advises the server (or any cache in front of it) how to
+     * behave in terms of cached requests"
      */
     CACHE_CONTROL_DIRECTIVE("cacheControlDirective"),
 
     /**
-     * Request that the server return subsetted resources, containing only the elements specified in the given parameters.
-     * For example: <code>subsetElements("name", "identifier")</code> requests that the server only return
+     * Request that the server return subsetted resources, containing only the elements specified in the given
+     * parameters. For example: <code>subsetElements("name", "identifier")</code> requests that the server only return
      * the "name" and "identifier" fields in the returned resource, and omit any others.
      */
     SUBSET_ELEMENTS("subsetElements"),
 
-
     ENCODING_ENUM("encodingEnum"),
 
     /**
-     * Explicitly specify a custom structure type to attempt to use when parsing the response. This
-     * is useful for invocations where the response is a Bundle/Parameters containing nested resources,
-     * and you want to use specific custom structures for those nested resources.
+     * Explicitly specify a custom structure type to attempt to use when parsing the response. This is useful for
+     * invocations where the response is a Bundle/Parameters containing nested resources, and you want to use specific
+     * custom structures for those nested resources.
      * <p>
-     * See <a href="https://jamesagnew.github.io/hapi-fhir/doc_extensions.html">Profiles and Extensions</a> for more information on using custom structures
+     * See <a href="https://jamesagnew.github.io/hapi-fhir/doc_extensions.html">Profiles and Extensions</a> for more
+     * information on using custom structures
      * </p>
      */
     PREFER_RESPONSE_TYPE("preferredResponseType"),
 
     /**
-     * Explicitly specify a custom structure type to attempt to use when parsing the response. This
-     * is useful for invocations where the response is a Bundle/Parameters containing nested resources,
-     * and you want to use specific custom structures for those nested resources.
+     * Explicitly specify a custom structure type to attempt to use when parsing the response. This is useful for
+     * invocations where the response is a Bundle/Parameters containing nested resources, and you want to use specific
+     * custom structures for those nested resources.
      * <p>
-     * See <a href="https://jamesagnew.github.io/hapi-fhir/doc_extensions.html">Profiles and Extensions</a> for more information on using custom structures
+     * See <a href="https://jamesagnew.github.io/hapi-fhir/doc_extensions.html">Profiles and Extensions</a> for more
+     * information on using custom structures
      * </p>
      */
     PREFER_RESPONSE_TYPES("preferredResponseTypes"),
@@ -121,7 +122,8 @@ public enum ExtraParameters {
                     }
                     break;
                 case CACHE_CONTROL_DIRECTIVE:
-                    CacheControlDirective cacheControlDirective = (CacheControlDirective) extraParameters.get(CACHE_CONTROL_DIRECTIVE);
+                    CacheControlDirective cacheControlDirective
+                            = (CacheControlDirective) extraParameters.get(CACHE_CONTROL_DIRECTIVE);
                     clientExecutable.cacheControl(cacheControlDirective);
                     break;
                 case SUBSET_ELEMENTS:
@@ -133,11 +135,13 @@ public enum ExtraParameters {
                     clientExecutable.encoded(encodingEnum);
                     break;
                 case PREFER_RESPONSE_TYPE:
-                    Class<? extends IBaseResource> type = (Class<? extends IBaseResource>) extraParameters.get(PREFER_RESPONSE_TYPE);
+                    Class<? extends IBaseResource> type
+                            = (Class<? extends IBaseResource>) extraParameters.get(PREFER_RESPONSE_TYPE);
                     clientExecutable.preferResponseType(type);
                     break;
                 case PREFER_RESPONSE_TYPES:
-                    List<Class<? extends IBaseResource>> types = (List<Class<? extends IBaseResource>>) extraParameters.get(PREFER_RESPONSE_TYPES);
+                    List<Class<? extends IBaseResource>> types
+                            = (List<Class<? extends IBaseResource>>) extraParameters.get(PREFER_RESPONSE_TYPES);
                     clientExecutable.preferResponseTypes(types);
                     break;
                 case PRETTY_PRINT:

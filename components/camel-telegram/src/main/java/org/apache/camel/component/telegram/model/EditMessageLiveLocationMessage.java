@@ -73,4 +73,3 @@ public class EditMessageLiveLocationMessage extends OutgoingMessage {
         return sb.toString();
     }
 }
-

@@ -73,4 +73,3 @@ public class ConsumerStreamingTest extends SplunkMockTestSupport {
         };
     }
 }
-

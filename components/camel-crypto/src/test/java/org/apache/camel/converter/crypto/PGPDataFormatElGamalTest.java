@@ -24,7 +24,7 @@ public class PGPDataFormatElGamalTest extends PGPDataFormatTest {
     protected String getKeyFileName() {
         return "org/apache/camel/component/crypto/pubring-ElGamal.gpg";
     }
-    
+
     @Override
     protected String getKeyFileNameSec() {
         return "org/apache/camel/component/crypto/secring-ElGamal.gpg";

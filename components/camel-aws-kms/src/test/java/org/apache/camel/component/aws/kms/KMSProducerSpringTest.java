@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class KMSProducerSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void kmsListBrokersTest() throws Exception {
 
@@ -48,12 +48,12 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ListKeysResult resultGet = (ListKeysResult) exchange.getIn().getBody();
         assertEquals(1, resultGet.getKeys().size());
         assertEquals("keyId", resultGet.getKeys().get(0).getKeyId());
     }
-    
+
     @Test
     public void kmsCreateKeyTest() throws Exception {
 
@@ -66,12 +66,12 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         CreateKeyResult resultGet = (CreateKeyResult) exchange.getIn().getBody();
         assertEquals("test", resultGet.getKeyMetadata().getKeyId());
         assertEquals(true, resultGet.getKeyMetadata().isEnabled());
     }
-    
+
     @Test
     public void kmsDisableKeyTest() throws Exception {
 
@@ -85,9 +85,9 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
     }
-    
+
     @Test
     public void kmsEnableKeyTest() throws Exception {
 
@@ -101,9 +101,9 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
     }
-    
+
     @Test
     public void kmsScheduleKeyDeletionTest() throws Exception {
 
@@ -117,11 +117,11 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ScheduleKeyDeletionResult resultGet = (ScheduleKeyDeletionResult) exchange.getIn().getBody();
         assertEquals("test", resultGet.getKeyId());
     }
-    
+
     @Test
     public void kmsDescribeKeyTest() throws Exception {
 
@@ -135,7 +135,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DescribeKeyResult resultGet = exchange.getIn().getBody(DescribeKeyResult.class);
         assertEquals("test", resultGet.getKeyMetadata().getKeyId());
         assertEquals("MyCamelKey", resultGet.getKeyMetadata().getDescription());

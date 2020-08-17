@@ -27,5 +27,5 @@ public class SpringRemoveHeadersExcludeTest extends RemoveHeadersExcludeTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/removeHeadersExclude.xml");
     }
-    
+
 }

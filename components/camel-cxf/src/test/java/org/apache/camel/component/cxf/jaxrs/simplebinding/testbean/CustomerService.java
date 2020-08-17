@@ -33,24 +33,29 @@ import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 @Path("/customerservice/")
 public interface CustomerService {
 
-    @GET @Path("/customers/{id}/")
+    @GET
+    @Path("/customers/{id}/")
     Customer getCustomer(@PathParam("id") String id, @QueryParam("test") String test);
 
-    @PUT @Path("/customers/{id}")
+    @PUT
+    @Path("/customers/{id}")
     Response updateCustomer(Customer customer, @PathParam("id") String id);
 
-    @POST @Path("/customers/")
+    @POST
+    @Path("/customers/")
     Response newCustomer(Customer customer, @PathParam("type") String type, @QueryParam("age") int age);
 
     @Path("/customers/vip/{status}")
     VipCustomerResource vipCustomer(@PathParam("status") String status);
 
     @Consumes("image/jpeg")
-    @POST @Path("/customers/{id}/image_inputstream")
+    @POST
+    @Path("/customers/{id}/image_inputstream")
     Response uploadImageInputStream(InputStream is);
 
     @Consumes("image/jpeg")
-    @POST @Path("/customers/{id}/image_datahandler")
+    @POST
+    @Path("/customers/{id}/image_datahandler")
     Response uploadImageDataHandler(DataHandler dh);
 
     @Path("/customers/multipart")

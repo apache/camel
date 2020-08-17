@@ -159,7 +159,7 @@ public class DefaultHttpBinding implements HttpBinding {
         //apply the headerFilterStrategy
         Enumeration<?> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
+            String name = (String) names.nextElement();
             String value = request.getHeader(name);
             // use http helper to extract parameter value as it may contain multiple values
             Object extracted = HttpHelper.extractHttpParameterValue(value);
@@ -196,11 +196,13 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         // if content type is serialized java object, then de-serialize it to a Java object
-        if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
+        if (request.getContentType() != null
+                && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
             // only deserialize java if allowed
             if (allowJavaSerializedObject || isTransferException()) {
                 try {
-                    InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+                    InputStream is
+                            = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
                     Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
                     if (object != null) {
                         message.setBody(object);
@@ -222,7 +224,7 @@ public class DefaultHttpBinding implements HttpBinding {
         Map<String, Object> headers = message.getHeaders();
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
+            String name = (String) names.nextElement();
             // there may be multiple values for the same name
             String[] values = request.getParameterValues(name);
             LOG.trace("HTTP parameter {} = {}", name, values);
@@ -230,7 +232,7 @@ public class DefaultHttpBinding implements HttpBinding {
             if (values != null) {
                 for (String value : values) {
                     if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
                 }
@@ -292,6 +294,7 @@ public class DefaultHttpBinding implements HttpBinding {
         String uri = request.getRequestURI();
         /**
          * In async case, it seems that request.getContextPath() can return null
+         * 
          * @see https://dev.eclipse.org/mhonarc/lists/jetty-users/msg04669.html
          */
         String contextPath = request.getContextPath() == null ? "" : request.getContextPath();
@@ -324,7 +327,9 @@ public class DefaultHttpBinding implements HttpBinding {
                     AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
                     am.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File) object, fileName)));
                 } else {
-                    LOG.debug("Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}", fileName, fileNameExtWhitelist);
+                    LOG.debug(
+                            "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
+                            fileName, fileNameExtWhitelist);
                 }
             }
         }
@@ -353,7 +358,7 @@ public class DefaultHttpBinding implements HttpBinding {
         if (request.getHeader(Exchange.CONTENT_ENCODING) != null) {
             String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING, String.class);
             response.setHeader(Exchange.CONTENT_ENCODING, contentEncoding);
-        }        
+        }
         if (checkChunked(response, response.getExchange())) {
             response.setHeader(Exchange.TRANSFER_ENCODING, "chunked");
         }
@@ -394,7 +399,7 @@ public class DefaultHttpBinding implements HttpBinding {
     public void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         int statusCode = determineResponseCode(exchange, exchange.getMessage().getBody());
         response.setStatus(statusCode);
-        
+
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
@@ -426,7 +431,7 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
     }
-    
+
     /*
      * set the HTTP status code
      * NOTE: this is similar to the Netty-Http and Undertow approach
@@ -450,14 +455,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
         return codeToUse;
     }
-    
+
     protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
         if ((headerValue instanceof Date || headerValue instanceof Locale)
-            && convertDateAndLocaleLocally(exchange)) {
+                && convertDateAndLocaleLocally(exchange)) {
             if (headerValue instanceof Date) {
-                return toHttpDate((Date)headerValue);
+                return toHttpDate((Date) headerValue);
             } else {
-                return toHttpLanguage((Locale)headerValue);
+                return toHttpLanguage((Locale) headerValue);
             }
         } else {
             return exchange.getContext().getTypeConverter().convertTo(String.class, headerValue);
@@ -478,7 +483,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
         return false;
     }
-    
+
     protected int copyStream(InputStream is, OutputStream os, int bufferSize) throws IOException {
         try {
             // copy stream, and must flush on each write as etc Jetty has better performance when
@@ -503,7 +508,8 @@ public class DefaultHttpBinding implements HttpBinding {
                     throw new IOException(e);
                 }
             } else {
-                throw new RuntimeCamelException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
+                throw new RuntimeCamelException(
+                        "Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
             }
         }
 
@@ -536,7 +542,8 @@ public class DefaultHttpBinding implements HttpBinding {
                         bos.writeTo(os);
                     } else {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Streaming response in non-chunked mode with content-length {} and buffer size: {}", len, len);
+                            LOG.debug("Streaming response in non-chunked mode with content-length {} and buffer size: {}", len,
+                                    len);
                         }
                         copyStream(stream.getInputStream(), os, len);
                     }
@@ -559,7 +566,8 @@ public class DefaultHttpBinding implements HttpBinding {
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing response in non-chunked mode as plain text with content-length {} and buffer size: {}", dataByteLength, response.getBufferSize());
+                    LOG.debug("Writing response in non-chunked mode as plain text with content-length {} and buffer size: {}",
+                            dataByteLength, response.getBufferSize());
                 }
                 try {
                     response.getWriter().print(data);
@@ -576,7 +584,7 @@ public class DefaultHttpBinding implements HttpBinding {
             // check the endpoint option
             Endpoint endpoint = exchange.getFromEndpoint();
             if (endpoint instanceof HttpCommonEndpoint) {
-                answer = ((HttpCommonEndpoint)endpoint).isChunked();
+                answer = ((HttpCommonEndpoint) endpoint).isChunked();
             }
         } else {
             answer = message.getHeader(Exchange.HTTP_CHUNKED, boolean.class);
@@ -596,7 +604,8 @@ public class DefaultHttpBinding implements HttpBinding {
         ServletOutputStream os = response.getOutputStream();
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Streaming response as GZIP in non-chunked mode with content-length {} and buffer size: {}", data.length, response.getBufferSize());
+                LOG.debug("Streaming response as GZIP in non-chunked mode with content-length {} and buffer size: {}",
+                        data.length, response.getBufferSize());
             }
             response.setContentLength(data.length);
             os.write(data);
@@ -738,12 +747,12 @@ public class DefaultHttpBinding implements HttpBinding {
         dateFormat.setTimeZone(TIME_ZONE_GMT);
         return dateFormat;
     }
-    
+
     protected static String toHttpDate(Date date) {
         SimpleDateFormat format = getHttpDateFormat();
         return format.format(date);
     }
-    
+
     protected static String toHttpLanguage(Locale locale) {
         StringBuilder sb = new StringBuilder();
         sb.append(locale.getLanguage());

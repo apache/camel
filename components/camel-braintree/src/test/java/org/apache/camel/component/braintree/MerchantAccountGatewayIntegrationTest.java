@@ -34,24 +34,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
 
     @Disabled
     @Test
     public void testCreate() throws Exception {
         final String merchantId = UUID.randomUUID().toString();
         final Result<MerchantAccount> result = requestBody("direct://CREATE",
-            new MerchantAccountRequest()
-                .masterMerchantAccountId(System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"))
-                .individual()
-                .firstName("merchant")
-                .lastName(merchantId)
-                .address()
-                .streetAddress("my street")
-                .done()
-                .done(),
-            Result.class
-        );
+                new MerchantAccountRequest()
+                        .masterMerchantAccountId(System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"))
+                        .individual()
+                        .firstName("merchant")
+                        .lastName(merchantId)
+                        .address()
+                        .streetAddress("my street")
+                        .done()
+                        .done(),
+                Result.class);
 
         assertNotNull(result, "create result");
         assertTrue(result.isSuccess());
@@ -74,14 +74,14 @@ public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTest
         headers.put(BraintreeConstants.PROPERTY_PREFIX + "id", System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"));
 
         final Result<MerchantAccount> result = requestBodyAndHeaders("direct://UPDATE",
-            new MerchantAccountRequest()
-                .individual()
-                .address()
-                .streetAddress("my new street address")
-                .done()
-                .done(),
-            headers,
-            Result.class);
+                new MerchantAccountRequest()
+                        .individual()
+                        .address()
+                        .streetAddress("my new street address")
+                        .done()
+                        .done(),
+                headers,
+                Result.class);
 
         assertNotNull(result, "update result");
         assertTrue(result.isSuccess());
@@ -97,13 +97,13 @@ public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTest
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find");
+                        .to("braintree://" + PATH_PREFIX + "/find");
                 // test route for update
                 from("direct://UPDATE")
-                    .to("braintree://" + PATH_PREFIX + "/update?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/update?inBody=request");
             }
         };
     }

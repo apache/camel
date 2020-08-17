@@ -34,12 +34,13 @@ import org.slf4j.LoggerFactory;
 @Converter(generateLoader = true)
 public final class GoogleDriveFilesConverter {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleDriveFilesConverter.class);
-    
+
     private GoogleDriveFilesConverter() {
     }
-    
+
     @Converter
-    public static com.google.api.services.drive.model.File genericFileToGoogleDriveFile(GenericFile<?> file, Exchange exchange) throws Exception {       
+    public static com.google.api.services.drive.model.File genericFileToGoogleDriveFile(GenericFile<?> file, Exchange exchange)
+            throws Exception {
         if (file.getFile() instanceof File) {
             File f = (File) file.getFile();
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
@@ -55,25 +56,27 @@ public final class GoogleDriveFilesConverter {
             // body wasn't a java.io.File so let's try to convert it
             file.getBinding().loadContent(exchange, file);
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
-                        
+
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
             fileMetadata.setTitle(file.getFileName());
             InputStreamContent mediaContent = new InputStreamContent(null, is);
             exchange.getIn().setHeader("CamelGoogleDrive.content", fileMetadata);
             exchange.getIn().setHeader("CamelGoogleDrive.mediaContent", mediaContent);
-            
+
             return fileMetadata;
         }
         return null;
     }
-    
+
     // convenience method that takes google file metadata and converts that to an inputstream
     @Converter
-    public static InputStream download(com.google.api.services.drive.model.File fileMetadata, Exchange exchange) throws Exception {
+    public static InputStream download(com.google.api.services.drive.model.File fileMetadata, Exchange exchange)
+            throws Exception {
         if (fileMetadata.getDownloadUrl() != null && fileMetadata.getDownloadUrl().length() > 0) {
             try {
                 // TODO maybe separate this out as custom drive API ex. google-drive://download...
-                HttpResponse resp = getClient(exchange).getRequestFactory().buildGetRequest(new GenericUrl(fileMetadata.getDownloadUrl())).execute();
+                HttpResponse resp = getClient(exchange).getRequestFactory()
+                        .buildGetRequest(new GenericUrl(fileMetadata.getDownloadUrl())).execute();
                 return resp.getContent();
             } catch (IOException e) {
                 LOG.debug("Could not download file.", e);
@@ -86,24 +89,28 @@ public final class GoogleDriveFilesConverter {
     }
 
     @Converter
-    public static String downloadContentAsString(com.google.api.services.drive.model.File fileMetadata, Exchange exchange) throws Exception {
+    public static String downloadContentAsString(com.google.api.services.drive.model.File fileMetadata, Exchange exchange)
+            throws Exception {
         InputStream is = download(fileMetadata, exchange);
         if (is != null) {
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
         }
         return null;
     }
-    
+
     @Converter
-    public static com.google.api.services.drive.model.ChildReference genericStringToChildReference(String payload, Exchange exchange) throws Exception {       
+    public static com.google.api.services.drive.model.ChildReference genericStringToChildReference(
+            String payload, Exchange exchange)
+            throws Exception {
         if (payload != null) {
-            com.google.api.services.drive.model.ChildReference childReference = new com.google.api.services.drive.model.ChildReference();
+            com.google.api.services.drive.model.ChildReference childReference
+                    = new com.google.api.services.drive.model.ChildReference();
             childReference.setId(payload);
             return childReference;
         }
         return null;
     }
-    
+
     private static Drive getClient(Exchange exchange) {
         GoogleDriveComponent component = exchange.getContext().getComponent("google-drive", GoogleDriveComponent.class);
         return component.getClient(component.getConfiguration());

@@ -68,7 +68,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         QName testEndpointQNameA = new QName("http://camel.apache.org/camel-test", "portA");
         QName testEndpointQNameB = new QName("http://camel.apache.org/camel-test", "portB");
         QName testEndpointQNameC = new QName("http://camel.apache.org/camel-test", "portC");
-        
+
         // set up the bus with configure file
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);
@@ -84,7 +84,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         assertNotNull(context, "the camel context which get from camel conduit is not null");
         assertEquals(context.getName(), "conduit_context", "get the wrong camel context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
-        
+
         // test the configuration of camelContextId attribute 
         endpointInfo.setAddress("camel://direct:EndpointA");
         endpointInfo.setName(testEndpointQNameC);
@@ -94,7 +94,6 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         assertNotNull(context, "the camel context which get from camel conduit is not null");
         assertEquals(context.getName(), "conduit_context", "get the wrong camel context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
-
 
         endpointInfo.setAddress("camel://direct:EndpointC");
         endpointInfo.setName(testEndpointQNameB);
@@ -152,7 +151,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
     }
 
     public void verifyReceivedMessage(String content) {
-        ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
+        ByteArrayInputStream bis = (ByteArrayInputStream) inMessage.getContent(InputStream.class);
         byte bytes[] = new byte[bis.available()];
         try {
             bis.read(bytes);

@@ -50,10 +50,10 @@ final class Unmarshaller<P extends AbstractParser<?>> {
     /**
      * Unmarshal from the given reader.
      *
-     * @param reader             reader to read from
-     * @param parser             uniVocity parser to use
-     * @param headerRowProcessor Row processor that retrieves the header
-     * @return Unmarshalled data
+     * @param  reader             reader to read from
+     * @param  parser             uniVocity parser to use
+     * @param  headerRowProcessor Row processor that retrieves the header
+     * @return                    Unmarshalled data
      */
     public Object unmarshal(Reader reader, P parser, HeaderRowProcessor headerRowProcessor) {
         parser.beginParsing(reader);
@@ -64,9 +64,9 @@ final class Unmarshaller<P extends AbstractParser<?>> {
     /**
      * Converts the given iterator into a list.
      *
-     * @param iterator iterator to convert
-     * @param <T>      item class
-     * @return a list that contains all the items of the iterator
+     * @param  iterator iterator to convert
+     * @param  <T>      item class
+     * @return          a list that contains all the items of the iterator
      */
     private static <T> List<T> convertToList(Iterator<T> iterator) {
         List<T> result = new ArrayList<>();
@@ -129,8 +129,8 @@ final class Unmarshaller<P extends AbstractParser<?>> {
         /**
          * Converts the rows into the expected object.
          *
-         * @param row row to convert
-         * @return converted row
+         * @param  row row to convert
+         * @return     converted row
          */
         protected abstract E convertRow(String[] row);
     }

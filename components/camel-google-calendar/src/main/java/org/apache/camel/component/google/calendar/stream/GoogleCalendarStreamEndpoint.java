@@ -43,7 +43,8 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
 
-    public GoogleCalendarStreamEndpoint(String uri, GoogleCalendarStreamComponent component, GoogleCalendarStreamConfiguration endpointConfiguration) {
+    public GoogleCalendarStreamEndpoint(String uri, GoogleCalendarStreamComponent component,
+                                        GoogleCalendarStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -61,15 +62,15 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
     }
 
     public Calendar getClient() {
-        return ((GoogleCalendarStreamComponent)getComponent()).getClient(configuration);
+        return ((GoogleCalendarStreamComponent) getComponent()).getClient(configuration);
     }
 
     public GoogleCalendarClientFactory getClientFactory() {
-        return ((GoogleCalendarStreamComponent)getComponent()).getClientFactory();
+        return ((GoogleCalendarStreamComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
-        ((GoogleCalendarStreamComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleCalendarStreamComponent) getComponent()).setClientFactory(clientFactory);
     }
 
     public GoogleCalendarStreamConfiguration getConfiguration() {

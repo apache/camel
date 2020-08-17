@@ -86,17 +86,17 @@ public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTes
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result")
-                    .end();
+                        .end();
 
                 from("direct:dead")
-                    .to("mock:dead")
-                    .throwException(new IllegalArgumentException("We are dead"));
+                        .to("mock:dead")
+                        .throwException(new IllegalArgumentException("We are dead"));
             }
         };
     }

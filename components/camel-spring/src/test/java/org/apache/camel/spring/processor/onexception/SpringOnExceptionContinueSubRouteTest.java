@@ -25,7 +25,8 @@ public class SpringOnExceptionContinueSubRouteTest extends OnExceptionContinueSu
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/onexception/OnExceptionContinueSubRouteTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/onexception/OnExceptionContinueSubRouteTest.xml");
     }
 
 }

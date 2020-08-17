@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
     static int port = CXFTestSupport.getPort1();
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/SoapMessageProviderContext.xml");
@@ -47,11 +47,9 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
     public void testSOAPMessageModeDocLit() throws Exception {
         JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
         fromHandler.reset();
-        
-        QName serviceName =
-            new QName("http://apache.org/hello_world_soap_http", "SOAPProviderService");
-        QName portName =
-            new QName("http://apache.org/hello_world_soap_http", "SoapProviderPort");
+
+        QName serviceName = new QName("http://apache.org/hello_world_soap_http", "SOAPProviderService");
+        QName portName = new QName("http://apache.org/hello_world_soap_http", "SoapProviderPort");
 
         URL wsdl = getClass().getResource("/wsdl/hello_world.wsdl");
         assertNotNull(wsdl);
@@ -63,9 +61,9 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
         String response2 = new String("Bonjour");
         try {
             Greeter greeter = service.getPort(portName, Greeter.class);
-            ((BindingProvider)greeter).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                     "http://localhost:" + port + "/CxfSoapMessageProviderTest/SoapContext/SoapProviderPort");
+            ((BindingProvider) greeter).getRequestContext()
+                    .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                            "http://localhost:" + port + "/CxfSoapMessageProviderTest/SoapContext/SoapProviderPort");
             for (int idx = 0; idx < 2; idx++) {
                 String greeting = greeter.greetMe("Milestone-" + idx);
                 assertNotNull(greeting, "no response received from service");
@@ -76,16 +74,14 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
                 assertEquals(response2, reply);
             }
         } catch (UndeclaredThrowableException ex) {
-            throw (Exception)ex.getCause();
+            throw (Exception) ex.getCause();
         }
-        
+
         assertEquals(fromHandler.getMessageCount(), 8, "Can't get the right message count");
         assertEquals(fromHandler.getFaultCount(), 0, "Can't get the right fault count");
         //From CXF 2.2.7 the soap handler's getHeader() method will not be called if the SOAP message don't have headers
         //assertEquals(fromHandler.getGetHeadersCount(), 4, "Can't get the right headers count");
-        
+
     }
-
-
 
 }

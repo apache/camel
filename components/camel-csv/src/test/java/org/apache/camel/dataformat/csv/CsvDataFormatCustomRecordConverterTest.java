@@ -42,7 +42,7 @@ public class CsvDataFormatCustomRecordConverterTest extends CamelSpringTestSuppo
         template.sendBody("direct:unmarshal", getData());
         mock.assertIsSatisfied();
         Message message = mock.getReceivedExchanges().get(0).getIn();
-        List<List<String>> body = CastUtils.cast((List)message.getBody());
+        List<List<String>> body = CastUtils.cast((List) message.getBody());
         assertNotNull(body);
         assertEquals(body.size(), 1);
         List<String> row = body.get(0);
@@ -57,6 +57,6 @@ public class CsvDataFormatCustomRecordConverterTest extends CamelSpringTestSuppo
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                                                  "org/apache/camel/dataformat/csv/CsvDataFormatCustomRecordConverter.xml");
+                "org/apache/camel/dataformat/csv/CsvDataFormatCustomRecordConverter.xml");
     }
 }

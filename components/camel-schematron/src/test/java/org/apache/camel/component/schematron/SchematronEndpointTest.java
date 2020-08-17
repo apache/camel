@@ -34,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class SchematronEndpointTest extends CamelTestSupport {
 
-
     @Test
-    public void testSchematronFileReadFromClassPath()throws Exception {
+    public void testSchematronFileReadFromClassPath() throws Exception {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
         Endpoint endpoint = context().getEndpoint("schematron://sch/schematron-1.sch");
@@ -53,7 +52,7 @@ public class SchematronEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSchematronFileReadFromFileSystem()throws Exception {
+    public void testSchematronFileReadFromFileSystem() throws Exception {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
         String path = ClassLoader.getSystemResource("sch/schematron-1.sch").getPath();

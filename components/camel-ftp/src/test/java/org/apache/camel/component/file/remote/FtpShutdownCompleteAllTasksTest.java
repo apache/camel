@@ -75,8 +75,8 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from(getFtpUrl()).routeId("route1")
-                    // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).delay(1000).to("seda:foo");
+                        // let it complete all tasks during shutdown
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).delay(1000).to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

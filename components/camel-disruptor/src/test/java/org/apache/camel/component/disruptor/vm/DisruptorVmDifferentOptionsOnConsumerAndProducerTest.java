@@ -29,7 +29,6 @@ public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends Abstra
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
 
-
         template2.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();

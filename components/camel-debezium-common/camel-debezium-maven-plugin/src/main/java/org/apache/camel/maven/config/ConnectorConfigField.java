@@ -29,7 +29,8 @@ public class ConnectorConfigField {
     private final boolean isRequired;
     private final Object overrideDefaultValue;
 
-    public ConnectorConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired, final Object overrideDefaultValue) {
+    public ConnectorConfigField(final ConfigDef.ConfigKey configKey, final boolean isDeprecated, final boolean isRequired,
+                                final Object overrideDefaultValue) {
         ObjectHelper.notNull(configKey, "configKey");
         ObjectHelper.notNull(isDeprecated, "isDeprecated");
         ObjectHelper.notNull(isRequired, "isRequired");
@@ -93,7 +94,8 @@ public class ConnectorConfigField {
     public boolean isTimeField() {
         // since we don't really have an info if the field is a time or not, we use a hack that if the field name ends with `ms` and of type
         // int or long. Not pretty but is the only feasible workaround here.
-        return isMillSecondsInTheFieldName(fieldDef.name) && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
+        return isMillSecondsInTheFieldName(fieldDef.name)
+                && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
     }
 
     private boolean isMillSecondsInTheFieldName(final String name) {
@@ -119,20 +121,30 @@ public class ConnectorConfigField {
 
     private Class<?> getType(final ConfigDef.Type type) {
         switch (type) {
-            case INT: return Integer.TYPE;
-            case SHORT: return Short.TYPE;
-            case DOUBLE: return Double.TYPE;
-            case STRING: case PASSWORD: case CLASS: case LIST:
+            case INT:
+                return Integer.TYPE;
+            case SHORT:
+                return Short.TYPE;
+            case DOUBLE:
+                return Double.TYPE;
+            case STRING:
+            case PASSWORD:
+            case CLASS:
+            case LIST:
                 return String.class;
-            case BOOLEAN: return Boolean.TYPE;
-            case LONG: return Long.TYPE;
-            default: throw new IllegalArgumentException(String.format("Type '%s' is not supported", type.name()));
+            case BOOLEAN:
+                return Boolean.TYPE;
+            case LONG:
+                return Long.TYPE;
+            default:
+                throw new IllegalArgumentException(String.format("Type '%s' is not supported", type.name()));
         }
     }
 
     private String getDefaultValueWrappedInString(final ConfigDef.ConfigKey field) {
         if (getDefaultValue() != null) {
-            if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD || field.type() == ConfigDef.Type.CLASS) {
+            if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD
+                    || field.type() == ConfigDef.Type.CLASS) {
                 if (getDefaultValue() instanceof Class) {
                     return "\"" + ((Class) getDefaultValue()).getName() + "\"";
                 }

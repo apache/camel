@@ -76,20 +76,20 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(exchange -> {
-                        Map<String, Object> headers = exchange.getIn().getHeaders();
-                        assertEquals("VALUE_1", headers.get("HEADER_1"));
-                        assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
-                    })
-                    .setHeader("HEADER_3", constant("START"))
-                    .setHeader("HEADER_2", constant("VALUE_2"))
-                    .process(exchange -> {
-                        Map<String, Object> headers = exchange.getIn().getHeaders();
-                        assertEquals("START", headers.get("HEADER_3"));
-                        assertEquals("START", exchange.getIn().getHeader("HEADER_3"));
-                    })
-                    .setHeader("HEADER_3", constant("VALUE_3"))
-                    .to("mock:result");
+                        .process(exchange -> {
+                            Map<String, Object> headers = exchange.getIn().getHeaders();
+                            assertEquals("VALUE_1", headers.get("HEADER_1"));
+                            assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
+                        })
+                        .setHeader("HEADER_3", constant("START"))
+                        .setHeader("HEADER_2", constant("VALUE_2"))
+                        .process(exchange -> {
+                            Map<String, Object> headers = exchange.getIn().getHeaders();
+                            assertEquals("START", headers.get("HEADER_3"));
+                            assertEquals("START", exchange.getIn().getHeader("HEADER_3"));
+                        })
+                        .setHeader("HEADER_3", constant("VALUE_3"))
+                        .to("mock:result");
             }
         };
     }

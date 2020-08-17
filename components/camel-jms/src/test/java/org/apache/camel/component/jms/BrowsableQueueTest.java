@@ -35,7 +35,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BrowsableQueueTest.class);
 
     protected String componentName = "activemq";
-    protected Object[] expectedBodies = {"body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8"};
+    protected Object[] expectedBodies = { "body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8" };
 
     @Test
     public void testSendMessagesThenBrowseQueue() throws Exception {

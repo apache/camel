@@ -30,12 +30,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The master camel component provides a way to ensures that only a single endpoint
- * in a cluster is active at any point in time with automatic failover if the
- * JVM dies or the leadership is lot for any reason.
+ * The master camel component provides a way to ensures that only a single endpoint in a cluster is active at any point
+ * in time with automatic failover if the JVM dies or the leadership is lot for any reason.
  * <p>
- * This feature is useful if you need to consume from a backend that does not
- * support concurrent consumption.
+ * This feature is useful if you need to consume from a backend that does not support concurrent consumption.
  */
 @Component("master")
 public class MasterComponent extends DefaultComponent {
@@ -70,12 +68,11 @@ public class MasterComponent extends DefaultComponent {
         }
 
         return new MasterEndpoint(
-            uri,
-            this,
-            getClusterService(),
-            namespace,
-            delegateUri
-        );
+                uri,
+                this,
+                getClusterService(),
+                namespace,
+                delegateUri);
     }
 
     @Override
@@ -118,8 +115,7 @@ public class MasterComponent extends DefaultComponent {
             ObjectHelper.notNull(context, "Camel Context");
 
             service = ClusterServiceHelper.lookupService(context, serviceSelector).orElseThrow(
-                () -> new IllegalStateException("No cluster service found")
-            );
+                    () -> new IllegalStateException("No cluster service found"));
         }
 
         return service;

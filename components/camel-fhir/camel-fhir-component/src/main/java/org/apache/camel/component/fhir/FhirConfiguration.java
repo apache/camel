@@ -73,31 +73,35 @@ public class FhirConfiguration {
     private boolean compress;
 
     @UriParam(description = "Request that the server modify the response using the <code>_summary</code> param",
-            label = "advanced", javaType = "java.lang.String")
+              label = "advanced", javaType = "java.lang.String")
     private SummaryEnum summary;
 
     @UriParam(description = "HTTP session cookie to add to every request", label = "advanced")
     private String sessionCookie;
 
     @UriParam(description = "FhirContext is an expensive object to create. To avoid creating multiple instances,"
-            + " it can be set directly.", label = "advanced")
+                            + " it can be set directly.",
+              label = "advanced")
     private FhirContext fhirContext;
 
     @UriParam(description = "Force conformance check", label = "advanced")
     private boolean forceConformanceCheck;
 
     @UriParam(description = "When should Camel validate the FHIR Server's conformance statement",
-            defaultValue = "ONCE", label = "advanced", javaType = "java.lang.String")
+              defaultValue = "ONCE", label = "advanced", javaType = "java.lang.String")
     private ServerValidationModeEnum validationMode;
 
     @UriParam(description = "When this option is set, model classes will not be scanned for children until the"
-            + " child list for the given type is actually accessed.", defaultValue = "false", label = "advanced")
+                            + " child list for the given type is actually accessed.",
+              defaultValue = "false", label = "advanced")
     private boolean deferModelScanning;
 
-    @UriParam(description = "How long to try and establish the initial TCP connection (in ms)", label = "advanced", defaultValue = "10000")
+    @UriParam(description = "How long to try and establish the initial TCP connection (in ms)", label = "advanced",
+              defaultValue = "10000")
     private Integer connectionTimeout;
 
-    @UriParam(description = "How long to block for individual read/write operations (in ms)", label = "advanced", defaultValue = "10000")
+    @UriParam(description = "How long to block for individual read/write operations (in ms)", label = "advanced",
+              defaultValue = "10000")
     private Integer socketTimeout;
 
     @UriParam(label = "proxy", description = "The proxy host")
@@ -141,7 +145,6 @@ public class FhirConfiguration {
     public void setEncoding(String encoding) {
         this.encoding = EncodingEnum.valueOf(encoding);
     }
-
 
     public boolean isPrettyPrint() {
         return prettyPrint;

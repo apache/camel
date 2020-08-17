@@ -91,7 +91,8 @@ public class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true").to("file:target/data/charset/?fileName=output.txt&charset=utf-8");
+                from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true")
+                        .to("file:target/data/charset/?fileName=output.txt&charset=utf-8");
             }
         };
     }

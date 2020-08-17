@@ -30,11 +30,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly scalable publish-subscribe service that
- * can ingest millions of events per second and stream them to multiple consumers.
+ * The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly
+ * scalable publish-subscribe service that can ingest millions of events per second and stream them to multiple
+ * consumers.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs", syntax = "azure-eventhubs:namespace/eventHubName", category = {
-        Category.CLOUD, Category.MESSAGING })
+@UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs",
+             syntax = "azure-eventhubs:namespace/eventHubName", category = {
+                     Category.CLOUD, Category.MESSAGING })
 public class EventHubsEndpoint extends DefaultEndpoint {
 
     @UriParam

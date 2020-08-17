@@ -28,7 +28,7 @@ import org.apache.camel.reifier.loadbalancer.LoadBalancerReifier;
 public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
     public LoadBalanceReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (LoadBalanceDefinition)definition);
+        super(route, (LoadBalanceDefinition) definition);
     }
 
     @Override
@@ -39,7 +39,8 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
         int max = definition.getLoadBalancerType().getMaximumNumberOfOutputs();
         int size = definition.getOutputs().size();
         if (size > max) {
-            throw new IllegalArgumentException("To many outputs configured on " + definition.getLoadBalancerType() + ": " + size + " > " + max);
+            throw new IllegalArgumentException(
+                    "To many outputs configured on " + definition.getLoadBalancerType() + ": " + size + " > " + max);
         }
 
         for (ProcessorDefinition<?> processorType : definition.getOutputs()) {
@@ -48,7 +49,9 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
             // compilation errors on earlier versions of JDK6
             // on Windows boxes or with IBM JDKs etc.
             if (LoadBalanceDefinition.class.isInstance(processorType)) {
-                throw new IllegalArgumentException("Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
+                throw new IllegalArgumentException(
+                        "Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: "
+                                                   + processorType);
             }
             Processor processor = createProcessor(processorType);
             Channel channel = wrapChannel(processor, processorType);

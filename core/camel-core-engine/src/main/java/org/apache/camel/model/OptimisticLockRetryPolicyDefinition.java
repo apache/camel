@@ -93,16 +93,14 @@ public class OptimisticLockRetryPolicyDefinition {
     }
 
     /**
-     * Sets the upper value of retry in millis between retries, when using
-     * exponential or random backoff
+     * Sets the upper value of retry in millis between retries, when using exponential or random backoff
      */
     public OptimisticLockRetryPolicyDefinition maximumRetryDelay(long maximumRetryDelay) {
         return maximumRetryDelay(Long.toString(maximumRetryDelay));
     }
 
     /**
-     * Sets the upper value of retry in millis between retries, when using
-     * exponential or random backoff
+     * Sets the upper value of retry in millis between retries, when using exponential or random backoff
      */
     public OptimisticLockRetryPolicyDefinition maximumRetryDelay(String maximumRetryDelay) {
         setMaximumRetryDelay(maximumRetryDelay);

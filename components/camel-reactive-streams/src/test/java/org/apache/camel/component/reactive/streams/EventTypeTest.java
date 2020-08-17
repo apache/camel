@@ -44,14 +44,13 @@ public class EventTypeTest extends CamelTestSupport {
 
         context.start();
 
-        Flowable.<Integer>empty()
+        Flowable.<Integer> empty()
                 .subscribe(numbers);
-
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
-        endpoint.expectedBodiesReceived(new Object[]{null});
+        endpoint.expectedBodiesReceived(new Object[] { null });
         endpoint.assertIsSatisfied();
     }
 
@@ -70,9 +69,8 @@ public class EventTypeTest extends CamelTestSupport {
 
         context.start();
 
-        Flowable.<Integer>empty()
+        Flowable.<Integer> empty()
                 .subscribe(numbers);
-
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);
@@ -132,7 +130,6 @@ public class EventTypeTest extends CamelTestSupport {
                 })
                 .subscribe(numbers);
 
-
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onError");
@@ -167,7 +164,6 @@ public class EventTypeTest extends CamelTestSupport {
                     return n;
                 })
                 .subscribe(numbers);
-
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);

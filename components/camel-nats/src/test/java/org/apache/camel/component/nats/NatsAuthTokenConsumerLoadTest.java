@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class NatsAuthTokenConsumerLoadTest extends NatsAuthTokenTestSupport {
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 

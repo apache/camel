@@ -43,7 +43,8 @@ public final class QueryHelper {
         return fields.stream().map(SObjectField::getName).toArray(String[]::new);
     }
 
-    public static String[] filteredFieldNamesOf(final AbstractDescribedSObjectBase object, final Predicate<SObjectField> filter) {
+    public static String[] filteredFieldNamesOf(
+            final AbstractDescribedSObjectBase object, final Predicate<SObjectField> filter) {
         if (object == null) {
             return NONE;
         }
@@ -66,10 +67,12 @@ public final class QueryHelper {
         final SObjectDescription description = object.description();
         final List<SObjectField> fields = description.getFields();
 
-        return fields.stream().map(SObjectField::getName).collect(Collectors.joining(", ", "SELECT ", " FROM " + description.getName()));
+        return fields.stream().map(SObjectField::getName)
+                .collect(Collectors.joining(", ", "SELECT ", " FROM " + description.getName()));
     }
 
-    public static String queryToFetchFilteredFieldsOf(final AbstractDescribedSObjectBase object, final Predicate<SObjectField> filter) {
+    public static String queryToFetchFilteredFieldsOf(
+            final AbstractDescribedSObjectBase object, final Predicate<SObjectField> filter) {
         if (object == null) {
             return null;
         }
@@ -81,6 +84,7 @@ public final class QueryHelper {
         final SObjectDescription description = object.description();
         final List<SObjectField> fields = description.getFields();
 
-        return fields.stream().filter(filter).map(SObjectField::getName).collect(Collectors.joining(", ", "SELECT ", " FROM " + description.getName()));
+        return fields.stream().filter(filter).map(SObjectField::getName)
+                .collect(Collectors.joining(", ", "SELECT ", " FROM " + description.getName()));
     }
 }

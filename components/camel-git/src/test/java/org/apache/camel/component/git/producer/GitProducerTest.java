@@ -64,7 +64,7 @@ public class GitProducerTest extends GitTestSupport {
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
     }
-    
+
     @Test
     public void checkoutTest() throws Exception {
         // Init
@@ -92,8 +92,7 @@ public class GitProducerTest extends GitTestSupport {
         assertEquals(branchCreated, true);
         git.close();
     }
-    
-    
+
     @Test
     public void checkoutSpecificTagTest() throws Exception {
         // Init
@@ -106,7 +105,7 @@ public class GitProducerTest extends GitTestSupport {
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
-        
+
         // Test camel-git create tag
         template.sendBody("direct:create-tag", "");
 
@@ -251,7 +250,7 @@ public class GitProducerTest extends GitTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
         assertThrows(CamelExecutionException.class,
-            () -> template.requestBodyAndHeaders("direct:commit-not-allow-empty", "", headers));
+                () -> template.requestBodyAndHeaders("direct:commit-not-allow-empty", "", headers));
 
         // Check : An exception should have been raised
     }
@@ -758,7 +757,7 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(remoteConfigList.size() == 0);
         Object result = template.requestBody("direct:remoteAdd", "");
         assertTrue(result instanceof RemoteConfig);
-        RemoteConfig remoteConfig = (RemoteConfig)result;
+        RemoteConfig remoteConfig = (RemoteConfig) result;
         remoteConfigList = git.remoteList().call();
         assertTrue(remoteConfigList.size() == 1);
         assertEquals(remoteConfigList.get(0).getName(), remoteConfig.getName());
@@ -779,13 +778,13 @@ public class GitProducerTest extends GitTestSupport {
         List<RemoteConfig> gitRemoteConfigs = git.remoteList().call();
         Object result = template.requestBody("direct:remoteList", "");
         assertTrue(result instanceof List);
-        List<RemoteConfig> remoteConfigs = (List<RemoteConfig>)result;
+        List<RemoteConfig> remoteConfigs = (List<RemoteConfig>) result;
         assertEquals(gitRemoteConfigs.size(), remoteConfigs.size());
         assertEquals(gitRemoteConfigs.get(0).getName(), remoteConfigs.get(0).getName());
         assertEquals(gitRemoteConfigs.get(0).getURIs(), remoteConfigs.get(0).getURIs());
         git.close();
     }
-    
+
     @Test
     public void cleanTest() throws Exception {
         Git git = getGitTestRepository();
@@ -793,14 +792,15 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
 
         // Test camel-git add
-        Set<String> cleaned = template.requestBodyAndHeader("direct:clean", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Set.class);
+        Set<String> cleaned
+                = template.requestBodyAndHeader("direct:clean", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Set.class);
 
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
         assertTrue(cleaned.contains(filenameToAdd));
         git.close();
     }
-    
+
     @Test
     public void gcTest() throws Exception {
         Git git = getGitTestRepository();
@@ -820,13 +820,13 @@ public class GitProducerTest extends GitTestSupport {
         validateGitLogs(git, commitMessage, commitMessage);
 
         // Test camel-git add
-        Properties gcResult = template.requestBodyAndHeader("direct:gc", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Properties.class);
-
+        Properties gcResult
+                = template.requestBodyAndHeader("direct:gc", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Properties.class);
 
         assertNotNull(gcResult);
         git.close();
     }
-    
+
     @Test
     public void mergeTest() throws Exception {
         // Init
@@ -850,13 +850,13 @@ public class GitProducerTest extends GitTestSupport {
             }
         });
         validateGitLogs(git, commitMessageBranch, commitMessage);
-        
+
         // Test camel-git commit (with branch)
         MergeResult result = template.requestBody("direct:merge", "", MergeResult.class);
         assertEquals(result.getMergeStatus().toString(), "Fast-forward");
         git.close();
     }
-    
+
     @Test
     public void showTagsTest() throws Exception {
         // Init
@@ -890,11 +890,13 @@ public class GitProducerTest extends GitTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:clone").to("git://" + gitLocalRepo + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
+                from("direct:clone").to("git://" + gitLocalRepo
+                                        + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
                 from("direct:init").to("git://" + gitLocalRepo + "?operation=init");
                 from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:checkout").to("git://" + gitLocalRepo + "?operation=checkout&branchName=" + branchTest);
-                from("direct:checkout-specific-tag").to("git://" + gitLocalRepo + "?operation=checkout&branchName=" + branchTest + "&tagName=" + tagTest);
+                from("direct:checkout-specific-tag")
+                        .to("git://" + gitLocalRepo + "?operation=checkout&branchName=" + branchTest + "&tagName=" + tagTest);
                 from("direct:remove").to("git://" + gitLocalRepo + "?operation=remove");
                 from("direct:add-on-branch").to("git://" + gitLocalRepo + "?operation=add&branchName=" + branchTest);
                 from("direct:remove-on-branch").to("git://" + gitLocalRepo + "?operation=add&branchName=" + branchTest);
@@ -903,9 +905,11 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:commit-branch").to("git://" + gitLocalRepo + "?operation=commit&branchName=" + branchTest);
                 from("direct:commit-all").to("git://" + gitLocalRepo + "?operation=commit");
                 from("direct:commit-all-branch").to("git://" + gitLocalRepo + "?operation=commit&branchName=" + branchTest);
-                from("direct:add-status-commit").to("git://" + gitLocalRepo + "?operation=add").to("git://" + gitLocalRepo + "?operation=status").choice()
-                    .when(simple("${body.hasUncommittedChanges()}")).log("Commiting changes...").to("git://" + gitLocalRepo + "?operation=commit").otherwise()
-                    .log("Nothing to commit").end();
+                from("direct:add-status-commit").to("git://" + gitLocalRepo + "?operation=add")
+                        .to("git://" + gitLocalRepo + "?operation=status").choice()
+                        .when(simple("${body.hasUncommittedChanges()}")).log("Commiting changes...")
+                        .to("git://" + gitLocalRepo + "?operation=commit").otherwise()
+                        .log("Nothing to commit").end();
                 from("direct:create-branch").to("git://" + gitLocalRepo + "?operation=createBranch&branchName=" + branchTest);
                 from("direct:delete-branch").to("git://" + gitLocalRepo + "?operation=deleteBranch&branchName=" + branchTest);
                 from("direct:status").to("git://" + gitLocalRepo + "?operation=status");
@@ -916,11 +920,14 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:delete-tag").to("git://" + gitLocalRepo + "?operation=deleteTag&tagName=" + tagTest);
                 from("direct:show-branches").to("git://" + gitLocalRepo + "?operation=showBranches");
                 from("direct:cherrypick").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=" + branchTest);
-                from("direct:cherrypick-master").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
+                from("direct:cherrypick-master")
+                        .to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
                 from("direct:pull").to("git://" + gitLocalRepo + "?remoteName=origin&operation=pull");
                 from("direct:clean").to("git://" + gitLocalRepo + "?operation=clean");
                 from("direct:gc").to("git://" + gitLocalRepo + "?operation=gc");
-                from("direct:remoteAdd").to("git://" + gitLocalRepo + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
+                from("direct:remoteAdd")
+                        .to("git://" + gitLocalRepo
+                            + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
                 from("direct:remoteList").to("git://" + gitLocalRepo + "?operation=remoteList");
                 from("direct:merge").to("git://" + gitLocalRepo + "?operation=merge&branchName=" + branchTest);
                 from("direct:show-tags").to("git://" + gitLocalRepo + "?operation=showTags");

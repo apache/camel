@@ -40,13 +40,12 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
-
-
 /**
- * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
- * Based on Cassandra Java Driver provided by DataStax.
+ * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API). Based on Cassandra Java Driver provided by
+ * DataStax.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", category = {Category.DATABASE, Category.NOSQL})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
+             category = { Category.DATABASE, Category.NOSQL })
 public class CassandraEndpoint extends ScheduledPollEndpoint {
 
     private volatile CassandraSessionHolder sessionHolder;
@@ -110,7 +109,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         if (session == null && beanRef != null) {
             Object bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanRef);
             if (bean instanceof CqlSession) {
-                session = (CqlSession)bean;
+                session = (CqlSession) bean;
                 keyspace = session.getKeyspace().isPresent() ? session.getKeyspace().get().toString() : null;
             } else {
                 throw new IllegalArgumentException("CQL Bean type should be of type CqlSession but was " + bean);
@@ -185,8 +184,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Instead of using a hostname:port, refer to an existing configured Session
-     * or Cluster from the Camel registry to be used.
+     * Instead of using a hostname:port, refer to an existing configured Session or Cluster from the Camel registry to
+     * be used.
      */
     public void setBean(String beanRef) {
         this.beanRef = beanRef;
@@ -207,8 +206,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
-     * comma.
+     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
      */
     public void setHosts(String hosts) {
         this.hosts = hosts;
@@ -252,8 +250,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * CQL query to perform. Can be overridden with the message header with key
-     * CamelCqlQuery.
+     * CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
      */
     public void setCql(String cql) {
         this.cql = cql;
@@ -323,8 +320,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a custom class that implements logic for converting ResultSet into
-     * message body ALL, ONE, LIMIT_10, LIMIT_100...
+     * To use a custom class that implements logic for converting ResultSet into message body ALL, ONE, LIMIT_10,
+     * LIMIT_100...
      */
     public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
         this.resultSetConversionStrategy = resultSetConversionStrategy;
@@ -351,6 +348,5 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     public void setLoadBalancingPolicyClass(String loadBalancingPolicyClass) {
         this.loadBalancingPolicyClass = loadBalancingPolicyClass;
     }
-
 
 }

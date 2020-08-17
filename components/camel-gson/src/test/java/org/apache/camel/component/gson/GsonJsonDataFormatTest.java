@@ -28,7 +28,8 @@ public class GsonJsonDataFormatTest extends GsonMarshalTest {
 
     @Test
     public void testUnmarshalMap() {
-        Map<?, ?> unmarshalled = template.requestBody("direct:json", "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
+        Map<?, ?> unmarshalled = template.requestBody("direct:json",
+                "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
         Map<?, ?> map1 = (Map<?, ?>) unmarshalled.get("pointsOfSale");
         Map<?, ?> map2 = (Map<?, ?>) map1.get("pointOfSale");
         assertEquals("newpad", map2.get("prodcut"), "Don't get the right value");
@@ -44,7 +45,7 @@ public class GsonJsonDataFormatTest extends GsonMarshalTest {
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Gson);
                 from("direct:backPojo").unmarshal().json(JsonLibrary.Gson, TestPojo.class).to("mock:reversePojo");
-                
+
                 from("direct:json").unmarshal().json(JsonLibrary.Gson, Map.class);
             }
         };

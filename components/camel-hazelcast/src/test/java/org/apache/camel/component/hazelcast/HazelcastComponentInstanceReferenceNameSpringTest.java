@@ -27,7 +27,6 @@ public class HazelcastComponentInstanceReferenceNameSpringTest extends Hazelcast
     private static final String TEST_VALUE = "TestValue";
     private static final String TEST_KEY = "TestKey";
 
-
     @Test
     public void testComparePutAndGet() {
         template.sendBodyAndHeader("direct:testHazelcastInstanceBeanRefPut", TEST_VALUE,
@@ -43,8 +42,6 @@ public class HazelcastComponentInstanceReferenceNameSpringTest extends Hazelcast
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "/META-INF/spring/test-camel-context-hazelcast-instance-name-reference.xml"
-        );
+                "/META-INF/spring/test-camel-context-hazelcast-instance-name-reference.xml");
     }
 }
-

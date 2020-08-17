@@ -30,8 +30,7 @@ public class SpringIntegrationMessageTest {
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.start();
 
-        org.springframework.messaging.Message testSpringMessage =
-            MessageBuilder.withPayload("Test")
+        org.springframework.messaging.Message testSpringMessage = MessageBuilder.withPayload("Test")
                 .setHeader("header1", "value1")
                 .setHeader("header2", "value2")
                 .build();

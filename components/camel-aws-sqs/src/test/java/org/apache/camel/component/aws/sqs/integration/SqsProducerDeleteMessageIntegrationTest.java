@@ -58,9 +58,11 @@ public class SqsProducerDeleteMessageIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=false").startupOrder(1).log("${body}")
-                    .to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&operation=deleteMessage").log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
-                    .to("mock:result");
+                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=false")
+                        .startupOrder(1).log("${body}")
+                        .to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&operation=deleteMessage")
+                        .log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
+                        .to("mock:result");
             }
         };
     }

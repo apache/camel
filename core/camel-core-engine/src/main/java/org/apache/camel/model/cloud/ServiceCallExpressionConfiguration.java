@@ -87,8 +87,7 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
     }
 
     /**
-     * The header that holds the service host information, default
-     * ServiceCallConstants.SERVICE_HOST
+     * The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST
      */
     public void setHostHeader(String hostHeader) {
         this.hostHeader = hostHeader;
@@ -99,8 +98,7 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
     }
 
     /**
-     * The header that holds the service port information, default
-     * ServiceCallConstants.SERVICE_PORT
+     * The header that holds the service port information, default ServiceCallConstants.SERVICE_PORT
      */
     public void setPortHeader(String portHeader) {
         this.portHeader = portHeader;
@@ -123,8 +121,7 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
     }
 
     /**
-     * The header that holds the service host information, default
-     * ServiceCallConstants.SERVICE_HOST
+     * The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST
      */
     public ServiceCallExpressionConfiguration hostHeader(String hostHeader) {
         setHostHeader(hostHeader);
@@ -132,8 +129,7 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
     }
 
     /**
-     * The header that holds the service port information, default
-     * ServiceCallConstants.SERVICE_PORT
+     * The header that holds the service port information, default ServiceCallConstants.SERVICE_PORT
      */
     public ServiceCallExpressionConfiguration portHeader(String portHeader) {
         setPortHeader(portHeader);
@@ -168,7 +164,8 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
 
         if (factoryKey != null) {
             // First try to find the factory from the registry.
-            ServiceExpressionFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceExpressionFactory.class);
+            ServiceExpressionFactory factory
+                    = CamelContextHelper.lookup(camelContext, factoryKey, ServiceExpressionFactory.class);
             if (factory != null) {
                 // If a factory is found in the registry do not re-configure it
                 // as
@@ -179,30 +176,35 @@ public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration
                 Class<?> type;
                 try {
                     // Then use Service factory.
-                    type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
+                    type = camelContext.adapt(ExtendedCamelContext.class)
+                            .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
                 } catch (Exception e) {
                     throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
                 }
 
                 if (type != null) {
                     if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
-                        factory = (ServiceExpressionFactory)camelContext.getInjector().newInstance(type, false);
+                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type, false);
                     } else {
-                        throw new IllegalArgumentException("Resolving Expression: " + factoryKey + " detected type conflict: Not a ExpressionFactory implementation. Found: "
+                        throw new IllegalArgumentException(
+                                "Resolving Expression: " + factoryKey
+                                                           + " detected type conflict: Not a ExpressionFactory implementation. Found: "
                                                            + type.getName());
                     }
                 }
 
                 try {
                     Map<String, Object> parameters = new HashMap<>();
-                    camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null, false);
+                    camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null,
+                            false);
 
                     parameters.replaceAll((k, v) -> {
                         if (v instanceof String) {
                             try {
-                                v = camelContext.resolvePropertyPlaceholders((String)v);
+                                v = camelContext.resolvePropertyPlaceholders((String) v);
                             } catch (Exception e) {
-                                throw new IllegalArgumentException(String.format("Exception while resolving %s (%s)", k, v.toString()), e);
+                                throw new IllegalArgumentException(
+                                        String.format("Exception while resolving %s (%s)", k, v.toString()), e);
                             }
                         }
 

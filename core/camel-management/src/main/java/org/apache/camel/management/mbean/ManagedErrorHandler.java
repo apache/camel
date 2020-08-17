@@ -237,7 +237,7 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         }
 
         RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
-        return (double) redelivery.getRedeliveryPolicy().getCollisionAvoidancePercent();  
+        return (double) redelivery.getRedeliveryPolicy().getCollisionAvoidancePercent();
     }
 
     @Override

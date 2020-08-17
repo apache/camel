@@ -78,13 +78,14 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         if (!Files.isDirectory(baseDirectory)) {
-            throw new IllegalArgumentException(String.format("Parameter path must be directory, %s given", baseDirectory.toString()));
+            throw new IllegalArgumentException(
+                    String.format("Parameter path must be directory, %s given", baseDirectory.toString()));
         }
 
         DirectoryWatcher.Builder watcherBuilder = DirectoryWatcher.builder()
-            .path(this.baseDirectory)
-            .logger(LOG)
-            .listener(new FileWatchDirectoryChangeListener());
+                .path(this.baseDirectory)
+                .logger(LOG)
+                .listener(new FileWatchDirectoryChangeListener());
 
         if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
             // If not macOS, use FileSystem WatchService. io.methvin.watcher uses by default WatchService associated to default FileSystem.
@@ -101,9 +102,9 @@ public class FileWatchConsumer extends DefaultConsumer {
         this.watcher = watcherBuilder.build();
 
         watchDirExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-            .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
+                .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
         pollExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-            .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
+                .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
 
         for (int i = 0; i < getEndpoint().getPollThreads(); i++) {
             this.watcher.watchAsync(watchDirExecutorService);
@@ -176,7 +177,8 @@ public class FileWatchConsumer extends DefaultConsumer {
                     return false;
                 }
             } catch (IOException e) {
-                LOG.warn(String.format("Exception occurred during executing filter. Filtering file %s out.", fileEvent.getEventPath()), e);
+                LOG.warn(String.format("Exception occurred during executing filter. Filtering file %s out.",
+                        fileEvent.getEventPath()), e);
                 return false;
             }
         }
@@ -187,8 +189,8 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         return antPathMatcher.match(
-            getEndpoint().getAntInclude(),
-            PathUtils.normalizeToString(baseDirectory.relativize(fileEvent.getEventPath())) // match against relativized path
+                getEndpoint().getAntInclude(),
+                PathUtils.normalizeToString(baseDirectory.relativize(fileEvent.getEventPath())) // match against relativized path
         );
     }
 

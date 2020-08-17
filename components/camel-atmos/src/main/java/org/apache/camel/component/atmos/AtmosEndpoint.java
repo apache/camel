@@ -37,7 +37,8 @@ import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER
 /**
  * Integract with EMC's ViPR object data services using the Atmos Client.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation",
+             category = { Category.CLOUD, Category.FILE })
 public class AtmosEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -82,8 +83,8 @@ public class AtmosEndpoint extends DefaultEndpoint {
     /**
      * Create one of the camel consumer available based on the configuration
      *
-     * @param processor the given processor
-     * @return the camel consumer
+     * @param  processor the given processor
+     * @return           the camel consumer
      */
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {

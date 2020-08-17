@@ -85,13 +85,13 @@ public class LevelDBAggregateRecoverDeadLetterChannelTest extends CamelTestSuppo
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

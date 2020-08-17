@@ -63,7 +63,7 @@ public class NettyUDPLargeMessageInOnlyTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:udp://localhost:{{port}}?receiveBufferSizePredictor=2048&sync=false")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

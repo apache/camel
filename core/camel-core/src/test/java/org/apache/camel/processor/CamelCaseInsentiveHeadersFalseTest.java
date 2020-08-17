@@ -47,7 +47,7 @@ public class CamelCaseInsentiveHeadersFalseTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when(header("foo")).to("mock:foo")
                         .otherwise().to("mock:bar");
             }

@@ -25,7 +25,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-
 public class JmsValidatorTest extends CamelTestSupport {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
@@ -70,15 +69,15 @@ public class JmsValidatorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jms:queue:inbox")
-                    .convertBodyTo(String.class)
-                    .doTry()
+                        .convertBodyTo(String.class)
+                        .doTry()
                         .to("validator:file:src/test/resources/myschema.xsd")
                         .to("jms:queue:valid")
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .to("jms:queue:invalid")
-                    .doFinally()
+                        .doFinally()
                         .to("jms:queue:finally")
-                    .end();
+                        .end();
 
                 from("jms:queue:valid").to("mock:valid");
                 from("jms:queue:invalid").to("mock:invalid");

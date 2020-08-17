@@ -380,7 +380,7 @@ public class CaseInsensitiveMapTest {
         objStream.writeObject(testMap);
 
         ObjectInputStream inStream = new ObjectInputStream(new ByteArrayInputStream(bStream.toByteArray()));
-        CaseInsensitiveMap testMapCopy = (CaseInsensitiveMap)inStream.readObject();
+        CaseInsensitiveMap testMapCopy = (CaseInsensitiveMap) inStream.readObject();
 
         assertTrue(testMapCopy.containsKey("key"));
     }

@@ -42,7 +42,8 @@ public class JcloudsComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String[] uriParts = remaining.split(JcloudsConstants.DELIMETER);
         if (uriParts.length != 2) {
-            throw new IllegalArgumentException("Invalid Endpoint URI: " + uri + ". It should contains a valid command and providerId");
+            throw new IllegalArgumentException(
+                    "Invalid Endpoint URI: " + uri + ". It should contains a valid command and providerId");
         }
         String endpointType = uriParts[0];
         String providerId = uriParts[1];
@@ -66,8 +67,9 @@ public class JcloudsComponent extends DefaultComponent {
 
     /**
      * Returns the {@link BlobStore} that matches the given providerOrApi.
-     * @param predicate The blobstore context name, provider or api.
-     * @return The matching {@link BlobStore}
+     * 
+     * @param  predicate The blobstore context name, provider or api.
+     * @return           The matching {@link BlobStore}
      */
     protected BlobStore getBlobStore(String predicate) throws IllegalArgumentException {
         if (blobStores != null && !blobStores.isEmpty()) {
@@ -94,8 +96,9 @@ public class JcloudsComponent extends DefaultComponent {
 
     /**
      * Returns the {@link ComputeService} that matches the given predicate.
-     * @param predicate The compute context name, provider or api.
-     * @return The matching {@link ComputeService}
+     * 
+     * @param  predicate The compute context name, provider or api.
+     * @return           The matching {@link ComputeService}
      */
     protected ComputeService getComputeService(String predicate) throws IllegalArgumentException {
         if (computeServices != null && !computeServices.isEmpty()) {
@@ -120,9 +123,9 @@ public class JcloudsComponent extends DefaultComponent {
     }
 
     /**
-     * Checks if jclouds {@link Context} supports the name.
-     * We need this method as getName is not supported in earlier micro version of 1.5.x.
-     * So we use this check to fallback to traditional means of looking up contexts and services, if name is not present.
+     * Checks if jclouds {@link Context} supports the name. We need this method as getName is not supported in earlier
+     * micro version of 1.5.x. So we use this check to fallback to traditional means of looking up contexts and
+     * services, if name is not present.
      */
     private boolean isNameSupportedByContext() {
         try {

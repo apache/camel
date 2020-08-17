@@ -151,6 +151,7 @@ public final class UniVocityTsvDataFormatUnmarshalSpringTest extends CamelSpring
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/univocity/UniVocityTsvDataFormatUnmarshalSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/univocity/UniVocityTsvDataFormatUnmarshalSpringTest.xml");
     }
 }

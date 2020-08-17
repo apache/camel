@@ -42,7 +42,7 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSplitterWithWrongFile() throws Exception {
         getMockEndpoint("mock:entry").expectedMessageCount(0);
@@ -50,7 +50,7 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
 
         // send a file which does not exit
         template.sendBody("direct:decompressFiles", new File("src/test/resources/data"));
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -60,9 +60,9 @@ public class TarSplitterRouteIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:errors"));
-                
+
                 from("direct:decompressFiles")
-                    .split(new TarSplitter()).streaming().shareUnitOfWork()
+                        .split(new TarSplitter()).streaming().shareUnitOfWork()
                         .to("log:entry")
                         .to("mock:entry");
             }

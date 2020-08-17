@@ -49,7 +49,7 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
 
         // the foo route is stopped so this service is no longer there
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
-            () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class));
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class));
         NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
         assertEquals(404, cause.getStatusCode());
 
@@ -65,12 +65,12 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo").routeId("foo")
-                    .to("mock:foo")
-                    .transform().constant("Bye World");
+                        .to("mock:foo")
+                        .transform().constant("Bye World");
 
                 from("netty-http:http://0.0.0.0:{{port}}/bar").routeId("bar")
-                    .to("mock:bar")
-                    .transform().constant("Bye Camel");
+                        .to("mock:bar")
+                        .transform().constant("Bye Camel");
             }
         };
     }

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ZooKeeperUtilsTest {
 
     private CamelContext camelContext = new DefaultCamelContext();
@@ -38,7 +39,7 @@ public class ZooKeeperUtilsTest {
         assertEquals(CreateMode.PERSISTENT_SEQUENTIAL, getCreateModeFromString("PERSISTENT_SEQUENTIAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.EPHEMERAL, getCreateModeFromString("DOESNOTEXIST", CreateMode.EPHEMERAL));
     }
-    
+
     @Test
     public void testCreateModeExtractionFromMessageHeader() {
         assertEquals(CreateMode.EPHEMERAL, testModeInMessage("EPHEMERAL", CreateMode.EPHEMERAL));

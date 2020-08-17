@@ -147,7 +147,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                             }
                             polled.run();
                         } catch (Throwable t) {
-                            LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.", t);
+                            LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.",
+                                    t);
                         }
                     }
                 } finally {

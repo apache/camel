@@ -20,11 +20,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.http.common.HttpConsumer;
 
-
 /**
- * A Consumer of exchanges for a service in Resteasy.  ResteasyConsumer acts a Resteasy
- * service to receive requests, convert them, and forward them to Camel
- * route for processing.
+ * A Consumer of exchanges for a service in Resteasy. ResteasyConsumer acts a Resteasy service to receive requests,
+ * convert them, and forward them to Camel route for processing.
  *
  */
 public class ResteasyConsumer extends HttpConsumer {

@@ -99,8 +99,7 @@ public class HBaseComponent extends DefaultComponent {
     }
 
     /**
-     * Maximum number of references to keep for each table in the HTable pool.
-     * The default value is 10.
+     * Maximum number of references to keep for each table in the HTable pool. The default value is 10.
      */
     public void setPoolMaxSize(int poolMaxSize) {
         this.poolMaxSize = poolMaxSize;

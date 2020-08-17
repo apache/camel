@@ -145,8 +145,8 @@ public class UpdateIssueProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("jira://updateIssue?jiraUrl=" + JIRA_CREDENTIALS)
-                    .to(mockResult);
+                        .to("jira://updateIssue?jiraUrl=" + JIRA_CREDENTIALS)
+                        .to(mockResult);
             }
         };
     }

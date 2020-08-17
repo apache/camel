@@ -44,7 +44,7 @@ public enum DispositionMode {
     }
 
     public static DispositionMode parseDispositionMode(String dispositionModeString) {
-        switch(dispositionModeString) {
+        switch (dispositionModeString) {
             case "manual-action/MDN-sent-manually":
                 return MANUAL_ACTION_MDN_SENT_MANUALLY;
             case "manual-actionMDN-sent-automatically":

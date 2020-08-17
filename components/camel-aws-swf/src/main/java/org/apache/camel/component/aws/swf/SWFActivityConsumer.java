@@ -31,7 +31,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
     private SWFEndpoint endpoint;
     private final SWFConfiguration configuration;
     private GenericActivityWorker genericWorker;
-    
+
     private transient String swfActivityConsumerToString;
 
     public SWFActivityConsumer(SWFEndpoint endpoint, Processor processor, SWFConfiguration configuration) {
@@ -53,7 +53,8 @@ public class SWFActivityConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         CamelActivityImplementationFactory factory = new CamelActivityImplementationFactory(this, configuration);
-        genericWorker = new GenericActivityWorker(endpoint.getSWClient(), configuration.getDomainName(), configuration.getActivityList());
+        genericWorker = new GenericActivityWorker(
+                endpoint.getSWClient(), configuration.getDomainName(), configuration.getActivityList());
         genericWorker.setActivityImplementationFactory(factory);
         genericWorker.setTaskExecutorThreadPoolSize(configuration.getActivityThreadPoolSize());
         genericWorker.start();

@@ -32,14 +32,14 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CxfSimpleRouterTest extends CamelTestSupport {    
-    
+public class CxfSimpleRouterTest extends CamelTestSupport {
+
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
-    
+
     protected Server server;
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    
+
     protected String getRouterAddress() {
         return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/router";
     }
@@ -47,15 +47,15 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     protected String getServiceAddress() {
         return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/helloworld";
     }
-    
+
     protected void configureFactory(ServerFactoryBean svrBean) {
     }
 
     @BeforeEach
-    public void startService() {       
+    public void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
-    
+
         svrBean.setAddress(getServiceAddress());
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
@@ -63,22 +63,22 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         server = svrBean.create();
         server.start();
     }
-    
+
     @AfterEach
     public void shutdownService() {
         if (server != null) {
             server.stop();
         }
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
                 from(routerEndpointURI)
-                    .to("log:org.apache.camel?level=DEBUG")
-                    .to(serviceEndpointURI);
+                        .to("log:org.apache.camel?level=DEBUG")
+                        .to(serviceEndpointURI);
             }
         };
     }
@@ -87,19 +87,19 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }
-    
+
     protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(getRouterAddress());
-        clientBean.setServiceClass(HelloService.class); 
-        
+        clientBean.setServiceClass(HelloService.class);
+
         HelloService client = (HelloService) proxyFactory.create();
         return client;
     }
 
     @Test
-    public void testInvokingServiceFromCXFClient() throws Exception {        
+    public void testInvokingServiceFromCXFClient() throws Exception {
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
         assertEquals("echo hello world", result, "we should get the right answer from router");

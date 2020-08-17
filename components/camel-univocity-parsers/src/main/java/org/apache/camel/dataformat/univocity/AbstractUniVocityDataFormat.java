@@ -47,9 +47,12 @@ import static org.apache.camel.support.ExchangeHelper.getCharsetName;
  * @param <P>   uniVocity parser class
  * @param <DF>  the data format class (for providing a fluent API)
  */
-public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends CommonWriterSettings<F>,
-        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>>
-        extends ServiceSupport implements DataFormat, DataFormatName {
+public abstract class AbstractUniVocityDataFormat<
+        F extends Format, CWS extends CommonWriterSettings<F>,
+        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>,
+        DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>>
+        extends ServiceSupport
+        implements DataFormat, DataFormatName {
     protected String nullValue;
     protected Boolean skipEmptyLines;
     protected Boolean ignoreTrailingWhitespaces;
@@ -126,23 +129,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets the String representation of a null value.
-     * If {@code null} then the default settings value is used.
+     * Gets the String representation of a null value. If {@code null} then the default settings value is used.
      *
      * @return the String representation of a null value
-     * @see com.univocity.parsers.common.CommonSettings#getNullValue()
+     * @see    com.univocity.parsers.common.CommonSettings#getNullValue()
      */
     public String getNullValue() {
         return nullValue;
     }
 
     /**
-     * Sets the String representation of a null value.
-     * If {@code null} then the default settings value is used.
+     * Sets the String representation of a null value. If {@code null} then the default settings value is used.
      *
-     * @param nullValue the String representation of a null value
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonSettings#setNullValue(String)
+     * @param  nullValue the String representation of a null value
+     * @return           current data format instance, fluent API
+     * @see              com.univocity.parsers.common.CommonSettings#setNullValue(String)
      */
     public DF setNullValue(String nullValue) {
         this.nullValue = nullValue;
@@ -150,23 +151,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets whether or not empty lines should be ignored.
-     * If {@code null} then the default settings value is used.
+     * Gets whether or not empty lines should be ignored. If {@code null} then the default settings value is used.
      *
      * @return whether or not empty lines should be ignored
-     * @see com.univocity.parsers.common.CommonSettings#getSkipEmptyLines()
+     * @see    com.univocity.parsers.common.CommonSettings#getSkipEmptyLines()
      */
     public Boolean getSkipEmptyLines() {
         return skipEmptyLines;
     }
 
     /**
-     * Sets whether or not empty lines should be ignored.
-     * If {@code null} then the default settings value is used.
+     * Sets whether or not empty lines should be ignored. If {@code null} then the default settings value is used.
      *
-     * @param skipEmptyLines whether or not empty lines should be ignored
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonSettings#setSkipEmptyLines(boolean)
+     * @param  skipEmptyLines whether or not empty lines should be ignored
+     * @return                current data format instance, fluent API
+     * @see                   com.univocity.parsers.common.CommonSettings#setSkipEmptyLines(boolean)
      */
     public DF setSkipEmptyLines(Boolean skipEmptyLines) {
         this.skipEmptyLines = skipEmptyLines;
@@ -174,23 +173,23 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets whether or not trailing whitespaces should be ignored.
-     * If {@code null} then the default settings value is used.
+     * Gets whether or not trailing whitespaces should be ignored. If {@code null} then the default settings value is
+     * used.
      *
      * @return whether or not trailing whitespaces should be ignored
-     * @see com.univocity.parsers.common.CommonSettings#getIgnoreTrailingWhitespaces()
+     * @see    com.univocity.parsers.common.CommonSettings#getIgnoreTrailingWhitespaces()
      */
     public Boolean getIgnoreTrailingWhitespaces() {
         return ignoreTrailingWhitespaces;
     }
 
     /**
-     * Sets whether or not trailing whitespaces should be ignored.
-     * If {@code null} then the default settings value is used.
+     * Sets whether or not trailing whitespaces should be ignored. If {@code null} then the default settings value is
+     * used.
      *
-     * @param ignoreTrailingWhitespaces whether or not trailing whitespaces should be ignored
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonSettings#setIgnoreTrailingWhitespaces(boolean)
+     * @param  ignoreTrailingWhitespaces whether or not trailing whitespaces should be ignored
+     * @return                           current data format instance, fluent API
+     * @see                              com.univocity.parsers.common.CommonSettings#setIgnoreTrailingWhitespaces(boolean)
      */
     public DF setIgnoreTrailingWhitespaces(Boolean ignoreTrailingWhitespaces) {
         this.ignoreTrailingWhitespaces = ignoreTrailingWhitespaces;
@@ -198,23 +197,23 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets whether or not leading whitespaces should be ignored.
-     * If {@code null} then the default settings value is used.
+     * Gets whether or not leading whitespaces should be ignored. If {@code null} then the default settings value is
+     * used.
      *
      * @return whether or not leading whitespaces should be ignored
-     * @see com.univocity.parsers.common.CommonSettings#getIgnoreLeadingWhitespaces()
+     * @see    com.univocity.parsers.common.CommonSettings#getIgnoreLeadingWhitespaces()
      */
     public Boolean getIgnoreLeadingWhitespaces() {
         return ignoreLeadingWhitespaces;
     }
 
     /**
-     * Sets whether or not leading whitespaces should be ignored.
-     * If {@code null} then the default settings value is used.
+     * Sets whether or not leading whitespaces should be ignored. If {@code null} then the default settings value is
+     * used.
      *
-     * @param ignoreLeadingWhitespaces whether or not leading whitespaces should be ignored
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonSettings#setIgnoreLeadingWhitespaces(boolean)
+     * @param  ignoreLeadingWhitespaces whether or not leading whitespaces should be ignored
+     * @return                          current data format instance, fluent API
+     * @see                             com.univocity.parsers.common.CommonSettings#setIgnoreLeadingWhitespaces(boolean)
      */
     public DF setIgnoreLeadingWhitespaces(Boolean ignoreLeadingWhitespaces) {
         this.ignoreLeadingWhitespaces = ignoreLeadingWhitespaces;
@@ -222,25 +221,23 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets whether or not headers are disabled.
-     * If {@code true} then it passes {@code null} to
+     * Gets whether or not headers are disabled. If {@code true} then it passes {@code null} to
      * {@link com.univocity.parsers.common.CommonSettings#setHeaders(String...)} in order to disabled them.
      *
      * @return whether or not headers are disabled
-     * @see com.univocity.parsers.common.CommonSettings#getHeaders()
+     * @see    com.univocity.parsers.common.CommonSettings#getHeaders()
      */
     public boolean isHeadersDisabled() {
         return headersDisabled;
     }
 
     /**
-     * Sets whether or not headers are disabled.
-     * If {@code true} then it passes {@code null} to
+     * Sets whether or not headers are disabled. If {@code true} then it passes {@code null} to
      * {@link com.univocity.parsers.common.CommonSettings#setHeaders(String...)} in order to disabled them.
      *
-     * @param headersDisabled whether or not headers are disabled
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonSettings#setHeaders(String...)
+     * @param  headersDisabled whether or not headers are disabled
+     * @return                 current data format instance, fluent API
+     * @see                    com.univocity.parsers.common.CommonSettings#setHeaders(String...)
      */
     public DF setHeadersDisabled(boolean headersDisabled) {
         this.headersDisabled = headersDisabled;
@@ -248,23 +245,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets the headers.
-     * If {@code null} then the default settings value is used.
+     * Gets the headers. If {@code null} then the default settings value is used.
      *
      * @return the headers
-     * @see com.univocity.parsers.common.CommonSettings#getHeaders()
+     * @see    com.univocity.parsers.common.CommonSettings#getHeaders()
      */
     public String[] getHeaders() {
         return headers;
     }
 
     /**
-     * Sets the headers.
-     * If {@code null} then the default settings value is used.
+     * Sets the headers. If {@code null} then the default settings value is used.
      *
-     * @param headers the headers
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonSettings#setHeaders(String...)
+     * @param  headers the headers
+     * @return         current data format instance, fluent API
+     * @see            com.univocity.parsers.common.CommonSettings#setHeaders(String...)
      */
     public DF setHeaders(String[] headers) {
         this.headers = headers;
@@ -272,23 +267,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets whether or not the header extraction is enabled.
-     * If {@code null} then the default settings value is used.
+     * Gets whether or not the header extraction is enabled. If {@code null} then the default settings value is used.
      *
      * @return whether or not the header extraction is enabled
-     * @see com.univocity.parsers.common.CommonParserSettings#isHeaderExtractionEnabled()
+     * @see    com.univocity.parsers.common.CommonParserSettings#isHeaderExtractionEnabled()
      */
     public Boolean getHeaderExtractionEnabled() {
         return headerExtractionEnabled;
     }
 
     /**
-     * Sets whether or not the header extraction is enabled.
-     * If {@code null} then the default settings value is used.
+     * Sets whether or not the header extraction is enabled. If {@code null} then the default settings value is used.
      *
-     * @param headerExtractionEnabled whether or not the header extraction is enabled
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonParserSettings#setHeaderExtractionEnabled(boolean)
+     * @param  headerExtractionEnabled whether or not the header extraction is enabled
+     * @return                         current data format instance, fluent API
+     * @see                            com.univocity.parsers.common.CommonParserSettings#setHeaderExtractionEnabled(boolean)
      */
     public DF setHeaderExtractionEnabled(Boolean headerExtractionEnabled) {
         this.headerExtractionEnabled = headerExtractionEnabled;
@@ -296,23 +289,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets the number of records to read.
-     * If {@code null} then the default settings value is used.
+     * Gets the number of records to read. If {@code null} then the default settings value is used.
      *
      * @return the number of records to read
-     * @see com.univocity.parsers.common.CommonParserSettings#getNumberOfRecordsToRead()
+     * @see    com.univocity.parsers.common.CommonParserSettings#getNumberOfRecordsToRead()
      */
     public Integer getNumberOfRecordsToRead() {
         return numberOfRecordsToRead;
     }
 
     /**
-     * Sets the number of records to read.
-     * If {@code null} then the default settings value is used.
+     * Sets the number of records to read. If {@code null} then the default settings value is used.
      *
-     * @param numberOfRecordsToRead the number of records to read
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonParserSettings#setNumberOfRecordsToRead(long)
+     * @param  numberOfRecordsToRead the number of records to read
+     * @return                       current data format instance, fluent API
+     * @see                          com.univocity.parsers.common.CommonParserSettings#setNumberOfRecordsToRead(long)
      */
     public DF setNumberOfRecordsToRead(Integer numberOfRecordsToRead) {
         this.numberOfRecordsToRead = numberOfRecordsToRead;
@@ -320,23 +311,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets the String representation of an empty value.
-     * If {@code null} then the default settings value is used.
+     * Gets the String representation of an empty value. If {@code null} then the default settings value is used.
      *
      * @return the String representation of an empty value
-     * @see com.univocity.parsers.common.CommonWriterSettings#getEmptyValue()
+     * @see    com.univocity.parsers.common.CommonWriterSettings#getEmptyValue()
      */
     public String getEmptyValue() {
         return emptyValue;
     }
 
     /**
-     * Sets the String representation of an empty value.
-     * If {@code null} then the default settings value is used.
+     * Sets the String representation of an empty value. If {@code null} then the default settings value is used.
      *
-     * @param emptyValue the String representation of an empty value
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonWriterSettings#setEmptyValue(String)
+     * @param  emptyValue the String representation of an empty value
+     * @return            current data format instance, fluent API
+     * @see               com.univocity.parsers.common.CommonWriterSettings#setEmptyValue(String)
      */
     public DF setEmptyValue(String emptyValue) {
         this.emptyValue = emptyValue;
@@ -344,23 +333,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets the line separator.
-     * If {@code null} then the default format value is used.
+     * Gets the line separator. If {@code null} then the default format value is used.
      *
      * @return the line separator
-     * @see com.univocity.parsers.common.Format#getLineSeparatorString()
+     * @see    com.univocity.parsers.common.Format#getLineSeparatorString()
      */
     public String getLineSeparator() {
         return lineSeparator;
     }
 
     /**
-     * Sets the line separator.
-     * If {@code null} then the default format value is used.
+     * Sets the line separator. If {@code null} then the default format value is used.
      *
-     * @param lineSeparator the line separator
-     * @return current data format instance, fluent API
-     * @see Format#setLineSeparator(String)
+     * @param  lineSeparator the line separator
+     * @return               current data format instance, fluent API
+     * @see                  Format#setLineSeparator(String)
      */
     public DF setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;
@@ -368,23 +355,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets the normalized line separator.
-     * If {@code null} then the default format value is used.
+     * Gets the normalized line separator. If {@code null} then the default format value is used.
      *
      * @return the normalized line separator
-     * @see com.univocity.parsers.common.Format#getNormalizedNewline()
+     * @see    com.univocity.parsers.common.Format#getNormalizedNewline()
      */
     public Character getNormalizedLineSeparator() {
         return normalizedLineSeparator;
     }
 
     /**
-     * Sets the normalized line separator.
-     * If {@code null} then the default format value is used.
+     * Sets the normalized line separator. If {@code null} then the default format value is used.
      *
-     * @param normalizedLineSeparator the normalized line separator
-     * @return current data format instance, fluent API
-     * @see Format#setNormalizedNewline(char)
+     * @param  normalizedLineSeparator the normalized line separator
+     * @return                         current data format instance, fluent API
+     * @see                            Format#setNormalizedNewline(char)
      */
     public DF setNormalizedLineSeparator(Character normalizedLineSeparator) {
         this.normalizedLineSeparator = normalizedLineSeparator;
@@ -392,23 +377,21 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     }
 
     /**
-     * Gets the comment symbol.
-     * If {@code null} then the default format value is used.
+     * Gets the comment symbol. If {@code null} then the default format value is used.
      *
      * @return the comment symbol
-     * @see com.univocity.parsers.common.Format#getComment()
+     * @see    com.univocity.parsers.common.Format#getComment()
      */
     public Character getComment() {
         return comment;
     }
 
     /**
-     * Gets the comment symbol.
-     * If {@code null} then the default format value is used.
+     * Gets the comment symbol. If {@code null} then the default format value is used.
      *
-     * @param comment the comment symbol
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.Format#setComment(char)
+     * @param  comment the comment symbol
+     * @return         current data format instance, fluent API
+     * @see            com.univocity.parsers.common.Format#setComment(char)
      */
     public DF setComment(Character comment) {
         this.comment = comment;
@@ -427,8 +410,8 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     /**
      * Sets whether or not the unmarshalling should read lines lazily.
      *
-     * @param lazyLoad whether or not the unmarshalling should read lines lazily
-     * @return current data format instance, fluent API
+     * @param  lazyLoad whether or not the unmarshalling should read lines lazily
+     * @return          current data format instance, fluent API
      */
     public DF setLazyLoad(boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
@@ -447,8 +430,8 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     /**
      * Sets whether or not the unmarshalling should produces maps instead of lists.
      *
-     * @param asMap whether or not the unmarshalling should produces maps instead of lists
-     * @return current data format instance, fluent API
+     * @param  asMap whether or not the unmarshalling should produces maps instead of lists
+     * @return       current data format instance, fluent API
      */
     public DF setAsMap(boolean asMap) {
         this.asMap = asMap;
@@ -478,9 +461,9 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     /**
      * Creates a new instance of the uniVocity writer.
      *
-     * @param writer   Output writer to use
-     * @param settings Writer settings to use
-     * @return New uinstance of the uniVocity writer
+     * @param  writer   Output writer to use
+     * @param  settings Writer settings to use
+     * @return          New uinstance of the uniVocity writer
      */
     protected abstract W createWriter(Writer writer, CWS settings);
 
@@ -510,8 +493,8 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     /**
      * Creates a new instance of the uniVocity parser.
      *
-     * @param settings Parser settings to use
-     * @return New instance of the uniVocity parser
+     * @param  settings Parser settings to use
+     * @return          New instance of the uniVocity parser
      */
     protected abstract P createParser(CPS settings);
 

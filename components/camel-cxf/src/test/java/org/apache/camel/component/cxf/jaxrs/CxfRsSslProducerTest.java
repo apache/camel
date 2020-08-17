@@ -42,21 +42,21 @@ public class CxfRsSslProducerTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {     
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringSslProducer.xml");
     }
-    
+
     protected void setupDestinationURL(Message inMessage) {
         // do nothing here
     }
-    
+
     @Test
     public void testCorrectTrustStore() {
         Exchange exchange = template.send("direct://trust", new MyProcessor());
-     
+
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
-        
+
         assertNotNull(response, "The response should not be null");
         assertEquals(String.valueOf(response.getId()), "123", "Get a wrong customer id");
         assertEquals(response.getName(), "John", "Get a wrong customer name");

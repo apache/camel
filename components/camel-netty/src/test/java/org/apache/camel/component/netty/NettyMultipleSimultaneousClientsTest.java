@@ -91,9 +91,9 @@ public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .log("${body}")
-                    .transform(body().prepend("Bye "))
-                    .to("mock:result");
+                        .log("${body}")
+                        .transform(body().prepend("Bye "))
+                        .to("mock:result");
             }
         };
     }

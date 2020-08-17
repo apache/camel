@@ -25,7 +25,8 @@ import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceUsers;
 import org.apache.camel.component.wordpress.api.service.spi.UsersSPI;
 
-public class WordpressServiceUsersAdapter extends AbstractWordpressCrudServiceAdapter<UsersSPI, User, UserSearchCriteria> implements WordpressServiceUsers {
+public class WordpressServiceUsersAdapter extends AbstractWordpressCrudServiceAdapter<UsersSPI, User, UserSearchCriteria>
+        implements WordpressServiceUsers {
 
     public WordpressServiceUsersAdapter(String wordpressUrl, String apiVersion) {
         super(wordpressUrl, apiVersion);
@@ -34,8 +35,9 @@ public class WordpressServiceUsersAdapter extends AbstractWordpressCrudServiceAd
     @Override
     public List<User> list(UserSearchCriteria s) {
         // @formatter:off
-        return getSpi().list(getApiVersion(), s.getContext(), s.getPage(), s.getPerPage(), s.getSearch(), s.getExclude(), s.getInclude(), s.getOffset(), s.getOrder(), s.getOrderBy(), s.getSlug(),
-                             s.getRoles());
+        return getSpi().list(getApiVersion(), s.getContext(), s.getPage(), s.getPerPage(), s.getSearch(), s.getExclude(),
+                s.getInclude(), s.getOffset(), s.getOrder(), s.getOrderBy(), s.getSlug(),
+                s.getRoles());
         // @formatter:on
     }
 

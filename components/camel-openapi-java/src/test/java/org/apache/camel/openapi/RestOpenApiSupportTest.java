@@ -53,7 +53,6 @@ public class RestOpenApiSupportTest {
         headers.put(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, "http, HTTPS ");
         RestOpenApiSupport.setupXForwardedHeaders(openApi, headers);
 
-
         assertEquals(openApi.basePath, "/prefix/base");
         assertEquals(openApi.host, "host");
         assertTrue(openApi.schemes.contains("http"));
@@ -73,17 +72,16 @@ public class RestOpenApiSupportTest {
         headers.put(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, "http, HTTPS ");
         RestOpenApiSupport.setupXForwardedHeaders(openApi, headers);
 
-
         assertEquals(openApi.getServers().get(0).url, "http://host/prefix/base");
         assertEquals(openApi.getServers().get(1).url, "https://host/prefix/base");
-
 
     }
 
     @ParameterizedTest
     @MethodSource("basePathAndPrefixVariations")
-    public void shouldAdaptWithVaryingBasePathsAndPrefixes(final String prefix, final String basePath,
-        final String expected) {
+    public void shouldAdaptWithVaryingBasePathsAndPrefixes(
+            final String prefix, final String basePath,
+            final String expected) {
         Oas20Document doc = new Oas20Document();
         doc.basePath = basePath;
         final Oas20Document openApi = spy(doc);
@@ -97,8 +95,9 @@ public class RestOpenApiSupportTest {
 
     @ParameterizedTest
     @MethodSource("basePathAndPrefixVariations")
-    public void shouldAdaptWithVaryingBasePathsAndPrefixesV3(final String prefix, final String basePath,
-        final String expected) {
+    public void shouldAdaptWithVaryingBasePathsAndPrefixesV3(
+            final String prefix, final String basePath,
+            final String expected) {
         Oas30Document doc = new Oas30Document();
         if (basePath != null) {
             doc.addServer("http://myhost/" + basePath, null);
@@ -120,7 +119,7 @@ public class RestOpenApiSupportTest {
         final Oas20Document openApi = spy(new Oas20Document());
 
         RestOpenApiSupport.setupXForwardedHeaders(openApi,
-            Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
+                Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
 
         for (final String scheme : expected) {
             assertTrue(openApi.schemes.contains(scheme));
@@ -134,7 +133,7 @@ public class RestOpenApiSupportTest {
         final Oas30Document openApi = spy(new Oas30Document());
 
         RestOpenApiSupport.setupXForwardedHeaders(openApi,
-            Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
+                Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
 
         List<String> schemas = new ArrayList<String>();
         if (openApi.servers != null) {
@@ -143,7 +142,6 @@ public class RestOpenApiSupportTest {
                     URL url = new URL(server.url);
                     schemas.add(url.getProtocol());
                 } catch (MalformedURLException e) {
-
 
                 }
             }
@@ -165,30 +163,30 @@ public class RestOpenApiSupportTest {
 
     static Stream<Arguments> basePathAndPrefixVariations() {
         return Stream.of(//
-            arguments("/prefix", "/base", "/prefix/base"), //
-            arguments("/prefix", "/base/", "/prefix/base/"), //
-            arguments("/prefix", "base", "/prefix/base"), //
-            arguments("/prefix", "base/", "/prefix/base/"), //
-            arguments("/prefix", "", "/prefix"), //
-            arguments("/prefix", null, "/prefix"), //
-            arguments("/prefix/", "/base", "/prefix/base"), //
-            arguments("/prefix/", "/base/", "/prefix/base/"), //
-            arguments("/prefix/", "base", "/prefix/base"), //
-            arguments("/prefix/", "base/", "/prefix/base/"), //
-            arguments("/prefix/", "", "/prefix/"), //
-            arguments("/prefix/", null, "/prefix/"), //
-            arguments("prefix", "/base", "prefix/base"), //
-            arguments("prefix", "/base/", "prefix/base/"), //
-            arguments("prefix", "base", "prefix/base"), //
-            arguments("prefix", "base/", "prefix/base/"), //
-            arguments("prefix", "", "prefix"), //
-            arguments("prefix", null, "prefix"), //
-            arguments("prefix/", "/base", "prefix/base"), //
-            arguments("prefix/", "/base/", "prefix/base/"), //
-            arguments("prefix/", "base", "prefix/base"), //
-            arguments("prefix/", "base/", "prefix/base/"), //
-            arguments("prefix/", "", "prefix/"), //
-            arguments("prefix/", null, "prefix/") //
+                arguments("/prefix", "/base", "/prefix/base"), //
+                arguments("/prefix", "/base/", "/prefix/base/"), //
+                arguments("/prefix", "base", "/prefix/base"), //
+                arguments("/prefix", "base/", "/prefix/base/"), //
+                arguments("/prefix", "", "/prefix"), //
+                arguments("/prefix", null, "/prefix"), //
+                arguments("/prefix/", "/base", "/prefix/base"), //
+                arguments("/prefix/", "/base/", "/prefix/base/"), //
+                arguments("/prefix/", "base", "/prefix/base"), //
+                arguments("/prefix/", "base/", "/prefix/base/"), //
+                arguments("/prefix/", "", "/prefix/"), //
+                arguments("/prefix/", null, "/prefix/"), //
+                arguments("prefix", "/base", "prefix/base"), //
+                arguments("prefix", "/base/", "prefix/base/"), //
+                arguments("prefix", "base", "prefix/base"), //
+                arguments("prefix", "base/", "prefix/base/"), //
+                arguments("prefix", "", "prefix"), //
+                arguments("prefix", null, "prefix"), //
+                arguments("prefix/", "/base", "prefix/base"), //
+                arguments("prefix/", "/base/", "prefix/base/"), //
+                arguments("prefix/", "base", "prefix/base"), //
+                arguments("prefix/", "base/", "prefix/base/"), //
+                arguments("prefix/", "", "prefix/"), //
+                arguments("prefix/", null, "prefix/") //
         );
     }
 
@@ -196,14 +194,14 @@ public class RestOpenApiSupportTest {
         final String[] none = new String[0];
 
         return Stream.of(//
-            arguments(null, none), //
-            arguments("", none), //
-            arguments(",", none), //
-            arguments(" , ", none), //
-            arguments("HTTPS,http", new String[] {"https", "http"}), //
-            arguments(" HTTPS,  http ", new String[] {"https", "http"}), //
-            arguments(",http,", new String[] {"http"}), //
-            arguments("hTtpS", new String[] {"https"})//
+                arguments(null, none), //
+                arguments("", none), //
+                arguments(",", none), //
+                arguments(" , ", none), //
+                arguments("HTTPS,http", new String[] { "https", "http" }), //
+                arguments(" HTTPS,  http ", new String[] { "https", "http" }), //
+                arguments(",http,", new String[] { "http" }), //
+                arguments("hTtpS", new String[] { "https" })//
         );
     }
 }

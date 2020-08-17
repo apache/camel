@@ -44,7 +44,8 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         mock.expectedFileExists("target/data/file/hello.txt", "Bye World");
 
         template.sendBodyAndHeader("file://target/data/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file?fileExist=TryRename&tempPrefix=tmp", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=TryRename&tempPrefix=tmp", "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         context.getRouteController().startAllRoutes();
 
@@ -56,7 +57,8 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file?noop=true&initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file?noop=true&initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

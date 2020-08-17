@@ -72,13 +72,15 @@ public class JGroupsRaftProducer extends DefaultProducer {
         if (body != null) {
             byte[] result;
             if (setOffset != null && setLength != null && setTimeout != null && setTimeUnit != null) {
-                LOG.debug("Calling set(byte[] {}, int {}, int {}, long {}, TimeUnit {}) method on raftHandle.", body, setOffset, setLength, setTimeout, setTimeUnit);
+                LOG.debug("Calling set(byte[] {}, int {}, int {}, long {}, TimeUnit {}) method on raftHandle.", body, setOffset,
+                        setLength, setTimeout, setTimeUnit);
                 result = raftHandle.set(body, setOffset, setLength, setTimeout, setTimeUnit);
             } else if (setOffset != null && setLength != null) {
                 LOG.debug("Calling set(byte[] {}, int {}, int {}) method on raftHandle.", body, setOffset, setLength);
                 result = raftHandle.set(body, setOffset, setLength);
             } else {
-                LOG.debug("Calling set(byte[] {}, int {}, int {} (i.e. body.length)) method on raftHandle.", body, 0, body.length);
+                LOG.debug("Calling set(byte[] {}, int {}, int {} (i.e. body.length)) method on raftHandle.", body, 0,
+                        body.length);
                 result = raftHandle.set(body, 0, body.length);
             }
             endpoint.populateJGroupsRaftHeaders(exchange);

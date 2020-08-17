@@ -82,8 +82,8 @@ public class LambdaConfiguration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region
+     * (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -99,7 +99,7 @@ public class LambdaConfiguration implements Cloneable {
     public void setOperation(LambdaOperations operation) {
         this.operation = operation;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -132,27 +132,26 @@ public class LambdaConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will
-     * look for a client instance in the registry automatically otherwise it
-     * will skip that checking.
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
      */
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
     }
-    
+
     // *************************************************
     //
     // *************************************************
 
     public LambdaConfiguration copy() {
         try {
-            return (LambdaConfiguration)super.clone();
+            return (LambdaConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

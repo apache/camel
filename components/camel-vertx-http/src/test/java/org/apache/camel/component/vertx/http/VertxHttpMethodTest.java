@@ -40,7 +40,8 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
 
     @Test
     public void testMethodSetFromHeader() {
-        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_METHOD, HttpMethod.PUT.name(), String.class);
+        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_METHOD, HttpMethod.PUT.name(),
+                String.class);
         assertEquals(HttpMethod.PUT.name(), result);
     }
 
@@ -52,7 +53,8 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
 
     @Test
     public void testDefaultMethodGetWhenQueryStringProvidedFromHeader() {
-        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_QUERY, "foo=bar&cheese=wine", String.class);
+        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_QUERY, "foo=bar&cheese=wine",
+                String.class);
         assertEquals(HttpMethod.GET.name(), result);
     }
 
@@ -70,7 +72,8 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
 
     @Test
     public void testHeaderConfigurationPrecedence() {
-        String result = template.requestBodyAndHeader(getProducerUri() + "?foo=bar", null, Exchange.HTTP_METHOD, HttpMethod.PUT.name(), String.class);
+        String result = template.requestBodyAndHeader(getProducerUri() + "?foo=bar", null, Exchange.HTTP_METHOD,
+                HttpMethod.PUT.name(), String.class);
         assertEquals(HttpMethod.PUT.name(), result);
     }
 

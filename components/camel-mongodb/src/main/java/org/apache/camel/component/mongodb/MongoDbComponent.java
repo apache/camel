@@ -33,11 +33,12 @@ import org.apache.camel.support.DefaultComponent;
 @Component("mongodb")
 public class MongoDbComponent extends DefaultComponent {
 
-    public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(Arrays.asList(
-            MongoDbOperation.insert,
-            MongoDbOperation.save,
-            MongoDbOperation.update,
-            MongoDbOperation.remove));
+    public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(
+            Arrays.asList(
+                    MongoDbOperation.insert,
+                    MongoDbOperation.save,
+                    MongoDbOperation.update,
+                    MongoDbOperation.remove));
 
     @Metadata
     private MongoClient mongoConnection;
@@ -70,8 +71,7 @@ public class MongoDbComponent extends DefaultComponent {
     }
 
     /**
-     * Shared client used for connection.
-     * All endpoints generated from the component will share this connection client.
+     * Shared client used for connection. All endpoints generated from the component will share this connection client.
      */
     public void setMongoConnection(MongoClient mongoConnection) {
         this.mongoConnection = mongoConnection;

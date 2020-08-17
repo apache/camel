@@ -34,13 +34,10 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 2000)).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 2000)).create();
         localServer.start();
 
         super.setUp();
@@ -58,32 +55,40 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGet() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?httpClient.SocketTimeout=5000", exchange1 -> {
-        });
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                             + localServer.getLocalPort() + "?httpClient.SocketTimeout=5000",
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpGetShouldThrowASocketTimeoutException() throws Exception {
-        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?httpClient.SocketTimeout=1000", exchange -> {
-        });
+        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                          + localServer.getLocalPort() + "?httpClient.SocketTimeout=1000",
+                exchange -> {
+                });
         Exception e = reply.getException();
         assertNotNull(e, "Should have thrown an exception");
     }
 
     @Test
     public void httpGetUriOption() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=5000", exchange1 -> {
-        });
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                             + localServer.getLocalPort() + "?socketTimeout=5000",
+                exchange1 -> {
+                });
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpGetUriOptionShouldThrowASocketTimeoutException() throws Exception {
-        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=1000", exchange -> {
-        });
+        Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
+                                          + localServer.getLocalPort() + "?socketTimeout=1000",
+                exchange -> {
+                });
         Exception e = reply.getException();
         assertNotNull(e, "Should have thrown an exception");
     }

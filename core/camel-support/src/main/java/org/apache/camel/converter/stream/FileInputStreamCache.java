@@ -57,11 +57,11 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     private final File file;
     private final CipherPair ciphers;
 
-    /** Only for testing purposes.*/
+    /** Only for testing purposes. */
     public FileInputStreamCache(File file) throws FileNotFoundException {
         this(new TempFileManager(file, true));
     }
-    
+
     FileInputStreamCache(TempFileManager closer) throws FileNotFoundException {
         this.file = closer.getTempFile();
         this.stream = null;
@@ -70,7 +70,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         this.tempFileManager = closer;
         this.tempFileManager.add(this);
     }
-    
+
     @Override
     public void close() {
         if (stream != null) {
@@ -84,7 +84,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         close();
         // reset by creating a new stream based on the file
         stream = null;
-        
+
         if (!file.exists()) {
             throw new RuntimeCamelException("Cannot reset stream from file " + file);
         }
@@ -138,6 +138,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         if (ciphers != null) {
             in = new CipherInputStream(in, ciphers.getDecryptor()) {
                 boolean closed;
+
                 public void close() throws IOException {
                     if (!closed) {
                         super.close();
@@ -149,17 +150,16 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         return in;
     }
 
-    /** 
+    /**
      * Manages the temporary file for the file input stream caches.
      * 
-     * Collects all FileInputStreamCache instances of the temporary file.
-     * Counts the number of exchanges which have a FileInputStreamCache  instance of the temporary file.
-     * Deletes the temporary file, if all exchanges are done.
+     * Collects all FileInputStreamCache instances of the temporary file. Counts the number of exchanges which have a
+     * FileInputStreamCache instance of the temporary file. Deletes the temporary file, if all exchanges are done.
      * 
      * @see CachedOutputStream
      */
     static class TempFileManager {
-        
+
         private static final Logger LOG = LoggerFactory.getLogger(TempFileManager.class);
         /** Indicator whether the file input stream caches are closed on completion of the exchanges. */
         private final boolean closedOnCompletion;
@@ -167,23 +167,24 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         private File tempFile;
         private OutputStream outputStream; // file output stream
         private CipherPair ciphers;
-        
+
         // there can be several input streams, for example in the multi-cast, or wiretap parallel processing
         private List<FileInputStreamCache> fileInputStreamCaches;
 
-        /** Only for testing.*/
+        /** Only for testing. */
         private TempFileManager(File file, boolean closedOnCompletion) {
             this(closedOnCompletion);
             this.tempFile = file;
         }
-        
+
         TempFileManager(boolean closedOnCompletion) {
             this.closedOnCompletion = closedOnCompletion;
         }
-                
-        /** Adds a FileInputStreamCache instance to the closer.
+
+        /**
+         * Adds a FileInputStreamCache instance to the closer.
          * <p>
-         * Must be synchronized, because can be accessed by several threads. 
+         * Must be synchronized, because can be accessed by several threads.
          */
         synchronized void add(FileInputStreamCache fileInputStreamCache) {
             if (fileInputStreamCaches == null) {
@@ -191,7 +192,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             }
             fileInputStreamCaches.add(fileInputStreamCache);
         }
-        
+
         void addExchange(Exchange exchange) {
             if (closedOnCompletion) {
                 exchangeCounter.incrementAndGet();
@@ -202,7 +203,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                         int actualExchanges = exchangeCounter.decrementAndGet();
                         if (actualExchanges == 0) {
                             // only one exchange (one thread) left, therefore we must not synchronize the following lines of code
-                            try {                              
+                            try {
                                 closeFileInputStreams();
                                 if (outputStream != null) {
                                     outputStream.close();
@@ -213,7 +214,9 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                             try {
                                 cleanUpTempFile();
                             } catch (Exception e) {
-                                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+                                LOG.warn("Error deleting temporary cache file: " + tempFile
+                                         + ". This exception will be ignored.",
+                                        e);
                             }
                         }
                     }
@@ -236,7 +239,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 }
             }
         }
-        
+
         OutputStream createOutputStream(StreamCachingStrategy strategy) throws IOException {
             // should only be called once
             if (tempFile != null) {
@@ -245,7 +248,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getSpoolDirectory());
 
             LOG.trace("Creating temporary stream cache file: {}", tempFile);
-            OutputStream out = new BufferedOutputStream(Files.newOutputStream(tempFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE));
+            OutputStream out = new BufferedOutputStream(
+                    Files.newOutputStream(tempFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE));
             if (ObjectHelper.isNotEmpty(strategy.getSpoolCipher())) {
                 try {
                     if (ciphers == null) {
@@ -256,6 +260,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 }
                 out = new CipherOutputStream(out, ciphers.getEncryptor()) {
                     boolean closed;
+
                     public void close() throws IOException {
                         if (!closed) {
                             super.close();
@@ -267,7 +272,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             outputStream = out;
             return out;
         }
-        
+
         FileInputStreamCache newStreamCache() throws IOException {
             try {
                 return new FileInputStreamCache(this);
@@ -275,7 +280,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 throw new IOException("Cached file " + tempFile + " not found", e);
             }
         }
-        
+
         void closeFileInputStreams() {
             if (fileInputStreamCaches != null) {
                 for (FileInputStreamCache fileInputStreamCache : fileInputStreamCaches) {
@@ -283,7 +288,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 }
                 fileInputStreamCaches.clear();
             }
-        } 
+        }
 
         void cleanUpTempFile() {
             // cleanup temporary file
@@ -296,15 +301,15 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
             }
         }
-        
+
         File getTempFile() {
             return tempFile;
         }
-        
+
         CipherPair getCiphers() {
             return ciphers;
         }
-        
+
     }
 
 }

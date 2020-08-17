@@ -34,10 +34,10 @@ public class SesComponentTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSESClient")
     private AmazonSESClientMock sesClient = new AmazonSESClientMock();
-    
+
     @BindToRegistry("toList")
     private List<String> toList = Arrays.asList("to1@example.com", "to2@example.com");
-    
+
     @BindToRegistry("replyToList")
     private List<String> replyToList = Arrays.asList("replyTo1@example.com", "replyTo2@example.com");
 
@@ -49,9 +49,9 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("1", exchange.getIn().getHeader(SesConstants.MESSAGE_ID));
-        
+
         SendEmailRequest sendEmailRequest = sesClient.getSendEmailRequest();
         assertEquals("from@example.com", sendEmailRequest.getSource());
         assertEquals(2, getTo(sendEmailRequest).size());
@@ -64,7 +64,7 @@ public class SesComponentTest extends CamelTestSupport {
         assertEquals("Subject", getSubject(sendEmailRequest));
         assertEquals("This is my message text.", getBody(sendEmailRequest));
     }
-    
+
     @Test
     public void sendInOutMessageUsingUrlOptions() throws Exception {
         Exchange exchange = template.request("direct:start", new Processor() {
@@ -73,7 +73,7 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("1", exchange.getMessage().getHeader(SesConstants.MESSAGE_ID));
     }
 
@@ -91,7 +91,7 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setHeader(SesConstants.SUBJECT, "anotherSubject");
             }
         });
-        
+
         assertEquals("1", exchange.getIn().getHeader(SesConstants.MESSAGE_ID));
 
         SendEmailRequest sendEmailRequest = sesClient.getSendEmailRequest();
@@ -113,12 +113,12 @@ public class SesComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws-ses://from@example.com"
-                        + "?to=#toList"
-                        + "&subject=Subject"
-                        + "&returnPath=bounce@example.com"
-                        + "&replyToAddresses=#replyToList"
-                        + "&amazonSESClient=#amazonSESClient");
+                        .to("aws-ses://from@example.com"
+                            + "?to=#toList"
+                            + "&subject=Subject"
+                            + "&returnPath=bounce@example.com"
+                            + "&replyToAddresses=#replyToList"
+                            + "&amazonSESClient=#amazonSESClient");
             }
         };
     }

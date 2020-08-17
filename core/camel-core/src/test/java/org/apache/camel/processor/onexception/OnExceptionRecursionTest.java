@@ -43,7 +43,8 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
 
                 from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
 
-                from("direct:handle").to("mock:d").log("Handling exception").throwException(new NullPointerException("A NPE error here"));
+                from("direct:handle").to("mock:d").log("Handling exception")
+                        .throwException(new NullPointerException("A NPE error here"));
             }
         });
         context.start();
@@ -78,7 +79,8 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
 
                 from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
 
-                from("direct:handle").errorHandler(noErrorHandler()).to("mock:d").log("Handling exception").throwException(new NullPointerException("A NPE error here"));
+                from("direct:handle").errorHandler(noErrorHandler()).to("mock:d").log("Handling exception")
+                        .throwException(new NullPointerException("A NPE error here"));
             }
         });
         context.start();

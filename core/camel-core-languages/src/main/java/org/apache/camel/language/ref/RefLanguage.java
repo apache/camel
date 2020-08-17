@@ -61,7 +61,8 @@ public class RefLanguage implements Language, IsSingleton {
                 if (target != null) {
                     return target.evaluate(exchange, Object.class);
                 } else {
-                    throw new IllegalArgumentException("Cannot find expression or predicate in registry with ref: " + expression);
+                    throw new IllegalArgumentException(
+                            "Cannot find expression or predicate in registry with ref: " + expression);
                 }
             }
 

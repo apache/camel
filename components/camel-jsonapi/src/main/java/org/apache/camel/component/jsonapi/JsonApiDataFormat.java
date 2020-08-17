@@ -47,7 +47,7 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
         this.mainFormatType = mainFormatType;
         this.dataFormatTypes = dataFormatTypes;
     }
-    
+
     @Override
     public String getDataFormatName() {
         return "jsonApi";

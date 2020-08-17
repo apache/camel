@@ -71,24 +71,24 @@ public class TelegramConsumerMediaStickerTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("telegram:bots?authorizationToken=mock-token")
-                        .to("mock:telegram");
-                }
-            }};
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("telegram:bots?authorizationToken=mock-token")
+                                .to("mock:telegram");
+                    }
+                } };
     }
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
         return new TelegramMockRoutes(port)
-            .addEndpoint(
-                "getUpdates",
-                "GET",
-                String.class,
-                TelegramTestUtil.stringResource("messages/updates-media-sticker.json"),
-                TelegramTestUtil.stringResource("messages/updates-empty.json"));
+                .addEndpoint(
+                        "getUpdates",
+                        "GET",
+                        String.class,
+                        TelegramTestUtil.stringResource("messages/updates-media-sticker.json"),
+                        TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
 }

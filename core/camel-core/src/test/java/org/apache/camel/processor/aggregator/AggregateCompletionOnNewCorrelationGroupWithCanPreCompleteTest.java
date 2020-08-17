@@ -59,7 +59,7 @@ public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest exte
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().body().streaming().parallelProcessing(false)
+                        .split().body().streaming().parallelProcessing(false)
                         .process(exchange -> {
                             if ("end".equals(exchange.getIn().getBody())) {
                                 // expectation: C is the last body to aggregate
@@ -69,7 +69,7 @@ public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest exte
                             }
                         })
                         .aggregate(header("id"), new CanPreCompleteAggregationStrategy()).completionOnNewCorrelationGroup()
-                            .to("log:aggregated", "mock:aggregated");
+                        .to("log:aggregated", "mock:aggregated");
             }
         };
     }
@@ -113,7 +113,6 @@ public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest exte
             if (newExchange.getIn().getBody().equals("end")) {
                 preComplete = true;
             }
-
 
             LOG.debug("preComplete[{}]", preComplete);
             return preComplete;

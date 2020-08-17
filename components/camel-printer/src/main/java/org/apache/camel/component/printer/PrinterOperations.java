@@ -58,7 +58,8 @@ public class PrinterOperations implements PrinterOperationsInterface {
         printRequestAttributeSet.add(Sides.ONE_SIDED);
     }
 
-    public PrinterOperations(PrintService printService, DocFlavor flavor, PrintRequestAttributeSet printRequestAttributeSet) throws PrintException {
+    public PrinterOperations(PrintService printService, DocFlavor flavor,
+                             PrintRequestAttributeSet printRequestAttributeSet) throws PrintException {
         this.setPrintService(printService);
         this.setFlavor(flavor);
         this.setPrintRequestAttributeSet(printRequestAttributeSet);
@@ -68,7 +69,8 @@ public class PrinterOperations implements PrinterOperationsInterface {
         LOG.trace("Print Service: {}", this.printService.getName());
 
         if (!sendToPrinter) {
-            LOG.debug("Print flag is set to false. This job will not be printed as long as this setting remains in effect. Please set the flag to true or remove the setting.");
+            LOG.debug(
+                    "Print flag is set to false. This job will not be printed as long as this setting remains in effect. Please set the flag to true or remove the setting.");
 
             File file;
             if (mimeType.equalsIgnoreCase("GIF") || mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {

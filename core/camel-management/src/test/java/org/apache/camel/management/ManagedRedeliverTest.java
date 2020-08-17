@@ -69,7 +69,7 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
         // there should be 5 failed exchanges (1 first time, and 4 redelivery attempts)
         num = (Long) mbeanServer.getAttribute(on, "ExchangesFailed");
         assertEquals(5, num.longValue());
-        
+
         // and we tried to redeliver the exchange 4 times, before it failed
         num = (Long) mbeanServer.getAttribute(on, "Redeliveries");
         assertEquals(4, num.longValue());
@@ -87,17 +87,17 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).handled(true)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(4).logStackTrace(false)
-                    .setBody().constant("Error");
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(4).logStackTrace(false)
+                        .setBody().constant("Error");
 
                 from("direct:start")
-                    .to("mock:foo")
-                    .process(exchange -> {
-                        log.info("Invoking me");
+                        .to("mock:foo")
+                        .process(exchange -> {
+                            log.info("Invoking me");
 
-                        throw new IllegalArgumentException("Damn");
-                    }).id("myprocessor");
+                            throw new IllegalArgumentException("Damn");
+                        }).id("myprocessor");
             }
         };
     }

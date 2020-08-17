@@ -31,14 +31,15 @@ import org.bouncycastle.cms.CMSAttributeTableGenerator;
 import org.bouncycastle.cms.SimpleAttributeTableGenerator;
 
 public class TestAttributesGeneratorProvider implements AttributesGeneratorProvider {
-    
 
     @Override
     public CMSAttributeTableGenerator getAttributesGenerator(Exchange excange) throws CryptoCmsException {
         Hashtable<ASN1ObjectIdentifier, Attribute> attrs = new Hashtable<>();
 
-        attrs.put(PKCSObjectIdentifiers.id_aa_contentHint, new Attribute(PKCSObjectIdentifiers.id_aa_contentHint, new DERSet(new DERUTF8String("Hint"))));
-        attrs.put(PKCSObjectIdentifiers.id_aa_receiptRequest, new Attribute(PKCSObjectIdentifiers.id_aa_receiptRequest, new DERSet(new DERUTF8String("Request"))));
+        attrs.put(PKCSObjectIdentifiers.id_aa_contentHint,
+                new Attribute(PKCSObjectIdentifiers.id_aa_contentHint, new DERSet(new DERUTF8String("Hint"))));
+        attrs.put(PKCSObjectIdentifiers.id_aa_receiptRequest,
+                new Attribute(PKCSObjectIdentifiers.id_aa_receiptRequest, new DERSet(new DERUTF8String("Request"))));
 
         AttributeTable attrTable = new AttributeTable(attrs);
 

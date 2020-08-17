@@ -17,14 +17,14 @@
 package org.apache.camel.component.dozer;
 
 /**
- * Used to map literal values (e.g. "ACME" or "ABC-123") to a field in the 
- * target object.
+ * Used to map literal values (e.g. "ACME" or "ABC-123") to a field in the target object.
  */
 public class VariableMapper extends BaseConverter {
-     
+
     @Override
-    public Object convert(Object existingDestinationFieldValue, 
-            Object sourceFieldValue, 
+    public Object convert(
+            Object existingDestinationFieldValue,
+            Object sourceFieldValue,
             Class<?> destinationClass,
             Class<?> sourceClass) {
         try {
@@ -33,10 +33,9 @@ public class VariableMapper extends BaseConverter {
             done();
         }
     }
-    
+
     /**
-     * We need at least one field in this class so that we can use it as a
-     * source for Dozer transformations.
+     * We need at least one field in this class so that we can use it as a source for Dozer transformations.
      */
     public String getLiteral() {
         return getParameter();

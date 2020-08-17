@@ -74,8 +74,7 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
         AsyncHttpClient c;
         AsyncHttpClientConfig config;
 
-        DefaultAsyncHttpClientConfig.Builder builder =
-                new DefaultAsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
@@ -171,7 +170,8 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
                             public void onPongFrame(byte[] payload) {
 
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
@@ -204,8 +204,8 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
                         .log(">>> Message received from WebSocket Client : ${body}")
                         .to("mock:client")
                         .loop(10)
-                            .setBody().constant(">> Welcome on board!")
-                            .to("websocket://test");
+                        .setBody().constant(">> Welcome on board!")
+                        .to("websocket://test");
             }
         };
     }

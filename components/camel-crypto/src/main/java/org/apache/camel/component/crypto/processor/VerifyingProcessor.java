@@ -43,8 +43,10 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
         if (cert == null) {
             PublicKey pk = getPublicKeyOrCertificateFromHeader(exchange, PublicKey.class, config.getPublicKey());
             if (pk == null) {
-                throw new IllegalStateException(String.format("Cannot verify signature as no Public Key or Certificate has been supplied."
-                        + " Either supply one in the route definition or via the message header '%s'", DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT));
+                throw new IllegalStateException(
+                        String.format("Cannot verify signature as no Public Key or Certificate has been supplied."
+                                      + " Either supply one in the route definition or via the message header '%s'",
+                                DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT));
             }
             signer.initVerify(pk);
         } else {
@@ -63,7 +65,8 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
     private byte[] getSignatureFromExchange(Exchange exchange) throws Exception {
         String encodedSignature = ExchangeHelper.getMandatoryHeader(exchange, config.getSignatureHeaderName(), String.class);
         if (encodedSignature == null) {
-            throw new IllegalStateException("Cannot verify exchange as no " + config.getSignatureHeaderName() + " header is present.");
+            throw new IllegalStateException(
+                    "Cannot verify exchange as no " + config.getSignatureHeaderName() + " header is present.");
         }
         return new Base64().decode(encodedSignature);
     }

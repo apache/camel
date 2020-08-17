@@ -49,8 +49,10 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
             template.sendBodyAndHeader("file://target/data/file?fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown a GenericFileOperationFailedException");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals(FileUtil.normalizePath("File already exist: target/data/file/hello.txt. Cannot write new file."), cause.getMessage());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            assertEquals(FileUtil.normalizePath("File already exist: target/data/file/hello.txt. Cannot write new file."),
+                    cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();

@@ -47,13 +47,15 @@ public class EventHubsComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        final EventHubsConfiguration configuration = this.configuration != null ? this.configuration.copy() : new EventHubsConfiguration();
+        final EventHubsConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new EventHubsConfiguration();
 
         final EventHubsEndpoint endpoint = new EventHubsEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
         if (configuration.isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration::setProducerAsyncClient, configuration::getProducerAsyncClient, EventHubProducerAsyncClient.class);
+            checkAndSetRegistryClient(configuration::setProducerAsyncClient, configuration::getProducerAsyncClient,
+                    EventHubProducerAsyncClient.class);
         }
 
         // if we don't have client nor connectionString, we check for params
@@ -76,30 +78,35 @@ public class EventHubsComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private <C> void checkAndSetRegistryClient(final Consumer<C> setClientFn, final Supplier<C> getClientFn, final Class<C> clientType) {
+    private <C> void checkAndSetRegistryClient(
+            final Consumer<C> setClientFn, final Supplier<C> getClientFn, final Class<C> clientType) {
         if (ObjectHelper.isEmpty(getClientFn.get())) {
             final Set<C> clients = getCamelContext().getRegistry().findByType(clientType);
             if (clients.size() == 1) {
                 setClientFn.accept(clients.stream().findFirst().get());
             } else if (clients.size() > 1) {
-                LOG.info(String.format("More than one %s instance in the registry, make sure to have only one instance", clientType.getSimpleName()));
+                LOG.info(String.format("More than one %s instance in the registry, make sure to have only one instance",
+                        clientType.getSimpleName()));
             } else {
                 LOG.info(String.format("No %s instance in the registry", clientType.getSimpleName()));
             }
         } else {
-            LOG.info(String.format("%s instance is already set at endpoint level: skipping the check in the registry", clientType.getSimpleName()));
+            LOG.info(String.format("%s instance is already set at endpoint level: skipping the check in the registry",
+                    clientType.getSimpleName()));
         }
     }
 
     private void validateConfigurations(final EventHubsConfiguration configuration) {
         if (!isAccessKeyAndAccessNameSet(configuration)) {
-            throw new IllegalArgumentException("Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
-                    + "or connectionString must be specified.");
+            throw new IllegalArgumentException(
+                    "Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
+                                               + "or connectionString must be specified.");
         }
     }
 
     private boolean isAccessKeyAndAccessNameSet(final EventHubsConfiguration configuration) {
-        return ObjectHelper.isNotEmpty(configuration.getSharedAccessName()) && ObjectHelper.isNotEmpty(configuration.getSharedAccessKey());
+        return ObjectHelper.isNotEmpty(configuration.getSharedAccessName())
+                && ObjectHelper.isNotEmpty(configuration.getSharedAccessKey());
     }
 
     private boolean areAzureClientsNotSet(final EventHubsConfiguration configuration) {

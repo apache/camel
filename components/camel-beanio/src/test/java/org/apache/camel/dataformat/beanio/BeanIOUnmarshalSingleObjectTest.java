@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanIOUnmarshalSingleObjectTest extends CamelTestSupport {
 
     private static final String NEW_LINE = "\n";
-    private static final String INPUT = "1234:Content starts from here" + NEW_LINE + "then continues" + NEW_LINE + "and ends here.";
+    private static final String INPUT
+            = "1234:Content starts from here" + NEW_LINE + "then continues" + NEW_LINE + "and ends here.";
 
     @Test
     void testMultiLineContentUnmarshal() throws Exception {
@@ -47,7 +48,8 @@ public class BeanIOUnmarshalSingleObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                BeanIODataFormat format = new BeanIODataFormat("org/apache/camel/dataformat/beanio/single-object-mapping.xml", "keyValueStream");
+                BeanIODataFormat format = new BeanIODataFormat(
+                        "org/apache/camel/dataformat/beanio/single-object-mapping.xml", "keyValueStream");
                 // turn on single mode
                 format.setUnmarshalSingleObject(true);
 

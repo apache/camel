@@ -48,8 +48,8 @@ public class SimpleNotifyBuilderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .transform(simple("Bye ${body}"))
-                    .to("seda:queue");
+                        .transform(simple("Bye ${body}"))
+                        .to("seda:queue");
             }
         };
     }

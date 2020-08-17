@@ -97,7 +97,7 @@ public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport 
 
                 // here is the Camel route where we aggregate
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         // use our created leveldb repo as aggregation repository
                         .completionSize(10).aggregationRepository(repo)
                         .to("mock:aggregated");

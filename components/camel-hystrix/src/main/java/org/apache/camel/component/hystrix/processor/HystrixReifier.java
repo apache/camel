@@ -79,8 +79,8 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
         // create setter using the default options
         HystrixCommand.Setter setter = HystrixCommand.Setter.withGroupKey(hcGroupKey)
-            .andCommandKey(hcCommandKey)
-            .andThreadPoolKey(tpKey);
+                .andCommandKey(hcCommandKey)
+                .andThreadPoolKey(tpKey);
 
         HystrixCommandProperties.Setter commandSetter = HystrixCommandProperties.Setter();
         setter.andCommandPropertiesDefaults(commandSetter);
@@ -92,14 +92,15 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
         // create setter for fallback via network
         HystrixCommand.Setter fallbackSetter = null;
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
+        boolean fallbackViaNetwork
+                = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             // use a different thread pool that is for fallback (should never use the same thread pool as the regular command)
             HystrixThreadPoolKey tpFallbackKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey + "-fallback");
 
             fallbackSetter = HystrixCommand.Setter.withGroupKey(hcGroupKey)
-                .andCommandKey(hcFallbackCommandKey)
-                .andThreadPoolKey(tpFallbackKey);
+                    .andCommandKey(hcFallbackCommandKey)
+                    .andThreadPoolKey(tpFallbackKey);
 
             HystrixCommandProperties.Setter commandFallbackSetter = HystrixCommandProperties.Setter();
             fallbackSetter.andCommandPropertiesDefaults(commandFallbackSetter);
@@ -111,10 +112,14 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
             configureHystrix(commandFallbackSetter, fallbackThreadPoolSetter, config);
         }
 
-        return new HystrixProcessor(hcGroupKey, hcCommandKey, hcFallbackCommandKey, setter, fallbackSetter, processor, fallback, fallbackViaNetwork);
+        return new HystrixProcessor(
+                hcGroupKey, hcCommandKey, hcFallbackCommandKey, setter, fallbackSetter, processor, fallback,
+                fallbackViaNetwork);
     }
 
-    private void configureHystrix(HystrixCommandProperties.Setter command, HystrixThreadPoolProperties.Setter threadPool, HystrixConfigurationDefinition config) {
+    private void configureHystrix(
+            HystrixCommandProperties.Setter command, HystrixThreadPoolProperties.Setter threadPool,
+            HystrixConfigurationDefinition config) {
         // command
         if (config.getCircuitBreakerEnabled() != null) {
             command.withCircuitBreakerEnabled(parseBoolean(config.getCircuitBreakerEnabled()));
@@ -135,13 +140,16 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
             command.withCircuitBreakerSleepWindowInMilliseconds(parseInt(config.getCircuitBreakerSleepWindowInMilliseconds()));
         }
         if (config.getExecutionIsolationSemaphoreMaxConcurrentRequests() != null) {
-            command.withExecutionIsolationSemaphoreMaxConcurrentRequests(parseInt(config.getExecutionIsolationSemaphoreMaxConcurrentRequests()));
+            command.withExecutionIsolationSemaphoreMaxConcurrentRequests(
+                    parseInt(config.getExecutionIsolationSemaphoreMaxConcurrentRequests()));
         }
         if (config.getExecutionIsolationStrategy() != null) {
-            command.withExecutionIsolationStrategy(parse(HystrixCommandProperties.ExecutionIsolationStrategy.class, config.getExecutionIsolationStrategy()));
+            command.withExecutionIsolationStrategy(
+                    parse(HystrixCommandProperties.ExecutionIsolationStrategy.class, config.getExecutionIsolationStrategy()));
         }
         if (config.getExecutionIsolationThreadInterruptOnTimeout() != null) {
-            command.withExecutionIsolationThreadInterruptOnTimeout(parseBoolean(config.getExecutionIsolationThreadInterruptOnTimeout()));
+            command.withExecutionIsolationThreadInterruptOnTimeout(
+                    parseBoolean(config.getExecutionIsolationThreadInterruptOnTimeout()));
         }
         if (config.getExecutionTimeoutInMilliseconds() != null) {
             command.withExecutionTimeoutInMilliseconds(parseInt(config.getExecutionTimeoutInMilliseconds()));
@@ -150,13 +158,15 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
             command.withExecutionTimeoutEnabled(parseBoolean(config.getExecutionTimeoutEnabled()));
         }
         if (config.getFallbackIsolationSemaphoreMaxConcurrentRequests() != null) {
-            command.withFallbackIsolationSemaphoreMaxConcurrentRequests(parseInt(config.getFallbackIsolationSemaphoreMaxConcurrentRequests()));
+            command.withFallbackIsolationSemaphoreMaxConcurrentRequests(
+                    parseInt(config.getFallbackIsolationSemaphoreMaxConcurrentRequests()));
         }
         if (config.getFallbackEnabled() != null) {
             command.withFallbackEnabled(parseBoolean(config.getFallbackEnabled()));
         }
         if (config.getMetricsHealthSnapshotIntervalInMilliseconds() != null) {
-            command.withMetricsHealthSnapshotIntervalInMilliseconds(parseInt(config.getMetricsHealthSnapshotIntervalInMilliseconds()));
+            command.withMetricsHealthSnapshotIntervalInMilliseconds(
+                    parseInt(config.getMetricsHealthSnapshotIntervalInMilliseconds()));
         }
         if (config.getMetricsRollingPercentileBucketSize() != null) {
             command.withMetricsRollingPercentileBucketSize(parseInt(config.getMetricsRollingPercentileBucketSize()));
@@ -165,13 +175,15 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
             command.withMetricsRollingPercentileEnabled(parseBoolean(config.getMetricsRollingPercentileEnabled()));
         }
         if (config.getMetricsRollingPercentileWindowInMilliseconds() != null) {
-            command.withMetricsRollingPercentileWindowInMilliseconds(parseInt(config.getMetricsRollingPercentileWindowInMilliseconds()));
+            command.withMetricsRollingPercentileWindowInMilliseconds(
+                    parseInt(config.getMetricsRollingPercentileWindowInMilliseconds()));
         }
         if (config.getMetricsRollingPercentileWindowBuckets() != null) {
             command.withMetricsRollingPercentileWindowBuckets(parseInt(config.getMetricsRollingPercentileWindowBuckets()));
         }
         if (config.getMetricsRollingStatisticalWindowInMilliseconds() != null) {
-            command.withMetricsRollingStatisticalWindowInMilliseconds(parseInt(config.getMetricsRollingStatisticalWindowInMilliseconds()));
+            command.withMetricsRollingStatisticalWindowInMilliseconds(
+                    parseInt(config.getMetricsRollingStatisticalWindowInMilliseconds()));
         }
         if (config.getMetricsRollingStatisticalWindowBuckets() != null) {
             command.withMetricsRollingStatisticalWindowBuckets(parseInt(config.getMetricsRollingStatisticalWindowBuckets()));
@@ -195,13 +207,16 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
             threadPool.withQueueSizeRejectionThreshold(parseInt(config.getQueueSizeRejectionThreshold()));
         }
         if (config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds() != null) {
-            threadPool.withMetricsRollingStatisticalWindowInMilliseconds(parseInt(config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds()));
+            threadPool.withMetricsRollingStatisticalWindowInMilliseconds(
+                    parseInt(config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds()));
         }
         if (config.getThreadPoolRollingNumberStatisticalWindowBuckets() != null) {
-            threadPool.withMetricsRollingStatisticalWindowBuckets(parseInt(config.getThreadPoolRollingNumberStatisticalWindowBuckets()));
+            threadPool.withMetricsRollingStatisticalWindowBuckets(
+                    parseInt(config.getThreadPoolRollingNumberStatisticalWindowBuckets()));
         }
         if (config.getAllowMaximumSizeToDivergeFromCoreSize() != null) {
-            threadPool.withAllowMaximumSizeToDivergeFromCoreSize(parseBoolean(config.getAllowMaximumSizeToDivergeFromCoreSize()));
+            threadPool
+                    .withAllowMaximumSizeToDivergeFromCoreSize(parseBoolean(config.getAllowMaximumSizeToDivergeFromCoreSize()));
         }
     }
 
@@ -213,14 +228,15 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
         Map<String, Object> properties = new HashMap<>();
 
         final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
-                .getConfigurerResolver().resolvePropertyConfigurer(HystrixConfigurationDefinition.class.getSimpleName(), camelContext);
+                .getConfigurerResolver()
+                .resolvePropertyConfigurer(HystrixConfigurationDefinition.class.getSimpleName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-            () -> camelContext.getExtension(Model.class).getHystrixConfiguration(null),
-            () -> lookup(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class)),
-            configurer);
+                () -> camelContext.getExtension(Model.class).getHystrixConfiguration(null),
+                () -> lookup(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class)),
+                configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
@@ -228,9 +244,9 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
             final String ref = parseString(definition.getConfigurationRef());
 
             loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),
-                () -> mandatoryLookup(ref, HystrixConfigurationDefinition.class)),
-                configurer);
+                    () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),
+                    () -> mandatoryLookup(ref, HystrixConfigurationDefinition.class)),
+                    configurer);
         }
 
         // Extract properties from local configuration

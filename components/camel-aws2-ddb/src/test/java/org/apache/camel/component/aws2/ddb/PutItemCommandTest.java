@@ -61,6 +61,7 @@ public class PutItemCommandTest {
         assertEquals("DOMAIN1", ddbClient.putItemRequest.tableName());
         assertEquals(attributeMap, ddbClient.putItemRequest.item());
         assertEquals(expectedAttributeValueMap, ddbClient.putItemRequest.expected());
-        assertEquals(AttributeValue.builder().s("attrValue").build(), exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
+        assertEquals(AttributeValue.builder().s("attrValue").build(),
+                exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

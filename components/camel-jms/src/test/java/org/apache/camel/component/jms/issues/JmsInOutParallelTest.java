@@ -52,25 +52,25 @@ public class JmsInOutParallelTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                
+
                 from("direct:test")
-                    .setBody(constant("1,2,3,4,5"))
-                    .inOut("activemq:queue:test1?requestTimeout=2000")
-                    .split().tokenize(",").parallelProcessing()
+                        .setBody(constant("1,2,3,4,5"))
+                        .inOut("activemq:queue:test1?requestTimeout=2000")
+                        .split().tokenize(",").parallelProcessing()
                         .inOut("activemq:queue:test2?requestTimeout=2000")
                         .to("mock:received")
-                    .end()
-                    .setBody(constant("Fully done"))
-                    .log("Finished");
-                
+                        .end()
+                        .setBody(constant("Fully done"))
+                        .log("Finished");
+
                 from("activemq:queue:test1")
-                    .log("Received on queue test1");
-                
+                        .log("Received on queue test1");
+
                 from("activemq:queue:test2")
-                    .log("Received on queue test2")
-                    .setBody(constant("Some reply"))
-                    .delay(constant(100));
-                
+                        .log("Received on queue test2")
+                        .setBody(constant("Some reply"))
+                        .delay(constant(100));
+
             }
         };
     }

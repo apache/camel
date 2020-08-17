@@ -44,7 +44,8 @@ import org.apache.camel.util.TimeUtils;
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED", enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
+    @Metadata(javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
+              enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
     private String propagation;
 
     @XmlAttribute
@@ -125,11 +126,9 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * The compensation endpoint URI that must be called to compensate all
-     * changes done in the route. The route corresponding to the compensation
-     * URI must perform compensation and complete without error. If errors occur
-     * during compensation, the saga service may call again the compensation URI
-     * to retry.
+     * The compensation endpoint URI that must be called to compensate all changes done in the route. The route
+     * corresponding to the compensation URI must perform compensation and complete without error. If errors occur
+     * during compensation, the saga service may call again the compensation URI to retry.
      */
     public void setCompensation(SagaActionUriDefinition compensation) {
         this.compensation = compensation;
@@ -140,11 +139,9 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * The completion endpoint URI that will be called when the Saga is
-     * completed successfully. The route corresponding to the completion URI
-     * must perform completion tasks and terminate without error. If errors
-     * occur during completion, the saga service may call again the completion
-     * URI to retry.
+     * The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding
+     * to the completion URI must perform completion tasks and terminate without error. If errors occur during
+     * completion, the saga service may call again the completion URI to retry.
      */
     public void setCompletion(SagaActionUriDefinition completion) {
         this.completion = completion;
@@ -155,8 +152,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY,
-     * SUPPORTS, NOT_SUPPORTED, NEVER).
+     * Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY, SUPPORTS, NOT_SUPPORTED, NEVER).
      */
     public void setPropagation(String propagation) {
         this.propagation = propagation;
@@ -167,11 +163,9 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * Determine how the saga should be considered complete. When set to AUTO,
-     * the saga is completed when the exchange that initiates the saga is
-     * processed successfully, or compensated when it completes exceptionally.
-     * When set to MANUAL, the user must complete or compensate the saga using
-     * the "saga:complete" or "saga:compensate" endpoints.
+     * Determine how the saga should be considered complete. When set to AUTO, the saga is completed when the exchange
+     * that initiates the saga is processed successfully, or compensated when it completes exceptionally. When set to
+     * MANUAL, the user must complete or compensate the saga using the "saga:complete" or "saga:compensate" endpoints.
      */
     public void setCompletionMode(String completionMode) {
         this.completionMode = completionMode;
@@ -201,11 +195,10 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * Allows to save properties of the current exchange in order to re-use them
-     * in a compensation/completion callback route. Options are usually helpful
-     * e.g. to store and retrieve identifiers of objects that should be deleted
-     * in compensating actions. Option values will be transformed into input
-     * headers of the compensation/completion exchange.
+     * Allows to save properties of the current exchange in order to re-use them in a compensation/completion callback
+     * route. Options are usually helpful e.g. to store and retrieve identifiers of objects that should be deleted in
+     * compensating actions. Option values will be transformed into input headers of the compensation/completion
+     * exchange.
      */
     public void setOptions(List<SagaOptionDefinition> options) {
         this.options = options;
@@ -216,9 +209,8 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * Set the maximum amount of time for the Saga. After the timeout is
-     * expired, the saga will be compensated automatically (unless a different
-     * decision has been taken in the meantime).
+     * Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated
+     * automatically (unless a different decision has been taken in the meantime).
      */
     public void setTimeout(String timeout) {
         this.timeout = timeout;
@@ -229,9 +221,8 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     /**
-     * Set the maximum amount of time for the Saga. After the timeout is
-     * expired, the saga will be compensated automatically (unless a different
-     * decision has been taken in the meantime).
+     * Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated
+     * automatically (unless a different decision has been taken in the meantime).
      */
     public void setTimeoutInMilliseconds(String timeoutInMilliseconds) {
         this.timeoutInMilliseconds = timeoutInMilliseconds;

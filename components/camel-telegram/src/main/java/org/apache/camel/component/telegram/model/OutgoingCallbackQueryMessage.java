@@ -20,12 +20,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Used to send answers to callback queries sent from inline keyboards.
- * The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
- * Returns {@link MessageResult}
+ * Used to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a
+ * notification at the top of the chat screen or as an alert. Returns {@link MessageResult}
  *
  * @see <a href="https://core.telegram.org/bots/api#answercallbackquery">
- * https://core.telegram.org/bots/api#answercallbackquery</a>
+ *      https://core.telegram.org/bots/api#answercallbackquery</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OutgoingCallbackQueryMessage extends OutgoingMessage {

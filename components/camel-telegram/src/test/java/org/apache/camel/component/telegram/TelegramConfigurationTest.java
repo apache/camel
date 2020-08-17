@@ -30,7 +30,8 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
 
     @Test
     public void testChatBotResult() throws Exception {
-        TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream().filter(e -> e instanceof TelegramEndpoint).findAny().get();
+        TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream()
+                .filter(e -> e instanceof TelegramEndpoint).findAny().get();
         TelegramConfiguration config = endpoint.getConfiguration();
 
         assertEquals("bots", config.getType());
@@ -43,7 +44,6 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
         assertEquals(Integer.valueOf(1234), config.getProxyPort());
         assertEquals(TelegramProxyType.SOCKS5, config.getProxyType());
     }
-
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

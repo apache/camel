@@ -88,7 +88,7 @@ public class AsyncTest extends BigQueryTestSupport {
 
         sendResult.assertIsSatisfied(4000);
 
-        for (Map object: objects) {
+        for (Map object : objects) {
             assertRowExist(TABLE_ID, object);
         }
     }

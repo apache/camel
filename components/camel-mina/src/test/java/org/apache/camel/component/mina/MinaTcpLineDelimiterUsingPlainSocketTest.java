@@ -64,7 +64,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
     @Test
     public void testReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
         String out = sendAndReceive("force-null-out-body");
-        assertNull(out,  "no data should be received");
+        assertNull(out, "no data should be received");
 
         out = sendAndReceive("force-null-out-body");
         assertNull(out, "no data should be received");
@@ -125,20 +125,21 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true", getPort()))
-                    .process(e -> {
-                        String in = e.getIn().getBody(String.class);
-                        if ("force-null-out-body".equals(in)) {
-                            // forcing a null out body
-                            e.getMessage().setBody(null);
-                        } else if ("force-exception".equals(in)) {
-                            // clear out before throwing exception
-                            e.getMessage().setBody(null);
-                            throw new IllegalArgumentException("Forced exception");
-                        } else {
-                            e.getMessage().setBody("Hello " + in);
-                        }
-                    });
+                from(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true",
+                        getPort()))
+                                .process(e -> {
+                                    String in = e.getIn().getBody(String.class);
+                                    if ("force-null-out-body".equals(in)) {
+                                        // forcing a null out body
+                                        e.getMessage().setBody(null);
+                                    } else if ("force-exception".equals(in)) {
+                                        // clear out before throwing exception
+                                        e.getMessage().setBody(null);
+                                        throw new IllegalArgumentException("Forced exception");
+                                    } else {
+                                        e.getMessage().setBody("Hello " + in);
+                                    }
+                                });
             }
         };
     }

@@ -93,7 +93,8 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         URL url = new URL("file:src/test/resources/germanbooks-iso-8859-1.json");
         assertNotNull(url);
-        sendBody("direct:start", url, Collections.<String, Object> singletonMap(JsonPathConstants.HEADER_JSON_ENCODING, "ISO-8859-1"));
+        sendBody("direct:start", url,
+                Collections.<String, Object> singletonMap(JsonPathConstants.HEADER_JSON_ENCODING, "ISO-8859-1"));
 
         check("Joseph und seine Brüder", "Götzendämmerung");
     }

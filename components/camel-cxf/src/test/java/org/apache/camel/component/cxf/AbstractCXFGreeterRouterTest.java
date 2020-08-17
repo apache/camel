@@ -40,18 +40,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
-    
-    private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",
-                                                "SOAPService");
-    private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http",
-                                                "RouterPort");
-    
-    private final String testDocLitFaultBody = 
-        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-        + "<soap:Body><testDocLitFault xmlns=\"http://apache.org/hello_world_soap_http/types\">"
-        + "<faultType>NoSuchCodeLitFault</faultType></testDocLitFault>"
-        + "</soap:Body></soap:Envelope>";
-    
+
+    private final QName serviceName = new QName(
+            "http://apache.org/hello_world_soap_http",
+            "SOAPService");
+    private final QName routerPortName = new QName(
+            "http://apache.org/hello_world_soap_http",
+            "RouterPort");
+
+    private final String testDocLitFaultBody = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                                               + "<soap:Body><testDocLitFault xmlns=\"http://apache.org/hello_world_soap_http/types\">"
+                                               + "<faultType>NoSuchCodeLitFault</faultType></testDocLitFault>"
+                                               + "</soap:Body></soap:Envelope>";
+
     public static int getPort1() {
         return CXFTestSupport.getPort1();
     }
@@ -61,7 +62,7 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     }
 
     protected abstract ClassPathXmlApplicationContext createApplicationContext();
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -73,18 +74,18 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        
+
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
-    
+
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);
         service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
-                        "http://localhost:" + getPort2() + "/"
-                        + getClass().getSimpleName() + "/CamelContext/RouterPort");
+                "http://localhost:" + getPort2() + "/"
+                                                                            + getClass().getSimpleName()
+                                                                            + "/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
 
         String reply = greeter.greetMe("test");
@@ -107,36 +108,34 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
         }
 
     }
-    
+
     @Test
     public void testRoutingSOAPFault() throws Exception {
         try {
             template.sendBody("http://localhost:" + getPort2() + "/"
                               + getClass().getSimpleName()
                               + "/CamelContext/RouterPort/",
-                              testDocLitFaultBody);
+                    testDocLitFaultBody);
             fail("Should get an exception here.");
         } catch (RuntimeCamelException exception) {
             assertTrue(exception.getCause() instanceof HttpOperationFailedException, "It should get the response error");
-            assertEquals(((HttpOperationFailedException)exception.getCause()).getStatusCode(), 500, "Get a wrong response code");
+            assertEquals(((HttpOperationFailedException) exception.getCause()).getStatusCode(), 500,
+                    "Get a wrong response code");
         }
     }
-    
+
     @Test
     public void testPublishEndpointUrl() throws Exception {
         String response = template.requestBody("http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
                                                + "/CamelContext/RouterPort/"
-            + getClass().getSimpleName() + "?wsdl", null, String.class);
+                                               + getClass().getSimpleName() + "?wsdl",
+                null, String.class);
         assertTrue(response.indexOf("http://www.simple.com/services/test") > 0, "Can't find the right service location.");
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
-   
 }
-
-
-
