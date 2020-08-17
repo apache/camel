@@ -85,6 +85,8 @@
         <azure-storage-java-sdk-version>8.6.0</azure-storage-java-sdk-version>
         <azure-storage-blob-java-sdk12-version>12.7.0</azure-storage-blob-java-sdk12-version>
         <azure-storage-queue-java-sdk12-version>12.5.2</azure-storage-queue-java-sdk12-version>
+        <azure-eventhubs-java-version>5.1.2</azure-eventhubs-java-version>
+        <azure-eventhubs-checkpointstore-blob-version>1.1.2</azure-eventhubs-checkpointstore-blob-version>
         <beanio-version>2.1.0</beanio-version>
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
         <bouncycastle-version>1.66</bouncycastle-version>
@@ -1038,6 +1040,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-storage-queue</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-azure-eventhubs</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
