@@ -83,9 +83,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
     private DynamicClassLoader projectClassLoader;
 
-    private static class Option extends BaseOptionModel {
+    public static class ConfigurerOption extends BaseOptionModel {
 
-        public Option(String name, Class type, String getter) {
+        public ConfigurerOption(String name, Class type, String getter) {
             // we just use name, type
             setName(name);
             if (byte[].class == type) {
@@ -105,8 +105,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
 
         public void setNestedType(String nestedType) {
-            // trick to use deprecation note for nested type
-            setDeprecationNote(nestedType);
+            // store in extra
+            setExtra(nestedType);
         }
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     targetFqn = fqn.substring(pos + 1);
                     fqn = fqn.substring(0, pos);
                 }
-                List<Option> options = processClass(fqn);
+                List<ConfigurerOption> options = processClass(fqn);
                 generateConfigurer(fqn, targetFqn, options, sourcesOutputDir);
                 generateMetaInfConfigurer(targetFqn, resourcesOutputDir);
             } catch (Exception e) {
@@ -286,8 +286,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         return artifacts;
     }
 
-    private List<Option> processClass(String fqn) throws ClassNotFoundException {
-        List<Option> answer = new ArrayList<>();
+    private List<ConfigurerOption> processClass(String fqn) throws ClassNotFoundException {
+        List<ConfigurerOption> answer = new ArrayList<>();
         // filter out duplicates by using a names set that has already added
         Set<String> names = new HashSet<>();
 
@@ -310,10 +310,10 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     }
                 }
 
-                Option option = null;
+                ConfigurerOption option = null;
                 String t = Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
                 if (names.add(t)) {
-                    option = new Option(t, type, getter);
+                    option = new ConfigurerOption(t, type, getter);
                     answer.add(option);
                 } else {
                     boolean replace = false;
@@ -325,7 +325,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     }
                     if (replace) {
                         answer.removeIf(o -> o.getName().equals(t));
-                        option = new Option(t, type, getter);
+                        option = new ConfigurerOption(t, type, getter);
                         answer.add(option);
                     }
                 }
@@ -341,7 +341,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                         }
                         desc = desc.replace('$', '.');
                         desc = desc.trim();
-                        if (!desc.isEmpty()) {
+                        // skip if the type is generic or a wildcard
+                        if (!desc.isEmpty() && desc.indexOf('?') == -1 && !desc.contains(" extends ")) {
                             option.setNestedType(desc);
                         }
                     }
@@ -365,7 +366,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         return true;
     }
 
-    private void generateConfigurer(String fqn, String targetFqn, List<Option> options, File outputDir) throws IOException {
+    private void generateConfigurer(String fqn, String targetFqn, List<ConfigurerOption> options, File outputDir) throws IOException {
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String cn = targetFqn.substring(pos + 1) + "Configurer";

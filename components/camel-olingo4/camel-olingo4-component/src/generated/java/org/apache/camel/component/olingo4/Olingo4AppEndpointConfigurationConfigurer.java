@@ -136,5 +136,18 @@ public class Olingo4AppEndpointConfigurationConfigurer extends org.apache.camel.
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "endpointhttpheaders":
+        case "EndpointHttpHeaders": return java.lang.String.class;
+        case "httpheaders":
+        case "HttpHeaders": return java.lang.String.class;
+        case "queryparams":
+        case "QueryParams": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 
