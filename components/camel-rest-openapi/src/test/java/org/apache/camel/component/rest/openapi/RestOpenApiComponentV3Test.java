@@ -41,7 +41,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runners.Parameterized.Parameters;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -237,7 +236,6 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         };
     }
 
-    @Parameters(name = "component = {0}")
     public static Iterable<String> knownProducers() {
         return Arrays.asList(RestEndpoint.DEFAULT_REST_PRODUCER_COMPONENTS);
     }
