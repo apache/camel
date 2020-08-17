@@ -221,5 +221,22 @@ public class FhirOperationEndpointConfigurationConfigurer extends org.apache.cam
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "extraparameters":
+        case "ExtraParameters": return java.lang.Object.class;
+        case "outputparametertype":
+        case "OutputParameterType": return org.hl7.fhir.instance.model.api.IBaseParameters.class;
+        case "resourcetype":
+        case "ResourceType": return org.hl7.fhir.instance.model.api.IBaseResource.class;
+        case "responseclass":
+        case "ResponseClass": return org.hl7.fhir.instance.model.api.IBaseBundle.class;
+        case "returntype":
+        case "ReturnType": return org.hl7.fhir.instance.model.api.IBaseResource.class;
+        default: return null;
+        }
+    }
 }
 

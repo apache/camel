@@ -191,12 +191,5 @@ public class HystrixConfigurationPropertiesConfigurer extends org.apache.camel.s
         default: return null;
         }
     }
-
-    @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        default: return null;
-        }
-    }
 }
 

@@ -136,8 +136,8 @@ public final class PropertyConfigurerGenerator {
             }
             w.write("    }\n");
 
-            // nested type was stored in deprecation note as we use BaseOptionModel to hold the option data
-            boolean hasNestedTypes = options.stream().map(BaseOptionModel::getDeprecationNote).anyMatch(s -> s != null && !s.trim().isEmpty());
+            // nested type was stored in extra as we use BaseOptionModel to hold the option data
+            boolean hasNestedTypes = options.stream().map(BaseOptionModel::getExtra).anyMatch(s -> s != null && !s.trim().isEmpty());
             if (hasNestedTypes) {
                 w.write("\n");
                 w.write("    @Override\n");
@@ -145,7 +145,7 @@ public final class PropertyConfigurerGenerator {
                 if (!options.isEmpty()) {
                     w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
                     for (BaseOptionModel option : options) {
-                        String nestedType = option.getDeprecationNote();
+                        String nestedType = option.getExtra();
                         if (nestedType != null && !nestedType.isEmpty()) {
                             nestedType = nestedType.replace('$', '.');
                             if (!option.getName().toLowerCase().equals(option.getName())) {

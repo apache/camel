@@ -181,5 +181,16 @@ public class FhirLoadPageEndpointConfigurationConfigurer extends org.apache.came
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "extraparameters":
+        case "ExtraParameters": return java.lang.Object.class;
+        case "returntype":
+        case "ReturnType": return org.hl7.fhir.instance.model.api.IBaseBundle.class;
+        default: return null;
+        }
+    }
 }
 

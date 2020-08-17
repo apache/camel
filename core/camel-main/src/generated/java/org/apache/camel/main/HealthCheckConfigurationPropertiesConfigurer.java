@@ -56,12 +56,5 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
         default: return null;
         }
     }
-
-    @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        default: return null;
-        }
-    }
 }
 
