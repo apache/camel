@@ -140,6 +140,25 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <!-- we need to generate additional configurer classes -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-test-configurer</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>generate-test-configurer</goal>
+                        </goals>
+                        <!-- only do these test classes -->
+                        <configuration>
+                            <discoverClasses>false</discoverClasses>
+                            <classes>org.apache.camel.main.MySecondFoo,org.apache.camel.main.MySecondBar</classes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
