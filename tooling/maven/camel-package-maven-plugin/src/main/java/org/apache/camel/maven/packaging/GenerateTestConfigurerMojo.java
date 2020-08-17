@@ -27,35 +27,35 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
- * Generate configurer classes from @Configuer annotated classes for main sources.
+ * Generate configurer classes from @Configuer annotated classes for test sources.
  */
-@Mojo(name = "generate-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+@Mojo(name = "generate-test-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
         requiresDependencyCollection = ResolutionScope.COMPILE,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 // must include runtime dependencies to generate configurer source
-public class GenerateConfigurerMojo extends AbstractGenerateConfigurerMojo {
+public class GenerateTestConfigurerMojo extends AbstractGenerateConfigurerMojo {
 
     /**
-     * The output directory for generated java source code
+     * The output directory for generated test java source code
      */
-    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    @Parameter(defaultValue = "${project.basedir}/src/test/java")
     protected File sourcesOutputDir;
 
     /**
-     * The output directory for generated resource source code
+     * The output directory for generated test resource source code
      */
-    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
+    @Parameter(defaultValue = "${project.basedir}/src/test/resources")
     protected File resourcesOutputDir;
 
     /**
-     * To generate configurer for these classes.
+     * To generate configurer for these test classes.
      * The syntax is either <tt>fqn</tt> or </tt>fqn=targetFqn</tt>.
      * This allows to map source class to target class to generate the source code using a different classname.
      */
     @Parameter
     protected List<String> classes;
 
-    public GenerateConfigurerMojo() {
+    public GenerateTestConfigurerMojo() {
     }
 
     @Override
@@ -65,13 +65,13 @@ public class GenerateConfigurerMojo extends AbstractGenerateConfigurerMojo {
         }
 
         if (sourcesOutputDir == null) {
-            sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
+            sourcesOutputDir = new File(project.getBasedir(), "src/test/java");
         }
         if (resourcesOutputDir == null) {
-            resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
+            resourcesOutputDir = new File(project.getBasedir(), "src/test/resources");
         }
 
-        doExecute(sourcesOutputDir, resourcesOutputDir, classes, false);
+        doExecute(sourcesOutputDir, resourcesOutputDir, classes, true);
     }
 
 }
