@@ -45,7 +45,7 @@ public class EventHubsConfiguration implements Cloneable {
     private String sharedAccessKey;
     @UriParam(label = "security", secret = true)
     private String connectionString;
-    @UriParam(label = "common", defaultValue = "Amqp")
+    @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;

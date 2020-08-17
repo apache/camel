@@ -81,7 +81,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *amqpRetryOptions* (common) | Sets the retry policy for EventHubAsyncClient. If not specified, the default retry options are used. |  | AmqpRetryOptions
-| *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is AmqpTransportType#AMQP. The value can be one of: Amqp, AmqpWebSockets | Amqp | AmqpTransportType
+| *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is AmqpTransportType#AMQP. The value can be one of: Amqp, AmqpWebSockets | AMQP | AmqpTransportType
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *blobAccessKey* (consumer) | In case you chose the default BlobCheckpointStore, this sets access key for the associated azure account name to be used for authentication with azure blob services |  | String
 | *blobAccountName* (consumer) | In case you chose the default BlobCheckpointStore, this sets Azure account name to be used for authentication with azure blob services. |  | String
@@ -115,7 +115,7 @@ The Azure Event Hubs component supports 21 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *amqpRetryOptions* (common) | Sets the retry policy for EventHubAsyncClient. If not specified, the default retry options are used. |  | AmqpRetryOptions
-| *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is AmqpTransportType#AMQP. The value can be one of: Amqp, AmqpWebSockets | Amqp | AmqpTransportType
+| *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is AmqpTransportType#AMQP. The value can be one of: Amqp, AmqpWebSockets | AMQP | AmqpTransportType
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (common) | The component configurations |  | EventHubsConfiguration
 | *blobAccessKey* (consumer) | In case you chose the default BlobCheckpointStore, this sets access key for the associated azure account name to be used for authentication with azure blob services |  | String
