@@ -374,9 +374,14 @@ public final class Olingo2AppImpl implements Olingo2App {
             final Olingo2ResponseHandler<T> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
+        // merge operation must use data based property serialization in order to not overwrite
+        // unspecified properties with null values
+        EntityProviderWriteProperties entityProviderWriteProperties =
+                EntityProviderWriteProperties.fromProperties(getEntityProviderWriteProperties())
+                                             .isDataBasedPropertySerialization(true).build();
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpMerge(createUri(resourcePath, null)),
                 request -> writeContent(edm, (HttpMerge) request, uriInfo,
-                        endpointHttpHeaders, data, responseHandler, getEntityProviderWriteProperties()),
+                        endpointHttpHeaders, data, responseHandler, entityProviderWriteProperties),
                 responseHandler);
     }
 
