@@ -242,14 +242,17 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     private InputStream getObject(String bucketName, MinioClient minioClient, String objectName) throws Exception {
         GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        MinioChecks.checkServerSideEncryptionCustomerKeyConfig(getConfiguration(), getObjectRequest::ssec);
-        MinioChecks.checkOffsetConfig(getConfiguration(), getObjectRequest::offset);
-        MinioChecks.checkLengthConfig(getConfiguration(), getObjectRequest::length);
-        MinioChecks.checkVersionIdConfig(getConfiguration(), getObjectRequest::versionId);
-        MinioChecks.checkMatchETagConfig(getConfiguration(), getObjectRequest::matchETag);
-        MinioChecks.checkNotMatchETagConfig(getConfiguration(), getObjectRequest::notMatchETag);
-        MinioChecks.checkModifiedSinceConfig(getConfiguration(), getObjectRequest::modifiedSince);
-        MinioChecks.checkUnModifiedSinceConfig(getConfiguration(), getObjectRequest::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
+                getObjectRequest::ssec);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, getObjectRequest::offset);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, getObjectRequest::length);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, getObjectRequest::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, getObjectRequest::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag, getObjectRequest::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
+                getObjectRequest::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
+                getObjectRequest::unmodifiedSince);
 
         return minioClient.getObject(getObjectRequest.build());
     }
@@ -350,21 +353,25 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
         CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
 
-        MinioChecks.checkServerSideEncryptionCustomerKeyConfig(getConfiguration(), copySourceBuilder::ssec);
-        MinioChecks.checkOffsetConfig(getConfiguration(), copySourceBuilder::offset);
-        MinioChecks.checkLengthConfig(getConfiguration(), copySourceBuilder::length);
-        MinioChecks.checkVersionIdConfig(getConfiguration(), copySourceBuilder::versionId);
-        MinioChecks.checkMatchETagConfig(getConfiguration(), copySourceBuilder::matchETag);
-        MinioChecks.checkNotMatchETagConfig(getConfiguration(), copySourceBuilder::notMatchETag);
-        MinioChecks.checkModifiedSinceConfig(getConfiguration(), copySourceBuilder::modifiedSince);
-        MinioChecks.checkUnModifiedSinceConfig(getConfiguration(), copySourceBuilder::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
+                copySourceBuilder::ssec);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, copySourceBuilder::offset);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, copySourceBuilder::length);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, copySourceBuilder::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, copySourceBuilder::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag,
+                copySourceBuilder::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
+                copySourceBuilder::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
+                copySourceBuilder::unmodifiedSince);
 
         CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
                 .source(copySourceBuilder.build())
                 .bucket(getConfiguration().getDestinationBucketName())
                 .object(destinationObjectName);
 
-        MinioChecks.checkServerSideEncryptionConfig(getConfiguration(), copyObjectRequest::sse);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryption, copyObjectRequest::sse);
 
         getMinioClient().copyObject(copyObjectRequest.build());
     }
