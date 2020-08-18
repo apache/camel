@@ -25,6 +25,10 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
         case "ConnectTimeout": target.setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "contenttype":
         case "ContentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "entityproviderreadproperties":
+        case "EntityProviderReadProperties": target.setEntityProviderReadProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class, value)); return true;
+        case "entityproviderwriteproperties":
+        case "EntityProviderWriteProperties": target.setEntityProviderWriteProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class, value)); return true;
         case "filteralreadyseen":
         case "FilterAlreadySeen": target.setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
         case "httpasyncclientbuilder":
@@ -55,6 +59,8 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
         answer.put("ApiName", org.apache.camel.component.olingo2.internal.Olingo2ApiName.class);
         answer.put("ConnectTimeout", int.class);
         answer.put("ContentType", java.lang.String.class);
+        answer.put("EntityProviderReadProperties", org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class);
+        answer.put("EntityProviderWriteProperties", org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class);
         answer.put("FilterAlreadySeen", boolean.class);
         answer.put("HttpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
         answer.put("HttpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
@@ -78,6 +84,10 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
         case "ConnectTimeout": return target.getConnectTimeout();
         case "contenttype":
         case "ContentType": return target.getContentType();
+        case "entityproviderreadproperties":
+        case "EntityProviderReadProperties": return target.getEntityProviderReadProperties();
+        case "entityproviderwriteproperties":
+        case "EntityProviderWriteProperties": return target.getEntityProviderWriteProperties();
         case "filteralreadyseen":
         case "FilterAlreadySeen": return target.isFilterAlreadySeen();
         case "httpasyncclientbuilder":

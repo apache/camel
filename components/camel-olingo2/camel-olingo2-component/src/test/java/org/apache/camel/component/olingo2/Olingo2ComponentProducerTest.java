@@ -68,7 +68,10 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
     private static final String ADDRESS = "Address";
     private static final String TEST_RESOURCE = "$1";
     private static final String TEST_RESOURCE_ADDRESS = TEST_RESOURCE + "/Address";
-    private static final String TEST_CREATE_MANUFACTURER = "DefaultContainer.Manufacturers('123')";
+    private static final String TEST_MERGE_MANUFACTURER_ID = "124";
+    private static final String TEST_CREATE_MANUFACTURER_ID = "123";
+    private static final String TEST_CREATE_MANUFACTURER
+            = String.format("DefaultContainer.Manufacturers('%s')", TEST_CREATE_MANUFACTURER_ID);
     private static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/MyFormula.svc";
 
     private static Olingo2SampleServer server;
@@ -136,7 +139,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         final ODataEntry manufacturer = requestBody("direct:CREATE", data);
         assertNotNull(manufacturer, "Created Manufacturer");
         final Map<String, Object> properties = manufacturer.getProperties();
-        assertEquals("123", properties.get(ID_PROPERTY), "Created Manufacturer Id");
+        assertEquals(TEST_CREATE_MANUFACTURER_ID, properties.get(ID_PROPERTY), "Created Manufacturer Id");
         LOG.info("Created Manufacturer: {}", properties);
 
         // update
@@ -149,6 +152,15 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Update status");
         LOG.info("Update status: {}", status);
 
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put(Olingo2Constants.PROPERTY_PREFIX + "keyPredicate", String.format("'%s'", TEST_CREATE_MANUFACTURER_ID));
+        final ODataEntry updatedManufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
+        assertNotNull(updatedManufacturer);
+        final Map<String, Object> updatedProperties = updatedManufacturer.getProperties();
+        assertEquals(TEST_CREATE_MANUFACTURER_ID, updatedProperties.get(ID_PROPERTY), "Manufacturer Id");
+        assertEquals("MyCarManufacturer Renamed", updatedProperties.get("Name"), "Manufacturer Name");
+        LOG.info("Updated Manufacturer: {}", updatedProperties);
+
         // delete
         status = requestBody("direct:DELETE", null);
         assertNotNull(status, "Delete status");
@@ -158,7 +170,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
 
     private Map<String, Object> getEntityData() {
         final Map<String, Object> data = new HashMap<>();
-        data.put("Id", "123");
+        data.put(ID_PROPERTY, TEST_CREATE_MANUFACTURER_ID);
         data.put("Name", "MyCarManufacturer");
         data.put("Founded", new Date());
         Map<String, Object> address = new HashMap<>();
@@ -349,14 +361,16 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
                 from("direct:CREATE").to("olingo2://create/Manufacturers");
 
                 // test route for update
-                from("direct:UPDATE").to("olingo2://update/Manufacturers('123')");
+                from("direct:UPDATE").to(String.format("olingo2://update/Manufacturers('%s')", TEST_CREATE_MANUFACTURER_ID));
 
                 // test route for delete
-                from("direct:DELETE").to("olingo2://delete/Manufacturers('123')");
+                from("direct:DELETE").to(String.format("olingo2://delete/Manufacturers('%s')", TEST_CREATE_MANUFACTURER_ID));
+
+                // test route for merge
+                from("direct:MERGE").to(String.format("olingo2://merge/Manufacturers('%s')", TEST_MERGE_MANUFACTURER_ID));
 
                 /*
-                 * // test route for merge from("direct:MERGE")
-                 * .to("olingo2://merge"); // test route for patch
+                 * // test route for patch
                  * from("direct:PATCH") .to("olingo2://patch");
                  */
 

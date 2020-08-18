@@ -30,6 +30,8 @@ import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 
 /**
  * Component configuration for Olingo2 component.
@@ -53,6 +55,10 @@ public class Olingo2Configuration {
     private String contentType = DEFAULT_CONTENT_TYPE;
     @UriParam
     private Map<String, String> httpHeaders;
+    @UriParam
+    private EntityProviderReadProperties entityProviderReadProperties;
+    @UriParam
+    private EntityProviderWriteProperties entityProviderWriteProperties;
     @UriParam(defaultValue = "" + DEFAULT_TIMEOUT)
     private int connectTimeout = DEFAULT_TIMEOUT;
     @UriParam(defaultValue = "" + DEFAULT_TIMEOUT)
@@ -124,6 +130,31 @@ public class Olingo2Configuration {
      */
     public void setHttpHeaders(Map<String, String> httpHeaders) {
         this.httpHeaders = httpHeaders;
+    }
+
+    public EntityProviderReadProperties getEntityProviderReadProperties() {
+        return entityProviderReadProperties;
+    }
+
+    /**
+     * Custom entity provider read properties applied to all read operations.
+     */
+    public void setEntityProviderReadProperties(EntityProviderReadProperties entityProviderReadProperties) {
+        this.entityProviderReadProperties = entityProviderReadProperties;
+    }
+
+    public EntityProviderWriteProperties getEntityProviderWriteProperties() {
+        return entityProviderWriteProperties;
+    }
+
+    /**
+     * Custom entity provider write properties applied to create, update, patch, batch and merge operations. For
+     * instance users can skip the Json object wrapper or enable content only mode when sending request data. A service
+     * URI set in the properties will always be overwritten by the serviceUri configuration parameter. Please consider
+     * to using the serviceUri configuration parameter instead of setting the respective write property here.
+     */
+    public void setEntityProviderWriteProperties(EntityProviderWriteProperties entityProviderWriteProperties) {
+        this.entityProviderWriteProperties = entityProviderWriteProperties;
     }
 
     public int getConnectTimeout() {
@@ -205,8 +236,6 @@ public class Olingo2Configuration {
 
     /**
      * Set this to true to filter out results that have already been communicated by this component.
-     * 
-     * @param filterAlreadySeen
      */
     public void setFilterAlreadySeen(boolean filterAlreadySeen) {
         this.filterAlreadySeen = filterAlreadySeen;
@@ -226,8 +255,11 @@ public class Olingo2Configuration {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(serviceUri).append(contentType).append(httpHeaders).append(connectTimeout)
+        return new HashCodeBuilder().append(serviceUri).append(contentType)
+                .append(httpHeaders).append(connectTimeout)
                 .append(socketTimeout).append(proxy)
+                .append(entityProviderReadProperties).append(entityProviderWriteProperties)
+                .append(filterAlreadySeen).append(splitResult)
                 .append(sslContextParameters).append(httpAsyncClientBuilder).append(httpClientBuilder).hashCode();
     }
 
@@ -235,16 +267,21 @@ public class Olingo2Configuration {
     public boolean equals(Object obj) {
         if (obj instanceof Olingo2Configuration) {
             Olingo2Configuration other = (Olingo2Configuration) obj;
-            return serviceUri == null
+            return connectTimeout == other.connectTimeout && filterAlreadySeen == other.filterAlreadySeen
+                    && splitResult == other.splitResult && socketTimeout == other.socketTimeout && serviceUri == null
                     ? other.serviceUri == null
                     : serviceUri.equals(other.serviceUri) && contentType == null
                             ? other.contentType == null
                     : contentType.equals(other.contentType) && httpHeaders == null
                             ? other.httpHeaders == null
-                    : httpHeaders.equals(other.httpHeaders) && connectTimeout == other.connectTimeout
-                            && socketTimeout == other.socketTimeout && proxy == null
+                    : httpHeaders.equals(other.httpHeaders) && entityProviderReadProperties == null
+                            ? other.entityProviderReadProperties == null
+                    : entityProviderReadProperties.equals(other.entityProviderReadProperties) && proxy == null
                             ? other.proxy == null
-                    : proxy.equals(other.proxy) && sslContextParameters == null
+                    : proxy.equals(other.proxy) && entityProviderWriteProperties == null
+                            ? other.entityProviderWriteProperties == null
+                    : entityProviderWriteProperties.equals(other.entityProviderWriteProperties)
+                            && sslContextParameters == null
                             ? other.sslContextParameters == null
                     : sslContextParameters.equals(other.sslContextParameters) && httpAsyncClientBuilder == null
                             ? other.httpAsyncClientBuilder == null

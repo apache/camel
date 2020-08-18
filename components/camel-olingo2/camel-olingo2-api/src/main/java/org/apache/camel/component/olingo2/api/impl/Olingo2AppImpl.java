@@ -129,6 +129,8 @@ public final class Olingo2AppImpl implements Olingo2App {
     private String serviceUri;
     private ContentType contentType;
     private Map<String, String> httpHeaders;
+    private EntityProviderReadProperties entityProviderReadProperties;
+    private EntityProviderWriteProperties entityProviderWriteProperties;
 
     /**
      * Create Olingo2 Application with default HTTP configuration.
@@ -195,6 +197,34 @@ public final class Olingo2AppImpl implements Olingo2App {
     @Override
     public void setHttpHeaders(Map<String, String> httpHeaders) {
         this.httpHeaders = httpHeaders;
+    }
+
+    @Override
+    public void setEntityProviderReadProperties(EntityProviderReadProperties entityProviderReadProperties) {
+        this.entityProviderReadProperties = entityProviderReadProperties;
+    }
+
+    @Override
+    public EntityProviderReadProperties getEntityProviderReadProperties() {
+        if (entityProviderReadProperties == null) {
+            entityProviderReadProperties = EntityProviderReadProperties.init().build();
+        }
+
+        return entityProviderReadProperties;
+    }
+
+    @Override
+    public void setEntityProviderWriteProperties(EntityProviderWriteProperties entityProviderWriteProperties) {
+        this.entityProviderWriteProperties = entityProviderWriteProperties;
+    }
+
+    @Override
+    public EntityProviderWriteProperties getEntityProviderWriteProperties() {
+        if (entityProviderWriteProperties == null) {
+            entityProviderWriteProperties = EntityProviderWriteProperties.serviceRoot(null).build();
+        }
+
+        return entityProviderWriteProperties;
     }
 
     @Override
@@ -310,7 +340,8 @@ public final class Olingo2AppImpl implements Olingo2App {
             final Olingo2ResponseHandler<T> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
-        writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo, endpointHttpHeaders, data, responseHandler);
+        writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo,
+                endpointHttpHeaders, data, responseHandler, getEntityProviderWriteProperties());
     }
 
     @Override
@@ -320,7 +351,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpPut(createUri(resourcePath, null)),
-                request -> writeContent(edm, (HttpPut) request, uriInfo, endpointHttpHeaders, data, responseHandler),
+                request -> writeContent(edm, (HttpPut) request, uriInfo,
+                        endpointHttpHeaders, data, responseHandler, getEntityProviderWriteProperties()),
                 responseHandler);
     }
 
@@ -331,7 +363,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpPatch(createUri(resourcePath, null)),
-                request -> writeContent(edm, (HttpPatch) request, uriInfo, endpointHttpHeaders, data, responseHandler),
+                request -> writeContent(edm, (HttpPatch) request, uriInfo,
+                        endpointHttpHeaders, data, responseHandler, getEntityProviderWriteProperties()),
                 responseHandler);
     }
 
@@ -342,7 +375,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpMerge(createUri(resourcePath, null)),
-                request -> writeContent(edm, (HttpMerge) request, uriInfo, endpointHttpHeaders, data, responseHandler),
+                request -> writeContent(edm, (HttpMerge) request, uriInfo,
+                        endpointHttpHeaders, data, responseHandler, getEntityProviderWriteProperties()),
                 responseHandler);
     }
 
@@ -352,7 +386,8 @@ public final class Olingo2AppImpl implements Olingo2App {
             final Olingo2ResponseHandler<List<Olingo2BatchResponse>> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, BATCH, null);
 
-        writeContent(edm, new HttpPost(createUri(BATCH, null)), uriInfo, endpointHttpHeaders, data, responseHandler);
+        writeContent(edm, new HttpPost(createUri(BATCH, null)), uriInfo,
+                endpointHttpHeaders, data, responseHandler, getEntityProviderWriteProperties());
     }
 
     @Override
@@ -506,7 +541,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                 final List<EdmProperty> complexPropertyPath = uriInfo.getPropertyPath();
                 final EdmProperty complexProperty = complexPropertyPath.get(complexPropertyPath.size() - 1);
                 response = (T) EntityProvider.readProperty(getContentType(), complexProperty, content,
-                        EntityProviderReadProperties.init().build());
+                        getEntityProviderReadProperties());
                 break;
 
             case URI4:
@@ -518,7 +553,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                     response = (T) EntityProvider.readPropertyValue(simpleProperty, content);
                 } else {
                     response = (T) EntityProvider.readProperty(getContentType(), simpleProperty, content,
-                            EntityProviderReadProperties.init().build());
+                            getEntityProviderReadProperties());
                 }
                 break;
 
@@ -536,18 +571,18 @@ public final class Olingo2AppImpl implements Olingo2App {
                 if (uriInfo.getCustomQueryOptions().containsKey("!deltatoken")) {
                     // ODataDeltaFeed
                     response = (T) EntityProvider.readDeltaFeed(getContentType(), uriInfo.getTargetEntitySet(), content,
-                            EntityProviderReadProperties.init().build());
+                            getEntityProviderReadProperties());
                 } else {
                     // ODataFeed
                     response = (T) EntityProvider.readFeed(getContentType(), uriInfo.getTargetEntitySet(), content,
-                            EntityProviderReadProperties.init().build());
+                            getEntityProviderReadProperties());
                 }
                 break;
 
             case URI2:
             case URI6A:
                 response = (T) EntityProvider.readEntry(getContentType(), uriInfo.getTargetEntitySet(), content,
-                        EntityProviderReadProperties.init().build());
+                        getEntityProviderReadProperties());
                 break;
 
             // Function Imports
@@ -557,7 +592,7 @@ public final class Olingo2AppImpl implements Olingo2App {
             case URI13:
             case URI14:
                 response = (T) EntityProvider.readFunctionImport(getContentType(), uriInfo.getFunctionImport(), content,
-                        EntityProviderReadProperties.init().build());
+                        getEntityProviderReadProperties());
                 break;
 
             default:
@@ -570,11 +605,11 @@ public final class Olingo2AppImpl implements Olingo2App {
     private <T> void writeContent(
             final Edm edm, final HttpEntityEnclosingRequestBase httpEntityRequest, final UriInfoWithType uriInfo,
             final Map<String, String> endpointHttpHeaders, final Object content,
-            final Olingo2ResponseHandler<T> responseHandler) {
+            final Olingo2ResponseHandler<T> responseHandler, EntityProviderWriteProperties entityProviderWriteProperties) {
 
         try {
             // process resource by UriType
-            final ODataResponse response = writeContent(edm, uriInfo, content);
+            final ODataResponse response = writeContent(edm, uriInfo, content, entityProviderWriteProperties);
 
             // copy all response headers
             for (String header : response.getHeaderNames()) {
@@ -672,7 +707,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                                     responseHandler.onResponse(
                                             (T) EntityProvider.readProperty(getContentType(), simpleProperty,
                                                     result.getEntity().getContent(),
-                                                    EntityProviderReadProperties.init().build()),
+                                                    getEntityProviderReadProperties()),
                                             headersToMap(result.getAllHeaders()));
                                 }
                                 break;
@@ -685,7 +720,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                                 responseHandler.onResponse(
                                         (T) EntityProvider.readProperty(getContentType(), complexProperty,
                                                 result.getEntity().getContent(),
-                                                EntityProviderReadProperties.init().build()),
+                                                getEntityProviderReadProperties()),
                                         headersToMap(result.getAllHeaders()));
                                 break;
 
@@ -719,7 +754,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                                 responseHandler.onResponse(
                                         (T) EntityProvider.readEntry(response.getContentHeader(), uriInfo.getTargetEntitySet(),
                                                 result.getEntity().getContent(),
-                                                EntityProviderReadProperties.init().build()),
+                                                getEntityProviderReadProperties()),
                                         headersToMap(result.getAllHeaders()));
                                 break;
 
@@ -738,7 +773,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
     }
 
-    private ODataResponse writeContent(Edm edm, UriInfoWithType uriInfo, Object content)
+    private ODataResponse writeContent(Edm edm, UriInfoWithType uriInfo,
+                                       Object content, EntityProviderWriteProperties entityProviderWriteProperties)
             throws ODataApplicationException, EdmException, EntityProviderException, URISyntaxException, IOException {
 
         String responseContentType = getContentType();
@@ -770,7 +806,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                 // $links with 0..1 cardinality property
                 final EdmEntitySet targetLinkEntitySet = uriInfo.getTargetEntitySet();
                 EntityProviderWriteProperties linkProperties
-                        = EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
+                        = EntityProviderWriteProperties.fromProperties(entityProviderWriteProperties)
+                                                       .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
                 @SuppressWarnings("unchecked")
                 final Map<String, Object> linkMap = (Map<String, Object>) content;
                 response = EntityProvider.writeLink(responseContentType, targetLinkEntitySet, linkMap, linkProperties);
@@ -780,7 +817,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                 // $links with * cardinality property
                 final EdmEntitySet targetLinksEntitySet = uriInfo.getTargetEntitySet();
                 EntityProviderWriteProperties linksProperties
-                        = EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
+                        = EntityProviderWriteProperties.fromProperties(entityProviderWriteProperties)
+                                                       .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
                 @SuppressWarnings("unchecked")
                 final List<Map<String, Object>> linksMap = (List<Map<String, Object>>) content;
                 response = EntityProvider.writeLinks(responseContentType, targetLinksEntitySet, linksMap, linksProperties);
@@ -793,7 +831,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                 // Entity
                 final EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
                 EntityProviderWriteProperties properties
-                        = EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
+                        = EntityProviderWriteProperties.fromProperties(entityProviderWriteProperties)
+                                                       .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
                 @SuppressWarnings("unchecked")
                 final Map<String, Object> objectMap = (Map<String, Object>) content;
                 response = EntityProvider.writeEntry(responseContentType, targetEntitySet, objectMap, properties);
@@ -888,7 +927,8 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         if (batchRequest.getBody() != null && !Operation.DELETE.equals(batchRequest.getOperation())) {
 
-            final ODataResponse response = writeContent(edm, uriInfo, batchRequest.getBody());
+            final ODataResponse response = writeContent(edm, uriInfo, batchRequest.getBody(),
+                    getEntityProviderWriteProperties());
             // copy response headers
             for (String header : response.getHeaderNames()) {
                 headers.put(header, response.getHeader(header));
@@ -1024,9 +1064,7 @@ public final class Olingo2AppImpl implements Olingo2App {
             }
 
             AbstractFutureCallback.checkStatus(httpResponse);
-        } catch (ODataApplicationException e) {
-            return new Olingo2BatchResponse(statusCode, statusInfo, response.getContentId(), response.getHeaders(), e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (ODataApplicationException | UnsupportedEncodingException e) {
             return new Olingo2BatchResponse(statusCode, statusInfo, response.getContentId(), response.getHeaders(), e);
         }
 
@@ -1141,9 +1179,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                 }
             }
             result = new UriInfoWithType(UriParser.parse(edm, pathSegments, queryParams), resourcePath);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("resourcePath: " + e.getMessage(), e);
-        } catch (ODataException e) {
+        } catch (URISyntaxException | ODataException e) {
             throw new IllegalArgumentException("resourcePath: " + e.getMessage(), e);
         }
 
