@@ -344,6 +344,30 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
+    void copyDocumentWithNewName() throws UnsupportedEncodingException {
+        Folder destination = createFolderWithName("Destination");
+        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
+
+        Exchange exchange = createExchangeWithInBody(null);
+        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.COPY_DOCUMENT);
+        exchange.getIn().getHeaders().put(PropertyIds.NAME, "renamedDocument.txt");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, document.getId());
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, destination.getId());
+
+        template.send(exchange);
+
+        Document copy = exchange.getMessage().getBody(Document.class);
+
+        assertNotNull(copy);
+        assertNotEquals(document.getName(), copy.getName());
+        assertEquals(document.getName(), "document.txt");
+        assertEquals(copy.getName(), "renamedDocument.txt");
+        assertEquals(document.getContentStreamLength(), copy.getContentStreamLength());
+        assertEquals(destination.getId(), copy.getParents().get(0).getId());
+    }
+
+    @Test
     void copyFolder() {
         Folder folder = createFolderWithName("Folder");
         Folder destination = createFolderWithName("Destination Folder");

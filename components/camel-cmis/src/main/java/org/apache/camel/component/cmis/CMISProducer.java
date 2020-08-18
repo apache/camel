@@ -19,6 +19,7 @@ package org.apache.camel.component.cmis;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -345,7 +347,12 @@ public class CMISProducer extends DefaultProducer {
         Folder destinationFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
 
         Document document = (Document) getSessionFacade().getObjectById(objectId);
+        String newDocumentName = message.getHeader(PropertyIds.NAME, String.class);
+        if(!StringUtils.isEmpty(newDocumentName))
+        {
+            document.updateProperties(Collections.singletonMap(PropertyIds.NAME, newDocumentName));
 
+        }
         return document.copy(destinationFolder);
     }
 
