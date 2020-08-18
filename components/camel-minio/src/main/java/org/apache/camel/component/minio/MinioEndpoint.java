@@ -212,14 +212,18 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         String bucketName = getConfiguration().getBucketName();
         StatObjectArgs.Builder statObjectRequest = StatObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        MinioChecks.checkServerSideEncryptionCustomerKeyConfig(getConfiguration(), statObjectRequest::ssec);
-        MinioChecks.checkOffsetConfig(getConfiguration(), statObjectRequest::offset);
-        MinioChecks.checkLengthConfig(getConfiguration(), statObjectRequest::length);
-        MinioChecks.checkVersionIdConfig(getConfiguration(), statObjectRequest::versionId);
-        MinioChecks.checkMatchETagConfig(getConfiguration(), statObjectRequest::matchETag);
-        MinioChecks.checkNotMatchETagConfig(getConfiguration(), statObjectRequest::notMatchETag);
-        MinioChecks.checkModifiedSinceConfig(getConfiguration(), statObjectRequest::modifiedSince);
-        MinioChecks.checkUnModifiedSinceConfig(getConfiguration(), statObjectRequest::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
+                statObjectRequest::ssec);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, statObjectRequest::offset);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, statObjectRequest::length);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, statObjectRequest::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, statObjectRequest::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag,
+                statObjectRequest::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
+                statObjectRequest::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
+                statObjectRequest::unmodifiedSince);
 
         ObjectStat stat = minioClient.statObject(statObjectRequest.build());
 
