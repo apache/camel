@@ -145,6 +145,13 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
         if (result instanceof ODataFeed) {
             ODataFeed odataFeed = (ODataFeed) result;
             for (ODataEntry entry : odataFeed.getEntries()) {
+                if (odataFeed.getFeedMetadata().getInlineCount() != null) {
+                    //
+                    // If $inlinecount was set to true in the query then
+                    // need to include the count in the entities
+                    //
+                    entry.getProperties().put("ResultCount", odataFeed.getFeedMetadata().getInlineCount());
+                }
                 splitResult.add(entry);
             }
         } else if (result instanceof List) {
