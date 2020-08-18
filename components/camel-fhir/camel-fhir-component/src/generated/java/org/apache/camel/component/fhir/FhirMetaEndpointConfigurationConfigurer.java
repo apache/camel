@@ -186,5 +186,16 @@ public class FhirMetaEndpointConfigurationConfigurer extends org.apache.camel.su
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "extraparameters":
+        case "ExtraParameters": return java.lang.Object.class;
+        case "metatype":
+        case "MetaType": return org.hl7.fhir.instance.model.api.IBaseMetaType.class;
+        default: return null;
+        }
+    }
 }
 

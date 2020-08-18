@@ -101,5 +101,14 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpheaders":
+        case "HttpHeaders": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

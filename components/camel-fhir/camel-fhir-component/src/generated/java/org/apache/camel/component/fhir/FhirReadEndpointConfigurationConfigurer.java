@@ -226,5 +226,16 @@ public class FhirReadEndpointConfigurationConfigurer extends org.apache.camel.su
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "extraparameters":
+        case "ExtraParameters": return java.lang.Object.class;
+        case "resource":
+        case "Resource": return org.hl7.fhir.instance.model.api.IBaseResource.class;
+        default: return null;
+        }
+    }
 }
 

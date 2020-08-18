@@ -191,5 +191,14 @@ public class FhirPatchEndpointConfigurationConfigurer extends org.apache.camel.s
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "extraparameters":
+        case "ExtraParameters": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

@@ -171,5 +171,16 @@ public class FhirCapabilitiesEndpointConfigurationConfigurer extends org.apache.
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "extraparameters":
+        case "ExtraParameters": return java.lang.Object.class;
+        case "type":
+        case "Type": return org.hl7.fhir.instance.model.api.IBaseConformance.class;
+        default: return null;
+        }
+    }
 }
 

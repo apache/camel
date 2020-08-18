@@ -451,5 +451,16 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurations":
+        case "Configurations": return java.lang.Object.class;
+        case "routesbuilders":
+        case "RoutesBuilders": return org.apache.camel.RoutesBuilder.class;
+        default: return null;
+        }
+    }
 }
 
