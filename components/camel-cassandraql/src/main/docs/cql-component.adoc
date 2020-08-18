@@ -2,7 +2,7 @@
 = Cassandra CQL Component
 :docTitle: Cassandra CQL
 :artifactId: camel-cassandraql
-:description: Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+:description: Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API). Based on Cassandra Java Driver provided by DataStax.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
