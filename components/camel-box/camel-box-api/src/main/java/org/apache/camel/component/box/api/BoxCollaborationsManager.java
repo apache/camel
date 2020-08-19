@@ -80,20 +80,18 @@ public class BoxCollaborationsManager {
      * 
      * @return              The new collaboration.
      */
-    @SuppressWarnings("unused") // compiler for some reason thinks 'if
-                               // (collaborator == null)' clause is dead code.
     public BoxCollaboration addFolderCollaboration(
             String folderId, BoxCollaborator collaborator,
             BoxCollaboration.Role role) {
         try {
-            LOG.debug("Creating  collaborations for folder(id=" + folderId + ") with collaborator("
-                      + collaborator.getID() + ")");
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
             if (collaborator == null) {
                 throw new IllegalArgumentException("Parameter 'collaborator' can not be null");
             }
+            LOG.debug("Creating  collaborations for folder(id=" + folderId + ") with collaborator("
+                    + collaborator.getID() + ")");
             if (role == null) {
                 throw new IllegalArgumentException("Parameter 'role' can not be null");
             }
