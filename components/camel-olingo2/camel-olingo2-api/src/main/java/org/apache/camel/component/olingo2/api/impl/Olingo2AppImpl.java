@@ -376,9 +376,9 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         // merge operation must use data based property serialization in order to not overwrite
         // unspecified properties with null values
-        EntityProviderWriteProperties entityProviderWriteProperties =
-                EntityProviderWriteProperties.fromProperties(getEntityProviderWriteProperties())
-                                             .isDataBasedPropertySerialization(true).build();
+        EntityProviderWriteProperties entityProviderWriteProperties
+                = EntityProviderWriteProperties.fromProperties(getEntityProviderWriteProperties())
+                        .isDataBasedPropertySerialization(true).build();
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpMerge(createUri(resourcePath, null)),
                 request -> writeContent(edm, (HttpMerge) request, uriInfo,
                         endpointHttpHeaders, data, responseHandler, entityProviderWriteProperties),
@@ -778,8 +778,9 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
     }
 
-    private ODataResponse writeContent(Edm edm, UriInfoWithType uriInfo,
-                                       Object content, EntityProviderWriteProperties entityProviderWriteProperties)
+    private ODataResponse writeContent(
+            Edm edm, UriInfoWithType uriInfo,
+            Object content, EntityProviderWriteProperties entityProviderWriteProperties)
             throws ODataApplicationException, EdmException, EntityProviderException, URISyntaxException, IOException {
 
         String responseContentType = getContentType();
@@ -812,7 +813,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                 final EdmEntitySet targetLinkEntitySet = uriInfo.getTargetEntitySet();
                 EntityProviderWriteProperties linkProperties
                         = EntityProviderWriteProperties.fromProperties(entityProviderWriteProperties)
-                                                       .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
+                                .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
                 @SuppressWarnings("unchecked")
                 final Map<String, Object> linkMap = (Map<String, Object>) content;
                 response = EntityProvider.writeLink(responseContentType, targetLinkEntitySet, linkMap, linkProperties);
@@ -823,7 +824,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                 final EdmEntitySet targetLinksEntitySet = uriInfo.getTargetEntitySet();
                 EntityProviderWriteProperties linksProperties
                         = EntityProviderWriteProperties.fromProperties(entityProviderWriteProperties)
-                                                       .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
+                                .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
                 @SuppressWarnings("unchecked")
                 final List<Map<String, Object>> linksMap = (List<Map<String, Object>>) content;
                 response = EntityProvider.writeLinks(responseContentType, targetLinksEntitySet, linksMap, linksProperties);
@@ -837,7 +838,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                 final EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
                 EntityProviderWriteProperties properties
                         = EntityProviderWriteProperties.fromProperties(entityProviderWriteProperties)
-                                                       .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
+                                .serviceRoot(new URI(serviceUri + SEPARATOR)).build();
                 @SuppressWarnings("unchecked")
                 final Map<String, Object> objectMap = (Map<String, Object>) content;
                 response = EntityProvider.writeEntry(responseContentType, targetEntitySet, objectMap, properties);
