@@ -35,6 +35,14 @@
     <properties>
         <firstVersion>3.0</firstVersion>
         <label>core</label>
+
+        <sourcecheckExcludes>
+            **/MySecondFooConfigurer.java,
+            **/MySecondBarConfigurer.java
+        </sourcecheckExcludes>
+        <sourcecheckExcludesComma>
+            ${sourcecheckExcludes},
+        </sourcecheckExcludesComma>
     </properties>
 
     <dependencies>
@@ -158,20 +166,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.revelc.code</groupId>
-                <artifactId>impsort-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>**/package-info.java,**/MySecondFooConfigurer.java,**/MySecondBarConfigurer.java</excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>**/MySecondFooConfigurer.java,**/MySecondBarConfigurer.java</excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
