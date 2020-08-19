@@ -234,8 +234,10 @@ public class SalesforceLoginConfig {
 
     @Override
     public String toString() {
-        return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + "," + "clientId='" + clientId + '\'' + ", clientSecret='********'"
-                + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'" + password + '\'' + ", keystore=********'" + keystore + '\''
-                + ", lazyLogin=" + lazyLogin + ']';
+        return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + ","
+               + "clientId='" + clientId + '\'' + ", clientSecret='********'"
+               + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'"
+               + ", keystore=********'"
+               + ", lazyLogin=" + lazyLogin + ']';
     }
 }
