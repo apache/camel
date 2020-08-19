@@ -2559,7 +2559,7 @@ public abstract class AbstractCamelContext extends BaseService
         ServiceHelper.initService(lifecycleStrategies);
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {
-                strategy.onContextInitialized(this);
+                strategy.onContextInitializing(this);
             } catch (VetoCamelContextStartException e) {
                 // okay we should not start Camel since it was vetoed
                 LOG.warn("Lifecycle strategy " + strategy + " vetoed initializing CamelContext ({}) due to: {}", getName(),
@@ -2639,6 +2639,21 @@ public abstract class AbstractCamelContext extends BaseService
 
         // start the route definitions before the routes is started
         startRouteDefinitions();
+
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            try {
+                strategy.onContextInitialized(this);
+            } catch (VetoCamelContextStartException e) {
+                // okay we should not start Camel since it was vetoed
+                LOG.warn("Lifecycle strategy " + strategy + " vetoed initializing CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                LOG.warn("Lifecycle strategy " + strategy + " failed initializing CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
+                throw e;
+            }
+        }
 
         EventHelper.notifyCamelContextInitialized(this);
     }

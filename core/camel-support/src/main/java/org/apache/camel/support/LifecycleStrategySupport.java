@@ -31,6 +31,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.OnCamelContextInitialized;
+import org.apache.camel.spi.OnCamelContextInitializing;
 import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStop;
 
@@ -141,6 +142,15 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
         };
     }
 
+    public static LifecycleStrategy adapt(OnCamelContextInitializing handler) {
+        return new LifecycleStrategySupport() {
+            @Override
+            public void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
+                handler.onContextInitializing(context);
+            }
+        };
+    }
+
     public static LifecycleStrategy adapt(OnCamelContextInitialized handler) {
         return new LifecycleStrategySupport() {
             @Override
@@ -166,6 +176,10 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
                 handler.onContextStop(context);
             }
         };
+    }
+
+    public static OnCamelContextInitializing onCamelContextInitializing(Consumer<CamelContext> consumer) {
+        return consumer::accept;
     }
 
     public static OnCamelContextInitialized onCamelContextInitialized(Consumer<CamelContext> consumer) {
