@@ -16,18 +16,22 @@
  */
 package org.apache.camel.component.arangodb;
 
-public enum ArangoDbOperation {
-    SAVE_DOCUMENT,
-    FIND_DOCUMENT_BY_KEY,
-    UPDATE_DOCUMENT,
-    DELETE_DOCUMENT,
-    AQL_QUERY,
-    SAVE_VERTEX,
-    FIND_VERTEX_BY_KEY,
-    UPDATE_VERTEX,
-    DELETE_VERTEX,
-    SAVE_EDGE,
-    FIND_EDGE_BY_KEY,
-    UPDATE_EDGE,
-    DELETE_EDGE
+import com.arangodb.ArangoCollection;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+public class BaseCollectionTest extends BaseArangoDbTest {
+
+    protected ArangoCollection collection;
+
+    @BeforeEach
+    public void beforeEach() {
+        arangoDatabase.createCollection(COLLECTION_NAME);
+        collection = arangoDatabase.collection(COLLECTION_NAME);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        collection.drop();
+    }
 }
