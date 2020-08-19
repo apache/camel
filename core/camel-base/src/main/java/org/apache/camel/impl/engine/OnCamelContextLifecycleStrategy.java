@@ -21,6 +21,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.OnCamelContextInitialized;
+import org.apache.camel.spi.OnCamelContextInitializing;
 import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStop;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -30,6 +31,18 @@ import org.apache.camel.support.LifecycleStrategySupport;
  * {@link OnCamelContextStop} which has been registered in the Camel {@link org.apache.camel.spi.Registry}.
  */
 class OnCamelContextLifecycleStrategy extends LifecycleStrategySupport {
+
+    @Override
+    public void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
+        for (OnCamelContextInitializing handler : context.getRegistry().findByType(OnCamelContextInitializing.class)) {
+            // RoutesBuilder should register them-self to the camel context
+            // to avoid invoking them multiple times if routes are discovered
+            // from the registry (i.e. camel-main)
+            if (!(handler instanceof RoutesBuilder)) {
+                handler.onContextInitializing(context);
+            }
+        }
+    }
 
     @Override
     public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {

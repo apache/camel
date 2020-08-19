@@ -41,6 +41,17 @@ public interface LifecycleStrategy {
      *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
      *                                        starting itself.
      */
+    default void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on initialized a {@link CamelContext}.
+     *
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
+     */
     default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
     }
 

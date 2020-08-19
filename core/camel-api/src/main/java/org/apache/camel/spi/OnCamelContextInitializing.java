@@ -19,9 +19,9 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * Notification on initialized a {@link CamelContext}.
+ * Notification on initializing a {@link CamelContext}.
  */
 @FunctionalInterface
-public interface OnCamelContextInitialized extends OnCamelContextEvent {
-    void onContextInitialized(CamelContext context);
+public interface OnCamelContextInitializing extends OnCamelContextEvent {
+    void onContextInitializing(CamelContext context);
 }
