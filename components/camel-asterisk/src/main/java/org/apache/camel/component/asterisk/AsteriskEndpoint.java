@@ -57,7 +57,8 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         // Validate mandatory option
         ObjectHelper.notNull(hostname, "hostname");
         ObjectHelper.notNull(username, "username");

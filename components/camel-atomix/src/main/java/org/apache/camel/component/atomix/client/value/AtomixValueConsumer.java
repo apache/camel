@@ -65,7 +65,7 @@ public final class AtomixValueConsumer extends AbstractAtomixClientConsumer<Atom
         // close listeners
         listeners.forEach(Listener::close);
 
-        super.doStart();
+        super.doStop();
     }
 
     // ********************************************

@@ -288,7 +288,9 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
             if (useDefaultObjectMapper && camelContext != null) {
