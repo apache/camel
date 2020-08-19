@@ -100,6 +100,10 @@ public class HttpSendDynamicAware implements SendDynamicAware {
             query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
         }
 
+        if (query == null && exchange.getIn().getHeader(Exchange.HTTP_QUERY) != null) {
+            query = (String) exchange.getIn().getHeader(Exchange.HTTP_QUERY);
+        }
+
         if (path != null || query != null) {
             return new HttpSendDynamicPreProcessor(path, query);
         } else {
