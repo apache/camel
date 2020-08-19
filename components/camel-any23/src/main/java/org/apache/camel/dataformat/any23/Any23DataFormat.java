@@ -119,7 +119,9 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         ModifiableConfiguration conf = null;
         String[] extrArray = null;
         if (extractors != null && !extractors.isEmpty()) {

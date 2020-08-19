@@ -210,8 +210,8 @@ public class ActiveMQComponent extends JmsComponent {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // use OriginalDestinationPropagateStrategy by default if no custom
         // strategy has been set
