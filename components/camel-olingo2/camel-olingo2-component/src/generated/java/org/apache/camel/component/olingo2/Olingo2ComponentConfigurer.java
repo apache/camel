@@ -35,6 +35,10 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "connectTimeout": getOrCreateConfiguration(target).setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "contenttype":
         case "contentType": getOrCreateConfiguration(target).setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "entityproviderreadproperties":
+        case "entityProviderReadProperties": getOrCreateConfiguration(target).setEntityProviderReadProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class, value)); return true;
+        case "entityproviderwriteproperties":
+        case "entityProviderWriteProperties": getOrCreateConfiguration(target).setEntityProviderWriteProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class, value)); return true;
         case "filteralreadyseen":
         case "filterAlreadySeen": getOrCreateConfiguration(target).setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
         case "httpasyncclientbuilder":
@@ -68,6 +72,8 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
         answer.put("configuration", org.apache.camel.component.olingo2.Olingo2Configuration.class);
         answer.put("connectTimeout", int.class);
         answer.put("contentType", java.lang.String.class);
+        answer.put("entityProviderReadProperties", org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class);
+        answer.put("entityProviderWriteProperties", org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class);
         answer.put("filterAlreadySeen", boolean.class);
         answer.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
         answer.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
@@ -95,6 +101,10 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "connectTimeout": return getOrCreateConfiguration(target).getConnectTimeout();
         case "contenttype":
         case "contentType": return getOrCreateConfiguration(target).getContentType();
+        case "entityproviderreadproperties":
+        case "entityProviderReadProperties": return getOrCreateConfiguration(target).getEntityProviderReadProperties();
+        case "entityproviderwriteproperties":
+        case "entityProviderWriteProperties": return getOrCreateConfiguration(target).getEntityProviderWriteProperties();
         case "filteralreadyseen":
         case "filterAlreadySeen": return getOrCreateConfiguration(target).isFilterAlreadySeen();
         case "httpasyncclientbuilder":
