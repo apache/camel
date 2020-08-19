@@ -28,7 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CamelCommand that uses the {@link CamelContext} registered on the {@link ServiceRegistry} for this specific deployment.
+ * CamelCommand that uses the {@link CamelContext} registered on the {@link ServiceRegistry} for this specific
+ * deployment.
  */
 public class DeploymentContextCamelCommand extends AbstractCamelCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentContextCamelCommand.class);

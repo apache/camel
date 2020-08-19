@@ -93,13 +93,14 @@ public class CamelKieServerExtension implements KieServerExtension {
     @Override
     public void init(KieServerImpl kieServer, KieServerRegistry registry) {
         if (this.managedCamel && this.camelContext == null) {
-            this.camelContext = (DefaultCamelContext)buildGlobalContext();
+            this.camelContext = (DefaultCamelContext) buildGlobalContext();
             this.camelContext.setName("KIE Server Camel context");
 
             try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
                 if (is != null) {
                     ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-                    RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(camelContext, is);
+                    RoutesDefinition routes
+                            = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(camelContext, is);
                     camelContext.addRouteDefinitions(routes.getRoutes());
                 }
             } catch (Exception e) {
@@ -130,14 +131,15 @@ public class CamelKieServerExtension implements KieServerExtension {
         try (InputStream is = classloader.getResourceAsStream("camel-routes.xml")) {
             if (is != null) {
 
-                DefaultCamelContext context = (DefaultCamelContext)buildDeploymentContext(id, classloader);
+                DefaultCamelContext context = (DefaultCamelContext) buildDeploymentContext(id, classloader);
                 context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());
 
                 ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-                RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, is);
+                RoutesDefinition routes
+                        = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, is);
                 annotateKJarRoutes(routes, id);
                 context.addRouteDefinitions(routes.getRoutes());
-                
+
                 context.start();
                 camelContexts.put(id, context);
 
@@ -156,7 +158,8 @@ public class CamelKieServerExtension implements KieServerExtension {
     }
 
     @Override
-    public boolean isUpdateContainerAllowed(String id, KieContainerInstance kieContainerInstance, Map<String, Object> parameters) {
+    public boolean isUpdateContainerAllowed(
+            String id, KieContainerInstance kieContainerInstance, Map<String, Object> parameters) {
         return true;
     }
 
@@ -259,19 +262,19 @@ public class CamelKieServerExtension implements KieServerExtension {
     }
 
     protected CamelContext buildDeploymentContext(String identifier, ClassLoader classloader) {
-       
-        
-        InternalRuntimeManager runtimeManager = (InternalRuntimeManager)RuntimeManagerRegistry.get().getManager(identifier);
+
+        InternalRuntimeManager runtimeManager = (InternalRuntimeManager) RuntimeManagerRegistry.get().getManager(identifier);
 
         if (runtimeManager != null) {
 
-            CamelContextBuilder deploymentContextBuilder = (CamelContextBuilder)runtimeManager.getEnvironment().getEnvironment().get(JBPMConstants.CAMEL_CONTEXT_BUILDER_KEY);
+            CamelContextBuilder deploymentContextBuilder = (CamelContextBuilder) runtimeManager.getEnvironment()
+                    .getEnvironment().get(JBPMConstants.CAMEL_CONTEXT_BUILDER_KEY);
             if (deploymentContextBuilder != null) {
                 return deploymentContextBuilder.buildCamelContext();
             }
         }
-        CamelContext camelContext = new CamelContextBuilder() { 
-        }.buildCamelContext();       
+        CamelContext camelContext = new CamelContextBuilder() {
+        }.buildCamelContext();
         camelContext.setApplicationContextClassLoader(classloader);
         return camelContext;
     }
