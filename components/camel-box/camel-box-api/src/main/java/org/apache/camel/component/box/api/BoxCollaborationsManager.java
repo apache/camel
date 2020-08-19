@@ -91,7 +91,7 @@ public class BoxCollaborationsManager {
                 throw new IllegalArgumentException("Parameter 'collaborator' can not be null");
             }
             LOG.debug("Creating  collaborations for folder(id=" + folderId + ") with collaborator("
-                    + collaborator.getID() + ")");
+                      + collaborator.getID() + ")");
             if (role == null) {
                 throw new IllegalArgumentException("Parameter 'role' can not be null");
             }
