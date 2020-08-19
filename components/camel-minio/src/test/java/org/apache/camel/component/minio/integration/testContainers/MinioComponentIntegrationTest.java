@@ -16,7 +16,15 @@
  */
 package org.apache.camel.component.minio.integration.testContainers;
 
-import org.apache.camel.*;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Properties;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.integration.MinioTestUtils;
@@ -25,10 +33,6 @@ import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
