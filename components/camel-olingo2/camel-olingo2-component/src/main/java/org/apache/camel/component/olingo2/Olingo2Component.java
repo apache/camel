@@ -169,9 +169,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
             }
             try {
                 asyncClientBuilder.setSSLContext(sslContextParameters.createSSLContext(getCamelContext()));
-            } catch (GeneralSecurityException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            } catch (IOException e) {
+            } catch (GeneralSecurityException | IOException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
 
@@ -187,6 +185,8 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
         apiProxy = new Olingo2AppWrapper(olingo2App);
         apiProxy.getOlingo2App().setContentType(configuration.getContentType());
         apiProxy.getOlingo2App().setHttpHeaders(configuration.getHttpHeaders());
+        apiProxy.getOlingo2App().setEntityProviderReadProperties(configuration.getEntityProviderReadProperties());
+        apiProxy.getOlingo2App().setEntityProviderWriteProperties(configuration.getEntityProviderWriteProperties());
 
         return apiProxy;
     }

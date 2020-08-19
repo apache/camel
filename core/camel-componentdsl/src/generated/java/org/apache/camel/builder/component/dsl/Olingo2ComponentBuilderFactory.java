@@ -89,6 +89,39 @@ public interface Olingo2ComponentBuilderFactory {
             return this;
         }
         /**
+         * Custom entity provider read properties applied to all read
+         * operations.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2ComponentBuilder entityProviderReadProperties(
+                org.apache.olingo.odata2.api.ep.EntityProviderReadProperties entityProviderReadProperties) {
+            doSetProperty("entityProviderReadProperties", entityProviderReadProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider write properties applied to create, update,
+         * patch, batch and merge operations. For instance users can skip the
+         * Json object wrapper or enable content only mode when sending request
+         * data. A service URI set in the properties will always be overwritten
+         * by the serviceUri configuration parameter. Please consider to using
+         * the serviceUri configuration parameter instead of setting the
+         * respective write property here.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2ComponentBuilder entityProviderWriteProperties(
+                org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties entityProviderWriteProperties) {
+            doSetProperty("entityProviderWriteProperties", entityProviderWriteProperties);
+            return this;
+        }
+        /**
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
@@ -306,6 +339,8 @@ public interface Olingo2ComponentBuilderFactory {
             case "configuration": ((Olingo2Component) component).setConfiguration((org.apache.camel.component.olingo2.Olingo2Configuration) value); return true;
             case "connectTimeout": getOrCreateConfiguration((Olingo2Component) component).setConnectTimeout((int) value); return true;
             case "contentType": getOrCreateConfiguration((Olingo2Component) component).setContentType((java.lang.String) value); return true;
+            case "entityProviderReadProperties": getOrCreateConfiguration((Olingo2Component) component).setEntityProviderReadProperties((org.apache.olingo.odata2.api.ep.EntityProviderReadProperties) value); return true;
+            case "entityProviderWriteProperties": getOrCreateConfiguration((Olingo2Component) component).setEntityProviderWriteProperties((org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties) value); return true;
             case "filterAlreadySeen": getOrCreateConfiguration((Olingo2Component) component).setFilterAlreadySeen((boolean) value); return true;
             case "httpHeaders": getOrCreateConfiguration((Olingo2Component) component).setHttpHeaders((java.util.Map) value); return true;
             case "proxy": getOrCreateConfiguration((Olingo2Component) component).setProxy((org.apache.http.HttpHost) value); return true;

@@ -29,10 +29,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
@@ -261,7 +260,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read value of the People object and split the results into individual
+     * Read value of the Address object and split the results into individual
      * messages
      */
     @SuppressWarnings("unchecked")
@@ -328,6 +327,46 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
             Object name = properties.get("Name");
             assertNotNull(name);
             assertTrue(name.toString().contains("Powered Racing"));
+        }
+    }
+
+    /**
+     * Read entity set of the Manufacturers object and split the results into individual messages. Auto add inline count
+     * or results to entities.
+     */
+    @Test
+    public void testConsumerReadSplitResultsWithInlineCount() throws Exception {
+        int expectedMsgCount = 2;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-with-count");
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo2://read/Manufacturers/?$inlinecount=allpages&splitResult=true")
+                        .to("mock:consumer-splitresult-with-count");
+            }
+        };
+
+        addRouteAndStartContext(builder);
+
+        mockEndpoint.assertIsSatisfied();
+
+        //
+        // 2 individual messages in the exchange,
+        // each containing a different entity.
+        //
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ODataEntry);
+            ODataEntry entry = (ODataEntry) body;
+            Map<String, Object> properties = entry.getProperties();
+            assertNotNull(properties);
+
+            Object name = properties.get("Name");
+            assertNotNull(name);
+            assertTrue(name.toString().contains("Powered Racing"));
+            Object resultCount = properties.get("ResultCount");
+            assertTrue(((Integer) resultCount) > 0);
         }
     }
 }
