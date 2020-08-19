@@ -26,6 +26,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.SendDynamicAware;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -100,7 +101,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
             query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
         }
 
-        if (query == null && exchange.getIn().getHeader(Exchange.HTTP_QUERY) != null) {
+        if (query == null && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_QUERY))) {
             query = (String) exchange.getIn().getHeader(Exchange.HTTP_QUERY);
         }
 

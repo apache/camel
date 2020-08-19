@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
 
@@ -70,6 +70,7 @@ public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
     @Test
     public void testDynamicAwareHeadersQuery() throws Exception {
         Exchange e = fluentTemplate.to("direct:dynamicAwareWithoutPathHeader").send();
-        assertNotNull(e.getIn().getHeader(Exchange.HTTP_QUERY));
+        assertEquals("/dynamicAware", e.getIn().getHeader(Exchange.HTTP_PATH));
+        assertEquals("par1=val1&par2=val2", e.getIn().getHeader(Exchange.HTTP_QUERY));
     }
 }
