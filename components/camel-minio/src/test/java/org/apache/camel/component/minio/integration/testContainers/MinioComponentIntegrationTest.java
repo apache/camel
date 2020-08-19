@@ -1,0 +1,133 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.minio.integration.testContainers;
+
+import org.apache.camel.*;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.minio.MinioConstants;
+import org.apache.camel.component.minio.integration.MinioTestUtils;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Properties;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class MinioComponentIntegrationTest extends ContainerAwareTestSupport {
+
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
+    final int port = 9000;
+
+    @EndpointInject("direct:start")
+    private ProducerTemplate template;
+
+    @EndpointInject("mock:result")
+    private MockEndpoint result;
+
+    public MinioComponentIntegrationTest() throws IOException {
+    }
+
+    @Test
+    public void sendInOnly() throws Exception {
+        result.expectedMessageCount(1);
+
+        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
+            exchange.getIn().setBody("This is my bucket content.");
+        });
+
+        Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
+            exchange.getIn().setBody("This is my bucket content.");
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertResultExchange(result.getExchanges().get(0));
+
+        assertResponseMessage(exchange1.getIn());
+        assertResponseMessage(exchange2.getIn());
+    }
+
+    @Test
+    public void sendInOut() throws Exception {
+        result.expectedMessageCount(1);
+
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {
+            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
+            exchange1.getIn().setBody("This is my bucket content.");
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertResultExchange(result.getExchanges().get(0));
+
+        assertResponseMessage(exchange.getMessage());
+    }
+
+    private void assertResultExchange(Exchange resultExchange) {
+        assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
+        assertEquals("mycamelbucket", resultExchange.getIn().getHeader(MinioConstants.BUCKET_NAME));
+        assertTrue(resultExchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class).startsWith("CamelUnitTest"));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.VERSION_ID)); // not enabled on this bucket
+        assertNotNull(resultExchange.getIn().getHeader(MinioConstants.LAST_MODIFIED));
+        assertEquals("application/octet-stream", resultExchange.getIn().getHeader(MinioConstants.CONTENT_TYPE));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_ENCODING));
+        assertEquals(26L, resultExchange.getIn().getHeader(MinioConstants.CONTENT_LENGTH));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_DISPOSITION));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_MD5));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.CACHE_CONTROL));
+    }
+
+    private void assertResponseMessage(Message message) {
+        assertNull(message.getHeader(MinioConstants.VERSION_ID));
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                String minioEndpointUri =
+                        "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=RAW(zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG)&region=us-west-1&autoCreateBucket=true&endpoint=http://127.0.0.1&proxyPort=9000";
+
+                from("direct:start").to(minioEndpointUri);
+                from(minioEndpointUri).to("mock:result");
+
+            }
+        };
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return new GenericContainer<>("minio/minio:latest")
+                .withEnv("MINIO_ACCESS_KEY", properties.getProperty("accessKey"))
+                .withEnv("MINIO_SECRET_KEY", properties.getProperty("secretKey"))
+                .withCommand("server /data")
+                .withExposedPorts(port)
+                .waitingFor(new HttpWaitStrategy()
+                        .forPath("/minio/health/ready")
+                        .forPort(port)
+                        .withStartupTimeout(Duration.ofSeconds(10)));
+    }
+}
