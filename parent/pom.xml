@@ -612,6 +612,9 @@
         <camel.osgi.provide.capability />
 
         <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
+
+        <sourcecheckExcludes></sourcecheckExcludes>
+        <sourcecheckExcludesComma></sourcecheckExcludesComma>
     </properties>
 
     <dependencyManagement>
@@ -3939,12 +3942,58 @@
                                 </sourceDirectories>
                                 <headerLocation>header-java.txt</headerLocation>
                                 <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
-                                <excludes>
-                                    **/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java
-                                </excludes>
+                                <excludes>${sourcecheckExcludesComma}**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
                             </configuration>
                             <goals>
                                 <goal>checkstyle</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code</groupId>
+                    <artifactId>impsort-maven-plugin</artifactId>
+                    <version>${impsort-maven-plugin-version}</version>
+                    <configuration>
+                        <groups>java.,javax.,org.w3c.,org.xml.,junit.,*</groups>
+                        <excludes>${sourcecheckExcludesComma}**/package-info.java</excludes>
+                        <staticAfter>true</staticAfter>
+                        <removeUnused>true</removeUnused>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>sort-imports</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>sort</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${formatter-maven-plugin.version}</version>
+                    <configuration>
+                        <configFile>camel-eclipse-formatter-config.xml</configFile>
+                        <skip>${format.skip}</skip>
+                        <skipHtmlFormatting>true</skipHtmlFormatting>
+                        <cachedir>${basedir}/target</cachedir>
+                        <excludes>${sourcecheckExcludes}</excludes>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>camel-buildtools</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>format</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>format</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -4253,48 +4302,10 @@
             <plugin>
                 <groupId>net.revelc.code</groupId>
                 <artifactId>impsort-maven-plugin</artifactId>
-                <version>${impsort-maven-plugin-version}</version>
-                <configuration>
-                    <groups>java.,javax.,org.w3c.,org.xml.,junit.,*</groups>
-                    <excludes>**/package-info.java</excludes>
-                    <staticAfter>true</staticAfter>
-                    <removeUnused>true</removeUnused>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>sort-imports</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>sort</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
-                <version>${formatter-maven-plugin.version}</version>
-                <configuration>
-                    <configFile>camel-eclipse-formatter-config.xml</configFile>
-                    <skip>${format.skip}</skip>
-                    <skipHtmlFormatting>true</skipHtmlFormatting>
-                    <cachedir>${basedir}/target</cachedir>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-buildtools</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>format</id>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -4425,6 +4436,7 @@
                             </execution>
                             <execution>
                                 <id>validate</id>
+                                <phase>validate</phase>
                                 <goals>
                                     <goal>validate</goal>
                                 </goals>

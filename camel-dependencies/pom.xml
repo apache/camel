@@ -526,6 +526,8 @@
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-version>8.5.1</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
+    <sourcecheckExcludes></sourcecheckExcludes>
+    <sourcecheckExcludesComma></sourcecheckExcludesComma>
     <spark-version>2.4.6</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
     <spring-batch-version>4.2.4.RELEASE</spring-batch-version>
