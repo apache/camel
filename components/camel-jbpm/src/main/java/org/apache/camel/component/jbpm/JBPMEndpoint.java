@@ -38,21 +38,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with jBPM workflow engine over REST.
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", category = {Category.API, Category.WORKFLOW})
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL",
+             category = { Category.API, Category.WORKFLOW })
 public class JBPMEndpoint extends DefaultEndpoint {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(JBPMEndpoint.class);
 
     @UriParam
     private JBPMConfiguration configuration;
 
-    public JBPMEndpoint(String uri, JBPMComponent component, JBPMConfiguration configuration) throws URISyntaxException, MalformedURLException {
+    public JBPMEndpoint(String uri, JBPMComponent component, JBPMConfiguration configuration) throws URISyntaxException,
+                                                                                              MalformedURLException {
         super(uri, component);
         this.configuration = configuration;
     }
 
     public Producer createProducer() throws Exception {
-        KieServicesConfiguration kieConfiguration = KieServicesFactory.newRestConfiguration(configuration.getConnectionURL().toExternalForm(), configuration.getUserName(),
-                                                                                            configuration.getPassword());
+        KieServicesConfiguration kieConfiguration = KieServicesFactory.newRestConfiguration(
+                configuration.getConnectionURL().toExternalForm(), configuration.getUserName(),
+                configuration.getPassword());
 
         if (configuration.getTimeout() != null) {
             kieConfiguration.setTimeout(configuration.getTimeout());

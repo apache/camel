@@ -36,25 +36,28 @@ import org.slf4j.LoggerFactory;
  * Camel jBPM {@link WorkItemHandler} which allows to call Camel routes with a <code>direct</code> endpoint.
  * <p/>
  * The handler passes the {@WorkItem} to the route that has a consumer on the endpoint-id that can be passed with the
- * <code>CamelEndpointId</code>{@link WorkItem} parameter. E.g. when a the value "myCamelEndpoint" is passed to the {link WorkItem} via the
- * <code>CamelEndpointId</code> parameter, this command will send the {@link WorkItem} to the Camel URI
- * <code>direct:myCamelEndpoint</code>.
+ * <code>CamelEndpointId</code>{@link WorkItem} parameter. E.g. when a the value "myCamelEndpoint" is passed to the
+ * {link WorkItem} via the <code>CamelEndpointId</code> parameter, this command will send the {@link WorkItem} to the
+ * Camel URI <code>direct:myCamelEndpoint</code>.
  * <p/>
- * The body of the result {@link Message} of the invocation is returned via the <code>Response</code> parameter. Access to the raw response
- * {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to more advanced fields like message
- * headers and attachments.
+ * The body of the result {@link Message} of the invocation is returned via the <code>Response</code> parameter. Access
+ * to the raw response {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to
+ * more advanced fields like message headers and attachments.
  * <p/>
- * The handler can be configured to always wrap exceptions coming from Camel in a {@link WorkItemHandlerRuntimeException}. This is the default behaviour, but
- * can also be explicitly configured by setting the <code>HandleExceptions</code> workitem parameter to <code>true</code>/ When
- * the <code>HandleExceptions</code> workitem parameter is set to <code>false</code>, any exceptions coming from the Camel route will simply be
- * re-thrown. This makes the Camel route's exception handling logic responsible for correctly handling any exceptions.
+ * The handler can be configured to always wrap exceptions coming from Camel in a
+ * {@link WorkItemHandlerRuntimeException}. This is the default behaviour, but can also be explicitly configured by
+ * setting the <code>HandleExceptions</code> workitem parameter to <code>true</code>/ When the
+ * <code>HandleExceptions</code> workitem parameter is set to <code>false</code>, any exceptions coming from the Camel
+ * route will simply be re-thrown. This makes the Camel route's exception handling logic responsible for correctly
+ * handling any exceptions.
  * <p/>
- * This handler can be constructed in multiple ways. When you don't pass a {@link RuntimeManager} to the constructor, the handler will try
- * to find the global KIE {@link CamelContext} from the <code>jBPM</code> {@link ServiceRegistry}. When the {@link RuntimeManager} is passed
- * to the constructor, the handler will retrieve and use the {@link CamelContext} bound to the {@link RuntimeManage} from the
- * {@link ServiceRegistry}. When a <code>CamelEndpointId</code> is passed to the constructor, the handler will send all requests to the
- * Camel route that is consuming from that endpoint, unless the endpoint is overridden by passing a the <code>CamelEndpointId</code> in the
- * {@link WorkItem} parameters.
+ * This handler can be constructed in multiple ways. When you don't pass a {@link RuntimeManager} to the constructor,
+ * the handler will try to find the global KIE {@link CamelContext} from the <code>jBPM</code> {@link ServiceRegistry}.
+ * When the {@link RuntimeManager} is passed to the constructor, the handler will retrieve and use the
+ * {@link CamelContext} bound to the {@link RuntimeManage} from the {@link ServiceRegistry}. When a
+ * <code>CamelEndpointId</code> is passed to the constructor, the handler will send all requests to the Camel route that
+ * is consuming from that endpoint, unless the endpoint is overridden by passing a the <code>CamelEndpointId</code> in
+ * the {@link WorkItem} parameters.
  * 
  */
 public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWorkItemHandler implements Cacheable {
@@ -84,8 +87,8 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     }
 
     /**
-     * Constructor which accepts {@link RuntimeManager}. This causes this WorkItemHanlder to create a {@link ProducerTemplate} for the
-     * runtime specific {@link CamelContext}.
+     * Constructor which accepts {@link RuntimeManager}. This causes this WorkItemHanlder to create a
+     * {@link ProducerTemplate} for the runtime specific {@link CamelContext}.
      */
     public AbstractCamelWorkItemHandler(RuntimeManager runtimeManager) {
         this(runtimeManager, "");
@@ -103,8 +106,8 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
             this.initialized = true;
         } catch (IllegalArgumentException iae) {
             String message = "CamelContext with identifier '" + camelContextKey
-                    + "' not found in ServiceRegistry. This can be caused by the order in which the platform extensions are initialized. " 
-                    + "Deferring Camel ProducerTemplate creation until the first WorkItemHandler call.";
+                             + "' not found in ServiceRegistry. This can be caused by the order in which the platform extensions are initialized. "
+                             + "Deferring Camel ProducerTemplate creation until the first WorkItemHandler call.";
             logger.info(message, iae);
         }
     }
@@ -113,7 +116,6 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
         CamelContext camelContext = (CamelContext) ServiceRegistry.get().service(key);
         return this.producerTemplate = camelContext.createProducerTemplate();
     }
-
 
     public void executeWorkItem(WorkItem workItem, final WorkItemManager manager) {
         if (!initialized) {
@@ -132,12 +134,14 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
         if (isHandleExceptionParamValue == null) {
             isHandleException = true;
         } else if (isHandleExceptionParamValue instanceof String) {
-            isHandleException = Boolean.parseBoolean((String)isHandleExceptionParamValue);
+            isHandleException = Boolean.parseBoolean((String) isHandleExceptionParamValue);
         } else if (isHandleExceptionParamValue instanceof Boolean) {
-            isHandleException = ((Boolean)isHandleExceptionParamValue).booleanValue();
+            isHandleException = ((Boolean) isHandleExceptionParamValue).booleanValue();
         } else {
-            throw new IllegalArgumentException("Unsupported type '" + isHandleExceptionParamValue.getClass().getCanonicalName() + "' for workitem parameter '"
-                + JBPMConstants.HANDLE_EXCEPTION_WI_PARAM + "'.");
+            throw new IllegalArgumentException(
+                    "Unsupported type '" + isHandleExceptionParamValue.getClass().getCanonicalName()
+                                               + "' for workitem parameter '"
+                                               + JBPMConstants.HANDLE_EXCEPTION_WI_PARAM + "'.");
         }
 
         String workItemCamelEndpointId = getCamelEndpointId(workItem);
@@ -163,7 +167,7 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
             if (isHandleException) {
                 handleException(e);
             } else {
-                throw (RuntimeException)e;
+                throw (RuntimeException) e;
             }
         }
     }
@@ -175,8 +179,8 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
             if (workItemCamelEndpointId != null && !workItemCamelEndpointId.isEmpty()) {
                 logger.debug(
                         "The Camel Endpoint ID has been set on both the WorkItemHanlder and WorkItem. The '"
-                                + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM
-                                + "' configured on the WorkItem overrides the global configuation.");
+                             + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM
+                             + "' configured on the WorkItem overrides the global configuation.");
             } else {
                 workItemCamelEndpointId = camelEndpointId;
             }
@@ -185,8 +189,8 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
         if (workItemCamelEndpointId == null || workItemCamelEndpointId.isEmpty()) {
             throw new IllegalArgumentException(
                     "No Camel Endpoint ID specified. Please configure the '" + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM
-                            + "' in either the constructor of this WorkItemHandler, or pass it via the "
-                            + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM + "' WorkItem parameter.");
+                                               + "' in either the constructor of this WorkItemHandler, or pass it via the "
+                                               + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM + "' WorkItem parameter.");
         }
         return workItemCamelEndpointId;
     }
