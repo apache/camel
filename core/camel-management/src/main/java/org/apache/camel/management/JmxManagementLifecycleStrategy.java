@@ -167,7 +167,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+    public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
         Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
 
         String name = context.getName();
