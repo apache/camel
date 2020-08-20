@@ -1003,7 +1003,7 @@ public class XmlConverter {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
             LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
-                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
         }
         factory.setErrorListener(new XmlErrorListener());
         configureSaxonTransformerFactory(factory);
@@ -1056,13 +1056,13 @@ public class XmlConverter {
             sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (Exception e) {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
         }
         try {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (Exception e) {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e });
+                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e.getMessage() });
         }
         sfactory.setNamespaceAware(true);
         return sfactory;

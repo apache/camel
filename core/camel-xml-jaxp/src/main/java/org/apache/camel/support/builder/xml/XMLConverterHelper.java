@@ -126,14 +126,14 @@ public class XMLConverterHelper {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         } catch (ParserConfigurationException e) {
             LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { XMLConstants.FEATURE_SECURE_PROCESSING, true, e });
+                    new Object[] { XMLConstants.FEATURE_SECURE_PROCESSING, true, e.getMessage() });
         }
         try {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
             LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e });
+                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e.getMessage() });
         }
         // setup the SecurityManager by default if it's apache xerces
         try {
@@ -145,7 +145,7 @@ public class XMLConverterHelper {
             }
         } catch (Exception e) {
             LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
-                    new Object[] { "http://apache.org/xml/properties/security-manager", e });
+                    new Object[] { "http://apache.org/xml/properties/security-manager", e.getMessage() });
         }
         // setup the feature from the system property
         setupFeatures(factory);
