@@ -72,9 +72,9 @@ public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSu
             public void configure() throws Exception {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
-                        .log("aggregated exchange id ${exchangeId} with ${body}")
-                        .to("mock:result")
+                            .completionSize(5).aggregationRepository(repo)
+                            .log("aggregated exchange id ${exchangeId} with ${body}")
+                            .to("mock:result")
                         .end();
             }
         };

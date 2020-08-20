@@ -74,23 +74,25 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // CHECKSTYLE:OFF
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
-                        // this is the output from the aggregator
-                        .log("aggregated exchange id ${exchangeId} with ${body}")
-                        .to("mock:aggregated")
-                        // simulate errors the first three times
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                int count = counter.incrementAndGet();
-                                if (count <= 3) {
-                                    throw new IllegalArgumentException("Damn");
+                            .completionSize(5).aggregationRepository(repo)
+                            // this is the output from the aggregator
+                            .log("aggregated exchange id ${exchangeId} with ${body}")
+                            .to("mock:aggregated")
+                            // simulate errors the first three times
+                            .process(new Processor() {
+                                public void process(Exchange exchange) throws Exception {
+                                    int count = counter.incrementAndGet();
+                                    if (count <= 3) {
+                                        throw new IllegalArgumentException("Damn");
+                                    }
                                 }
-                            }
-                        })
-                        .to("mock:result")
+                            })
+                            .to("mock:result")
                         .end();
+                // CHECKSTYLE:ON
             }
         };
     }

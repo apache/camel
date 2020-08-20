@@ -70,7 +70,7 @@ public class MulticastParallelRouteTest extends CamelAwsXRayTestSupport {
                 from("seda:a").routeId("a")
                         .log("routing at ${routeId}")
                         .multicast().parallelProcessing()
-                        .to("seda:b", "seda:c")
+                            .to("seda:b", "seda:c")
                         .end()
                         .log("End of routing");
 

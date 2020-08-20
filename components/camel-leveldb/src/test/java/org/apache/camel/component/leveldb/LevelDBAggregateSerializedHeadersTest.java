@@ -78,10 +78,10 @@ public class LevelDBAggregateSerializedHeadersTest extends CamelTestSupport {
                 from("seda:start?size=" + SIZE)
                         .to("log:input?groupSize=500")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .aggregationRepository(repo)
-                        .completionSize(SIZE)
-                        .to("log:output?showHeaders=true")
-                        .to("mock:result")
+                            .aggregationRepository(repo)
+                            .completionSize(SIZE)
+                            .to("log:output?showHeaders=true")
+                            .to("mock:result")
                         .end();
             }
         };
