@@ -19,16 +19,9 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * Marker interface used to make it easy to discover {@link CamelContext} related event handlers from the registry.
- *
- * @see OnCamelContextInitializing
- * @see OnCamelContextInitialized
- * @see OnCamelContextStart
- * @see OnCamelContextStarting
- * @see OnCamelContextStarted
- * @see OnCamelContextStop
- * @see OnCamelContextStopped
- * @see OnCamelContextStopping
+ * Notification on starting a {@link CamelContext}.
  */
-public interface OnCamelContextEvent {
+@FunctionalInterface
+public interface OnCamelContextStarting extends OnCamelContextEvent {
+    void onContextStarting(CamelContext context);
 }
