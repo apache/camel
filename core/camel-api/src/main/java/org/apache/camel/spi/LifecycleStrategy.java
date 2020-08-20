@@ -45,7 +45,7 @@ public interface LifecycleStrategy {
     }
 
     /**
-     * Notification on initialized a {@link CamelContext}.
+     * Notification on initialized {@link CamelContext}.
      *
      * @param  context                        the camel context
      * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
@@ -58,19 +58,60 @@ public interface LifecycleStrategy {
     /**
      * Notification on starting a {@link CamelContext}.
      *
+     * @param      context                        the camel context
+     * @throws     VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                            exceptions will be logged at <tt>WARN</tt> level by Camel will
+     *                                            continue starting itself. *
+     * @deprecated                                use {@link #onContextStarting(CamelContext)}.
+     */
+    @Deprecated
+    default void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on starting a {@link CamelContext}.
+     *
      * @param  context                        the camel context
      * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
      *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
      *                                        starting itself.
      */
-    void onContextStart(CamelContext context) throws VetoCamelContextStartException;
+    default void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on started {@link CamelContext}.
+     *
+     * @param context the camel context
+     */
+    default void onContextStarted(CamelContext context) {
+    }
+
+    /**
+     * Notification on stopping a {@link CamelContext}.
+     *
+     * @param      context the camel context
+     * @deprecated         use {@link #onContextStopping(CamelContext)}.
+     */
+    @Deprecated
+    default void onContextStop(CamelContext context) {
+    }
 
     /**
      * Notification on stopping a {@link CamelContext}.
      *
      * @param context the camel context
      */
-    void onContextStop(CamelContext context);
+    default void onContextStopping(CamelContext context) {
+    }
+
+    /**
+     * Notification on stopped {@link CamelContext}.
+     *
+     * @param context the camel context
+     */
+    default void onContextStopped(CamelContext context) {
+    }
 
     /**
      * Notification on adding an {@link Component}.

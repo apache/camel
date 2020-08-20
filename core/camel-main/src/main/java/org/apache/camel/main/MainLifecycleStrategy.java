@@ -34,7 +34,7 @@ public class MainLifecycleStrategy extends LifecycleStrategySupport {
     }
 
     @Override
-    public void onContextStop(CamelContext context) {
+    public void onContextStopping(CamelContext context) {
         LOG.info("CamelContext: {} has been shutdown, triggering shutdown of the JVM.", context.getName());
 
         // trigger stopping the Main
