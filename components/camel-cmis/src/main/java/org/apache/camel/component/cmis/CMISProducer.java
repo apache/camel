@@ -81,8 +81,8 @@ public class CMISProducer extends DefaultProducer {
         Method method = ReflectionHelper.findMethod(this.getClass(), action.getMethodName(), paramMethod);
         Object object = ObjectHelper.invokeMethod(method, this, exchange);
 
-        exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(object);
+        exchange.getMessage().copyFrom(exchange.getIn());
+        exchange.getMessage().setBody(object);
     }
 
     /**
@@ -348,9 +348,8 @@ public class CMISProducer extends DefaultProducer {
 
         Document document = (Document) getSessionFacade().getObjectById(objectId);
         String newDocumentName = message.getHeader(PropertyIds.NAME, String.class);
-        if(!StringUtils.isEmpty(newDocumentName))
-        {
-            document.updateProperties(Collections.singletonMap(PropertyIds.NAME, newDocumentName));
+        if(org.apache.camel.util.ObjectHelper.isNotEmpty(newDocumentName)) {
+            document.updateProperties(Collections.singletonMap(PropertyIds.NAME, newDocumentName), false);
 
         }
         return document.copy(destinationFolder);
