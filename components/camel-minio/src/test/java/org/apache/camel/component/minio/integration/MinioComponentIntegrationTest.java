@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.minio.integration;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -35,12 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class MinioComponentIntegrationTest extends CamelTestSupport {
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    public MinioComponentIntegrationTest() throws IOException {
+    }
 
     @Test
     public void sendInOnly() throws Exception {
@@ -104,8 +111,7 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 String minioEndpointUri
-                        = "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=RAW(zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG)&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io";
-
+                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey") + "&secretKey=RAW(" + properties.getProperty("secretKey") + ")&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io";
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
 

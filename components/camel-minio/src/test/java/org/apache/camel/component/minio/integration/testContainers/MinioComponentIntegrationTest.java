@@ -17,7 +17,6 @@
 package org.apache.camel.component.minio.integration.testContainers;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Properties;
 
 import org.apache.camel.EndpointInject;
@@ -29,20 +28,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MinioComponentIntegrationTest extends ContainerAwareTestSupport {
+public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
 
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
-    final int port = 9000;
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -111,29 +106,14 @@ public class MinioComponentIntegrationTest extends ContainerAwareTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        String minioEndpointUri =
+                "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey") + "&secretKey=RAW(" + properties.getProperty("secretKey") + ")&autoCreateBucket=true&endpoint=http://" + getMinioHost() + "&proxyPort=" + getMinioPort();
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpointUri =
-                        "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=RAW(zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG)&region=us-west-1&autoCreateBucket=true&endpoint=http://127.0.0.1&proxyPort=9000";
-
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
-
             }
         };
-    }
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return new GenericContainer<>("minio/minio:latest")
-                .withEnv("MINIO_ACCESS_KEY", properties.getProperty("accessKey"))
-                .withEnv("MINIO_SECRET_KEY", properties.getProperty("secretKey"))
-                .withCommand("server /data")
-                .withExposedPorts(port)
-                .waitingFor(new HttpWaitStrategy()
-                        .forPath("/minio/health/ready")
-                        .forPort(port)
-                        .withStartupTimeout(Duration.ofSeconds(10)));
     }
 }
