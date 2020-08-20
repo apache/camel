@@ -74,6 +74,7 @@
                                     <include>net.revelc.code.formatter:formatter-maven-plugin</include>
                                 </includes>
                             </artifactSet>
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
                         </configuration>
                     </execution>
                 </executions>
