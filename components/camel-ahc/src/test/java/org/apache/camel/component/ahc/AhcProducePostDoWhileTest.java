@@ -40,11 +40,11 @@ public class AhcProducePostDoWhileTest extends BaseAhcTest {
             public void configure() throws Exception {
                 from("direct:start").streamCaching()
                         .loopDoWhile(body().isNotEqualTo("done"))
-                        .to(getAhcEndpointUri())
-                        .to("mock:line")
-                        .filter(exchangeProperty(Exchange.LOOP_INDEX).isEqualTo(3))
-                        .setBody().constant("done")
-                        .end()
+                            .to(getAhcEndpointUri())
+                            .to("mock:line")
+                            .filter(exchangeProperty(Exchange.LOOP_INDEX).isEqualTo(3))
+                                .setBody().constant("done")
+                            .end()
                         .end()
                         .to("mock:result");
 

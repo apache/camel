@@ -107,8 +107,8 @@ public class ServiceCallConfigurationTest {
                 from("direct:start")
                         .routeId("default")
                         .serviceCall()
-                        .name("scall")
-                        .component("file")
+                            .name("scall")
+                            .component("file")
                         .end();
             }
         });
@@ -146,9 +146,9 @@ public class ServiceCallConfigurationTest {
             public void configure() throws Exception {
                 from("direct:start")
                         .routeId("default")
-                        .serviceCall()
-                        .name("scall")
-                        .component("file")
+                            .serviceCall()
+                            .name("scall")
+                            .component("file")
                         .end();
             }
         });
@@ -188,9 +188,9 @@ public class ServiceCallConfigurationTest {
             public void configure() throws Exception {
                 from("direct:start")
                         .routeId("default")
-                        .serviceCall()
-                        .name("scall")
-                        .component("file")
+                            .serviceCall()
+                            .name("scall")
+                            .component("file")
                         .end();
             }
         });
@@ -254,23 +254,23 @@ public class ServiceCallConfigurationTest {
                 from("direct:default")
                         .id("default")
                         .serviceCall()
-                        .name("default-scall")
-                        .component("file")
+                            .name("default-scall")
+                            .component("file")
                         .end();
                 from("direct:named")
                         .id("named")
                         .serviceCall()
-                        .serviceCallConfiguration("named")
-                        .name("named-scall")
-                        .component("file")
+                            .serviceCallConfiguration("named")
+                            .name("named-scall")
+                            .component("file")
                         .end();
                 from("direct:local")
                         .id("local")
                         .serviceCall()
-                        .serviceCallConfiguration("named")
-                        .name("local-scall")
-                        .component("file")
-                        .serviceDiscovery(localServiceDiscovery)
+                            .serviceCallConfiguration("named")
+                            .name("local-scall")
+                            .component("file")
+                            .serviceDiscovery(localServiceDiscovery)
                         .end();
             }
         });
@@ -342,13 +342,13 @@ public class ServiceCallConfigurationTest {
                     from("direct:start")
                             .routeId("default")
                             .serviceCall()
-                            .name("{{scall.name}}")
-                            .component("{{scall.scheme}}")
-                            .uri("direct:{{scall.name}}")
-                            .staticServiceDiscovery()
-                            .servers("{{scall.servers1}}")
-                            .servers("{{scall.servers2}}")
-                            .end()
+                                .name("{{scall.name}}")
+                                .component("{{scall.scheme}}")
+                                .uri("direct:{{scall.name}}")
+                                .staticServiceDiscovery()
+                                    .servers("{{scall.servers1}}")
+                                    .servers("{{scall.servers2}}")
+                                .end()
                             .end();
                 }
             });

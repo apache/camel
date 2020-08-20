@@ -36,9 +36,12 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start").choice().when(header("number").isEqualTo("one")).to("mock:one")
-                            .when(header("number").isEqualTo("two")).to("mock:two")
-                            .when(header("number").isEqualTo("three")).to("mock:three").endChoice().to("mock:finally");
+                    from("direct:start")
+                            .choice()
+                                .when(header("number").isEqualTo("one")).to("mock:one")
+                                .when(header("number").isEqualTo("two")).to("mock:two")
+                                .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
+                            .to("mock:finally");
                 }
             });
             context.start();
@@ -55,9 +58,13 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(header("number").isEqualTo("one")).to("mock:one")
-                        .when(header("number").isEqualTo("two")).to("mock:two")
-                        .when(header("number").isEqualTo("three")).to("mock:three").end().to("mock:finally");
+                from("direct:start")
+                        .choice()
+                            .when(header("number").isEqualTo("one")).to("mock:one")
+                            .when(header("number").isEqualTo("two")).to("mock:two")
+                            .when(header("number").isEqualTo("three")).to("mock:three")
+                        .end()
+                        .to("mock:finally");
             }
         });
         context.start();
@@ -79,9 +86,13 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(header("number").isEqualTo("one")).to("mock:one")
-                        .when(header("number").isEqualTo("two")).to("mock:two")
-                        .when(header("number").isEqualTo("three")).to("mock:three").endChoice().end().to("mock:finally");
+                from("direct:start")
+                        .choice()
+                            .when(header("number").isEqualTo("one")).to("mock:one")
+                            .when(header("number").isEqualTo("two")).to("mock:two")
+                            .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
+                        .end()
+                        .to("mock:finally");
             }
         });
         context.start();

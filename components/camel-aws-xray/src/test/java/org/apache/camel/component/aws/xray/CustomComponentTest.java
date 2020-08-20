@@ -142,15 +142,12 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
 
                 from("seda:backingTask").routeId("backingTask")
                         .onException(Exception.class)
-                        .redeliveryDelay(100L)
-                        .onRedelivery((Exchange exchange) -> System.err.println(">> Retrying due to "
-                                                                                + exchange
-                                                                                        .getProperty(Exchange.EXCEPTION_CAUGHT,
-                                                                                                Exception.class)
-                                                                                        .getLocalizedMessage()))
-                        .logExhausted(true)
-                        .handled(true)
-                        .logStackTrace(true)
+                            .redeliveryDelay(100L)
+                            .onRedelivery((Exchange exchange) -> System.err.println(">> Retrying due to "
+                                    + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getLocalizedMessage()))
+                            .logExhausted(true)
+                            .handled(true)
+                            .logStackTrace(true)
                         .end()
 
                         .log("routing at ${routeId}")

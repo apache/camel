@@ -85,14 +85,14 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
                 from("file://target/testDeleteTarFileWhenUnmarshalWithDataFormat?delete=true")
                         .unmarshal(dataFormat)
                         .split(bodyAs(Iterator.class)).streaming()
-                        .convertBodyTo(String.class)
-                        .to("mock:end")
+                            .convertBodyTo(String.class)
+                            .to("mock:end")
                         .end();
 
                 from("file://target/testDeleteTarFileWhenUnmarshalWithSplitter?delete=true")
                         .split(new TarSplitter()).streaming()
-                        .convertBodyTo(String.class)
-                        .to("mock:end")
+                            .convertBodyTo(String.class)
+                            .to("mock:end")
                         .end();
             }
         };

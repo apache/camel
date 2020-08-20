@@ -72,10 +72,10 @@ public class LevelDBAggregateRecoverWithSedaTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
-                        .log("aggregated exchange id ${exchangeId} with ${body}")
-                        .to("mock:aggregated")
-                        .to("seda:foo")
+                            .completionSize(5).aggregationRepository(repo)
+                            .log("aggregated exchange id ${exchangeId} with ${body}")
+                            .to("mock:aggregated")
+                            .to("seda:foo")
                         .end();
 
                 // should be able to recover when we send over SEDA as its a OnCompletion

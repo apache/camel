@@ -70,8 +70,8 @@ public class MulticastRouteTest extends CamelAwsXRayTestSupport {
                 from("seda:a").routeId("a")
                         .log("routing at ${routeId}")
                         .multicast()
-                        .to("seda:b")
-                        .to("seda:c")
+                            .to("seda:b")
+                            .to("seda:c")
                         .end()
                         .log("End of routing");
 
