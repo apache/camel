@@ -363,8 +363,8 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
 
                 from("direct:athenaListQueryExecutionsSetsNextTokenTest")
                         .loop(2)
-                        .setBody(constant("SELECT 1"))
-                        .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
+                            .setBody(constant("SELECT 1"))
+                            .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
                         .end()
                         .to("aws2-athena://label?operation=listQueryExecutions&maxResults=1&" + awsCreds);
 
@@ -406,8 +406,8 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
                         .setBody(constant("SELECT 1"))
                         .to("aws2-athena://label?operation=startQueryExecution&outputLocation=" + s3Bucket + "&" + awsCreds)
                         .loopDoWhile(simple("${header." + Athena2Constants.QUERY_EXECUTION_STATE + "} != 'SUCCEEDED'"))
-                        .delay(1_000)
-                        .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds)
+                            .delay(1_000)
+                            .to("aws2-athena://label?operation=getQueryExecution&" + awsCreds)
                         .end()
                         .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer&" + awsCreds);
             }

@@ -42,10 +42,10 @@ public class MyRestDslRouteBuilder extends RouteBuilder {
 
         rest("/foo").consumes("xml").produces("json").description("my foo service")
                 .get("{id}").apiDocs(false)
-                .description("get by id")
-                .to("log:id")
+                    .description("get by id")
+                    .to("log:id")
                 .post().bindingMode(RestBindingMode.xml)
-                .description("post something")
-                .toD("log:post");
+                    .description("post something")
+                    .toD("log:post");
     }
 }
