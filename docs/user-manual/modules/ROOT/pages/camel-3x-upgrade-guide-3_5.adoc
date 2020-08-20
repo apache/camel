@@ -49,3 +49,14 @@ A new parameter `geoLocationProvider` was introduced to allow the use of a custo
 === Camel Karaf
 
 The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.
+
+=== LifecycleStrategy
+
+The `LifecycleStrategy` has been enhanced and provides some additional methods and changes in the behavior:
+
+* **onContextInitializing**: is invoked when the context is about to be initialized, this was previopusly achieved by `onContextInitialized` but as the name was a misleading
+* **onContextInitialized**: is now invoked when the context is initialized
+* **onContextStarting**: is invoked when the context is about to start, this was previously achieved by the `onContextStart` which is now deprecated.
+* **onContextStarted**: is now invoked when the context is started
+* **onContextStopping**: is invoked when the context is about to be stopped, this was previously achieved by the `onContextStop` which is now deprecated.
+* **onContextStop**: is now invoked when the context is stopped
