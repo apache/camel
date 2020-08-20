@@ -399,9 +399,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                    new Object[] {
                             trigger.getKey(), trigger.getClass().getSimpleName(),
-                            jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime() });
+                            jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime());
         }
 
         // Increase camel job count for this endpoint

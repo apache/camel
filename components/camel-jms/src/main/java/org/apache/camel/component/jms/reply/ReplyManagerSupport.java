@@ -171,9 +171,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                         log.warn(
                                 "Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
                                  + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                new Object[] {
                                         holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
-                                        ExchangeHelper.logIds(exchange) });
+                                        ExchangeHelper.logIds(exchange));
                     }
 
                     // no response, so lets set a timed out exception
@@ -252,7 +251,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 if (log.isTraceEnabled()) {
                     log.trace(
                             "Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
-                            new Object[] { correlationID, counter, answer });
+                            correlationID, counter, answer);
                 }
             }
         }
