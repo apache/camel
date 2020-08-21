@@ -954,6 +954,7 @@ public abstract class AbstractCamelContext extends BaseService
                 }
                 LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
                 Component component = getComponent(scheme);
+                ServiceHelper.initService(component);
 
                 // Ask the component to resolve the endpoint.
                 if (component != null) {
