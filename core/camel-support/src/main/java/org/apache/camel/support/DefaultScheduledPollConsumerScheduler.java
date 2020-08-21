@@ -167,8 +167,8 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
             if (isUseFixedDelay()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                                    currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
-                                    consumer.getEndpoint());
+                            currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                            consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
                     futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay,
@@ -177,8 +177,8 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                                    currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
-                                    consumer.getEndpoint());
+                            currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                            consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
                     futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay,
