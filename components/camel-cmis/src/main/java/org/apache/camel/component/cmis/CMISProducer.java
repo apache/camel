@@ -19,6 +19,7 @@ package org.apache.camel.component.cmis;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -79,8 +80,8 @@ public class CMISProducer extends DefaultProducer {
         Method method = ReflectionHelper.findMethod(this.getClass(), action.getMethodName(), paramMethod);
         Object object = ObjectHelper.invokeMethod(method, this, exchange);
 
-        exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(object);
+        exchange.getMessage().copyFrom(exchange.getIn());
+        exchange.getMessage().setBody(object);
     }
 
     /**
@@ -335,6 +336,11 @@ public class CMISProducer extends DefaultProducer {
         Folder destinationFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
 
         Document document = (Document) getSessionFacade().getObjectById(objectId);
+
+        String newDocumentName = message.getHeader(PropertyIds.NAME, String.class);
+        if(org.apache.camel.util.ObjectHelper.isNotEmpty(newDocumentName)) {
+           return document.copy(destinationFolder, Collections.singletonMap(PropertyIds.NAME, newDocumentName), VersioningState.NONE, null, null, null, getSessionFacade().createOperationContext());
+        }
 
         return document.copy(destinationFolder);
     }
