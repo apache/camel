@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerConcurrentTest.class);
@@ -86,7 +86,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
                     LOG.info("Exception", e);
                 }
 
-                assertNotNull(calculateResponse, "instanceId = " + instanceId);
+                assertNotEquals(0, calculateResponse, "instanceId = " + instanceId);
                 assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
 
                 transport.close();
@@ -120,7 +120,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
                 latch.await(5, TimeUnit.SECONDS);
 
                 int calculateResponse = calculateCallback.getCalculateResponse();
-                assertNotNull(calculateResponse, "instanceId = " + instanceId);
+                LOG.debug("instanceId = {}", instanceId);
                 assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
 
                 transport.close();
