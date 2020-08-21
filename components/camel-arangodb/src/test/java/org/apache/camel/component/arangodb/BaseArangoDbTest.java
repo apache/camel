@@ -24,10 +24,13 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
-public class AbstractArangoDbTest extends CamelTestSupport {
+public class BaseArangoDbTest extends CamelTestSupport {
 
     protected static final String DATABASE_NAME = "dbTest";
     protected static final String COLLECTION_NAME = "camelTest";
+    protected static final String GRAPH_NAME = "graphTest";
+    protected static final String VERTEX_COLLECTION_NAME = "vertexTest";
+    protected static final String EDGE_COLLECTION_NAME = "edgeTest";
     protected static ArangoDbContainer container;
     protected static ArangoDB arangoDb;
     protected static ArangoDatabase arangoDatabase;

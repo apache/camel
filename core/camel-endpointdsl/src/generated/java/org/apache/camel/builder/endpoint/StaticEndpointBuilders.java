@@ -254,10 +254,11 @@ public class StaticEndpointBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb documents, collections and graphs.
+     * Perform operations on ArangoDb when used as a Document Database, or as a
+     * Graph Database
      * 
      * Category: database,nosql
-     * Since: 3.5.0-SNAPSHOT
+     * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
      * 
      * Syntax: <code>arangodb:database</code>
@@ -273,10 +274,11 @@ public class StaticEndpointBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb documents, collections and graphs.
+     * Perform operations on ArangoDb when used as a Document Database, or as a
+     * Graph Database
      * 
      * Category: database,nosql
-     * Since: 3.5.0-SNAPSHOT
+     * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
      * 
      * Syntax: <code>arangodb:database</code>
