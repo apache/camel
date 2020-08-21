@@ -174,7 +174,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 } else {
                     LOG.debug("Transaction rollback ({}) redelivered({}) for {} "
                               + "due exchange was marked for rollbackOnlyLast",
-                            new Object[] { transactionKey, redelivered, ids });
+                            transactionKey, redelivered, ids);
                 }
             }
             // remove caused exception due we was marked as rollback only last

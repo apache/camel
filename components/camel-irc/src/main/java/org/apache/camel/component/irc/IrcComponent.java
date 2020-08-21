@@ -88,9 +88,8 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
-                        new Object[] {
                                 configuration.getHostname(), configuration.getSpaceSeparatedChannelNames(),
-                                configuration.getNickname(), configuration.getUsername() });
+                                configuration.getNickname(), configuration.getUsername());
             }
 
             SSLContextParameters sslParams = configuration.getSslContextParameters();
@@ -114,9 +113,8 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
-                        new Object[] {
                                 configuration.getHostname(), configuration.getSpaceSeparatedChannelNames(),
-                                configuration.getNickname(), configuration.getUsername() });
+                                configuration.getNickname(), configuration.getUsername());
             }
 
             conn = new IRCConnection(
