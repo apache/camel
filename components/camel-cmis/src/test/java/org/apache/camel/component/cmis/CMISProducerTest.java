@@ -344,7 +344,7 @@ public class CMISProducerTest extends CMISTestSupport {
     @Test
     void copyDocumentWithNewName() throws UnsupportedEncodingException {
         Folder destination = createFolderWithName("Destination");
-        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
+        Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
         exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
