@@ -58,6 +58,6 @@ public class DigitalOceanComponentTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:getAccountInfo", null);
         assertMockEndpointsSatisfied();
         assertIsInstanceOf(Account.class, exchange.getMessage().getBody());
-        assertEquals(exchange.getMessage().getBody(Account.class).getEmail(), "camel@apache.org");
+        assertEquals("camel@apache.org", exchange.getMessage().getBody(Account.class).getEmail());
     }
 }

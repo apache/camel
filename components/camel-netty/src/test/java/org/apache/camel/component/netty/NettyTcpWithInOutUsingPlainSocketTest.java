@@ -72,7 +72,7 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
         assertFalse("force-exception".equals(out), "out should not be the same as in when the exchange has failed");
-        assertEquals(out, "java.lang.IllegalArgumentException: Forced exception", "should get the exception here");
+        assertEquals("java.lang.IllegalArgumentException: Forced exception", out, "should get the exception here");
     }
 
     private String sendAndReceive(String input) throws IOException {

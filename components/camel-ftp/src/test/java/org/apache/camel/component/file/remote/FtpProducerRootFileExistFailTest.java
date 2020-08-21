@@ -49,7 +49,7 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause
                     = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals(cause.getMessage(), "File already exist: hello.txt. Cannot write new file.");
+            assertEquals("File already exist: hello.txt. Cannot write new file.", cause.getMessage());
         }
 
         // root file should still exist

@@ -805,12 +805,12 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertEquals(engine.getEnabledProtocols().length, 1);
-        assertEquals(engine.getEnabledProtocols()[0], "SSLv3");
-        assertEquals(socket.getEnabledProtocols().length, 1);
-        assertEquals(socket.getEnabledProtocols()[0], "SSLv3");
-        assertEquals(serverSocket.getEnabledProtocols().length, 1);
-        assertEquals(serverSocket.getEnabledProtocols()[0], "SSLv3");
+        assertEquals(1, engine.getEnabledProtocols().length);
+        assertEquals("SSLv3", engine.getEnabledProtocols()[0]);
+        assertEquals(1, socket.getEnabledProtocols().length);
+        assertEquals("SSLv3", socket.getEnabledProtocols()[0]);
+        assertEquals(1, serverSocket.getEnabledProtocols().length);
+        assertEquals("SSLv3", serverSocket.getEnabledProtocols()[0]);
     }
 
     @Test

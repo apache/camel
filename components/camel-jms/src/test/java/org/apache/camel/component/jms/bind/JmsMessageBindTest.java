@@ -48,7 +48,7 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
 
         // now lets test that the bean is correct
         MyBean bean = getMandatoryBean(MyBean.class, "myBean");
-        assertEquals(bean.getBody(), "SomeBody", "body");
+        assertEquals("SomeBody", bean.getBody(), "body");
 
         Map<?, ?> beanHeaders = bean.getHeaders();
         assertNotNull(beanHeaders, "No headers!");

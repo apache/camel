@@ -46,9 +46,9 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean) endpoint.createJAXRSServerFactoryBean();
 
         assertEquals(1, sfb.getProviders().size(), "Get a wrong provider size");
-        assertEquals(sfb.getBeanId(), "rsServer", "Get a wrong beanId");
-        assertEquals(sfb.getAddress(), "http://localhost:9000/router", "Get a wrong address");
-        assertEquals(sfb.getResourceClasses().size(), 1, "Get a wrong size of resource classes");
+        assertEquals("rsServer", sfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("http://localhost:9000/router", sfb.getAddress(), "Get a wrong address");
+        assertEquals(1, sfb.getResourceClasses().size(), "Get a wrong size of resource classes");
         assertEquals(sfb.getResourceClasses().get(0), CustomerService.class, "Get a wrong resource class");
         assertEquals(true, sfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
         assertEquals(200, sfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");
@@ -64,8 +64,8 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
     public void testCreateCxfRsClientFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsClient", CxfRsEndpoint.class);
         SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) endpoint.createJAXRSClientFactoryBean();
-        assertEquals(cfb.getBeanId(), "rsClient", "Get a wrong beanId");
-        assertEquals(cfb.getAddress(), "http://localhost:9002/helloworld", "Get a wrong address");
+        assertEquals("rsClient", cfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("http://localhost:9002/helloworld", cfb.getAddress(), "Get a wrong address");
         assertTrue(cfb.create() instanceof CustomerService, "Get a wrong resource class instance");
         assertEquals(false, cfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
         assertEquals(0, cfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");

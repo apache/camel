@@ -56,7 +56,7 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
     @Test
     void testJmsInOutHttpPostIssue() {
         String out = template.requestBody("jms:queue:in", "Hello World", String.class);
-        assertEquals(out, "OK");
+        assertEquals("OK", out);
     }
 
     @Override

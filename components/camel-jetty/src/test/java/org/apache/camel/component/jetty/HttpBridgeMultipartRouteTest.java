@@ -68,7 +68,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         assertEquals(body, responseString);
 
         String numAttachments = response.getFirstHeader("numAttachments").getValue();
-        assertEquals(numAttachments, "2");
+        assertEquals("2", numAttachments);
 
         client.close();
     }

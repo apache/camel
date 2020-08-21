@@ -64,7 +64,7 @@ public class CamelGreeterConsumerTest {
         Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
                 params, CxfConstants.OPERATION_NAME, "greetMe");
         assertTrue(result instanceof List, "Result is a list instance ");
-        assertEquals(((List<?>) result).get(0), "HelloWillem", "Get the wrong response");
+        assertEquals("HelloWillem", ((List<?>) result).get(0), "Get the wrong response");
         try {
             template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
                     params, CxfConstants.OPERATION_NAME, "pingMe");

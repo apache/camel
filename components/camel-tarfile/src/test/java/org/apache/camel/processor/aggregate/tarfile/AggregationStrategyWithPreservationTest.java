@@ -80,7 +80,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                 }
                 fileCount++;
             }
-            assertEquals(fileCount, AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES,
+            assertEquals(AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount,
                     "Tar file should contains " + AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES + " files");
             assertEquals(0, expectedTarFiles.size(), "Should have found all of the tar files in the file.");
         } finally {

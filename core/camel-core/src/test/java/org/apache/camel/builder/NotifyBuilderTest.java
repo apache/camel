@@ -47,7 +47,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
         notify.destroy();
         int afterDestroy = context.getManagementStrategy().getEventNotifiers().size();
         // Then:
-        assertEquals(withReg - afterDestroy, 1);
+        assertEquals(1, withReg - afterDestroy);
     }
 
     @Test

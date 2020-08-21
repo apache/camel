@@ -45,6 +45,6 @@ public class SqsEndpointExplicitQueueUrlTest {
     public void doStartWithExplicitQueueUrlInConfigShouldNotCallSqsClientListQueues() throws Exception {
         endpoint.doInit();
 
-        assertEquals(endpoint.getQueueUrl(), QUEUE_URL);
+        assertEquals(QUEUE_URL, endpoint.getQueueUrl());
     }
 }

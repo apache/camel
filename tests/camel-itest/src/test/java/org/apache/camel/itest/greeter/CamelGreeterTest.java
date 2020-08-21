@@ -65,10 +65,10 @@ public class CamelGreeterTest {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals(list.size(), 1, "Should get one message");
+        assertEquals(1, list.size(), "Should get one message");
         for (Exchange exchange : list) {
             String result = (String) exchange.getIn().getBody();
-            assertEquals(result, "Hello Willem", "Get the wrong result ");
+            assertEquals("Hello Willem", result, "Get the wrong result ");
         }
     }
 

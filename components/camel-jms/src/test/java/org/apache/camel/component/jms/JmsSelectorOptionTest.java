@@ -71,7 +71,7 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
                 Message message = ex.getIn();
                 int size = message.getHeader("SIZE_NUMBER", int.class);
                 assertTrue(size < 1500, "The message header SIZE_NUMBER should be less than 1500");
-                assertEquals(message.getBody(), "Message3", "The message body is wrong");
+                assertEquals("Message3", message.getBody(), "The message body is wrong");
             } else {
                 break;
             }

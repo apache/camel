@@ -43,7 +43,7 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             }
         });
         assertNotNull(exchange.getMessage().getBody(ListFunctionsResponse.class));
-        assertEquals(exchange.getMessage().getBody(ListFunctionsResponse.class).functions().size(), 2);
+        assertEquals(2, exchange.getMessage().getBody(ListFunctionsResponse.class).functions().size());
     }
 
     @Test
@@ -57,8 +57,8 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         });
         GetFunctionResponse result = exchange.getMessage().getBody(GetFunctionResponse.class);
         assertNotNull(result);
-        assertEquals(result.configuration().functionName(), "twitterTrends");
-        assertEquals(result.configuration().runtime(), Runtime.JAVA8);
+        assertEquals("twitterTrends", result.configuration().functionName());
+        assertEquals(Runtime.JAVA8, result.configuration().runtime());
 
     }
 

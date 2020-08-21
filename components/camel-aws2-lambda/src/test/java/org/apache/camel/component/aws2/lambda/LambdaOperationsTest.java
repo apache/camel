@@ -51,23 +51,23 @@ public class LambdaOperationsTest {
 
     @Test
     public void testToString() {
-        assertEquals(Lambda2Operations.createFunction.toString(), "createFunction");
-        assertEquals(Lambda2Operations.getFunction.toString(), "getFunction");
-        assertEquals(Lambda2Operations.listFunctions.toString(), "listFunctions");
-        assertEquals(Lambda2Operations.invokeFunction.toString(), "invokeFunction");
-        assertEquals(Lambda2Operations.deleteFunction.toString(), "deleteFunction");
-        assertEquals(Lambda2Operations.updateFunction.toString(), "updateFunction");
-        assertEquals(Lambda2Operations.createEventSourceMapping.toString(), "createEventSourceMapping");
-        assertEquals(Lambda2Operations.deleteEventSourceMapping.toString(), "deleteEventSourceMapping");
-        assertEquals(Lambda2Operations.listEventSourceMapping.toString(), "listEventSourceMapping");
-        assertEquals(Lambda2Operations.listTags.toString(), "listTags");
-        assertEquals(Lambda2Operations.tagResource.toString(), "tagResource");
-        assertEquals(Lambda2Operations.untagResource.toString(), "untagResource");
-        assertEquals(Lambda2Operations.publishVersion.toString(), "publishVersion");
-        assertEquals(Lambda2Operations.listVersions.toString(), "listVersions");
-        assertEquals(Lambda2Operations.createAlias.toString(), "createAlias");
-        assertEquals(Lambda2Operations.deleteAlias.toString(), "deleteAlias");
-        assertEquals(Lambda2Operations.getAlias.toString(), "getAlias");
-        assertEquals(Lambda2Operations.listAliases.toString(), "listAliases");
+        assertEquals("createFunction", Lambda2Operations.createFunction.toString());
+        assertEquals("getFunction", Lambda2Operations.getFunction.toString());
+        assertEquals("listFunctions", Lambda2Operations.listFunctions.toString());
+        assertEquals("invokeFunction", Lambda2Operations.invokeFunction.toString());
+        assertEquals("deleteFunction", Lambda2Operations.deleteFunction.toString());
+        assertEquals("updateFunction", Lambda2Operations.updateFunction.toString());
+        assertEquals("createEventSourceMapping", Lambda2Operations.createEventSourceMapping.toString());
+        assertEquals("deleteEventSourceMapping", Lambda2Operations.deleteEventSourceMapping.toString());
+        assertEquals("listEventSourceMapping", Lambda2Operations.listEventSourceMapping.toString());
+        assertEquals("listTags", Lambda2Operations.listTags.toString());
+        assertEquals("tagResource", Lambda2Operations.tagResource.toString());
+        assertEquals("untagResource", Lambda2Operations.untagResource.toString());
+        assertEquals("publishVersion", Lambda2Operations.publishVersion.toString());
+        assertEquals("listVersions", Lambda2Operations.listVersions.toString());
+        assertEquals("createAlias", Lambda2Operations.createAlias.toString());
+        assertEquals("deleteAlias", Lambda2Operations.deleteAlias.toString());
+        assertEquals("getAlias", Lambda2Operations.getAlias.toString());
+        assertEquals("listAliases", Lambda2Operations.listAliases.toString());
     }
 }

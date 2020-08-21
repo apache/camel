@@ -43,7 +43,7 @@ public class Any23DataFormatDefaultTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             Model resultingRDF = in.getBody(Model.class);
-            assertEquals(resultingRDF.size(), 28);
+            assertEquals(28, resultingRDF.size());
         }
     }
 

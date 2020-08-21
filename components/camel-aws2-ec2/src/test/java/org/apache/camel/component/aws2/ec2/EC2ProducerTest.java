@@ -64,9 +64,9 @@ public class EC2ProducerTest extends CamelTestSupport {
         });
 
         RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.instances().get(0).imageId(), "test-1");
-        assertEquals(resultGet.instances().get(0).instanceType(), InstanceType.T2_MICRO);
-        assertEquals(resultGet.instances().get(0).instanceId(), "instance-1");
+        assertEquals("test-1", resultGet.instances().get(0).imageId());
+        assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
+        assertEquals("instance-1", resultGet.instances().get(0).instanceId());
     }
 
     @Test
@@ -81,9 +81,9 @@ public class EC2ProducerTest extends CamelTestSupport {
         });
 
         RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.instances().get(0).imageId(), "test-1");
-        assertEquals(resultGet.instances().get(0).instanceType(), InstanceType.T2_MICRO);
-        assertEquals(resultGet.instances().get(0).instanceId(), "instance-1");
+        assertEquals("test-1", resultGet.instances().get(0).imageId());
+        assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
+        assertEquals("instance-1", resultGet.instances().get(0).instanceId());
     }
 
     @Test
@@ -102,12 +102,12 @@ public class EC2ProducerTest extends CamelTestSupport {
         });
 
         RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.instances().get(0).imageId(), "test-1");
-        assertEquals(resultGet.instances().get(0).instanceType(), InstanceType.T2_MICRO);
-        assertEquals(resultGet.instances().get(0).instanceId(), "instance-1");
-        assertEquals(resultGet.instances().get(0).securityGroups().size(), 2);
-        assertEquals(resultGet.instances().get(0).securityGroups().get(0).groupId(), "id-3");
-        assertEquals(resultGet.instances().get(0).securityGroups().get(1).groupId(), "id-4");
+        assertEquals("test-1", resultGet.instances().get(0).imageId());
+        assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
+        assertEquals("instance-1", resultGet.instances().get(0).instanceId());
+        assertEquals(2, resultGet.instances().get(0).securityGroups().size());
+        assertEquals("id-3", resultGet.instances().get(0).securityGroups().get(0).groupId());
+        assertEquals("id-4", resultGet.instances().get(0).securityGroups().get(1).groupId());
     }
 
     @Test
@@ -123,9 +123,9 @@ public class EC2ProducerTest extends CamelTestSupport {
         });
 
         StartInstancesResponse resultGet = (StartInstancesResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.startingInstances().get(0).instanceId(), "test-1");
-        assertEquals(resultGet.startingInstances().get(0).previousState().name(), InstanceStateName.STOPPED);
-        assertEquals(resultGet.startingInstances().get(0).currentState().name(), InstanceStateName.RUNNING);
+        assertEquals("test-1", resultGet.startingInstances().get(0).instanceId());
+        assertEquals(InstanceStateName.STOPPED, resultGet.startingInstances().get(0).previousState().name());
+        assertEquals(InstanceStateName.RUNNING, resultGet.startingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -141,9 +141,9 @@ public class EC2ProducerTest extends CamelTestSupport {
         });
 
         StopInstancesResponse resultGet = (StopInstancesResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.stoppingInstances().get(0).instanceId(), "test-1");
-        assertEquals(resultGet.stoppingInstances().get(0).previousState().name(), InstanceStateName.RUNNING);
-        assertEquals(resultGet.stoppingInstances().get(0).currentState().name(), InstanceStateName.STOPPED);
+        assertEquals("test-1", resultGet.stoppingInstances().get(0).instanceId());
+        assertEquals(InstanceStateName.RUNNING, resultGet.stoppingInstances().get(0).previousState().name());
+        assertEquals(InstanceStateName.STOPPED, resultGet.stoppingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -159,9 +159,9 @@ public class EC2ProducerTest extends CamelTestSupport {
         });
 
         TerminateInstancesResponse resultGet = (TerminateInstancesResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.terminatingInstances().get(0).instanceId(), "test-1");
-        assertEquals(resultGet.terminatingInstances().get(0).previousState().name(), InstanceStateName.RUNNING);
-        assertEquals(resultGet.terminatingInstances().get(0).currentState().name(), InstanceStateName.TERMINATED);
+        assertEquals("test-1", resultGet.terminatingInstances().get(0).instanceId());
+        assertEquals(InstanceStateName.RUNNING, resultGet.terminatingInstances().get(0).previousState().name());
+        assertEquals(InstanceStateName.TERMINATED, resultGet.terminatingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -178,8 +178,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         });
 
         DescribeInstancesResponse resultGet = (DescribeInstancesResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.reservations().size(), 1);
-        assertEquals(resultGet.reservations().get(0).instances().size(), 1);
+        assertEquals(1, resultGet.reservations().size());
+        assertEquals(1, resultGet.reservations().get(0).instances().size());
     }
 
     @Test
@@ -198,8 +198,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         DescribeInstanceStatusResponse resultGet = (DescribeInstanceStatusResponse) exchange.getMessage().getBody();
-        assertEquals(resultGet.instanceStatuses().size(), 1);
-        assertEquals(resultGet.instanceStatuses().get(0).instanceState().name(), InstanceStateName.RUNNING);
+        assertEquals(1, resultGet.instanceStatuses().size());
+        assertEquals(InstanceStateName.RUNNING, resultGet.instanceStatuses().get(0).instanceState().name());
     }
 
     @Test
@@ -231,9 +231,9 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         MonitorInstancesResponse resultGet = (MonitorInstancesResponse) exchange.getMessage().getBody();
 
-        assertEquals(resultGet.instanceMonitorings().size(), 1);
-        assertEquals(resultGet.instanceMonitorings().get(0).instanceId(), "test-1");
-        assertEquals(resultGet.instanceMonitorings().get(0).monitoring().state(), MonitoringState.ENABLED);
+        assertEquals(1, resultGet.instanceMonitorings().size());
+        assertEquals("test-1", resultGet.instanceMonitorings().get(0).instanceId());
+        assertEquals(MonitoringState.ENABLED, resultGet.instanceMonitorings().get(0).monitoring().state());
     }
 
     @Test
@@ -251,9 +251,9 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         UnmonitorInstancesResponse resultGet = (UnmonitorInstancesResponse) exchange.getMessage().getBody();
 
-        assertEquals(resultGet.instanceMonitorings().size(), 1);
-        assertEquals(resultGet.instanceMonitorings().get(0).instanceId(), "test-1");
-        assertEquals(resultGet.instanceMonitorings().get(0).monitoring().state(), MonitoringState.DISABLED);
+        assertEquals(1, resultGet.instanceMonitorings().size());
+        assertEquals("test-1", resultGet.instanceMonitorings().get(0).instanceId());
+        assertEquals(MonitoringState.DISABLED, resultGet.instanceMonitorings().get(0).monitoring().state());
     }
 
     @Override

@@ -81,7 +81,7 @@ public class SqsFilterMessagesWithNoDeleteTest {
         // left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
 
-        assertEquals(response, "Message: hello, world!");
+        assertEquals("Message: hello, world!", response);
 
         ctx.stop();
         clientMock.shutdown();

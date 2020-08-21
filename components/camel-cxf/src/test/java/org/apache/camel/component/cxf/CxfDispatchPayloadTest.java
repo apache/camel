@@ -50,7 +50,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
     public void testDispatchPayload() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchPayload(name, false);
-        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
+        assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
         org.apache.camel.Message response = exchange.getOut();
         assertNotNull(response, "The response must not be null");
@@ -63,7 +63,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
     public void testDispatchPayloadOneway() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchPayload(name, true);
-        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
+        assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
         org.apache.camel.Message response = exchange.getOut();
         assertNotNull(response, "The response must not be null");

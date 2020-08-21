@@ -44,7 +44,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayload
 
     @Override
     protected void checkSOAPAction(Exchange exchange) {
-        assertEquals(exchange.getIn().getHeader("SOAPAction"), "GetPersonAction");
+        assertEquals("GetPersonAction", exchange.getIn().getHeader("SOAPAction"));
     }
 
 }

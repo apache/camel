@@ -110,15 +110,15 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     @SuppressWarnings("unchecked")
     public void testInvokingServiceWithCamelProducer() throws Exception {
         Exchange exchange = sendJaxWsMessageWithHolders("hello");
-        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
+        assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
         org.apache.camel.Message out = exchange.getOut();
         List<Object> result = out.getBody(List.class);
-        assertEquals(result.size(), 4, "The result list should not be empty");
+        assertEquals(4, result.size(), "The result list should not be empty");
         Holder<String> name = (Holder<String>) result.get(3);
         assertEquals("Bonjour", name.value, "we should get the right answer from router");
 
         exchange = sendJaxWsMessageWithHolders("");
-        assertEquals(exchange.isFailed(), true, "We should get a fault here");
+        assertEquals(true, exchange.isFailed(), "We should get a fault here");
         Throwable ex = exchange.getException();
         assertTrue(ex instanceof UnknownPersonFault, "We should get the UnknowPersonFault here");
     }

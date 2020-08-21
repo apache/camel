@@ -68,7 +68,7 @@ public class JettyJmsTest {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals(list.size(), 1, "Should get one message");
+        assertEquals(1, list.size(), "Should get one message");
 
         for (Exchange exchange : list) {
             Object result = exchange.getIn().getBody();

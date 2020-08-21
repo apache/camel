@@ -89,8 +89,8 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         CreateBrokerResult resultGet = (CreateBrokerResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getBrokerId(), "1");
-        assertEquals(resultGet.getBrokerArn(), "test");
+        assertEquals("1", resultGet.getBrokerId());
+        assertEquals("test", resultGet.getBrokerArn());
     }
 
     @Test
@@ -108,7 +108,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         DeleteBrokerResult resultGet = (DeleteBrokerResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getBrokerId(), "1");
+        assertEquals("1", resultGet.getBrokerId());
     }
 
     @Test
@@ -144,7 +144,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
         UpdateBrokerResult resultGet = (UpdateBrokerResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getBrokerId(), "1");
+        assertEquals("1", resultGet.getBrokerId());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
         DescribeBrokerResult resultGet = (DescribeBrokerResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getBrokerId(), "1");
+        assertEquals("1", resultGet.getBrokerId());
     }
 
     @Override

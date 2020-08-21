@@ -76,7 +76,7 @@ public class HttpHeaderTest extends BaseJettyTest {
                         ServletRequest request
                                 = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
                         assertNotNull(request);
-                        assertEquals(request.getProtocol(), "HTTP/1.0", "Get a wong http protocol version");
+                        assertEquals("HTTP/1.0", request.getProtocol(), "Get a wong http protocol version");
                         for (Entry<String, Object> entry : headers.entrySet()) {
                             if ("SOAPAction".equals(entry.getKey())
                                     && "http://xxx.com/interfaces/ticket".equals(entry.getValue())) {

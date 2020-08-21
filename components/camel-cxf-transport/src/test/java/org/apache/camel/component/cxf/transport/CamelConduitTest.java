@@ -82,7 +82,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         CamelContext context = conduit.getCamelContext();
 
         assertNotNull(context, "the camel context which get from camel conduit is not null");
-        assertEquals(context.getName(), "conduit_context", "get the wrong camel context");
+        assertEquals("conduit_context", context.getName(), "get the wrong camel context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
 
         // test the configuration of camelContextId attribute 
@@ -92,7 +92,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         context = conduit.getCamelContext();
 
         assertNotNull(context, "the camel context which get from camel conduit is not null");
-        assertEquals(context.getName(), "conduit_context", "get the wrong camel context");
+        assertEquals("conduit_context", context.getName(), "get the wrong camel context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
 
         endpointInfo.setAddress("camel://direct:EndpointC");
@@ -100,7 +100,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         conduit = new CamelConduit(null, bus, endpointInfo);
         context = conduit.getCamelContext();
         assertNotNull(context, "the camel context which get from camel conduit is not null");
-        assertEquals(context.getName(), "context", "get the wrong camel context");
+        assertEquals("context", context.getName(), "get the wrong camel context");
         assertEquals("direct://EndpointC", context.getRoutes().get(0).getEndpoint().getEndpointUri());
         bus.shutdown(false);
     }

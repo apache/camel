@@ -73,7 +73,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                 }
             }
 
-            assertEquals(fileCount, AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES,
+            assertEquals(AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount,
                     String.format("Zip file should contains %d files, got %d files",
                             AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount));
             assertEquals(0, expectedZipFiles.size(),

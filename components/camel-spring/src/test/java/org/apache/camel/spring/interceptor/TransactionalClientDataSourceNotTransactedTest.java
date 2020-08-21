@@ -39,7 +39,7 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals(e.getCause().getMessage(), "We don't have Donkeys, only Camels");
+            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);

@@ -103,8 +103,8 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
 
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
-        assertEquals(((PongResponse) pongResponse).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PING_ID, ((PongResponse) pongResponse).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, ((PongResponse) pongResponse).getPongName());
     }
 
     @Test
@@ -117,8 +117,8 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
 
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
-        assertEquals(((PongResponse) pongResponse).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PING_ID, ((PongResponse) pongResponse).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, ((PongResponse) pongResponse).getPongName());
     }
 
     @Test
@@ -133,8 +133,9 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
         } catch (Exception e) {
             assertNotNull(e);
             assertTrue(e.getCause().getCause() instanceof StatusRuntimeException);
-            assertEquals(e.getCause().getCause().getMessage(),
-                    "UNAUTHENTICATED: The Token's Signature resulted invalid when verified using the Algorithm: HmacSHA256");
+            assertEquals(
+                    "UNAUTHENTICATED: The Token's Signature resulted invalid when verified using the Algorithm: HmacSHA256",
+                    e.getCause().getCause().getMessage());
         }
     }
 

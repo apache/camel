@@ -101,11 +101,11 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         InputStream is = cos.getWrappedInputStream();
         exchange.getUnitOfWork().done(exchange);
         String temp = toString(is);
-        assertEquals(temp, TEST_STRING, "Get a wrong stream content");
+        assertEquals(TEST_STRING, temp, "Get a wrong stream content");
         IOHelper.close(is);
 
         files = file.list();
-        assertEquals(0, files.length, "we should have a temp file");
+        assertEquals(files.length, 0, "we should have a temp file");
         IOHelper.close(cos);
     }
 
@@ -129,7 +129,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         ((InputStream) cache).close();
         files = file.list();
         assertEquals(1, files.length, "we should have a temp file");
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
         exchange.getUnitOfWork().done(exchange);
 
         try {
@@ -174,7 +174,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
         ((InputStream) cache).close();
         assertEquals(1, files.length, "we should have a temp file");
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
         exchange.getUnitOfWork().done(exchange);
 
         try {
@@ -207,10 +207,10 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         boolean b = cache instanceof FileInputStreamCache;
         assertTrue(b, "Should get the FileInputStreamCache");
         String temp = toString((InputStream) cache);
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
         cache.reset();
         temp = toString((InputStream) cache);
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
         ((InputStream) cache).close();
         files = file.list();
         assertEquals(1, files.length, "we should have a temp file");
@@ -239,7 +239,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         boolean b = cache instanceof InputStreamCache;
         assertTrue(b, "Should get the InputStreamCache");
         String temp = IOConverter.toString((InputStream) cache, null);
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
 
         IOHelper.close(cos);
     }
@@ -262,7 +262,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         boolean b = cache instanceof InputStreamCache;
         assertTrue(b, "Should get the InputStreamCache");
         String temp = IOConverter.toString((InputStream) cache, null);
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
 
         exchange.getUnitOfWork().done(exchange);
 
@@ -279,7 +279,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
-        assertEquals(cos.getStrategyBufferSize(), 8192, "we should have a custom buffer size");
+        assertEquals(8192, cos.getStrategyBufferSize(), "we should have a custom buffer size");
 
         // make sure things still work after custom buffer size set
         File file = new File("target/cachedir");
@@ -291,10 +291,10 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         boolean b = cache instanceof FileInputStreamCache;
         assertTrue(b, "Should get the FileInputStreamCache");
         String temp = toString((InputStream) cache);
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
         cache.reset();
         temp = toString((InputStream) cache);
-        assertEquals(temp, TEST_STRING, "Cached a wrong file");
+        assertEquals(TEST_STRING, temp, "Cached a wrong file");
 
         ((InputStream) cache).close();
         files = file.list();
