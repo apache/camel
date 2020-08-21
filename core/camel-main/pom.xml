@@ -146,13 +146,6 @@
                             <goal>generate-configurer</goal>
                         </goals>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- we need to generate additional configurer classes -->
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
                     <execution>
                         <id>generate-test-configurer</id>
                         <phase>process-test-classes</phase>
