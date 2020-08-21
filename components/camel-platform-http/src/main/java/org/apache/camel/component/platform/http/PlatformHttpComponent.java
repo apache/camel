@@ -36,6 +36,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,6 +142,16 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
                     PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
         }
 
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
+        }
+
         Map<String, Object> map
                 = RestComponentHelper.initRestEndpointProperties(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, config);
 
@@ -151,8 +162,6 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         }
 
         RestComponentHelper.addHttpRestrictParam(map, verb, cors);
-
-        // do not append with context-path as the servlet path should be without context-path
 
         String url = RestComponentHelper.createRestConsumerUrl("platform-http", path, map);
 
