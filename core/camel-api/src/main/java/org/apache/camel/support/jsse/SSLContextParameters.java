@@ -287,9 +287,8 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
         LOG.debug(
                 "SSLContext [{}], initialized from [{}], is using provider [{}], protocol [{}], key managers {}, trust managers {}, and secure random [{}].",
-                new Object[] {
                         context, this, context.getProvider(), context.getProtocol(), keyManagers, trustManagers,
-                        secureRandom });
+                        secureRandom);
 
         context.init(keyManagers, trustManagers, secureRandom);
 

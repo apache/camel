@@ -83,7 +83,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             // log a warn and then ignore the message
             log.warn(
                     "Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
-                    new Object[] { correlationID, replyTo, correlation.size(), message });
+                    correlationID, replyTo, correlation.size(), message);
         }
     }
 
@@ -233,13 +233,12 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 // warn if using concurrent consumer with shared reply queue as that may not work properly
                 log.warn(
                         "Using {}-{} concurrent consumer on {} with shared queue {} may not work properly with all message brokers.",
-                        new Object[] {
                                 answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name,
-                                endpoint.getReplyTo() });
+                                endpoint.getReplyTo());
             } else {
                 // log that we are using concurrent consumers
                 log.info("Using {}-{} concurrent consumers on {}",
-                        new Object[] { answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name });
+                        answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name);
             }
         }
 
