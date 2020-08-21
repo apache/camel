@@ -21,7 +21,11 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "collection": target.getConfiguration().setCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "documentcollection":
+        case "documentCollection": target.getConfiguration().setDocumentCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "edgecollection":
+        case "edgeCollection": target.getConfiguration().setEdgeCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "graph": target.getConfiguration().setGraph(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -30,6 +34,8 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "port": target.getConfiguration().setPort(property(camelContext, int.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "vertexcollection":
+        case "vertexCollection": target.getConfiguration().setVertexCollection(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -38,7 +44,9 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("basicPropertyBinding", boolean.class);
-        answer.put("collection", java.lang.String.class);
+        answer.put("documentCollection", java.lang.String.class);
+        answer.put("edgeCollection", java.lang.String.class);
+        answer.put("graph", java.lang.String.class);
         answer.put("host", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.arangodb.ArangoDbOperation.class);
@@ -46,6 +54,7 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         answer.put("port", int.class);
         answer.put("synchronous", boolean.class);
         answer.put("user", java.lang.String.class);
+        answer.put("vertexCollection", java.lang.String.class);
         return answer;
     }
 
@@ -55,7 +64,11 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
-        case "collection": return target.getConfiguration().getCollection();
+        case "documentcollection":
+        case "documentCollection": return target.getConfiguration().getDocumentCollection();
+        case "edgecollection":
+        case "edgeCollection": return target.getConfiguration().getEdgeCollection();
+        case "graph": return target.getConfiguration().getGraph();
         case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
@@ -64,6 +77,8 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "port": return target.getConfiguration().getPort();
         case "synchronous": return target.isSynchronous();
         case "user": return target.getConfiguration().getUser();
+        case "vertexcollection":
+        case "vertexCollection": return target.getConfiguration().getVertexCollection();
         default: return null;
         }
     }

@@ -28,17 +28,15 @@ public class ArangoDbComponentTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfiguration() throws Exception {
         ArangoDbComponent component = context.getComponent("arangodb", ArangoDbComponent.class);
         ArangoDbEndpoint endpoint = (ArangoDbEndpoint) component
-                .createEndpoint("arangodb:testDb?collection=myCollection");
+                .createEndpoint("arangodb:testDb?documentCollection=myCollection");
         assertEquals("testDb", endpoint.getConfiguration().getDatabase());
-        assertEquals("myCollection", endpoint.getConfiguration().getCollection());
+        assertEquals("myCollection", endpoint.getConfiguration().getDocumentCollection());
     }
 
     @Test
-    public void testRouteWithNoDatabaseName() throws Exception {
+    public void testRouteWithNoDatabaseName() {
         ArangoDbComponent component = context.getComponent("arangodb", ArangoDbComponent.class);
-        assertThrows(IllegalArgumentException.class, () -> {
-            component
-                    .createEndpoint("arangodb?collection=myCollection");
-        });
+        assertThrows(IllegalArgumentException.class, () -> component
+                .createEndpoint("arangodb?documentCollection=myCollection"));
     }
 }

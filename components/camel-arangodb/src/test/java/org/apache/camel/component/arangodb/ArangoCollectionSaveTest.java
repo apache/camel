@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
@@ -31,8 +30,6 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_INSERT;
@@ -40,26 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArangoCollectionSaveTest extends AbstractArangoDbTest {
-    private ArangoCollection collection;
-
-    @BeforeEach
-    public void beforeEach() {
-        arangoDatabase.createCollection(COLLECTION_NAME);
-        collection = arangoDatabase.collection(COLLECTION_NAME);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        collection.drop();
-    }
+public class ArangoCollectionSaveTest extends BaseCollectionTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insert")
-                        .to("arangodb:{{arangodb.testDb}}?collection={{arangodb.testCollection}}&operation=SAVE_DOCUMENT");
+                        .to("arangodb:{{arangodb.testDb}}?documentCollection={{arangodb.testCollection}}&operation=SAVE_DOCUMENT");
             }
         };
     }
@@ -70,10 +55,7 @@ public class ArangoCollectionSaveTest extends AbstractArangoDbTest {
         myObject.addAttribute("a", "Foo");
         myObject.addAttribute("b", 42);
 
-        Exchange result = template.request("direct:insert", exchange -> {
-            exchange.getMessage().setBody(myObject);
-            exchange.getMessage().setHeader("abc", "def");
-        });
+        Exchange result = template.request("direct:insert", exchange -> exchange.getMessage().setBody(myObject));
 
         assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
         DocumentCreateEntity<BaseDocument> docCreated = (DocumentCreateEntity<BaseDocument>) result.getMessage().getBody();
