@@ -148,11 +148,54 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
         // Update all component pom sync point
         if (count > 0 && (val == null || val.equals("true"))) {
-            syncPomFile();
+            syncParentPomFile();
+            syncAllComponentsPomFile();
         }
     }
 
-    private void syncPomFile() throws MojoExecutionException {
+    private void syncParentPomFile() throws MojoExecutionException {
+        Path root = findCamelDirectory(project.getBasedir(), "parent").toPath();
+        Path pomFile = root.resolve("pom.xml");
+
+        final String startDependenciesMarker = "<!-- camel components: START -->";
+        final String endDependenciesMarker = "<!-- camel components: END -->";
+
+        if (!Files.isRegularFile(pomFile)) {
+            throw new MojoExecutionException("Pom file " + pomFile + " does not exist");
+        }
+
+        try {
+            final String pomText = loadText(pomFile);
+
+            final String before = Strings.before(pomText, startDependenciesMarker);
+            final String after = Strings.after(pomText, endDependenciesMarker);
+
+            final String between = pomText.substring(before.length(), pomText.length() - after.length());
+
+            Pattern pattern = Pattern.compile(
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>\\$\\{project\\.version}</version>\\s*</dependency>");
+            Matcher matcher = pattern.matcher(between);
+            TreeSet<String> dependencies = new TreeSet<>();
+            while (matcher.find()) {
+                dependencies.add(matcher.group());
+            }
+            dependencies.add("<dependency>\n"
+                             + "\t\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
+                             + "\t\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                             + "\t\t\t\t<version>${project.version}</version>\n"
+                             + "\t\t\t</dependency>");
+
+            final String updatedPom = before + startDependenciesMarker + "\n\t\t\t"
+                                      + String.join("\n\t\t\t", dependencies) + "\n\t\t\t"
+                                      + endDependenciesMarker + after;
+
+            updateResource(buildContext, pomFile, updatedPom);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading file " + pomFile + " Reason: " + e, e);
+        }
+    }
+
+    private void syncAllComponentsPomFile() throws MojoExecutionException {
         Path root = findCamelDirectory(project.getBasedir(), "core/camel-allcomponents").toPath();
         Path pomFile = root.resolve("pom.xml");
 

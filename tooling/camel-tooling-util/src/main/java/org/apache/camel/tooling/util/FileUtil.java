@@ -22,8 +22,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public final class FileUtil {
+
+    private static final ConcurrentMap<String, Object> LOCKS = new ConcurrentHashMap<>();
 
     private FileUtil() {
     }
@@ -65,6 +69,13 @@ public final class FileUtil {
      * @throws IOException if an exception occurs
      */
     public static boolean updateFile(Path path, byte[] newdata) throws IOException {
+        Object lock = LOCKS.computeIfAbsent(path.toString(), k -> new Object());
+        synchronized (lock) {
+            return doUpdateFile(path, newdata);
+        }
+    }
+
+    private static boolean doUpdateFile(Path path, byte[] newdata) throws IOException {
         if (newdata == null) {
             if (!Files.exists(path)) {
                 return false;
