@@ -48,7 +48,7 @@ public class ShutdownGracefulTimeoutTriggerTest extends ContextTestSupport {
         context.stop();
 
         // should not be able to complete all messages as timeout occurred
-        assertNotSame(foo, "Should not able able to complete all pending messages", "stopABCDE");
+        assertNotSame("Should not able able to complete all pending messages", foo, "stopABCDE");
     }
 
     @Override

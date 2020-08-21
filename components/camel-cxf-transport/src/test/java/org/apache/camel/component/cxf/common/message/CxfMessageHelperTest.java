@@ -58,7 +58,7 @@ public class CxfMessageHelperTest {
         // test message
         InputStream is = message.getContent(InputStream.class);
         assertNotNull(is, "The input stream should not be null");
-        assertEquals(toString(is), "hello world", "Don't get the right message");
+        assertEquals("hello world", toString(is), "Don't get the right message");
 
         // DOMSource
         URL request = this.getClass().getResource("RequestBody.xml");
@@ -70,14 +70,14 @@ public class CxfMessageHelperTest {
         message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         is = message.getContent(InputStream.class);
         assertNotNull(is, "The input stream should not be null");
-        assertEquals(toString(is), REQUEST_STRING, "Don't get the right message");
+        assertEquals(REQUEST_STRING, toString(is), "Don't get the right message");
 
         // File
         exchange.getIn().setBody(requestFile);
         message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         is = message.getContent(InputStream.class);
         assertNotNull(is, "The input stream should not be null");
-        assertEquals(toString(is), REQUEST_STRING, "Don't get the right message");
+        assertEquals(REQUEST_STRING, toString(is), "Don't get the right message");
 
         // transport header's case insensitiveness
         // String

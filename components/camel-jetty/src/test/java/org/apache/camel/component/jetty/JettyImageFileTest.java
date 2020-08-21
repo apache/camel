@@ -42,7 +42,7 @@ public class JettyImageFileTest extends BaseJettyTest {
         template.send(endpoint, exchange);
 
         assertNotNull(exchange.getOut().getBody());
-        assertEquals(MessageHelper.getContentType(exchange.getOut()), "image/jpeg", "Get a wrong content-type");
+        assertEquals("image/jpeg", MessageHelper.getContentType(exchange.getOut()), "Get a wrong content-type");
     }
 
     @Test

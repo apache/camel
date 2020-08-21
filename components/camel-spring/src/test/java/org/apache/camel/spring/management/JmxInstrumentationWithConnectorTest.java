@@ -38,7 +38,7 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
         ManagementAgent agent = getMandatoryBean(DefaultManagementAgent.class, "agent");
         assertNotNull(agent, "SpringInstrumentationAgent must be configured for JMX support");
         assertNotNull(agent.getMBeanServer(), "MBeanServer must be configured for JMX support");
-        assertEquals(agent.getMBeanServer().getDefaultDomain(), "org.apache.camel.test");
+        assertEquals("org.apache.camel.test", agent.getMBeanServer().getDefaultDomain());
     }
 
     @Override

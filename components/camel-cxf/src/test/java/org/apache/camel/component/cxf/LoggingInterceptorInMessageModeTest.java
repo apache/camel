@@ -97,7 +97,7 @@ public class LoggingInterceptorInMessageModeTest {
         HelloService client = (HelloService) proxyFactory.create();
 
         String result = client.echo("hello world");
-        assertEquals(result, "echo hello world", "we should get the right answer from router");
+        assertEquals("echo hello world", result, "we should get the right answer from router");
         //assertTrue(writer.getString().indexOf("hello world") > 0);
 
     }

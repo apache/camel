@@ -86,8 +86,8 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         CreateFunctionResult result = (CreateFunctionResult) exchange.getIn().getBody();
-        assertEquals(result.getFunctionName(), "GetHelloWithName");
-        assertEquals(result.getDescription(), "Hello with node.js on Lambda");
+        assertEquals("GetHelloWithName", result.getFunctionName());
+        assertEquals("Hello with node.js on Lambda", result.getDescription());
         assertNotNull(result.getFunctionArn());
         assertNotNull(result.getCodeSha256());
     }
@@ -115,7 +115,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         UpdateFunctionCodeResult result = (UpdateFunctionCodeResult) exchange.getIn().getBody();
-        assertEquals(result.getFunctionName(), "GetHelloWithName");
+        assertEquals("GetHelloWithName", result.getFunctionName());
         assertNotNull(result.getFunctionArn());
         assertNotNull(result.getCodeSha256());
     }
@@ -146,7 +146,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         GetFunctionResult result = (GetFunctionResult) exchange.getMessage().getBody();
-        assertEquals(result.getConfiguration().getFunctionName(), "GetHelloWithName");
+        assertEquals("GetHelloWithName", result.getConfiguration().getFunctionName());
     }
 
     @Test
@@ -161,8 +161,8 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         ListFunctionsResult result = (ListFunctionsResult) exchange.getMessage().getBody();
-        assertEquals(result.getFunctions().size(), 1);
-        assertEquals(result.getFunctions().get(0).getFunctionName(), "GetHelloWithName");
+        assertEquals(1, result.getFunctions().size());
+        assertEquals("GetHelloWithName", result.getFunctions().get(0).getFunctionName());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         assertNotNull(exchange.getMessage().getBody(String.class));
-        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertEquals("{\"Hello\":\"Camel\"}", exchange.getMessage().getBody(String.class));
     }
 
     @Test
@@ -191,7 +191,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         CreateEventSourceMappingResult result = exchange.getMessage().getBody(CreateEventSourceMappingResult.class);
-        assertEquals(result.getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+        assertEquals("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName", result.getFunctionArn());
     }
 
     @Test
@@ -218,8 +218,8 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         ListEventSourceMappingsResult result = exchange.getMessage().getBody(ListEventSourceMappingsResult.class);
-        assertEquals(result.getEventSourceMappings().get(0).getFunctionArn(),
-                "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+        assertEquals("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName",
+                result.getEventSourceMappings().get(0).getFunctionArn());
     }
 
     @Test

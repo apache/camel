@@ -78,8 +78,8 @@ public class CxfEndpointTest {
 
         assertEquals(endpoint.getAddress(),
                 "http://localhost:" + port2 + "/CxfEndpointTest/helloworld", "Got the wrong endpoint address");
-        assertEquals(endpoint.getServiceClass().getCanonicalName(),
-                "org.apache.camel.component.cxf.HelloService", "Got the wrong endpont service class");
+        assertEquals("org.apache.camel.component.cxf.HelloService", endpoint.getServiceClass().getCanonicalName(),
+                "Got the wrong endpont service class");
     }
 
     @Test

@@ -114,8 +114,8 @@ public class MQProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         CreateBrokerResponse resultGet = (CreateBrokerResponse) exchange.getIn().getBody();
-        assertEquals(resultGet.brokerId(), "1");
-        assertEquals(resultGet.brokerArn(), "test");
+        assertEquals("1", resultGet.brokerId());
+        assertEquals("test", resultGet.brokerArn());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class MQProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         DeleteBrokerResponse resultGet = (DeleteBrokerResponse) exchange.getIn().getBody();
-        assertEquals(resultGet.brokerId(), "1");
+        assertEquals("1", resultGet.brokerId());
     }
 
     @Test
@@ -169,7 +169,7 @@ public class MQProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
         UpdateBrokerResponse resultGet = (UpdateBrokerResponse) exchange.getIn().getBody();
-        assertEquals(resultGet.brokerId(), "1");
+        assertEquals("1", resultGet.brokerId());
     }
 
     @Test
@@ -190,7 +190,7 @@ public class MQProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
         DescribeBrokerResponse resultGet = (DescribeBrokerResponse) exchange.getIn().getBody();
-        assertEquals(resultGet.brokerId(), "1");
+        assertEquals("1", resultGet.brokerId());
     }
 
     @Override

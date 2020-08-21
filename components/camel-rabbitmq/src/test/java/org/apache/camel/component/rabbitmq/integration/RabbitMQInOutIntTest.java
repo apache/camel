@@ -113,8 +113,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
                             foo.setDescription("foobar");
                         } else if (exchange.getIn().getBody(String.class) != null) {
                             if (exchange.getIn().getBody(String.class).contains("header")) {
-                                assertEquals(exchange.getIn().getHeader("String"), "String");
-                                assertEquals(exchange.getIn().getHeader("routeHeader"), "routeHeader");
+                                assertEquals("String", exchange.getIn().getHeader("String"));
+                                assertEquals("routeHeader", exchange.getIn().getHeader("routeHeader"));
                             }
 
                             if (exchange.getIn().getBody(String.class).contains("Exception")) {
@@ -247,7 +247,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
                     String.class);
             fail("This should have thrown an exception");
         } catch (CamelExecutionException e) {
-            assertEquals(e.getCause().getClass(), IllegalArgumentException.class);
+            assertEquals(IllegalArgumentException.class, e.getCause().getClass());
         } catch (Exception e) {
             fail("This should have caught CamelExecutionException");
         }

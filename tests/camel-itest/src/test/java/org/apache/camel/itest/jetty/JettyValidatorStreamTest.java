@@ -36,7 +36,7 @@ public class JettyValidatorStreamTest extends CamelTestSupport {
         assertNotNull(inputStream, "The inputStream should not be null");
 
         String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
-        assertEquals(response, "<ok/>", "The response should be ok");
+        assertEquals("<ok/>", response, "The response should be ok");
     }
 
     @Override

@@ -75,8 +75,8 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         });
 
         CreateFunctionResult result = (CreateFunctionResult) exchange.getMessage().getBody();
-        assertEquals(result.getFunctionName(), "GetHelloWithName");
-        assertEquals(result.getDescription(), "Hello with node.js on Lambda");
+        assertEquals("GetHelloWithName", result.getFunctionName());
+        assertEquals("Hello with node.js on Lambda", result.getDescription());
         assertNotNull(result.getFunctionArn());
         assertNotNull(result.getCodeSha256());
     }
@@ -103,7 +103,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
             }
         });
         GetFunctionResult result = (GetFunctionResult) exchange.getMessage().getBody();
-        assertEquals(result.getConfiguration().getFunctionName(), "GetHelloWithName");
+        assertEquals("GetHelloWithName", result.getConfiguration().getFunctionName());
     }
 
     @Test
@@ -116,8 +116,8 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         });
 
         ListFunctionsResult result = (ListFunctionsResult) exchange.getMessage().getBody();
-        assertEquals(result.getFunctions().size(), 1);
-        assertEquals(result.getFunctions().get(0).getFunctionName(), "GetHelloWithName");
+        assertEquals(1, result.getFunctions().size());
+        assertEquals("GetHelloWithName", result.getFunctions().get(0).getFunctionName());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         });
 
         assertNotNull(exchange.getMessage().getBody(String.class));
-        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertEquals("{\"Hello\":\"Camel\"}", exchange.getMessage().getBody(String.class));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         CreateEventSourceMappingResult result = exchange.getMessage().getBody(CreateEventSourceMappingResult.class);
-        assertEquals(result.getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+        assertEquals("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName", result.getFunctionArn());
     }
 
     @Test
@@ -172,8 +172,8 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         ListEventSourceMappingsResult result = exchange.getMessage().getBody(ListEventSourceMappingsResult.class);
-        assertEquals(result.getEventSourceMappings().get(0).getFunctionArn(),
-                "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+        assertEquals("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName",
+                result.getEventSourceMappings().get(0).getFunctionArn());
     }
 
     @Test

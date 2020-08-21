@@ -130,7 +130,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
 
                 from("direct:listVipCustomers").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals(exchange.getIn().getHeader("status", String.class), "gold");
+                        assertEquals("gold", exchange.getIn().getHeader("status", String.class));
                         assertEquals(MessageContentsList.class, exchange.getIn().getBody().getClass());
                         assertEquals(0, exchange.getIn().getBody(MessageContentsList.class).size());
                         CustomerList response = new CustomerList();
@@ -144,7 +144,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
 
                 from("direct:updateVipCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals(exchange.getIn().getHeader("status", String.class), "gold");
+                        assertEquals("gold", exchange.getIn().getHeader("status", String.class));
                         assertEquals("123", exchange.getIn().getHeader("id"));
                         Customer c = exchange.getIn().getBody(Customer.class);
                         assertEquals(123, c.getId());
@@ -154,7 +154,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
 
                 from("direct:deleteVipCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals(exchange.getIn().getHeader("status", String.class), "gold");
+                        assertEquals("gold", exchange.getIn().getHeader("status", String.class));
                         assertEquals("123", exchange.getIn().getHeader("id"));
                     }
                 });

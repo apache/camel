@@ -42,14 +42,14 @@ public class SdbOperationsTest {
 
     @Test
     public void testToString() {
-        assertEquals(SdbOperations.BatchDeleteAttributes.toString(), "BatchDeleteAttributes");
-        assertEquals(SdbOperations.BatchPutAttributes.toString(), "BatchPutAttributes");
-        assertEquals(SdbOperations.DeleteAttributes.toString(), "DeleteAttributes");
-        assertEquals(SdbOperations.DeleteDomain.toString(), "DeleteDomain");
-        assertEquals(SdbOperations.DomainMetadata.toString(), "DomainMetadata");
-        assertEquals(SdbOperations.GetAttributes.toString(), "GetAttributes");
-        assertEquals(SdbOperations.ListDomains.toString(), "ListDomains");
-        assertEquals(SdbOperations.PutAttributes.toString(), "PutAttributes");
-        assertEquals(SdbOperations.Select.toString(), "Select");
+        assertEquals("BatchDeleteAttributes", SdbOperations.BatchDeleteAttributes.toString());
+        assertEquals("BatchPutAttributes", SdbOperations.BatchPutAttributes.toString());
+        assertEquals("DeleteAttributes", SdbOperations.DeleteAttributes.toString());
+        assertEquals("DeleteDomain", SdbOperations.DeleteDomain.toString());
+        assertEquals("DomainMetadata", SdbOperations.DomainMetadata.toString());
+        assertEquals("GetAttributes", SdbOperations.GetAttributes.toString());
+        assertEquals("ListDomains", SdbOperations.ListDomains.toString());
+        assertEquals("PutAttributes", SdbOperations.PutAttributes.toString());
+        assertEquals("Select", SdbOperations.Select.toString());
     }
 }

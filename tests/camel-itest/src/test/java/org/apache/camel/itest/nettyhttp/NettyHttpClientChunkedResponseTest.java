@@ -53,7 +53,7 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
         });
 
         assertNotNull(out);
-        assertEquals(out.getMessage().getBody(String.class), "Bye Camel in chunks.");
+        assertEquals("Bye Camel in chunks.", out.getMessage().getBody(String.class));
         if (checkChunkedHeader) {
             assertEquals("chunked", out.getMessage().getHeader("Transfer-Encoding"));
         }

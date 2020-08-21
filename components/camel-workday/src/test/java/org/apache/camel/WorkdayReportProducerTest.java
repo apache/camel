@@ -40,13 +40,13 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
 
         WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
 
-        assertEquals(workdayConfiguration.getEntity(), WorkdayConfiguration.Entity.report);
-        assertEquals(workdayConfiguration.getPath(), "/ISU_Camel/Custom_Report_Employees");
-        assertEquals(workdayConfiguration.getHost(), "impl.workday.com");
-        assertEquals(workdayConfiguration.getTenant(), "camel");
-        assertEquals(workdayConfiguration.getClientId(), "f7014d38-99d2-4969-b740-b5b62db6b46a");
-        assertEquals(workdayConfiguration.getClientSecret(), "7dbaf280-3cea-11ea-b77f-2e728ce88125");
-        assertEquals(workdayConfiguration.getTokenRefresh(), "88689ab63cda");
+        assertEquals(WorkdayConfiguration.Entity.report, workdayConfiguration.getEntity());
+        assertEquals("/ISU_Camel/Custom_Report_Employees", workdayConfiguration.getPath());
+        assertEquals("impl.workday.com", workdayConfiguration.getHost());
+        assertEquals("camel", workdayConfiguration.getTenant());
+        assertEquals("f7014d38-99d2-4969-b740-b5b62db6b46a", workdayConfiguration.getClientId());
+        assertEquals("7dbaf280-3cea-11ea-b77f-2e728ce88125", workdayConfiguration.getClientSecret());
+        assertEquals("88689ab63cda", workdayConfiguration.getTokenRefresh());
     }
 
     @Test
@@ -62,8 +62,8 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
                                     + "&format=json");
         } catch (Exception exception) {
 
-            assertEquals(exception.getClass(), IllegalArgumentException.class);
-            assertEquals(exception.getMessage(), "Host must be specified");
+            assertEquals(IllegalArgumentException.class, exception.getClass());
+            assertEquals("Host must be specified", exception.getMessage());
             return;
         }
 
@@ -83,7 +83,7 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
         WorkdayReportProducer workdayProducer = new WorkdayReportProducer(workdayEndpoint);
         String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
 
-        assertEquals(workdayUri,
-                "https://camel.myworkday.com/ccx/service/customreport2/camel/ISU_Camel/Custom_Report_Employees?param=test1&format=json");
+        assertEquals("https://camel.myworkday.com/ccx/service/customreport2/camel/ISU_Camel/Custom_Report_Employees?param=test1&format=json",
+                workdayUri);
     }
 }

@@ -75,7 +75,7 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             fail("Commit status sent to service is different from response");
         }
 
-        assertEquals(status.getState(), "success");
+        assertEquals("success", status.getState());
 
         assertEquals(status.getDescription(), text);
     }

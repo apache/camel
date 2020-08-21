@@ -67,15 +67,15 @@ public class CxfPayLoadSoapHeaderTest extends CxfPayLoadSoapHeaderTestAbstract {
 
                         List<SoapHeader> headers = payload.getHeaders();
                         assertNotNull(headers, "We should get the headers here");
-                        assertEquals(headers.size(), 1, "Get the wrong headers size");
-                        assertEquals(((Element) (headers.get(0).getObject())).getNamespaceURI(),
-                                "http://camel.apache.org/pizza/types", "Get the wrong namespace URI");
+                        assertEquals(1, headers.size(), "Get the wrong headers size");
+                        assertEquals("http://camel.apache.org/pizza/types",
+                                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
                         // alternatively you can also get the SOAP header via the camel header:
                         headers = exchange.getIn().getHeader(Header.HEADER_LIST, List.class);
                         assertNotNull(headers, "We should get the headers here");
-                        assertEquals(headers.size(), 1, "Get the wrong headers size");
-                        assertEquals(((Element) (headers.get(0).getObject())).getNamespaceURI(),
-                                "http://camel.apache.org/pizza/types", "Get the wrong namespace URI");
+                        assertEquals(1, headers.size(), "Get the wrong headers size");
+                        assertEquals("http://camel.apache.org/pizza/types",
+                                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
 
                     }
 

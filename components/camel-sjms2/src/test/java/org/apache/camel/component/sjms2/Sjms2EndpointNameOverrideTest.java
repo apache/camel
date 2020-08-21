@@ -42,8 +42,8 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
         Sjms2Endpoint sjms = (Sjms2Endpoint) endpoint;
-        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://test");
-        assertEquals(sjms.createExchange().getPattern(), ExchangePattern.InOnly);
+        assertEquals(BEAN_NAME + "://test", sjms.getEndpointUri());
+        assertEquals(ExchangePattern.InOnly, sjms.createExchange().getPattern());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":queue:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof Sjms2Endpoint);
-        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://queue:test");
+        assertEquals(BEAN_NAME + "://queue:test", sjms.getEndpointUri());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":topic:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof Sjms2Endpoint);
-        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://topic:test");
+        assertEquals(BEAN_NAME + "://topic:test", sjms.getEndpointUri());
     }
 
     @Override

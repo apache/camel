@@ -73,7 +73,7 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
         assertEquals(true, result, "we should get the right answer from router");
         // The below invocation is failed with CXF 2.6.1 as the request are all start with <arg0>
         String str = client.echo("hello world");
-        assertEquals("we should get the right answer from router", "echo hello world", str);
+        assertEquals("echo hello world", str, "we should get the right answer from router");
 
     }
 

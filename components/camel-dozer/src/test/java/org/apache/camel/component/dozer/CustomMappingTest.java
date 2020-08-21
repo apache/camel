@@ -56,7 +56,7 @@ public class CustomMappingTest {
         // check results
         resultEndpoint.assertIsSatisfied();
         XYZOrder result = resultEndpoint.getExchanges().get(0).getIn().getBody(XYZOrder.class);
-        assertEquals(result.getPriority(), "custom2:GOLD");
-        assertEquals(result.getCustId(), "mapCustomer:ACME");
+        assertEquals("custom2:GOLD", result.getPriority());
+        assertEquals("mapCustomer:ACME", result.getCustId());
     }
 }
