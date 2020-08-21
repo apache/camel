@@ -21,10 +21,10 @@ import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.oaipmh.utils.JettyTestServer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
 
@@ -35,7 +35,7 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
         mock.assertIsSatisfied(5 * 1000);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws IOException {
         //Mocked data  taken from https://repositorio.cepal.org/oai/request - July 21, 2020
         JettyTestServer.getInstance().context = "test4";
@@ -43,7 +43,7 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
         JettyTestServer.getInstance().startServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }

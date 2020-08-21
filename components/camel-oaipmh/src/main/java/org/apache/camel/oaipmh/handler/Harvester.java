@@ -58,7 +58,8 @@ public class Harvester {
         this.httpClient = new OAIPMHHttpClient();
         this.oaipmhResponseHandler = oaipmhResponseHandler;
 
-        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
+        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
+                || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
             this.metadata = null;
             this.until = null;
             this.from = null;
