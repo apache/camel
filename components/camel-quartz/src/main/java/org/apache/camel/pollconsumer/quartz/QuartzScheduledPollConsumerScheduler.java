@@ -255,8 +255,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                            trigger.getKey(), trigger.getClass().getSimpleName(),
-                            job.getJobClass().getSimpleName(), trigger.getNextFireTime());
+                    trigger.getKey(), trigger.getClass().getSimpleName(),
+                    job.getJobClass().getSimpleName(), trigger.getNextFireTime());
         }
     }
 

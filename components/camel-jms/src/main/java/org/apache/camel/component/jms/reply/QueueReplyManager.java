@@ -233,8 +233,8 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 // warn if using concurrent consumer with shared reply queue as that may not work properly
                 log.warn(
                         "Using {}-{} concurrent consumer on {} with shared queue {} may not work properly with all message brokers.",
-                                answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name,
-                                endpoint.getReplyTo());
+                        answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name,
+                        endpoint.getReplyTo());
             } else {
                 // log that we are using concurrent consumers
                 log.info("Using {}-{} concurrent consumers on {}",

@@ -338,8 +338,9 @@ public class CMISProducer extends DefaultProducer {
         Document document = (Document) getSessionFacade().getObjectById(objectId);
 
         String newDocumentName = message.getHeader(PropertyIds.NAME, String.class);
-        if(org.apache.camel.util.ObjectHelper.isNotEmpty(newDocumentName)) {
-           return document.copy(destinationFolder, Collections.singletonMap(PropertyIds.NAME, newDocumentName), VersioningState.NONE, null, null, null, getSessionFacade().createOperationContext());
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(newDocumentName)) {
+            return document.copy(destinationFolder, Collections.singletonMap(PropertyIds.NAME, newDocumentName),
+                    VersioningState.NONE, null, null, null, getSessionFacade().createOperationContext());
         }
 
         return document.copy(destinationFolder);
