@@ -148,6 +148,10 @@ public class BlobClientWrapper {
                 Context.NONE);
     }
 
+    public boolean appendBlobExists() {
+        return getAppendBlobClient().exists();
+    }
+
     public Response<PageBlobItem> createPageBlob(
             final long size, final Long sequenceNumber, final BlobHttpHeaders headers,
             final Map<String, String> metadata, final BlobRequestConditions requestConditions, final Duration timeout) {
@@ -176,6 +180,10 @@ public class BlobClientWrapper {
             final BlobRange blobRange, final BlobRequestConditions requestConditions,
             final Duration timeout) {
         return getPageBlobClient().getPageRangesWithResponse(blobRange, requestConditions, timeout, Context.NONE);
+    }
+
+    public boolean pageBlobExists() {
+        return getPageBlobClient().exists();
     }
 
     public String generateSas(final BlobServiceSasSignatureValues blobServiceSasSignatureValues) {
