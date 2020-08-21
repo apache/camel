@@ -118,10 +118,10 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> elements = payload.getBodySources();
                         assertNotNull(elements, "We should get the elements here");
-                        assertEquals(elements.size(), 1, "Get the wrong elements size");
+                        assertEquals(1, elements.size(), "Get the wrong elements size");
 
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/",
+                        assertEquals("http://cxf.component.camel.apache.org/", el.getNamespaceURI(),
                                 "Get the wrong namespace URI");
                     }
 

@@ -49,7 +49,7 @@ public class HttpBindingRefTest extends BaseJettyTest {
     @Test
     public void testCustomHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
-        assertEquals(context.getTypeConverter().convertTo(String.class, out), "Something went wrong but we dont care");
+        assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
     }
 
     @Override

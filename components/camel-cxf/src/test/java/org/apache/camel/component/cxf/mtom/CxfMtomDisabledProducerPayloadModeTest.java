@@ -144,7 +144,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            assertArrayEquals(bytes, MtomTestHelper.REQ_PHOTO_DATA);
+            assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA, bytes);
 
             dh = map.get(MtomTestHelper.REQ_IMAGE_CID);
             assertEquals("image/jpeg", dh.getContentType());

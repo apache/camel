@@ -123,7 +123,7 @@ public class KuduScanTest extends AbstractKuduTest {
         List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
 
-        assertEquals(results.size(), 1, "Wrong number of results.");
+        assertEquals(1, results.size(), "Wrong number of results.");
 
         Map<String, Object> row = results.get(0);
 

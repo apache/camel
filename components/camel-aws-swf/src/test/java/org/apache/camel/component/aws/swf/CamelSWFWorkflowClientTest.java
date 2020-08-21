@@ -137,7 +137,7 @@ public class CamelSWFWorkflowClientTest {
                 Collections.singletonList("camelTest"));
 
         verify(clientExternal).startWorkflowExecution(new Object[] { null });
-        assertEquals(ids[0], "123");
-        assertEquals(ids[1], "run1");
+        assertEquals("123", ids[0]);
+        assertEquals("run1", ids[1]);
     }
 }

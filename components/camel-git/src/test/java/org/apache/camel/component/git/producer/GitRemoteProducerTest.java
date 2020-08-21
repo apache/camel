@@ -50,7 +50,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
             }
         });
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
 
         Status status = new Git(repository).status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));

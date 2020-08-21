@@ -69,10 +69,10 @@ public class BindySimpleCsvBooleanUnmarshallTest {
         result.assertIsSatisfied();
 
         assertFalse(examples.get(0).getName().isEmpty());
-        assertEquals(examples.get(0).getName(), "andrew");
+        assertEquals("andrew", examples.get(0).getName());
         assertTrue(examples.get(0).getExist());
         assertFalse(examples.get(1).getName().isEmpty());
-        assertEquals(examples.get(1).getName(), "andrew");
+        assertEquals("andrew", examples.get(1).getName());
         assertFalse(examples.get(1).getExist());
         assertNotNull(examples);
     }
@@ -93,13 +93,13 @@ public class BindySimpleCsvBooleanUnmarshallTest {
         result.assertIsSatisfied();
 
         assertFalse(examples.get(0).getName().isEmpty());
-        assertEquals(examples.get(0).getName(), "andrew");
+        assertEquals("andrew", examples.get(0).getName());
         assertTrue(examples.get(0).getExist());
         assertFalse(examples.get(1).getName().isEmpty());
-        assertEquals(examples.get(1).getName(), "joseph");
+        assertEquals("joseph", examples.get(1).getName());
         assertFalse(examples.get(1).getExist());
         assertFalse(examples.get(2).getName().isEmpty());
-        assertEquals(examples.get(2).getName(), "nicholas");
+        assertEquals("nicholas", examples.get(2).getName());
         assertTrue(examples.get(2).getExist());
         assertNotNull(examples);
     }

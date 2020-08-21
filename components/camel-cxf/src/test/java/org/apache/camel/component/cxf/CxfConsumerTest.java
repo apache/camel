@@ -119,7 +119,7 @@ public class CxfConsumerTest extends CamelTestSupport {
 
         Boolean bool = client.echoBoolean(Boolean.TRUE);
         assertNotNull(bool, "The result should not be null");
-        assertEquals(bool.toString(), "true", "We should get the echo boolean result from router");
+        assertEquals("true", bool.toString(), "We should get the echo boolean result from router");
     }
 
     @Test

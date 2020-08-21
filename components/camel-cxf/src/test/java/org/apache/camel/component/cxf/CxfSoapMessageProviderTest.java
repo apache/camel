@@ -77,8 +77,8 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
             throw (Exception) ex.getCause();
         }
 
-        assertEquals(fromHandler.getMessageCount(), 8, "Can't get the right message count");
-        assertEquals(fromHandler.getFaultCount(), 0, "Can't get the right fault count");
+        assertEquals(8, fromHandler.getMessageCount(), "Can't get the right message count");
+        assertEquals(0, fromHandler.getFaultCount(), "Can't get the right fault count");
         //From CXF 2.2.7 the soap handler's getHeader() method will not be called if the SOAP message don't have headers
         //assertEquals(fromHandler.getGetHeadersCount(), 4, "Can't get the right headers count");
 

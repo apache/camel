@@ -171,8 +171,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                         log.warn(
                                 "Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
                                  + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                        holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
-                                        ExchangeHelper.logIds(exchange));
+                                holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
+                                ExchangeHelper.logIds(exchange));
                     }
 
                     // no response, so lets set a timed out exception

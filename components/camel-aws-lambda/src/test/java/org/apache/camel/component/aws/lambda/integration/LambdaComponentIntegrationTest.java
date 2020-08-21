@@ -59,7 +59,7 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             }
         });
         assertNotNull(exchange.getMessage().getBody(CreateFunctionResult.class));
-        assertEquals(exchange.getMessage().getBody(CreateFunctionResult.class).getFunctionName(), "GetHelloWithName");
+        assertEquals("GetHelloWithName", exchange.getMessage().getBody(CreateFunctionResult.class).getFunctionName());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             }
         });
         assertNotNull(exchange.getMessage().getBody(ListFunctionsResult.class));
-        assertEquals(exchange.getMessage().getBody(ListFunctionsResult.class).getFunctions().size(), 3);
+        assertEquals(3, exchange.getMessage().getBody(ListFunctionsResult.class).getFunctions().size());
     }
 
     @Test
@@ -86,8 +86,8 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         });
         GetFunctionResult result = exchange.getMessage().getBody(GetFunctionResult.class);
         assertNotNull(result);
-        assertEquals(result.getConfiguration().getFunctionName(), "GetHelloWithName");
-        assertEquals(result.getConfiguration().getRuntime(), "nodejs6.10");
+        assertEquals("GetHelloWithName", result.getConfiguration().getFunctionName());
+        assertEquals("nodejs6.10", result.getConfiguration().getRuntime());
 
     }
 
@@ -102,7 +102,7 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         });
 
         assertNotNull(exchange.getMessage().getBody(String.class));
-        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertEquals("{\"Hello\":\"Camel\"}", exchange.getMessage().getBody(String.class));
     }
 
     @Test

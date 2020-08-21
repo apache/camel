@@ -36,21 +36,21 @@ public class CamelContextAwareTest extends SpringTestSupport {
         assertNotNull(bean1.getCamelContext(), "No CamelContext injected!");
         Map<String, String> globalOptions = bean1.getCamelContext().getGlobalOptions();
         assertNotNull(globalOptions, "The global options reference should not be null");
-        assertEquals(globalOptions.size(), 1, "No global options injected");
-        assertEquals(globalOptions.get("org.apache.camel.test"), "this is a test first",
+        assertEquals(1, globalOptions.size(), "No global options injected");
+        assertEquals("this is a test first", globalOptions.get("org.apache.camel.test"),
                 "Should get the value of org.apache.camel.test");
     }
 
     @Test
     public void testCamelTemplates() throws Exception {
         DefaultProducerTemplate producer1 = getMandatoryBean(DefaultProducerTemplate.class, "producer1");
-        assertEquals(producer1.getCamelContext().getName(), "camel1", "Inject a wrong camel context");
+        assertEquals("camel1", producer1.getCamelContext().getName(), "Inject a wrong camel context");
 
         DefaultProducerTemplate producer2 = getMandatoryBean(DefaultProducerTemplate.class, "producer2");
-        assertEquals(producer2.getCamelContext().getName(), "camel2", "Inject a wrong camel context");
+        assertEquals("camel2", producer2.getCamelContext().getName(), "Inject a wrong camel context");
 
         DefaultConsumerTemplate consumer = getMandatoryBean(DefaultConsumerTemplate.class, "consumer");
-        assertEquals(consumer.getCamelContext().getName(), "camel2", "Inject a wrong camel context");
+        assertEquals("camel2", consumer.getCamelContext().getName(), "Inject a wrong camel context");
     }
 
     @Override

@@ -262,7 +262,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/postxml").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String value = exchange.getIn().getBody(String.class);
-                        assertEquals(value, POST_MESSAGE, "The response message is wrong");
+                        assertEquals(POST_MESSAGE, value, "The response message is wrong");
                         exchange.getOut().setBody("OK");
                     }
                 });

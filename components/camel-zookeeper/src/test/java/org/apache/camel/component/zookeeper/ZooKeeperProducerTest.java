@@ -137,7 +137,7 @@ public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
         assertMockEndpointsSatisfied();
 
         Stat s = mock.getReceivedExchanges().get(0).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS, Stat.class);
-        assertEquals(s.getEphemeralOwner(), 0);
+        assertEquals(0, s.getEphemeralOwner());
     }
 
     @Test

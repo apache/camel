@@ -59,7 +59,7 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         assertTrue(protocalHeaders.get("content-type").toString().startsWith("[text/xml;"), "Should get a right content type");
         assertTrue(protocalHeaders.get("content-type").toString().indexOf("charset=") > 0,
                 "Should get a right context type with a charset");
-        assertEquals(context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200, "Should get the response code");
+        assertEquals(200, context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), "Should get the response code");
         assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().startsWith("text/xml;"),
                 "Should get the content type");
         assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().indexOf("charset=") > 0,

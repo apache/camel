@@ -73,7 +73,7 @@ public class RestEndpointTest {
 
         final RestProducer producer = (RestProducer) restEndpoint.createProducer();
 
-        assertEquals(producer.getBindingMode().name(), "json");
+        assertEquals("json", producer.getBindingMode().name());
     }
 
     @Test

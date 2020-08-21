@@ -56,7 +56,7 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause
                     = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals(cause.getMessage(), "File already exist: exist/hello.txt. Cannot write new file.");
+            assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();

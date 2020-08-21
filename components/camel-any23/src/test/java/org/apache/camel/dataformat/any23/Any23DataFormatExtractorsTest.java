@@ -54,7 +54,7 @@ public class Any23DataFormatExtractorsTest extends CamelTestSupport {
             String resultingRDF = in.getBody(String.class);
             InputStream toInputStream = IOUtils.toInputStream(resultingRDF, Charset.defaultCharset());
             Model parse = Rio.parse(toInputStream, baseURI, RDFFormat.TURTLE);
-            assertEquals(parse.size(), 1);
+            assertEquals(1, parse.size());
         }
     }
 

@@ -127,7 +127,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertEquals(text, "a");
+        assertEquals("a", text);
         is.close();
 
         context.stop();
@@ -146,7 +146,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertEquals(text, "a");
+        assertEquals("a", text);
         is.close();
 
         context.stop();
@@ -165,7 +165,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertEquals(text, "a");
+        assertEquals("a", text);
         is.close();
 
         context.stop();

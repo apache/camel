@@ -235,7 +235,7 @@ public class ConverterTest extends TestSupport {
         Exchange e = new DefaultExchange(camel);
         e.setProperty("prefix", "foo-");
         MyBean bean = converter.convertTo(MyBean.class, e, values);
-        assertEquals(bean.getFoo(), 5, "converted using exchange");
+        assertEquals(5, bean.getFoo(), "converted using exchange");
         assertEquals("foo-bar", bean.getBar(), "converted using exchange");
     }
 

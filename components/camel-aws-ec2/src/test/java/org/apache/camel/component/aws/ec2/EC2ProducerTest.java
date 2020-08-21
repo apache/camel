@@ -71,9 +71,9 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         RunInstancesResult resultGet = (RunInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
-        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
-        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
+        assertEquals("test-1", resultGet.getReservation().getInstances().get(0).getImageId());
+        assertEquals(InstanceType.T2Micro.toString(), resultGet.getReservation().getInstances().get(0).getInstanceType());
+        assertEquals("instance-1", resultGet.getReservation().getInstances().get(0).getInstanceId());
     }
 
     @Test
@@ -98,12 +98,12 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         RunInstancesResult resultGet = (RunInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
-        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
-        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
-        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().size(), 2);
-        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-1");
-        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-2");
+        assertEquals("test-1", resultGet.getReservation().getInstances().get(0).getImageId());
+        assertEquals(InstanceType.T2Micro.toString(), resultGet.getReservation().getInstances().get(0).getInstanceType());
+        assertEquals("instance-1", resultGet.getReservation().getInstances().get(0).getInstanceId());
+        assertEquals(2, resultGet.getReservation().getInstances().get(0).getSecurityGroups().size());
+        assertEquals("id-1", resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId());
+        assertEquals("id-2", resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId());
     }
 
     @Test
@@ -209,12 +209,12 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         RunInstancesResult resultGet = (RunInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
-        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
-        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
-        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().size(), 2);
-        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-3");
-        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-4");
+        assertEquals("test-1", resultGet.getReservation().getInstances().get(0).getImageId());
+        assertEquals(InstanceType.T2Micro.toString(), resultGet.getReservation().getInstances().get(0).getInstanceType());
+        assertEquals("instance-1", resultGet.getReservation().getInstances().get(0).getInstanceId());
+        assertEquals(2, resultGet.getReservation().getInstances().get(0).getSecurityGroups().size());
+        assertEquals("id-3", resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId());
+        assertEquals("id-4", resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId());
     }
 
     @Test
@@ -251,10 +251,10 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         StartInstancesResult resultGet = (StartInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getStartingInstances().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getStartingInstances().get(0).getPreviousState().getName(),
-                InstanceStateName.Stopped.toString());
-        assertEquals(resultGet.getStartingInstances().get(0).getCurrentState().getName(), InstanceStateName.Running.toString());
+        assertEquals("test-1", resultGet.getStartingInstances().get(0).getInstanceId());
+        assertEquals(InstanceStateName.Stopped.toString(),
+                resultGet.getStartingInstances().get(0).getPreviousState().getName());
+        assertEquals(InstanceStateName.Running.toString(), resultGet.getStartingInstances().get(0).getCurrentState().getName());
     }
 
     @Test
@@ -273,10 +273,10 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         StopInstancesResult resultGet = (StopInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getStoppingInstances().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getStoppingInstances().get(0).getPreviousState().getName(),
-                InstanceStateName.Running.toString());
-        assertEquals(resultGet.getStoppingInstances().get(0).getCurrentState().getName(), InstanceStateName.Stopped.toString());
+        assertEquals("test-1", resultGet.getStoppingInstances().get(0).getInstanceId());
+        assertEquals(InstanceStateName.Running.toString(),
+                resultGet.getStoppingInstances().get(0).getPreviousState().getName());
+        assertEquals(InstanceStateName.Stopped.toString(), resultGet.getStoppingInstances().get(0).getCurrentState().getName());
     }
 
     @Test
@@ -295,11 +295,11 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         TerminateInstancesResult resultGet = (TerminateInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getTerminatingInstances().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getTerminatingInstances().get(0).getPreviousState().getName(),
-                InstanceStateName.Running.toString());
-        assertEquals(resultGet.getTerminatingInstances().get(0).getCurrentState().getName(),
-                InstanceStateName.Terminated.toString());
+        assertEquals("test-1", resultGet.getTerminatingInstances().get(0).getInstanceId());
+        assertEquals(InstanceStateName.Running.toString(),
+                resultGet.getTerminatingInstances().get(0).getPreviousState().getName());
+        assertEquals(InstanceStateName.Terminated.toString(),
+                resultGet.getTerminatingInstances().get(0).getCurrentState().getName());
     }
 
     @Test
@@ -317,8 +317,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         DescribeInstancesResult resultGet = (DescribeInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getReservations().size(), 1);
-        assertEquals(resultGet.getReservations().get(0).getInstances().size(), 2);
+        assertEquals(1, resultGet.getReservations().size());
+        assertEquals(2, resultGet.getReservations().get(0).getInstances().size());
     }
 
     @Test
@@ -338,8 +338,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         DescribeInstancesResult resultGet = (DescribeInstancesResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getReservations().size(), 1);
-        assertEquals(resultGet.getReservations().get(0).getInstances().size(), 1);
+        assertEquals(1, resultGet.getReservations().size());
+        assertEquals(1, resultGet.getReservations().get(0).getInstances().size());
     }
 
     @Test
@@ -357,7 +357,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getInstanceStatuses().size(), 2);
+        assertEquals(2, resultGet.getInstanceStatuses().size());
     }
 
     @Test
@@ -377,8 +377,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         DescribeInstanceStatusResult resultGet = (DescribeInstanceStatusResult) exchange.getIn().getBody();
-        assertEquals(resultGet.getInstanceStatuses().size(), 1);
-        assertEquals(resultGet.getInstanceStatuses().get(0).getInstanceState().getName(), InstanceStateName.Running.toString());
+        assertEquals(1, resultGet.getInstanceStatuses().size());
+        assertEquals(InstanceStateName.Running.toString(), resultGet.getInstanceStatuses().get(0).getInstanceState().getName());
     }
 
     @Test
@@ -416,9 +416,9 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         MonitorInstancesResult resultGet = (MonitorInstancesResult) exchange.getIn().getBody();
 
-        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
-        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Enabled.toString());
+        assertEquals(1, resultGet.getInstanceMonitorings().size());
+        assertEquals("test-1", resultGet.getInstanceMonitorings().get(0).getInstanceId());
+        assertEquals(MonitoringState.Enabled.toString(), resultGet.getInstanceMonitorings().get(0).getMonitoring().getState());
     }
 
     @Test
@@ -439,9 +439,9 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         UnmonitorInstancesResult resultGet = (UnmonitorInstancesResult) exchange.getIn().getBody();
 
-        assertEquals(resultGet.getInstanceMonitorings().size(), 1);
-        assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
-        assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Disabled.toString());
+        assertEquals(1, resultGet.getInstanceMonitorings().size());
+        assertEquals("test-1", resultGet.getInstanceMonitorings().get(0).getInstanceId());
+        assertEquals(MonitoringState.Disabled.toString(), resultGet.getInstanceMonitorings().get(0).getMonitoring().getState());
     }
 
     @Test

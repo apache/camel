@@ -70,7 +70,7 @@ public class CxfEndpointUtilsTest {
     public void testGetProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI());
         QName service = endpoint.getServiceNameAsQName();
-        assertEquals(service, SERVICE_NAME, "We should get the right service name");
+        assertEquals(SERVICE_NAME, service, "We should get the right service name");
     }
 
     public char sepChar() {

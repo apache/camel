@@ -42,7 +42,7 @@ public class GitConsumerTest extends GitTestSupport {
         mockResultCommit.expectedMessageCount(2);
         Git git = getGitTestRepository();
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -77,7 +77,7 @@ public class GitConsumerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -89,7 +89,7 @@ public class GitConsumerTest extends GitTestSupport {
                 tagCreated = true;
             }
         }
-        assertEquals(tagCreated, true);
+        assertEquals(true, tagCreated);
 
         // Test
         mockResultTag.assertIsSatisfied();
@@ -111,7 +111,7 @@ public class GitConsumerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -123,7 +123,7 @@ public class GitConsumerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(branchCreated, true);
+        assertEquals(true, branchCreated);
 
         // Test
         mockResultBranch.assertIsSatisfied();

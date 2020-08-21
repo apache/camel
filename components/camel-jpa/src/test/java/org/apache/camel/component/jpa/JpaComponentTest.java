@@ -43,7 +43,7 @@ public class JpaComponentTest extends CamelTestSupport {
                 = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
         JpaConsumer consumer = (JpaConsumer) jpa.createConsumer(null);
 
-        assertEquals(consumer.getLockModeType(), LockModeType.PESSIMISTIC_WRITE);
+        assertEquals(LockModeType.PESSIMISTIC_WRITE, consumer.getLockModeType());
     }
 
     @Test

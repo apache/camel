@@ -74,8 +74,8 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         Object pongResponse = template.requestBody("direct:grpc-sync-sync", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
-        assertEquals(((PongResponse) pongResponse).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PING_ID, ((PongResponse) pongResponse).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, ((PongResponse) pongResponse).getPongName());
 
         // Testing simple sync method with name described in .proto file instead
         // of generated class
@@ -109,9 +109,9 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         Object pongResponse = template.requestBody("direct:grpc-sync-async", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof List<?>);
-        assertEquals(((List<PongResponse>) pongResponse).get(0).getPongId(), GRPC_TEST_PONG_ID01);
-        assertEquals(((List<PongResponse>) pongResponse).get(1).getPongId(), GRPC_TEST_PONG_ID02);
-        assertEquals(((List<PongResponse>) pongResponse).get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PONG_ID01, ((List<PongResponse>) pongResponse).get(0).getPongId());
+        assertEquals(GRPC_TEST_PONG_ID02, ((List<PongResponse>) pongResponse).get(1).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, ((List<PongResponse>) pongResponse).get(0).getPongName());
     }
 
     @Override

@@ -91,8 +91,8 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         List<PongResponse> asyncPongResponseList = (List<PongResponse>) asyncPongResponse;
         assertEquals(1, asyncPongResponseList.size());
-        assertEquals(asyncPongResponseList.get(0).getPongId(), GRPC_TEST_PING_ID);
-        assertEquals(asyncPongResponseList.get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PING_ID, asyncPongResponseList.get(0).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, asyncPongResponseList.get(0).getPongName());
     }
 
     @Test
@@ -119,9 +119,9 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         List<PongResponse> asyncPongResponseList = (List<PongResponse>) asyncPongResponse;
         assertEquals(2, asyncPongResponseList.size());
-        assertEquals(asyncPongResponseList.get(0).getPongId(), GRPC_TEST_PONG_ID01);
-        assertEquals(asyncPongResponseList.get(1).getPongId(), GRPC_TEST_PONG_ID02);
-        assertEquals(asyncPongResponseList.get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PONG_ID01, asyncPongResponseList.get(0).getPongId());
+        assertEquals(GRPC_TEST_PONG_ID02, asyncPongResponseList.get(1).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, asyncPongResponseList.get(0).getPongName());
     }
 
     @Test
@@ -148,8 +148,8 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         List<PongResponse> asyncPongResponseList = (List<PongResponse>) asyncPongResponse;
         assertEquals(1, asyncPongResponseList.size());
-        assertEquals(asyncPongResponseList.get(0).getPongId(), GRPC_TEST_PING_ID);
-        assertEquals(asyncPongResponseList.get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PING_ID, asyncPongResponseList.get(0).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, asyncPongResponseList.get(0).getPongName());
     }
 
     @Test
@@ -176,8 +176,8 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         List<PongResponse> asyncPongResponseList = (List<PongResponse>) asyncPongResponse;
         assertEquals(1, asyncPongResponseList.size());
-        assertEquals(asyncPongResponseList.get(0).getPongId(), GRPC_TEST_PING_ID);
-        assertEquals(asyncPongResponseList.get(0).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
+        assertEquals(GRPC_TEST_PING_ID, asyncPongResponseList.get(0).getPongId());
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, asyncPongResponseList.get(0).getPongName());
     }
 
     @Override

@@ -119,7 +119,7 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
             fail("Should get an exception here.");
         } catch (RuntimeCamelException exception) {
             assertTrue(exception.getCause() instanceof HttpOperationFailedException, "It should get the response error");
-            assertEquals(((HttpOperationFailedException) exception.getCause()).getStatusCode(), 500,
+            assertEquals(500, ((HttpOperationFailedException) exception.getCause()).getStatusCode(),
                     "Get a wrong response code");
         }
     }
