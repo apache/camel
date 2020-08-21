@@ -48,7 +48,6 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -347,11 +346,12 @@ public class CMISProducer extends DefaultProducer {
         Folder destinationFolder = (Folder) getSessionFacade().getObjectById(destinationFolderId);
 
         Document document = (Document) getSessionFacade().getObjectById(objectId);
+
         String newDocumentName = message.getHeader(PropertyIds.NAME, String.class);
         if(org.apache.camel.util.ObjectHelper.isNotEmpty(newDocumentName)) {
-            document.updateProperties(Collections.singletonMap(PropertyIds.NAME, newDocumentName), false);
-
+           return document.copy(destinationFolder, Collections.singletonMap(PropertyIds.NAME, newDocumentName), VersioningState.NONE, null, null, null, getSessionFacade().createOperationContext());
         }
+
         return document.copy(destinationFolder);
     }
 
