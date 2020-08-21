@@ -51,7 +51,7 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void sendInOnly() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(2);
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
@@ -66,6 +66,7 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         assertResultExchange(result.getExchanges().get(0));
+        assertResultExchange(result.getExchanges().get(1));
 
         assertResponseMessage(exchange1.getIn());
         assertResponseMessage(exchange2.getIn());
@@ -111,7 +112,9 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 String minioEndpointUri
-                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey") + "&secretKey=RAW(" + properties.getProperty("secretKey") + ")&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io";
+                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey")
+                        + "&secretKey=RAW(" + properties.getProperty("secretKey")
+                        + ")&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io&deleteAfterRead=false";
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
 

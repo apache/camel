@@ -31,9 +31,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
 
@@ -49,41 +49,33 @@ public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
     }
 
     @Test
-    public void sendInOnly() throws Exception {
-        result.expectedMessageCount(1);
+    public void send() throws Exception {
+        result.expectedMessageCount(3);
 
-        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
-            exchange.getIn().setBody("This is my bucket content.");
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange_0 -> {
+            exchange_0.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest0");
+            exchange_0.getIn().setBody("This is my bucket content.");
         });
 
-        Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
-            exchange.getIn().setBody("This is my bucket content.");
+        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange_1 -> {
+            exchange_1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1");
+            exchange_1.getIn().setBody("This is my bucket content.");
         });
 
-        assertMockEndpointsSatisfied();
-
-        assertResultExchange(result.getExchanges().get(0));
-
-        assertResponseMessage(exchange1.getIn());
-        assertResponseMessage(exchange2.getIn());
-    }
-
-    @Test
-    public void sendInOut() throws Exception {
-        result.expectedMessageCount(1);
-
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {
-            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
-            exchange1.getIn().setBody("This is my bucket content.");
+        Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange_2 -> {
+            exchange_2.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2");
+            exchange_2.getIn().setBody("This is my bucket content.");
         });
 
         assertMockEndpointsSatisfied();
 
         assertResultExchange(result.getExchanges().get(0));
+        assertResultExchange(result.getExchanges().get(1));
+        assertResultExchange(result.getExchanges().get(2));
 
         assertResponseMessage(exchange.getMessage());
+        assertResponseMessage(exchange1.getIn());
+        assertResponseMessage(exchange2.getIn());
     }
 
     private void assertResultExchange(Exchange resultExchange) {
@@ -106,13 +98,16 @@ public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        String minioEndpointUri =
-                "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey") + "&secretKey=RAW(" + properties.getProperty("secretKey") + ")&autoCreateBucket=true&endpoint=http://" + getMinioHost() + "&proxyPort=" + getMinioPort();
         return new RouteBuilder() {
             @Override
             public void configure() {
+                String minioEndpointUri
+                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey")
+                        + "&secretKey=RAW(" + properties.getProperty("secretKey")
+                        + ")&autoCreateBucket=true&endpoint=http://" + getMinioHost() + "&proxyPort=" + getMinioPort();
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
+
             }
         };
     }

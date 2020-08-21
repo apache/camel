@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Properties;
 
-import io.minio.MinioClient;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.testcontainers.containers.GenericContainer;
