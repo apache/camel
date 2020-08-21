@@ -189,7 +189,7 @@ public class DefaultCxfBindingTest {
         Set<Attachment> attachments
                 = CastUtils.cast((Set<?>) requestContext.get(CxfConstants.CAMEL_CXF_ATTACHMENTS));
         assertNotNull(attachments);
-        assertNotNull(attachments.size() == 1);
+        assertEquals(1, attachments.size());
         Attachment att = attachments.iterator().next();
         assertEquals("att-1", att.getId());
         assertEquals("value 1", att.getHeader("attachment-header"));
@@ -327,7 +327,7 @@ public class DefaultCxfBindingTest {
 
         Collection<Attachment> attachments = cxfMessage.getAttachments();
         assertNotNull(attachments);
-        assertNotNull(attachments.size() == 1);
+        assertEquals(1, attachments.size());
         Attachment att = attachments.iterator().next();
         assertEquals("att-1", att.getId());
         assertEquals("value 1", att.getHeader("attachment-header"));

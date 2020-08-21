@@ -83,7 +83,7 @@ public class ComplexRequestReplyTest {
         ProducerTemplate requester = senderContext.createProducerTemplate();
         LOG.info("*** Sending Request 1");
         String response = (String) requester.requestBody(fromEndpoint, "This is a request");
-        assertNotNull(response != null);
+        assertNotNull(response);
         LOG.info("Got response: " + response);
 
         /**
@@ -104,7 +104,7 @@ public class ComplexRequestReplyTest {
 
         LOG.info("*** Sending Request 2");
         response = (String) requester.requestBody(fromEndpoint, "This is a request");
-        assertNotNull(response != null);
+        assertNotNull(response);
         LOG.info("Got response: " + response);
     }
 

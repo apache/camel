@@ -31,6 +31,7 @@ import twitter4j.Status;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -64,7 +65,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
         Status receivedTweet = tweets.get(0).getIn().getBody(Status.class);
         assertNotNull(receivedTweet);
         // The identifier for the published tweet should be there
-        assertNotNull(receivedTweet.getId());
+        assertNotEquals(0, receivedTweet.getId());
     }
 
     @Override
