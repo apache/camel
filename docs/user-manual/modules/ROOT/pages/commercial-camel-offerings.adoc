@@ -50,6 +50,13 @@ and runtime. You start by composing ETLs using the application builder.
 You test ETLs instantly on your machine. You bundle ETLs with your
 application.
 
+
+[[CommercialCamelOfferings-IBM]]
+== http://ibm.biz/OSSupport[IBM]
+
+http://ibm.biz/OSSupport[IBM] provides cross-platform support for
+Apache Camel and many other open source packages.
+
 [[CommercialCamelOfferings-MediaDriver]]
 == http://mediadriver.com[Media Driver]
 
