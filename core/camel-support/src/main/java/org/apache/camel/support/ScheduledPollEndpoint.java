@@ -71,10 +71,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer,scheduler",
               description = "If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages.")
     private boolean greedy;
-    @UriParam(enums = "none,spring,quartz",
-              defaultValue = "none", label = "consumer,scheduler",
-              description = "To use a cron scheduler from either camel-spring or camel-quartz component")
-    private String scheduler = "none";
+    @UriParam(defaultValue = "none", label = "consumer,scheduler",
+              description = "To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler")
+    private Object scheduler = "none";
     @UriParam(prefix = "scheduler.", multiValue = true, label = "consumer,scheduler",
               description = "To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler.")
     private Map<String, Object> schedulerProperties;
@@ -127,9 +126,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
 
         // options take precedence
-        String schedulerName = (String) options.getOrDefault("scheduler", scheduler);
-        if (schedulerName != null) {
-            if ("spring".equals(schedulerName)) {
+        Object schedulerKey = options.getOrDefault("scheduler", scheduler);
+        if (schedulerKey != null) {
+            if ("spring".equals(schedulerKey)) {
                 // special for scheduler if its "spring" or "quartz"
                 try {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver()
@@ -141,7 +140,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                                                        + " from classpath. Make sure camel-spring.jar is on the classpath.",
                             e);
                 }
-            } else if ("quartz".equals(schedulerName)) {
+            } else if ("quartz".equals(schedulerKey)) {
                 // special for scheduler if its "spring" or "quartz"
                 try {
                     Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver()
@@ -153,13 +152,22 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                                                        + " from classpath. Make sure camel-quartz.jar is on the classpath.",
                             e);
                 }
-            } else if (!"none".equals(schedulerName)) {
-                // must refer to a custom scheduler by the given name
-                if (EndpointHelper.isReferenceParameter(schedulerName)) {
-                    schedulerName = schedulerName.substring(1);
+            } else if (!"none".equals(schedulerKey)) {
+                if (schedulerKey instanceof String) {
+                    String str = schedulerKey.toString();
+                    // must refer to a custom scheduler by the given name
+                    if (EndpointHelper.isReferenceParameter(str)) {
+                        str = str.substring(1);
+                    }
+                    consumerScheduler = CamelContextHelper.mandatoryLookup(getCamelContext(), str,
+                            ScheduledPollConsumerScheduler.class);
+                } else if (schedulerKey instanceof ScheduledPollConsumerScheduler) {
+                    consumerScheduler = (ScheduledPollConsumerScheduler) schedulerKey;
+                } else {
+                    throw new IllegalArgumentException(
+                            "Scheduler must either be a reference to a custom scheduler or an ScheduledPollConsumerScheduler type, was: "
+                                                       + schedulerKey.getClass().getName());
                 }
-                consumerScheduler = CamelContextHelper.mandatoryLookup(getCamelContext(), schedulerName,
-                        ScheduledPollConsumerScheduler.class);
             }
         }
     }
@@ -335,11 +343,11 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      * text spring to use the Spring based; and use the text #myScheduler to refer to a custom scheduler by its id in
      * the Registry. See Quartz page for an example.
      */
-    public void setScheduler(String schedulerName) {
+    public void setScheduler(Object schedulerName) {
         this.scheduler = schedulerName;
     }
 
-    public String getScheduler() {
+    public Object getScheduler() {
         return scheduler;
     }
 

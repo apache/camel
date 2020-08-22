@@ -505,9 +505,22 @@ public interface XQueryEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         */
+        default XQueryEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler

@@ -363,7 +363,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("secret", endpoint.getConfiguration().getPassword());
         assertEquals("myhost", endpoint.getConfiguration().getHost());
 
-        assertNotNull("Scheduler not set", endpoint.getScheduler());
+        assertNotNull(endpoint.getScheduler());
         assertEquals("quartz", endpoint.getScheduler());
     }
 }

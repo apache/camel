@@ -22,7 +22,17 @@ import org.apache.camel.spi.Configurer;
 
 @Configurer
 public class MySecondBar {
+
+    private int number;
     private List<String> names;
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
     public List<String> getNames() {
         return names;

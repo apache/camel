@@ -548,7 +548,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     }
 
     @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "attachments":
         case "Attachments": return org.zendesk.client.v2.model.Attachment.class;

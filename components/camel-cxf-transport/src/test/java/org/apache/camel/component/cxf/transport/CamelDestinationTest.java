@@ -92,7 +92,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         CamelContext context = destination.getCamelContext();
 
         assertNotNull(context, "The camel context which get from camel destination is not null");
-        assertEquals("dest_context", context.getName(),  "Get the wrong camel context");
+        assertEquals("dest_context", context.getName(), "Get the wrong camel context");
         assertEquals(2, context.getRoutes().size(), "The camel context should has two routers");
         bus.shutdown(false);
     }

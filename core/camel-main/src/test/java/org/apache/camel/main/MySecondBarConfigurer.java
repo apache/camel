@@ -21,6 +21,8 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "names":
         case "Names": target.setNames(property(camelContext, java.util.List.class, value)); return true;
+        case "number":
+        case "Number": target.setNumber(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -29,6 +31,7 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("Names", java.util.List.class);
+        answer.put("Number", int.class);
         return answer;
     }
 
@@ -38,12 +41,14 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "names":
         case "Names": return target.getNames();
+        case "number":
+        case "Number": return target.getNumber();
         default: return null;
         }
     }
 
     @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "names":
         case "Names": return java.lang.String.class;

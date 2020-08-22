@@ -23,8 +23,12 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,6 +59,38 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     @Test
     public void testProperties() throws Exception {
+        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        bi.setExtendedStatistics(true);
+        bi.setLoggingLevel(LoggingLevel.WARN);
+
+        Bar bar = new Bar();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("age", "33");
+        prop.put("{{committer}}", "true");
+        prop.put("gold-customer", "true");
+
+        myConfigurer.reset();
+        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        assertEquals(3, myConfigurer.getCounter());
+
+        assertEquals(33, bar.getAge());
+        assertTrue(bar.isRider());
+        assertTrue(bar.isGoldCustomer());
+        assertNull(bar.getWork());
+
+        assertTrue(prop.isEmpty(), "Should bind all properties");
+
+        // should not use reflection
+        assertEquals(0, bi.getInvokedCounter());
+    }
+
+    @Test
+    public void testPropertiesNested() throws Exception {
+        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        bi.setExtendedStatistics(true);
+        bi.setLoggingLevel(LoggingLevel.WARN);
+
         Bar bar = new Bar();
 
         Map<String, Object> prop = new HashMap<>();
@@ -66,7 +102,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         myConfigurer.reset();
         PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
-        assertEquals(3, myConfigurer.getCounter());
+        assertEquals(6, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
         assertTrue(bar.isRider());
@@ -75,10 +111,37 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         assertEquals("Acme", bar.getWork().getName());
 
         assertTrue(prop.isEmpty(), "Should bind all properties");
+
+        // will use reflection for configuring Work as we do not have a configurer for it
+        assertTrue(bi.getInvokedCounter() > 0);
     }
 
     @Test
-    public void testPropertiesOptionallKey() throws Exception {
+    public void testAutowired() throws Exception {
+        Bar bar = new Bar();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("age", "33");
+        prop.put("{{committer}}", "true");
+        prop.put("gold-customer", "true");
+        prop.put("work", "#autowired");
+
+        myConfigurer.reset();
+        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        // there should be 4 as autowried is also used
+        assertEquals(3 + 1, myConfigurer.getCounter());
+
+        assertEquals(33, bar.getAge());
+        assertTrue(bar.isRider());
+        assertTrue(bar.isGoldCustomer());
+        assertEquals(456, bar.getWork().getId());
+        assertEquals("Acme", bar.getWork().getName());
+
+        assertTrue(prop.isEmpty(), "Should bind all properties");
+    }
+
+    @Test
+    public void testPropertiesOptionalKey() throws Exception {
         Bar bar = new Bar();
 
         Map<String, Object> prop = new HashMap<>();
@@ -93,7 +156,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         myConfigurer.reset();
         PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
-        assertEquals(3, myConfigurer.getCounter());
+        assertEquals(7, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
         assertTrue(bar.isRider());
@@ -125,7 +188,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         myConfigurer.reset();
         PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).withMandatory(true).bind(context, bar,
                 prop);
-        assertEquals(3, myConfigurer.getCounter());
+        assertEquals(7, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
         assertTrue(bar.isRider());
@@ -214,7 +277,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         }
     }
 
-    private static class MyConfigurer implements GeneratedPropertyConfigurer {
+    private static class MyConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
         private int counter;
 
@@ -251,6 +314,41 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         public void reset() {
             counter = 0;
+        }
+
+        @Override
+        public Map<String, Object> getAllOptions(Object target) {
+            Map<String, Object> map = new HashMap<>();
+            if (target instanceof Bar) {
+                map.put("age", int.class);
+                map.put("rider", boolean.class);
+                map.put("work", Company.class);
+                map.put("goldCustomer", boolean.class);
+            }
+            return map;
+        }
+
+        @Override
+        public Object getOptionValue(Object target, String name, boolean ignoreCase) {
+            name = name.toLowerCase(Locale.ENGLISH);
+            name = name.replaceAll("-", "");
+            if (target instanceof Bar) {
+                Bar bar = (Bar) target;
+                if ("age".equals(name)) {
+                    counter++;
+                    return bar.getAge();
+                } else if ("rider".equals(name)) {
+                    counter++;
+                    return bar.isRider();
+                } else if ("work".equals(name)) {
+                    counter++;
+                    return bar.getWork();
+                } else if ("goldcustomer".equals(name)) {
+                    counter++;
+                    return bar.isGoldCustomer();
+                }
+            }
+            return null;
         }
     }
 

@@ -67,7 +67,7 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "savedSearch": target.getConfiguration().setSavedSearch(property(camelContext, java.lang.String.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "scheme": target.getConfiguration().setScheme(property(camelContext, java.lang.String.class, value)); return true;
@@ -128,7 +128,7 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("savedSearch", java.lang.String.class);
         answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.String.class);
+        answer.put("scheduler", java.lang.Object.class);
         answer.put("schedulerProperties", java.util.Map.class);
         answer.put("scheme", java.lang.String.class);
         answer.put("search", java.lang.String.class);
