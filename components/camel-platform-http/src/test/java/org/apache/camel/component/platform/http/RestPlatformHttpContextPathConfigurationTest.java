@@ -27,14 +27,14 @@ public class RestPlatformHttpContextPathConfigurationTest extends AbstractPlatfo
     @Test
     public void contextPath() {
         RestAssured.get("/rest/get")
-            .then()
-            .body(containsString("GET: /get"));
+                .then()
+                .body(containsString("GET: /get"));
 
         RestAssured.given()
-            .contentType("text/plain")
-            .post("/rest/post")
-            .then()
-            .body(containsString("POST: /post"));
+                .contentType("text/plain")
+                .post("/rest/post")
+                .then()
+                .body(containsString("POST: /post"));
     }
 
     @Override
