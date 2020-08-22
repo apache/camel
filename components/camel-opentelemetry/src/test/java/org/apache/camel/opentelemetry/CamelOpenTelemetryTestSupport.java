@@ -165,7 +165,7 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         }
         if (!td.getTags().isEmpty()) {
             for (Map.Entry<String, String> entry : td.getTags().entrySet()) {
-                assertEquals(entry.getValue(), span.getAttributes().get(entry.getKey()));
+                assertEquals(entry.getValue(), span.getAttributes().get(entry.getKey()).getStringValue());
             }
         }
 

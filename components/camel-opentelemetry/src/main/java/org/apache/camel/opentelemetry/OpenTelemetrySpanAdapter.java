@@ -19,15 +19,19 @@ package org.apache.camel.opentelemetry;
 import java.util.EnumMap;
 import java.util.Map;
 
+import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.common.AttributeValue;
 import io.opentelemetry.common.Attributes;
+import io.opentelemetry.correlationcontext.CorrelationContext;
+import io.opentelemetry.correlationcontext.CorrelationContextManager;
+import io.opentelemetry.correlationcontext.EntryMetadata;
 import io.opentelemetry.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
+    static final EntryMetadata DEFAULT_ENTRY_METADATA = EntryMetadata.create(EntryMetadata.EntryTtl.UNLIMITED_PROPAGATION);
     private static final String DEFAULT_EVENT_NAME = "log";
-
     private static EnumMap<Tag, String> tagMap = new EnumMap<>(Tag.class);
 
     static {
@@ -42,9 +46,19 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     }
 
     io.opentelemetry.trace.Span span;
+    private CorrelationContextManager contextManager;
+    private CorrelationContext correlationContext;
+    private OpenTelemetrySpanAdapter parent;
 
     OpenTelemetrySpanAdapter(io.opentelemetry.trace.Span span) {
         this.span = span;
+        this.contextManager = OpenTelemetry.getCorrelationContextManager();
+    }
+
+    OpenTelemetrySpanAdapter(io.opentelemetry.trace.Span span, CorrelationContext correlationContext) {
+        this.span = span;
+        this.contextManager = OpenTelemetry.getCorrelationContextManager();
+        this.correlationContext = correlationContext;
     }
 
     io.opentelemetry.trace.Span getOpenTelemetrySpan() {
@@ -123,5 +137,28 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
             }
         }
         return attributesBuilder.build();
+    }
+
+    public CorrelationContext getCorrelationContext() {
+        return this.correlationContext;
+    }
+
+    public void setCorrelationContext(CorrelationContext correlationContext) {
+        this.correlationContext = correlationContext;
+    }
+
+    public void setCorrelationContextItem(String key, String value) {
+        CorrelationContext.Builder builder = contextManager.contextBuilder();
+        if (correlationContext != null) {
+            builder = builder.setParent(correlationContext);
+        }
+        correlationContext = builder.put(key, value, DEFAULT_ENTRY_METADATA).build();
+    }
+
+    public String getContextPropagationItem(String key) {
+        if (correlationContext != null) {
+            return correlationContext.getEntryValue(key);
+        }
+        return null;
     }
 }
