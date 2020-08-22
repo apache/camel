@@ -17,36 +17,24 @@
 package org.apache.camel.component.platform.http;
 
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.CoreMatchers.containsString;
 
-public class PlatformHttpTest extends AbstractPlatformHttpTest {
-
-    @Test
-    public void testGet() throws Exception {
-        given()
-                .header("Accept", "application/json")
-                .port(port)
-                .expect()
-                .statusCode(200)
-                .when()
-                .get("/get");
-    }
+public class RestPlatformHttpContextPathConfigurationTest extends AbstractPlatformHttpTest {
 
     @Test
-    public void testPost() {
-        RequestSpecification request = RestAssured.given();
-        request.body("test");
-        Response response = request.get("/post");
+    public void contextPath() {
+        RestAssured.get("/rest/get")
+            .then()
+            .body(containsString("GET: /get"));
 
-        int statusCode = response.getStatusCode();
-        assertEquals(200, statusCode);
-        assertEquals("TEST", response.body().asString().trim());
+        RestAssured.given()
+            .contentType("text/plain")
+            .post("/rest/post")
+            .then()
+            .body(containsString("POST: /post"));
     }
 
     @Override
@@ -54,10 +42,22 @@ public class PlatformHttpTest extends AbstractPlatformHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("platform-http:/get")
-                        .setBody().constant("get");
-                from("platform-http:/post")
-                        .transform().body(String.class, b -> b.toUpperCase());
+
+                restConfiguration()
+                        .component("platform-http")
+                        .contextPath("/rest");
+
+                rest()
+                        .get("/get")
+                        .route()
+                        .setBody(constant("GET: /get"))
+                        .endRest()
+                        .post("/post")
+                        .consumes("text/plain").produces("text/plain")
+                        .route()
+                        .setBody(constant("POST: /post"))
+                        .endRest();
+
             }
         };
     }
