@@ -37,7 +37,6 @@ public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
 
     public CxfRsConsumer(CxfRsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        server = createServer();
     }
 
     protected Server createServer() {
