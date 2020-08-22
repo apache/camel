@@ -20,7 +20,8 @@ import java.util.Set;
 
 import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
-import io.opentelemetry.context.Scope;
+import io.opentelemetry.correlationcontext.CorrelationContext;
+import io.opentelemetry.correlationcontext.CorrelationsContextUtils;
 import io.opentelemetry.trace.DefaultTracer;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.SpanContext;
@@ -92,28 +93,32 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     @Override
     protected SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent) {
         Span.Builder builder = tracer.spanBuilder(operationName).setSpanKind(mapToSpanKind(kind));
+        CorrelationContext correlationContext = null;
         if (parent != null) {
             OpenTelemetrySpanAdapter oTelSpanWrapper = (OpenTelemetrySpanAdapter) parent;
             Span parentSpan = oTelSpanWrapper.getOpenTelemetrySpan();
+            correlationContext = oTelSpanWrapper.getCorrelationContext();
             builder = builder.setParent(parentSpan);
         }
-        return new OpenTelemetrySpanAdapter(builder.startSpan());
+        return new OpenTelemetrySpanAdapter(builder.startSpan(), correlationContext);
     }
 
     @Override
     protected SpanAdapter startExchangeBeginSpan(
             Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent) {
         Span.Builder builder = tracer.spanBuilder(operationName);
+        CorrelationContext correlationContext = null;
         if (parent != null) {
             OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) parent;
             builder = builder.setParent(spanFromExchange.getOpenTelemetrySpan());
+            correlationContext = spanFromExchange.getCorrelationContext();
         } else {
             ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
             Context ctx = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), adapter,
                     new OpenTelemetryGetter(adapter));
             Span span = TracingContextUtils.getSpan(ctx);
             SpanContext parentFromHeaders = span.getContext();
-
+            correlationContext = CorrelationsContextUtils.getCorrelationContext(ctx);
             if (parentFromHeaders != null && parentFromHeaders.isValid()) {
                 builder.setParent(parentFromHeaders).setSpanKind(mapToSpanKind(sd.getReceiverSpanKind()));
             } else if (!(sd instanceof AbstractInternalSpanDecorator)) {
@@ -121,7 +126,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             }
         }
 
-        return new OpenTelemetrySpanAdapter(builder.startSpan());
+        return new OpenTelemetrySpanAdapter(builder.startSpan(), correlationContext);
     }
 
     @Override
@@ -133,9 +138,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     @Override
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
         OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) span;
-        try (Scope scope = tracer.withSpan(spanFromExchange.getOpenTelemetrySpan())) {
-            OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), adapter, new OpenTelemetrySetter());
-        }
+        Context context = TracingContextUtils.withSpan(spanFromExchange.getOpenTelemetrySpan(), Context.current());
+        context = CorrelationsContextUtils.withCorrelationContext(spanFromExchange.getCorrelationContext(), context);
+        OpenTelemetry.getPropagators().getHttpTextFormat().inject(context, adapter, new OpenTelemetrySetter());
     }
 
 }
