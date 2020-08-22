@@ -589,8 +589,10 @@ public final class PropertyBindingSupport {
                 return Integer.compare(n1, n2);
             }
             // 2) sort by reference (as it may refer to other beans in the OGNL graph)
-            boolean ref1 = map.get(o1).toString().startsWith("#");
-            boolean ref2 = map.get(o2).toString().startsWith("#");
+            Object v1 = map.get(o1);
+            Object v2 = map.get(o2);
+            boolean ref1 = v1 != null && v1.toString().startsWith("#");
+            boolean ref2 = v2 != null && v2.toString().startsWith("#");
             if (ref1 != ref2) {
                 return Boolean.compare(ref1, ref2);
             }
@@ -629,6 +631,10 @@ public final class PropertyBindingSupport {
             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
             boolean reference, boolean placeholder,
             PropertyConfigurer configurer) {
+
+        if (properties == null || properties.isEmpty()) {
+            return false;
+        }
 
         boolean answer = false;
 
