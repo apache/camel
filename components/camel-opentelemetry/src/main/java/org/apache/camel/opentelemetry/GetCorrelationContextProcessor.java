@@ -1,12 +1,12 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates
- * and other contributors as indicated by the @author tags.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,14 +30,14 @@ import org.slf4j.LoggerFactory;
 public class GetCorrelationContextProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
     private static final Logger LOG = LoggerFactory.getLogger(GetCorrelationContextProcessor.class);
     private final String headerName;
-    private final String baggageName;
+    private final String keyName;
     private String id;
     private String routeId;
 
-    public GetCorrelationContextProcessor(String baggageName, String headerName) {
-        this.baggageName = baggageName;
+    public GetCorrelationContextProcessor(String keyName, String headerName) {
+        this.keyName = keyName;
         this.headerName = headerName;
-        ObjectHelper.notNull(baggageName, "baggageName");
+        ObjectHelper.notNull(keyName, "keyName");
         ObjectHelper.notNull(headerName, "headerName");
     }
 
@@ -46,10 +46,10 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
         try {
             OpenTelemetrySpanAdapter camelSpan = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
             if (camelSpan != null) {
-                String item = camelSpan.getContextPropagationItem(baggageName);
+                String item = camelSpan.getContextPropagationItem(keyName);
                 exchange.getMessage().setHeader(headerName, item);
             } else {
-                LOG.warn("OpenTracing: could not find managed span for exchange={}", exchange);
+                LOG.warn("OpenTelemetry: could not find managed span for exchange={}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -68,7 +68,7 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
 
     @Override
     public String getTraceLabel() {
-        return "getBaggage[" + baggageName + ", " + headerName + "]";
+        return "getCorrelationContext[" + keyName + ", " + headerName + "]";
     }
 
     @Override
@@ -91,8 +91,8 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
         this.routeId = routeId;
     }
 
-    public String getBaggageName() {
-        return baggageName;
+    public String getKeyName() {
+        return keyName;
     }
 
     public String getHeaderName() {

@@ -1,12 +1,12 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates
- * and other contributors as indicated by the @author tags.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,7 +55,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
                 String item = expression.evaluate(exchange, String.class);
                 camelSpan.setCorrelationContextItem(baggageName, item);
             } else {
-                LOG.warn("OpenTracing: could not find managed span for exchange={}", exchange);
+                LOG.warn("OpenTelemetry: could not find managed span for exchange={}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -74,7 +74,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
 
     @Override
     public String getTraceLabel() {
-        return "setBaggage[" + baggageName + ", " + expression + "]";
+        return "setCorrelationContext[" + baggageName + ", " + expression + "]";
     }
 
     @Override
